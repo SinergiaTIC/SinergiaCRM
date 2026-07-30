@@ -112,7 +112,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
         $emailAddress = $bean->email1 ?? null;
         // Validate that the email is correct
         if (empty($emailAddress) || !filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "DataBlock '{$block->dataBlock->name}' does not have a valid 'email1' field ('{$emailAddress}').");
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "DataBlock '{$block->dataBlock->getName()}' does not have a valid 'email1' field ('{$emailAddress}').");
         }
 
         // Create a deferred ticket
@@ -165,7 +165,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
      */
     public function processWebhook(ExecutionContext $context, array $requestData): ActionResult {
         // Email confirmation received: extract the email address from the context data and update the opt-in status
-        $emailAddress = $context->deferredContext?->getCustom('email');
+        $emailAddress = $context->getDeferredContext()?->getCustom('email');
         if (empty($emailAddress)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF EmailConfirmationAction: Email address missing in Webhook request");
             return new ActionResult(ResultStatus::ERROR, null, "No valid email address found in the context data.");

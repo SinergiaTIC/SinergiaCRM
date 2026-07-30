@@ -26,39 +26,35 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormDataBlock {
-    public FormConfig $form_config;       // The configuration of the form it belongs to
-
-    public string $id;                    // ID of the data block
-    public string $name;                  // Internal name (UI identifier) of the data block
-    public string $text;                  // Text to display for the data block
-    public string $module;                // Module name
+    private string $id;                    // ID of the data block
+    private string $name;                  // Internal name (UI identifier) of the data block
+    private string $text;                  // Text to display for the data block
+    private ?string $module;               // Module name
     /** @var FormDataBlockField[] */
-    public array $fields;                 // Fields of the data block
+    private array $fields;                 // Fields of the data block
     /** @var FormDuplicateRule[] */
-    public array $duplicate_detections;   // Definition of duplicate detection
+    private array $duplicate_detections;   // Definition of duplicate detection
 
     private ?BeanReference $beanReference = null; // Bean where the data block has been saved
 
     /**
      * Creates an instance of FormDataBlock from a JSON array.
-     * @param FormConfig $form The configuration of the form it belongs to
      * @param array $data The data in array format
      * @return FormDataBlock The created instance
      */
-    public static function fromJsonArray(FormConfig $form, array $data): self {
+    public static function fromJsonArray(array $data): self {
         $dto = new self();
-        $dto->form_config = $form;
 
         $dto->id = $data['id'];
         $dto->name = $data['name'];
         $dto->text = $data['text'];
-        $dto->module = $data['module'];
+        $dto->module = $data['module'] ?? null;
 
         $dto->fields = [];
         if (isset($data['fields'])) {
             foreach ($data['fields'] as $fieldData) {
                 $formDataBlockField = FormDataBlockField::fromJsonArray($dto, $fieldData);
-                $dto->fields[$formDataBlockField->name] = $formDataBlockField;
+                $dto->addField($formDataBlockField);
             }
         }
 
@@ -70,6 +66,44 @@ class FormDataBlock {
         }
 
         return $dto;
+    }
+
+    public function getId(): string {
+        return $this->id;
+    }
+
+    public function getName(): string {
+        return $this->name;
+    }
+
+    public function getText(): string {
+        return $this->text;
+    }
+
+    public function getModule(): ?string {
+        return $this->module;
+    }
+
+    /**
+     * @return FormDataBlockField[]
+     */
+    public function getFields(): array {
+        return $this->fields;
+    }
+
+    public function getFieldByName(string $name): ?FormDataBlockField {
+        return $this->fields[$name] ?? null;
+    }
+
+    /**
+     * @return FormDuplicateRule[]
+     */
+    public function getDuplicateDetections(): array {
+        return $this->duplicate_detections;
+    }
+
+    private function addField(FormDataBlockField $field): void {
+        $this->fields[$field->name] = $field;
     }
 
     public function setBeanReference(string $beanId): void {

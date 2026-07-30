@@ -694,7 +694,7 @@ class stic_AWF_FormsUtils {
      */
     public static function wasBeanCreatedInThisContext(string $beanId, ExecutionContext $context): bool 
     {
-        foreach ($context->actionResults as $result) {
+        foreach ($context->getActionResults() as $result) {
             foreach ($result->modifiedBeans as $modBean) {
                 if ($modBean->beanId === $beanId && $modBean->modificationType === BeanModificationType::CREATED) {
                     return true;

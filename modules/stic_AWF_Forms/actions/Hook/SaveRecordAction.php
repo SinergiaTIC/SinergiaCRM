@@ -64,7 +64,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     {
         global $db, $beanList;
 
-        $module = $block->dataBlock->module;
+        $module = $block->dataBlock->getModule();
         if (!isset($beanList[$module])) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "The configured module '{$module}' is not available on the system.");
         }
@@ -74,7 +74,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         $modifications = [];
 
         // Duplicate detection logic
-        $duplicateRules = $block->dataBlock->duplicate_detections ?? [];
+        $duplicateRules = $block->dataBlock->getDuplicateDetections();
         foreach ($duplicateRules as $rule) {
             $scalarFields = [];
             $emailValues = [];
@@ -183,7 +183,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
                 $fieldLabels = [];
                 foreach ($rule->fields as $fName) {
-                    $fieldDef = $block->dataBlock->fields[$fName] ?? null;
+                    $fieldDef = $block->dataBlock->getFieldByName($fName);
                     if ($fieldDef) {
                         $label = !empty($fieldDef->label) ? $fieldDef->label : (!empty($fieldDef->text_original) ? $fieldDef->text_original : $fName);
                         $fieldLabels[] = rtrim($label, ': ');
@@ -210,8 +210,8 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             }
             
             // Assign user if a default one is set
-            if (!empty($context->defaultAssignedUserId)) {
-                $bean->assigned_user_id = $context->defaultAssignedUserId;
+            if (!empty($context->getDefaultAssignedUserId())) {
+                $bean->assigned_user_id = $context->getDefaultAssignedUserId();
             }
             // Fill all bean fields
             $modifications = $this->populateBean($bean, $block);
@@ -315,7 +315,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                         $relName = $cfg['relationship_name'] ?? '';
                         $idName = $cfg['id_name'] ?? '';
                         $targetBlockId = $cfg['target_block_id'] ?? '';
-                        $targetBlock = $context->formConfig->data_blocks[$targetBlockId] ?? null;
+                        $targetBlock = $context->getFormConfig()->getDataBlockById($targetBlockId);
                         $targetBeanRef = $targetBlock?->getBeanReference();
                         $targetId = $targetBeanRef?->beanId ?? '';
                         $metadata[] = ['key' => 'injected_fk', 'label' => $idName, 'value' => "{$relName} → {$targetId}"];
@@ -474,7 +474,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 continue;
             }
 
-            $targetBlock = $context->formConfig->data_blocks[$targetBlockId] ?? null;
+            $targetBlock = $context->getFormConfig()->getDataBlockById($targetBlockId);
             if (!$targetBlock) {
                 $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlockId}' not found for relationship '{$relationName}'.");
                 continue;
@@ -482,7 +482,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
             $targetBeanRef = $targetBlock->getBeanReference();
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
-                $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlock->name}' has no bean ID. Check action order.");
+                $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlock->getName()}' has no bean ID. Check action order.");
                 continue;
             }
 

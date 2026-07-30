@@ -248,7 +248,7 @@ class ResponseHandler
 
         // Execution Context
         $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean, $formBean->form_type);
-        $context->visitorUserId = $realUserId;
+        $context->setVisitorUserId($realUserId);
 
         // Html Summary
         $htmlSummary = '';
@@ -289,8 +289,8 @@ class ResponseHandler
 
         // Only 'public' forms process responses
         if (!$isPublic) {
-            $title = $formConfig->layout->closed_form_title ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
-            $msg = $formConfig->layout->closed_form_text ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
+            $title = $formConfig->getLayout()->closed_form_title ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+            $msg = $formConfig->getLayout()->closed_form_text ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
             stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
             return;
         }
@@ -307,9 +307,9 @@ class ResponseHandler
         //    0: Main    (Main)
         //    1: Receipt (Received/Confirmation for 'async')
         //   -1: OnError (Error)
-        $mainFlow = $formConfig->flows['0'] ?? null;
-        $receiptFlow = $formConfig->flows['1'] ?? null;
-        $errorFlow = $formConfig->flows['-1'] ?? null;
+        $mainFlow = $formConfig->getFlowById('0');
+        $receiptFlow = $formConfig->getFlowById('1');
+        $errorFlow = $formConfig->getFlowById('-1');
 
         $isAsync = ($formBean->processing_mode === 'async');
         if ($isAsync) {
@@ -325,8 +325,8 @@ class ResponseHandler
                     try {
                         $lastAction->performTerminal($context, $lastResult);
                     } catch (\Throwable $t) {
-                        $context->addError($t, $lastResult->actionConfig);
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action {$lastResult->actionConfig?->name}: " . $t->getMessage());
+                        $context->addError($t, $lastResult->getActionConfig());
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action {$lastResult->getActionConfig()?->getName()}: " . $t->getMessage());
                     }
                 }
                 // No terminal (or error runing terminal)
@@ -336,8 +336,8 @@ class ResponseHandler
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Receipt flow not found in form. ID: $formId");
             }
             // If we get here, no flow or terminal has been run: Show generic message
-            $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_AWF_Forms');
-            $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_AWF_Forms');
+            $title = $formConfig->getLayout()->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+            $msg = $formConfig->getLayout()->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_AWF_Forms');
             stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);                
 
         } else {
@@ -360,7 +360,7 @@ class ResponseHandler
 
                 // Update status
                 $hasErrors = false;
-                foreach ($context->actionResults as $result) {
+                foreach ($context->getActionResults() as $result) {
                     if ($result->isError()) {
                         $hasErrors = true;
                         break;
@@ -382,8 +382,8 @@ class ResponseHandler
                     try {
                         $lastAction->performTerminal($context, $lastResult);
                     } catch (\Throwable $t) {
-                        $context->addError($t, $lastResult->actionConfig);
-                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action in Main flow {$lastResult->actionConfig?->name}: " . $t->getMessage());
+                        $context->addError($t, $lastResult->getActionConfig());
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action in Main flow {$lastResult->getActionConfig()?->getName()}: " . $t->getMessage());
                     }
                 }
                 // No terminal (or error runing terminal): Show generic message
@@ -465,7 +465,7 @@ class ResponseHandler
 
         // Consolidate links: A single link for each affected bean
         $consolidatedBeans = []; 
-        foreach ($context->actionResults as $result) {
+        foreach ($context->getActionResults() as $result) {
             foreach ($result->modifiedBeans as $modBean) {
                 $key = $modBean->moduleName . ':' . $modBean->beanId;
 
@@ -577,15 +577,15 @@ class ResponseHandler
         // (browsers don't send unchecked checkboxes)
         stic_AWFUtils::fillMissingBooleanFields($config, $data);
 
-        foreach ($config->data_blocks as $block) {
+        foreach ($config->getDataBlocks() as $block) {
             // Datablock is detached
-            if (empty($block->module)) continue; 
+            if (empty($block->getModule())) continue; 
             
-            $targetBean = BeanFactory::newBean($block->module);
+            $targetBean = BeanFactory::newBean($block->getModule());
             $realVardefs = $targetBean ? $targetBean->field_defs : [];
             if (empty($realVardefs)) continue;
 
-            foreach ($block->fields as $formField) {
+            foreach ($block->getFields() as $formField) {
                 $inputKeyInForm = $formField->getKey();
                 $inputKey = $formField->getPhpKey();
                 $value = $data[$inputKey] ?? null;
@@ -747,8 +747,8 @@ class ResponseHandler
         //     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship 'details_link' in Responses bean.");
         // }
 
-        foreach ($formConfig->data_blocks as $block) {
-            foreach ($block->fields as $field) {
+        foreach ($formConfig->getDataBlocks() as $block) {
+            foreach ($block->getFields() as $field) {
                 $currentOrder = $orderCounter;
                 $orderCounter += 1;
 
@@ -801,13 +801,13 @@ class ResponseHandler
                 $detailBean->stic_awf_forms_id_c = $formBean->id ?? ''; 
                 $detailBean->assigned_user_id = $responseBean->assigned_user_id;
                 
-                $detailBean->question_key = $block->name . '.' . $field->name;
+                $detailBean->question_key = $block->getName() . '.' . $field->name;
                 $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
                 $detailBean->question_label = rtrim($detailBean->question_label, ' :');
                 if (!empty($field->description)) {
                     $detailBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
                 }
-                $detailBean->question_section = $block->text;
+                $detailBean->question_section = $block->getText();
                 
                 $detailBean->question_sort_order = $currentOrder;
 

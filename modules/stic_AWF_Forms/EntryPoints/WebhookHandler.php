@@ -147,7 +147,7 @@ class WebhookHandler
                             $formConfig = null;
                             try {
                                 $context = stic_AWFUtils::rebuildContextFromTicket($existingTicket);
-                                $formConfig = $context->formConfig;
+                                $formConfig = $context->getFormConfig();
                             } catch (Exception $e) {}
 
                             $title = translate('LBL_PROCESSING_TITLE', 'stic_AWF_Deferred_Tickets');
@@ -204,14 +204,14 @@ class WebhookHandler
         }
 
         // Inject rawBody into deferred context for strategies that need it
-        $context->deferredContext->setCustom('_rawBody', $rawBody);
+        $context->getDeferredContext()->setCustom('_rawBody', $rawBody);
 
         $outContext = $context;
 
         // Discover actions to require class files
         ActionDiscoveryService::discoverActions([ActionType::DEFERRED]);
 
-        $actionClass = $context->deferredContext->actionClass;
+        $actionClass = $context->getDeferredContext()->actionClass;
         if (empty($actionClass) || !class_exists($actionClass)) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF WebhookHandler: Handler class {$actionClass} not found for webhook processing.");
             $res = new ActionResult(ResultStatus::ERROR, null, "Handler class '{$actionClass}' not found for webhook processing.");
@@ -240,8 +240,8 @@ class WebhookHandler
             if ($action instanceof IWebhookDecodable && $action->handlesSource($source)) {
                 // Initialize the isolated emergency typed context
                 $context = new ExecutionContext('', '', [], new FormConfig(), null, '');
-                $context->deferredContext = new DeferredContextData('', '');
-                $context->deferredContext->setCustom('_rawBody', $rawBody);
+                $context->setDeferredContext(new DeferredContextData('', ''));
+                $context->getDeferredContext()->setCustom('_rawBody', $rawBody);
 
                 // Give up control of the resolution to the deferred action itself
                 $result = $action->processOrphanWebhook($context, $source, $rawData);

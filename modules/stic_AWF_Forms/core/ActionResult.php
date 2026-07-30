@@ -42,7 +42,7 @@ class ActionResult {
     public array $modifiedBeans;             // Beans modified by the action
 
     public float $timestamp;                 // Execution timestamp
-    public ?FormAction $actionConfig;        // Configuration of the executed action
+    private ?FormAction $actionConfig;       // Configuration of the executed action
 
     protected ?IServerAction $actionSource;  // The action that generated this result 
     public array $data = array();            // Result data from the execution
@@ -54,6 +54,10 @@ class ActionResult {
 
     public function getAction(): ?IServerAction {
         return $this->actionSource;
+    }
+
+    public function getActionConfig(): ?FormAction {
+        return $this->actionConfig;
     }
 
     public function setData(array $data) {
@@ -102,7 +106,7 @@ class ActionResult {
      */
     public function registerBeanModificationFromBlock(SugarBean $bean, DataBlockResolved $block, BeanModificationType $action, array $submittedData): void 
     {
-        $blockModule = $block->dataBlock->module;
+        $blockModule = $block->dataBlock->getModule();
         if ($bean->module_name !== $blockModule) {
             throw new \LogicException("Error in registerBeanModificationFromBlock: Bean module ('{$bean->module_name}') is different from block module ('{$blockModule}').");
         }
@@ -125,8 +129,8 @@ class ActionResult {
         require_once 'modules/stic_AWF_Forms/core/FieldModification.php';
 
         $actionText = null;
-        if ($this->actionConfig) {
-            $actionText = $this->actionConfig->text ?? $this->actionConfig->title ?? $this->actionConfig->name;
+        if ($this->getActionConfig()) {
+            $actionText = $this->getActionConfig()->getText() ?? $this->getActionConfig()->getName();
         }
 
         $logData = [];

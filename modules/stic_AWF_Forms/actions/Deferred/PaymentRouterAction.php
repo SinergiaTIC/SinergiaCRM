@@ -195,34 +195,25 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      */
     private function executeDeferredOkFlow(ExecutionContext $context, ?FormAction $actionConfig = null): void {
         $successFlowId = null;
-        $successFlow = null;
         $errorFlowId = null;
-        $errorFlow = null;
 
         if ($actionConfig !== null) {
-            $successFlowId = $actionConfig->flow_success_id ?? null;
-            $errorFlowId = $actionConfig->flow_error_id ?? null;
-        } elseif ($context->deferredContext !== null) {
-            $successFlowId = $context->deferredContext->flowSuccessId ?? null;
-            $errorFlowId = $context->deferredContext->flowErrorId ?? null;
+            $successFlowId = $actionConfig->getFlowSuccessId() ?? null;
+            $errorFlowId = $actionConfig->getFlowErrorId() ?? null;
+        } elseif ($context->getDeferredContext() !== null) {
+            $successFlowId = $context->getDeferredContext()->flowSuccessId ?? null;
+            $errorFlowId = $context->getDeferredContext()->flowErrorId ?? null;
         }
 
-        if ($successFlowId !== null && $successFlowId !== '') {
-            $successFlow = $context->formConfig->flows[$successFlowId] ?? null;
-        }
-        if ($errorFlowId !== null && $errorFlowId !== '') {
-            $errorFlow = $context->formConfig->flows[$errorFlowId] ?? null;
-        }
-
-        if ($successFlow === null) {
-            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": PaymentRouterAction: No success flow configured (flow_success_id={$successFlowId}). Skipping deferred OK flow.");
+        if (empty($successFlowId)) {
+            $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '."PaymentRouterAction: No success flow configured (flow_success_id={$successFlowId}). Skipping deferred OK flow.");
             return;
         }
 
-        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": PaymentRouterAction: Executing Deferred OK flow (ID={$successFlowId}).");
+        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '."PaymentRouterAction: Executing Deferred OK flow (ID={$successFlowId}).");
 
         $executor = new ServerActionFlowExecutor($context);
-        $executor->executeFlow($successFlow, $errorFlow);
+        $executor->executeSubFlow($successFlowId, $errorFlowId);
     }
 
     /**
@@ -254,7 +245,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @return ActionResult Result of the execution of the action.
      */
     public function processWebhook(ExecutionContext $context, array $requestData): ActionResult {
-        $savedData = $context->deferredContext ? $context->deferredContext->toArray() : [];
+        $savedData = $context->getDeferredContext() ? $context->getDeferredContext()->toArray() : [];
         
         try {
             $strategy = stic_AWF_PaymentStrategyFactory::createFromStoredData($savedData);
@@ -302,7 +293,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @param bool $isSuccess Whether to run the success or error flow
      */
     private function enqueueDeferredFlow(ExecutionContext $context, bool $isSuccess): void {
-        $ticketId = $context->deferredContext ? $context->deferredContext->ticketId : null;
+        $ticketId = $context->getDeferredContext() ? $context->getDeferredContext()->ticketId : null;
 
         if (empty($ticketId)) {
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": No ticket_id in context data. Falling back to synchronous flow execution.");

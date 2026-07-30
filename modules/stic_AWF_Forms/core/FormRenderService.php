@@ -97,8 +97,8 @@ class FormRenderService {
      * @return void
      */
     private function prefillFieldsFromRequest(FormConfig $config, array $requestData): void {
-        foreach ($config->data_blocks as $block) {
-            foreach ($block->fields as $field) {
+        foreach ($config->getDataBlocks() as $block) {
+            foreach ($block->getFields() as $field) {
                 // Look for matches by field name (e.g., "email", "first_name")
                 // Also support the full format "BlockName_fieldname" when disambiguation is needed
                 $val = null;

@@ -55,7 +55,7 @@ class FormHtmlGeneratorService {
             {
                 $htmlRaw .= "<meta charset='UTF-8'>" .$this->newLine();
                 $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .$this->newLine();
-                $htmlRaw .= "<title>" . htmlspecialchars($config->layout->web_title) . "</title>" .$this->newLine();
+                $htmlRaw .= "<title>" . htmlspecialchars($config->getLayout()->web_title) . "</title>" .$this->newLine();
         
                 // External libraries (Bootstrap + Alpine)
                 $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .$this->newLine();
@@ -88,7 +88,7 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML for the form as a string
      */
     public function generateFormHtml(FormConfig $config, string $formId, string $actionUrl, bool $isPreview): string {
-        $layout = $config->layout;
+        $layout = $config->getLayout();
        
         // Ensure Id is valid for CSS
         $wrapperId = 'stic-awf-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $formId);
@@ -114,7 +114,7 @@ class FormHtmlGeneratorService {
      * @return string The generated CSS styles
      */
     private function generateCss(FormConfig $config, string $wrapperId): string {
-        $layout = $config->layout;
+        $layout = $config->getLayout();
         $theme = $layout->theme;
         $customCss = $this->decode($layout->custom_css);
         $primaryRgb = stic_AWFUtils::hex2rgb($theme->primary_color);
@@ -129,9 +129,9 @@ class FormHtmlGeneratorService {
                 $hasCollapsible = true;
             }
             foreach ($section->elements as $element) {
-                if ($element->type === 'datablock' && isset($config->data_blocks[$element->ref_id])) {
-                    $block = $config->data_blocks[$element->ref_id];
-                    foreach ($block->fields as $field) {
+                if ($element->type === 'datablock' && $config->getDataBlockById($element->ref_id) !== null) {
+                    $block = $config->getDataBlockById($element->ref_id);
+                    foreach ($block->getFields() as $field) {
                         $usedSubtypes[$field->subtype_in_form ?? 'text'] = true;
                     }
                 }
@@ -242,7 +242,7 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML for the body of the form as a string
      */
     private function generateBody(FormConfig $config, string $wrapperId, string $actionUrl, bool $isPreview): string {
-        $layout = $config->layout;
+        $layout = $config->getLayout();
         
         $headerHtml = $this->decode($layout->header_html);
         $footerHtml = $this->decode($layout->footer_html);
@@ -428,7 +428,7 @@ class FormHtmlGeneratorService {
                                     {
                                         foreach ($section->elements as $element) {
                                             if ($element->type == 'datablock') {
-                                                $block = $config->data_blocks[$element->ref_id] ?? null;
+                                                $block = $config->getDataBlockById($element->ref_id) ?? null;
                                                 if ($block) {
                                                     $html .= $this->generateDataBlockHtml($block, $layout->theme);
                                                 }
@@ -479,7 +479,7 @@ class FormHtmlGeneratorService {
      */
     private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme): string {
         $html = "";
-        foreach ($block->fields as $field) {
+        foreach ($block->getFields() as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
             $html .= $this->renderField($field, $theme);
         }
@@ -869,8 +869,8 @@ class FormHtmlGeneratorService {
         // Get used validators
         $usedValidators = [];
         $hasRating = false;
-        foreach ($config->data_blocks as $block) {
-            foreach ($block->fields as $field) {
+        foreach ($config->getDataBlocks() as $block) {
+            foreach ($block->getFields() as $field) {
                 if ($field->type_in_form === 'rating') {
                     $hasRating = true;
                 }
@@ -901,7 +901,8 @@ class FormHtmlGeneratorService {
         }
 
         // == UI ACTIONS ==
-        if (isset($config->flows['0'])) {
+        $uiFlow = $config->getFlowById('0');
+        if ($uiFlow !== null) {
             // Load Hook and UI actions to check for IFrontendAction
             $possibleActions = ActionDiscoveryService::discoverActions([ActionType::HOOK, ActionType::UI]);
             $actionMap = [];
@@ -909,11 +910,11 @@ class FormHtmlGeneratorService {
                 $actionMap[$a->getName()] = $a;
             }
 
-            foreach ($config->flows['0']->actions as $formAction) {
-                if (isset($actionMap[$formAction->name])) {
-                    $def = $actionMap[$formAction->name];
+            foreach ($uiFlow->getActions() as $formAction) {
+                if (isset($actionMap[$formAction->getName()])) {
+                    $def = $actionMap[$formAction->getName()];
                     if ($def instanceof IFrontendAction) {
-                        $assets = $def->getFrontendAssets($formAction->parameters, $config, $formId);
+                        $assets = $def->getFrontendAssets($formAction->getParameters(), $config, $formId);
                         if (!empty($assets['script'])) {
                             foreach ($assets['script'] as $scriptContent) {
                                 $js .= "<script>\n// --- UI ACTIONS ---\n{$scriptContent}".$this->newLine()."</script>".$this->newLine();
@@ -929,7 +930,7 @@ class FormHtmlGeneratorService {
 
         // == CUSTOM JS ==
         // Add custom JS from layout
-        $customJs = $this->decode($config->layout->custom_js);
+        $customJs = $this->decode($config->getLayout()->custom_js);
         if (!empty($customJs)) {
             $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});".$this->newLine()."</script>" .$this->newLine();
         }
