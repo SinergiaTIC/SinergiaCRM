@@ -26,8 +26,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormFlow {
-    private FormConfig $form_config;  // The configuration of the form it belongs to
-
     private string $id;               // ID of the action flow
     private string $name;             // Internal name of the action flow
     private string $text;             // The text to display
@@ -37,13 +35,11 @@ class FormFlow {
 
     /**
      * Creates an instance of FormFlow from a JSON array.
-     * @param FormConfig $form The configuration of the form it belongs to
      * @param array $data The data in array format
      * @return FormFlow The created instance
      */
-    public static function fromJsonArray(FormConfig $form, array $data): self {
+    public static function fromJsonArray(array $data): self {
         $dto = new self();
-        $dto->form_config = $form;
 
         $dto->id = $data['id'];
         $dto->name = $data['name'];
@@ -61,23 +57,26 @@ class FormFlow {
     }
 
     /**
-     * Creates a virtual flow with a subset of actions.
+     * Creates a virtual flow with a subset of actions from this flow.
      * This is the only supported way to build a flow with a custom action set
      * from outside the class construction process.
-     * @param FormConfig $formConfig The form configuration the virtual flow belongs to
      * @param string $id The ID of the virtual flow
      * @param string $name The name of the virtual flow
      * @param string $text The text of the virtual flow
-     * @param FormAction[] $actions The actions of the virtual flow
+     * @param string[] $actionIds The IDs of the actions to include in the virtual flow
      * @return FormFlow The created virtual flow
      */
-    public static function createVirtual(FormConfig $formConfig, string $id, string $name, string $text, array $actions): self {
+    public function createVirtual(string $id, string $name, string $text, array $actionIds): self {
         $dto = new self();
-        $dto->form_config = $formConfig;
         $dto->id = $id;
         $dto->name = $name;
         $dto->text = $text;
-        $dto->setActions($actions);
+        foreach ($actionIds as $actionId) {
+            $action = $this->getActionById($actionId);
+            if ($action !== null) {
+                $dto->addAction($action);
+            }
+        }
         return $dto;
     }
 
@@ -99,31 +98,11 @@ class FormFlow {
     }
 
     /**
-     * Sets the actions of the flow.
-     * Private: only the construction process and createVirtual should mutate actions.
-     * @param FormAction[] $actions The actions
-     */
-    private function setActions(array $actions): void {
-        $this->actions = [];
-        foreach ($actions as $action) {
-            $this->addAction($action);
-        }
-    }
-
-    /**
      * Adds an action to the flow.
      * @param FormAction $action The action to add
      */
     private function addAction(FormAction $action): void {
         $this->actions[$action->getId()] = $action;
-    }
-
-    /**
-     * Returns the form configuration this flow belongs to.
-     * @return FormConfig The form configuration
-     */
-    public function getFormConfig(): FormConfig {
-        return $this->form_config;
     }
 
     /**

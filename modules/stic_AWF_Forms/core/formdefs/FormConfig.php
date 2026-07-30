@@ -54,7 +54,7 @@ class FormConfig {
         $dto->flows = [];
         if (isset($data['flows'])) {
             foreach ($data['flows'] as $flowData) {
-                $formFlow = FormFlow::fromJsonArray($dto, $flowData);
+                $formFlow = FormFlow::fromJsonArray($flowData);
                 $dto->addFlow($formFlow);
             }
         }

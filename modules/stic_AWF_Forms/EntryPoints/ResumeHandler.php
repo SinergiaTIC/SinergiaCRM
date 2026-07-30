@@ -112,12 +112,12 @@ class ResumeHandler
                 return;
             }
 
-            // Get remaining actions, after current deferred action
-            $remainingActions = [];
+            // Get remaining action IDs, after current deferred action
+            $remainingActionIds = [];
             $foundPausingAction = false;
             foreach ($originFlow->getActions() as $action) {
                 if ($foundPausingAction) {
-                    $remainingActions[$action->getId()] = $action;
+                    $remainingActionIds[] = $action->getId();
                 }
                 if ($action->getId() === $ticket->handler_action_id) {
                     $foundPausingAction = true;
@@ -125,12 +125,11 @@ class ResumeHandler
             }
 
             // Build a virtual flow to resume
-            $virtualFlow = FormFlow::createVirtual(
-                $originFlow->getFormConfig(),
+            $virtualFlow = $originFlow->createVirtual(
                 'virtual_resume_flow',
                 'virtual_resume_flow',
                 '',
-                $remainingActions
+                $remainingActionIds
             );
 
             if ($ticket->status === 'processed') {
