@@ -248,7 +248,7 @@ class ResponseHandler
 
         // Execution Context
         $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean, $formBean->form_type);
-        $context->visitorUserId = $realUserId;
+        $context->setVisitorUserId($realUserId);
 
         // Html Summary
         $htmlSummary = '';
@@ -360,7 +360,7 @@ class ResponseHandler
 
                 // Update status
                 $hasErrors = false;
-                foreach ($context->actionResults as $result) {
+                foreach ($context->getActionResults() as $result) {
                     if ($result->isError()) {
                         $hasErrors = true;
                         break;
@@ -465,7 +465,7 @@ class ResponseHandler
 
         // Consolidate links: A single link for each affected bean
         $consolidatedBeans = []; 
-        foreach ($context->actionResults as $result) {
+        foreach ($context->getActionResults() as $result) {
             foreach ($result->modifiedBeans as $modBean) {
                 $key = $modBean->moduleName . ':' . $modBean->beanId;
 

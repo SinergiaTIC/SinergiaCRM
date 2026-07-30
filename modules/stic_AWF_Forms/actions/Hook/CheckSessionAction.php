@@ -70,18 +70,18 @@ class CheckSessionAction extends HookActionDefinition implements IFrontendAction
         // We do not check $current_user because always is an admin (ResponseHandler sets current_user to admin for the execution of the actions)
         // Instead, we check if there is $defaultAssignedUserId defined in ExecutionContext with the loged user before the change to admin
 
-        $formBean = BeanFactory::getBean('stic_AWF_Forms', $context->formId);
+        $formBean = BeanFactory::getBean('stic_AWF_Forms', $context->getFormId());
         if (!$formBean || empty($formBean->id)) {
-            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Form not found with ID '{$context->formId}'. Aborting session check.");
+            $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Form not found with ID '{$context->getFormId()}'. Aborting session check.");
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Form not found");
         }
 
-        if(empty($context->visitorUserId)) {
+        if(empty($context->getVisitorUserId())) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": No user session found in context for form '{$formBean->name}' (ID: {$formBean->id}). Aborting session check.");
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "No user session found");
         }
         
-        $authenticated_user = BeanFactory::getBean('Users', $context->visitorUserId);
+        $authenticated_user = BeanFactory::getBean('Users', $context->getVisitorUserId());
         if (!$authenticated_user) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Authenticated user not found in session for form '{$formBean->name}' (ID: {$formBean->id}). Aborting session check.");
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Authenticated user not found");

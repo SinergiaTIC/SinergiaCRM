@@ -165,7 +165,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
      */
     public function processWebhook(ExecutionContext $context, array $requestData): ActionResult {
         // Email confirmation received: extract the email address from the context data and update the opt-in status
-        $emailAddress = $context->deferredContext?->getCustom('email');
+        $emailAddress = $context->getDeferredContext()?->getCustom('email');
         if (empty($emailAddress)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF EmailConfirmationAction: Email address missing in Webhook request");
             return new ActionResult(ResultStatus::ERROR, null, "No valid email address found in the context data.");

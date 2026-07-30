@@ -200,9 +200,9 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
         if ($actionConfig !== null) {
             $successFlowId = $actionConfig->getFlowSuccessId() ?? null;
             $errorFlowId = $actionConfig->getFlowErrorId() ?? null;
-        } elseif ($context->deferredContext !== null) {
-            $successFlowId = $context->deferredContext->flowSuccessId ?? null;
-            $errorFlowId = $context->deferredContext->flowErrorId ?? null;
+        } elseif ($context->getDeferredContext() !== null) {
+            $successFlowId = $context->getDeferredContext()->flowSuccessId ?? null;
+            $errorFlowId = $context->getDeferredContext()->flowErrorId ?? null;
         }
 
         if (empty($successFlowId)) {
@@ -245,7 +245,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @return ActionResult Result of the execution of the action.
      */
     public function processWebhook(ExecutionContext $context, array $requestData): ActionResult {
-        $savedData = $context->deferredContext ? $context->deferredContext->toArray() : [];
+        $savedData = $context->getDeferredContext() ? $context->getDeferredContext()->toArray() : [];
         
         try {
             $strategy = stic_AWF_PaymentStrategyFactory::createFromStoredData($savedData);
@@ -293,7 +293,7 @@ class PaymentRouterAction extends DeferredBeanActionDefinition implements ITermi
      * @param bool $isSuccess Whether to run the success or error flow
      */
     private function enqueueDeferredFlow(ExecutionContext $context, bool $isSuccess): void {
-        $ticketId = $context->deferredContext ? $context->deferredContext->ticketId : null;
+        $ticketId = $context->getDeferredContext() ? $context->getDeferredContext()->ticketId : null;
 
         if (empty($ticketId)) {
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": No ticket_id in context data. Falling back to synchronous flow execution.");

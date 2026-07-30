@@ -76,7 +76,7 @@ class stic_AWFUtils {
             case 'time':
             case 'datetime':
             case 'datetimecombo':
-                $baseTimestamp = (int)$context->submissionTimestamp;
+                $baseTimestamp = (int)$context->getSubmissionTimestamp();
                 // strtotime also handles "today", "+1 day", etc.
                 $parsedTime = @strtotime($valueToCast, $baseTimestamp);
                 
@@ -114,9 +114,9 @@ class stic_AWFUtils {
      */
     public static function generateSummaryHtml(ExecutionContext $context, array $options = []): string
     {
-        $theme = $context->formConfig->getLayout()->theme;
-        $layout = $context->formConfig->getLayout();
-        $formData = $context->formData;
+        $theme = $context->getFormConfig()->getLayout()->theme;
+        $layout = $context->getFormConfig()->getLayout();
+        $formData = $context->getFormData();
 
         // Default options
         $title = $options['title'] ?? '';
@@ -374,8 +374,8 @@ class stic_AWFUtils {
             $text .= mb_strtoupper($title) . "\n" . str_repeat('=', mb_strlen($title)) . "\n\n";
         }
         
-        $layout = $context->formConfig->getLayout();
-        $formData = $context->formData; 
+        $layout = $context->getFormConfig()->getLayout();
+        $formData = $context->getFormData(); 
         
         foreach ($layout->structure as $section) {
             
@@ -663,14 +663,14 @@ class stic_AWFUtils {
             $beansForTemplate[] = $parentBeanForArchive;
         }
         // The Response Bean (to access $stic_awf_responses_html_summary)
-        if ($context->responseBean) {
-            $beansForTemplate[] = $context->responseBean;
+        if ($context->getResponseBean()) {
+            $beansForTemplate[] = $context->getResponseBean();
         }
 
         // Add all other generated Beans from the form context (DataBlocks)
         // We only add them if a bean of that module hasn't been added yet to avoid unpredictable overwrites
         $loadedModules = array_map(function($b) { return $b->module_dir; }, $beansForTemplate);
-        foreach ($context->actionResults as $result) {
+        foreach ($context->getActionResults() as $result) {
             foreach ($result->modifiedBeans as $modBean) {
                 // Ignore Metadata entries wich represent action logs not CRM records
                 if ($modBean->modificationType === BeanModificationType::METADATA) continue;
@@ -1002,7 +1002,7 @@ class stic_AWFUtils {
         );
 
         $deferredContext = DeferredContextData::fromJson($ticket->context_data);
-        $context->deferredContext = $deferredContext;
+        $context->setDeferredContext($deferredContext);
 
         // Datablock references to beans
         foreach ($deferredContext->blockReferences as $blockId => $beanId) {
@@ -1022,7 +1022,7 @@ class stic_AWFUtils {
     public static function extractBlockReferences(ExecutionContext $context): array
     {
         $blockReferences = [];
-        foreach ($context->formConfig->getDataBlocks() as $bId => $b) {
+        foreach ($context->getFormConfig()->getDataBlocks() as $bId => $b) {
             if ($b->getBeanReference() !== null) {
                 $blockReferences[$bId] = $b->getBeanReference()->beanId;
             }
@@ -1050,10 +1050,10 @@ class stic_AWFUtils {
         $errorFlow = null;
 
         if ($flowId !== null && $flowId !== '') {
-            $flow = $context->formConfig->getFlowById($flowId);
+            $flow = $context->getFormConfig()->getFlowById($flowId);
         }
         if ($errorFlowId !== null && $errorFlowId !== '') {
-            $errorFlow =  $context->formConfig->getFlowById($errorFlowId);
+            $errorFlow =  $context->getFormConfig()->getFlowById($errorFlowId);
         }
 
         if ($flow === null) {
@@ -1085,9 +1085,9 @@ class stic_AWFUtils {
             // Success flow execution
             $lastResult = $executor->executeFlow($flow, $errorFlow);
             if (!$lastResult->isError()) {
-                if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
-                    $context->responseBean->status = 'processed';
-                    $context->responseBean->save();
+                if ($context->getResponseBean() && $context->getResponseBean()->status === 'awaiting_action') {
+                    $context->getResponseBean()->status = 'processed';
+                    $context->getResponseBean()->save();
                 }
                 if ($ticketBean && $ticketBean->status === 'resolved') {
                     $ticketBean->status = 'processed';
@@ -1097,9 +1097,9 @@ class stic_AWFUtils {
         } else {
             // Error flow execution
             $lastResult = $executor->executeFlow($flow);
-            if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
-                $context->responseBean->status = 'error';
-                $context->responseBean->save();
+            if ($context->getResponseBean() && $context->getResponseBean()->status === 'awaiting_action') {
+                $context->getResponseBean()->status = 'error';
+                $context->getResponseBean()->save();
             }
             if ($ticketBean) {
                 $ticketBean->status = 'failed';
@@ -1138,12 +1138,12 @@ class stic_AWFUtils {
             if ($isSuccess && $ticketStatus === 'processed' && !$isCli) {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The ticket has already been processed. Ticket ID: {$ticket->id}");
                 
-                $customTitle = $context->deferredContext?->alreadyProcessedTitle;
-                $customMsg = $context->deferredContext?->alreadyProcessedMessage;
+                $customTitle = $context->getDeferredContext()?->alreadyProcessedTitle;
+                $customMsg = $context->getDeferredContext()?->alreadyProcessedMessage;
                 if (!empty($customTitle) || !empty($customMsg)) {
                     $title = $customTitle ?: translate('LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT', 'stic_AWF_Forms');
                     $msg = $customMsg ?: translate('LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT', 'stic_AWF_Forms');
-                    self::renderGenericResponse($context->formConfig, $title, $msg);
+                    self::renderGenericResponse($context->getFormConfig(), $title, $msg);
                     return;
                 }
             }
@@ -1158,17 +1158,17 @@ class stic_AWFUtils {
             if (!$isCli) {
                 // If no flow was configured, or the last action is not terminal (or terminal didn't exit), show a generic fallback page.
                 if ($isSuccess) {
-                    self::renderGenericResponseSuccess($context->formConfig); 
+                    self::renderGenericResponseSuccess($context->getFormConfig()); 
                 } else {
-                    $customTitle = $context->deferredContext?->expiredTitle;
-                    $customMsg = $context->deferredContext?->expiredMessage;
+                    $customTitle = $context->getDeferredContext()?->expiredTitle;
+                    $customMsg = $context->getDeferredContext()?->expiredMessage;
 
                     if (!empty($customTitle) || !empty($customMsg)) {
                         $title = $customTitle ?: translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
                         $msg = $customMsg ?: translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
-                        self::renderGenericResponse($context->formConfig, $title, $msg);
+                        self::renderGenericResponse($context->getFormConfig(), $title, $msg);
                     } else {
-                        self::renderGenericResponseError($context->formConfig);
+                        self::renderGenericResponseError($context->getFormConfig());
                     }
                 }
             }
@@ -1186,17 +1186,17 @@ class stic_AWFUtils {
     */
     public static function updateResponseExecutionLog(ExecutionContext $context): void
     {
-        if (empty($context->responseBean) || empty($context->actionResults)) {
+        if (empty($context->getResponseBean()) || empty($context->getActionResults())) {
             return;
         }
 
         // Retrieve the current state of the database
-        $context->responseBean->retrieve($context->responseBean->id);
-        $currentLog = $context->responseBean->execution_log ?? '';
+        $context->getResponseBean()->retrieve($context->getResponseBean()->id);
+        $currentLog = $context->getResponseBean()->execution_log ?? '';
 
-        if ($context->deferredContext !== null) {
+        if ($context->getDeferredContext() !== null) {
             $labelTitle = translate('LBL_EXECUTION_DEFERRED', 'stic_AWF_Responses');
-            $parentActionText = $context->deferredContext->actionText ?? '';
+            $parentActionText = $context->getDeferredContext()->actionText ?? '';
             $header = "[" . date('Y-m-d H:i:s') . " - {$labelTitle}: {$parentActionText}]\n";
         } else {
             $header = "[" . date('Y-m-d H:i:s') . "]\n";
@@ -1204,7 +1204,7 @@ class stic_AWFUtils {
         $newLogSegment = $header;
         $hasNewEntries = false;
 
-        foreach ($context->actionResults as $result) {
+        foreach ($context->getActionResults() as $result) {
             if ($result->isError()) {
                 $icon = translate('LBL_EXECUTION_ITEM_ERROR', 'stic_AWF_Responses');
             } elseif ($result->isSkipped()) {
@@ -1223,8 +1223,8 @@ class stic_AWFUtils {
         }
 
         if ($hasNewEntries) {
-            $context->responseBean->execution_log = $currentLog . (empty($currentLog) ? "" : "\n") . $newLogSegment;
-            $context->responseBean->save();
+            $context->getResponseBean()->execution_log = $currentLog . (empty($currentLog) ? "" : "\n") . $newLogSegment;
+            $context->getResponseBean()->save();
         }
     }
         

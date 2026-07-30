@@ -82,7 +82,7 @@ trait DeferredActionHelperTrait {
         $ticket->new_with_id = true;
 
         $ticket->name = $ticketNamePrefix . ': ' . date('Y-m-d H:i:s');
-        $ticket->stic_awf_responses_id_c = $context->responseId;
+        $ticket->stic_awf_responses_id_c = $context->getResponseId();
         $ticket->token_hash = bin2hex(random_bytes(32));
         $ticket->status = 'pending';
         $ticket->handler_action_id = $actionConfig->getId();
@@ -92,7 +92,7 @@ trait DeferredActionHelperTrait {
         $ticket->expiration_date = date('Y-m-d H:i:s', strtotime("+{$days} days"));
 
         // Set the context data for the deferred flow
-        $associatedBean = $bean ?? $context->responseBean;
+        $associatedBean = $bean ?? $context->getResponseBean();
         $contextData = DeferredContextData::createSnapshot(
             static::class, // The child class name
             $ticket, 

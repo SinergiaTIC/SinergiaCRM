@@ -26,26 +26,26 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class ExecutionContext {
-    public array $formData = [];       // Copy of the RAW form data received
+    private array $formData = [];       // Copy of the RAW form data received
     
-    public string $formId = '';        // ID of the form being processed
-    public string $responseId = '';    // Response ID generated for this submission
-    public ?SugarBean $responseBean;   // Response Bean generated for this submission
+    private string $formId = '';        // ID of the form being processed
+    private string $responseId = '';    // Response ID generated for this submission
+    private ?SugarBean $responseBean;   // Response Bean generated for this submission
 
-    public FormConfig $formConfig;     // Form configuration
+    private FormConfig $formConfig;     // Form configuration
 
     /** @var ActionResult[] */
-    public array $actionResults = [];
+    private array $actionResults = [];
 
-    public float $submissionTimestamp;
+    private float $submissionTimestamp;
 
-    public string $formType = '';
+    private string $formType = '';
 
-    public string $defaultAssignedUserId;
-    public ?string $visitorUserId = null;
+    private string $defaultAssignedUserId;
+    private ?string $visitorUserId = null;
 
     /** @var ?DeferredContextData Objecte de context per a processos diferits */
-    public ?DeferredContextData $deferredContext = null;
+    private ?DeferredContextData $deferredContext = null;
     
     /**
      * Constructor for ExecutionContext.
@@ -69,6 +69,22 @@ class ExecutionContext {
         $this->responseBean = $responseBean;
         $this->formType = $formType;
     }
+
+    public function getFormData(): array { return $this->formData; }
+    public function setFormData(array $formData): void { $this->formData = $formData; }
+    public function addFormDataValue(string $key, $value): void { $this->formData[$key] = $value; }
+    public function getFormId(): string { return $this->formId; }
+    public function getResponseId(): string { return $this->responseId; }
+    public function getResponseBean(): ?SugarBean { return $this->responseBean; }
+    public function getFormConfig(): FormConfig { return $this->formConfig; }
+    public function getActionResults(): array { return $this->actionResults; }
+    public function getSubmissionTimestamp(): float { return $this->submissionTimestamp; }
+    public function getFormType(): string { return $this->formType; }
+    public function getDefaultAssignedUserId(): string { return $this->defaultAssignedUserId; }
+    public function getVisitorUserId(): ?string { return $this->visitorUserId; }
+    public function setVisitorUserId(?string $visitorUserId): void { $this->visitorUserId = $visitorUserId; }
+    public function getDeferredContext(): ?DeferredContextData { return $this->deferredContext; }
+    public function setDeferredContext(?DeferredContextData $deferredContext): void { $this->deferredContext = $deferredContext; }
 
     /**
      * Adds an action result to the execution context.

@@ -94,7 +94,7 @@ class DeferredContextData
 
     public function captureBlockReferences(ExecutionContext $context): void {
         $this->blockReferences = [];
-        foreach ($context->formConfig->getDataBlocks() as $bId => $b) {
+        foreach ($context->getFormConfig()->getDataBlocks() as $bId => $b) {
             if ($b->getBeanReference() !== null) {
                 $this->blockReferences[$bId] = $b->getBeanReference()->beanId;
             }
@@ -204,9 +204,9 @@ class DeferredContextData
     }
 
     public static function createSnapshot(string $actionClass, stic_AWF_Deferred_Tickets $ticket, FormAction $actionConfig, ?SugarBean $bean, ExecutionContext $context, array $customData): self {
-        $bean = $bean ?? $context->responseBean;
+        $bean = $bean ?? $context->getResponseBean();
         $instance = new self(
-            $context->formId,
+            $context->getFormId(),
             $actionClass,
             $actionConfig->getText() ?? $actionConfig->getName(),
             $ticket->id,

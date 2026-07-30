@@ -132,7 +132,7 @@ class ParameterResolverService {
             case ActionDataType::DATE:
             case ActionDataType::DATETIME:
             case ActionDataType::TIME:
-                $baseTimestamp = (int)$context->submissionTimestamp;
+                $baseTimestamp = (int)$context->getSubmissionTimestamp();
                 // Use strtotime to parse both fixed dates ("2025-10-31") and relative dates ("today", "+1 day")
                 $parsedTime = @strtotime($valueToCast, $baseTimestamp);
                 if ($parsedTime === false) {
@@ -171,13 +171,13 @@ class ParameterResolverService {
             return null;
         }
 
-        $dataBlockConfig = $context->formConfig->getDataBlockById($dataBlockId);
+        $dataBlockConfig = $context->getFormConfig()->getDataBlockById($dataBlockId);
         if ($dataBlockConfig === null) {
             $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": DataBlock config not found with Id: '{$dataBlockId}'.");
             return null;
         }
 
-        return new DataBlockResolved($dataBlockConfig, $context->formData, $context);
+        return new DataBlockResolved($dataBlockConfig, $context->getFormData(), $context);
     }
 
     private function resolveBean(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?BeanReference {
@@ -220,7 +220,7 @@ class ParameterResolverService {
         $isDetached = str_starts_with($formKey, '_detached.');
         $keyToParse = $isDetached ? substr($formKey, 10) : $formKey; // 10 = strlen('_detached.')
         $foundBlock = null;
-        foreach ($context->formConfig->getDataBlocks() as $block) {
+        foreach ($context->getFormConfig()->getDataBlocks() as $block) {
                 $prefix = $block->getName() . '.';
                 if (str_starts_with($keyToParse, $prefix)) {
                     $foundBlock = $block;
@@ -241,9 +241,9 @@ class ParameterResolverService {
 
         $crmFieldType = $fieldDefinition?->type ?? 'text';
         $finalValue = null;
-        if (array_key_exists($phpKey, $context->formData)) {
+        if (array_key_exists($phpKey, $context->getFormData())) {
             // Fill value from form data
-            $finalValue = stic_AWFUtils::castCrmValue($context->formData[$phpKey], $crmFieldType, $context);
+            $finalValue = stic_AWFUtils::castCrmValue($context->getFormData()[$phpKey], $crmFieldType, $context);
         } else {
             // If not set in form data, then find if is a field with fixed value in DataBlock
             if ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
