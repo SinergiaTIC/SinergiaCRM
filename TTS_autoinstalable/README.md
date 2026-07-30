@@ -20,8 +20,6 @@ Tras la instalación:
 | Nombre | Descripción | Ejemplo |
 |--------|------------|---------|
 | `TTS_DEEPGRAM_API_KEY` | API key de Deepgram | `tu_api_key` |
-| `TTS_DEEPGRAM_MODEL` | Modelo Deepgram TTS | `aura-2-alvaro-es` |
-| `TTS_DEEPGRAM_VOICE` | Voz por defecto de Deepgram | `aura-2-alvaro-es` |
 
 ### Tipo TTS
 | Nombre | Descripción | Ejemplo |

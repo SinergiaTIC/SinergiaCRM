@@ -7,7 +7,6 @@ var SttTTS = (function () {
         this.strings = {};
         this.endpoints = {
             synth: 'index.php?entryPoint=ttsSynth',
-            usage: 'index.php?entryPoint=ttsUsage',
             strings: 'index.php?entryPoint=ttsStrings',
             recordNames: 'index.php?entryPoint=ttsRecordNames',
         };
@@ -258,8 +257,10 @@ var SttTTS = (function () {
                     var blob = new Blob(chunks, { type: 'audio/mpeg' });
                     var url = URL.createObjectURL(blob);
                     audio.src = url;
+                    self._currentObjectUrl = url;
                     audio.addEventListener('ended', function () {
                         URL.revokeObjectURL(url);
+                        self._currentObjectUrl = null;
                     });
                     resolve({ audio: audio, charCount: charCount, recordName: decodedName, type: 'blob' });
                     if (cacheKey) self.cachePut(cacheKey, chunks);
@@ -332,7 +333,8 @@ var SttTTS = (function () {
             var cachedBlob = self._audioCache[key];
             var url = URL.createObjectURL(cachedBlob);
             audio.src = url;
-            audio.addEventListener('ended', function () { URL.revokeObjectURL(url); });
+            self._currentObjectUrl = url;
+            audio.addEventListener('ended', function () { URL.revokeObjectURL(url); self._currentObjectUrl = null; });
             return Promise.resolve({ audio: audio, charCount: 0, recordName: '', type: 'blob' });
         }
         try {
@@ -344,7 +346,8 @@ var SttTTS = (function () {
                         self._audioCache[key] = blob;
                         var url = URL.createObjectURL(blob);
                         audio.src = url;
-                        audio.addEventListener('ended', function () { URL.revokeObjectURL(url); });
+                        self._currentObjectUrl = url;
+                        audio.addEventListener('ended', function () { URL.revokeObjectURL(url); self._currentObjectUrl = null; });
                         return { audio: audio, charCount: 0, recordName: '', type: 'blob' };
                     });
                 });
@@ -385,19 +388,6 @@ var SttTTS = (function () {
                 });
             }
             attempt(maxRetries);
-        });
-    };
-
-    SttTTS.prototype.reportUsage = function (charCount, language, module, scenario) {
-        return this.sstFetch(this.endpoints.usage, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                charCount: charCount,
-                language: language || this.config.defaultLanguage || 'es',
-                module: module || this.config.module || '',
-                scenario: scenario || 'a',
-            }),
         });
     };
 

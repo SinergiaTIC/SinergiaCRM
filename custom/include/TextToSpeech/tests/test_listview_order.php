@@ -74,7 +74,7 @@ echo "=== TtsListviewOrder Tests ===\n\n";
 // Need to set up the global $db and remap BeanFactory
 // Since this is complex, let me test the key methods directly
 
-require_once '/application/sinergiacrm/custom/include/TextToSpeech/Entrypoints/ttsListviewOrder.php';
+require_once __DIR__ . '/../Entrypoints/ttsListviewOrder.php';
 
 $orderHelper = new TtsListviewOrder();
 

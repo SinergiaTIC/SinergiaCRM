@@ -65,7 +65,7 @@ if (!function_exists('return_app_list_strings_language')) {
     }
 }
 
-require_once '/application/sinergiacrm/custom/include/TextToSpeech/Entrypoints/ttsTextAssembler.php';
+require_once __DIR__ . '/../Entrypoints/ttsTextAssembler.php';
 
 $passed = 0;
 $failed = 0;

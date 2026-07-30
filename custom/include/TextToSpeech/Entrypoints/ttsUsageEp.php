@@ -16,7 +16,7 @@ if (!$validation['valid']) {
 
 $data = $validation['data'];
 if ($data === null) {
-    ttsOutputJson(array('success' => false, 'error' => 'Invalid or missing JSON data'), 400);
+    ttsOutputJson(array('success' => false, 'error' => 'Datos JSON inválidos o faltantes.'), 400);
     return;
 }
 

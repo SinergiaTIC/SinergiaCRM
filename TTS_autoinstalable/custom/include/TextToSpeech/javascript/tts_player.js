@@ -11,7 +11,6 @@
     SttTTS.prototype.playbackRate = 1.0;
     SttTTS.prototype.abortController = null;
     SttTTS.prototype.totalCharCount = 0;
-    SttTTS.prototype._usageReported = false;
     SttTTS.prototype._fragmentData = null;
     SttTTS.prototype._listUids = null;
     SttTTS.prototype._sessionRestoring = false;
@@ -159,7 +158,6 @@
         this.abortController = new AbortController();
         var player = document.querySelector('.tts-player');
         if (player) player.classList.remove('tts-loading');
-        this._usageReported = false;
         this.totalCharCount = 0;
         this._fragmentData = fragmentData;
         if (this.totalFragments <= 0 && fragmentData.scenario === 'a') {
@@ -317,22 +315,27 @@
         this.audioElement = audio;
         audio.playbackRate = this.playbackRate;
         var self = this;
-        audio.addEventListener('timeupdate', function () {
-            self.updateTimeDisplay(audio);
-        });
-        audio.addEventListener('ended', function () {
-            self.audioElement = null;
-            if (self.audioQueue.length > 0) {
+        this._audioListeners = {
+            timeupdate: function () { self.updateTimeDisplay(audio); },
+            ended: function () {
+                self.audioElement = null;
+                self._audioListeners = null;
+                if (self.audioQueue.length > 0) {
+                    self.playNext();
+                } else {
+                    self.isPlaying = false;
+                    self.finishPlayback();
+                }
+            },
+            error: function () {
+                self.audioElement = null;
+                self._audioListeners = null;
                 self.playNext();
-            } else {
-                self.isPlaying = false;
-                self.finishPlayback();
-            }
-        });
-        audio.addEventListener('error', function () {
-            self.audioElement = null;
-            self.playNext();
-        });
+            },
+        };
+        audio.addEventListener('timeupdate', this._audioListeners.timeupdate);
+        audio.addEventListener('ended', this._audioListeners.ended);
+        audio.addEventListener('error', this._audioListeners.error);
         var seekPos = this._seekPosition;
         this._seekPosition = 0;
         if (seekPos > 0) {
@@ -376,14 +379,23 @@
             this.abortController = null;
         }
         if (this.audioElement) {
+            if (this._audioListeners) {
+                this.audioElement.removeEventListener('timeupdate', this._audioListeners.timeupdate);
+                this.audioElement.removeEventListener('ended', this._audioListeners.ended);
+                this.audioElement.removeEventListener('error', this._audioListeners.error);
+                this._audioListeners = null;
+            }
             this.audioElement.pause();
+            if (this._currentObjectUrl) {
+                try { URL.revokeObjectURL(this._currentObjectUrl); } catch (e) {}
+                this._currentObjectUrl = null;
+            }
             this.audioElement = null;
         }
         this.isPlaying = false;
         this.isPaused = false;
         this.updatePlayButton();
         this.audioQueue = [];
-        this.reportUsageDelayed();
     };
 
     SttTTS.prototype.closePlayer = function () {
@@ -482,22 +494,7 @@
     SttTTS.prototype.finishPlayback = function () {
         this.isPlaying = false;
         this.updatePlayButton();
-        this.reportUsageDelayed();
         this.saveSessionState();
-    };
-
-    SttTTS.prototype.reportUsageDelayed = function () {
-        var self = this;
-        if (this._usageReported || this.totalCharCount <= 0) return;
-        this._usageReported = true;
-        setTimeout(function () {
-            self.reportUsage(
-                self.totalCharCount,
-                self.config.defaultLanguage || 'es',
-                self.config.module || '',
-                self._fragmentData ? self._fragmentData.scenario : 'a'
-            );
-        }, 500);
     };
 
     SttTTS.prototype.cleanup = function () {

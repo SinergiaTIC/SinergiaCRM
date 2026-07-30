@@ -1,0 +1,7 @@
+This module is part of SinergiaCRM and is licensed under the same license
+as the SinergiaCRM project.
+
+SinergiaCRM is a fork of SuiteCRM, which is licensed under the GNU Affero
+General Public License v3 (AGPL-3.0).
+
+See https://www.gnu.org/licenses/agpl-3.0.html for the full license text.

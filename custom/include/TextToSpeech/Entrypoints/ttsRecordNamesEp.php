@@ -18,17 +18,13 @@ $module = isset($input['module']) ? $input['module'] : '';
 $uids = isset($input['uids']) ? $input['uids'] : array();
 
 if (empty($module) || empty($uids) || !is_array($uids)) {
-    ttsOutputJson(array('success' => false, 'error' => 'Invalid parameters'), 400);
+    ttsOutputJson(array('success' => false, 'error' => 'Parámetros inválidos.'), 400);
     return;
-}
-
-if (!is_array($uids)) {
-    $uids = array($uids);
 }
 
 $seed = BeanFactory::getBean($module);
 if (!$seed) {
-    ttsOutputJson(array('success' => false, 'error' => 'Invalid module'), 400);
+    ttsOutputJson(array('success' => false, 'error' => 'Módulo inválido.'), 400);
     return;
 }
 

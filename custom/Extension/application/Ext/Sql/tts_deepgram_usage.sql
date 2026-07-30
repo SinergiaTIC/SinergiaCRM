@@ -57,15 +57,7 @@ INSERT INTO stic_settings (id, name, value, type, description, date_entered, dat
 SELECT UUID(), 'TTS_BAR_COLOR', '#181818', 'TTS', 'Background color of the TTS player bar. Use hex format (e.g. #181818).', NOW(), NOW(), 0
 WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_BAR_COLOR' AND type = 'TTS' AND deleted = 0);
 
--- TTS Deepgram credentials and config (type: TTS_DEEPGRAM)
+-- TTS Deepgram credentials (type: TTS_DEEPGRAM)
 INSERT INTO stic_settings (id, name, value, type, description, date_entered, date_modified, deleted)
 SELECT UUID(), 'TTS_DEEPGRAM_API_KEY', '', 'TTS_DEEPGRAM', 'Deepgram API Key for Text-to-Speech. Leave empty to disable TTS.', NOW(), NOW(), 0
 WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_DEEPGRAM_API_KEY' AND type = 'TTS_DEEPGRAM' AND deleted = 0);
-
-INSERT INTO stic_settings (id, name, value, type, description, date_entered, date_modified, deleted)
-SELECT UUID(), 'TTS_DEEPGRAM_MODEL', 'aura-2-alvaro-es', 'TTS_DEEPGRAM', 'Deepgram TTS model (aura-2-alvaro-es)', NOW(), NOW(), 0
-WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_DEEPGRAM_MODEL' AND type = 'TTS_DEEPGRAM' AND deleted = 0);
-
-INSERT INTO stic_settings (id, name, value, type, description, date_entered, date_modified, deleted)
-SELECT UUID(), 'TTS_DEEPGRAM_VOICE', 'aura-2-alvaro-es', 'TTS_DEEPGRAM', 'Default Deepgram TTS voice', NOW(), NOW(), 0
-WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_DEEPGRAM_VOICE' AND type = 'TTS_DEEPGRAM' AND deleted = 0);

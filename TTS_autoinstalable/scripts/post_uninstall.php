@@ -17,19 +17,14 @@ function post_uninstall()
     if (file_exists($configFile)) {
         $lines = file($configFile, FILE_IGNORE_NEW_LINES);
         $newLines = [];
-        $skipping = false;
-        $skipCount = 0;
         foreach ($lines as $line) {
             if (strpos($line, '// TTS (Text-to-Speech) - Deepgram technical configuration') !== false) {
-                $skipping = true;
-                $skipCount = 0;
                 continue;
             }
-            if ($skipping) {
-                $skipCount++;
-                if ($skipCount >= 6) {
-                    $skipping = false;
-                }
+            if (strpos($line, "\$sugar_config['tts_") !== false) {
+                continue;
+            }
+            if (strpos($line, "\$sugar_config['deepgram_tts_") !== false) {
                 continue;
             }
             $newLines[] = $line;

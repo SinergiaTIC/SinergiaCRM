@@ -148,4 +148,4 @@ Reporta cualquier fallo con una breve descripción junto al caso.
 | Responsive/UX | 4 | 3 | |
 | Cache | 3 | 0 | |
 | Regresión STT | 1 | 0 | |
-| **Total** | **64** | **35** | |
+| **Total** | **65** | **35** | |

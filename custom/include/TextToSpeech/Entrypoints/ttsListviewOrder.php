@@ -28,7 +28,7 @@ class TtsListviewOrder
         }
 
         $tableName = $seed->table_name;
-        $where = $this->buildWhereFromQuery($currentQueryByPage);
+        $where = $this->buildWhereFromQuery($currentQueryByPage, $seed);
         global $db;
         $quotedIds = array();
         foreach ($uids as $uid) {
@@ -43,7 +43,6 @@ class TtsListviewOrder
                . (empty($where) ? '' : " AND " . $where)
                . (empty($orderByClause) ? '' : " ORDER BY " . $orderByClause);
 
-        global $db;
         $result = $db->query($query);
         $orderedIds = array();
         while ($row = $db->fetchByAssoc($result)) {
@@ -53,7 +52,7 @@ class TtsListviewOrder
         return !empty($orderedIds) ? $orderedIds : $uids;
     }
 
-    private function buildWhereFromQuery($currentQueryByPage)
+    private function buildWhereFromQuery($currentQueryByPage, $seed)
     {
         if (empty($currentQueryByPage)) {
             return '';
@@ -72,22 +71,30 @@ class TtsListviewOrder
             if (empty($value)) {
                 continue;
             }
-            $whereClauses[] = $this->buildSearchCondition($field, $value);
+            $condition = $this->buildSearchCondition($field, $value, $seed);
+            if ($condition !== '') {
+                $whereClauses[] = $condition;
+            }
         }
 
         return implode(' AND ', $whereClauses);
     }
 
-    private function buildSearchCondition($field, $value)
+    private function buildSearchCondition($field, $value, $seed)
     {
+        if (!isset($seed->field_defs[$field])) {
+            return '';
+        }
+        global $db;
+        $column = $seed->table_name . '.' . $field;
         if (is_array($value)) {
             $parts = array();
             foreach ($value as $v) {
-                $parts[] = $field . " LIKE '%" . $v . "%'";
+                $parts[] = $column . " LIKE '%" . $db->quote($v) . "%'";
             }
             return '(' . implode(' OR ', $parts) . ')';
         }
-        return $field . " LIKE '%" . $value . "%'";
+        return $column . " LIKE '%" . $db->quote($value) . "%'";
     }
 
     private function buildOrderBy($seed, $orderBy, $lvso)
@@ -95,10 +102,10 @@ class TtsListviewOrder
         if (empty($orderBy) || empty($lvso)) {
             return '';
         }
-        $direction = strtoupper($lvso) === 'DESC' ? 'DESC' : 'ASC';
-        if (isset($seed->field_defs[$orderBy])) {
-            return $seed->table_name . '.' . $orderBy . ' ' . $direction;
+        if (!isset($seed->field_defs[$orderBy])) {
+            return '';
         }
-        return $orderBy . ' ' . $direction;
+        $direction = strtoupper($lvso) === 'DESC' ? 'DESC' : 'ASC';
+        return $seed->table_name . '.' . $orderBy . ' ' . $direction;
     }
 }

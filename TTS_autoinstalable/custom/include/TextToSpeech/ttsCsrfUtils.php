@@ -22,12 +22,20 @@ function ttsIsValidAjaxRequest()
 {
     $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
     $referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+    $serverHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+
     if (!empty($origin) && !empty($referer)) {
         $parsedOrigin = parse_url($origin, PHP_URL_HOST);
         $parsedReferer = parse_url($referer, PHP_URL_HOST);
         return $parsedOrigin === $parsedReferer;
     }
-    return true;
+    if (!empty($referer)) {
+        return parse_url($referer, PHP_URL_HOST) === $serverHost;
+    }
+    if (!empty($origin)) {
+        return parse_url($origin, PHP_URL_HOST) === $serverHost;
+    }
+    return false;
 }
 
 function ttsValidateRequest($options = array())
@@ -40,7 +48,7 @@ function ttsValidateRequest($options = array())
     $result = array('valid' => false, 'error' => null, 'code' => 200, 'data' => null);
 
     if (empty($current_user->id)) {
-        $result['error'] = 'Authentication required';
+        $result['error'] = 'Autenticación requerida.';
         $result['code'] = 401;
         return $result;
     }
@@ -49,7 +57,7 @@ function ttsValidateRequest($options = array())
 
     if ($method === 'GET') {
         if (!$allowGet) {
-            $result['error'] = 'Method not allowed';
+            $result['error'] = 'Método no permitido.';
             $result['code'] = 405;
             return $result;
         }
@@ -59,7 +67,7 @@ function ttsValidateRequest($options = array())
 
     if (in_array($method, array('POST', 'PUT', 'DELETE'), true)) {
         if (!ttsIsValidAjaxRequest()) {
-            $result['error'] = 'Invalid request origin';
+            $result['error'] = 'Origen de petición inválido.';
             $result['code'] = 403;
             return $result;
         }
@@ -68,7 +76,7 @@ function ttsValidateRequest($options = array())
             $rawInput = file_get_contents('php://input');
             $data = json_decode($rawInput, true);
             if ($data === null && !empty($rawInput)) {
-                $result['error'] = 'Invalid JSON input';
+                $result['error'] = 'JSON inválido.';
                 $result['code'] = 400;
                 return $result;
             }
@@ -79,7 +87,7 @@ function ttsValidateRequest($options = array())
         return $result;
     }
 
-    $result['error'] = 'Method not allowed';
+    $result['error'] = 'Método no permitido.';
     $result['code'] = 405;
     return $result;
 }

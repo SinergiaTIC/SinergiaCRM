@@ -1,6 +1,6 @@
 <?php
 if (!defined('sugarEntry')) define('sugarEntry', true);
-require_once '/application/sinergiacrm/custom/include/TextToSpeech/providers/ttsTextFragmenter.php';
+require_once __DIR__ . '/../providers/ttsTextFragmenter.php';
 
 $passed = 0;
 $failed = 0;

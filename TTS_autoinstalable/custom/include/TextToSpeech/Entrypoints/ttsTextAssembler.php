@@ -67,7 +67,15 @@ class TtsTextAssembler
             return $this->formatDateValue($value);
         }
         if ($this->isBoolField($bean, $field)) {
-            return $value ? 'Yes' : 'No';
+            global $app_list_strings;
+            $dom = isset($app_list_strings['dom_int_int_bool']) ? $app_list_strings['dom_int_int_bool'] : null;
+            if (is_array($dom) && isset($dom[(int)$value])) {
+                return $dom[(int)$value];
+            }
+            if (is_array($dom) && isset($dom[$value])) {
+                return $dom[$value];
+            }
+            return $value ? '1' : '0';
         }
         if ($this->isEnumField($bean, $field)) {
             return $this->getEnumDisplayValue($bean, $field, $value);
@@ -132,6 +140,13 @@ class TtsTextAssembler
     {
         if (empty($value) || $value === '0000-00-00' || $value === '0000-00-00 00:00:00') {
             return '';
+        }
+        global $timedate;
+        if (isset($timedate) && method_exists($timedate, 'to_display_date_time')) {
+            $display = $timedate->to_display_date_time($value, true, true);
+            if ($display) {
+                return $display;
+            }
         }
         return $value;
     }
