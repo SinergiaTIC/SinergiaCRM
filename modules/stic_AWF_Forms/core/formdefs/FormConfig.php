@@ -33,7 +33,7 @@ class FormConfig {
     private array $data_blocks;        // The form's data blocks
     /** @var FormFlow[] */
     private array $flows;              // The form's action flows
-    public ?FormLayout $layout = null; // The form layout
+    private ?FormLayout $layout = null; // The form layout
 
     /** 
      * Creates a FormConfig instance from a JSON array. 
@@ -60,10 +60,10 @@ class FormConfig {
         }
 
         if (isset($data['layout'])) {
-            $dto->layout = FormLayout::fromJsonArray($dto, $data['layout']);
+            $dto->setLayout(FormLayout::fromJsonArray($dto, $data['layout']));
         } else {
-            $dto->layout = new FormLayout();     // Default layout
-            $dto->layout->theme = new FormTheme();
+            $dto->setLayout(new FormLayout());     // Default layout
+            $dto->getLayout()->theme = new FormTheme();
         }
         return $dto;
     }
@@ -118,5 +118,22 @@ class FormConfig {
      */
     private function addDataBlock(FormDataBlock $dataBlock): void {
         $this->data_blocks[$dataBlock->getId()] = $dataBlock;
+    }
+
+    /**
+     * Returns the form layout.
+     * @return ?FormLayout The form layout
+     */
+    public function getLayout(): ?FormLayout {
+        return $this->layout;
+    }
+
+    /**
+     * Sets the form layout.
+     * Private: only the construction process (fromJsonArray) should mutate the layout.
+     * @param ?FormLayout $layout The form layout
+     */
+    private function setLayout(?FormLayout $layout): void {
+        $this->layout = $layout;
     }
 }

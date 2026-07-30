@@ -289,8 +289,8 @@ class ResponseHandler
 
         // Only 'public' forms process responses
         if (!$isPublic) {
-            $title = $formConfig->layout->closed_form_title ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
-            $msg = $formConfig->layout->closed_form_text ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
+            $title = $formConfig->getLayout()->closed_form_title ?? translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+            $msg = $formConfig->getLayout()->closed_form_text ?? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
             stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
             return;
         }
@@ -336,8 +336,8 @@ class ResponseHandler
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Receipt flow not found in form. ID: $formId");
             }
             // If we get here, no flow or terminal has been run: Show generic message
-            $title = $formConfig->layout->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_AWF_Forms');
-            $msg = $formConfig->layout->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_AWF_Forms');
+            $title = $formConfig->getLayout()->receipt_form_title ?? translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+            $msg = $formConfig->getLayout()->receipt_form_text ?? translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE', 'stic_AWF_Forms');
             stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);                
 
         } else {

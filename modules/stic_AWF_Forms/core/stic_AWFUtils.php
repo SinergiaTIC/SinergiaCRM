@@ -114,8 +114,8 @@ class stic_AWFUtils {
      */
     public static function generateSummaryHtml(ExecutionContext $context, array $options = []): string
     {
-        $theme = $context->formConfig->layout->theme;
-        $layout = $context->formConfig->layout;
+        $theme = $context->formConfig->getLayout()->theme;
+        $layout = $context->formConfig->getLayout();
         $formData = $context->formData;
 
         // Default options
@@ -374,7 +374,7 @@ class stic_AWFUtils {
             $text .= mb_strtoupper($title) . "\n" . str_repeat('=', mb_strlen($title)) . "\n\n";
         }
         
-        $layout = $context->formConfig->layout;
+        $layout = $context->formConfig->getLayout();
         $formData = $context->formData; 
         
         foreach ($layout->structure as $section) {
@@ -484,14 +484,14 @@ class stic_AWFUtils {
         ini_set('display_errors', 0);
         error_reporting(0);
         
-        $theme = $config?->layout?->theme ?? new FormTheme();
+        $theme = $config?->getLayout()?->theme ?? new FormTheme();
         $fontFamily = $theme->font_family ?? 'sans-serif';
         $bgColor = $theme->page_bg_color ?? '#f8f9fa';
         $textColor = $theme->text_color ?? '#212529';
         $formBg = $theme->form_bg_color ?? '#ffffff';
         $primaryColor = $theme->primary_color ?? '#0d6efd';
-        $customCss = $config?->layout?->custom_css ?? '';
-        $customJs = $config?->layout?->custom_js ?? '';
+        $customCss = $config?->getLayout()?->custom_css ?? '';
+        $customJs = $config?->getLayout()?->custom_js ?? '';
         
         echo "
 <!DOCTYPE html>
@@ -540,8 +540,8 @@ class stic_AWFUtils {
      */
     public static function renderGenericResponseSuccess(?FormConfig $config): void
     {
-        $title = $config?->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
-        $msg = $config?->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
+        $title = $config?->getLayout()?->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
+        $msg = $config?->getLayout()?->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
         self::renderGenericResponse($config, $title, $msg);
     }
 

@@ -55,7 +55,7 @@ class FormHtmlGeneratorService {
             {
                 $htmlRaw .= "<meta charset='UTF-8'>" .$this->newLine();
                 $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .$this->newLine();
-                $htmlRaw .= "<title>" . htmlspecialchars($config->layout->web_title) . "</title>" .$this->newLine();
+                $htmlRaw .= "<title>" . htmlspecialchars($config->getLayout()->web_title) . "</title>" .$this->newLine();
         
                 // External libraries (Bootstrap + Alpine)
                 $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .$this->newLine();
@@ -88,7 +88,7 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML for the form as a string
      */
     public function generateFormHtml(FormConfig $config, string $formId, string $actionUrl, bool $isPreview): string {
-        $layout = $config->layout;
+        $layout = $config->getLayout();
        
         // Ensure Id is valid for CSS
         $wrapperId = 'stic-awf-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $formId);
@@ -114,7 +114,7 @@ class FormHtmlGeneratorService {
      * @return string The generated CSS styles
      */
     private function generateCss(FormConfig $config, string $wrapperId): string {
-        $layout = $config->layout;
+        $layout = $config->getLayout();
         $theme = $layout->theme;
         $customCss = $this->decode($layout->custom_css);
         $primaryRgb = stic_AWFUtils::hex2rgb($theme->primary_color);
@@ -242,7 +242,7 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML for the body of the form as a string
      */
     private function generateBody(FormConfig $config, string $wrapperId, string $actionUrl, bool $isPreview): string {
-        $layout = $config->layout;
+        $layout = $config->getLayout();
         
         $headerHtml = $this->decode($layout->header_html);
         $footerHtml = $this->decode($layout->footer_html);
@@ -930,7 +930,7 @@ class FormHtmlGeneratorService {
 
         // == CUSTOM JS ==
         // Add custom JS from layout
-        $customJs = $this->decode($config->layout->custom_js);
+        $customJs = $this->decode($config->getLayout()->custom_js);
         if (!empty($customJs)) {
             $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});".$this->newLine()."</script>" .$this->newLine();
         }
