@@ -64,7 +64,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     {
         global $db, $beanList;
 
-        $module = $block->dataBlock->module;
+        $module = $block->dataBlock->getModule();
         if (!isset($beanList[$module])) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "The configured module '{$module}' is not available on the system.");
         }
@@ -74,7 +74,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         $modifications = [];
 
         // Duplicate detection logic
-        $duplicateRules = $block->dataBlock->duplicate_detections ?? [];
+        $duplicateRules = $block->dataBlock->getDuplicateDetections();
         foreach ($duplicateRules as $rule) {
             $scalarFields = [];
             $emailValues = [];
@@ -183,7 +183,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
                 $fieldLabels = [];
                 foreach ($rule->fields as $fName) {
-                    $fieldDef = $block->dataBlock->fields[$fName] ?? null;
+                    $fieldDef = $block->dataBlock->getFieldByName($fName);
                     if ($fieldDef) {
                         $label = !empty($fieldDef->label) ? $fieldDef->label : (!empty($fieldDef->text_original) ? $fieldDef->text_original : $fName);
                         $fieldLabels[] = rtrim($label, ': ');
@@ -482,7 +482,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
             $targetBeanRef = $targetBlock->getBeanReference();
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
-                $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlock->name}' has no bean ID. Check action order.");
+                $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlock->getName()}' has no bean ID. Check action order.");
                 continue;
             }
 

@@ -102,7 +102,7 @@ class ActionResult {
      */
     public function registerBeanModificationFromBlock(SugarBean $bean, DataBlockResolved $block, BeanModificationType $action, array $submittedData): void 
     {
-        $blockModule = $block->dataBlock->module;
+        $blockModule = $block->dataBlock->getModule();
         if ($bean->module_name !== $blockModule) {
             throw new \LogicException("Error in registerBeanModificationFromBlock: Bean module ('{$bean->module_name}') is different from block module ('{$blockModule}').");
         }

@@ -130,7 +130,7 @@ class ExecutionContext {
      */
     public function getDataBlockByName(string $blockName): ?FormDataBlock {
         foreach ($this->formConfig->getDataBlocks() as $block) {
-            if ($block->name === $blockName) {
+            if ($block->getName() === $blockName) {
                 return $block;
             }
         }

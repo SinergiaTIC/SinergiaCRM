@@ -221,14 +221,14 @@ class ParameterResolverService {
         $keyToParse = $isDetached ? substr($formKey, 10) : $formKey; // 10 = strlen('_detached.')
         $foundBlock = null;
         foreach ($context->formConfig->getDataBlocks() as $block) {
-            $prefix = $block->name . '.';
-            if (str_starts_with($keyToParse, $prefix)) {
-                $foundBlock = $block;
-                // The field name is the rest of the string
-                $fieldName = substr($keyToParse, strlen($prefix));
-                $fieldDefinition = $block->fields[$fieldName] ?? null;
-                break;
-            }
+                $prefix = $block->getName() . '.';
+                if (str_starts_with($keyToParse, $prefix)) {
+                    $foundBlock = $block;
+                    // The field name is the rest of the string
+                    $fieldName = substr($keyToParse, strlen($prefix));
+                    $fieldDefinition = $block->getFieldByName($fieldName);
+                    break;
+                }
         }
         if (!$foundBlock) {
             $lastDot = strrpos($keyToParse, '.');

@@ -46,7 +46,7 @@ class FormConfig {
         $dto->data_blocks = [];
         if (isset($data['data_blocks'])) {
             foreach ($data['data_blocks'] as $dataBlockData) {
-                $formDataBlock = FormDataBlock::fromJsonArray($dto, $dataBlockData);
+                $formDataBlock = FormDataBlock::fromJsonArray($dataBlockData);
                 $dto->addDataBlock($formDataBlock);
             }
         }
@@ -117,6 +117,6 @@ class FormConfig {
      * @param FormDataBlock $dataBlock The data block to add
      */
     private function addDataBlock(FormDataBlock $dataBlock): void {
-        $this->data_blocks[$dataBlock->id] = $dataBlock;
+        $this->data_blocks[$dataBlock->getId()] = $dataBlock;
     }
 }

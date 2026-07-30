@@ -579,13 +579,13 @@ class ResponseHandler
 
         foreach ($config->getDataBlocks() as $block) {
             // Datablock is detached
-            if (empty($block->module)) continue; 
+            if (empty($block->getModule())) continue; 
             
-            $targetBean = BeanFactory::newBean($block->module);
+            $targetBean = BeanFactory::newBean($block->getModule());
             $realVardefs = $targetBean ? $targetBean->field_defs : [];
             if (empty($realVardefs)) continue;
 
-            foreach ($block->fields as $formField) {
+            foreach ($block->getFields() as $formField) {
                 $inputKeyInForm = $formField->getKey();
                 $inputKey = $formField->getPhpKey();
                 $value = $data[$inputKey] ?? null;
@@ -748,7 +748,7 @@ class ResponseHandler
         // }
 
         foreach ($formConfig->getDataBlocks() as $block) {
-            foreach ($block->fields as $field) {
+            foreach ($block->getFields() as $field) {
                 $currentOrder = $orderCounter;
                 $orderCounter += 1;
 
@@ -801,13 +801,13 @@ class ResponseHandler
                 $detailBean->stic_awf_forms_id_c = $formBean->id ?? ''; 
                 $detailBean->assigned_user_id = $responseBean->assigned_user_id;
                 
-                $detailBean->question_key = $block->name . '.' . $field->name;
+                $detailBean->question_key = $block->getName() . '.' . $field->name;
                 $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
                 $detailBean->question_label = rtrim($detailBean->question_label, ' :');
                 if (!empty($field->description)) {
                     $detailBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
                 }
-                $detailBean->question_section = $block->text;
+                $detailBean->question_section = $block->getText();
                 
                 $detailBean->question_sort_order = $currentOrder;
 

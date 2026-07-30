@@ -112,7 +112,7 @@ class EmailConfirmationAction extends DeferredBeanActionDefinition
         $emailAddress = $bean->email1 ?? null;
         // Validate that the email is correct
         if (empty($emailAddress) || !filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "DataBlock '{$block->dataBlock->name}' does not have a valid 'email1' field ('{$emailAddress}').");
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "DataBlock '{$block->dataBlock->getName()}' does not have a valid 'email1' field ('{$emailAddress}').");
         }
 
         // Create a deferred ticket

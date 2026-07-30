@@ -161,7 +161,7 @@ class stic_AWFUtils {
                 $block = $context->getDataBlockById($element->ref_id);
                 if (!$block) continue;
 
-                foreach ($block->fields as $fieldDef) {
+                foreach ($block->getFields() as $fieldDef) {
                     // Only show visible fields in the form
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) {
                         continue;
@@ -395,7 +395,7 @@ class stic_AWFUtils {
                 $block = $context->getDataBlockById($element->ref_id);
                 if (!$block) continue;
 
-                foreach ($block->fields as $fieldDef) {
+                foreach ($block->getFields() as $fieldDef) {
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                     if (empty($fieldDef->label)) continue;
 
@@ -879,7 +879,7 @@ class stic_AWFUtils {
      */
     public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
         foreach ($formConfig->getDataBlocks() as $dataBlock) {
-            foreach ($dataBlock->fields as $field) {
+            foreach ($dataBlock->getFields() as $field) {
                 if ($field->type === 'bool' || $field->type === 'checkbox' || in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) {
                     $phpKey = $field->getPhpKey();
                     if (!isset($formData[$phpKey])) {
