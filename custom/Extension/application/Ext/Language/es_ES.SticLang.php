@@ -186,6 +186,7 @@ $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Formularios Web Avanzados';
 $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Procesos en espera de formularios';
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Notificaciones externas de formularios';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversaciones';
+$app_list_strings['moduleList']['stic_Organizational_Environment'] = 'Entorno Organizacional';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
