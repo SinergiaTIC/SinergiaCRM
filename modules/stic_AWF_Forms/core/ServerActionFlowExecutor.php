@@ -208,4 +208,25 @@ class ServerActionFlowExecutor {
             }
         }
     }
+
+    /**
+     * Executes a deferred sub-flow by its ID, optionally with its own error flow.
+     * @param string $flowId The ID of the sub-flow to execute.
+     * @param ?string $errorFlowId The ID of the error sub-flow (optional).
+     * @return ActionResult The result of the sub-flow execution.
+     */
+    public function executeSubFlow(string $flowId, ?string $errorFlowId = null): ActionResult {
+        $flow = $this->context->formConfig->flows[$flowId] ?? null;
+        $errorFlow = null;
+        if ($errorFlowId !== null && $errorFlowId !== '') {
+            $errorFlow = $this->context->formConfig->flows[$errorFlowId] ?? null;
+        }
+
+        if ($flow === null) {
+            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Deferred sub-flow with id '{$flowId}' not found.");
+            return new ActionResult(ResultStatus::ERROR, null, "Deferred sub-flow with id '{$flowId}' not found.");
+        }
+
+        return $this->executeFlow($flow, $errorFlow);
+    }
 }
