@@ -42,6 +42,10 @@ SELECT UUID(), 'TTS_DAILY_CHAR_LIMIT', '50000', 'TTS', 'Daily character limit pe
 WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_DAILY_CHAR_LIMIT' AND type = 'TTS' AND deleted = 0);
 
 INSERT INTO stic_settings (id, name, value, type, description, date_entered, date_modified, deleted)
+SELECT UUID(), 'TTS_DAILY_TIME_LIMIT', '-1', 'TTS', 'Daily time limit in minutes per user (-1 = unlimited). Estimate: chars/10/60.', NOW(), NOW(), 0
+WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_DAILY_TIME_LIMIT' AND type = 'TTS' AND deleted = 0);
+
+INSERT INTO stic_settings (id, name, value, type, description, date_entered, date_modified, deleted)
 SELECT UUID(), 'TTS_MAX_RECORDS_LIST', '50', 'TTS', 'Maximum records for list view mass action', NOW(), NOW(), 0
 WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_MAX_RECORDS_LIST' AND type = 'TTS' AND deleted = 0);
 
@@ -59,7 +63,7 @@ SELECT UUID(), 'TTS_DEEPGRAM_API_KEY', '', 'TTS_DEEPGRAM', 'Deepgram API Key for
 WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_DEEPGRAM_API_KEY' AND type = 'TTS_DEEPGRAM' AND deleted = 0);
 
 INSERT INTO stic_settings (id, name, value, type, description, date_entered, date_modified, deleted)
-SELECT UUID(), 'TTS_DEEPGRAM_MODEL', 'aura-2', 'TTS_DEEPGRAM', 'Deepgram TTS model (aura-2)', NOW(), NOW(), 0
+SELECT UUID(), 'TTS_DEEPGRAM_MODEL', 'aura-2-alvaro-es', 'TTS_DEEPGRAM', 'Deepgram TTS model (aura-2-alvaro-es)', NOW(), NOW(), 0
 WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_DEEPGRAM_MODEL' AND type = 'TTS_DEEPGRAM' AND deleted = 0);
 
 INSERT INTO stic_settings (id, name, value, type, description, date_entered, date_modified, deleted)

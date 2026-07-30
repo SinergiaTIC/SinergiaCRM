@@ -17,20 +17,25 @@ Tras la instalación:
 2. Configura los siguientes ajustes:
 
 ### Tipo TTS_DEEPGRAM
-| Nombre | Descripción |
-|--------|------------|
-| `TTS_DEEPGRAM_API_KEY` | API key de Deepgram |
+| Nombre | Descripción | Ejemplo |
+|--------|------------|---------|
+| `TTS_DEEPGRAM_API_KEY` | API key de Deepgram | `tu_api_key` |
+| `TTS_DEEPGRAM_MODEL` | Modelo Deepgram TTS | `aura-2-alvaro-es` |
+| `TTS_DEEPGRAM_VOICE` | Voz por defecto de Deepgram | `aura-2-alvaro-es` |
 
 ### Tipo TTS
 | Nombre | Descripción | Ejemplo |
 |--------|------------|---------|
 | `TTS_ENABLED` | Activar TTS (1/0) | `1` |
 | `TTS_DEFAULT_LANGUAGE` | Idioma de lectura | `es` |
+| `TTS_DEFAULT_VOICE` | Voz TTS por defecto | `aura-2-alvaro-es` |
 | `TTS_TEXTAREAS` | Módulos:campos con textarea | `Accounts:description;Notes:description` |
 | `TTS_HIGHLIGHT_FIELDS` | Módulos:campos destacados | `Accounts:name,phone_office,billing_address_city` |
 | `TTS_DAILY_CHAR_LIMIT` | Límite diario de caracteres | `50000` |
+| `TTS_DAILY_TIME_LIMIT` | Límite diario de tiempo (minutos) | `60` |
 | `TTS_MAX_RECORDS_LIST` | Máx. registros en lista | `50` |
 | `TTS_LIST_SEPARATOR` | Separador entre registros | `Registro siguiente.` |
+| `TTS_BAR_COLOR` | Color de fondo del reproductor (hex) | `#181818` |
 
 3. Cierra sesión y vuelve a entrar
 
