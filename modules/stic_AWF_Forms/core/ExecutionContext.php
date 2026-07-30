@@ -92,14 +92,14 @@ class ExecutionContext {
      */
     public function addActionResult(ActionResult $result): void {
         $result->resetTimestamp();
-        $key = $result->actionConfig?->getId();
+        $key = $result->getActionConfig()?->getId();
         if ($key === null) {
             $key = 'unknown_' . count($this->actionResults);
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Adding ActionResult with unknown action ID to ExecutionContext. Assigned key: {$key}");
         }
         $this->actionResults[$key] = $result;
         if($result->isError()) {
-            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Action '{$result->actionConfig?->getName()}' resulted in ERROR: " . $result->message);
+            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Action '{$result->getActionConfig()?->getName()}' resulted in ERROR: " . $result->message);
         }
     }
 

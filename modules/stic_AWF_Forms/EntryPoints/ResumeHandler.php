@@ -173,7 +173,7 @@ class ResumeHandler
                 try {
                     $lastAction->performTerminal($context, $lastResult);
                 } catch (\Throwable $t) {
-                    $context->addError($t, $lastResult->actionConfig);
+                    $context->addError($t, $lastResult->getActionConfig());
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error executing sequential terminal action: " . $t->getMessage());
                 }
             }
