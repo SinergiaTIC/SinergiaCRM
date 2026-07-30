@@ -23,4 +23,3 @@ $app_strings['LBL_TTS_NOW_PLAYING'] = 'Now playing...';
 $app_strings['LBL_TTS_PLAYLIST'] = 'Playlist';
 $app_strings['LBL_TTS_RECORD'] = 'Record';
 $app_strings['LBL_TTS_SEEK'] = 'Seek position';
-$app_strings['LBL_TTS_LANGUAGE'] = 'Language';

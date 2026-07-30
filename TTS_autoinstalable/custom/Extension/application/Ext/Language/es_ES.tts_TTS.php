@@ -23,4 +23,3 @@ $app_strings['LBL_TTS_NOW_PLAYING'] = 'Reproduciendo...';
 $app_strings['LBL_TTS_PLAYLIST'] = 'Lista de reproducción';
 $app_strings['LBL_TTS_RECORD'] = 'Registro';
 $app_strings['LBL_TTS_SEEK'] = 'Posición';
-$app_strings['LBL_TTS_LANGUAGE'] = 'Idioma';

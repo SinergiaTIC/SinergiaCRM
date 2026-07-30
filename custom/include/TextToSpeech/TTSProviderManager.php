@@ -149,7 +149,6 @@ class TTSProviderManager
 
         require_once 'modules/stic_Settings/Utils.php';
         $defaultLanguage = stic_SettingsUtils::getSetting('TTS_DEFAULT_LANGUAGE') ?: 'es';
-        $availableLanguages = stic_SettingsUtils::getSetting('TTS_AVAILABLE_LANGUAGES') ?: 'es,en,ca';
         $dailyLimit = stic_SettingsUtils::getSetting('TTS_DAILY_CHAR_LIMIT') ?: '50000';
         $maxRecords = stic_SettingsUtils::getSetting('TTS_MAX_RECORDS_LIST') ?: '50';
 
@@ -158,7 +157,6 @@ class TTSProviderManager
             'provider' => $provider->getId(),
             'providerName' => $provider->getName(),
             'defaultLanguage' => $defaultLanguage,
-            'availableLanguages' => array_map('trim', explode(',', $availableLanguages)),
             'dailyLimit' => (int)$dailyLimit,
             'maxRecords' => (int)$maxRecords,
             'maxCharsPerRequest' => $provider->getMaxCharsPerRequest(),

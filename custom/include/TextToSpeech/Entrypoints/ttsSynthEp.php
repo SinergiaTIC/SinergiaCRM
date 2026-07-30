@@ -28,7 +28,7 @@ $scenario = $data['scenario'] ?? 'a';
 $fragmentIndex = isset($data['fragmentIndex']) ? (int)$data['fragmentIndex'] : 0;
 $fields = $data['fields'] ?? array();
 $text = $data['text'] ?? '';
-$language = $data['language'] ?? 'es';
+$language = $data['language'] ?? (stic_SettingsUtils::getSetting('TTS_DEFAULT_LANGUAGE') ?: 'es');
 $listContext = $data['listContext'] ?? null;
 
 if (empty($module)) {
@@ -71,6 +71,9 @@ switch ($scenario) {
             return;
         }
         $synthesizeText = $assembler->buildFromText($text);
+        if (!empty($record)) {
+            $bean = BeanFactory::getBean($module, $record);
+        }
         break;
 
     case 'b':
@@ -138,36 +141,21 @@ if (empty(trim($synthesizeText))) {
     return;
 }
 
-$config = array('language' => $language, 'encoding' => 'mp3');
-$result = $provider->synthesize($synthesizeText, $config);
-
-if ($result === null) {
-    ttsOutputJson(array('success' => false, 'error' => 'Synthesis failed'), 500);
-    return;
-}
-
-$charCount = $result['charCount'];
 $recordName = '';
 if (isset($bean) && !empty($bean->id)) {
     $recordName = !empty($bean->name) ? $bean->name : $bean->get_summary_text();
 }
 
 @ob_end_clean();
-ob_start();
-ob_clean();
+while (ob_get_level() > 0) ob_end_clean();
 
-http_response_code(200);
-header('Content-Type: audio/mpeg');
-header('X-TTS-Char-Count: ' . $charCount);
-if (!empty($recordName)) {
-    header('X-TTS-Record-Name: ' . base64_encode($recordName));
+$config = array('language' => $language, 'encoding' => 'mp3');
+$result = $provider->synthesizeStreamed($synthesizeText, $config, $recordName);
+
+if ($result === null) {
+    ttsOutputJson(array('success' => false, 'error' => 'Synthesis failed'), 500);
+    return;
 }
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Pragma: no-cache');
-header('Expires: 0');
-
-echo $result['audio'];
-ob_flush();
 
 function ttsGetDailyUsage($userId)
 {

@@ -11,10 +11,11 @@ function ttsGetModulesConfig($settingName)
     }
     global $db;
     $safeName = $db->quote($settingName);
-    $sql = "SELECT description FROM stic_settings WHERE name = '{$safeName}' AND type = 'TTS' AND deleted = 0 LIMIT 1";
-    $result = $db->getOne($sql);
-    if ($result !== false && strlen($result) > 0) {
-        return trim($result);
+    $sql = "SELECT value, description FROM stic_settings WHERE name = '{$safeName}' AND type = 'TTS' AND deleted = 0 LIMIT 1";
+    $row = $db->query($sql);
+    if ($row && ($r = $db->fetchByAssoc($row))) {
+        if (strlen($r['value'] ?? '') > 0) return trim($r['value']);
+        if (strlen($r['description'] ?? '') > 0) return trim($r['description']);
     }
     return false;
 }
@@ -88,25 +89,7 @@ class ttsInjectorHook
         $isListView = ($action === 'index');
 
         $defaultLanguage = stic_SettingsUtils::getSetting('TTS_DEFAULT_LANGUAGE') ?: 'es';
-        $availableLanguages = stic_SettingsUtils::getSetting('TTS_AVAILABLE_LANGUAGES') ?: 'es,en,ca';
-
-        $langLabels = array(
-            'ca' => 'Català',
-            'es' => 'Español',
-            'en' => 'English',
-            'eu' => 'Euskera',
-            'gl' => 'Galego',
-            'pt' => 'Português',
-            'fr' => 'Français',
-            'de' => 'Deutsch',
-            'it' => 'Italiano',
-        );
-
-        $langCodes = array_map('trim', explode(',', $availableLanguages));
-        $languagesArray = array();
-        foreach ($langCodes as $code) {
-            $languagesArray[] = array('code' => $code, 'label' => $langLabels[$code] ?? strtoupper($code));
-        }
+        $barColor = ttsGetModulesConfig('TTS_BAR_COLOR') ?: '#181818';
 
         $safeModule = htmlspecialchars($module, ENT_QUOTES, 'UTF-8');
         $safeLanguage = htmlspecialchars($defaultLanguage, ENT_QUOTES, 'UTF-8');
@@ -118,20 +101,24 @@ class ttsInjectorHook
             'fields' => $highlightFields,
             'textareaFields' => $textareaFields,
             'defaultLanguage' => $safeLanguage,
-            'availableLanguages' => $availableLanguages,
-            'languages' => $languagesArray,
             'isDetailView' => $isDetailView,
             'isEditView' => $isEditView,
             'isListView' => $isListView,
             'hasTextarea' => $hasTextarea,
             'hasHighlight' => $hasHighlight,
+            'barColor' => $barColor,
         );
         $safeConfig = json_encode($config);
 
+        $jsDir = 'custom/include/TextToSpeech/javascript';
+        $vClient = filemtime($jsDir . '/tts_client.js') ?: 1;
+        $vPlayer = filemtime($jsDir . '/tts_player.js') ?: 1;
+        $vButtons = filemtime($jsDir . '/tts_buttons.js') ?: 1;
+
         echo '<script>var sticTtsConfig = ' . $safeConfig . ';</script>' . "\n";
         echo '<link rel="stylesheet" href="custom/themes/SinergiaCRMCustom/tts_client.css">' . "\n";
-        echo '<script src="custom/include/TextToSpeech/javascript/tts_client.js"></script>' . "\n";
-        echo '<script src="custom/include/TextToSpeech/javascript/tts_player.js"></script>' . "\n";
-        echo '<script src="custom/include/TextToSpeech/javascript/tts_buttons.js"></script>' . "\n";
+        echo '<script src="' . $jsDir . '/tts_client.js?v=' . $vClient . '"></script>' . "\n";
+        echo '<script src="' . $jsDir . '/tts_player.js?v=' . $vPlayer . '"></script>' . "\n";
+        echo '<script src="' . $jsDir . '/tts_buttons.js?v=' . $vButtons . '"></script>' . "\n";
     }
 }

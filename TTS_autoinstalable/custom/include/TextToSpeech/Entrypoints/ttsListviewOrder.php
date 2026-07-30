@@ -14,6 +14,10 @@ class TtsListviewOrder
         $orderBy = isset($listContext['orderBy']) ? $listContext['orderBy'] : '';
         $selectEntireList = isset($listContext['select_entire_list']) ? $listContext['select_entire_list'] : '0';
 
+        if ($selectEntireList !== '1') {
+            return $uids;
+        }
+
         if (empty($module) || empty($uids)) {
             return $uids;
         }
@@ -25,15 +29,12 @@ class TtsListviewOrder
 
         $tableName = $seed->table_name;
         $where = $this->buildWhereFromQuery($currentQueryByPage);
-
-        if ($selectEntireList !== '1' && !empty($uids)) {
-            global $db;
-            $quotedIds = array();
-            foreach ($uids as $uid) {
-                $quotedIds[] = "'" . $db->quote($uid) . "'";
-            }
-            $where .= (empty($where) ? '' : ' AND ') . $tableName . '.id IN (' . implode(',', $quotedIds) . ')';
+        global $db;
+        $quotedIds = array();
+        foreach ($uids as $uid) {
+            $quotedIds[] = "'" . $db->quote($uid) . "'";
         }
+        $where .= (empty($where) ? '' : ' AND ') . $tableName . '.id IN (' . implode(',', $quotedIds) . ')';
 
         $orderByClause = $this->buildOrderBy($seed, $orderBy, $lvso);
 

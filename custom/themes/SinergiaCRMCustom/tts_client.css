@@ -3,7 +3,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: #181818;
+    background: var(--tts-bar-bg, #181818);
     color: #e0e0e0;
     padding: 0 16px;
     height: 56px;
@@ -39,6 +39,13 @@
     font-size: 12px;
     color: #b3b3b3;
     max-width: 200px;
+}
+
+.tts-progress-text {
+    white-space: nowrap;
+    font-size: 11px;
+    color: #1db954;
+    margin-left: 8px;
 }
 
 .tts-player-center {
@@ -213,18 +220,13 @@
     flex-shrink: 0;
 }
 
-.tts-textarea-lang {
-    font-size: 11px;
-    padding: 1px 4px;
-    border: 1px solid #cbd5e1;
-    border-radius: 3px;
-    background: #fff;
-    color: #475569;
-    outline: none;
-    cursor: pointer;
-    width: auto;
-    min-width: 60px;
-    flex-shrink: 0;
+.tts-textarea-btn-inline {
+    display: inline-flex;
+    vertical-align: middle;
+    position: relative;
+    left: -50px;
+    font-size: 12px;
+    padding: 1px 6px;
 }
 
 .tts-textarea-btn {
@@ -238,6 +240,7 @@
     outline: none;
     display: inline-flex;
     align-items: center;
+    gap: 4px;
     font-size: 13px;
     line-height: 1;
 }
@@ -249,21 +252,6 @@
 }
 
 .tts-textarea-btn:focus-visible {
-    box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.4);
-}
-
-.tts-textarea-lang {
-    font-size: 12px;
-    padding: 2px 4px;
-    border: 1px solid #cbd5e1;
-    border-radius: 3px;
-    background: #fff;
-    color: #475569;
-    outline: none;
-    cursor: pointer;
-}
-
-.tts-textarea-lang:focus-visible {
     box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.4);
 }
 

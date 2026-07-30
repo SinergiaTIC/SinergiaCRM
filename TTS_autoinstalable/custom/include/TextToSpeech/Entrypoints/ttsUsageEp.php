@@ -32,13 +32,6 @@ if ($charCount < 1 || $charCount > 100000) {
     return;
 }
 
-$availableLanguages = stic_SettingsUtils::getSetting('TTS_AVAILABLE_LANGUAGES') ?: 'es,en,ca';
-$allowedLanguages = array_map('trim', explode(',', $availableLanguages));
-if (!in_array($language, $allowedLanguages)) {
-    ttsOutputJson(array('success' => false, 'error' => 'Invalid language'), 400);
-    return;
-}
-
 $dailyLimit = stic_SettingsUtils::getSetting('TTS_DAILY_CHAR_LIMIT');
 $wasLimited = false;
 $remaining = -1;

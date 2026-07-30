@@ -25,8 +25,7 @@ Tras la instalación:
 | Nombre | Descripción | Ejemplo |
 |--------|------------|---------|
 | `TTS_ENABLED` | Activar TTS (1/0) | `1` |
-| `TTS_DEFAULT_LANGUAGE` | Idioma por defecto | `es` |
-| `TTS_AVAILABLE_LANGUAGES` | Idiomas disponibles | `es,en,ca` |
+| `TTS_DEFAULT_LANGUAGE` | Idioma de lectura | `es` |
 | `TTS_TEXTAREAS` | Módulos:campos con textarea | `Accounts:description;Notes:description` |
 | `TTS_HIGHLIGHT_FIELDS` | Módulos:campos destacados | `Accounts:name,phone_office,billing_address_city` |
 | `TTS_DAILY_CHAR_LIMIT` | Límite diario de caracteres | `50000` |
@@ -42,12 +41,6 @@ Tras la instalación:
 | Textarea | Botón ▶ junto al campo textarea |
 | Vista detalle | Botón "Escuchar info destacada" |
 | Vista lista | Seleccionar registros → Bulk Action → "Escuchar seleccionados" |
-
-## Soporte de idiomas
-
-- Español (es)
-- Catalán (ca)
-- Inglés (en)
 
 ## Coexistencia con STT
 

@@ -9,7 +9,7 @@ class TtsTextAssembler
     {
         $parts = array();
         $moduleName = $bean->module_dir;
-        $modStrings = $this->getModStrings($moduleName, $language);
+        $modStrings = $this->getModStrings($moduleName);
 
         foreach ($fields as $field) {
             $label = $this->getFieldLabel($bean, $field, $modStrings);
@@ -101,49 +101,45 @@ class TtsTextAssembler
         }
         $appListStrings = return_app_list_strings_language($GLOBALS['current_language'] ?? 'en_us');
         $optionsKey = $bean->field_defs[$field]['options'] ?? '';
+        $options = array();
         if (!empty($optionsKey) && isset($appListStrings[$optionsKey])) {
             $options = $appListStrings[$optionsKey];
-            if (isset($options[$value])) {
-                return $options[$value];
-            }
         }
-        return $value;
+
+        $type = $bean->field_defs[$field]['type'] ?? '';
+        if ($type === 'multienum') {
+            if (is_array($value)) {
+                $values = $value;
+            } else {
+                $values = explode('^,^', trim($value, '^'));
+            }
+            $display = array();
+            foreach ($values as $v) {
+                $v = trim($v);
+                if (isset($options[$v])) {
+                    $display[] = $options[$v];
+                } else {
+                    $display[] = $v;
+                }
+            }
+            return implode(', ', $display);
+        }
+
+        return isset($options[$value]) ? $options[$value] : $value;
     }
 
     private function formatDateValue($value)
     {
-        if (empty($value) || $value === '0000-00-00') {
+        if (empty($value) || $value === '0000-00-00' || $value === '0000-00-00 00:00:00') {
             return '';
         }
-        $timestamp = strtotime($value);
-        if ($timestamp === false) {
-            return $value;
-        }
-        global $timedate;
-        if ($timedate) {
-            return $timedate->to_display_date_time($value);
-        }
-        return date('Y-m-d', $timestamp);
+        return $value;
     }
 
-    private function getModStrings($moduleName, $language = null)
+    private function getModStrings($moduleName)
     {
-        if ($language === null) {
-            $language = $GLOBALS['current_language'] ?? 'en_us';
-        }
-        $langMap = array(
-            'ca' => 'ca_ES',
-            'es' => 'es_ES',
-            'en' => 'en_us',
-            'eu' => 'eu_ES',
-            'gl' => 'gl_ES',
-            'pt' => 'pt_PT',
-            'fr' => 'fr_FR',
-            'de' => 'de_DE',
-            'it' => 'it_IT',
-        );
-        $suiteLang = isset($langMap[$language]) ? $langMap[$language] : $language;
-        $modStrings = return_module_language($suiteLang, $moduleName);
+        $language = $GLOBALS['current_language'] ?? 'en_us';
+        $modStrings = return_module_language($language, $moduleName);
         return $modStrings ?: array();
     }
 }

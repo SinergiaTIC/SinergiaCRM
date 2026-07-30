@@ -42,7 +42,6 @@ $keyMap = array(
     'playlist' => 'LBL_TTS_PLAYLIST',
     'record' => 'LBL_TTS_RECORD',
     'seek' => 'LBL_TTS_SEEK',
-    'language' => 'LBL_TTS_LANGUAGE',
 );
 
 $strings = array();

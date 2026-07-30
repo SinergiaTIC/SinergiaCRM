@@ -44,6 +44,134 @@ class ttsDeepgramProvider extends TTSProviderBase
         );
     }
 
+    public function synthesizeStreamed($text, $config = array(), $recordName = '')
+    {
+        $GLOBALS['log']->info('TTS-DEBUG-P: enter synthesizeStreamed text_len=' . strlen($text));
+
+        $apiKey = $this->getApiKey();
+        if (empty($apiKey)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Deepgram API key not configured');
+            return null;
+        }
+
+        $maxChars = $this->getMaxCharsPerRequest();
+        $fragmenter = new TtsTextFragmenter($maxChars);
+        $fragments = $fragmenter->fragment($text);
+
+        if (empty($fragments)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': empty fragments');
+            return null;
+        }
+
+        $GLOBALS['log']->info('TTS-DEBUG-P: text split into ' . count($fragments) . ' fragments');
+        $totalChars = 0;
+        $headersSent = false;
+
+        foreach ($fragments as $fragment) {
+            $result = $this->streamFragment($fragment, $config, $recordName, $apiKey, $headersSent);
+            if ($result === null) {
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': fragment failed, aborting');
+                if (!$headersSent) {
+                    return null;
+                }
+                break;
+            }
+            $totalChars += $result['charCount'];
+            $headersSent = true;
+        }
+
+        $GLOBALS['log']->info('TTS-DEBUG-P: returning success, totalChars=' . $totalChars);
+        return array('charCount' => $totalChars);
+    }
+
+    private function streamFragment($fragment, $config, $recordName, $apiKey, &$headersSent)
+    {
+        $httpCode = 0;
+        $charCount = 0;
+        $errorBody = '';
+        $totalCharEstimate = mb_strlen($fragment);
+
+        $url = $this->getRestEndpoint($config);
+        $body = $this->getRequestBody($fragment, $config);
+        $headers = $this->getAuthHeaders($apiKey, $config);
+        $timeout = (int)$this->getConfig('curl_timeout', 30);
+
+        $ch = curl_init();
+        curl_setopt_array($ch, array(
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => false,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $body,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_TIMEOUT => $timeout,
+            CURLOPT_SSL_VERIFYPEER => true,
+            CURLOPT_SSL_VERIFYHOST => 2,
+            CURLOPT_HEADER => false,
+        ));
+
+        curl_setopt($ch, CURLOPT_HEADERFUNCTION, function($curl, $headerLine) use (&$httpCode, &$charCount) {
+            $len = strlen($headerLine);
+            $trimmed = trim($headerLine);
+            if (preg_match('/^HTTP\/\S+\s+(\d+)/', $trimmed, $m)) {
+                $httpCode = (int)$m[1];
+            }
+            if (preg_match('/^dg-char-count:\s*(\d+)/i', $trimmed, $m)) {
+                $charCount = (int)$m[1];
+            }
+            return $len;
+        });
+
+        curl_setopt($ch, CURLOPT_WRITEFUNCTION, function($curl, $data) use (&$httpCode, &$errorBody, &$headersSent, &$charCount, $totalCharEstimate, $recordName) {
+            $dataLen = strlen($data);
+            if ($httpCode !== 200) {
+                $errorBody .= $data;
+                return $dataLen;
+            }
+            if (!$headersSent) {
+                @ob_end_clean();
+                while (ob_get_level() > 0) ob_end_clean();
+                http_response_code(200);
+                header('Content-Type: audio/mpeg');
+                if (!empty($recordName)) {
+                    header('X-TTS-Record-Name: ' . base64_encode($recordName));
+                }
+                if ($charCount <= 0) {
+                    $charCount = $totalCharEstimate;
+                }
+                header('X-TTS-Char-Count: ' . $charCount);
+                header('Cache-Control: public, max-age=300');
+                $headersSent = true;
+            }
+            echo $data;
+            if (ob_get_level() > 0) ob_flush();
+            flush();
+            return $dataLen;
+        });
+
+        curl_exec($ch);
+        $curlErrno = curl_errno($ch);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+
+        if ($httpCode !== 200 || $curlErrno !== 0) {
+            $msg = 'Deepgram returned HTTP ' . $httpCode . ' (errno=' . $curlErrno . ')';
+            if (!empty($curlError)) {
+                $msg .= ' curl: ' . $curlError;
+            }
+            if (!empty($errorBody)) {
+                $msg .= ' body: ' . substr($errorBody, 0, 200);
+            }
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $msg);
+            return null;
+        }
+
+        if ($charCount <= 0) {
+            $charCount = $totalCharEstimate;
+        }
+
+        return array('charCount' => $charCount);
+    }
+
     public function getMaxCharsPerRequest()
     {
         $configValue = $this->getConfig('max_chars_per_request', 2000);
@@ -64,6 +192,11 @@ class ttsDeepgramProvider extends TTSProviderBase
     {
         if (!empty($voice)) {
             return $voice;
+        }
+        require_once 'modules/stic_Settings/Utils.php';
+        $defaultVoice = stic_SettingsUtils::getSetting('TTS_DEFAULT_VOICE');
+        if (!empty($defaultVoice)) {
+            return $defaultVoice;
         }
         return isset($this->voices[$language]) ? $this->voices[$language] : '';
     }
@@ -182,9 +315,10 @@ class ttsDeepgramProvider extends TTSProviderBase
 
     private function testEndpoint($apiKey)
     {
+        $url = $this->getRestEndpoint(array('language' => 'es', 'encoding' => 'mp3'));
         $ch = curl_init();
         curl_setopt_array($ch, array(
-            CURLOPT_URL => 'https://api.eu.deepgram.com/v1/speak?model=aura-2-alvaro-es&encoding=mp3',
+            CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POST => true,
             CURLOPT_POSTFIELDS => json_encode(array('text' => 'test')),
