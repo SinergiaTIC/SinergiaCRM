@@ -30,11 +30,11 @@ SELECT UUID(), 'TTS_DEFAULT_VOICE', 'aura-2-alvaro-es', 'TTS', 'Default TTS voic
 WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_DEFAULT_VOICE' AND type = 'TTS' AND deleted = 0);
 
 INSERT INTO stic_settings (id, name, value, type, description, date_entered, date_modified, deleted)
-SELECT UUID(), 'TTS_TEXTAREAS', 'Ver descripcion', 'TTS', 'Formato: Modulo:campo1,campo2;OtroModulo:campo1. Ej: Accounts:description;Notes:description. Usar "ALL" para activar en todos los textarea de un modulo (ej: Contacts:ALL). Para valores largos (>255 chars) editar description en BD.', NOW(), NOW(), 0
+SELECT UUID(), 'TTS_TEXTAREAS', 'Ver descripcion', 'TTS', 'Formato: Modulo:campo1,campo2|OtroModulo:campo1. Ej: Accounts:description|Notes:description. Usar ALL para todos los textarea. Ver README.', NOW(), NOW(), 0
 WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_TEXTAREAS' AND type = 'TTS' AND deleted = 0);
 
 INSERT INTO stic_settings (id, name, value, type, description, date_entered, date_modified, deleted)
-SELECT UUID(), 'TTS_HIGHLIGHT_FIELDS', 'Ver descripcion', 'TTS', 'Formato: Modulo:campo1,campo2;OtroModulo:campo1. Ej: Accounts:name,phone_office,billing_address_city. Para valores largos (>255 chars) editar description en BD.', NOW(), NOW(), 0
+SELECT UUID(), 'TTS_HIGHLIGHT_FIELDS', 'Ver descripcion', 'TTS', 'Formato: Modulo:campo1,campo2|OtroModulo:campo1. Ej: Accounts:name,phone_office,billing_address_city. Ver README.', NOW(), NOW(), 0
 WHERE NOT EXISTS (SELECT 1 FROM stic_settings WHERE name = 'TTS_HIGHLIGHT_FIELDS' AND type = 'TTS' AND deleted = 0);
 
 INSERT INTO stic_settings (id, name, value, type, description, date_entered, date_modified, deleted)
