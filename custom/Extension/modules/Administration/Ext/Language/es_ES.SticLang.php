@@ -105,3 +105,18 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especificar la plantilla de 
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Al activar esta opción los usuarios podrán autenticarse mediante OAuth 2.0, además de hacerlo con usuario y contraseña. Después de activarla se deberá configurar por lo menos uno de los proveedores externos. Para más información, consulte la <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentación</a>.';
+
+// User lockout settings
+$mod_strings['LBL_USER_LOCKOUT'] = 'Bloqueo de usuario';
+$mod_strings['LBL_MAX_FAILED_LOGINS'] = 'Intentos fallidos máximos';
+$mod_strings['LBL_MAX_FAILED_LOGINS_HELP'] = 'El número de intentos fallidos antes de que se bloquee la cuenta de un usuario.';
+$mod_strings['LBL_AUTO_UNLOCK_TIME'] = 'Tiempo de desbloqueo automático';
+$mod_strings['LBL_AUTO_UNLOCK_TIME_HELP'] = 'El número de minutos que tarda en desbloquearse automáticamente la cuenta de un usuario.';
+$mod_strings['LBL_AUTO_UNLOCK_TIME_UNITS'] = 'minutos';
+$mod_strings['ERR_MAX_FAILED_LOGINS'] = 'Por favor, especifique un valor válido para el número máximo de intentos fallidos de inicio de sesión';
+$mod_strings['ERR_AUTOMATIC_UNLOCK_TIME'] = 'Por favor, especifique un valor válido para el tiempo de desbloqueo automático';
+$mod_strings['LBL_ENABLE_MAX_FAILED_LOGINS'] = 'Bloquear usuarios después de un número de intentos fallidos de inicio de sesión';
+$mod_strings['LBL_AUTO_UNLOCK'] = 'Desbloquear automáticamente a los usuarios bloqueados';
+$mod_strings['LBL_AUTO_UNLOCK_HELP'] = 'Desbloquear a los usuarios bloqueados después de un tiempo configurable';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT'] = 'Activar bloqueo de usuario';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT_HELP'] = 'Activar o desactivar completamente el sistema de bloqueo de usuarios tras intentos fallidos de inicio de sesión.';

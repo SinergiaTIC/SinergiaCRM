@@ -105,3 +105,18 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Set the email template that 
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth authentication';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Enable OAuth authentication';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'When enabling this option users will be able to authenticate using OAuth 2.0, in addition to using a username and password. After enabling it at least one of the external providers must be configured. For more information, see the <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentation</a>.';
+
+// User lockout settings
+$mod_strings['LBL_USER_LOCKOUT'] = 'User Lockout';
+$mod_strings['LBL_MAX_FAILED_LOGINS'] = 'Max failed logins';
+$mod_strings['LBL_MAX_FAILED_LOGINS_HELP'] = 'The number of failed logins before a user will have their account locked.';
+$mod_strings['LBL_AUTO_UNLOCK_TIME'] = 'Automatic user unlock time';
+$mod_strings['LBL_AUTO_UNLOCK_TIME_HELP'] = 'The number of minutes it takes for a user account to be automatically unlocked.';
+$mod_strings['LBL_AUTO_UNLOCK_TIME_UNITS'] = 'minutes';
+$mod_strings['ERR_MAX_FAILED_LOGINS'] = 'Please specify a valid value for the number of max failed logins';
+$mod_strings['ERR_AUTOMATIC_UNLOCK_TIME'] = 'Please specify a valid value for the automatic unlock time';
+$mod_strings['LBL_ENABLE_MAX_FAILED_LOGINS'] = 'Lock users after a number of failed logins';
+$mod_strings['LBL_AUTO_UNLOCK'] = 'Automatically unlock locked users';
+$mod_strings['LBL_AUTO_UNLOCK_HELP'] = 'Unlock locked users after a configurable amount of time';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT'] = 'Enable User Lockout';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT_HELP'] = 'Enable or disable the entire user lockout system after failed login attempts.';

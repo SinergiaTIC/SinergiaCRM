@@ -104,3 +104,10 @@ $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' amb ID ';
 // Model 182
 $mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Emissió del Model 182';
 $mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = "Indica per a quines organitzacions l'usuari podrà generar el Model 182. La llista es genera dinàmicament a partir dels <a href='index.php?module=stic_Settings' target='_blank'>paràmetres de configuració</a>.";
+
+// User lockout
+$mod_strings['ERR_USER_IS_LOCKED_OUT'] = 'Aquest usuari ha estat bloquejat i no pot iniciar la sessió utilitzant la seva contrasenya actual. Si voleu ser desbloquejat, aviseu l\'administrador.';
+$mod_strings['LBL_USER_LOCKOUT_COUNTDOWN'] = '⛔ Usuari bloquejat. Es desbloquejarà automàticament en {minutes} min {seconds} seg.';
+$mod_strings['LBL_USER_LOCKOUT_FINISHED_REFRESHING'] = '✅ El temps de bloqueig ha finalitzat. Actualitzant...';
+$mod_strings['LBL_USER_UNLOCKED_REFRESHING'] = '✅ Usuari desbloquejat. Actualitzant...';
+$mod_strings['ERR_USER_IS_LOCKED_OUT_DETAILVIEW'] = 'Aquest usuari ha estat bloquejat a causa de múltiples intents fallits d\'inici de sessió. Podeu desbloquejar-lo utilitzant l\'acció "Desbloquejar usuari".';

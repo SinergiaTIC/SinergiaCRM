@@ -260,7 +260,59 @@
 									{/if}
 									</table>
 
-
+									{* STIC-Custom 20260612 ART - User Lockout Settings *}
+									{* https://github.com/SinergiaTIC/SinergiaCRM/pull/1242 *}
+									<table id="userLockId" name="userLockName" width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
+										<tr>
+											<th align="left" scope="row" colspan="2"><h4>{$MOD.LBL_USER_LOCKOUT}</h4></th>
+										</tr>
+										<tr>
+											<td width="25%" scope="row">{$MOD.LBL_ENABLE_USER_LOCKOUT}:&nbsp{sugar_help text=$MOD.LBL_ENABLE_USER_LOCKOUT_HELP WIDTH=400}</td>
+											<td scope="row" width="25%" >
+												<input type='hidden' name='userlockout_enabled' value='0'>
+												<input type='checkbox' id="enableUserLockout" name='userlockout_enabled' value='1' {if $config.userlockout.enabled}checked="checked"{/if} onchange="toggleUserLockoutSettings(this)">&nbsp;
+											</td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr id="userLockoutSettingsRow">
+											<td colspan="4">
+												<table width="100%" border="0" cellspacing="1" cellpadding="0" style="display:{if $config.userlockout.enabled}block{else}none{/if}" id="userLockoutSettings">
+													<tr>
+														<td width="25%" scope="row">{$MOD.LBL_ENABLE_MAX_FAILED_LOGINS}:</td>
+														<td scope="row" width="25%" >
+															<input type='checkbox' id="maxFailedLogin" {if $config.userlockout.maxfailedlogins}checked="checked"{/if}>&nbsp;
+														</td>
+														<td></td>
+														<td></td>
+													</tr>
+										<tr id="maxFailedLoginsRow">
+											<td width="25%" scope="row">{$MOD.LBL_MAX_FAILED_LOGINS}:&nbsp{sugar_help text=$MOD.LBL_MAX_FAILED_LOGINS_HELP WIDTH=400}</td>
+											<td scope="row" width="25%">
+												<input type='text' maxlength="3" style="width:2em" id='userlockout_maxfailedlogins' name='userlockout_maxfailedlogins'  value='{$config.userlockout.maxfailedlogins}'>
+											</td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td width="25%" scope="row">{$MOD.LBL_AUTO_UNLOCK}:&nbsp{sugar_help text=$MOD.LBL_AUTO_UNLOCK_HELP WIDTH=400}</td>
+											<td scope="row" width="25%" >
+												<input type='checkbox' id="autoUnlock" {if $config.userlockout.automaticunlocktime}checked="checked"{/if}>&nbsp;
+											</td>
+											<td>&nbsp;</td><td>&nbsp;</td>
+										</tr>
+										<tr id="autoUnlockRow">
+											<td width="25%" scope="row">{$MOD.LBL_AUTO_UNLOCK_TIME}:&nbsp{sugar_help text=$MOD.LBL_AUTO_UNLOCK_TIME_HELP WIDTH=400}</td>
+											<td scope="row" width="25%" >
+												<input type='text' maxlength="10" style="width:5em" id='userlockout_automaticunlocktime' name='userlockout_automaticunlocktime'  value='{$config.userlockout.automaticunlocktime}'>&nbsp;<span>{$MOD.LBL_AUTO_UNLOCK_TIME_UNITS}</span>
+											</td>
+											<td>&nbsp;</td><td>&nbsp;</td>
+										</tr>
+												</table>
+											</td>
+										</tr>
+									</table>
+									{* END STIC-Custom *}
 
 
 						<table id="emailTemplatesId" name="emailTemplatesName" width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
@@ -610,6 +662,52 @@ document.getElementById('forgotpassword_checkbox').checked=true;
 
 {literal}
 <script>
+// STIC-Custom 20260612 ART - User Lockout Settings
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+// Function to toggle display of lockout settings rows based on checkbox state
+function toggleLockoutRow(checkboxSelector, rowSelector, inputSelector) {
+	if($(checkboxSelector).is(':checked')){
+			$(rowSelector).show();
+		}else{
+		$(rowSelector).hide();
+		$(inputSelector).val(0);
+	}
+}
+
+// Function to initialize lockout settings on page load
+function initUserLockoutSettings() {
+	$('#maxFailedLogin').change(function() {
+		toggleLockoutRow('#maxFailedLogin', '#maxFailedLoginsRow', '#userlockout_maxfailedlogins');
+	});
+
+	$('#autoUnlock').change(function() {
+		toggleLockoutRow('#autoUnlock', '#autoUnlockRow', '#userlockout_automaticunlocktime');
+	});
+
+	toggleLockoutRow('#maxFailedLogin', '#maxFailedLoginsRow', '#userlockout_maxfailedlogins');
+	toggleLockoutRow('#autoUnlock', '#autoUnlockRow', '#userlockout_automaticunlocktime');
+}
+
+initUserLockoutSettings();
+
+// Function to toggle display of all lockout settings when enabling/disabling user lockout
+function toggleUserLockoutSettings(checkbox) {
+  var settingsDiv = document.getElementById('userLockoutSettings');
+  if (checkbox.checked) {
+    settingsDiv.style.display = 'block';
+  } else {
+    settingsDiv.style.display = 'none';
+    // Reset all lockout settings when disabled
+    document.getElementById('maxFailedLogin').checked = false;
+    document.getElementById('userlockout_maxfailedlogins').value = 0;
+    document.getElementById('autoUnlock').checked = false;
+    document.getElementById('userlockout_automaticunlocktime').value = 0;
+    $('#maxFailedLoginsRow').hide();
+    $('#autoUnlockRow').hide();
+  }
+}
+// END STIC-Custom
+
 function addcheck(form){{/literal}
 	addForm('ConfigurePasswordSettings');
 
@@ -624,6 +722,11 @@ function addcheck(form){{/literal}
 	// STIC-Custom 20220523 MHP - Add validation to check that the email template is set
 	// STIC#737
 	addToValidate('ConfigurePasswordSettings', 'passwordsetting_generatepasswordtmpl', 'string', form.generatepasswordtmpl.value == '',"{$MOD.ERR_SYS_GEN_PWD_TPL_NOT_SELECTED}" );
+	// END STIC-Custom
+	// STIC-Custom 20260612 ART - User Lockout Settings
+	// https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+	addToValidate('ConfigurePasswordSettings', 'userlockout_maxfailedlogins', 'int', false,"{$MOD.ERR_MAX_FAILED_LOGINS} ");
+  	addToValidate('ConfigurePasswordSettings', 'userlockout_automaticunlocktime', 'int', false,"{$MOD.ERR_AUTOMATIC_UNLOCK_TIME} ");
 	// END STIC-Custom
    {literal}}{/literal}
 

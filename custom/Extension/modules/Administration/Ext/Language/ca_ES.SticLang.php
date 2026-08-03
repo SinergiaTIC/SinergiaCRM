@@ -105,3 +105,18 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = "Indiqueu la plantilla de cor
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticació OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = "Activa l'autenticació OAuth";
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = "Si activeu aquesta opció, els usuaris podran autenticar-se mitjançant OAuth 2.0, a més de poder fer-ho amb usuari i contrasenya. Després d'activar aquesta opció s'haurà de configurar, com a mínim, un dels proveïdors externs. Per a més informació, consulteu la <a href='https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth' target='_blank'>documentació</a>.";
+
+// User lockout settings
+$mod_strings['LBL_USER_LOCKOUT'] = 'Bloqueig d\'usuaris';
+$mod_strings['LBL_MAX_FAILED_LOGINS'] = 'Màxim d\'intents fallits';
+$mod_strings['LBL_MAX_FAILED_LOGINS_HELP'] = 'El nombre d\'intents fallits abans que un usuari tingui el seu compte bloquejat.';
+$mod_strings['LBL_AUTO_UNLOCK_TIME'] = 'Temps de desbloqueig automàtic';
+$mod_strings['LBL_AUTO_UNLOCK_TIME_HELP'] = 'El nombre de minuts que triga un compte d\'usuari a desbloquejar-se automàticament.';
+$mod_strings['LBL_AUTO_UNLOCK_TIME_UNITS'] = 'minuts';
+$mod_strings['ERR_MAX_FAILED_LOGINS'] = 'Si us plau, especifiqueu un valor vàlid per al nombre màxim d\'intents fallits';
+$mod_strings['ERR_AUTOMATIC_UNLOCK_TIME'] = 'Si us plau, especifiqueu un valor vàlid per al temps de desbloqueig automàtic';
+$mod_strings['LBL_ENABLE_MAX_FAILED_LOGINS'] = 'Bloquejar usuaris després d\'un nombre d\'intents fallits';
+$mod_strings['LBL_AUTO_UNLOCK'] = 'Desbloquejar automàticament els usuaris bloquejats';
+$mod_strings['LBL_AUTO_UNLOCK_HELP'] = 'Desbloquejar els usuaris bloquejats després d\'un temps configurable';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT'] = 'Habilitar bloqueig d\'usuaris';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT_HELP'] = 'Habilitar o deshabilitar completament el sistema de bloqueig d\'usuaris després intentos fallits d\'accés.';
