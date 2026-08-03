@@ -23,6 +23,7 @@
 
 require_once 'modules/Meetings/views/view.edit.php';
 require_once 'SticInclude/Views.php';
+require_once 'modules/MySettings/TabController.php';
 
 class CustomMeetingsViewEdit extends MeetingsViewEdit
 {
@@ -54,7 +55,13 @@ class CustomMeetingsViewEdit extends MeetingsViewEdit
 
         SticViews::display($this);
 
-        // Write here you custom code
+        global $beanList, $moduleList, $current_user;
+        $tc = new TabController();
+        $displayTabs = $tc->get_tabs($current_user)[0];
+        $leadAccess = in_array('Leads', $moduleList) && isset($displayTabs['Leads']) && isset($beanList['Leads']) && ACLController::checkAccess('Leads', 'edit', true);
+        if (!$leadAccess) {
+            echo '<style>#create_invitee_as_lead{display:none!important}</style>';
+        }
     }
 
 }
