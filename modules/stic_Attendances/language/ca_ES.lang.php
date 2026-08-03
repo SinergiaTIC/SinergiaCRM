@@ -77,4 +77,10 @@ $mod_strings = array(
 
     // Camps de filtre en relacions molts a molts
     'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Esdeveniment (via Inscripcions)',
+
+    // Missatges de feedback d'interfície d'usuari per a la creació d'assistències
+    'LBL_UI_CREATED_LIST' => "S'han creat assistències per als dies %s.",
+    'LBL_UI_CREATED_COUNT' => "S'han creat assistències per a %d dies.",
+    'LBL_UI_NOOP_LIST' => "No s'han creat noves assistències per als dies %s.",
+    'LBL_UI_NOOP_COUNT' => "No s'han creat noves assistències per a %d dies.",
 );
