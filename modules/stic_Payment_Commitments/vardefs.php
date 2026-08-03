@@ -870,6 +870,16 @@ $dictionary['stic_Payment_Commitments'] = array(
             'side' => 'left',
             'vname' => 'LBL_STIC_BOOKINGS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_BOOKINGS_TITLE',
         ),
+        'stic_allocation_proposals' => array(
+            'name' => 'stic_allocation_proposals',
+            'type' => 'link',
+            'relationship' => 'stic_payment_commitments_stic_allocation_proposals',
+            'source' => 'non-db',
+            'module' => 'stic_Allocation_Proposals',
+            'bean_name' => 'stic_Allocation_Proposals',
+            'side' => 'right',
+            'vname' => 'LBL_STIC_PAYMENT_COMMITMENTS_STIC_ALLOCATION_PROPOSALS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE',
+        ),
     ),
     'relationships' => array(
     ),

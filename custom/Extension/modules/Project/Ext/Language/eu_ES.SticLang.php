@@ -63,5 +63,10 @@ $mod_strings['LBL_DELETE_TASK_CONFIRM'] = '¿Seguro que quiere borrar esta tarea
 $mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';
 $mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centros';
 
+// Esleipen Proposamenekin erlazioarentzako stringak
+$mod_strings['LBL_PROJECT_STIC_ALLOCATION_PROPOSALS_FROM_STIC_ALLOCATION_PROPOSALS_TITLE'] = 'Esleipen Proposamenak';
+
+// Esleipenekin erlazioarentzako stringak
+$mod_strings['LBL_PROJECT_STIC_ALLOCATIONS_FROM_STIC_ALLOCATIONS_TITLE'] = 'Esleipenak';
 // Cadenas Recursos
 $mod_strings['LBL_STIC_RESOURCES_PROJECT_FROM_STIC_RESOURCES_TITLE'] = 'Recursos';
