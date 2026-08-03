@@ -323,7 +323,10 @@ HTML;
 			convert_urls : false,
 			plugin_insertdate_dateFormat : '{DATE '+df+'}',
 			pagebreak_separator : "<div style=\"page-break-before: always;\">&nbsp;</div>",
-			extended_valid_elements : "textblock,barcode[*]",
+            // STIC-Custom AAM 20260520 - Preserve subpanel comment tags (<!--$subpanel:...-->) during HTML purification
+			// extended_valid_elements : "textblock,barcode[*]",
+			extended_valid_elements : "textblock,barcode[*],!--$--,!/--$--",
+            // END STIC-Custom
 			custom_elements: "textblock",
             setup : function(ed) {
                 ed.addButton('insertsignature', {

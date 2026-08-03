@@ -30,6 +30,17 @@ use SuiteCRM\Utility\SuiteValidator as SuiteValidator;
 #[\AllowDynamicProperties]
 class templateParser
 {
+    // STIC-Custom - AAM - 20260519 - Subpanel and aggregate pattern constants for PDF templates
+    const SUBPANEL_START_PATTERN = '/<!--\$subpanel:([a-z0-9_]+)(?::([a-z0-9_]+))?(?::([^>]+?))?-->/i';
+    const SUBPANEL_END_PATTERN = '/<!--\/\$subpanel:([a-z0-9_]+)(?::([a-z0-9_]+))?-->/i';
+    const AGGREGATE_PATTERN = '/\$(SUM|COUNT|AVG|MIN|MAX):([a-z0-9_]+):([a-z0-9_]+)/i';
+
+    /** @var array Aggregate values keyed by "FUNC:table:field" */
+    private static $aggregates = [];
+    /** @var array All related beans grouped by table name for aggregate computation */
+    private static $allBeansByTable = [];
+    // END STIC-Custom
+
     public static function parse_template($string, $bean_arr)
     {
         foreach ($bean_arr as $bean_name => $bean_id) {
@@ -72,6 +83,11 @@ class templateParser
                 }
             }
         }
+
+        // STIC-Custom - AAM - 20260519 - Parse subpanel loops for related record data
+        $string = templateParser::parseSubpanels($string, $bean_arr);
+        // END STIC-Custom
+
         return $string;
     }
 
@@ -349,4 +365,260 @@ class templateParser
         }
     }
     // END STIC
+
+    // STIC-Custom - AAM - 20260519 - Get all subpanel (one-to-many) relationships for a bean
+    public static function getSubpanelRelationships(SugarBean $bean): array
+    {
+        $relationships = array();
+        if (!isset($bean->module_dir)) { return $relationships; }
+        require_once 'include/SubPanel/SubPanelDefinitions.php';
+        $subPanelDefinitions = new SubPanelDefinitions($bean);
+        if (!isset($subPanelDefinitions->layout_defs['subpanel_setup'])) { return $relationships; }
+        foreach ($subPanelDefinitions->layout_defs['subpanel_setup'] as $subpanelKey => $subpanelDef) {
+            if (!isset($subpanelDef['module'])) { continue; }
+            $module = $subpanelDef['module'];
+            if (empty($module)) { continue; }
+            $relatedBean = BeanFactory::newBean($module);
+            if (!$relatedBean) { continue; }
+            $fields = array();
+            if (isset($relatedBean->field_defs) && is_array($relatedBean->field_defs)) {
+                foreach ($relatedBean->field_defs as $relFieldName => $relFieldDef) {
+                    if (isset($relFieldDef['name']) && $relFieldDef['name'] !== '') {
+                        if (isset($relFieldDef['reportable']) && !$relFieldDef['reportable']) { continue; }
+                        if (isset($relFieldDef['type']) && in_array($relFieldDef['type'], array('id', 'link'))) { continue; }
+                        if (isset($relFieldDef['dbType']) && strtolower($relFieldDef['dbType']) === 'id') { continue; }
+                        $fields[$relFieldName] = isset($relFieldDef['vname']) ? translate($relFieldDef['vname'], $module) : $relFieldName;
+                    }
+                }
+            }
+            if (!empty($fields)) {
+                asort($fields);
+                $subpanelTitleKey = isset($subpanelDef['title_key']) ? $subpanelDef['title_key'] : $subpanelKey;
+                $subpanelTitle = translate($subpanelTitleKey, $bean->module_dir);
+                $relationships[$subpanelKey] = array('module' => $module, 'table_name' => $relatedBean->table_name, 'fields' => $fields, 'relationship' => $subpanelKey, 'name' => $subpanelTitle);
+            }
+        }
+        uasort($relationships, function($a, $b) { return strcasecmp($a['name'], $b['name']); });
+        return $relationships;
+    }
+
+    // STIC-Custom - AAM - 20260519 - Parse subpanel loops in PDF template
+    public static function parseSubpanels(string $template, array $beanArr): string
+    {
+        $GLOBALS['log']->fatal('PARSE_SUBPANELS_START: template length=' . strlen($template));
+        $matches = array();
+        if (!preg_match_all(self::SUBPANEL_START_PATTERN, $template, $matches, PREG_OFFSET_CAPTURE)) {
+            $GLOBALS['log']->fatal('PARSE_SUBPANELS: no matches found');
+            return $template;
+        }
+        $GLOBALS['log']->fatal('PARSE_SUBPANELS: found ' . count($matches[0]) . ' matches');
+        self::$aggregates = [];
+        self::$allBeansByTable = [];
+        $result = $template;
+        $subpanelStacks = array();
+        foreach ($matches[0] as $index => $match) {
+            $subpanelKey = $matches[1][$index][0];
+            $parentKey = isset($matches[2][$index][0]) ? $matches[2][$index][0] : null;
+            $optionsStr = isset($matches[3][$index][0]) ? $matches[3][$index][0] : null;
+            if ($parentKey !== null && strpos($parentKey, '=') !== false) { $optionsStr = $parentKey; $parentKey = null; }
+            $subpanelStacks[] = array('key' => $subpanelKey, 'parent' => $parentKey, 'options' => self::parseSubpanelOptions($optionsStr), 'offset' => $match[1], 'full_match' => $match[0], 'end_offset' => null);
+        }
+        $endMatches = array();
+        if (preg_match_all(self::SUBPANEL_END_PATTERN, $template, $endMatches, PREG_OFFSET_CAPTURE)) {
+            foreach ($endMatches[0] as $index => $match) {
+                $endKey = $endMatches[1][$index][0];
+                $endParent = isset($endMatches[2][$index][0]) ? $endMatches[2][$index][0] : null;
+                foreach ($subpanelStacks as &$sp) {
+                    if ($sp['key'] === $endKey && $sp['parent'] === $endParent && $sp['end_offset'] === null) { $sp['end_offset'] = $match[1] + strlen($match[0]); break; }
+                }
+            }
+        }
+        usort($subpanelStacks, function($a, $b) { return $b['offset'] - $a['offset']; });
+        foreach ($subpanelStacks as $subpanel) {
+            if ($subpanel['end_offset'] === null) { continue; }
+            $fullMatch = $subpanel['full_match'];
+            if (empty($fullMatch)) { continue; }
+            $loopStart = $subpanel['offset'] + strlen($fullMatch);
+            $endTagLen = strlen('<!--/$subpanel:' . $subpanel['key'] . '-->');
+            $loopContentLength = $subpanel['end_offset'] - $subpanel['offset'] - strlen($fullMatch) - $endTagLen;
+            if ($loopContentLength < 0) $loopContentLength = 0;
+            $loopContent = substr($template, $loopStart, $loopContentLength);
+            $options = $subpanel['options'];
+            $parsedContent = '';
+            if ($subpanel['parent'] && isset($beanArr[$subpanel['parent']])) {
+                $parentBean = BeanFactory::getBean($subpanel['parent'], $beanArr[$subpanel['parent']]);
+                if ($parentBean) {
+                    $allBeans = self::getRelatedRecords($parentBean, $subpanel['key']);
+                    self::collectBeansForAggregates($allBeans);
+                    $parsedContent = self::parseNestedSubpanel($loopContent, $parentBean, $subpanel['key'], self::applySubpanelOptions($allBeans, $options));
+                }
+            } else {
+                foreach ($beanArr as $beanName => $beanId) {
+                    $bean = BeanFactory::getBean($beanName, $beanId);
+                    if ($bean) {
+                        $allBeans = self::getRelatedRecords($bean, $subpanel['key']);
+                        self::collectBeansForAggregates($allBeans);
+                        $parsedContent .= self::parseNestedSubpanel($loopContent, $bean, $subpanel['key'], self::applySubpanelOptions($allBeans, $options));
+                    }
+                }
+            }
+            $result = substr($result, 0, $subpanel['offset']) . $parsedContent . substr($result, $subpanel['end_offset']);
+        }
+        $result = self::computeAndReplaceAggregates($result);
+        $GLOBALS['log']->fatal('PARSE_SUBPANELS_END: result length=' . strlen($result));
+        return $result;
+    }
+
+    // STIC-Custom - AAM - 20260520 - Collect beans for deduplicated aggregate computation
+    private static function collectBeansForAggregates(array $beans): void {
+        foreach ($beans as $bean) {
+            if (!empty($bean->table_name)) {
+                if (!isset(self::$allBeansByTable[$bean->table_name])) { self::$allBeansByTable[$bean->table_name] = []; }
+                self::$allBeansByTable[$bean->table_name][$bean->id] = $bean;
+            }
+        }
+    }
+
+    // STIC-Custom - AAM - 20260520 - Parse subpanel loop options string
+    private static function parseSubpanelOptions(?string $optionsStr): array {
+        $options = array('order' => null, 'dir' => 'ASC', 'limit' => 100, 'filters' => array());
+        if (empty($optionsStr)) { return $options; }
+        foreach (explode(';', $optionsStr) as $pair) {
+            $pair = trim($pair); if (empty($pair)) continue;
+            $eqPos = strpos($pair, '='); if ($eqPos === false) continue;
+            $key = strtolower(trim(substr($pair, 0, $eqPos)));
+            $value = trim(substr($pair, $eqPos + 1));
+            switch ($key) {
+                case 'order': $options['order'] = $value; break;
+                case 'dir': $options['dir'] = strtoupper($value) === 'DESC' ? 'DESC' : 'ASC'; break;
+                case 'limit': $options['limit'] = max(1, (int)$value); break;
+                case 'filter': $parts = explode(':', $value, 3); if (count($parts) >= 2) { $options['filters'][] = array('field' => $parts[0], 'op' => $parts[1] ?? 'eq', 'value' => $parts[2] ?? ''); } break;
+            }
+        }
+        return $options;
+    }
+
+    // STIC-Custom - AAM - 20260520 - Apply sorting, filtering, and limiting to beans
+    private static function applySubpanelOptions(array $beans, array $options): array {
+        if (empty($beans)) return $beans;
+        if (!empty($options['filters'])) { $beans = self::applyFilters($beans, $options['filters']); }
+        if ($options['order'] !== null && !empty($beans)) {
+            $orderField = $options['order']; $direction = $options['dir'];
+            usort($beans, function($a, $b) use ($orderField, $direction) {
+                $va = $a->$orderField ?? ''; $vb = $b->$orderField ?? '';
+                $cmp = (is_numeric($va) && is_numeric($vb)) ? ((float)$va <=> (float)$vb) : strcasecmp((string)$va, (string)$vb);
+                return $direction === 'DESC' ? -$cmp : $cmp;
+            });
+        }
+        if ($options['limit'] > 0 && count($beans) > $options['limit']) { $beans = array_slice($beans, 0, $options['limit']); }
+        return $beans;
+    }
+
+    // STIC-Custom - AAM - 20260520 - Apply filter conditions
+    private static function applyFilters(array $beans, array $filters): array {
+        return array_filter($beans, function($bean) use ($filters) {
+            foreach ($filters as $filter) {
+                $beanValue = $bean->{$filter['field']} ?? '';
+                if (isset($bean->field_defs[$filter['field']]) && in_array($bean->field_defs[$filter['field']]['type'], ['enum','radioenum','dynamicenum']) && isset($bean->field_defs[$filter['field']]['options'])) {
+                    $beanValue = translate($bean->field_defs[$filter['field']]['options'], $bean->module_dir, $beanValue);
+                }
+                if (!self::compareValues($beanValue, $filter['op'], $filter['value'])) { return false; }
+            }
+            return true;
+        });
+    }
+
+    // STIC-Custom - AAM - 20260520 - Compare two values with operator
+    private static function compareValues($beanValue, string $op, string $filterValue): bool {
+        $op = strtolower($op);
+        $bothNumeric = is_numeric($beanValue) && is_numeric($filterValue);
+        switch ($op) {
+            case 'eq': case '=': return $bothNumeric ? (float)$beanValue == (float)$filterValue : strcasecmp((string)$beanValue, $filterValue) === 0;
+            case 'neq': case '!=': case '<>': return $bothNumeric ? (float)$beanValue != (float)$filterValue : strcasecmp((string)$beanValue, $filterValue) !== 0;
+            case 'gt': case '>': return $bothNumeric ? (float)$beanValue > (float)$filterValue : strcasecmp((string)$beanValue, $filterValue) > 0;
+            case 'gte': case '>=': return $bothNumeric ? (float)$beanValue >= (float)$filterValue : strcasecmp((string)$beanValue, $filterValue) >= 0;
+            case 'lt': case '<': return $bothNumeric ? (float)$beanValue < (float)$filterValue : strcasecmp((string)$beanValue, $filterValue) < 0;
+            case 'lte': case '<=': return $bothNumeric ? (float)$beanValue <= (float)$filterValue : strcasecmp((string)$beanValue, $filterValue) <= 0;
+            case 'like': case 'contains': return stripos((string)$beanValue, $filterValue) !== false;
+            case 'in': foreach (array_map('trim', explode(',', $filterValue)) as $item) { if (($bothNumeric && (float)$beanValue == (float)$item) || strcasecmp((string)$beanValue, $item) === 0) return true; } return false;
+            default: return strcasecmp((string)$beanValue, $filterValue) === 0;
+        }
+    }
+
+    // STIC-Custom - AAM - 20260520 - Compute aggregates and replace placeholders in template
+    private static function computeAndReplaceAggregates(string $template): string {
+        if (empty(self::$allBeansByTable)) { return $template; }
+        if (!preg_match_all(self::AGGREGATE_PATTERN, $template, $aggMatches)) { return $template; }
+        $replacements = [];
+        foreach ($aggMatches[0] as $idx => $fullMatch) {
+            $func = strtoupper($aggMatches[1][$idx]); $table = $aggMatches[2][$idx]; $field = $aggMatches[3][$idx];
+            if (isset($replacements[$fullMatch])) continue;
+            $beans = self::$allBeansByTable[$table] ?? [];
+            $values = array();
+            foreach ($beans as $bean) { if ($func === 'COUNT') { $values[] = 1; } else { $val = $bean->$field ?? null; if ($val !== null && $val !== '') { $values[] = is_numeric($val) ? (float)$val : $val; } } }
+            if (empty($values)) { $replacements[$fullMatch] = ($func === 'COUNT' ? '0' : ''); continue; }
+            $allNumeric = array_reduce($values, function($c, $v) { return $c && is_numeric($v); }, true);
+            switch ($func) {
+                case 'SUM': $replacements[$fullMatch] = $allNumeric ? number_format(array_sum($values), 2, ',', '.') : ''; break;
+                case 'COUNT': $replacements[$fullMatch] = (string)count($values); break;
+                case 'AVG': $replacements[$fullMatch] = ($allNumeric && count($values) > 0) ? number_format(array_sum($values) / count($values), 2, ',', '.') : ''; break;
+                case 'MIN': $replacements[$fullMatch] = $allNumeric ? number_format(min($values), 2, ',', '.') : (is_string($values[0]) ? min($values) : ''); break;
+                case 'MAX': $replacements[$fullMatch] = $allNumeric ? number_format(max($values), 2, ',', '.') : (is_string($values[0]) ? max($values) : ''); break;
+            }
+        }
+        foreach ($replacements as $search => $replacement) { $template = str_replace($search, $replacement, $template); }
+        return $template;
+    }
+
+    // STIC-Custom - AAM - 20260519 - Handle nested subpanel loop rendering
+    public static function parseNestedSubpanel(string $template, SugarBean $parentBean, string $relationshipName, array $relatedBeans = null): string {
+        $GLOBALS['log']->fatal('NESTED_DEBUG: relationship=' . $relationshipName);
+        if ($relatedBeans === null) { $relatedBeans = self::getRelatedRecords($parentBean, $relationshipName); }
+        $GLOBALS['log']->fatal('NESTED_DEBUG: found ' . count($relatedBeans) . ' related beans');
+        if (empty($relatedBeans)) { return ''; }
+        $hasNested = preg_match(self::SUBPANEL_START_PATTERN, $template);
+        $result = '';
+        foreach ($relatedBeans as $relatedBean) {
+            // STIC-Custom - AAM - 20260520 - Fully load bean to populate all fields
+            if (method_exists($relatedBean, 'retrieve') && !empty($relatedBean->id)) { $relatedBean->retrieve($relatedBean->id); }
+            $rowContent = $template;
+            if ($hasNested) {
+                $subpanelRelationships = self::getSubpanelRelationships($relatedBean);
+                preg_match_all(self::SUBPANEL_START_PATTERN, $rowContent, $nestedMatches, PREG_OFFSET_CAPTURE);
+                $nestedSubpanels = array();
+                foreach ($nestedMatches[0] as $ni => $nm) { $nestedSubpanels[] = array('key' => $nestedMatches[1][$ni][0], 'offset' => $nm[1]); }
+                usort($nestedSubpanels, function($a, $b) { return $b['offset'] - $a['offset']; });
+                foreach ($nestedSubpanels as $nested) {
+                    if (isset($subpanelRelationships[$nested['key']])) {
+                        $nestedContent = self::parseNestedSubpanel($rowContent, $relatedBean, $nested['key']);
+                        $pat = '/<!--\\$subpanel:' . $nested['key'] . '-->(.*?)<!--\\\/\\$subpanel:' . $nested['key'] . '-->/is';
+                        if (preg_match($pat, $rowContent, $nm)) { $rowContent = str_replace($nm[0], $nestedContent, $rowContent); }
+                    }
+                }
+            }
+            $rowContent = self::parse_template_bean($rowContent, $relatedBean->table_name, $relatedBean);
+            $result .= $rowContent;
+        }
+        return $result;
+    }
+
+    // STIC-Custom - AAM - 20260519 - Get related records via relationship link field
+    public static function getRelatedRecords(SugarBean $bean, string $relationship): array {
+        $relatedBeans = array();
+        if (!isset($bean->field_defs[$relationship])) { return $relatedBeans; }
+        $fieldDef = $bean->field_defs[$relationship];
+        if (isset($fieldDef['type']) && $fieldDef['type'] === 'link' && method_exists($bean, 'get_linked_beans')) {
+            $beanName = isset($fieldDef['bean_name']) ? $fieldDef['bean_name'] : (isset($fieldDef['module']) ? BeanFactory::getBeanName($fieldDef['module']) : null);
+            if ($beanName) { $relatedBeans = $bean->get_linked_beans($relationship, $beanName, array(), 0, 9999); }
+        }
+        return $relatedBeans;
+    }
+
+    // STIC-Custom - AAM - 20260519 - Get available subpanel fields for template editor UI
+    public static function getSubpanelFieldsForModule(string $moduleName): array {
+        $bean = BeanFactory::getBean($moduleName);
+        return $bean ? self::getSubpanelRelationships($bean) : array();
+    }
+    // END STIC-Custom
+
 }
