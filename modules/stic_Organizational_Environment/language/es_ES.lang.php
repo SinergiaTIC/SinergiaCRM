@@ -64,6 +64,8 @@ $mod_strings = array(
     'LBL_NEW_FORM_TITLE' => 'Nuevo Entorno Organizacional',
     'LBL_DEFAULT_PANEL' => 'Datos generales',
     'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
+    'LBL_NETWORK_TYPE'   => 'Relación con',
+    'LBL_NETWORK_ENTITY' => 'Organización o persona del entorno',
     'LBL_RELATIONSHIP_TYPE' => 'Tipo de relación',
     'LBL_BASE_ORGANIZATION' => 'Organización base',
     'LBL_NETWORK_PERSON' => 'Persona del entorno',
@@ -72,9 +74,4 @@ $mod_strings = array(
     'LBL_END_DATE' => 'Fecha de baja',
     'LBL_REFERENCE_ORGANIZATION' => 'Organización de referencia',
     'LBL_ACTIVE' => 'Activo',
-);
-
-$mod_list_strings['stic_organizational_environment_relationships_list'] = array(
-    'belongs_to' => 'Pertenece a',
-    'headquarters_branch_of' => 'Sede/Delegación de',
 );

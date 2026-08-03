@@ -24,41 +24,36 @@
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
-
-class stic_Organizational_EnvironmentLogicHooks {
-
-    public function before_save(&$bean, $event, $arguments) {
+class stic_Organizational_EnvironmentLogicHooks
+{
+    public function before_save(&$bean, $event, $arguments)
+    {
         if (empty($bean->name)) {
             $this->autoGenerateName($bean);
         }
     }
 
-    private function autoGenerateName(&$bean) {
-        $networkOrgName = "";
-        $relationshipType = "";
-        $baseOrgName = "";
+    private function autoGenerateName(&$bean)
+    {
+        global $app_list_strings;
 
+        $networkName = '';
         if (!empty($bean->network_organization_id_c)) {
             $relatedBean = BeanFactory::getBean('Accounts', $bean->network_organization_id_c);
-            if($relatedBean) {
-                $networkOrgName = $relatedBean->name;
-            }
-        } else if(!empty($bean->network_person_id_c)) {
+            $networkName = $relatedBean ? $relatedBean->name : '';
+        } elseif (!empty($bean->network_person_id_c)) {
             $relatedBean = BeanFactory::getBean('Contacts', $bean->network_person_id_c);
-            if($relatedBean) {
-                $networkOrgName = $relatedBean->first_name . '-' . $relatedBean->last_name;
-            }
+            $networkName = $relatedBean ? $relatedBean->first_name . ' ' . $relatedBean->last_name : '';
         }
 
+        $baseName = '';
         if (!empty($bean->base_organization_id_c)) {
             $relatedBean = BeanFactory::getBean('Accounts', $bean->base_organization_id_c);
-            if ($relatedBean) {
-                $baseOrgName = $relatedBean->name;
-            }
+            $baseName = $relatedBean ? $relatedBean->name : '';
         }
 
-        $relationshipType = $bean->relationship_type;
+        $typeLabel = $app_list_strings['stic_organizational_environment_relationships_list'][$bean->relationship_type] ?? $bean->relationship_type;
 
-        $bean->name = "$networkOrgName - $relationshipType - $baseOrgName";
+        $bean->name = "$networkName - $typeLabel - $baseName";
     }
 }

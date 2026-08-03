@@ -33,10 +33,25 @@ $dictionary['stic_Organizational_Environment'] = array(
     "assignable" => true,
     "plugin_use_workflow" => false,
     'fields' => array(
-     
+        'network_type_c' => array(
+            'name' => 'network_type_c',
+            'type' => 'enum',                    
+            'options' => 'stic_organizational_environment_network_type_list',
+            'vname' => 'LBL_NETWORK_TYPE',
+            'default' => 'organization',
+            'studio' => 'visible',
+            'massupdate' => true,
+            'audited' => false,
+            'importable' => true,
+            'unified_search' => false,
+            'required' => false,
+        ),
         'relationship_type' => array(
             'name' => 'relationship_type',
-            'type' => 'enum',
+            'type' => 'dynamicenum',
+            'dbtype' => 'enum',
+            'parentenum' => 'network_type_c',
+            'default' => 1,
             'required' => true,
             'options' => 'stic_organizational_environment_relationships_list',
             'vname' => 'LBL_RELATIONSHIP_TYPE',
@@ -62,6 +77,7 @@ $dictionary['stic_Organizational_Environment'] = array(
         'start_date' => array(
             'name' => 'start_date',
             'type' => 'date',
+            'required' => true,
             'vname' => 'LBL_START_DATE',
             'massupdate' => true,
             'enable_range_search' => true,
@@ -160,7 +176,10 @@ $dictionary['stic_Organizational_Environment'] = array(
 if (!class_exists('VardefManager')) {
     require_once 'include/SugarObjects/VardefManager.php';
 }
-VardefManager::createVardef('stic_Organizational_Environment', 'stic_Organizational_Environment', array('basic', 'assignable', 'security_groups'));
+VardefManager::createVardef(
+    'stic_Organizational_Environment',
+    'stic_Organizational_Environment', 
+    array('basic', 'assignable', 'security_groups'));
 
 $dictionary['stic_Organizational_Environment']['fields']['name']['required'] = '0';
 $dictionary['stic_Organizational_Environment']['fields']['name']['importable'] = true;

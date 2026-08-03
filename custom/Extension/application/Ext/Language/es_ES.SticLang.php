@@ -799,6 +799,37 @@ $app_list_strings['stic_contacts_relationships_end_reasons_list']['economy'] = '
 $app_list_strings['stic_contacts_relationships_end_reasons_list']['personal'] = 'Razones personales';
 $app_list_strings['stic_contacts_relationships_end_reasons_list']['other'] = 'Otros';
 
+//Entorno organizacional: Relación con el entorno (tipos de organización)
+$app_list_strings['stic_organizational_environment_relationships_list'][''] = '';
+$app_list_strings['stic_organizational_environment_relationships_list']['organization_belongs_to'] = 'Pertenece a';
+$app_list_strings['stic_organizational_environment_relationships_list']['organization_headquarters_branch_of'] = 'Sede/Delegación de';
+$app_list_strings['stic_organizational_environment_relationships_list']['organization_joint_venture_of'] = 'Unión temporal de empresas de';
+$app_list_strings['stic_organizational_environment_relationships_list']['organization_associate_of'] = 'Asociada de';
+$app_list_strings['stic_organizational_environment_relationships_list']['organization_affiliated_with'] = 'Vinculada con';
+//Entorno organizacional: Relación con el entorno (tipos de persona)
+$app_list_strings['stic_organizational_environment_relationships_list']['person_administration_manager_of'] = 'Responsable de administración de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_coordinator_manager_of'] = 'Coordinación / Responsable de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_contact_for'] = 'Contacto de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_management'] = 'Gerencia / Dirección';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_committee_member'] = 'Miembro de comisión';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_governing_board'] = 'Órgano de Gobierno';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_trustee_of'] = 'Patrono/a de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_president_of'] = 'Presidente/a de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_volunteer_coordinator_of'] = 'Responsable de voluntariado de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_secretary_of'] = 'Secretario/a de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_member_of'] = 'Socio/a de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_technical_specialist_of'] = 'Técnico/a de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_treasurer_of'] = 'Tesorero/a de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_vice_secretary_of'] = 'Vicesecretario/a de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_vice_president_of'] = 'Vicepresidente/a de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_board_member_of'] = 'Vocal de';
+$app_list_strings['stic_organizational_environment_relationships_list']['person_volunteer_of'] = 'Voluntario/a de';
+
+//Entorno organizacional: Tipo de relación
+$app_list_strings['stic_organizational_environment_network_type_list'][''] = '';
+$app_list_strings['stic_organizational_environment_network_type_list']['organization'] = 'Organización';
+$app_list_strings['stic_organizational_environment_network_type_list']['person'] = 'Persona';
+
 // Oportunidades: Tipos
 $app_list_strings['stic_opportunities_types_list'][''] = '';
 $app_list_strings['stic_opportunities_types_list']['public_tender'] = 'Concurso público';
