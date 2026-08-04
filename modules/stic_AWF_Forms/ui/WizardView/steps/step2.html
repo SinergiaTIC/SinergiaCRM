@@ -111,8 +111,9 @@
                           </button>
                         </template>
                         <!-- Chevron Collapse Button -->
-                        <button type="button" class="btn ms-2" @click="toggleCollapse()" :title="isCollapsed ? '[Expandir]' : '[Col·lapsar]'">
-                          <span class="suitepicon" :class="isCollapsed ? 'suitepicon-action-move-down' : 'suitepicon-action-move-up'"></span>
+                        <button class="btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2" @click="toggleCollapse()" 
+                                :title="isCollapsed ? utils.translate('LBL_BUTTON_EXPAND') : utils.translate('LBL_BUTTON_COLLAPSE')">
+                          <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
                         </button>
                       </div>
                     </div>
