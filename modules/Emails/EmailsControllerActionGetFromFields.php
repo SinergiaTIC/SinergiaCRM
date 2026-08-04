@@ -205,7 +205,7 @@ class EmailsControllerActionGetFromFields
             // STIC-Custom 20260803 PCS - Avoid adding the system default outbound account twice:
             // it may already have been added by the collector through addSystemEmailAddress /
             // fillDataAddressWithSystemMailerSettings (same id as the system mailer settings).
-            // STIC#
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1366
             $existingIds = array_column($dataAddresses, 'id');
             if (in_array($id, $existingIds, true) && $type === 'system') {
                 continue;
@@ -217,7 +217,7 @@ class EmailsControllerActionGetFromFields
                 'name' => $name,
                 'attributes' => [
                     // STIC-Custom 20260803 PCS - Avoid encoding errors.
-                    // STIC#
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1366
                     // 'from' => $fromAddress,
                     // 'name' => $fromName,
                     // 'oe' => '',

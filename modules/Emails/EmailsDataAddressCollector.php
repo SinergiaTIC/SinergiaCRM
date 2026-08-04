@@ -674,7 +674,7 @@ class EmailsDataAddressCollector
             $system = $this->getOe()->getSystemMailerSettings();
             // STIC-Custom 20260803 PCS - Avoid adding the system default outbound account twice when
             // it has already been added by addOutboundEmailAccounts (same id in the outbound_email table).
-            // STIC#
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1366
             $existingIds = array_column($dataAddresses, 'id');
             if (in_array($system->id, $existingIds, true)) {
                 return $dataAddresses;
@@ -704,7 +704,7 @@ class EmailsDataAddressCollector
             $system = $this->getOe()->getSystemMailerSettings();
             // STIC-Custom 20260803 PCS - Avoid adding the system default outbound account twice when
             // it has already been added by addOutboundEmailAccounts (same id in the outbound_email table).
-            // STIC#
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1366
             $existingIds = array_column($dataAddresses, 'id');
             if (in_array($system->id, $existingIds, true)) {
                 return;
