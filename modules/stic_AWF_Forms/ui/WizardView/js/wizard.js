@@ -1150,6 +1150,10 @@ class WizardStep2 {
     return {
       formConfig: initial_formConfig,
 
+      get visualGroups() {
+        return this.formConfig.getVisualGroups();
+      },
+
       deleteDataBlock(dataBlock) {
         this.formConfig.deleteDataBlock(dataBlock);
         Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
@@ -1167,6 +1171,11 @@ class WizardStep2 {
     return {
       formConfig: initial_formConfig,
       dataBlock: dataBlock,
+      isCollapsed: false,
+
+      toggleCollapse() {
+        this.isCollapsed = !this.isCollapsed;
+      },
 
       init() {
         this.$watch('dataBlock.text', (newText, oldText) => {

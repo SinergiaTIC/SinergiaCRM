@@ -2300,6 +2300,52 @@ class stic_AwfConfiguration {
   }
 
   /**
+   * Returns an array of visual group structures for UI rendering.
+   * Groups root repeatable blocks with their child blocks, and places standalone blocks in a default non-group container.
+   * @returns {Array<{id: string, isGroup: boolean, rootBlock: stic_AwfDataBlock|null, blocks: stic_AwfDataBlock[]}>}
+   */
+  getVisualGroups() {
+    const groups = [];
+    const standaloneGroup = {
+      id: 'group_standalone',
+      isGroup: false,
+      rootBlock: null,
+      blocks: []
+    };
+    const processedIds = new Set();
+
+    this.data_blocks.forEach(block => {
+      if (processedIds.has(block.id)) return;
+
+      // Skip child blocks here; they belong to their repeatable root
+      if (block.parent_repeat_root && block.parent_repeat_root !== '') return;
+
+      if (block.is_repeatable) {
+        const children = this.data_blocks.filter(b => b.parent_repeat_root === block.id);
+        groups.push({
+          id: 'group_' + block.id,
+          isGroup: true,
+          rootBlock: block,
+          blocks: [block, ...children] // Root block first, then dependent children
+        });
+
+        processedIds.add(block.id);
+        children.forEach(c => processedIds.add(c.id));
+      } else {
+        standaloneGroup.blocks.push(block);
+        processedIds.add(block.id);
+      }
+    });
+
+    // Prepend standalone group if it contains any blocks
+    if (standaloneGroup.blocks.length > 0) {
+      groups.unshift(standaloneGroup);
+    }
+
+    return groups;
+  }
+
+  /**
    * Regenerates automatic actions (Save and Relate) based on current Data Blocks.
    * It should be called before entering action configuration (Step 3).
    */
