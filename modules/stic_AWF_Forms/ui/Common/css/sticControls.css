@@ -205,12 +205,20 @@
   text-align: start !important;
 }
 
-.card .datablock.awf-child-block {
+.card.groupdatablock .card-header {
+  background-color: #e9f2ff;
+}
+
+.card.groupdatablock {
+  border-color: #80abec; 
+}
+
+.card.datablock.child-block {
   margin-left: 2rem;
 }
 
-.card .datablock.awf-child-block .card-header {
-  background-color: rgba(13, 110, 253, 0.05);
+.card.datablock.child-block .card-header {
+  background-color: #ececec;
 }
 
 .datablock-module {
