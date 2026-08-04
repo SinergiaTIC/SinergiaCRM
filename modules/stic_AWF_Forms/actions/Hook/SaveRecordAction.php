@@ -75,6 +75,62 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
         // Duplicate detection logic
         $duplicateRules = $block->dataBlock->duplicate_detections ?? [];
+
+        // STIC-Custom OC - 20250803 - Intra-POST duplicate detection for repeatable blocks
+        // When a repeatable block submits several instances in the same request, a later
+        // instance may be a duplicate of one created earlier in this same request. Detect it
+        // against the block's indexed reference map (beans registered by previous instances)
+        // and apply the configured duplicate strategy.
+        if ($block->instanceIndex !== null && !empty($duplicateRules)) {
+            $indexedRefs = $block->dataBlock->getIndexedBeanReferences();
+            foreach ($indexedRefs as $otherIndex => $ref) {
+                if ($otherIndex === $block->instanceIndex) continue;
+
+                $otherBean = BeanFactory::getBean($module, $ref->beanId);
+                if (!$otherBean) continue;
+
+                $matchedRule = null;
+                foreach ($duplicateRules as $rule) {
+                    $match = true;
+                    foreach ($rule->fields as $fieldName) {
+                        $fieldValue = $block->getFieldValue($fieldName)?->value;
+                        if ($fieldValue === null || $fieldValue === '') {
+                            $match = false;
+                            break;
+                        }
+                        if (($otherBean->$fieldName ?? null) != $fieldValue) {
+                            $match = false;
+                            break;
+                        }
+                    }
+                    if ($match) {
+                        $matchedRule = $rule;
+                        break;
+                    }
+                }
+
+                if ($matchedRule !== null) {
+                    $bean = $otherBean;
+                    $onDuplicateAction = $matchedRule->on_duplicate;
+
+                    $fieldLabels = [];
+                    foreach ($matchedRule->fields as $fName) {
+                        $fieldDef = $block->dataBlock->fields[$fName] ?? null;
+                        if ($fieldDef) {
+                            $label = !empty($fieldDef->label) ? $fieldDef->label : (!empty($fieldDef->text_original) ? $fieldDef->text_original : $fName);
+                            $fieldLabels[] = rtrim($label, ': ');
+                        } else {
+                            $fieldLabels[] = $fName;
+                        }
+                    }
+                    $matchedRuleFields = implode(', ', $fieldLabels);
+                    break;
+                }
+            }
+        }
+        // END STIC-Custom OC
+
+        if ($bean === null) {
         foreach ($duplicateRules as $rule) {
             $scalarFields = [];
             $emailValues = [];
@@ -196,6 +252,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 break; // Stop searching, we found one
             }
         }
+        } // END STIC-Custom OC: skip standard DB duplicate detection when intra-POST match was found
 
         // Action Logic (Create or Handle Duplicate) and performed modifications
         $modificationType = null;
@@ -316,7 +373,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                         $idName = $cfg['id_name'] ?? '';
                         $targetBlockId = $cfg['target_block_id'] ?? '';
                         $targetBlock = $context->formConfig->data_blocks[$targetBlockId] ?? null;
-                        $targetBeanRef = $targetBlock?->getBeanReference();
+                        $targetBeanRef = $targetBlock?->getBeanReference($context->getCurrentInstanceIndex());
                         $targetId = $targetBeanRef?->beanId ?? '';
                         $metadata[] = ['key' => 'injected_fk', 'label' => $idName, 'value' => "{$relName} → {$targetId}"];
                     }
@@ -480,7 +537,15 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 continue;
             }
 
-            $targetBeanRef = $targetBlock->getBeanReference();
+            // STIC-Custom OC - 20250803 - Instance-aware relation FK injection
+            // If the target block belongs to a repeatable group, read its per-instance
+            // bean reference using the current instance index. Otherwise use the scalar reference.
+            $instanceIndex = $context->getCurrentInstanceIndex();
+            $isTargetRepeatable = $targetBlock->is_repeatable || !empty($targetBlock->parent_repeat_root);
+            $targetBeanRef = $isTargetRepeatable
+                ? $targetBlock->getBeanReference($instanceIndex)
+                : $targetBlock->getBeanReference();
+            // END STIC-Custom OC
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
                 $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlock->name}' has no bean ID. Check action order.");
                 continue;

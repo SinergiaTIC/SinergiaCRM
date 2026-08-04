@@ -149,7 +149,11 @@ class RelateRecordsAction extends HookBeanActionDefinition {
             if (!$targetDataBlock || !($targetDataBlock instanceof DataBlockResolved)) {
                 return new ActionResult(ResultStatus::ERROR, $actionConfig, "Invalid value in target_object parameter as datablock: is not a valid DataBlockResolved.");
             }
-            $targetBeanRef = $targetDataBlock->dataBlock->getBeanReference();
+            // STIC-Custom OC - 20250803 - Instance-aware target reference for repeatable blocks
+            // The target DataBlockResolved carries the instance index (null for scalar blocks),
+            // so the per-instance bean reference is read accordingly.
+            $targetBeanRef = $targetDataBlock->dataBlock->getBeanReference($targetDataBlock->instanceIndex);
+            // END STIC-Custom OC
             if ($targetBeanRef === null || empty($targetBeanRef->beanId)) {
                 return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetDataBlock->dataBlock->name}' has no ID. Check Action Order.");
             }

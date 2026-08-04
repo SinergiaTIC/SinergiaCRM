@@ -97,49 +97,109 @@ class ServerActionFlowExecutor {
                     }
                 }
 
-                // Parameter resolution
+                // STIC-Custom OC - 20250803 - Repeatable data blocks support
                 $paramDefinitions  = $actionExecutor->getParameters();
                 $paramConfigurations = $actionConfig->parameters;
-                $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
-                $actionConfig->setResolvedParameters($resolvedParameters);
 
-                // Execute the action
-                $lastResult = $actionExecutor->execute($this->context, $actionConfig);
-                $lastResult->setAction($actionExecutor);
-                
-                // Context update
-                $this->context->addActionResult($lastResult);
-
-                if ($lastResult->isWait()) {
-                    // Mark the response as waiting
-                    if ($this->context->responseBean) {
-                        $this->context->responseBean->status = 'awaiting_action';
-                        $this->context->responseBean->save();
+                // Detect whether the action operates on a block that belongs to a repeatable group
+                // (either the repeatable root itself or a child of it).
+                $targetBlockId = null;
+                if (!empty($paramDefinitions)) {
+                    $paramConfigMap = [];
+                    foreach ($paramConfigurations as $paramConfig) {
+                        $paramConfigMap[$paramConfig->name] = $paramConfig;
                     }
+                    foreach ($paramDefinitions as $paramDef) {
+                        if ($paramDef->type !== ActionParameterType::DATA_BLOCK) continue;
+                        $paramConfig = $paramConfigMap[$paramDef->name] ?? null;
+                        $targetBlockId = $paramConfig->value ?? $paramDef->defaultValue;
+                        break;
+                    }
+                }
+
+                $repeatRoot = null;
+                if ($targetBlockId !== null) {
+                    $targetBlock = $this->context->formConfig->data_blocks[$targetBlockId] ?? null;
+                    if ($targetBlock !== null) {
+                        if ($targetBlock->is_repeatable) {
+                            $repeatRoot = $targetBlock;
+                        } elseif (!empty($targetBlock->parent_repeat_root)) {
+                            $repeatRoot = $this->context->formConfig->data_blocks[$targetBlock->parent_repeat_root] ?? null;
+                        }
+                    }
+                }
+
+                // Only record-saving and relationship-creation actions are expanded once per instance.
+                // Other actions keep the legacy behavior: executed exactly once without an instance index.
+                $actionClassName = get_class($actionExecutor);
+                $isExpandableAction = ($actionClassName === 'SaveRecordAction') || ($actionClassName === 'RelateRecordsAction');
+
+                $instanceIndexes = [null];
+                if ($repeatRoot !== null && $isExpandableAction) {
+                    $instances = DataBlockResolved::resolveInstances($repeatRoot, $this->context->formData, $this->context);
+                    if (empty($instances)) {
+                        // Optional repeatable group (min_instances = 0) with zero instances: skip the action.
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Repeatable group '{$repeatRoot->name}' has no instances.");
+                        $this->context->addActionResult($skippedResult);
+                        $lastResult = $skippedResult;
+                        continue;
+                    }
+                    $instanceIndexes = array_map(fn($instance) => $instance->instanceIndex, $instances);
+                }
+                // END STIC-Custom OC
+
+                foreach ($instanceIndexes as $instanceIndex) {
+                    // STIC-Custom OC - 20250803 - The context instance index MUST be set before any
+                    // parameter resolution so that per-instance form fields and bean references are read.
+                    $this->context->setCurrentInstanceIndex($instanceIndex);
+                    // END STIC-Custom OC
+
+                    // Parameter resolution
+                    $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
+                    $actionConfig->setResolvedParameters($resolvedParameters);
+
+                    // Execute the action
+                    $lastResult = $actionExecutor->execute($this->context, $actionConfig);
+                    $lastResult->setAction($actionExecutor);
                     
-                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $lastResult->message);
+                    // Context update
+                    $this->context->addActionResult($lastResult);
 
-                    // Return $lastResult to finish: the engine will be put on hold
-                    return $lastResult; 
-                }
+                    if ($lastResult->isWait()) {
+                        // Mark the response as waiting
+                        if ($this->context->responseBean) {
+                            $this->context->responseBean->status = 'awaiting_action';
+                            $this->context->responseBean->save();
+                        }
+                        
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $lastResult->message);
 
-                // Error detection
-                if ($lastResult->isError()) {
-                    // If the action is marked to continue on error, we log the error but we continue with the next actions of the flow.
-                    if ($actionConfig->continue_on_error) {
-                        $lastResult->status = ResultStatus::SKIPPED;
-                        $lastResult->message = "Ignored Error: " . $lastResult->message;
-                        $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
-                        continue; 
+                        // Return $lastResult to finish: the engine will be put on hold
+                        return $lastResult; 
                     }
 
-                    // If there's an error flow: immediately switch to the error flow
-                    if ($errorFlowConfig !== null) {
-                        return $this->executeFlow($errorFlowConfig);
+                    // Error detection
+                    if ($lastResult->isError()) {
+                        // If the action is marked to continue on error, we log the error but we continue with the next actions of the flow.
+                        if ($actionConfig->continue_on_error) {
+                            $lastResult->status = ResultStatus::SKIPPED;
+                            $lastResult->message = "Ignored Error: " . $lastResult->message;
+                            $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
+                            continue 2; 
+                        }
+
+                        // If there's an error flow: immediately switch to the error flow
+                        if ($errorFlowConfig !== null) {
+                            return $this->executeFlow($errorFlowConfig);
+                        }
+                        // If there is no error flow, finish
+                        return $lastResult; 
                     }
-                    // If there is no error flow, finish
-                    return $lastResult; 
                 }
+
+                // STIC-Custom OC - 20250803 - Reset the instance index after the action execution
+                $this->context->setCurrentInstanceIndex(null);
+                // END STIC-Custom OC
             }
         } catch (\Throwable $t) {
             // Catch any Exception or PHP Fatal Error and convert it into a context error

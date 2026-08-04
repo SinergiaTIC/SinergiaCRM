@@ -141,6 +141,23 @@ $mod_strings = array (
   'LBL_DATABLOCK_NAME' => 'Nombre',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Nombre interno',
 
+  // STIC-Custom OC - 20250803 - Datu-bloke errepikagarria
+  'LBL_DATABLOCK_REPEATABLE' => 'Bloke errepikagarria',
+  'LBL_DATABLOCK_REPEATABLE_TITLE' => 'Erabiltzaileek bloke honen hainbat sarrera gehi ditzakete',
+  'LBL_DATABLOCK_REPEATABLE_ENABLED' => 'Blokea errepikagarria da (0..N sarrera)',
+  'LBL_DATABLOCK_MIN_INSTANCES' => 'Gutxieneko sarrera kopurua',
+  'LBL_DATABLOCK_MAX_INSTANCES' => 'Gehieneko sarrera kopurua',
+  'LBL_DATABLOCK_MAX_INSTANCES_HELP' => 'Utzi hutsik sarrera kopuru mugagabea izateko.',
+  'LBL_DATABLOCK_REPEATABLE_OPTIONAL_WARNING' => 'Minimoa 0 bada, blokea aukerakoa da eta hutsik utz daiteke.',
+  'LBL_DATABLOCK_REPEATABLE_NESTING_ERROR' => 'Bloke errepikagarriak ezin dira beste bloke batzuen barruan egon.',
+  'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Bloke errepikagarri baten semeak ezin dira modu independentean mugitu.',
+  'LBL_DATABLOCK_GROUP_TITLE' => 'Taldearen izenburua',
+  'LBL_DATABLOCK_ADD_LABEL' => 'Gehitu botoiaren testua',
+  'LBL_DATABLOCK_REMOVE_LABEL' => 'Ezabatu botoiaren testua',
+  'LBL_DATABLOCK_ADD_INSTANCE_DEFAULT' => 'Gehitu beste bat',
+  'LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT' => 'Ezabatu',
+  // END STIC-Custom OC
+
   // DataBlock -> Fields
   'LBL_FIELDS' => 'Campos',
   'LBL_FIELDS_FORM_TAB' => 'Formulario',

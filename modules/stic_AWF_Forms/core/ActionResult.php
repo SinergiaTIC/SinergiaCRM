@@ -110,7 +110,11 @@ class ActionResult {
         $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $submittedData);
         $this->addModifiedBean($modifiedBean);
 
-        $block->dataBlock->setBeanReference($bean->id);
+        // STIC-Custom OC - 20250803 - Indexed bean references for repeatable blocks
+        // The resolved block carries the instance index (null for scalar blocks),
+        // so the reference is stored per instance in the block's indexed map.
+        $block->dataBlock->setBeanReference($bean->id, $block->instanceIndex);
+        // END STIC-Custom OC
     }
 
     /**

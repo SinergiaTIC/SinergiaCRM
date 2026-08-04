@@ -1001,6 +1001,69 @@ class WizardStep2 {
         }
         
 
+        // Store for the Repeatable DataBlock configuration
+        if (!Alpine.store('repeatableModal')) {
+          Alpine.store('repeatableModal', {
+            isOpen: false,
+            block: null,
+            originalBlock: null,
+
+            get formConfig() { return window.alpineComponent.formConfig; },
+
+            open(item) {
+              if (!this.formConfig.canBeRepeatable(item)) {
+                alert(utils.translate('LBL_DATABLOCK_REPEATABLE_NESTING_ERROR'));
+                return;
+              }
+              this.block = item;
+              // Keep a shallow clone for cancel
+              this.originalBlock = { ...item };
+              this.isOpen = true;
+            },
+
+            close() {
+              if (this.block && this.originalBlock) {
+                // Restore changed values on cancel
+                this.block.is_repeatable = this.originalBlock.is_repeatable;
+                this.block.min_instances = this.originalBlock.min_instances;
+                this.block.max_instances = this.originalBlock.max_instances;
+                this.block.group_title = this.originalBlock.group_title;
+                this.block.add_button_label = this.originalBlock.add_button_label;
+                this.block.remove_button_label = this.originalBlock.remove_button_label;
+              }
+              this.isOpen = false;
+              this.block = null;
+              this.originalBlock = null;
+            },
+
+            save() {
+              if (!this.block) return;
+              if (this.block.is_repeatable) {
+                if (this.block.min_instances === '' || this.block.min_instances === null || this.block.min_instances === undefined) {
+                  this.block.min_instances = 1;
+                }
+                this.block.min_instances = Math.max(0, Math.min(1, parseInt(this.block.min_instances, 10) || 0));
+                this.block.max_instances = this.block.max_instances ? Math.max(0, parseInt(this.block.max_instances, 10) || 0) : null;
+                this.block.group_title = this.block.group_title || this.block.text;
+                this.block.add_button_label = this.block.add_button_label || utils.translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT');
+                this.block.remove_button_label = this.block.remove_button_label || utils.translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT');
+                this.formConfig.propagateRepeatableRoot(this.block.id);
+              } else {
+                this.block.min_instances = 1;
+                this.block.max_instances = null;
+                this.block.group_title = '';
+                this.block.add_button_label = '';
+                this.block.remove_button_label = '';
+                this.formConfig.clearRepeatableRoot(this.block.id);
+              }
+              this.isOpen = false;
+              this.block = null;
+              this.originalBlock = null;
+              window.alpineComponent.formConfig.prepareForSave();
+            }
+          });
+        }
+
         // Store for the Relationship Creator management
         if (!Alpine.store('relCreator')) {
           Alpine.store('relCreator', {
@@ -2610,10 +2673,27 @@ class WizardStep4 {
 
         const fromSection = this.formConfig.layout.structure.find(s => s.id == fromSectionId);
         const toSection = this.formConfig.layout.structure.find(s => s.id == toSectionId);
+        if (!fromSection || !toSection) return;
 
-        if (fromSection && toSection) {
-          fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
-          toSection.elements.push(element);
+        const block = this.getDataBlock(element);
+        if (block && block.parent_repeat_root && block.parent_repeat_root !== '') {
+          // Children of a repeatable root cannot be moved independently
+          alert(utils.translate('LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD'));
+          return;
+        }
+
+        // Move the element itself
+        fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
+        toSection.elements.push(element);
+
+        // If this is a repeatable root, drag its children with it
+        if (block && block.is_repeatable) {
+          const childIds = new Set(this.formConfig.data_blocks
+            .filter(b => b.parent_repeat_root === block.id)
+            .map(b => b.id));
+          const childElements = fromSection.elements.filter(el => el.type === 'datablock' && childIds.has(el.ref_id));
+          fromSection.elements = fromSection.elements.filter(el => !childIds.has(el.ref_id));
+          toSection.elements.push(...childElements);
         }
       },
 

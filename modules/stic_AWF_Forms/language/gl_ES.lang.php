@@ -141,6 +141,23 @@ $mod_strings = array (
   'LBL_DATABLOCK_NAME' => 'Nome',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Nome interno',
 
+  // STIC-Custom OC - 20250803 - Bloque de datos repetible
+  'LBL_DATABLOCK_REPEATABLE' => 'Bloque repetible',
+  'LBL_DATABLOCK_REPEATABLE_TITLE' => 'Permite que os usuarios engadan varias entradas deste bloque',
+  'LBL_DATABLOCK_REPEATABLE_ENABLED' => 'O bloque é repetible (0..N entradas)',
+  'LBL_DATABLOCK_MIN_INSTANCES' => 'Número mínimo de entradas',
+  'LBL_DATABLOCK_MAX_INSTANCES' => 'Número máximo de entradas',
+  'LBL_DATABLOCK_MAX_INSTANCES_HELP' => 'Déixao baleiro para un número ilimitado de entradas.',
+  'LBL_DATABLOCK_REPEATABLE_OPTIONAL_WARNING' => 'Se o mínimo é 0, o bloque é opcional e pode deixarse baleiro.',
+  'LBL_DATABLOCK_REPEATABLE_NESTING_ERROR' => 'Os bloques repetibles non poden aniñarse dentro doutros bloques.',
+  'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Os fillos dun bloque repetible non poden moverse de forma independente.',
+  'LBL_DATABLOCK_GROUP_TITLE' => 'Título do grupo',
+  'LBL_DATABLOCK_ADD_LABEL' => 'Texto do botón de engadir',
+  'LBL_DATABLOCK_REMOVE_LABEL' => 'Texto do botón de eliminar',
+  'LBL_DATABLOCK_ADD_INSTANCE_DEFAULT' => 'Engadir outro',
+  'LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT' => 'Eliminar',
+  // END STIC-Custom OC
+
   // DataBlock -> Fields
   'LBL_FIELDS' => 'Campos',
   'LBL_FIELDS_FORM_TAB' => 'Formulario ',

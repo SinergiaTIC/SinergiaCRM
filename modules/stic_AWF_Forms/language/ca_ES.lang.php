@@ -141,6 +141,23 @@ $mod_strings = array (
   'LBL_DATABLOCK_NAME' => 'Nom',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Nom intern',
 
+  // STIC-Custom OC - 20250803 - Bloc de dades repetible
+  'LBL_DATABLOCK_REPEATABLE' => 'Bloc repetible',
+  'LBL_DATABLOCK_REPEATABLE_TITLE' => 'Permet que els usuaris afegeixin diverses entrades d\'aquest bloc',
+  'LBL_DATABLOCK_REPEATABLE_ENABLED' => 'El bloc és repetible (0..N entrades)',
+  'LBL_DATABLOCK_MIN_INSTANCES' => 'Nombre mínim d\'entrades',
+  'LBL_DATABLOCK_MAX_INSTANCES' => 'Nombre màxim d\'entrades',
+  'LBL_DATABLOCK_MAX_INSTANCES_HELP' => 'Deixa-ho buit per a un nombre il·limitat d\'entrades.',
+  'LBL_DATABLOCK_REPEATABLE_OPTIONAL_WARNING' => 'Si el mínim és 0, el bloc és opcional i es pot deixar buit.',
+  'LBL_DATABLOCK_REPEATABLE_NESTING_ERROR' => 'Els blocs repetibles no poden anidar-se dins d\'altri blocs.',
+  'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Els fills d\'un bloc repetible no poden moure\'s de manera independent.',
+  'LBL_DATABLOCK_GROUP_TITLE' => 'Títol del grup',
+  'LBL_DATABLOCK_ADD_LABEL' => 'Text del botó d\'afegir',
+  'LBL_DATABLOCK_REMOVE_LABEL' => 'Text del botó d\'eliminar',
+  'LBL_DATABLOCK_ADD_INSTANCE_DEFAULT' => 'Afegeix-ne una altra',
+  'LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT' => 'Elimina',
+  // END STIC-Custom OC
+
   // DataBlock -> Fields
   'LBL_FIELDS' => 'Camps',
   'LBL_FIELDS_FORM_TAB' => 'Formulari',

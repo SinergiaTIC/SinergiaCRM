@@ -46,7 +46,12 @@ class ExecutionContext {
 
     /** @var ?DeferredContextData Objecte de context per a processos diferits */
     public ?DeferredContextData $deferredContext = null;
-    
+
+    // STIC-Custom OC - 20250803 - Repeatable data blocks support
+    /** @var ?int Current instance index of the repeatable block being executed, or null for scalar flows */
+    public ?int $currentInstanceIndex = null;
+    // END STIC-Custom OC
+
     /**
      * Constructor for ExecutionContext.
      * @param string $formId ID of the form being processed
@@ -136,6 +141,26 @@ class ExecutionContext {
         }
         return null;
     }
+
+    // STIC-Custom OC - 20250803 - Repeatable data blocks support
+    /**
+     * Sets the current instance index of the repeatable block being executed.
+     * Must be set before resolving parameters/actions of an instance so that
+     * instance-aware keys can be resolved.
+     * @param ?int $index The instance index, or null for scalar flows
+     */
+    public function setCurrentInstanceIndex(?int $index): void {
+        $this->currentInstanceIndex = $index;
+    }
+
+    /**
+     * Gets the current instance index of the repeatable block being executed.
+     * @return ?int The instance index, or null for scalar flows
+     */
+    public function getCurrentInstanceIndex(): ?int {
+        return $this->currentInstanceIndex;
+    }
+    // END STIC-Custom OC
 }
 
 

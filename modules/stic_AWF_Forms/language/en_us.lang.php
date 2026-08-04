@@ -141,6 +141,23 @@ $mod_strings = array (
   'LBL_DATABLOCK_NAME' => 'Name',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Internal name',
 
+  // STIC-Custom OC - 20250803 - Repeatable data blocks
+  'LBL_DATABLOCK_REPEATABLE' => 'Repeatable block',
+  'LBL_DATABLOCK_REPEATABLE_TITLE' => 'Let users add several entries of this block',
+  'LBL_DATABLOCK_REPEATABLE_ENABLED' => 'Block is repeatable (0..N entries)',
+  'LBL_DATABLOCK_MIN_INSTANCES' => 'Minimum number of entries',
+  'LBL_DATABLOCK_MAX_INSTANCES' => 'Maximum number of entries',
+  'LBL_DATABLOCK_MAX_INSTANCES_HELP' => 'Leave empty for unlimited entries.',
+  'LBL_DATABLOCK_REPEATABLE_OPTIONAL_WARNING' => 'If the minimum is 0, the block is optional and can be left empty.',
+  'LBL_DATABLOCK_REPEATABLE_NESTING_ERROR' => 'Repeatable blocks cannot be nested inside other blocks.',
+  'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Children of a repeatable block cannot be moved independently.',
+  'LBL_DATABLOCK_GROUP_TITLE' => 'Group title',
+  'LBL_DATABLOCK_ADD_LABEL' => 'Add button text',
+  'LBL_DATABLOCK_REMOVE_LABEL' => 'Remove button text',
+  'LBL_DATABLOCK_ADD_INSTANCE_DEFAULT' => 'Add another',
+  'LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT' => 'Remove',
+  // END STIC-Custom OC
+
   // DataBlock -> Fields
   'LBL_FIELDS' => 'Fields',
   'LBL_FIELDS_FORM_TAB' => 'Form',

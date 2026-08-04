@@ -177,6 +177,15 @@ class ParameterResolverService {
             return null;
         }
 
+        // STIC-Custom OC - 20250803 - Repeatable data blocks support
+        // When executing an instance of a repeatable group, resolve that instance's data
+        $instanceIndex = $context->getCurrentInstanceIndex();
+        $isInRepeatableGroup = $dataBlockConfig->is_repeatable || !empty($dataBlockConfig->parent_repeat_root);
+        if ($instanceIndex !== null && $isInRepeatableGroup) {
+            return new DataBlockResolved($dataBlockConfig, $context->formData, $context, $instanceIndex);
+        }
+        // END STIC-Custom OC
+
         return new DataBlockResolved($dataBlockConfig, $context->formData, $context);
     }
 
@@ -241,15 +250,33 @@ class ParameterResolverService {
 
         $crmFieldType = $fieldDefinition?->type ?? 'text';
         $finalValue = null;
-        if (array_key_exists($phpKey, $context->formData)) {
-            // Fill value from form data
-            $finalValue = stic_AWFUtils::castCrmValue($context->formData[$phpKey], $crmFieldType, $context);
-        } else {
-            // If not set in form data, then find if is a field with fixed value in DataBlock
-            if ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
+
+        // STIC-Custom OC - 20250803 - Repeatable data blocks support
+        // If an instance is being executed and the field belongs to a repeatable group,
+        // read the value from the indexed form structure: formData['Block'][index]['field']
+        $instanceIndex = $context->getCurrentInstanceIndex();
+        if ($instanceIndex !== null && $foundBlock !== null && ($foundBlock->is_repeatable || !empty($foundBlock->parent_repeat_root))) {
+            $blockArrayKey = $isDetached ? '_detached_' . $foundBlock->name : $foundBlock->name;
+            $instanceArray = $context->formData[$blockArrayKey][$instanceIndex] ?? [];
+            if (array_key_exists($fieldName, $instanceArray)) {
+                $finalValue = stic_AWFUtils::castCrmValue($instanceArray[$fieldName], $crmFieldType, $context);
+            } elseif ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
                 $finalValue = stic_AWFUtils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
             }
+        } else {
+            // END STIC-Custom OC
+            if (array_key_exists($phpKey, $context->formData)) {
+                // Fill value from form data
+                $finalValue = stic_AWFUtils::castCrmValue($context->formData[$phpKey], $crmFieldType, $context);
+            } else {
+                // If not set in form data, then find if is a field with fixed value in DataBlock
+                if ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
+                    $finalValue = stic_AWFUtils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
+                }
+            }
+        // STIC-Custom OC - 20250803 - Repeatable data blocks support
         }
+        // END STIC-Custom OC
         return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $finalValue);
     }
 

@@ -217,7 +217,16 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-submit-btn { width: var(--awf-submit-width); }
 #{$wrapperId} .awf-submit-container { width: 100%; text-align: " . ($submitWidthVal === '100%' ? 'center' : 'right') . "; }
 #{$wrapperId} .was-validated .form-control:valid, #{$wrapperId} .was-validated .form-select:valid, #{$wrapperId} .was-validated .form-check-input:valid { border-color: var(--bs-border-color); background-image: none; box-shadow: none; }
-#{$wrapperId} .was-validated .form-control:invalid, #{$wrapperId} .was-validated .form-select:invalid { background-image: none !important; border-color: #dc3545; }";
+#{$wrapperId} .was-validated .form-control:invalid, #{$wrapperId} .was-validated .form-select:invalid { background-image: none !important; border-color: #dc3545; }
+/* STIC-Custom OC - 20250803 - Repeatable group frontend styles */
+#{$wrapperId} .awf-group-container { margin-bottom: 1.5rem; }
+#{$wrapperId} .awf-group-title { font-size: 1.25em; margin-bottom: 1rem; font-weight: 600; }
+#{$wrapperId} .awf-instance-card { border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; margin-bottom: 1rem; background-color: rgba(0,0,0,0.02); }
+#{$wrapperId} .awf-instance-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-weight: 600; }
+#{$wrapperId} .awf-child-block-instances { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--bs-border-color); }
+#{$wrapperId} .awf-child-block-title { font-size: 1em; margin-bottom: 0.75rem; font-weight: 600; }
+#{$wrapperId} .awf-add-instance-btn { margin-top: 0.5rem; }
+/* END STIC-Custom OC */";
         if ($inputCssProps !== "")  $html .= "\n".$inputCssProps;
         if ($selectCssProps !== "")  $html .= "\n".$selectCssProps;
         if ($floatingLabelFix !== "") $html .= "\n".$floatingLabelFix;
@@ -430,7 +439,13 @@ class FormHtmlGeneratorService {
                                             if ($element->type == 'datablock') {
                                                 $block = $config->data_blocks[$element->ref_id] ?? null;
                                                 if ($block) {
-                                                    $html .= $this->generateDataBlockHtml($block, $layout->theme);
+                                                    // STIC-Custom OC - 20250803 - Children of repeatable roots are rendered inside the root's loop
+                                                    if ($block->parent_repeat_root && $block->parent_repeat_root !== '') {
+                                                        $html .= "<!-- Child block '{$block->name}' is rendered inside its repeatable root -->" . $this->newLine();
+                                                        continue;
+                                                    }
+                                                    // END STIC-Custom OC
+                                                    $html .= $this->generateDataBlockHtml($block, $layout->theme, $config);
                                                 }
                                             }
                                         }
@@ -477,13 +492,91 @@ class FormHtmlGeneratorService {
      * @param FormTheme $theme The form theme containing styling information that may affect how fields are rendered (e.g., floating labels)
      * @return string The generated HTML for the data block as a string
      */
-    private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme): string {
+    private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme, FormConfig $config): string {
+        // STIC-Custom OC - 20250803 - Delegate repeatable root blocks to the group renderer
+        if ($block->is_repeatable) {
+            return $this->generateRepeatableGroupHtml($block, $theme, $config);
+        }
+        // END STIC-Custom OC
         $html = "";
         foreach ($block->fields as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
             $html .= $this->renderField($field, $theme);
         }
         return $html;
+    }
+
+    /**
+     * Renders a repeatable group for a root data block. Each instance renders the root's fields
+     * followed by its child blocks' fields, all sharing the same instance index.
+     *
+     * @param FormDataBlock $rootBlock The repeatable root block
+     * @param FormTheme $theme The form theme
+     * @param FormConfig $config The full form configuration (to resolve children)
+     * @return string The generated HTML for the repeatable group
+     */
+    private function generateRepeatableGroupHtml(FormDataBlock $rootBlock, FormTheme $theme, FormConfig $config): string {
+        // STIC-Custom OC - 20250803 - Repeatable group HTML
+        $groupTitle = htmlspecialchars($rootBlock->group_title ?: $rootBlock->text);
+        $addLabel = htmlspecialchars($rootBlock->add_button_label ?: translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT', 'stic_AWF_Forms'));
+        $removeLabel = htmlspecialchars($rootBlock->remove_button_label ?: translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT', 'stic_AWF_Forms'));
+        $maxInstances = $rootBlock->max_instances ?? 0;
+        $maxInstancesJs = $maxInstances > 0 ? (int)$maxInstances : 'null';
+        $initialInstances = ($rootBlock->min_instances === 0) ? '[]' : '[{ id: 0 }]';
+
+        $html = "<div class='awf-group-container' x-data=\"{ nextInstanceId: 1, instances: {$initialInstances} }\">" . $this->newLine('+');
+        {
+            $html .= "<h4 class='awf-group-title'>{$groupTitle}</h4>" . $this->newLine();
+            $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
+            {
+                $html .= "<div class='awf-instance-card'>" . $this->newLine('+');
+                {
+                    $html .= "<div class='awf-instance-header'>" . $this->newLine('+');
+                    {
+                        $html .= "<span x-text=\"'{$groupTitle} #' + (index + 1)\"></span>" . $this->newLine();
+                        $html .= "<button type='button' class='btn btn-sm btn-outline-danger' @click=\"instances = instances.filter(i => i !== instance)\" x-text=\"'{$removeLabel}'\"></button>" . $this->newLine();
+                    }
+                    $html .= "</div>" . $this->newLine('-');
+
+                    // Root block fields for this instance
+                    $html .= "<div class='awf-instance-body'>" . $this->newLine('+');
+                    {
+                        foreach ($rootBlock->fields as $field) {
+                            if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                            $html .= $this->renderFieldForInstance($field, $theme, 'index');
+                        }
+
+                        // Child blocks for this instance
+                        $children = $config->getGroupChildren($rootBlock);
+                        foreach ($children as $childBlock) {
+                            if (!$childBlock->fields) continue;
+                            $html .= "<div class='awf-child-block-instances'>" . $this->newLine('+');
+                            {
+                                $html .= "<h5 class='awf-child-block-title'>" . htmlspecialchars($childBlock->text) . "</h5>" . $this->newLine();
+                                foreach ($childBlock->fields as $field) {
+                                    if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                                    $html .= $this->renderFieldForInstance($field, $theme, 'index');
+                                }
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                        }
+                    }
+                    $html .= "</div>" . $this->newLine('-');
+                }
+                $html .= "</div>" . $this->newLine('-');
+            }
+            $html .= "</template>" . $this->newLine('-');
+
+            $html .= "<button type='button' class='btn btn-primary awf-add-instance-btn' @click=\"instances.push({ id: nextInstanceId++ })\" x-show=\"!{$maxInstancesJs} || instances.length < {$maxInstancesJs}\">" . $this->newLine('+');
+            {
+                $html .= "<span x-text=\"'{$addLabel}'\"></span>" . $this->newLine();
+            }
+            $html .= "</button>" . $this->newLine('-');
+        }
+        $html .= "</div>" . $this->newLine('-');
+
+        return $html;
+        // END STIC-Custom OC
     }
 
     /**
@@ -496,12 +589,52 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML for the field as a string
      */
     private function renderField(FormDataBlockField $field, FormTheme $theme): string {
-        $inputName = $field->getKey();
+        return $this->renderFieldInternal($field, $theme);
+    }
+
+    /**
+     * Renders a field for a specific instance inside a repeatable group.
+     * @param FormDataBlockField $field The field to render
+     * @param FormTheme $theme The form theme
+     * @param string $instanceIndexVar The Alpine variable that holds the instance index (e.g., 'index')
+     * @return string The generated HTML
+     */
+    private function renderFieldForInstance(FormDataBlockField $field, FormTheme $theme, string $instanceIndexVar): string {
+        return $this->renderFieldInternal($field, $theme, $instanceIndexVar);
+    }
+
+    /**
+     * Internal field renderer that supports both scalar and instance-aware rendering.
+     * @param FormDataBlockField $field The field to render
+     * @param FormTheme $theme The form theme
+     * @param ?string $instanceIndexVar The Alpine variable for the instance index, or null for scalar fields
+     * @return string The generated HTML
+     */
+    private function renderFieldInternal(FormDataBlockField $field, FormTheme $theme, ?string $instanceIndexVar = null): string {
+        // STIC-Custom OC - 20250803 - Instance-aware field rendering for repeatable groups
+        $isInstance = $instanceIndexVar !== null;
+        $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
+        // Template for dynamic name attribute inside the x-for loop (Alpine expression)
+        $inputNameTemplate = $inputName;
+        if ($isInstance) {
+            $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+            $inputNameTemplate = $namePrefix . $field->data_block->name . "[' + {$instanceIndexVar} + '][" . $field->name . "]";
+        }
+        // The logical key used for the dynamic input ID (matches getKeyForId() validation error keys)
+        $inputKeyForId = $isInstance
+            ? $field->data_block->name . "_' + {$instanceIndexVar} + '_" . $field->name
+            : $field->getKeyForId();
+        if ($isInstance && $field->type_field === DataBlockFieldType::UNLINKED) {
+            $inputKeyForId = '_detached.' . $field->data_block->name . "_' + {$instanceIndexVar} + '_" . $field->name;
+        }
+        // END STIC-Custom OC
 
         // Render hidden fields differently: only input without label or wrapper
         if ($field->type_in_form === 'hidden') {
             $val = htmlspecialchars($field->value ?? '', ENT_QUOTES, 'UTF-8');
-            return "<input type='hidden' name='{$inputName}' id='f_{$inputName}' value='{$val}'>" . $this->newLine();
+            $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
+            $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+            return "<input type='hidden' {$nameAttr} {$idAttr} value='{$val}'>" . $this->newLine();
         }
 
         $label = htmlspecialchars($field->label);
@@ -526,14 +659,22 @@ class FormHtmlGeneratorService {
             }
         }
 
+        // STIC-Custom OC - 20250803 - Dynamic help ID and input IDs for repeatable fields
         $description = "";
         $ariaDescribedBy = "";
         if ($field->description != '') {
             $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
             $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
-            $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
-            $ariaDescribedBy = "aria-describedby='{$helpId}'";
+            if ($isInstance) {
+                $helpIdDynamic = "'help_' + '{$inputKeyForId}'";
+                $description = "<div :id=\"{$helpIdDynamic}\" class='form-text awf-help-text'>{$parsedDesc}</div>";
+                $ariaDescribedBy = ":aria-describedby=\"{$helpIdDynamic}\"";
+            } else {
+                $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
+                $ariaDescribedBy = "aria-describedby='{$helpId}'";
+            }
         }
+        // END STIC-Custom OC
 
         // --- SPECIAL CASES (Single Checkbox / Switch) with own representation ---
 
@@ -541,8 +682,11 @@ class FormHtmlGeneratorService {
         if ($field->subtype_in_form === 'select_checkbox') {
             $html = "<div class='form-check awf-field'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
-                $html .= "<label class='form-check-label' for='f_{$inputName}'>" . $this->newLine('+');
+                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
+                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
+                $html .= "<input type='checkbox' {$nameAttr} class='form-check-input' value='1' {$idAttr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
+                $html .= "<label class='form-check-label' {$forAttr}>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -561,8 +705,11 @@ class FormHtmlGeneratorService {
         if ($field->subtype_in_form === 'select_switch') {
             $html = "<div class='form-check form-switch awf-field'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' role='switch' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
-                $html .= "<label class='form-check-label' for='f_{$inputName}'>" . $this->newLine('+');
+                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
+                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
+                $html .= "<input type='checkbox' role='switch' {$nameAttr} class='form-check-input' value='1' {$idAttr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
+                $html .= "<label class='form-check-label' {$forAttr}>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -606,7 +753,9 @@ class FormHtmlGeneratorService {
 
             // Text Areas
             if ($field->type_in_form == 'textarea') {
-                $controlHtml .= "<textarea {$validationsAttr} name='{$inputName}' class='form-control' id='f_{$inputName}' ".
+                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
+                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+                $controlHtml .= "<textarea {$validationsAttr} {$nameAttr} class='form-control' {$idAttr} ".
                                 "placeholder='{$placeholder}' style='height: 100px' {$ariaDescribedBy} {$requiredAttr}></textarea>" .$this->newLine();
 
             // Selects & Lists
@@ -616,6 +765,8 @@ class FormHtmlGeneratorService {
                     $inputType = ($field->subtype_in_form === 'select_radio') ? 'radio' : 'checkbox';
                     $isMulti = ($inputType === 'checkbox');
                     $finalName = $inputName . ($isMulti ? '[]' : ''); // If multiple, name is array (ex: names[])
+                    $finalNameTemplate = $isInstance ? $inputNameTemplate . ($isMulti ? '[]' : '') : $finalName;
+                    $nameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
 
                     $controlHtml .= "<div class='awf-option-group pt-1'>" .$this->newLine('+');
                     {
@@ -624,12 +775,15 @@ class FormHtmlGeneratorService {
                                 $val = htmlspecialchars($opt->value);
                                 $txt = htmlspecialchars($opt->text);
                                 $optId = "f_{$inputName}_" . preg_replace('/[^a-zA-Z0-9]/', '', $val); 
+                                $optIdTemplate = $isInstance ? "'f_' + '{$inputKeyForId}' + '_" . preg_replace('/[^a-zA-Z0-9]/', '', $val) . "'" : "'{$optId}'";
                                 $req = ($requiredAttr && !$isMulti) ? 'required' : '';  // Note: 'required' in checkboxes groups is complex in pure HTML5. 
 
                                 $controlHtml .= "<div class='form-check'>" .$this->newLine('+');
                                 {
-                                    $controlHtml .= "<input {$validationsAttr} type='{$inputType}' name='{$finalName}' id='{$optId}' value='{$val}' class='form-check-input' {$req}>" .$this->newLine();
-                                    $controlHtml .= "<label class='form-check-label' for='{$optId}'>{$txt}</label>" .$this->newLine();
+                                    $idAttr = $isInstance ? ":id={$optIdTemplate}" : "id='{$optId}'";
+                                    $forAttr = $isInstance ? ":for={$optIdTemplate}" : "for='{$optId}'";
+                                    $controlHtml .= "<input {$validationsAttr} type='{$inputType}' {$nameAttr} {$idAttr} value='{$val}' class='form-check-input' {$req}>" .$this->newLine();
+                                    $controlHtml .= "<label class='form-check-label' {$forAttr}>{$txt}</label>" .$this->newLine();
                                 }
                                 $controlHtml .= "</div>" .$this->newLine('-');
                             }
@@ -642,9 +796,12 @@ class FormHtmlGeneratorService {
                 else {
                     $isMultipleSelect = ($field->subtype_in_form === 'select_multiple');
                     $finalName = $inputName . ($isMultipleSelect ? '[]' : '');
+                    $finalNameTemplate = $isInstance ? $inputNameTemplate . ($isMultipleSelect ? '[]' : '') : $finalName;
+                    $nameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
                     $multipleAttr = $isMultipleSelect ? 'multiple' : '';
                     
-                    $controlHtml .= "<select {$validationsAttr} name='{$finalName}' class='form-select' id='f_{$inputName}' {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine('+');
+                    $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+                    $controlHtml .= "<select {$validationsAttr} {$nameAttr} class='form-select' {$idAttr} {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine('+');
                     {
                         // Empty option only if not muliple
                         if (!$isMultipleSelect) {
@@ -679,14 +836,17 @@ class FormHtmlGeneratorService {
                 }
                 $iconClass = $this->getIconClass($field->subtype_in_form);
                 $cssClasses = 'form-control ' . ($iconClass ?? '');
-                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' name='{$inputName}' class='{$cssClasses}' id='f_{$inputName}' ".
+                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
+                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' {$nameAttr} class='{$cssClasses}' {$idAttr} ".
                                 "placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine();
             }
 
             if ($isFloating) {
                 // Floating order: Input, Label
                 $html .= $controlHtml .$this->newLine();
-                $html .= "<label for='f_{$inputName}'>" . $this->newLine('+'); 
+                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
+                $html .= "<label {$forAttr}>" . $this->newLine('+'); 
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -697,7 +857,8 @@ class FormHtmlGeneratorService {
         
             } else {
                 // Default order: Label, Input
-                $html .= "<label for='f_{$inputName}' class='form-label'>" . $this->newLine('+');
+                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
+                $html .= "<label {$forAttr} class='form-label'>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {

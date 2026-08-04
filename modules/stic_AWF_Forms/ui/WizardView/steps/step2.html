@@ -52,7 +52,7 @@
       <div class="work-area-container" style="position: relative; padding-bottom: 20px;">
         <template x-for="item in formConfig.data_blocks" :key="item.id">
           <!-- DataBlock -->
-          <div :id="'dataBlock_' + item.id" class="card datablock" :class="{'has-errors':!item.isValid()}" x-data="WizardStep2.datablockxData(formConfig, item);">
+          <div :id="'dataBlock_' + item.id" class="card datablock" :class="{'has-errors':!item.isValid(), 'awf-child-block': item.parent_repeat_root && item.parent_repeat_root !== ''}" x-data="WizardStep2.datablockxData(formConfig, item);">
             <!-- DataBlock header -->
             <div class="card-header d-flex flex-column">
               <div class="d-flex justify-content-start datablock-module">
@@ -67,6 +67,13 @@
                 </div>
                 <!-- Buttons -->
                 <div class="d-inline-flex">
+                  <!-- Repeatable DataBlock -->
+                  <template x-if="!item.parent_repeat_root">
+                    <button type="button" class="btn ms-2" @click="$store.repeatableModal.open(item);"
+                            :title="utils.translate('LBL_DATABLOCK_REPEATABLE')">
+                      <span x-text="item.is_repeatable ? '🔁' : '➕'" class="fs-5"></span>
+                    </button>
+                  </template>
                   <!-- Delete DataBlock -->
                   <template x-if="!item.required">
                     <button type="button" class="btn ms-2" @click="deleteDataBlock(item);"
@@ -1010,6 +1017,60 @@
               <button type="button" class="col-2 btn btn-primary" @click="$store.relCreator.saveChanges()" 
                       x-bind:disabled="!$store.relCreator.isValid" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Repeatable DataBlock Configuration -->
+    <div x-show="$store.repeatableModal.isOpen" x-cloak class="custom-modal-wrapper">
+      <div class="custom-modal-backdrop"></div>
+      <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalRepeatableDataBlock" style="max-width: 600px;">
+        <div class="custom-modal-content">
+          <div class="custom-modal-header">
+            <h3 class="modal-title" id="modalRepeatableDataBlock" x-text="utils.translate('LBL_DATABLOCK_REPEATABLE_TITLE')"></h3>
+            <button type="button" class="btn-close" @click="$store.repeatableModal.close();"></button>
+          </div>
+          <div class="custom-modal-body">
+            <form id="repeatableDataBlockModalForm">
+              <div class="mb-3 form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="repeatableIsRepeatable" x-model="$store.repeatableModal.block.is_repeatable">
+                <label class="form-check-label" for="repeatableIsRepeatable" x-text="utils.translate('LBL_DATABLOCK_REPEATABLE_ENABLED')"></label>
+              </div>
+              <div class="row">
+                <div class="col-6 mb-3">
+                  <label for="repeatableMinInstances" class="form-label" x-text="utils.translate('LBL_DATABLOCK_MIN_INSTANCES')"></label>
+                  <input id="repeatableMinInstances" type="number" min="0" max="1" class="form-control" x-model.number="$store.repeatableModal.block.min_instances">
+                </div>
+                <div class="col-6 mb-3">
+                  <label for="repeatableMaxInstances" class="form-label" x-text="utils.translate('LBL_DATABLOCK_MAX_INSTANCES')"></label>
+                  <input id="repeatableMaxInstances" type="number" min="0" class="form-control" x-model.number="$store.repeatableModal.block.max_instances">
+                  <div class="form-text text-muted small" x-text="utils.translate('LBL_DATABLOCK_MAX_INSTANCES_HELP')"></div>
+                </div>
+              </div>
+              <template x-if="$store.repeatableModal.block.min_instances === 0 || $store.repeatableModal.block.min_instances === '0'">
+                <div class="alert alert-warning py-2" x-text="utils.translate('LBL_DATABLOCK_REPEATABLE_OPTIONAL_WARNING')"></div>
+              </template>
+              <div class="mb-3">
+                <label for="repeatableGroupTitle" class="form-label" x-text="utils.translate('LBL_DATABLOCK_GROUP_TITLE')"></label>
+                <input id="repeatableGroupTitle" type="text" class="form-control" x-model="$store.repeatableModal.block.group_title">
+              </div>
+              <div class="row">
+                <div class="col-6 mb-3">
+                  <label for="repeatableAddLabel" class="form-label" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL')"></label>
+                  <input id="repeatableAddLabel" type="text" class="form-control" x-model="$store.repeatableModal.block.add_button_label">
+                </div>
+                <div class="col-6 mb-3">
+                  <label for="repeatableRemoveLabel" class="form-label" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL')"></label>
+                  <input id="repeatableRemoveLabel" type="text" class="form-control" x-model="$store.repeatableModal.block.remove_button_label">
+                </div>
+              </div>
+            </form>
+          </div>
+          <!-- Accept / Cancel Buttons -->
+          <div class="custom-modal-footer">
+            <button type="button" class="col-2 btn btn-secondary" @click="$store.repeatableModal.close();" x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL');"></button>
+            <button type="button" class="col-2 btn btn-primary" @click="$store.repeatableModal.save();" x-text="utils.translate('LBL_SAVE_BUTTON_LABEL');"></button>
           </div>
         </div>
       </div>

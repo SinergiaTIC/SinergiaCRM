@@ -42,6 +42,15 @@ class stic_AwfDataBlock {
       relationships: [],        // Block-to-block relationships [{ name, related_datablock_id }]
       duplicate_detections: [], // Duplicate detection definition
       save_action_id: "",       // ID of the data block save action
+      // STIC-Custom OC - 20250803 - Repeatable data blocks
+      is_repeatable: false,    // Indicates if the block can be repeated 0..N times
+      min_instances: 1,          // Minimum required instances (0 = optional)
+      max_instances: null,       // Maximum allowed instances (null = unlimited)
+      group_title: '',           // Visual title for the repeat group
+      add_button_label: '',      // Label for the "add instance" button
+      remove_button_label: '',   // Label for the "remove instance" button
+      parent_repeat_root: '',    // ID of the repeatable root this block belongs to
+      // END STIC-Custom OC
     });
 
     // 2. Overwrite with provided data
@@ -109,6 +118,40 @@ class stic_AwfDataBlock {
   getFieldInputName(field) {
     const prefix = field.type_field === 'unlinked' ? '_detached.' : '';
     return `${prefix}${this.name}.${field.name}`;
+  }
+
+  /**
+   * Gets the instance-aware field input name for repeatable blocks.
+   * For non-repeatable blocks, delegates to getFieldInputName.
+   * @param {stic_AwfField} field
+   * @param {number|null} index Instance index
+   * @returns {string}
+   */
+  getFieldInputNameForInstance(field, index) {
+    if (index === null || index === undefined) {
+      return this.getFieldInputName(field);
+    }
+    const prefix = field.type_field === 'unlinked' ? '_detached.' : '';
+    return `${prefix}${this.name}[${index}].${field.name}`;
+  }
+
+  /**
+   * Returns child blocks that belong to this repeatable root.
+   * @param {stic_AwfDataBlock[]} dataBlocks
+   * @returns {stic_AwfDataBlock[]}
+   */
+  getChildren(dataBlocks) {
+    return dataBlocks.filter(b => b.parent_repeat_root === this.id);
+  }
+
+  /**
+   * Returns the repeatable root block this block belongs to, if any.
+   * @param {stic_AwfDataBlock[]} dataBlocks
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getRepeatableRoot(dataBlocks) {
+    if (!this.parent_repeat_root) return null;
+    return dataBlocks.find(b => b.id === this.parent_repeat_root) || null;
   }
 
   /**
@@ -1098,6 +1141,7 @@ class stic_AwfLayout {
     // Add the missing blocks
     const orphanBlocks = dataBlocks.filter(b => {
       if (placedBlockIds.has(b.id)) return false; // The block is placed
+      if (b.parent_repeat_root && b.parent_repeat_root !== '') return false; // Children of a repeatable root are handled by their root
       if (!b.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return false; // Only has fixed or hidden fields
 
       return true;
@@ -1109,6 +1153,10 @@ class stic_AwfLayout {
         this._addSectionWithBlock(block);
       });
     }
+
+    // STIC-Custom OC - 20250803 - Keep children of repeatable roots with their root
+    this._ensureRepeatableChildrenWithRoot(dataBlocks);
+    // END STIC-Custom OC
   }
 
   _addSectionWithBlock(block) {
@@ -1123,6 +1171,61 @@ class stic_AwfLayout {
 
     section.elements.push(element);
     this.structure.push(section);
+  }
+
+  /**
+   * Ensures that children of a repeatable root are always placed in the same
+   * section as their root. If a child is in a different section or is standalone,
+   * it is moved to the root's section.
+   * @param {stic_AwfDataBlock[]} dataBlocks
+   */
+  _ensureRepeatableChildrenWithRoot(dataBlocks) {
+    const rootIds = new Set(dataBlocks.filter(b => b.is_repeatable).map(b => b.id));
+    const childIds = new Set(dataBlocks.filter(b => b.parent_repeat_root && rootIds.has(b.parent_repeat_root)).map(b => b.id));
+    if (rootIds.size === 0 && childIds.size === 0) return;
+
+    this.structure.forEach(section => {
+      section.elements = section.elements.filter(el => {
+        if (el.type !== 'datablock') return true;
+        const block = dataBlocks.find(b => b.id === el.ref_id);
+        if (!block) return false;
+        if (block.is_repeatable && block.parent_repeat_root) return false; // Invalid state
+        return true;
+      });
+    });
+
+    this.structure.forEach(section => {
+      const rootElements = section.elements.filter(el => el.type === 'datablock' && rootIds.has(el.ref_id));
+      rootElements.forEach(rootEl => {
+        const rootBlock = dataBlocks.find(b => b.id === rootEl.ref_id);
+        if (!rootBlock) return;
+        const childIdsForRoot = dataBlocks.filter(b => b.parent_repeat_root === rootBlock.id).map(b => b.id);
+        // Find all children of this root in the layout
+        const childElements = [];
+        this.structure.forEach(s => {
+          s.elements.forEach(el => {
+            if (el.type === 'datablock' && childIdsForRoot.includes(el.ref_id)) {
+              childElements.push({ section: s, element: el });
+            }
+          });
+        });
+        // Move children to the root's section
+        childElements.forEach(({ section: childSection, element: childEl }) => {
+          childSection.elements = childSection.elements.filter(el => el.id !== childEl.id);
+          section.elements.push(childEl);
+        });
+        // Add missing children
+        const existingChildIds = new Set(section.elements.filter(el => el.type === 'datablock').map(el => el.ref_id));
+        childIdsForRoot.forEach(childId => {
+          if (!existingChildIds.has(childId)) {
+            section.elements.push(new stic_AwfLayoutElement({
+              type: 'datablock',
+              ref_id: childId
+            }));
+          }
+        });
+      });
+    });
   }
 
   addSection(title) {
@@ -1656,6 +1759,9 @@ class stic_AwfConfiguration {
 
   syncLayoutWithDataBlocks() {
     this.layout.syncWithDataBlocks(this.data_blocks);
+    // STIC-Custom OC - 20250803 - Keep children of repeatable roots in the same section as their root
+    this.layout._ensureRepeatableChildrenWithRoot(this.data_blocks);
+    // END STIC-Custom OC
   }
 
   /**
@@ -1697,6 +1803,14 @@ class stic_AwfConfiguration {
 
     // Remove DataBlock
     this.data_blocks = this.data_blocks.filter(d => d.id != dataBlock.id);
+
+    // STIC-Custom OC - 20250803 - Clear parent_repeat_root for children of the deleted block
+    this.data_blocks.forEach(d => {
+      if (d.parent_repeat_root === dataBlock.id) {
+        d.parent_repeat_root = '';
+      }
+    });
+    // END STIC-Custom OC
   }
 
   deleteDataBlockField(dataBlock, field) {
@@ -1756,10 +1870,15 @@ class stic_AwfConfiguration {
    * @param {string} excludeField (Optional) The field name to exclude from the list (to avoid circular references)
    * @returns {Array} [{name: 'Block.Field', text: 'BlockName » Field label'}]
    */
-  getAllFieldsInForm(excludeName = null) {
+  getAllFieldsInForm(excludeName = null, includeRepeatable = false) {
     let allFields = [];
 
     this.data_blocks.forEach(block => {
+      // STIC-Custom OC - 20250803 - Exclude fields from repeatable blocks from global conditions
+      if (!includeRepeatable && (block.is_repeatable || (block.parent_repeat_root && block.parent_repeat_root !== ''))) {
+        return;
+      }
+      // END STIC-Custom OC
       block.fields.forEach(field => {
         if (field.type_field === 'fixed') return;
         let fullName = block.getFieldInputName(field);
@@ -1968,6 +2087,10 @@ class stic_AwfConfiguration {
         });
       });
     }
+
+    // STIC-Custom OC - 20250803 - Recompute repeatable roots after relationship removal
+    this.recomputeRepeatableRoots();
+    // END STIC-Custom OC
   }
 
   /**
@@ -2065,6 +2188,90 @@ class stic_AwfConfiguration {
     dataBlocks.push({ id: -1, text: utils.translate('LBL_DATABLOCK_NEW') });
 
     return dataBlocks;
+  }
+
+  /**
+   * Traverses the 1→N relationship tree starting at rootId and marks all
+   * descendants as children of this repeatable root (parent_repeat_root = rootId).
+   * @param {string} rootId
+   */
+  propagateRepeatableRoot(rootId) {
+    const root = this.data_blocks.find(b => b.id === rootId);
+    if (!root) return;
+
+    const visited = new Set();
+    const queue = [root];
+    while (queue.length > 0) {
+      const current = queue.shift();
+      if (visited.has(current.id)) continue;
+      visited.add(current.id);
+
+      // Mark the current block as a child of the root unless it is the root itself.
+      // The root itself keeps parent_repeat_root empty.
+      if (current.id !== rootId) {
+        current.parent_repeat_root = rootId;
+      }
+
+      const allRels = this.getAllDataBlockRelationships();
+      const rels = allRels[current.id] || [];
+      rels.forEach(rel => {
+        if (!rel.datablock_orig || !rel.datablock_dest) return;
+        // Follow the relationship in the direction where the current block is the 1 side
+        // (i.e., the initiator is the other block, the N side)
+        const isOneSide = rel.datablock_orig === current.id && rel.initiator_id !== current.id;
+        const isSelfReference = rel.datablock_orig === current.id && rel.datablock_dest === current.id;
+        if (isOneSide && !isSelfReference) {
+          const child = this.data_blocks.find(b => b.id === rel.datablock_dest);
+          if (child && !visited.has(child.id)) {
+            queue.push(child);
+          }
+        }
+      });
+    }
+  }
+
+  /**
+   * Clears parent_repeat_root for all blocks that belong to the given root.
+   * @param {string} rootId
+   */
+  clearRepeatableRoot(rootId) {
+    this.data_blocks.forEach(b => {
+      if (b.parent_repeat_root === rootId) {
+        b.parent_repeat_root = '';
+      }
+    });
+  }
+
+  /**
+   * Checks whether a block can be marked as repeatable. Nesting is not allowed.
+   * @param {stic_AwfDataBlock} block
+   * @returns {boolean}
+   */
+  canBeRepeatable(block) {
+    if (block.parent_repeat_root && block.parent_repeat_root !== '') {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * Recomputes parent_repeat_root for all blocks based on the current is_repeatable
+   * roots and the relationship tree. Used after a relationship is deleted to ensure
+   * no orphan pointers remain.
+   */
+  recomputeRepeatableRoots() {
+    // Clear existing roots first
+    this.data_blocks.forEach(b => {
+      if (b.parent_repeat_root && b.parent_repeat_root !== '') {
+        b.parent_repeat_root = '';
+      }
+    });
+    // Re-propagate from every repeatable root
+    this.data_blocks.forEach(b => {
+      if (b.is_repeatable) {
+        this.propagateRepeatableRoot(b.id);
+      }
+    });
   }
 
   /**

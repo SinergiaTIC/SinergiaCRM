@@ -37,7 +37,22 @@ class FormDataBlock {
     /** @var FormDuplicateRule[] */
     public array $duplicate_detections;   // Definition of duplicate detection
 
+    // STIC-Custom OC - 20250803 - Repeatable data block fields
+    public bool $is_repeatable = false;    // Indicates if the block can be repeated 0..N times
+    public int $min_instances = 1;        // Minimum required instances (0 = optional)
+    public ?int $max_instances = null;    // Maximum allowed instances (null = unlimited)
+    public string $group_title = '';       // Visual title for the repeat group
+    public string $add_button_label = '';   // Label for the "add instance" button
+    public string $remove_button_label = ''; // Label for the "remove instance" button
+    public string $parent_repeat_root = ''; // ID of the repeatable root this block belongs to
+    // END STIC-Custom OC
+
     private ?BeanReference $beanReference = null; // Bean where the data block has been saved
+
+    // STIC-Custom OC - 20250803 - Indexed bean references for repeatable blocks
+    /** @var array<int, BeanReference> */
+    private array $beanReferences = [];
+    // END STIC-Custom OC
 
     /**
      * Creates an instance of FormDataBlock from a JSON array.
@@ -53,6 +68,16 @@ class FormDataBlock {
         $dto->name = $data['name'];
         $dto->text = $data['text'];
         $dto->module = $data['module'];
+
+        // STIC-Custom OC - 20250803 - Map repeatable data block fields
+        $dto->is_repeatable = $data['is_repeatable'] ?? false;
+        $dto->min_instances = isset($data['min_instances']) ? (int)$data['min_instances'] : 1;
+        $dto->max_instances = isset($data['max_instances']) && $data['max_instances'] !== '' && $data['max_instances'] !== null ? (int)$data['max_instances'] : null;
+        $dto->group_title = $data['group_title'] ?? '';
+        $dto->add_button_label = $data['add_button_label'] ?? '';
+        $dto->remove_button_label = $data['remove_button_label'] ?? '';
+        $dto->parent_repeat_root = $data['parent_repeat_root'] ?? '';
+        // END STIC-Custom OC
 
         $dto->fields = [];
         if (isset($data['fields'])) {
@@ -72,11 +97,33 @@ class FormDataBlock {
         return $dto;
     }
 
-    public function setBeanReference(string $beanId): void {
-        $this->beanReference = new BeanReference($this->module, $beanId);
+    public function setBeanReference(string $beanId, ?int $index = null): void {
+        // STIC-Custom OC - 20250803 - Support indexed bean references for repeatable blocks
+        if ($index === null) {
+            $this->beanReference = new BeanReference($this->module, $beanId);
+            return;
+        }
+        $this->beanReferences[$index] = new BeanReference($this->module, $beanId);
+        // END STIC-Custom OC
     }
 
-    public function getBeanReference(): ?BeanReference {
-        return $this->beanReference;
+    public function getBeanReference(?int $index = null): ?BeanReference {
+        // STIC-Custom OC - 20250803 - Support indexed bean references for repeatable blocks
+        if ($index === null) {
+            return $this->beanReference;
+        }
+        return $this->beanReferences[$index] ?? null;
+        // END STIC-Custom OC
     }
+
+    // STIC-Custom OC - 20250803 - Intra-POST duplicate detection support
+    /**
+     * Returns the bean references already registered for repeatable instances
+     * during the current request execution.
+     * @return array<int, BeanReference>
+     */
+    public function getIndexedBeanReferences(): array {
+        return $this->beanReferences;
+    }
+    // END STIC-Custom OC
 }
