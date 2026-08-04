@@ -987,6 +987,7 @@ class stic_AwfAction {
       flow_error_id: null,      // ID of the failure flow
       flow_success_text: null,  // Final text for the success flow
       flow_error_text: null,    // Final text for the failure flow
+      repeat_group: null,       // { rootBlockId, groupTitle, isRoot } when the action targets a block of a repeatable group, null otherwise
     });
 
     this.flow_success_text = utils.translate("LBL_FLOW_DEFERRED_MAIN");
@@ -2275,6 +2276,30 @@ class stic_AwfConfiguration {
   }
 
   /**
+   * Returns repeatable-group metadata for a block, or null if the block is not part
+   * of any repeatable group.
+   * @param {stic_AwfDataBlock} block
+   * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+   */
+  getRepeatGroupInfo(block) {
+    if (!block) return null;
+    let rootBlock = null;
+    let isRoot = false;
+    if (block.is_repeatable) {
+      rootBlock = block;
+      isRoot = true;
+    } else if (block.parent_repeat_root && block.parent_repeat_root !== '') {
+      rootBlock = this.data_blocks.find(b => b.id === block.parent_repeat_root) || null;
+    }
+    if (!rootBlock) return null;
+    return {
+      rootBlockId: rootBlock.id,
+      groupTitle: rootBlock.group_title || rootBlock.text,
+      isRoot: isRoot,
+    };
+  }
+
+  /**
    * Regenerates automatic actions (Save and Relate) based on current Data Blocks.
    * It should be called before entering action configuration (Step 3).
    */
@@ -2367,6 +2392,7 @@ class stic_AwfConfiguration {
         if (newAction) {
           block.save_action_id = newAction.id;
           newAction.text = `${utils.translate('LBL_SAVE_RECORD_ACTION_TITLE')}: ${block.text}`;
+          newAction.repeat_group = this.getRepeatGroupInfo(block);
           outgoing1n.forEach(r => handledRelationshipNames.add(r.name));
         }
       }
@@ -2418,6 +2444,7 @@ class stic_AwfConfiguration {
                 const newAction = this.addAction(actionDef, params, '0');
                 if (newAction) {
                   newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${block.text}.${field.text_original || field.name} = ${field.value_text || field.value}`;
+                  newAction.repeat_group = this.getRepeatGroupInfo(block);
                 }
               }
             }
@@ -2479,6 +2506,9 @@ class stic_AwfConfiguration {
               const newAction = this.addAction(actionDef, params, '0');
               if (newAction) {
                 newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${blockOrig.text} ${arrow} ${blockDest.text}`;
+                // A block-to-block relationship belongs to a group if either side is part of one.
+                // The group of the initiator side (blockOrig) takes precedence; otherwise fall back to dest.
+                newAction.repeat_group = this.getRepeatGroupInfo(blockOrig) || this.getRepeatGroupInfo(blockDest);
               }
             }
           }

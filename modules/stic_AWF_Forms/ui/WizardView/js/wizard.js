@@ -1723,6 +1723,40 @@ class WizardStep3 {
       get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
       get actions() { return this.flow?.actions ?? []; },
 
+      /**
+       * Returns repeatable-group metadata for an action, or null if the action does not
+       * target a block of a repeatable group. Computed live from the action's
+       * data_block_id parameter so it works for manual, automatic and legacy actions;
+       * falls back to the repeat_group field stored on automatically generated actions.
+       * @param {stic_AwfAction} action
+       * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+       */
+      getActionRepeatGroup(action) {
+        if (!action || !this.formConfig) return null;
+        const blockParam = (action.parameters || []).find(p => p.name === 'data_block_id');
+        if (blockParam && blockParam.value) {
+          const block = this.formConfig.data_blocks.find(b => b.id === blockParam.value);
+          if (block) {
+            let rootBlock = null;
+            let isRoot = false;
+            if (block.is_repeatable) {
+              rootBlock = block;
+              isRoot = true;
+            } else if (block.parent_repeat_root && block.parent_repeat_root !== '') {
+              rootBlock = this.formConfig.data_blocks.find(b => b.id === block.parent_repeat_root) || null;
+            }
+            if (rootBlock) {
+              return {
+                rootBlockId: rootBlock.id,
+                groupTitle: rootBlock.group_title || rootBlock.text,
+                isRoot: isRoot,
+              };
+            }
+          }
+        }
+        return action.repeat_group || null;
+      },
+
       selectedCategory: '', 
       selectedActionDefName: '', 
 

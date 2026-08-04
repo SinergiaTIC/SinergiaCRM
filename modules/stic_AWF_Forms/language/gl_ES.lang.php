@@ -267,6 +267,8 @@ $mod_strings = array (
   'LBL_ACTION_PARAMETERS' => 'Parámetros',
   'LBL_ACTION_ACTIONS' => 'Accións',
   'LBL_ACTION_AUTOMATIC' => 'Automática',
+  'LBL_ACTION_AUTOMATIC_TITLE' => 'Acción automática',
+  'LBL_ACTION_REPEATABLE_GROUP_TITLE' => 'Pertenece al grupo repetible',
   'LBL_ACTION_NO_PARAMS' => 'Sen parámetros',
 
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Seleccionar --',
