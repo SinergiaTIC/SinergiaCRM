@@ -1231,7 +1231,11 @@ class WizardStep2 {
           }
         };
         if (this.optionValuesRelated != ''){
-          listName = `${utils.getModuleInformation(this.relatedModule)?.text} (${this.optionValuesRelated.split('|').length})`;
+          let relatedModuleText = utils.getModuleInformation(this.relatedModule)?.text;
+          if(!relatedModuleText && this.selectedFieldInfo?.module) {
+            relatedModuleText = SUGAR.language.languages.app_list_strings.moduleList[this.selectedFieldInfo.module] ?? this.selectedFieldInfo.module;
+          }
+          listName = `${relatedModuleText} (${this.optionValuesRelated.split('|').length})`;
         }
         if (listName == '' && this.field && this.field.value_options.length > 0) {
           listName = this.field.value_options.filter(v => v.is_visible).map(v => v.text).join(', ');
@@ -1241,7 +1245,8 @@ class WizardStep2 {
 
       get relatedModule() {
         if (this.field && this.field.type == 'relate') {
-          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options);
+          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options)
+                 || this.selectedFieldInfo?.module || '';
         }
         return '';
       },
