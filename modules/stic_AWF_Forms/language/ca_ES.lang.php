@@ -146,6 +146,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_GROUP_CONFIGURE' => 'Configura el grup de blocs de dades',
   'LBL_DATABLOCK_GROUP_CONVERT' => 'Converteix en grup opcional o repetible',
   'LBL_DATABLOCK_GROUP_UNGROUP' => 'Desagrupar els blocs de dades',
+  'LBL_DATABLOCK_GROUP_CONFIG_MANDATORY' => 'Grup obligatori',
 
   // STIC-Custom OC - 20250803 - Bloc de dades repetible
   'LBL_DATABLOCK_REPEATABLE_TITLE' => 'Permet que els usuaris afegeixin diverses entrades d\'aquest bloc',

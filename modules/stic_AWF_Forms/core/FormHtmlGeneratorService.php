@@ -226,6 +226,9 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-child-block-instances { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--bs-border-color); }
 #{$wrapperId} .awf-child-block-title { font-size: 1em; margin-bottom: 0.75rem; font-weight: 600; }
 #{$wrapperId} .awf-add-instance-btn { margin-top: 0.5rem; }
+#{$wrapperId} .awf-group-container { grid-column: 1 / -1; width: 100%; margin-bottom: 1.5rem; }
+#{$wrapperId} .awf-block-panel { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; margin-bottom: 1rem; }
+#{$wrapperId} .awf-block-title { font-size: 1em; font-weight: 600; margin-bottom: 0.75rem; padding-bottom: 0.25rem; border-bottom: 1px solid var(--bs-border-color); }
 /* END STIC-Custom OC */";
         if ($inputCssProps !== "")  $html .= "\n".$inputCssProps;
         if ($selectCssProps !== "")  $html .= "\n".$selectCssProps;
@@ -493,11 +496,10 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML for the data block as a string
      */
     private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme, FormConfig $config): string {
-        // STIC-Custom OC - 20250803 - Delegate repeatable root blocks to the group renderer
+        // Delegate repeatable root blocks to the group renderer
         if ($block->is_repeatable) {
             return $this->generateRepeatableGroupHtml($block, $theme, $config);
         }
-        // END STIC-Custom OC
         $html = "";
         foreach ($block->fields as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
@@ -506,9 +508,9 @@ class FormHtmlGeneratorService {
         return $html;
     }
 
-    /**
-     * Renders a repeatable group for a root data block. Each instance renders the root's fields
-     * followed by its child blocks' fields, all sharing the same instance index.
+/**
+     * Renders a repeatable group for a root data block. Each instance renders structured
+     * panels for the root block and all child blocks, sharing the same instance index.
      *
      * @param FormDataBlock $rootBlock The repeatable root block
      * @param FormTheme $theme The form theme
@@ -516,7 +518,7 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML for the repeatable group
      */
     private function generateRepeatableGroupHtml(FormDataBlock $rootBlock, FormTheme $theme, FormConfig $config): string {
-        // STIC-Custom OC - 20250803 - Repeatable group HTML
+        // STIC-Custom OC - 20260805 - Structured repeatable group rendering
         $groupTitle = htmlspecialchars($rootBlock->group_title ?: $rootBlock->text);
         $addLabel = htmlspecialchars($rootBlock->add_button_label ?: translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT', 'stic_AWF_Forms'));
         $removeLabel = htmlspecialchars($rootBlock->remove_button_label ?: translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT', 'stic_AWF_Forms'));
@@ -524,39 +526,72 @@ class FormHtmlGeneratorService {
         $maxInstancesJs = $maxInstances > 0 ? (int)$maxInstances : 'null';
         $initialInstances = ($rootBlock->min_instances === 0) ? '[]' : '[{ id: 0 }]';
 
+        $children = $config->getGroupChildren($rootBlock);
+
         $html = "<div class='awf-group-container' x-data=\"{ nextInstanceId: 1, instances: {$initialInstances} }\">" . $this->newLine('+');
         {
-            $html .= "<h4 class='awf-group-title'>{$groupTitle}</h4>" . $this->newLine();
+            // 1. Group Main Title Header
+            $html .= "<div class='awf-group-header mb-3 pb-2 border-bottom d-flex align-items-center justify-content-between'>" . $this->newLine('+');
+            {
+                $html .= "<div class='d-flex align-items-center'>" . $this->newLine('+');
+                {
+                    $html .= "<h4 class='awf-group-title mb-0 fw-bold'>{$groupTitle}</h4>" . $this->newLine();
+                }
+                $html .= "</div>" . $this->newLine('-');
+            }
+            $html .= "</div>" . $this->newLine('-');
+
+            // 2. Instances Loop (Alpine x-for)
             $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
             {
-                $html .= "<div class='awf-instance-card'>" . $this->newLine('+');
+                $html .= "<div class='awf-instance-card card border mb-3 shadow-sm'>" . $this->newLine('+');
                 {
-                    $html .= "<div class='awf-instance-header'>" . $this->newLine('+');
+                    // Instance Header: Numbering and Remove Button
+                    $html .= "<div class='card-header bg-light d-flex justify-content-between align-items-center py-2'>" . $this->newLine('+');
                     {
-                        $html .= "<span x-text=\"'{$groupTitle} #' + (index + 1)\"></span>" . $this->newLine();
-                        $html .= "<button type='button' class='btn btn-sm btn-outline-danger' @click=\"instances = instances.filter(i => i !== instance)\" x-text=\"'{$removeLabel}'\"></button>" . $this->newLine();
+                        $html .= "<span class='fw-bold text-secondary' x-text=\"'{$groupTitle} #' + (index + 1)\"></span>" . $this->newLine();
+                        $html .= "<button type='button' class='btn btn-sm btn-outline-danger' @click=\"instances = instances.filter(i => i !== instance)\">" . $this->newLine('+');
+                        {
+                            $html .= "<span>{$removeLabel}</span>" . $this->newLine();
+                        }
+                        $html .= "</button>" . $this->newLine('-');
                     }
                     $html .= "</div>" . $this->newLine('-');
 
-                    // Root block fields for this instance
-                    $html .= "<div class='awf-instance-body'>" . $this->newLine('+');
+                    // Instance Body: Structured panels for Root and Child DataBlocks
+                    $html .= "<div class='card-body p-3 bg-white'>" . $this->newLine('+');
                     {
-                        foreach ($rootBlock->fields as $field) {
-                            if ($field->type_field === DataBlockFieldType::FIXED) continue;
-                            $html .= $this->renderFieldForInstance($field, $theme, 'index');
-                        }
-
-                        // Child blocks for this instance
-                        $children = $config->getGroupChildren($rootBlock);
-                        foreach ($children as $childBlock) {
-                            if (!$childBlock->fields) continue;
-                            $html .= "<div class='awf-child-block-instances'>" . $this->newLine('+');
+                        // A. Root DataBlock Panel
+                        $rootBlockTitle = htmlspecialchars($rootBlock->text);
+                        $html .= "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
+                        {
+                            $html .= "<h5 class='awf-block-title text-dark'>{$rootBlockTitle}</h5>" . $this->newLine();
+                            $html .= "<div class='awf-grid-fields'>" . $this->newLine('+');
                             {
-                                $html .= "<h5 class='awf-child-block-title'>" . htmlspecialchars($childBlock->text) . "</h5>" . $this->newLine();
-                                foreach ($childBlock->fields as $field) {
+                                foreach ($rootBlock->fields as $field) {
                                     if ($field->type_field === DataBlockFieldType::FIXED) continue;
                                     $html .= $this->renderFieldForInstance($field, $theme, 'index');
                                 }
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                        }
+                        $html .= "</div>" . $this->newLine('-');
+
+                        // B. Child DataBlocks Panels
+                        foreach ($children as $childBlock) {
+                            if (!$childBlock->fields) continue;
+                            $childBlockTitle = htmlspecialchars($childBlock->text);
+                            $html .= "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
+                            {
+                                $html .= "<h5 class='awf-block-title text-dark'>{$childBlockTitle}</h5>" . $this->newLine();
+                                $html .= "<div class='awf-grid-fields'>" . $this->newLine('+');
+                                {
+                                    foreach ($childBlock->fields as $field) {
+                                        if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                                        $html .= $this->renderFieldForInstance($field, $theme, 'index');
+                                    }
+                                }
+                                $html .= "</div>" . $this->newLine('-');
                             }
                             $html .= "</div>" . $this->newLine('-');
                         }
@@ -567,9 +602,10 @@ class FormHtmlGeneratorService {
             }
             $html .= "</template>" . $this->newLine('-');
 
-            $html .= "<button type='button' class='btn btn-primary awf-add-instance-btn' @click=\"instances.push({ id: nextInstanceId++ })\" x-show=\"!{$maxInstancesJs} || instances.length < {$maxInstancesJs}\">" . $this->newLine('+');
+            // 3. Add Instance Button
+            $html .= "<button type='button' class='btn btn-primary awf-add-instance-btn mt-2' @click=\"instances.push({ id: nextInstanceId++ })\" x-show=\"!{$maxInstancesJs} || instances.length < {$maxInstancesJs}\">" . $this->newLine('+');
             {
-                $html .= "<span x-text=\"'{$addLabel}'\"></span>" . $this->newLine();
+                $html .= "<span>+ {$addLabel}</span>" . $this->newLine();
             }
             $html .= "</button>" . $this->newLine('-');
         }

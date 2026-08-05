@@ -42,7 +42,6 @@ class stic_AwfDataBlock {
       relationships: [],        // Block-to-block relationships [{ name, related_datablock_id }]
       duplicate_detections: [], // Duplicate detection definition
       save_action_id: "",       // ID of the data block save action
-      // STIC-Custom OC - 20250803 - Repeatable data blocks
       is_repeatable: false,    // Indicates if the block can be repeated 0..N times
       min_instances: 1,          // Minimum required instances (0 = optional)
       max_instances: null,       // Maximum allowed instances (null = unlimited)
@@ -50,7 +49,6 @@ class stic_AwfDataBlock {
       add_button_label: '',      // Label for the "add instance" button
       remove_button_label: '',   // Label for the "remove instance" button
       parent_repeat_root: '',    // ID of the repeatable root this block belongs to
-      // END STIC-Custom OC
     });
 
     // 2. Overwrite with provided data
@@ -343,6 +341,26 @@ class stic_AwfDataBlock {
       this.relationships = this.relationships.filter(r => r.name !== relName);
     }
   }
+
+  /**
+   * Ensures min_instances and max_instances constraints are strictly coherent:
+   * - Mandatory group (min_instances = 1): minimum allowed max_instances is 2 (if set).
+   * - Optional group (min_instances = 0): minimum allowed max_instances is 1 (if set).
+   */
+  sanitizeRepeatableLimits() {
+    if (!this.is_repeatable) return;
+
+    const isMandatory = parseInt(this.min_instances, 10) === 1;
+    const minAllowedMax = isMandatory ? 2 : 1;
+
+    if (this.max_instances !== null && this.max_instances !== '' && !isNaN(this.max_instances)) {
+      const currentMax = parseInt(this.max_instances, 10);
+      if (currentMax < minAllowedMax) {
+        this.max_instances = minAllowedMax;
+      }
+    }
+  }
+
 }
 
 /**
@@ -1155,9 +1173,7 @@ class stic_AwfLayout {
       });
     }
 
-    // STIC-Custom OC - 20250803 - Keep children of repeatable roots with their root
     this._ensureRepeatableChildrenWithRoot(dataBlocks);
-    // END STIC-Custom OC
   }
 
   _addSectionWithBlock(block) {
@@ -1760,9 +1776,7 @@ class stic_AwfConfiguration {
 
   syncLayoutWithDataBlocks() {
     this.layout.syncWithDataBlocks(this.data_blocks);
-    // STIC-Custom OC - 20250803 - Keep children of repeatable roots in the same section as their root
     this.layout._ensureRepeatableChildrenWithRoot(this.data_blocks);
-    // END STIC-Custom OC
   }
 
   /**
@@ -1805,13 +1819,12 @@ class stic_AwfConfiguration {
     // Remove DataBlock
     this.data_blocks = this.data_blocks.filter(d => d.id != dataBlock.id);
 
-    // STIC-Custom OC - 20250803 - Clear parent_repeat_root for children of the deleted block
+    // Clear parent_repeat_root for children of the deleted block
     this.data_blocks.forEach(d => {
       if (d.parent_repeat_root === dataBlock.id) {
         d.parent_repeat_root = '';
       }
     });
-    // END STIC-Custom OC
   }
 
   deleteDataBlockField(dataBlock, field) {
@@ -1875,11 +1888,10 @@ class stic_AwfConfiguration {
     let allFields = [];
 
     this.data_blocks.forEach(block => {
-      // STIC-Custom OC - 20250803 - Exclude fields from repeatable blocks from global conditions
+      // Exclude fields from repeatable blocks from global conditions
       if (!includeRepeatable && (block.is_repeatable || (block.parent_repeat_root && block.parent_repeat_root !== ''))) {
         return;
       }
-      // END STIC-Custom OC
       block.fields.forEach(field => {
         if (field.type_field === 'fixed') return;
         let fullName = block.getFieldInputName(field);
@@ -2089,9 +2101,8 @@ class stic_AwfConfiguration {
       });
     }
 
-    // STIC-Custom OC - 20250803 - Recompute repeatable roots after relationship removal
+    // Recompute repeatable roots after relationship removal
     this.recomputeRepeatableRoots();
-    // END STIC-Custom OC
   }
 
   /**
@@ -2273,6 +2284,51 @@ class stic_AwfConfiguration {
         this.propagateRepeatableRoot(b.id);
       }
     });
+  }
+
+  /**
+   * Converts a standalone data block into a repeatable root with sensible defaults.
+   * @param {stic_AwfDataBlock} block 
+   */
+  makeBlockRepeatable(block) {
+    if (!block || !this.canBeRepeatable(block)) return;
+
+    block.is_repeatable = true;
+    block.min_instances = 1;
+    block.max_instances = null;
+
+    // Propagate roots first so children are properly linked
+    this.propagateRepeatableRoot(block.id);
+
+    // Compute concatenated title: "Root Block + Child Block 1 + Child Block 2"
+    const children = this.data_blocks.filter(b => b.parent_repeat_root === block.id);
+    const blockNames = [block.text, ...children.map(c => c.text)];
+    block.group_title = blockNames.join(' + ');
+
+    block.add_button_label = block.add_button_label || utils.translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT');
+    block.remove_button_label = block.remove_button_label || utils.translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT');
+
+    block.sanitizeRepeatableLimits();
+    
+    this.prepareForSave();
+  }
+
+  /**
+   * Reverts a repeatable group back to a standalone block.
+   * @param {stic_AwfDataBlock} block 
+   */
+  ungroupBlock(block) {
+    if (!block) return;
+
+    block.is_repeatable = false;
+    block.min_instances = 1;
+    block.max_instances = null;
+    block.group_title = '';
+    block.add_button_label = '';
+    block.remove_button_label = '';
+
+    this.clearRepeatableRoot(block.id);
+    this.prepareForSave();
   }
 
   /**

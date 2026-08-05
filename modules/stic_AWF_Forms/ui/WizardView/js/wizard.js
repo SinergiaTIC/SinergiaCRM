@@ -1000,91 +1000,6 @@ class WizardStep2 {
           });
         }
         
-
-        // Store for the Repeatable DataBlock configuration
-        if (!Alpine.store('repeatableModal')) {
-          Alpine.store('repeatableModal', {
-            isOpen: false,
-            block: null,
-            originalBlock: null,
-
-            get formConfig() { return window.alpineComponent.formConfig; },
-
-            /**
-             * Directly ungroups a repeatable data block without opening the configuration modal.
-             * @param {stic_AwfDataBlock} item 
-             */
-            ungroup(item) {
-              if (!item) return;
-
-              item.is_repeatable = false;
-              item.min_instances = 1;
-              item.max_instances = null;
-              item.group_title = '';
-              item.add_button_label = '';
-              item.remove_button_label = '';
-                
-              // Clear parent_repeat_root across all descendants
-              this.formConfig.clearRepeatableRoot(item.id);
-              
-              // Mark config dirty and trigger auto-save preparation
-              window.alpineComponent.formConfig.prepareForSave();
-            },
-
-            open(item) {
-              if (!this.formConfig.canBeRepeatable(item)) {
-                alert(utils.translate('LBL_DATABLOCK_REPEATABLE_NESTING_ERROR'));
-                return;
-              }
-              this.block = item;
-              // Keep a shallow clone for cancel
-              this.originalBlock = { ...item };
-              this.isOpen = true;
-            },
-
-            close() {
-              if (this.block && this.originalBlock) {
-                // Restore changed values on cancel
-                this.block.is_repeatable = this.originalBlock.is_repeatable;
-                this.block.min_instances = this.originalBlock.min_instances;
-                this.block.max_instances = this.originalBlock.max_instances;
-                this.block.group_title = this.originalBlock.group_title;
-                this.block.add_button_label = this.originalBlock.add_button_label;
-                this.block.remove_button_label = this.originalBlock.remove_button_label;
-              }
-              this.isOpen = false;
-              this.block = null;
-              this.originalBlock = null;
-            },
-
-            save() {
-              if (!this.block) return;
-              if (this.block.is_repeatable) {
-                if (this.block.min_instances === '' || this.block.min_instances === null || this.block.min_instances === undefined) {
-                  this.block.min_instances = 1;
-                }
-                this.block.min_instances = Math.max(0, Math.min(1, parseInt(this.block.min_instances, 10) || 0));
-                this.block.max_instances = this.block.max_instances ? Math.max(0, parseInt(this.block.max_instances, 10) || 0) : null;
-                this.block.group_title = this.block.group_title || this.block.text;
-                this.block.add_button_label = this.block.add_button_label || utils.translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT');
-                this.block.remove_button_label = this.block.remove_button_label || utils.translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT');
-                this.formConfig.propagateRepeatableRoot(this.block.id);
-              } else {
-                this.block.min_instances = 1;
-                this.block.max_instances = null;
-                this.block.group_title = '';
-                this.block.add_button_label = '';
-                this.block.remove_button_label = '';
-                this.formConfig.clearRepeatableRoot(this.block.id);
-              }
-              this.isOpen = false;
-              this.block = null;
-              this.originalBlock = null;
-              window.alpineComponent.formConfig.prepareForSave();
-            }
-          });
-        }
-
         // Store for the Relationship Creator management
         if (!Alpine.store('relCreator')) {
           Alpine.store('relCreator', {
@@ -1171,9 +1086,11 @@ class WizardStep2 {
     return {
       formConfig: initial_formConfig,
 
-      get visualGroups() {
-        return this.formConfig.getVisualGroups();
-      },
+      get visualGroups() { return this.formConfig.getVisualGroups(); },
+
+      convertToGroup(block) { this.formConfig.makeBlockRepeatable(block); },
+
+      ungroup(block) { this.formConfig.ungroupBlock(block); },
 
       deleteDataBlock(dataBlock) {
         this.formConfig.deleteDataBlock(dataBlock);

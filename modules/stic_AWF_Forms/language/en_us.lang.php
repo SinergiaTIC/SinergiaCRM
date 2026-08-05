@@ -146,6 +146,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_GROUP_CONFIGURE' => 'Configure the data block group',
   'LBL_DATABLOCK_GROUP_CONVERT' => 'Convert to optional or repeatable group',
   'LBL_DATABLOCK_GROUP_UNGROUP' => 'Ungroup data blocks',
+  'LBL_DATABLOCK_GROUP_CONFIG_MANDATORY' => 'Mandatory group',
 
   // STIC-Custom OC - 20250803 - Repeatable data blocks
   'LBL_DATABLOCK_REPEATABLE_TITLE' => 'Let users add several entries of this block',
