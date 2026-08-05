@@ -57,20 +57,19 @@
             <template x-if="group.isGroup">
               <div class="card-header d-flex flex-column">
                 <div class="d-flex justify-content-start">
-                  <span class="badge bg-primary">[Grup Repetible]</span>
+                  <span class="badge bg-primary" x-text="utils.translate('LBL_DATABLOCK_GROUP')"></span>
                 </div>
                 <div class="d-flex align-items-center justify-content-between text-primary">
                   <h3 class="mb-0 me-3" :id="`groupDataBlockTitleEdit-${group.id}`" data-model="group.rootBlock.group_title" x-init="sticControls.editableText($el);"></h3>
                   <!-- Buttons -->
                   <div class="d-inline-flex">
                     <button type="button" class="btn btn-sm btn-outline-primary" @click="$store.repeatableModal.open(group.rootBlock)"
-                            :title="utils.translate('LBL_DATABLOCK_REPEATABLE')">
-                      <i class="suitepicon suitepicon-action-edit me-1"></i>
-                      <span>[Configurar Grup]</span>
+                            :title="utils.translate('LBL_DATABLOCK_GROUP_CONFIGURE')">
+                      <span class="suitepicon suitepicon-action-edit me-1"></span>
                     </button>
-                    <button type="button" class="btn btn-sm btn-outline-primary" @click="$store.repeatableModal.open(group.rootBlock)"
-                            :title="utils.translate('LBL_DATABLOCK_REPEATABLE')">
-                      <span class="suitepicon suitepicon-action-delete"></span>
+                    <button type="button" class="btn btn-sm btn-outline-primary" @click="$store.repeatableModal.ungroup(group.rootBlock)"
+                            :title="utils.translate('LBL_DATABLOCK_GROUP_UNGROUP')">
+                      <span class="suitepicon suitepicon-action-clear"></span>
                     </button>
                   </div>
                 </div>
@@ -97,10 +96,9 @@
                       <div class="d-inline-flex">
                         <!-- Repeatable DataBlock -->
                         <template x-if="!group.isGroup && !item.is_repeatable">
-                          <button type="button" class="btn ms-2" @click="$store.repeatableModal.open(item);"
-                                  :title="utils.translate('LBL_DATABLOCK_REPEATABLE')">
-                            <i class="suitepicon suitepicon-module-listview me-2"></i>
-                            <span>[Convertir en grup repetible]</span>
+                          <button type="button" class="btn ms-2" @click="$store.repeatableModal.open(item)"
+                                  :title="utils.translate('LBL_DATABLOCK_GROUP_CONVERT')">
+                            <span class="suitepicon suitepicon-action-plus me-2"></span>
                           </button>
                         </template>
                         <!-- Delete DataBlock -->
@@ -111,8 +109,7 @@
                           </button>
                         </template>
                         <!-- Chevron Collapse Button -->
-                        <button class="btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2" @click="toggleCollapse()" 
-                                :title="isCollapsed ? utils.translate('LBL_BUTTON_EXPAND') : utils.translate('LBL_BUTTON_COLLAPSE')">
+                        <button class="btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2" @click="toggleCollapse()">
                           <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
                         </button>
                       </div>

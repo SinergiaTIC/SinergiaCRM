@@ -114,8 +114,6 @@ $mod_strings = array (
   'LBL_BUTTON_ADD' => 'Add',
   'LBL_BUTTON_EDIT' => 'Edit',
   'LBL_BUTTON_DELETE' => 'Delete',
-  'LBL_BUTTON_EXPAND' => 'Expand',
-  'LBL_BUTTON_COLLAPSE' => 'Collapse',
   'LBL_BUTTON_MOVE_UP' => 'Move up',
   'LBL_BUTTON_MOVE_DOWN' => 'Move down',
   'LBL_BUTTON_DUPLICATE' => 'Duplicate',
@@ -143,8 +141,13 @@ $mod_strings = array (
   'LBL_DATABLOCK_NAME' => 'Name',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Internal name',
 
+  // DataBlock Groups
+  'LBL_DATABLOCK_GROUP' => 'Data block group',
+  'LBL_DATABLOCK_GROUP_CONFIGURE' => 'Configure the data block group',
+  'LBL_DATABLOCK_GROUP_CONVERT' => 'Convert to optional or repeatable group',
+  'LBL_DATABLOCK_GROUP_UNGROUP' => 'Ungroup data blocks',
+
   // STIC-Custom OC - 20250803 - Repeatable data blocks
-  'LBL_DATABLOCK_REPEATABLE' => 'Repeatable block',
   'LBL_DATABLOCK_REPEATABLE_TITLE' => 'Let users add several entries of this block',
   'LBL_DATABLOCK_REPEATABLE_ENABLED' => 'Block is repeatable (0..N entries)',
   'LBL_DATABLOCK_MIN_INSTANCES' => 'Minimum number of entries',

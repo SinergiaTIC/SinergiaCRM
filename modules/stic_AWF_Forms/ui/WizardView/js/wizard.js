@@ -1010,6 +1010,27 @@ class WizardStep2 {
 
             get formConfig() { return window.alpineComponent.formConfig; },
 
+            /**
+             * Directly ungroups a repeatable data block without opening the configuration modal.
+             * @param {stic_AwfDataBlock} item 
+             */
+            ungroup(item) {
+              if (!item) return;
+
+              item.is_repeatable = false;
+              item.min_instances = 1;
+              item.max_instances = null;
+              item.group_title = '';
+              item.add_button_label = '';
+              item.remove_button_label = '';
+                
+              // Clear parent_repeat_root across all descendants
+              this.formConfig.clearRepeatableRoot(item.id);
+              
+              // Mark config dirty and trigger auto-save preparation
+              window.alpineComponent.formConfig.prepareForSave();
+            },
+
             open(item) {
               if (!this.formConfig.canBeRepeatable(item)) {
                 alert(utils.translate('LBL_DATABLOCK_REPEATABLE_NESTING_ERROR'));
