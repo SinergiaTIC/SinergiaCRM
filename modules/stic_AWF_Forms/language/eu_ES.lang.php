@@ -146,7 +146,6 @@ $mod_strings = array (
   'LBL_DATABLOCK_GROUP_CONFIGURE' => 'Configura el grupo de bloques de datos',
   'LBL_DATABLOCK_GROUP_CONVERT' => 'Convertir a grupo opcional o repetible',
   'LBL_DATABLOCK_GROUP_UNGROUP' => 'Desagrupar los bloques de datos',
-  'LBL_DATABLOCK_GROUP_CONFIG_MANDATORY' => 'Grupo obligatorio',
 
   // STIC-Custom OC - 20250803 - Datu-bloke errepikagarria
   'LBL_DATABLOCK_REPEATABLE_TITLE' => 'Erabiltzaileek bloke honen hainbat sarrera gehi ditzakete',
@@ -158,8 +157,10 @@ $mod_strings = array (
   'LBL_DATABLOCK_REPEATABLE_NESTING_ERROR' => 'Bloke errepikagarriak ezin dira beste bloke batzuen barruan egon.',
   'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Bloke errepikagarri baten semeak ezin dira modu independentean mugitu.',
   'LBL_DATABLOCK_GROUP_TITLE' => 'Taldearen izenburua',
+  'LBL_DATABLOCK_TOGGLE_LABEL' => 'Texto del interruptor para incluir el bloque de datos',
   'LBL_DATABLOCK_ADD_LABEL' => 'Gehitu botoiaren testua',
   'LBL_DATABLOCK_REMOVE_LABEL' => 'Ezabatu botoiaren testua',
+  'LBL_DATABLOCK_TOGGLE_DEFAULT' => 'Incluir datos de',
   'LBL_DATABLOCK_ADD_INSTANCE_DEFAULT' => 'Gehitu beste bat',
   'LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT' => 'Ezabatu',
   // END STIC-Custom OC

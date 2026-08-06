@@ -146,7 +146,6 @@ $mod_strings = array (
   'LBL_DATABLOCK_GROUP_CONFIGURE' => 'Configure the data block group',
   'LBL_DATABLOCK_GROUP_CONVERT' => 'Convert to optional or repeatable group',
   'LBL_DATABLOCK_GROUP_UNGROUP' => 'Ungroup data blocks',
-  'LBL_DATABLOCK_GROUP_CONFIG_MANDATORY' => 'Mandatory group',
 
   // STIC-Custom OC - 20250803 - Repeatable data blocks
   'LBL_DATABLOCK_REPEATABLE_TITLE' => 'Let users add several entries of this block',
@@ -158,8 +157,10 @@ $mod_strings = array (
   'LBL_DATABLOCK_REPEATABLE_NESTING_ERROR' => 'Repeatable blocks cannot be nested inside other blocks.',
   'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Children of a repeatable block cannot be moved independently.',
   'LBL_DATABLOCK_GROUP_TITLE' => 'Group title',
+  'LBL_DATABLOCK_TOGGLE_LABEL' => 'Label for the toggle switch to include the data block',
   'LBL_DATABLOCK_ADD_LABEL' => 'Add button text',
   'LBL_DATABLOCK_REMOVE_LABEL' => 'Remove button text',
+  'LBL_DATABLOCK_TOGGLE_DEFAULT' => 'Include data of',
   'LBL_DATABLOCK_ADD_INSTANCE_DEFAULT' => 'Add another',
   'LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT' => 'Remove',
   // END STIC-Custom OC

@@ -37,22 +37,19 @@ class FormDataBlock {
     /** @var FormDuplicateRule[] */
     public array $duplicate_detections;   // Definition of duplicate detection
 
-    // STIC-Custom OC - 20250803 - Repeatable data block fields
-    public bool $is_repeatable = false;    // Indicates if the block can be repeated 0..N times
-    public int $min_instances = 1;        // Minimum required instances (0 = optional)
-    public ?int $max_instances = null;    // Maximum allowed instances (null = unlimited)
-    public string $group_title = '';       // Visual title for the repeat group
-    public string $add_button_label = '';   // Label for the "add instance" button
+    public bool $is_repeatable = false;      // Indicates if the block can be repeated 0..N times
+    public int $min_instances = 1;           // Minimum required instances (0 = optional)
+    public ?int $max_instances = null;       // Maximum allowed instances (null = unlimited)
+    public string $group_title = '';         // Visual title for the repeat group
+    public string $toggle_label = '';        // Label for the "include instance data" toggle switch
+    public string $add_button_label = '';    // Label for the "add instance" button
     public string $remove_button_label = ''; // Label for the "remove instance" button
-    public string $parent_repeat_root = ''; // ID of the repeatable root this block belongs to
-    // END STIC-Custom OC
+    public string $parent_repeat_root = '';  // ID of the repeatable root this block belongs to
 
     private ?BeanReference $beanReference = null; // Bean where the data block has been saved
 
-    // STIC-Custom OC - 20250803 - Indexed bean references for repeatable blocks
     /** @var array<int, BeanReference> */
     private array $beanReferences = [];
-    // END STIC-Custom OC
 
     /**
      * Creates an instance of FormDataBlock from a JSON array.
@@ -74,6 +71,7 @@ class FormDataBlock {
         $dto->min_instances = isset($data['min_instances']) ? (int)$data['min_instances'] : 1;
         $dto->max_instances = isset($data['max_instances']) && $data['max_instances'] !== '' && $data['max_instances'] !== null ? (int)$data['max_instances'] : null;
         $dto->group_title = $data['group_title'] ?? '';
+        $dto->toggle_label = $data['toggle_label'] ?? '';
         $dto->add_button_label = $data['add_button_label'] ?? '';
         $dto->remove_button_label = $data['remove_button_label'] ?? '';
         $dto->parent_repeat_root = $data['parent_repeat_root'] ?? '';

@@ -1088,6 +1088,28 @@ class WizardStep2 {
 
       get visualGroups() { return this.formConfig.getVisualGroups(); },
 
+      /**
+       * Toggles the optional status (min_instances = 0 vs 1) of a root DataBlock.
+       */
+      toggleOptional(block, isOptional) {
+        if (!block) return;
+        block.min_instances = isOptional ? 0 : 1;
+        block.sanitizeRepeatableLimits();
+        this.formConfig.prepareForSave();
+      },
+
+      /**
+       * Toggles the repeatable status (is_repeatable) of a root DataBlock.
+       */
+      toggleRepeatable(block, isRepeatable) {
+        if (!block) return;
+        if (isRepeatable) {
+          this.formConfig.makeBlockRepeatable(block);
+        } else {
+          this.formConfig.ungroupBlock(block);
+        }
+      },
+
       convertToGroup(block) { this.formConfig.makeBlockRepeatable(block); },
 
       ungroup(block) { this.formConfig.ungroupBlock(block); },

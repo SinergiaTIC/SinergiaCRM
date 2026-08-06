@@ -42,13 +42,14 @@ class stic_AwfDataBlock {
       relationships: [],        // Block-to-block relationships [{ name, related_datablock_id }]
       duplicate_detections: [], // Duplicate detection definition
       save_action_id: "",       // ID of the data block save action
-      is_repeatable: false,    // Indicates if the block can be repeated 0..N times
-      min_instances: 1,          // Minimum required instances (0 = optional)
-      max_instances: null,       // Maximum allowed instances (null = unlimited)
-      group_title: '',           // Visual title for the repeat group
-      add_button_label: '',      // Label for the "add instance" button
-      remove_button_label: '',   // Label for the "remove instance" button
-      parent_repeat_root: '',    // ID of the repeatable root this block belongs to
+      is_repeatable: false,     // Indicates if the block can be repeated 0..N times
+      min_instances: 1,         // Minimum required instances (0 = optional)
+      max_instances: null,      // Maximum allowed instances (null = unlimited)
+      group_title: '',          // Visual title for the repeat group
+      toggle_label: '',         // Label for the "include instance data" toggle switch
+      add_button_label: '',     // Label for the "add new instance" button
+      remove_button_label: '',  // Label for the "remove instance" button
+      parent_repeat_root: '',   // ID of the repeatable root this block belongs to
     });
 
     // 2. Overwrite with provided data
@@ -344,15 +345,20 @@ class stic_AwfDataBlock {
 
   /**
    * Ensures min_instances and max_instances constraints are strictly coherent:
-   * - Mandatory group (min_instances = 1): minimum allowed max_instances is 2 (if set).
-   * - Optional group (min_instances = 0): minimum allowed max_instances is 1 (if set).
+   * - Mandatory repeatable group (min_instances = 1, is_repeatable = true): minimum max_instances is 2.
+   * - Optional simple block (min_instances = 0, is_repeatable = false): max_instances is forced to 1.
+   * - Optional repeatable group (min_instances = 0, is_repeatable = true): minimum max_instances is 1.
    */
   sanitizeRepeatableLimits() {
-    if (!this.is_repeatable) return;
-
     const isMandatory = parseInt(this.min_instances, 10) === 1;
-    const minAllowedMax = isMandatory ? 2 : 1;
 
+    if (!this.is_repeatable) {
+      // Non-repeatable optional block: strictly 1 instance max
+      this.max_instances = !isMandatory ? 1 : null;
+      return;
+    }
+
+    const minAllowedMax = isMandatory ? 2 : 1;
     if (this.max_instances !== null && this.max_instances !== '' && !isNaN(this.max_instances)) {
       const currentMax = parseInt(this.max_instances, 10);
       if (currentMax < minAllowedMax) {
@@ -2305,6 +2311,7 @@ class stic_AwfConfiguration {
     const blockNames = [block.text, ...children.map(c => c.text)];
     block.group_title = blockNames.join(' + ');
 
+    block.toggle_label = block.toggle_label || utils.translate('LBL_DATABLOCK_TOGGLE_DEFAULT');
     block.add_button_label = block.add_button_label || utils.translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT');
     block.remove_button_label = block.remove_button_label || utils.translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT');
 
@@ -2314,20 +2321,26 @@ class stic_AwfConfiguration {
   }
 
   /**
-   * Reverts a repeatable group back to a standalone block.
+   * Reverts a repeatable group back to a non-repeatable block,
+   * preserving its optional status if min_instances is 0.
    * @param {stic_AwfDataBlock} block 
    */
   ungroupBlock(block) {
     if (!block) return;
 
     block.is_repeatable = false;
-    block.min_instances = 1;
-    block.max_instances = null;
-    block.group_title = '';
-    block.add_button_label = '';
-    block.remove_button_label = '';
+    block.max_instances = block.min_instances === 0 ? 1 : null;
 
-    this.clearRepeatableRoot(block.id);
+    // Only clear group metadata if the block is neither optional nor has children
+    const children = this.data_blocks.filter(b => b.parent_repeat_root === block.id);
+    if (children.length === 0 && block.min_instances === 1) {
+      block.group_title = '';
+      block.toggle_label = '';
+      block.add_button_label = '';
+      block.remove_button_label = '';
+      this.clearRepeatableRoot(block.id);
+    }
+
     this.prepareForSave();
   }
 
@@ -2357,7 +2370,8 @@ class stic_AwfConfiguration {
 
   /**
    * Returns an array of visual group structures for UI rendering.
-   * Groups root repeatable blocks with their child blocks, and places standalone blocks in a default non-group container.
+   * Groups root repeatable or optional blocks with their child blocks,
+   * and places mandatory standalone blocks in a default non-group container.
    * @returns {Array<{id: string, isGroup: boolean, rootBlock: stic_AwfDataBlock|null, blocks: stic_AwfDataBlock[]}>}
    */
   getVisualGroups() {
@@ -2376,8 +2390,10 @@ class stic_AwfConfiguration {
       // Skip child blocks here; they belong to their repeatable root
       if (block.parent_repeat_root && block.parent_repeat_root !== '') return;
 
-      if (block.is_repeatable) {
-        const children = this.data_blocks.filter(b => b.parent_repeat_root === block.id);
+      const children = this.data_blocks.filter(b => b.parent_repeat_root === block.id);
+      const isVisualGroup = block.is_repeatable || block.min_instances === 0 || children.length > 0;
+
+      if (isVisualGroup) {
         groups.push({
           id: 'group_' + block.id,
           isGroup: true,
