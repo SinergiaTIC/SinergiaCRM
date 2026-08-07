@@ -124,7 +124,11 @@ class ServerActionFlowExecutor {
                         if ($targetBlock->is_repeatable) {
                             $repeatRoot = $targetBlock;
                         } elseif (!empty($targetBlock->group_root)) {
-                            $repeatRoot = $this->context->formConfig->data_blocks[$targetBlock->group_root] ?? null;
+                            // STIC-Custom OC - 20260807 - Resolve the TOP-LEVEL branch root, not just the
+                            // immediate parent: with multi-level adoption a level-2+ child's group_root
+                            // points to its (non-repeatable) immediate parent.
+                            $repeatRoot = $this->context->formConfig->getGroupRootBlock($targetBlock);
+                            // END STIC-Custom OC
                         }
                     }
                 }

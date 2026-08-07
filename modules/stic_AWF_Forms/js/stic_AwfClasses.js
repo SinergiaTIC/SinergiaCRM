@@ -412,6 +412,30 @@ class stic_AwfDataBlock {
   }  
 
   /**
+   * Checks whether candidate is an ancestor of this block in the group_root chain.
+   * Used to prevent adoption cycles (A -> B -> A) during transitive adoption.
+   * @param {stic_AwfDataBlock} candidate
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {boolean}
+   */
+  hasAncestor(candidate, allDataBlocks) {
+    let currentParentId = this.group_root;
+    const visited = new Set([this.id]);
+
+    while (currentParentId) {
+      if (currentParentId === candidate.id) return true;
+      if (visited.has(currentParentId)) break; // Prevent infinite loop in malformed data
+      visited.add(currentParentId);
+
+      const parentBlock = allDataBlocks.find(b => b.id === currentParentId);
+      if (!parentBlock) break;
+      currentParentId = parentBlock.group_root;
+    }
+
+    return false;
+  }
+
+  /**
    * Returns valid candidate parent blocks for this block to join as a child.
    * Filters out self, descendants (cycle prevention), and invalid N x M combinations.
    * @param {stic_AwfDataBlock[]} allDataBlocks 
@@ -474,33 +498,6 @@ class stic_AwfDataBlock {
     });
 
     return descendants;
-  }
-
-  /**
-   * Auto-assigna com a fills només aquells blocs que depenen directament del pare (costat N).
-   * @param {stic_AwfDataBlock} block 
-   */
-  autoAssignDependentChildren(block) {
-    if (!block) return;
-
-    this.data_blocks.forEach(candidate => {
-      // Ometem el mateix bloc o blocs que ja tenen un pare assignat
-      if (candidate.id === block.id || candidate.group_root) return;
-
-      // UNIDIRECCIONAL: Només si el candidat conté el camp relacionat/FK que apunta cap al bloc pare (costat N)
-      const isChild = candidate.fields.some(f => 
-        f.type === 'relate' && f.value_type === 'dataBlock' && f.value === block.id
-      ) || candidate.relationships.some(r => 
-        r.related_datablock_id === block.id && r.initiator_id === candidate.id
-      );
-
-      // Valida que el candidat no sigui ja un ancestre del bloc pare (evita bucles A -> B -> A)
-      const isAncestyCycle = block.isDescendant(candidate.id, this.data_blocks);
-
-      if (isChild && !isAncestyCycle) {
-        candidate.group_root = block.id;
-      }
-    });
   }
 
   /**
@@ -2339,6 +2336,97 @@ class stic_AwfConfiguration {
   }
 
   /**
+   * Helper to check if a candidate block depends on parentBlock via relate field or relationship.
+   * @param {stic_AwfDataBlock} candidate 
+   * @param {stic_AwfDataBlock} parentBlock 
+   * @returns {boolean}
+   */
+  isBlockDependentOnParent(candidate, parentBlock) {
+    if (!candidate || !parentBlock || candidate.id === parentBlock.id) return false;
+
+    // 1. Check if candidate has a relate field pointing to parentBlock
+    const hasRelateToParent = candidate.fields.some(f => 
+      f.type === 'relate' && 
+      (f.value === parentBlock.id || (f.value_type === 'dataBlock' && f.value === parentBlock.id))
+    );
+    if (hasRelateToParent) return true;
+
+    // 2. Check candidate's relationships pointing to parentBlock
+    const candidateRel = candidate.relationships.some(r => 
+      r.related_datablock_id === parentBlock.id && r.role !== 'target'
+    );
+    if (candidateRel) return true;
+
+    // 3. Check parentBlock's relationships pointing to candidate where candidate is initiator
+    const parentRel = parentBlock.relationships.some(r => 
+      r.related_datablock_id === candidate.id && r.initiator_id === candidate.id
+    );
+    if (parentRel) return true;
+
+    return false;
+  }
+
+  /**
+   * Adopts orphan blocks that depend on parentBlock when parentBlock becomes a group root.
+   * Traverses transitively (BFS): adopted children also adopt their own dependents, so
+   * chains like Adult -> Entorn Familiar -> Menor -> Inscripcio are fully grouped.
+   * @param {stic_AwfDataBlock} parentBlock 
+   */
+  adoptRelatedOrphans(parentBlock) {
+    if (!parentBlock) return;
+
+    // STIC-Custom OC - 20260807 - Transitive (BFS) adoption: descendants of descendants
+    // must also join the group. Without this, only direct dependents were adopted.
+    const queue = [parentBlock];
+    const visited = new Set([parentBlock.id]);
+
+    while (queue.length > 0) {
+      const current = queue.shift();
+
+      this.data_blocks.forEach(candidate => {
+        if (visited.has(candidate.id)) return;
+        if (!candidate.is_root) return; // Skip if it already has a parent
+        if (candidate.is_repeatable || candidate.is_optional) return; // Skip if it is its own group root
+
+        if (this.isBlockDependentOnParent(candidate, current)) {
+          // Cycle prevention: never adopt an ancestor of the current block
+          if (current.hasAncestor(candidate, this.data_blocks)) return;
+
+          candidate.group_root = current.id;
+          visited.add(candidate.id);
+          queue.push(candidate); // Its own dependents will be adopted next
+        }
+      });
+    }
+    // END STIC-Custom OC
+  }
+
+  /**
+   * Disbands a group, releasing all its children and resetting group metadata.
+   * STIC-Custom OC - 20260807 - Releases the whole descendant branch (transitive), not just
+   * direct children: with multi-level adoption a level-2+ descendant would otherwise keep
+   * pointing to an already-disbanded intermediate parent.
+   * @param {stic_AwfDataBlock} parentBlock 
+   */
+  disbandGroup(parentBlock) {
+    if (!parentBlock) return;
+
+    // 1. Release ALL descendant blocks in the branch (BFS)
+    const descendants = parentBlock.getDescendants(this.data_blocks);
+    descendants.forEach(child => {
+      child.group_root = '';
+    });
+
+    // 2. Reset limits and clear group metadata
+    parentBlock.min_instances = 1;
+    parentBlock.max_instances = 1;
+    parentBlock.group_title = '';
+    parentBlock.toggle_label = '';
+    parentBlock.add_button_label = '';
+    parentBlock.remove_button_label = '';
+  }
+
+  /**
    * Toggles repeatable status without destroying optionality (0..N <-> 0..1).
    * @param {stic_AwfDataBlock} block 
    * @param {boolean} isRepeatable 
@@ -2350,7 +2438,8 @@ class stic_AwfConfiguration {
       if (!block.canBeRepeatable(this.data_blocks)) return;
       block.max_instances = null; // Unlimited (>1)
 
-      this.autoAssignDependentChildren(block);
+      // Auto-adopt orphan dependent blocks
+      this.adoptRelatedOrphans(block);
 
       // Ensure default group title if missing
       if (!block.group_title || !block.group_title.trim()) {
@@ -2363,7 +2452,7 @@ class stic_AwfConfiguration {
     } else {
       block.max_instances = 1;
 
-      // If it is not optional either, ungroup
+      // If it is also NOT optional, completely disband the group
       if (!block.is_optional) {
         this.ungroupBlock(block);
         return;
@@ -2386,7 +2475,8 @@ class stic_AwfConfiguration {
     if (isOptional) {
       block.min_instances = 0;
 
-      this.autoAssignDependentChildren(block);
+      // Auto-adopt orphan dependent blocks
+      this.adoptRelatedOrphans(block);
 
       // Ensure default group labels if missing
       if (!block.group_title || !block.group_title.trim()) {
@@ -2399,7 +2489,7 @@ class stic_AwfConfiguration {
     } else {
       block.min_instances = 1;
 
-      // If it is also not repeatable either, ungroup.
+      // If it is also NOT repeatable, completely disband the group
       if (!block.is_repeatable) {
         this.ungroupBlock(block);
         return;
@@ -2418,22 +2508,7 @@ class stic_AwfConfiguration {
    */
   ungroupBlock(block) {
     if (!block) return;
-
-    block.min_instances = 1;
-    block.max_instances = 1;
-
-    // Disassociate children if any
-    const children = block.getChildren(this.data_blocks);
-    children.forEach(child => {
-      child.group_root = '';
-    });
-
-    block.group_title = '';
-    block.toggle_label = '';
-    block.add_button_label = '';
-    block.remove_button_label = '';
-
-    block.sanitizeRepeatableLimits();
+    this.disbandGroup(block);
     this.prepareForSave();
   }
 

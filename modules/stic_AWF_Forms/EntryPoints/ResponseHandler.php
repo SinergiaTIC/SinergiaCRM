@@ -601,7 +601,8 @@ class ResponseHandler
                                                                    translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
                     $errors['errors'][$block->name] = translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
                 }
-                $children = $config->getGroupChildren($block);
+                // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches)
+                $children = $config->getGroupDescendants($block);
                 foreach ($instances as $resolvedBlock) {
                     $blocksToValidate = array_merge([$block], $children);
                     foreach ($blocksToValidate as $blockToValidate) {
@@ -807,7 +808,8 @@ class ResponseHandler
 
             if ($block->is_repeatable) {
                 $instances = DataBlockResolved::resolveInstances($block, $submittedData, $context);
-                $children = $formConfig->getGroupChildren($block);
+                // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches)
+                $children = $formConfig->getGroupDescendants($block);
                 foreach ($instances as $instance) {
                     $blocksToProcess = array_merge([$block], $children);
                     foreach ($blocksToProcess as $blockToProcess) {

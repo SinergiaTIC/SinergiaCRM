@@ -166,7 +166,10 @@ class stic_AWFUtils {
                 if (!empty($block->group_root)) continue;
 
                 if ($block->is_repeatable) {
-                    $groupBlocks = array_merge([$block], $formConfig->getGroupChildren($block));
+                    // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches);
+                    // config comes from the context ($formConfig was never defined in this scope).
+                    $formConfig = $context->formConfig;
+                    $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
                     $instances = DataBlockResolved::resolveInstances($block, $formData, new ExecutionContext('', '', $formData, $formConfig, null, '', null, ''));
                     $instanceNumber = 1;
                     foreach ($instances as $instance) {
@@ -935,7 +938,8 @@ class stic_AWFUtils {
             if (!empty($dataBlock->group_root)) continue;
 
             if ($dataBlock->is_repeatable) {
-                $blocksInGroup = array_merge([$dataBlock], $formConfig->getGroupChildren($dataBlock));
+                // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches)
+                $blocksInGroup = array_merge([$dataBlock], $formConfig->getGroupDescendants($dataBlock));
                 foreach (['', '_detached_'] as $prefix) {
                     foreach ($blocksInGroup as $blockInGroup) {
                         $blockKey = $prefix . $blockInGroup->name;

@@ -527,7 +527,10 @@ class FormHtmlGeneratorService {
         $maxInstances = $rootBlock->max_instances !== null ? (int)$rootBlock->max_instances : 'null';
         $isRepeatable = $rootBlock->is_repeatable;
 
-        $children = $config->getGroupChildren($rootBlock);
+        // STIC-Custom OC - 20260807 - Include the whole descendant branch (transitive adoption),
+        // not just direct children, so multi-level chains render completely inside the group.
+        $children = $config->getGroupDescendants($rootBlock);
+        // END STIC-Custom OC
 
         // Alpine initialization: If min=0 start empty [], if min=1 start with [{id:0}]
         $initialActive = ($minInstances > 0) ? 'true' : 'false';

@@ -225,6 +225,11 @@
   margin: -5px 0px -5px -6px;
 }
 
+.datablock-relationships {
+  width: 45%;
+  flex-shrink: 0;
+}
+
 label, .form-label {
   display: inline-block;
   font-weight: bold;

@@ -143,9 +143,9 @@ $mod_strings = array (
 
   // DataBlock Groups
   'LBL_DATABLOCK_GROUP' => 'Grupo de bloques de datos',
+  'LBL_DATABLOCK_GROUP_REPEATABLE' => 'Repetible',
+  'LBL_DATABLOCK_GROUP_OPTIONAL' => 'Opcional',
   'LBL_DATABLOCK_GROUP_CONFIGURE' => 'Configura el grupo de bloques de datos',
-  'LBL_DATABLOCK_GROUP_CONVERT' => 'Convertir a grupo opcional o repetible',
-  'LBL_DATABLOCK_GROUP_UNGROUP' => 'Desagrupar los bloques de datos',
 
   // STIC-Custom OC - 20250803 - Datu-bloke errepikagarria
   'LBL_DATABLOCK_REPEATABLE_TITLE' => 'Erabiltzaileek bloke honen hainbat sarrera gehi ditzakete',

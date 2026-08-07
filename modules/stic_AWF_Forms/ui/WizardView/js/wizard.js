@@ -1108,19 +1108,23 @@ class WizardStep2 {
       /**
        * Toggles the optional status (min_instances = 0 vs 1) of a DataBlock.
        */
-      toggleOptional(block, isOptional) {
+      toggleOptional(block, isOptional, highlight = true) {
         if (!block) return;
         this.formConfig.setBlockOptional(block, isOptional);
-        this.highlightCard(block.id);
+        if (highlight) {
+          this.highlightCard(block.id);
+        } 
       },
 
       /**
        * Toggles the repeatable status (is_repeatable) of a DataBlock.
        */
-      toggleRepeatable(block, isRepeatable) {
+      toggleRepeatable(block, isRepeatable, highlight = true) {
         if (!block) return;
         this.formConfig.setBlockRepeatable(block, isRepeatable);
-        this.highlightCard(block.id);
+        if (highlight) {
+          this.highlightCard(block.id);
+        }
       },
 
       // IEPA! Eliminar

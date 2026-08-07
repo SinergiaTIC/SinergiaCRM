@@ -75,4 +75,44 @@ class FormConfig {
         });
     }
     // END STIC-Custom OC
+
+    // STIC-Custom OC - 20260807 - Returns ALL descendant blocks of a group root (BFS, transitive).
+    // Needed because adoptRelatedOrphans (JS) adopts descendants transitively; rendering/execution
+    // must include the whole branch (e.g. Adult -> Entorn Familiar -> Menor -> Inscripcio).
+    public function getGroupDescendants(FormDataBlock $rootBlock): array {
+        $descendants = [];
+        $queue = [$rootBlock->id];
+        $visited = [$rootBlock->id => true];
+
+        while (!empty($queue)) {
+            $currentId = array_shift($queue);
+            foreach ($this->data_blocks as $b) {
+                if ($b->group_root !== $currentId) continue;
+                if (isset($visited[$b->id])) continue; // Cycle guard for malformed data
+                $visited[$b->id] = true;
+                $descendants[] = $b;
+                $queue[] = $b->id;
+            }
+        }
+
+        return $descendants;
+    }
+
+    // STIC-Custom OC - 20260807 - Walks up the group_root chain to the top-level root of the branch
+    // (the block whose own group_root is empty). Needed for multi-level hierarchies where a
+    // level-2+ child's group_root points to its immediate (non-root) parent.
+    public function getGroupRootBlock(FormDataBlock $block): ?FormDataBlock {
+        $current = $block;
+        $visited = [$current->id => true];
+
+        while (!empty($current->group_root)) {
+            $parent = $this->data_blocks[$current->group_root] ?? null;
+            if ($parent === null || isset($visited[$parent->id])) break; // Missing parent or cycle guard
+            $visited[$parent->id] = true;
+            $current = $parent;
+        }
+
+        return $current;
+    }
+    // END STIC-Custom OC
 }
