@@ -521,7 +521,7 @@ class stic_AwfDataBlock {
     let current = this;
     const visited = new Set([this.id]);
 
-    while (current.group_root) {
+    while (current && current.group_root) {
       if (visited.has(current.group_root)) break; // Cycle guard for malformed data
       visited.add(current.group_root);
 
@@ -533,6 +533,15 @@ class stic_AwfDataBlock {
     }
 
     return depth;
+  }
+
+  /**
+   * Checks if this block acts as a group head (root group or sub-group head).
+   * @param {stic_AwfDataBlock[]} dataBlocks 
+   * @returns {boolean}
+   */
+  isGroupHead(dataBlocks) {
+    return this.is_repeatable || this.is_optional || this.getChildren(dataBlocks).length > 0;
   }
 
   /**
@@ -2568,53 +2577,37 @@ class stic_AwfConfiguration {
   }
 
   /**
-   * Returns an array of visual group structures for UI rendering at Step 2.
-   * Pure function: does not mutate group_root of any data block.
-   * @returns {Array<{id: string, isGroup: boolean, rootBlock: stic_AwfDataBlock|null, blocks: stic_AwfDataBlock[]}>}
+   * Returns all DataBlocks in a flat array ordered hierarchically using Depth-First Search (DFS).
+   * Ensures parents are immediately followed by their children and grandchildren.
+   * @returns {stic_AwfDataBlock[]}
    */
-  getVisualGroups() {
-    const groups = [];
-    const standaloneGroup = {
-      id: 'group_standalone',
-      isGroup: false,
-      rootBlock: null,
-      blocks: []
+  getOrderedDataBlocks() {
+    const ordered = [];
+    const visited = new Set();
+
+    // DFS Traversal helper
+    const traverse = (block) => {
+      if (!block || visited.has(block.id)) return;
+      visited.add(block.id);
+      ordered.push(block);
+
+      // Get direct children and recurse immediately below the parent
+      const children = block.getChildren(this.data_blocks);
+      children.forEach(child => traverse(child));
     };
-    const processedIds = new Set();
 
+    // 1. Process root blocks first
+    const rootBlocks = this.data_blocks.filter(b => b.is_root);
+    rootBlocks.forEach(root => traverse(root));
+
+    // 2. Safety fallback for orphan cycles or malformed data
     this.data_blocks.forEach(block => {
-      if (processedIds.has(block.id)) return;
-
-      // Skip child blocks here; they are rendered right after their root (indented)
-      if (block.is_child) return;
-
-      const descendants = block.getDescendants(this.data_blocks);
-      // STIC-Custom OC - 20260807 - Only blocks with group cardinality (optional/repeatable)
-      // render as a visual Group container. A plain block with children is a normal block.
-      const isVisualGroup = block.is_repeatable || block.is_optional;
-      // END STIC-Custom OC
-
-      if (isVisualGroup) {
-        groups.push({
-          id: 'group_' + block.id,
-          isGroup: true,
-          rootBlock: block,
-          blocks: [block, ...descendants]
-        });
-      } else {
-        // Normal block: render it and its branch (children indented) in the standalone container
-        standaloneGroup.blocks.push(block, ...descendants);
+      if (!visited.has(block.id)) {
+        traverse(block);
       }
-
-      processedIds.add(block.id);
-      descendants.forEach(c => processedIds.add(c.id));
     });
 
-    if (standaloneGroup.blocks.length > 0) {
-      groups.unshift(standaloneGroup);
-    }
-
-    return groups;
+    return ordered;
   }
 
   /**

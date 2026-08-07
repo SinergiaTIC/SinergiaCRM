@@ -49,28 +49,31 @@
 
       <!-- DataBlocks -->
       <div class="work-area-container" style="position: relative; padding-bottom: 20px;">
-        <!-- Groups (Repeatable Groups + Standalone Container) -->
-        <template x-for="group in visualGroups" :key="group.id">
-
-          <!-- Group Container Wrapper -->
-          <div :class="group.isGroup ? 'card groupdatablock mb-4 shadow-sm' : ' mb-3'" x-data="{ showGroupSettings: false }">
+        <template x-for="item in orderedDataBlocks" :key="item.id">
+          <!-- DataBlock -->
+          <div :id="'dataBlock_' + item.id" class="card datablock mb-3 shadow-sm transition-all"
+               :class="{
+                  'has-errors': !item.isValid(), 
+                  'child-block border-info': item.is_child,
+                  'groupdatablock border-primary': item.isGroupHead(formConfig.data_blocks)
+               }" 
+               :style="'margin-left: ' + (item.getDepth(formConfig.data_blocks) * 2.75) + 'rem;'"
+               x-data="{ showGroupSettings: false, ...WizardStep2.datablockxData(formConfig, item) }">
             
-            <!-- Group Header (Only rendered for real repeatable groups) -->
-            <template x-if="group.isGroup">
-              <div class="card-header p-2">
+            <!-- Integrated Group header (Rendered ONLY if item is a group head/subgroup) -->
+            <template x-if="item.isGroupHead(formConfig.data_blocks)">
+              <div class="card-header border-bottom p-2">
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex flex-column ">
-                    <!-- <span class="badge bg-info me-2" x-text="utils.translate('LBL_DATABLOCK_GROUP') || 'Grup'"></span> -->
-
                     <div class="d-flex justify-content-start">
                       <!-- Optional Badge -->
-                      <span class="badge bg-info me-2" x-show="group.rootBlock.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
+                      <span class="badge bg-info me-2" x-show="item.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
                       <!-- Repeatable Badge -->
-                      <span class="badge bg-primary" x-show="group.rootBlock.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
+                      <span class="badge bg-primary" x-show="item.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
                     </div>
                     <!-- Group title -->
                     <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0 text-primary fw-bold" :id="`groupDataBlockTitleEdit-${group.id}`" data-model="group.rootBlock.group_title" x-init="sticControls.editableText($el);"></h3>
+                        <h3 class="mb-0 text-primary fw-bold" :id="`groupDataBlockTitleEdit-${item.id}`" data-model="item.group_title" x-init="sticControls.editableText($el);"></h3>
                     </div>
                   </div>
 
@@ -78,21 +81,25 @@
                   <div class="d-inline-flex align-items-center gap-4">
 
                     <!-- Optional Switch -->
-                    <div class="form-check form-switch d-flex align-items-center mb-0">
-                      <label class="form-check-label small me-2" :for="`groupOptSwitch_${group.id}`" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
-                      <input class="form-check-input" type="checkbox" role="switch" :id="`groupOptSwitch_${group.id}`"
-                             :checked="group.rootBlock.is_optional" :disabled="!group.rootBlock.can_be_optional"
-                             @change="toggleOptional(group.rootBlock, $el.checked, false)">
-                    </div>
+                    <template x-if="item.can_be_optional">
+                      <div class="form-check form-switch d-flex align-items-center mb-0">
+                        <label class="form-check-label small me-2" :for="`groupOptSwitch_${item.id}`" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
+                        <input class="form-check-input" type="checkbox" role="switch" :id="`groupOptSwitch_${item.id}`"
+                              :checked="item.is_optional" :disabled="!item.can_be_optional"
+                              @change="toggleOptional(item, $el.checked, false)">
+                      </div>
+                    </template>
 
                     <!-- Repeatable Switch -->
-                    <div class="form-check form-switch d-flex align-items-center mb-0">
-                      <label class="form-check-label small me-2" :for="`groupRepSwitch_${group.id}`" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
-                      <input class="form-check-input" type="checkbox" role="switch" :id="`groupRepSwitch_${group.id}`"
-                             :checked="group.rootBlock.is_repeatable" :disabled="!group.rootBlock.canBeRepeatable(formConfig.data_blocks)"
-                             @change="toggleRepeatable(group.rootBlock, $el.checked, false)">
-                    </div>
-
+                    <template x-if="item.canBeRepeatable(formConfig.data_blocks)">
+                      <div class="form-check form-switch d-flex align-items-center mb-0">
+                        <label class="form-check-label small me-2" :for="`groupRepSwitch_${item.id}`" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
+                        <input class="form-check-input" type="checkbox" role="switch" :id="`groupRepSwitch_${item.id}`"
+                              :checked="item.is_repeatable" :disabled="!item.canBeRepeatable(formConfig.data_blocks)"
+                              @change="toggleRepeatable(item, $el.checked, false)">
+                      </div>
+                    </template>
+                    
                     <!-- Toggle Group Settings Panel -->
                     <button type="button" class="btn btn-sm btn-outline-primary ms-2" @click="showGroupSettings = !showGroupSettings"
                             :class="{'active': showGroupSettings}" :title="utils.translate('LBL_DATABLOCK_GROUP_CONFIGURE')">
@@ -108,477 +115,462 @@
                         </svg>
                       </template>
                     </button>
-
                   </div>
                 </div>
 
-                <!-- Group Settings (Drawer) -->
+                <!-- Group Settings Drawer -->
                 <div x-show="showGroupSettings" x-transition class="mt-3 p-3 border rounded shadow-lg">
                   <div class="row g-3 align-items-center">
-                    
+
                     <!-- Text: Toggle Switch Custom Label -->
-                    <div class="col-md-3" x-show="group.rootBlock.min_instances === 0">
-                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_TOGGLE_LABEL')"></label>
-                      <input type="text" class="form-control form-control-sm" x-model="group.rootBlock.toggle_label" 
-                             :placeholder="utils.translate('LBL_DATABLOCK_TOGGLE_DEFAULT') + ' ' + (group.rootBlock.group_title || group.rootBlock.text)">
+                    <div class="col-md-3" x-show="item.is_optional">
+                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_TOGGLE_LABEL') || 'Text de l\'interruptor'"></label>
+                      <input type="text" class="form-control form-control-sm" x-model="item.toggle_label" 
+                             :placeholder="utils.translate('LBL_DATABLOCK_TOGGLE_DEFAULT') + ' ' + (item.group_title || item.text)">
                     </div>
 
                     <!-- Max Instances Limit -->
-                    <div class="col-md-2" x-show="group.rootBlock.is_repeatable">
-                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_MAX_INSTANCES')"></label>
-                      <input type="number" :min="group.rootBlock.min_instances === 1 ? 2 : 1" placeholder="∞" class="form-control form-control-sm" 
-                             x-model.number="group.rootBlock.max_instances" @input="group.rootBlock.sanitizeRepeatableLimits()" @blur="group.rootBlock.sanitizeRepeatableLimits()">
+                    <div class="col-md-2" x-show="item.is_repeatable">
+                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_MAX_INSTANCES') || 'Màxim d\'instàncies'"></label>
+                      <input type="number" min="2" placeholder="∞" class="form-control form-control-sm" 
+                             x-model.number="item.max_instances" @input="item.sanitizeRepeatableLimits()" @blur="item.sanitizeRepeatableLimits()">
                     </div>
 
                     <!-- Text: Add Button Custom Label -->
-                    <div class="col-md-3" x-show="group.rootBlock.is_repeatable">
-                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL')"></label>
-                      <input type="text" class="form-control form-control-sm" x-model="group.rootBlock.add_button_label" :placeholder="utils.translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT')">
+                    <div class="col-md-3" x-show="item.is_repeatable">
+                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL') || 'Text botó afegir'"></label>
+                      <input type="text" class="form-control form-control-sm" x-model="item.add_button_label" :placeholder="utils.translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT')">
                     </div>
 
                     <!-- Text: Remove Button Custom Label -->
-                    <div class="col-md-3" x-show="group.rootBlock.is_repeatable">
-                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL')"></label>
-                      <input type="text" class="form-control form-control-sm" x-model="group.rootBlock.remove_button_label" :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT')">
+                    <div class="col-md-3" x-show="item.is_repeatable">
+                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL') || 'Text botó eliminar'"></label>
+                      <input type="text" class="form-control form-control-sm" x-model="item.remove_button_label" :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT')">
                     </div>
                   </div>
                 </div>
               </div>
             </template>
 
-            <!-- Group Body -->
-            <div :class="group.isGroup ? 'card-body p-3 bg-white' : ''">
-              <template x-for="item in group.blocks" :key="item.id">
+            <!-- Standard DataBlock header -->
+            <div class="card-header pb-1 pe-0">
+              <!-- Description / Options -->
+              <div class="d-flex justify-content-between align-items-center mb-0 small">
+                <!-- Description -->
+                <div class="text-muted small" x-text="item.getTextDescription()"></div>
 
-                <!-- DataBlock -->
-                <div :id="'dataBlock_' + item.id" 
-                     class="card datablock mb-3" 
-                     :class="{
-                       'has-errors': !item.isValid(), 
-                       'child-block ms-4 border-info': item.is_child
-                     }" 
-                     :style="'margin-left: ' + (item.getDepth(formConfig.data_blocks) * 1.5) + 'rem;'"
-                     x-data="WizardStep2.datablockxData(formConfig, item);">
-                    
-                  <!-- DataBlock header -->
-                  <div class="card-header pb-1 pe-0">
-                    <!-- Description / Options -->
-                    <div class="d-flex justify-content-between align-items-center mb-0 small">
-                      <!-- Description -->
-                      <div class="text-muted small" x-text="item.getTextDescription()"></div>
+                <!-- Options (hidden for group DataBlocks) -->
+                <template x-if="!item.isGroupHead(formConfig.data_blocks)">
+                  <div class="d-flex align-items-center gap-4 me-3">
+                    <!-- Optional Switch -->
+                    <template x-if="item.can_be_optional">
+                      <div class="form-check form-switch d-flex align-items-center mb-0">
+                        <label class="form-check-label small me-2" :for="'opt_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
+                        <input class="form-check-input" type="checkbox" role="switch" :id="'opt_switch_' + item.id" :checked="item.is_optional" 
+                              @change="toggleOptional(item, $event.target.checked)">
+                      </div>
+                    </template>
 
-                      <!-- Options (hidden for the main group head: it is managed from the group header) -->
-                      <template x-if="!(item.is_root && (item.is_optional || item.is_repeatable))">
-                        <div class="d-flex align-items-center gap-4 me-3">
-                          <!-- Optional Switch -->
-                          <template x-if="item.can_be_optional">
-                            <div class="form-check form-switch d-flex align-items-center mb-0">
-                              <label class="form-check-label small me-2" :for="'opt_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
-                              <input class="form-check-input" type="checkbox" role="switch" :id="'opt_switch_' + item.id" :checked="item.is_optional" 
-                                    @change="toggleOptional(item, $event.target.checked)">
-                            </div>
-                          </template>
+                    <!-- Repeatable Switch -->
+                    <template x-if="item.canBeRepeatable(formConfig.data_blocks)">
+                      <div class="form-check form-switch d-flex align-items-center mb-0">
+                        <label class="form-check-label small me-2" :for="'rep_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
+                        <input class="form-check-input" type="checkbox" role="switch" :id="'rep_switch_' + item.id" :checked="item.is_repeatable" 
+                              @change="toggleRepeatable(item, $event.target.checked)">
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </div>
 
-                          <!-- Repeatable Switch -->
-                          <template x-if="item.canBeRepeatable(formConfig.data_blocks)">
-                            <div class="form-check form-switch d-flex align-items-center mb-0">
-                              <label class="form-check-label small me-2" :for="'rep_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
-                              <input class="form-check-input" type="checkbox" role="switch" :id="'rep_switch_' + item.id" :checked="item.is_repeatable" 
-                                    @change="toggleRepeatable(item, $event.target.checked)">
-                            </div>
-                          </template>
+              <!-- Title / Relationships / Buttons -->
+              <div class="d-flex align-items-center">
+                <!-- Title -->
+                <h3 class="flex-grow-1 mb-0" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h3>
+
+                <!-- Relationships -->
+                <div class="datablock-relationships mx-2">
+                  <template x-for="(rel, index) in $store.dataBlockRelationships.usedDatablockRelationships(item.id)">
+                    <div class="text-muted small" x-text="$store.dataBlockRelationships.getRelText(item.id, rel)"></div>
+                  </template>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex align-items-center ms-auto">
+                  <!-- Delete Button -->
+                  <template x-if="!item.required">
+                    <button type="button" class="btn" @click="deleteDataBlock(item)" :title="utils.translate('LBL_BUTTON_DELETE')">
+                      <span class="suitepicon suitepicon-action-delete"></span>
+                    </button>
+                  </template>
+
+                  <!-- Chevron -->
+                  <button class="btn btn-sm btn-link text-decoration-none" @click="toggleCollapse()">
+                    <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- DataBlock body -->
+            <div class="card-body" x-show="!isCollapsed" x-transition>
+
+              <!-- Config panel for Grouping and Cardinality -->
+              <div class="bg-light p-3 rounded border mb-3">
+                <div class="row g-3 align-items-center">
+                  
+                  <!-- Selector "Agrupar / Incloure dins de:" -->
+                  <div class="col-md-6" x-show="item.getAvailableGroupRoots(formConfig.data_blocks).length > 0 || item.group_root">
+                    <label class="form-label small fw-bold text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_GROUP_ROOT_LABEL') || 'Agrupar / Incloure dins de:'"></label>
+                    <select class="form-select form-select-sm"
+                            :value="item.group_root"
+                            @change="changeGroupRoot(item, $event.target.value)">
+                      <option value="" x-text="'-- ' + (utils.translate('LBL_DATABLOCK_INDEPENDENT') || 'Cap (Independent)') + ' --'"></option>
+                      <template x-for="candidate in item.getAvailableGroupRoots(formConfig.data_blocks)" :key="candidate.id">
+                        <option :value="candidate.id" 
+                                :selected="candidate.id === item.group_root" 
+                                x-text="'📦 ' + candidate.text + (candidate.getModuleText() ? ' (' + candidate.getModuleText() + ')' : '')">
+                        </option>
+                      </template>
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Metadades del grup (Visibles només si el bloc té cardinalitat de grup: opcional o repetible) -->
+                <template x-if="item.is_optional || item.is_repeatable">
+                  <div class="mt-3 pt-3 border-top">
+                    <div class="row g-2">
+                      <!-- Títol del grup -->
+                      <div class="col-md-6">
+                        <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_GROUP_TITLE') || 'Títol visual del grup'"></label>
+                        <input type="text" class="form-control form-control-sm" x-model="item.group_title" />
+                      </div>
+
+                      <!-- Màxim d'instàncies (Només si és repetible) -->
+                      <template x-if="item.is_repeatable">
+                        <div class="col-md-6">
+                          <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_MAX_INSTANCES') || 'Límit màxim d\'instàncies (buit = sense límit)'"></label>
+                          <input type="number" class="form-control form-control-sm" min="2" x-model.number="item.max_instances" placeholder="∞" @change="item.sanitizeRepeatableLimits()" />
                         </div>
                       </template>
-                    </div>
 
-                    <!-- Title / Relationships / Buttons -->
-                    <div class="d-flex align-items-center">
-                      <!-- Title -->
-                      <h3 class="flex-grow-1 mb-0" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h3>
+                      <!-- Etiqueta interruptor d'activació (Només si és opcional) -->
+                      <template x-if="item.is_optional">
+                        <div class="col-md-6 mt-2">
+                          <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_TOGGLE_LABEL') || 'Text de l\'interruptor d\'activació'"></label>
+                          <input type="text" class="form-control form-control-sm" x-model="item.toggle_label" />
+                        </div>
+                      </template>
 
-                      <!-- Relationships -->
-                      <div class="datablock-relationships mx-2">
-                        <template x-for="(rel, index) in $store.dataBlockRelationships.usedDatablockRelationships(item.id)">
-                          <div class="text-muted small" x-text="$store.dataBlockRelationships.getRelText(item.id, rel)"></div>
-                        </template>
-                      </div>
-
-                      <!-- Buttons -->
-                      <div class="d-flex align-items-center ms-auto">
-                        <!-- Delete Button -->
-                        <template x-if="!item.required">
-                          <button type="button" class="btn" @click="deleteDataBlock(item)" :title="utils.translate('LBL_BUTTON_DELETE')">
-                            <span class="suitepicon suitepicon-action-delete"></span>
-                          </button>
-                        </template>
-
-                        <!-- Chevron -->
-                        <button class="btn btn-sm btn-link text-decoration-none" @click="toggleCollapse()">
-                          <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
-                        </button>
-                      </div>
+                      <!-- Etiquetes botons d'instància (Només si és repetible) -->
+                      <template x-if="item.is_repeatable">
+                        <div class="col-md-6 mt-2 d-flex gap-2">
+                          <div class="w-50">
+                            <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_ADD_BTN_LABEL') || 'Text botó afegir'"></label>
+                            <input type="text" class="form-control form-control-sm" x-model="item.add_button_label" />
+                          </div>
+                          <div class="w-50">
+                            <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_REMOVE_BTN_LABEL') || 'Text botó eliminar'"></label>
+                            <input type="text" class="form-control form-control-sm" x-model="item.remove_button_label" />
+                          </div>
+                        </div>
+                      </template>
                     </div>
                   </div>
+                </template>
+              </div>
 
-                  <!-- DataBlock body -->
-                  <div class="card-body" x-show="!isCollapsed" x-transition>
-
-                    <!-- Panell de configuració de Jerarquia i Cardinalitat -->
-                    <div class="bg-light p-3 rounded border mb-3">
-                      <div class="row g-3 align-items-center">
-                        
-                        <!-- Selector "Agrupar / Incloure dins de:" -->
-                        <div class="col-md-6" x-show="item.getAvailableGroupRoots(formConfig.data_blocks).length > 0 || item.group_root">
-                          <label class="form-label small fw-bold text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_GROUP_ROOT_LABEL') || 'Agrupar / Incloure dins de:'"></label>
-                          <select class="form-select form-select-sm"
-                                  :value="item.group_root"
-                                  @change="changeGroupRoot(item, $event.target.value)">
-                            <option value="" x-text="'-- ' + (utils.translate('LBL_DATABLOCK_INDEPENDENT') || 'Cap (Independent)') + ' --'"></option>
-                            <template x-for="candidate in item.getAvailableGroupRoots(formConfig.data_blocks)" :key="candidate.id">
-                              <option :value="candidate.id" 
-                                      :selected="candidate.id === item.group_root" 
-                                      x-text="'📦 ' + candidate.text + (candidate.getModuleText() ? ' (' + candidate.getModuleText() + ')' : '')">
-                              </option>
-                            </template>
-                          </select>
-                        </div>
-                      </div>
-
-                      <!-- Metadades del grup (Visibles només si el bloc té cardinalitat de grup: opcional o repetible) -->
-                      <template x-if="item.is_optional || item.is_repeatable">
-                        <div class="mt-3 pt-3 border-top">
-                          <div class="row g-2">
-                            <!-- Títol del grup -->
-                            <div class="col-md-6">
-                              <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_GROUP_TITLE') || 'Títol visual del grup'"></label>
-                              <input type="text" class="form-control form-control-sm" x-model="item.group_title" />
-                            </div>
-
-                            <!-- Màxim d'instàncies (Només si és repetible) -->
-                            <template x-if="item.is_repeatable">
-                              <div class="col-md-6">
-                                <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_MAX_INSTANCES') || 'Límit màxim d\'instàncies (buit = sense límit)'"></label>
-                                <input type="number" class="form-control form-control-sm" min="2" x-model.number="item.max_instances" placeholder="∞" @change="item.sanitizeRepeatableLimits()" />
-                              </div>
-                            </template>
-
-                            <!-- Etiqueta interruptor d'activació (Només si és opcional) -->
-                            <template x-if="item.is_optional">
-                              <div class="col-md-6 mt-2">
-                                <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_TOGGLE_LABEL') || 'Text de l\'interruptor d\'activació'"></label>
-                                <input type="text" class="form-control form-control-sm" x-model="item.toggle_label" />
-                              </div>
-                            </template>
-
-                            <!-- Etiquetes botons d'instància (Només si és repetible) -->
-                            <template x-if="item.is_repeatable">
-                              <div class="col-md-6 mt-2 d-flex gap-2">
-                                <div class="w-50">
-                                  <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_ADD_BTN_LABEL') || 'Text botó afegir'"></label>
-                                  <input type="text" class="form-control form-control-sm" x-model="item.add_button_label" />
-                                </div>
-                                <div class="w-50">
-                                  <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_REMOVE_BTN_LABEL') || 'Text botó eliminar'"></label>
-                                  <input type="text" class="form-control form-control-sm" x-model="item.remove_button_label" />
-                                </div>
-                              </div>
-                            </template>
-                          </div>
-                        </div>
-                      </template>
+              <!-- Alert message -->
+              <template x-if="!item.isValid()">
+                <div class="alert alert-danger p-2 mb-3 shadow-sm border-danger">
+                  <div class="d-flex align-items-start">
+                    <i class="suitepicon  suitepicon-template-issue text-danger me-2 mt-1"></i>
+                    <div>
+                      <strong class="text-danger" x-text="utils.translate('LBL_ERROR_DATABLOCK_IS_INVALID')"></strong>
+                      <ul class="mb-0 ps-3 mt-1 text-danger small">
+                        <template x-for="err in item.getValidationErrors()">
+                          <li x-text="err"></li>
+                        </template>
+                      </ul>
                     </div>
-
-                    <!-- Alert message -->
-                    <template x-if="!item.isValid()">
-                      <div class="alert alert-danger p-2 mb-3 shadow-sm border-danger">
-                        <div class="d-flex align-items-start">
-                          <i class="suitepicon  suitepicon-template-issue text-danger me-2 mt-1"></i>
-                          <div>
-                            <strong class="text-danger" x-text="utils.translate('LBL_ERROR_DATABLOCK_IS_INVALID')"></strong>
-                            <ul class="mb-0 ps-3 mt-1 text-danger small">
-                              <template x-for="err in item.getValidationErrors()">
-                                <li x-text="err"></li>
-                              </template>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                    </template>              
-                    <!-- Fields Definition -->
-                    <div :id="`dataBlockFields${item.id}`">
-                      <!-- Fields summary Tabs -->
-                      <div x-data="WizardStep2.fieldsSummaryxData(item, formConfig);">
-                        <!-- Tab Headers: Fields -->
-                        <div class="stic-tabs">
-                          <div class="stic-tab">
-                            <input class="form-check-input" type="radio" :id="`dataBlockFieldsFormTab${item.id}`" x-model="fieldTabSelected" value="form"/>
-                            <label class="form-label" :for="`dataBlockFieldsFormTab${item.id}`" x-text="utils.translate('LBL_FIELDS_FORM_TAB') + ' ('+item.fields.filter(f => f.isFieldInForm()).length+')'"></label>
-                          </div>
-                          <template x-if="item.module">
-                            <div class="stic-tab">
-                              <input class="form-check-input" type="radio" :id="`dataBlockFieldsHiddenTab${item.id}`" x-model="fieldTabSelected" value="fixed"/>
-                              <label class="form-label" :for="`dataBlockFieldsHiddenTab${item.id}`" x-text="utils.translate('LBL_FIELDS_FIXED_TAB') + ' ('+item.fields.filter(f => !f.isFieldInForm()).length+')'"></label>
-                            </div>
-                          </template>
-                        </div>
-                        <!-- Tab Content: Fields-->
-                        <div class="stic-tabcontent" x-data="WizardStep2.sortableListxData(item.fields)">
-                          <!-- Description -->
-                          <p x-text="summaryDescription"></p>
-                          <!-- Buttons -->
-                          <div class="mb-2">
-                            <!-- Button: Add Field in Form -->
-                            <template x-if="item.module && fieldTabSelected=='form'">
-                              <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'form')" x-text="utils.translate('LBL_FIELD_FORM_ADD')"></button>
-                            </template>
-                            <!-- Button: Add Unlinked Field in Form -->
-                            <template x-if="fieldTabSelected=='form'">
-                              <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'unlinked')" x-text="utils.translate('LBL_FIELD_UNLINKED_ADD')"></button>
-                            </template>
-                            <!-- Button: Add Fixed Field -->
-                            <template x-if="item.module && fieldTabSelected=='fixed'">
-                              <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'fixed')" x-text="utils.translate('LBL_FIELD_FIXED_ADD')"></button>
-                            </template>
-                          </div>
-                          <!-- Fields -->
-                          <table class="table table-bordered table-striped" >
-                            <thead>
-                              <tr>
-                                <th></th>
-                                <th x-text="utils.translate(dataBlock.module?'LBL_FIELD':'LBL_FIELD_NAME')" x-show="canShowFieldColumn('text_original')"></th>
-                                <th x-text="utils.translate('LBL_FIELD_LABEL')" x-show="canShowFieldColumn('label')"></th>
-                                <th x-text="utils.translate('LBL_FIELD_TYPE_IN_FORM')" x-show="canShowFieldColumn('type_in_form')"></th>
-                                <th x-text="utils.translate('LBL_FIELD_SUBTYPE_IN_FORM')" x-show="canShowFieldColumn('subtype_in_form')"></th>
-                                <th x-text="utils.translate('LBL_FIELD_VALUE_TYPE')" x-show="canShowFieldColumn('value_type')"></th>
-                                <th x-text="utils.translate('LBL_FIELD_VALUE')" x-show="canShowFieldColumn('value_text')"></th>
-                                <th x-text="utils.translate('LBL_FIELD_REQUIRED_IN_FORM')" x-show="canShowFieldColumn('required_in_form')"></th>
-                                <th x-text="utils.translate('LBL_FIELD_ACTIONS')" style="min-width: 160px;"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <template x-for="(field, index) in item.fields">
-                                <template x-if="field && canShowField(field)">
-                                  <tr :class="{ 'table-danger': !field.isValid() }">
-                                    <td>
-                                      <!-- Ok tick -->
-                                      <template x-if="field.isValid()">
-                                        <div class="d-flex align-items-center">
-                                          <i class="suitepicon  suitepicon-action-confirm text-success me-2 mt-1" :title="utils.translate('LBL_OK_FIELD_IS_VALID')"></i>
-                                        </div>
-                                      </template>
-                                      <!-- Alert message -->
-                                      <template x-if="!field.isValid()">
-                                        <div class="d-flex align-items-center">
-                                          <i class="suitepicon suitepicon-template-issue text-danger me-2 mt-1" :title="utils.translate('LBL_ERROR_FIELD_IS_INVALID')"></i>
-                                          <ul class="m-0 p-0 text-danger small">
-                                            <template x-for="err in field.getValidationErrors()">
-                                              <li x-text="err"></li>
-                                            </template>
-                                          </ul>
-                                          <button type="button" class="btn" :disabled="field.value_type == 'dataBlock'" 
-                                                  @click="$store.fieldEditor.openEdit(item, field);" 
-                                                  :title="utils.translate('LBL_BUTTON_EDIT')">
-                                            <span class="suitepicon suitepicon-action-edit"></span>
-                                          </button>
-                                        </div>
-                                      </template>
-                                    </td>
-
-                                    <!-- Field -->
-                                    <td x-show="canShowFieldColumn('text_original')">
-                                      <i x-show="field?.type_field == 'unlinked'" x-text="'[ ' + field.text_original +' ]'"></i>
-                                      <div x-show="field?.type_field != 'unlinked'" x-text="field?.text_original"></div>
-                                      <div class="text-muted small" x-text="item.getFieldInputName(field)"></div>
-                                    </td>
-                                    <!-- Label & Validations -->
-                                    <td x-show="canShowFieldColumn('label')">
-                                      <div class="d-flex align-items-center justify-content-between">
-                                        <!-- Label -->
-                                        <div class="mb-0 me-3" :id="`dataBlockFieldLabel-${item.id}-${field.name}`" 
-                                            data-model="field.label" x-init="sticControls.editableText($el);">
-                                        </div>
-                                        <!-- Validations Badge -->
-                                        <template x-if="field.validations && field.validations.length > 0">
-                                          <span class="badge rounded-pill bg-info text-dark" :title="getValidationsTooltip(field)">
-                                            <i class="suitepicon suitepicon-module-accounts"></i>
-                                            <span x-text="field.validations.length"></span>
-                                          </span>
-                                        </template>                              
-                                      </div>
-                                    </td>
-                                    <!-- Type in form -->
-                                    <td x-text="field?.type_in_formText" x-show="canShowFieldColumn('type_in_form')"></td>
-                                    <!-- Subtype in form -->
-                                    <td x-text="field?.subtype_in_formText" x-show="canShowFieldColumn('subtype_in_form')"></td>
-                                    <!-- Value type -->
-                                    <td x-text="field?.value_typeText" x-show="canShowFieldColumn('value_type')"></td>
-                                    <!-- Value -->
-                                    <td x-text="getfieldValueText(field)" x-show="canShowFieldColumn('value_text')"></td>
-                                    <!-- Required in form -->
-                                    <td x-show="canShowFieldColumn('required_in_form')">
-                                      <div class="form-switch" x-show="field.type_in_form != 'hidden'">
-                                        <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="field.required_in_form" 
-                                              :id="`dataBlockFieldReqForm-${item.id}-${field.name}`"/>
-                                      </div>
-                                    </td>
-                                    <!-- Buttons -->
-                                    <td >
-                                      <div class="d-inline-flex">
-                                        <button type="button" class="btn" :disabled="field.value_type == 'dataBlock'" 
-                                                @click="$store.fieldEditor.openEdit(item, field);" 
-                                                :title="utils.translate('LBL_BUTTON_EDIT')">
-                                          <span class="suitepicon suitepicon-action-edit"></span>
-                                        </button>
-                                        <template x-if="field.type_field === 'unlinked'">
-                                          <button type="button" class="btn" @click="duplicateField(field);" 
-                                                  :title="utils.translate('LBL_BUTTON_DUPLICATE')">
-                                            <span>X2</span>
-                                          </button>                                    
-                                        </template>
-                                        <template x-if="field.isFieldInForm()">
-                                          <div class="input-group" role="group">
-                                            <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
-                                                    :title="utils.translate('LBL_BUTTON_MOVE_UP')">
-                                              <span class="suitepicon suitepicon-action-move-up"></span>
-                                            </button>
-                                            <button type="button" class="btn" :disabled="index < firstFieldInFormIndex || index === item.fields.length - 1" @click="moveDown(index);"
-                                                    :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
-                                              <span class="suitepicon suitepicon-action-move-down"></span>
-                                            </button>
-                                          </div>
-                                        </template>
-                                        <button type="button" class="btn ms-2" :disabled="field.required" 
-                                                @click="formConfig.deleteDataBlockField(item, field); $store.dataBlockRelationships.resetDataBlockRelationships();"
-                                                :title="utils.translate('LBL_BUTTON_DELETE')">
-                                          <span class="suitepicon suitepicon-action-delete"></span>
-                                        </button>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </template>
-                              </template>
-                            </tbody>
-                          </table>
-                        </div>
-                    </div>
-                    </div>
-                    <!-- Duplicate Definition -->
-                    <template x-if="item && item.module">
-                      <div :id="`dataBlockDuplicates${item.id}`">
-                        <table class="table table-bordered table-striped w-auto">
-                          <thead>
-                            <tr>
-                              <th x-text="utils.translate('LBL_DUPLICATE_FIELDS')"></th>
-                              <th x-text="utils.translate('LBL_ONDUPLICATE_ACTION')"></th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <template x-for="(dupli, index) in item.duplicate_detections">
-                              <tr>
-                                <!-- Duplicate Fields -->
-                                <td class="col-8">
-                                  <div x-data="WizardStep2.duplicateFieldsxData(item, index)">
-                                    <div class="dropdown" x-ref="dropdown">
-                                      <button type="button" class="form-select form-control text-start" @click="opened = !opened">
-                                        <span x-text="selectedFieldsText" class="text-truncate me-2" style="max-width: 90%;"></span>
-                                      </button>
-                                      <div x-show="opened" x-transition @click.away="opened = false" class="bg-white border shadow p-3 mt-1 position-absolute" 
-                                          style="max-height: 200px; overflow-y: auto; width: 100%; z-index: 1052; top: 100%; left: 0;">
-                                        <template x-for="field in fieldsToDuplicate" :key="field.name">
-                                          <div class="form-check">
-                                            <input type="checkbox" class="form-check-input"  :value="field.name" x-model="dupli.fields" :id="`check_${field.name}_${index}`">
-                                            <label class="form-check-label" :for="`check_${field.name}_${index}`" x-text="field.text_original"></label>
-                                          </div>
-                                        </template>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </td>
-                                <!-- Duplicate Action -->
-                                <td class="col-3">
-                                  <select :id="`duplicateAction${item.id}${index}`" class="form-select" x-model="dupli.on_duplicate" x-init="$nextTick(() => $el.value = dupli.on_duplicate)">
-                                    <template x-for="action in stic_AwfDuplicateDetection.on_duplicateList()" :key="action.id">
-                                      <option :value="action.id" x-text="action.text"></option>
-                                    </template>
-                                  </select>
-                                </td>
-                                <!-- Delete Button -->
-                                <td>
-                                  <template x-if="index>0">
-                                    <button type="button" class="btn" @click="item.duplicate_detections.splice(index, 1);" :title="utils.translate('LBL_BUTTON_DELETE')">
-                                      <span class="suitepicon suitepicon-action-delete"></span>
-                                    </button>
-                                  </template>
-                                </td>
-                              </tr>
-                            </template>
-                          </tbody>
-                        </table>
-                        <button type="button" class="btn" @click="item.duplicate_detections.push(new stic_AwfDuplicateDetection());" :title="utils.translate('LBL_DUPLICATE_CHECK_ADD')">
-                          <span class="suitepicon suitepicon-action-plus"></span>
-                        </button>
-                      </div>
-                    </template>
-                    <!-- Relationships Definition -->
-                    <template x-if="item && item.module">
-                      <div :id="`dataBlockRels${item.id}`">
-                        <!-- Button -->
-                        <button type="button" class="btn mb-2" @click="$store.relCreator.openCreate(item)" x-text="utils.translate('LBL_RELATIONSHIP_ADD')"></button>
-
-                        <!-- Relationships -->
-                        <table class="table table-bordered table-striped">
-                          <thead>
-                            <tr>
-                              <th x-text="utils.translate('LBL_RELATIONSHIP')"></th>
-                              <th x-text="utils.translate('LBL_RELATIONSHIP_INVOLVED_BLOCKS')"></th>
-                              <th x-text="utils.translate('LBL_RELATIONSHIP_TYPE')"></th>
-                              <th></th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <template x-for="(rel, index) in $store.dataBlockRelationships.usedDatablockRelationships(item.id)">
-                              <tr>
-                                <!-- Relationship -->
-                                <td x-text="rel.text"></td>
-                                <!-- Involved DataBlocks -->
-                                <td x-text="$store.dataBlockRelationships.getInvolvedBlocksText(item.id, rel)"></td>
-                                <!-- Type -->
-                                <td>
-                                  <span class="badge rounded-pill bg-secondary" x-text="$store.dataBlockRelationships.getRelationshipTypeLabel(item.id, rel.name, rel.datablock_dest, rel.initiator_id)"></span>
-                                </td>
-                                <!-- Delete button -->
-                                <td>
-                                  <button type="button" class="btn"
-                                          @click="$store.dataBlockRelationships.deleteRelationship(rel.datablock_orig, rel.name, rel.datablock_dest);"
-                                          :title="utils.translate('LBL_BUTTON_DELETE')">
-                                    <span class="suitepicon suitepicon-action-delete"></span>
-                                  </button>
-                                </td>
-                              </tr>
-                            </template>
-                          </tbody>
-                        </table>
-                      </div>
-                    </template>
-
-                    <!-- Accordion Headers -->
-                    <template x-if="!item.module">
-                      <div :id="`dataDef_${item.id}`" :class="{'has-errors':!item.isValid()}" :data-sections="JSON.stringify([
-                              {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
-                            ]);" x-init="$nextTick(() => sticControls.accordion($el))"></div>
-                    </template>
-                    <template x-if="item.module">
-                      <div :id="`dataDef_${item.id}`" :data-sections="JSON.stringify([
-                              {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
-                              {headerText:`utils.translate('LBL_DUPLICATE_CHECK')`, selected:false, contentId:'dataBlockDuplicates'+item.id},
-                              {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
-                            ]);" x-init="$nextTick(() => sticControls.accordion($el))"></div>
-                    </template>
                   </div>
                 </div>
               </template>
-            </div>            
+
+              <!-- Fields Definition -->
+              <div :id="`dataBlockFields${item.id}`">
+                <!-- Fields summary Tabs -->
+                <div x-data="WizardStep2.fieldsSummaryxData(item, formConfig);">
+                  <!-- Tab Headers: Fields -->
+                  <div class="stic-tabs">
+                    <div class="stic-tab">
+                      <input class="form-check-input" type="radio" :id="`dataBlockFieldsFormTab${item.id}`" x-model="fieldTabSelected" value="form"/>
+                      <label class="form-label" :for="`dataBlockFieldsFormTab${item.id}`" x-text="utils.translate('LBL_FIELDS_FORM_TAB') + ' ('+item.fields.filter(f => f.isFieldInForm()).length+')'"></label>
+                    </div>
+                    <template x-if="item.module">
+                      <div class="stic-tab">
+                        <input class="form-check-input" type="radio" :id="`dataBlockFieldsHiddenTab${item.id}`" x-model="fieldTabSelected" value="fixed"/>
+                        <label class="form-label" :for="`dataBlockFieldsHiddenTab${item.id}`" x-text="utils.translate('LBL_FIELDS_FIXED_TAB') + ' ('+item.fields.filter(f => !f.isFieldInForm()).length+')'"></label>
+                      </div>
+                    </template>
+                  </div>
+                  <!-- Tab Content: Fields-->
+                  <div class="stic-tabcontent" x-data="WizardStep2.sortableListxData(item.fields)">
+                    <!-- Description -->
+                    <p x-text="summaryDescription"></p>
+                    <!-- Buttons -->
+                    <div class="mb-2">
+                      <!-- Button: Add Field in Form -->
+                      <template x-if="item.module && fieldTabSelected=='form'">
+                        <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'form')" x-text="utils.translate('LBL_FIELD_FORM_ADD')"></button>
+                      </template>
+                      <!-- Button: Add Unlinked Field in Form -->
+                      <template x-if="fieldTabSelected=='form'">
+                        <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'unlinked')" x-text="utils.translate('LBL_FIELD_UNLINKED_ADD')"></button>
+                      </template>
+                      <!-- Button: Add Fixed Field -->
+                      <template x-if="item.module && fieldTabSelected=='fixed'">
+                        <button type="button" class="btn" @click="$store.fieldEditor.openCreate(item, 'fixed')" x-text="utils.translate('LBL_FIELD_FIXED_ADD')"></button>
+                      </template>
+                    </div>
+                    <!-- Fields -->
+                    <table class="table table-bordered table-striped" >
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th x-text="utils.translate(dataBlock.module?'LBL_FIELD':'LBL_FIELD_NAME')" x-show="canShowFieldColumn('text_original')"></th>
+                          <th x-text="utils.translate('LBL_FIELD_LABEL')" x-show="canShowFieldColumn('label')"></th>
+                          <th x-text="utils.translate('LBL_FIELD_TYPE_IN_FORM')" x-show="canShowFieldColumn('type_in_form')"></th>
+                          <th x-text="utils.translate('LBL_FIELD_SUBTYPE_IN_FORM')" x-show="canShowFieldColumn('subtype_in_form')"></th>
+                          <th x-text="utils.translate('LBL_FIELD_VALUE_TYPE')" x-show="canShowFieldColumn('value_type')"></th>
+                          <th x-text="utils.translate('LBL_FIELD_VALUE')" x-show="canShowFieldColumn('value_text')"></th>
+                          <th x-text="utils.translate('LBL_FIELD_REQUIRED_IN_FORM')" x-show="canShowFieldColumn('required_in_form')"></th>
+                          <th x-text="utils.translate('LBL_FIELD_ACTIONS')" style="min-width: 160px;"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <template x-for="(field, index) in item.fields">
+                          <template x-if="field && canShowField(field)">
+                            <tr :class="{ 'table-danger': !field.isValid() }">
+                              <td>
+                                <!-- Ok tick -->
+                                <template x-if="field.isValid()">
+                                  <div class="d-flex align-items-center">
+                                    <i class="suitepicon  suitepicon-action-confirm text-success me-2 mt-1" :title="utils.translate('LBL_OK_FIELD_IS_VALID')"></i>
+                                  </div>
+                                </template>
+                                <!-- Alert message -->
+                                <template x-if="!field.isValid()">
+                                  <div class="d-flex align-items-center">
+                                    <i class="suitepicon suitepicon-template-issue text-danger me-2 mt-1" :title="utils.translate('LBL_ERROR_FIELD_IS_INVALID')"></i>
+                                    <ul class="m-0 p-0 text-danger small">
+                                      <template x-for="err in field.getValidationErrors()">
+                                        <li x-text="err"></li>
+                                      </template>
+                                    </ul>
+                                    <button type="button" class="btn" :disabled="field.value_type == 'dataBlock'" 
+                                            @click="$store.fieldEditor.openEdit(item, field);" 
+                                            :title="utils.translate('LBL_BUTTON_EDIT')">
+                                      <span class="suitepicon suitepicon-action-edit"></span>
+                                    </button>
+                                  </div>
+                                </template>
+                              </td>
+
+                              <!-- Field -->
+                              <td x-show="canShowFieldColumn('text_original')">
+                                <i x-show="field?.type_field == 'unlinked'" x-text="'[ ' + field.text_original +' ]'"></i>
+                                <div x-show="field?.type_field != 'unlinked'" x-text="field?.text_original"></div>
+                                <div class="text-muted small" x-text="item.getFieldInputName(field)"></div>
+                              </td>
+                              <!-- Label & Validations -->
+                              <td x-show="canShowFieldColumn('label')">
+                                <div class="d-flex align-items-center justify-content-between">
+                                  <!-- Label -->
+                                  <div class="mb-0 me-3" :id="`dataBlockFieldLabel-${item.id}-${field.name}`" 
+                                      data-model="field.label" x-init="sticControls.editableText($el);">
+                                  </div>
+                                  <!-- Validations Badge -->
+                                  <template x-if="field.validations && field.validations.length > 0">
+                                    <span class="badge rounded-pill bg-info text-dark" :title="getValidationsTooltip(field)">
+                                      <i class="suitepicon suitepicon-module-accounts"></i>
+                                      <span x-text="field.validations.length"></span>
+                                    </span>
+                                  </template>                              
+                                </div>
+                              </td>
+                              <!-- Type in form -->
+                              <td x-text="field?.type_in_formText" x-show="canShowFieldColumn('type_in_form')"></td>
+                              <!-- Subtype in form -->
+                              <td x-text="field?.subtype_in_formText" x-show="canShowFieldColumn('subtype_in_form')"></td>
+                              <!-- Value type -->
+                              <td x-text="field?.value_typeText" x-show="canShowFieldColumn('value_type')"></td>
+                              <!-- Value -->
+                              <td x-text="getfieldValueText(field)" x-show="canShowFieldColumn('value_text')"></td>
+                              <!-- Required in form -->
+                              <td x-show="canShowFieldColumn('required_in_form')">
+                                <div class="form-switch" x-show="field.type_in_form != 'hidden'">
+                                  <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="field.required_in_form" 
+                                        :id="`dataBlockFieldReqForm-${item.id}-${field.name}`"/>
+                                </div>
+                              </td>
+                              <!-- Buttons -->
+                              <td >
+                                <div class="d-inline-flex">
+                                  <button type="button" class="btn" :disabled="field.value_type == 'dataBlock'" 
+                                          @click="$store.fieldEditor.openEdit(item, field);" 
+                                          :title="utils.translate('LBL_BUTTON_EDIT')">
+                                    <span class="suitepicon suitepicon-action-edit"></span>
+                                  </button>
+                                  <template x-if="field.type_field === 'unlinked'">
+                                    <button type="button" class="btn" @click="duplicateField(field);" 
+                                            :title="utils.translate('LBL_BUTTON_DUPLICATE')">
+                                      <span>X2</span>
+                                    </button>                                    
+                                  </template>
+                                  <template x-if="field.isFieldInForm()">
+                                    <div class="input-group" role="group">
+                                      <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
+                                              :title="utils.translate('LBL_BUTTON_MOVE_UP')">
+                                        <span class="suitepicon suitepicon-action-move-up"></span>
+                                      </button>
+                                      <button type="button" class="btn" :disabled="index < firstFieldInFormIndex || index === item.fields.length - 1" @click="moveDown(index);"
+                                              :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
+                                        <span class="suitepicon suitepicon-action-move-down"></span>
+                                      </button>
+                                    </div>
+                                  </template>
+                                  <button type="button" class="btn ms-2" :disabled="field.required" 
+                                          @click="formConfig.deleteDataBlockField(item, field); $store.dataBlockRelationships.resetDataBlockRelationships();"
+                                          :title="utils.translate('LBL_BUTTON_DELETE')">
+                                    <span class="suitepicon suitepicon-action-delete"></span>
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          </template>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+              </div>
+              </div>
+
+              <!-- Duplicate Definition -->
+              <template x-if="item && item.module">
+                <div :id="`dataBlockDuplicates${item.id}`">
+                  <table class="table table-bordered table-striped w-auto">
+                    <thead>
+                      <tr>
+                        <th x-text="utils.translate('LBL_DUPLICATE_FIELDS')"></th>
+                        <th x-text="utils.translate('LBL_ONDUPLICATE_ACTION')"></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template x-for="(dupli, index) in item.duplicate_detections">
+                        <tr>
+                          <!-- Duplicate Fields -->
+                          <td class="col-8">
+                            <div x-data="WizardStep2.duplicateFieldsxData(item, index)">
+                              <div class="dropdown" x-ref="dropdown">
+                                <button type="button" class="form-select form-control text-start" @click="opened = !opened">
+                                  <span x-text="selectedFieldsText" class="text-truncate me-2" style="max-width: 90%;"></span>
+                                </button>
+                                <div x-show="opened" x-transition @click.away="opened = false" class="bg-white border shadow p-3 mt-1 position-absolute" 
+                                    style="max-height: 200px; overflow-y: auto; width: 100%; z-index: 1052; top: 100%; left: 0;">
+                                  <template x-for="field in fieldsToDuplicate" :key="field.name">
+                                    <div class="form-check">
+                                      <input type="checkbox" class="form-check-input"  :value="field.name" x-model="dupli.fields" :id="`check_${field.name}_${index}`">
+                                      <label class="form-check-label" :for="`check_${field.name}_${index}`" x-text="field.text_original"></label>
+                                    </div>
+                                  </template>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <!-- Duplicate Action -->
+                          <td class="col-3">
+                            <select :id="`duplicateAction${item.id}${index}`" class="form-select" x-model="dupli.on_duplicate" x-init="$nextTick(() => $el.value = dupli.on_duplicate)">
+                              <template x-for="action in stic_AwfDuplicateDetection.on_duplicateList()" :key="action.id">
+                                <option :value="action.id" x-text="action.text"></option>
+                              </template>
+                            </select>
+                          </td>
+                          <!-- Delete Button -->
+                          <td>
+                            <template x-if="index>0">
+                              <button type="button" class="btn" @click="item.duplicate_detections.splice(index, 1);" :title="utils.translate('LBL_BUTTON_DELETE')">
+                                <span class="suitepicon suitepicon-action-delete"></span>
+                              </button>
+                            </template>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                  <button type="button" class="btn" @click="item.duplicate_detections.push(new stic_AwfDuplicateDetection());" :title="utils.translate('LBL_DUPLICATE_CHECK_ADD')">
+                    <span class="suitepicon suitepicon-action-plus"></span>
+                  </button>
+                </div>
+              </template>
+
+              <!-- Relationships Definition -->
+              <template x-if="item && item.module">
+                <div :id="`dataBlockRels${item.id}`">
+                  <!-- Button -->
+                  <button type="button" class="btn mb-2" @click="$store.relCreator.openCreate(item)" x-text="utils.translate('LBL_RELATIONSHIP_ADD')"></button>
+
+                  <!-- Relationships -->
+                  <table class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th x-text="utils.translate('LBL_RELATIONSHIP')"></th>
+                        <th x-text="utils.translate('LBL_RELATIONSHIP_INVOLVED_BLOCKS')"></th>
+                        <th x-text="utils.translate('LBL_RELATIONSHIP_TYPE')"></th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <template x-for="(rel, index) in $store.dataBlockRelationships.usedDatablockRelationships(item.id)">
+                        <tr>
+                          <!-- Relationship -->
+                          <td x-text="rel.text"></td>
+                          <!-- Involved DataBlocks -->
+                          <td x-text="$store.dataBlockRelationships.getInvolvedBlocksText(item.id, rel)"></td>
+                          <!-- Type -->
+                          <td>
+                            <span class="badge rounded-pill bg-secondary" x-text="$store.dataBlockRelationships.getRelationshipTypeLabel(item.id, rel.name, rel.datablock_dest, rel.initiator_id)"></span>
+                          </td>
+                          <!-- Delete button -->
+                          <td>
+                            <button type="button" class="btn"
+                                    @click="$store.dataBlockRelationships.deleteRelationship(rel.datablock_orig, rel.name, rel.datablock_dest);"
+                                    :title="utils.translate('LBL_BUTTON_DELETE')">
+                              <span class="suitepicon suitepicon-action-delete"></span>
+                            </button>
+                          </td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </template>
+
+              <!-- Accordion Headers -->
+              <template x-if="!item.module">
+                <div :id="`dataDef_${item.id}`" :class="{'has-errors':!item.isValid()}" :data-sections="JSON.stringify([
+                        {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
+                      ]);" x-init="$nextTick(() => sticControls.accordion($el))"></div>
+              </template>
+              <template x-if="item.module">
+                <div :id="`dataDef_${item.id}`" :data-sections="JSON.stringify([
+                        {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
+                        {headerText:`utils.translate('LBL_DUPLICATE_CHECK')`, selected:false, contentId:'dataBlockDuplicates'+item.id},
+                        {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
+                      ]);" x-init="$nextTick(() => sticControls.accordion($el))"></div>
+              </template>
+            </div>
           </div>
         </template>
       </div>

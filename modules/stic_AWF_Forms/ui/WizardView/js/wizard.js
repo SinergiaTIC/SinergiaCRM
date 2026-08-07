@@ -1086,7 +1086,7 @@ class WizardStep2 {
     return {
       formConfig: initial_formConfig,
 
-      get visualGroups() { return this.formConfig.getVisualGroups(); },
+      get orderedDataBlocks() { return this.formConfig.getOrderedDataBlocks(); },
 
       /**
        * Reassigns the group_root of a DataBlock and provides visual feedback.
@@ -1125,20 +1125,6 @@ class WizardStep2 {
         if (highlight) {
           this.highlightCard(block.id);
         }
-      },
-
-      // IEPA! Eliminar
-      convertToGroup(block) { 
-        if (!block) return;
-        this.formConfig.makeBlockRepeatable(block); 
-        this.highlightCard(block.id);
-      },
-
-      // IEPA! Eliminar
-      ungroup(block) {
-        if (!block) return;
-        this.formConfig.ungroupBlock(block);
-        this.highlightCard(block.id);
       },
 
       deleteDataBlock(dataBlock) {
