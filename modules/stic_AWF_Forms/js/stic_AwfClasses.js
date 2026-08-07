@@ -2337,6 +2337,10 @@ class stic_AwfConfiguration {
 
   /**
    * Helper to check if a candidate block depends on parentBlock via relate field or relationship.
+   * Dependency direction (per requirements: "root drags its dependent child blocks, 1→N"):
+   * the CHILD (candidate) is the N side — it owns the FK/relate field pointing to the parent.
+   * Relationships are stored on BOTH blocks with initiator_id = N-side id, so we must check
+   * that the candidate is the initiator (N side), not merely that a relationship exists.
    * @param {stic_AwfDataBlock} candidate 
    * @param {stic_AwfDataBlock} parentBlock 
    * @returns {boolean}
@@ -2344,24 +2348,26 @@ class stic_AwfConfiguration {
   isBlockDependentOnParent(candidate, parentBlock) {
     if (!candidate || !parentBlock || candidate.id === parentBlock.id) return false;
 
-    // 1. Check if candidate has a relate field pointing to parentBlock
+    // 1. Candidate has a relate field (FK) pointing to parentBlock => candidate is the N side.
     const hasRelateToParent = candidate.fields.some(f => 
       f.type === 'relate' && 
       (f.value === parentBlock.id || (f.value_type === 'dataBlock' && f.value === parentBlock.id))
     );
     if (hasRelateToParent) return true;
 
-    // 2. Check candidate's relationships pointing to parentBlock
-    const candidateRel = candidate.relationships.some(r => 
-      r.related_datablock_id === parentBlock.id && r.role !== 'target'
+    // 2. Candidate has a relationship entry pointing to parentBlock where the CANDIDATE is the
+    //    initiator (N side). Stored on the candidate itself.
+    const candidateIsInitiator = candidate.relationships.some(r => 
+      r.related_datablock_id === parentBlock.id && r.initiator_id === candidate.id
     );
-    if (candidateRel) return true;
+    if (candidateIsInitiator) return true;
 
-    // 3. Check parentBlock's relationships pointing to candidate where candidate is initiator
-    const parentRel = parentBlock.relationships.some(r => 
+    // 3. Same relationship may only be stored on the parentBlock entry (inverse side):
+    //    parentBlock has an entry pointing to candidate where the CANDIDATE is the initiator.
+    const parentEntryShowsCandidateInitiator = parentBlock.relationships.some(r => 
       r.related_datablock_id === candidate.id && r.initiator_id === candidate.id
     );
-    if (parentRel) return true;
+    if (parentEntryShowsCandidateInitiator) return true;
 
     return false;
   }
