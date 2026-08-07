@@ -163,7 +163,7 @@ class stic_AWFUtils {
 
 // STIC-Custom OC - 20250803 - Repeatable data blocks support
                 // Child blocks are rendered together with their repeatable root
-                if (!empty($block->parent_repeat_root)) continue;
+                if (!empty($block->group_root)) continue;
 
                 if ($block->is_repeatable) {
                     $groupBlocks = array_merge([$block], $formConfig->getGroupChildren($block));
@@ -932,7 +932,7 @@ class stic_AWFUtils {
         foreach ($formConfig->data_blocks as $dataBlock) {
             // STIC-Custom OC - 20250803 - Repeatable data blocks support
             // Child blocks are filled together with their repeatable root
-            if (!empty($dataBlock->parent_repeat_root)) continue;
+            if (!empty($dataBlock->group_root)) continue;
 
             if ($dataBlock->is_repeatable) {
                 $blocksInGroup = array_merge([$dataBlock], $formConfig->getGroupChildren($dataBlock));
@@ -1092,7 +1092,7 @@ class stic_AWFUtils {
         foreach ($deferredContext->blockReferences as $blockId => $beanId) {
             if (isset($formConfig->data_blocks[$blockId])) {
                 $block = $formConfig->data_blocks[$blockId];
-                if ($block->is_repeatable || !empty($block->parent_repeat_root)) {
+                if ($block->is_repeatable || !empty($block->group_root)) {
                     continue;
                 }
                 $block->setBeanReference($beanId);
@@ -1113,7 +1113,7 @@ class stic_AWFUtils {
         foreach ($context->formConfig->data_blocks as $bId => $b) {
             // STIC-Custom OC - 20250803 - Repeatable data blocks support
             // MVP restriction: deferred actions operate on non-repeatable blocks only.
-            if ($b->is_repeatable || !empty($b->parent_repeat_root)) {
+            if ($b->is_repeatable || !empty($b->group_root)) {
                 continue;
             }
             // END STIC-Custom OC

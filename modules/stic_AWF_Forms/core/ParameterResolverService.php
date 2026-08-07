@@ -180,7 +180,7 @@ class ParameterResolverService {
         // STIC-Custom OC - 20250803 - Repeatable data blocks support
         // When executing an instance of a repeatable group, resolve that instance's data
         $instanceIndex = $context->getCurrentInstanceIndex();
-        $isInRepeatableGroup = $dataBlockConfig->is_repeatable || !empty($dataBlockConfig->parent_repeat_root);
+        $isInRepeatableGroup = $dataBlockConfig->is_repeatable || !empty($dataBlockConfig->group_root);
         if ($instanceIndex !== null && $isInRepeatableGroup) {
             return new DataBlockResolved($dataBlockConfig, $context->formData, $context, $instanceIndex);
         }
@@ -255,7 +255,7 @@ class ParameterResolverService {
         // If an instance is being executed and the field belongs to a repeatable group,
         // read the value from the indexed form structure: formData['Block'][index]['field']
         $instanceIndex = $context->getCurrentInstanceIndex();
-        if ($instanceIndex !== null && $foundBlock !== null && ($foundBlock->is_repeatable || !empty($foundBlock->parent_repeat_root))) {
+        if ($instanceIndex !== null && $foundBlock !== null && ($foundBlock->is_repeatable || !empty($foundBlock->group_root))) {
             $blockArrayKey = $isDetached ? '_detached_' . $foundBlock->name : $foundBlock->name;
             $instanceArray = $context->formData[$blockArrayKey][$instanceIndex] ?? [];
             if (array_key_exists($fieldName, $instanceArray)) {

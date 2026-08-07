@@ -123,8 +123,8 @@ class ServerActionFlowExecutor {
                     if ($targetBlock !== null) {
                         if ($targetBlock->is_repeatable) {
                             $repeatRoot = $targetBlock;
-                        } elseif (!empty($targetBlock->parent_repeat_root)) {
-                            $repeatRoot = $this->context->formConfig->data_blocks[$targetBlock->parent_repeat_root] ?? null;
+                        } elseif (!empty($targetBlock->group_root)) {
+                            $repeatRoot = $this->context->formConfig->data_blocks[$targetBlock->group_root] ?? null;
                         }
                     }
                 }

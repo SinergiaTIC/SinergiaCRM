@@ -551,3 +551,23 @@ h4 {
 .awf-icon-toggle.open {
   transform: rotate(180deg);
 }
+
+/* Flash Highlight Effect for DataBlock Cards */
+@keyframes awfCardGlow {
+  0% {
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.6);
+    border-color: #0d6efd;
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(13, 110, 253, 0.4);
+    border-color: #0d6efd;
+  }
+  100% {
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+    border-color: #dee2e6;
+  }
+}
+
+.awf-card-highlight {
+  animation: awfCardGlow 1.2s ease-in-out;
+}

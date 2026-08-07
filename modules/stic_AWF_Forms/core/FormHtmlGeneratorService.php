@@ -443,7 +443,7 @@ class FormHtmlGeneratorService {
                                                 $block = $config->data_blocks[$element->ref_id] ?? null;
                                                 if ($block) {
                                                     // STIC-Custom OC - 20250803 - Children of repeatable roots are rendered inside the root's loop
-                                                    if ($block->parent_repeat_root && $block->parent_repeat_root !== '') {
+                                                    if ($block->group_root && $block->group_root !== '') {
                                                         $html .= "<!-- Child block '{$block->name}' is rendered inside its repeatable root -->" . $this->newLine();
                                                         continue;
                                                     }

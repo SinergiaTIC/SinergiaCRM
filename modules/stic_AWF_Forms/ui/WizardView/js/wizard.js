@@ -1089,32 +1089,56 @@ class WizardStep2 {
       get visualGroups() { return this.formConfig.getVisualGroups(); },
 
       /**
-       * Toggles the optional status (min_instances = 0 vs 1) of a root DataBlock.
+       * Reassigns the group_root of a DataBlock and provides visual feedback.
        */
-      toggleOptional(block, isOptional) {
+      changeGroupRoot(block, newRootId) {
         if (!block) return;
-        block.min_instances = isOptional ? 0 : 1;
+
+        block.group_root = newRootId || '';
+
+        if (block.is_child && !block.canBeOptional()) {
+          block.min_instances = 1;
+        }
+
         block.sanitizeRepeatableLimits();
         this.formConfig.prepareForSave();
+        this.highlightCard(block.id);
       },
 
       /**
-       * Toggles the repeatable status (is_repeatable) of a root DataBlock.
+       * Toggles the optional status (min_instances = 0 vs 1) of a DataBlock.
+       */
+      toggleOptional(block, isOptional) {
+        if (!block) return;
+        this.formConfig.setBlockOptional(block, isOptional);
+        this.highlightCard(block.id);
+      },
+
+      /**
+       * Toggles the repeatable status (is_repeatable) of a DataBlock.
        */
       toggleRepeatable(block, isRepeatable) {
         if (!block) return;
-        if (isRepeatable) {
-          this.formConfig.makeBlockRepeatable(block);
-        } else {
-          this.formConfig.ungroupBlock(block);
-        }
+        this.formConfig.setBlockRepeatable(block, isRepeatable);
+        this.highlightCard(block.id);
       },
 
-      convertToGroup(block) { this.formConfig.makeBlockRepeatable(block); },
+      // IEPA! Eliminar
+      convertToGroup(block) { 
+        if (!block) return;
+        this.formConfig.makeBlockRepeatable(block); 
+        this.highlightCard(block.id);
+      },
 
-      ungroup(block) { this.formConfig.ungroupBlock(block); },
+      // IEPA! Eliminar
+      ungroup(block) {
+        if (!block) return;
+        this.formConfig.ungroupBlock(block);
+        this.highlightCard(block.id);
+      },
 
       deleteDataBlock(dataBlock) {
+        if (!dataBlock) return;
         this.formConfig.deleteDataBlock(dataBlock);
         Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
       },
@@ -1123,6 +1147,25 @@ class WizardStep2 {
         let dataBlock = this.formConfig.data_blocks.find(d => d.id == dataBlockId);
         if (!dataBlock) return '';
         return `${dataBlock.text} (${dataBlock.getModuleText()})`;
+      },
+
+      /**
+       * Scrolls to the card and triggers the flash glow animation.
+       */
+      highlightCard(blockId) {
+        this.$nextTick(() => {
+          const element = document.getElementById('dataBlock_' + blockId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            element.classList.remove('awf-card-highlight');
+            // Force DOM reflow to restart animation if triggered consecutively
+            void element.offsetWidth;
+            element.classList.add('awf-card-highlight');
+            setTimeout(() => {
+              element.classList.remove('awf-card-highlight');
+            }, 1200);
+          }
+        });
       }
     };
   }
@@ -1711,8 +1754,8 @@ class WizardStep3 {
             if (block.is_repeatable) {
               rootBlock = block;
               isRoot = true;
-            } else if (block.parent_repeat_root && block.parent_repeat_root !== '') {
-              rootBlock = this.formConfig.data_blocks.find(b => b.id === block.parent_repeat_root) || null;
+            } else if (block.group_root && block.group_root !== '') {
+              rootBlock = this.formConfig.data_blocks.find(b => b.id === block.group_root) || null;
             }
             if (rootBlock) {
               return {
@@ -2679,7 +2722,7 @@ class WizardStep4 {
         if (!fromSection || !toSection) return;
 
         const block = this.getDataBlock(element);
-        if (block && block.parent_repeat_root && block.parent_repeat_root !== '') {
+        if (block && block.group_root && block.group_root !== '') {
           // Children of a repeatable root cannot be moved independently
           alert(utils.translate('LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD'));
           return;
@@ -2692,7 +2735,7 @@ class WizardStep4 {
         // If this is a repeatable root, drag its children with it
         if (block && block.is_repeatable) {
           const childIds = new Set(this.formConfig.data_blocks
-            .filter(b => b.parent_repeat_root === block.id)
+            .filter(b => b.group_root === block.id)
             .map(b => b.id));
           const childElements = fromSection.elements.filter(el => el.type === 'datablock' && childIds.has(el.ref_id));
           fromSection.elements = fromSection.elements.filter(el => !childIds.has(el.ref_id));

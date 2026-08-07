@@ -71,7 +71,7 @@ class FormConfig {
     // STIC-Custom OC - 20250803 - Returns the child blocks that belong to a repeatable root
     public function getGroupChildren(FormDataBlock $rootBlock): array {
         return array_filter($this->data_blocks, function (FormDataBlock $b) use ($rootBlock) {
-            return $b->parent_repeat_root === $rootBlock->id;
+            return $b->group_root === $rootBlock->id;
         });
     }
     // END STIC-Custom OC

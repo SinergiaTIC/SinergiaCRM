@@ -582,8 +582,8 @@ class ResponseHandler
             if (empty($block->module)) continue;
 
             // STIC-Custom OC - 20250803 - Repeatable blocks validation
-            // Child blocks (parent_repeat_root set) are validated together with their repeatable root
-            if (!empty($block->parent_repeat_root)) {
+            // Child blocks (group_root set) are validated together with their repeatable root
+            if (!empty($block->group_root)) {
                 continue;
             }
             if ($block->is_repeatable) {
@@ -803,7 +803,7 @@ class ResponseHandler
         $context = new ExecutionContext('', '', $submittedData, $formConfig, null, '', null, '');
         foreach ($formConfig->data_blocks as $block) {
             // Child blocks are processed together with their repeatable root
-            if (!empty($block->parent_repeat_root)) continue;
+            if (!empty($block->group_root)) continue;
 
             if ($block->is_repeatable) {
                 $instances = DataBlockResolved::resolveInstances($block, $submittedData, $context);

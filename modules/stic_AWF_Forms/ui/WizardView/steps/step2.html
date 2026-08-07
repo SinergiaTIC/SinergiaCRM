@@ -60,11 +60,11 @@
               <div class="card-header p-2">
                 <div class="d-flex align-items-center justify-content-between">
                   
-                  <!-- Title & Badge -->
+                  <!-- Title & Badges -->
                   <div class="d-flex align-items-center me-3">
-                    <span class="badge bg-info me-2" x-text="utils.translate('LBL_DATABLOCK_GROUP')"></span>
-                    <span class="badge bg-primary me-2" x-show="group.rootBlock.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
-                    <span class="badge bg-secondary me-2" x-show="group.rootBlock.min_instances === 0" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
+                    <span class="badge bg-info me-2" x-text="utils.translate('LBL_DATABLOCK_GROUP') || 'Grup'"></span>
+                    <span class="badge bg-primary me-2" x-show="group.rootBlock.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE') || 'Repetible'"></span>
+                    <span class="badge bg-warning text-dark me-2" x-show="group.rootBlock.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL') || 'Opcional'"></span>
                     <h3 class="mb-0 text-primary fw-bold" :id="`groupDataBlockTitleEdit-${group.id}`" data-model="group.rootBlock.group_title" x-init="sticControls.editableText($el);"></h3>
                   </div>
 
@@ -74,17 +74,19 @@
                     <!-- Switch Optional -->
                     <div class="form-check form-switch mb-0">
                       <input class="form-check-input" type="checkbox" role="switch" :id="`groupOptSwitch_${group.id}`"
-                            :checked="group.rootBlock.min_instances === 0"
+                            :checked="group.rootBlock.is_optional"
+                            :disabled="!group.rootBlock.can_be_optional"
                             @change="toggleOptional(group.rootBlock, $el.checked)">
-                      <label class="form-check-label small fw-semibold" :for="`groupOptSwitch_${group.id}`">[Opcional]</label>
+                      <label class="form-check-label small fw-semibold" :for="`groupOptSwitch_${group.id}`" x-text="utils.translate('LBL_DATABLOCK_OPTIONAL_LABEL') || 'Opcional'"></label>
                     </div>
 
                     <!-- Switch Repeatable -->
                     <div class="form-check form-switch mb-0">
                       <input class="form-check-input" type="checkbox" role="switch" :id="`groupRepSwitch_${group.id}`"
                             :checked="group.rootBlock.is_repeatable"
+                            :disabled="!group.rootBlock.canBeRepeatable(formConfig.data_blocks)"
                             @change="toggleRepeatable(group.rootBlock, $el.checked)">
-                      <label class="form-check-label small fw-semibold" :for="`groupRepSwitch_${group.id}`">[Repetible]</label>
+                      <label class="form-check-label small fw-semibold" :for="`groupRepSwitch_${group.id}`" x-text="utils.translate('LBL_DATABLOCK_REPEATABLE_LABEL') || 'Repetible'"></label>
                     </div>
 
                     <!-- Toggle Group Settings Panel -->
@@ -92,14 +94,7 @@
                             @click="showGroupSettings = !showGroupSettings"
                             :class="{'active': showGroupSettings}" :title="utils.translate('LBL_DATABLOCK_GROUP_CONFIGURE')">
                       <span class="suitepicon suitepicon-admin-system-settings me-1"></span>
-                      <span class="small" x-text="showGroupSettings ? '[Oculta opcions]' : '[Opcions del grup]'"></span>
-                    </button>                    
-
-                    <!-- Toggle Group Settings Panel -->
-                    <button type="button" class="btn btn-sm btn-outline-primary me-1" @click="showGroupSettings = !showGroupSettings"
-                            :class="{'active': showGroupSettings}" :title="utils.translate('LBL_DATABLOCK_GROUP_CONFIGURE')">
-                      <span class="suitepicon suitepicon-admin-system-settings me-1"></span>
-                      <span class="small" x-text="showGroupSettings ? '[Oculta opcions]' : '[Opcions del grup]'"></span>
+                      <span class="small" x-text="showGroupSettings ? (utils.translate('LBL_HIDE_OPTIONS') || 'Oculta opcions') : (utils.translate('LBL_SHOW_OPTIONS') || 'Opcions del grup')"></span>
                     </button>
 
                     <!-- Ungroup Button -->
@@ -146,12 +141,37 @@
             <!-- Group Body -->
             <div :class="group.isGroup ? 'card-body p-3 bg-white' : ''">
               <template x-for="item in group.blocks" :key="item.id">
+
                 <!-- DataBlock -->
-                <div :id="'dataBlock_' + item.id" class="card datablock" :class="{'has-errors':!item.isValid(), 'child-block': item.parent_repeat_root && item.parent_repeat_root !== ''}" x-data="WizardStep2.datablockxData(formConfig, item);">
+                <div :id="'dataBlock_' + item.id" 
+                     class="card datablock mb-3" 
+                     :class="{
+                       'has-errors': !item.isValid(), 
+                       'child-block ms-4 border-info': item.is_child,
+                       'groupdatablock border-primary': item.is_root && (item.is_repeatable || item.is_optional || item.getChildren(formConfig.data_blocks).length > 0)
+                     }" 
+                     x-data="WizardStep2.datablockxData(formConfig, item);">
+
                   <!-- DataBlock header -->
-                  <div class="card-header d-flex flex-column">
-                    <div class="d-flex justify-content-start datablock-module">
-                      <span class="mb-0 text-muted small" x-text="item.getTextDescription()"></span>
+                  <div class="card-header d-flex flex-column py-2 px-3">
+                    <div class="d-flex justify-content-start align-items-center gap-2 datablock-module mb-1">
+                      <span class="text-muted small" x-text="item.getTextDescription()"></span>
+
+                      <!-- Badge d'indicació si el bloc depèn d'un pare -->
+                      <template x-if="item.is_child">
+                        <span class="badge bg-light text-dark border ms-2" :title="'Bloc inclòs dins de ' + getDataBlockText(item.group_root)">
+                          <span>📦 </span>
+                          <span x-text="getDataBlockText(item.group_root)"></span>
+                        </span>
+                      </template>
+
+                      <!-- Badges visuals de la cardinalitat del propi bloc -->
+                      <template x-if="item.is_optional">
+                        <span class="badge bg-warning text-dark extra-small">Opcional</span>
+                      </template>
+                      <template x-if="item.is_repeatable">
+                        <span class="badge bg-primary extra-small">Repetible</span>
+                      </template>
                     </div>
                     <div class="d-flex justify-content-between align-items-center">
                       <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h3>
@@ -183,6 +203,107 @@
                   </div>
                   <!-- DataBlock body -->
                   <div class="card-body" x-show="!isCollapsed" x-transition>
+
+                    <!-- Panell de configuració de Jerarquia i Cardinalitat -->
+                    <div class="bg-light p-3 rounded border mb-3">
+                      <div class="row g-3 align-items-center">
+                        
+                        <!-- Selector "Agrupar / Incloure dins de:" -->
+                        <div class="col-md-6" x-show="item.getAvailableGroupRoots(formConfig.data_blocks).length > 0 || item.group_root">
+                          <label class="form-label small fw-bold text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_GROUP_ROOT_LABEL') || 'Agrupar / Incloure dins de:'"></label>
+                          <select class="form-select form-select-sm"
+                                  :value="item.group_root"
+                                  @change="changeGroupRoot(item, $event.target.value)">
+                            <option value="" x-text="'-- ' + (utils.translate('LBL_DATABLOCK_INDEPENDENT') || 'Cap (Independent)') + ' --'"></option>
+                            <template x-for="candidate in item.getAvailableGroupRoots(formConfig.data_blocks)" :key="candidate.id">
+                              <option :value="candidate.id" 
+                                      :selected="candidate.id === item.group_root" 
+                                      x-text="'📦 ' + candidate.text + (candidate.getModuleText() ? ' (' + candidate.getModuleText() + ')' : '')">
+                              </option>
+                            </template>
+                          </select>
+                        </div>
+
+                        <!-- Switches d'Opcionalitat i Repetibilitat -->
+                        <div class="col-md-6 d-flex align-items-center gap-4">
+                          <!-- Switch Opcional -->
+                          <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   role="switch" 
+                                   :id="'opt_switch_' + item.id" 
+                                   :checked="item.is_optional" 
+                                   :disabled="!item.can_be_optional" 
+                                   @change="toggleOptional(item, $event.target.checked)">
+                            <label class="form-check-label small fw-bold text-dark" :for="'opt_switch_' + item.id" x-text="utils.translate('LBL_DATABLOCK_OPTIONAL_LABEL') || 'Opcional (Mínim 0)'"></label>
+                          </div>
+
+                          <!-- Switch Repetible -->
+                          <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" 
+                                   type="checkbox" 
+                                   role="switch" 
+                                   :id="'rep_switch_' + item.id" 
+                                   :checked="item.is_repeatable" 
+                                   :disabled="!item.canBeRepeatable(formConfig.data_blocks)" 
+                                   @change="toggleRepeatable(item, $event.target.checked)">
+                            <label class="form-check-label small fw-bold text-dark" :for="'rep_switch_' + item.id" x-text="utils.translate('LBL_DATABLOCK_REPEATABLE_LABEL') || 'Repetible (Múltiples instàncies)'"></label>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Metadades del grup (Visibles si el bloc actua com a arrel de grup) -->
+                      <template x-if="item.is_root && (item.is_repeatable || item.is_optional || item.getChildren(formConfig.data_blocks).length > 0)">
+                        <div class="mt-3 pt-3 border-top">
+                          <div class="row g-2">
+                            <!-- Títol del grup -->
+                            <div class="col-md-6">
+                              <label class="form-label extra-small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_GROUP_TITLE') || 'Títol visual del grup'"></label>
+                              <input type="text" class="form-control form-control-sm" x-model="item.group_title" />
+                            </div>
+
+                            <!-- Màxim d'instàncies (Només si és repetible) -->
+                            <template x-if="item.is_repeatable">
+                              <div class="col-md-6">
+                                <label class="form-label extra-small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_MAX_INSTANCES') || 'Límit màxim d\'instàncies (buit = sense límit)'"></label>
+                                <input type="number" class="form-control form-control-sm" min="2" x-model.number="item.max_instances" placeholder="∞" @change="item.sanitizeRepeatableLimits()" />
+                              </div>
+                            </template>
+
+                            <!-- Etiqueta interruptor d'activació (Només si és opcional) -->
+                            <template x-if="item.is_optional">
+                              <div class="col-md-6 mt-2">
+                                <label class="form-label extra-small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_TOGGLE_LABEL') || 'Text de l\'interruptor d\'activació'"></label>
+                                <input type="text" class="form-control form-control-sm" x-model="item.toggle_label" />
+                              </div>
+                            </template>
+
+                            <!-- Etiquetes botons d'instància (Només si és repetible) -->
+                            <template x-if="item.is_repeatable">
+                              <div class="col-md-6 mt-2 d-flex gap-2">
+                                <div class="w-50">
+                                  <label class="form-label extra-small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_ADD_BTN_LABEL') || 'Text botó afegir'"></label>
+                                  <input type="text" class="form-control form-control-sm" x-model="item.add_button_label" />
+                                </div>
+                                <div class="w-50">
+                                  <label class="form-label extra-small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_REMOVE_BTN_LABEL') || 'Text botó eliminar'"></label>
+                                  <input type="text" class="form-control form-control-sm" x-model="item.remove_button_label" />
+                                </div>
+                              </div>
+                            </template>
+                          </div>
+
+                          <!-- Acció per desfer el grup -->
+                          <div class="text-end mt-2 pt-2 border-top">
+                            <button type="button" class="btn btn-sm btn-link text-danger text-decoration-none p-0" @click="ungroup(item)">
+                              <i class="suitepicon suitepicon-action-delete me-1"></i>
+                              <span x-text="utils.translate('LBL_DATABLOCK_UNGROUP_BTN') || 'Desagrupar i restablir a bloc simple'"></span>
+                            </button>
+                          </div>
+                        </div>
+                      </template>
+                    </div>
+
                     <!-- Alert message -->
                     <template x-if="!item.isValid()">
                       <div class="alert alert-danger p-2 mb-3 shadow-sm border-danger">

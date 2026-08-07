@@ -541,7 +541,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             // If the target block belongs to a repeatable group, read its per-instance
             // bean reference using the current instance index. Otherwise use the scalar reference.
             $instanceIndex = $context->getCurrentInstanceIndex();
-            $isTargetRepeatable = $targetBlock->is_repeatable || !empty($targetBlock->parent_repeat_root);
+            $isTargetRepeatable = $targetBlock->is_repeatable || !empty($targetBlock->group_root);
             $targetBeanRef = $isTargetRepeatable
                 ? $targetBlock->getBeanReference($instanceIndex)
                 : $targetBlock->getBeanReference();
