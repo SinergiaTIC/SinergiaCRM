@@ -45,6 +45,7 @@ class stic_AwfDataBlock {
       min_instances: 1,         // Minimum required instances (0 = optional)
       max_instances: 1,         // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
       group_title: '',          // Visual title for the repeat group
+      is_custom_group_title: false, // Flag to track manual title overrides
       toggle_label: '',         // Label for the "include instance data" toggle switch
       add_button_label: '',     // Label for the "add new instance" button
       remove_button_label: '',  // Label for the "remove instance" button
@@ -338,22 +339,17 @@ class stic_AwfDataBlock {
    */
   canBeOptional() {
     // 1. System required blocks can never be optional
-    if (this.required) {
-      return false;
-    }
+    if (this.required) return false;
 
     // 2. Child blocks with a mandatory FK relate field pointing to their parent cannot be optional
     if (this.is_child && this.group_root) {
       const hasMandatoryParentLink = this.fields.some(field => 
         field.required && 
         field.type === 'relate' && 
-        field.value_type === 'dataBlock' && 
-        field.value === this.group_root
+        (field.value === this.group_root || (field.value_type === 'dataBlock' && field.value === this.group_root))
       );
 
-      if (hasMandatoryParentLink) {
-        return false;
-      }
+      if (hasMandatoryParentLink) return false;
     }
 
     return true;
@@ -376,9 +372,7 @@ class stic_AwfDataBlock {
       const parentBlock = allDataBlocks.find(b => b.id === currentParentId);
       if (!parentBlock) break;
 
-      if (parentBlock.is_repeatable) {
-        return false; // Found an ancestor that is already repeatable
-      }
+      if (parentBlock.is_repeatable) return false; // Found an ancestor that is already repeatable
 
       currentParentId = parentBlock.group_root;
     }
@@ -451,9 +445,7 @@ class stic_AwfDataBlock {
 
       // 3. If this block is ALREADY repeatable, candidates MUST NOT be repeatable
       //    nor have repeatable ancestors (prevents N x M)
-      if (this.is_repeatable && !this.canBeRepeatableInParent(candidate, allDataBlocks)) {
-        return false;
-      }
+      if (this.is_repeatable && !this.canBeRepeatableInParent(candidate, allDataBlocks)) return false;
 
       return true;
     });
@@ -501,6 +493,23 @@ class stic_AwfDataBlock {
   }
 
   /**
+   * Returns the nearest ancestor (or self) that actually holds group cardinality (optional or repeatable).
+   * @param {stic_AwfDataBlock[]} dataBlocks 
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getGroupHeadBlock(dataBlocks) {
+    if (this.is_repeatable || this.is_optional) return this;
+    let current = this.getGroupRootBlock(dataBlocks);
+    while (current) {
+      if (current.is_repeatable || current.is_optional) {
+        return current;
+      }
+      current = current.getGroupRootBlock(dataBlocks);
+    }
+    return null;
+  }
+
+  /**
    * Returns the immediate parent block this block belongs to, if any.
    * @param {stic_AwfDataBlock[]} dataBlocks
    * @returns {stic_AwfDataBlock|null}
@@ -533,6 +542,19 @@ class stic_AwfDataBlock {
     }
 
     return depth;
+  }
+
+  /**
+   * Re-evaluates default group title based on contained blocks,
+   * unless the user has manually customized it.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   */
+  refreshGroupTitle(allDataBlocks) {
+    if (this.is_custom_group_title) return;
+
+    const descendants = this.getDescendants(allDataBlocks);
+    const blockNames = [this.text, ...descendants.map(c => c.text)].filter(Boolean);
+    this.group_title = blockNames.join(' + ');
   }
 
   /**
@@ -1773,6 +1795,13 @@ class stic_AwfConfiguration {
     }
     dataBlock.text = text;
 
+    // Refresh group titles across the hierarchy
+    this.data_blocks.forEach(b => {
+      if (b.isGroupHead(this.data_blocks)) {
+        b.refreshGroupTitle(this.data_blocks);
+      }
+    });
+
     // Update references in Actions
     this.flows.forEach(flow => {
       flow.actions.forEach(action => {
@@ -2415,8 +2444,6 @@ class stic_AwfConfiguration {
   adoptRelatedOrphans(parentBlock) {
     if (!parentBlock) return;
 
-    // STIC-Custom OC - 20260807 - Transitive (BFS) adoption: descendants of descendants
-    // must also join the group. Without this, only direct dependents were adopted.
     const queue = [parentBlock];
     const visited = new Set([parentBlock.id]);
 
@@ -2425,20 +2452,20 @@ class stic_AwfConfiguration {
 
       this.data_blocks.forEach(candidate => {
         if (visited.has(candidate.id)) return;
-        if (!candidate.is_root) return; // Skip if it already has a parent
-        if (candidate.is_repeatable || candidate.is_optional) return; // Skip if it is its own group root
+        if (!candidate.is_root) return;
+        if (candidate.is_repeatable || candidate.is_optional) return;
 
         if (this.isBlockDependentOnParent(candidate, current)) {
-          // Cycle prevention: never adopt an ancestor of the current block
           if (current.hasAncestor(candidate, this.data_blocks)) return;
 
           candidate.group_root = current.id;
           visited.add(candidate.id);
-          queue.push(candidate); // Its own dependents will be adopted next
+          queue.push(candidate);
         }
       });
     }
-    // END STIC-Custom OC
+
+    parentBlock.refreshGroupTitle(this.data_blocks);
   }
 
   /**
@@ -2461,6 +2488,7 @@ class stic_AwfConfiguration {
     parentBlock.min_instances = 1;
     parentBlock.max_instances = 1;
     parentBlock.group_title = '';
+    parentBlock.is_custom_group_title = false;
     parentBlock.toggle_label = '';
     parentBlock.add_button_label = '';
     parentBlock.remove_button_label = '';
@@ -2480,6 +2508,7 @@ class stic_AwfConfiguration {
 
       // Auto-adopt orphan dependent blocks
       this.adoptRelatedOrphans(block);
+      block.refreshGroupTitle(this.data_blocks);
 
       // Ensure default group title if missing
       if (!block.group_title || !block.group_title.trim()) {
@@ -2517,6 +2546,7 @@ class stic_AwfConfiguration {
 
       // Auto-adopt orphan dependent blocks
       this.adoptRelatedOrphans(block);
+      block.refreshGroupTitle(this.data_blocks);
 
       // Ensure default group labels if missing
       if (!block.group_title || !block.group_title.trim()) {

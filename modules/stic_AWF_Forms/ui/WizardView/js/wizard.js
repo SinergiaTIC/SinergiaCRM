@@ -1094,6 +1094,7 @@ class WizardStep2 {
       changeGroupRoot(block, newRootId) {
         if (!block) return;
 
+        const oldRoot = block.getGroupHeadBlock(this.formConfig.data_blocks);
         block.group_root = newRootId || '';
 
         if (block.is_child && !block.canBeOptional()) {
@@ -1101,6 +1102,12 @@ class WizardStep2 {
         }
 
         block.sanitizeRepeatableLimits();
+
+        // Refresh group titles for old and new roots
+        if (oldRoot) oldRoot.refreshGroupTitle(this.formConfig.data_blocks);
+        const newRoot = block.getGroupHeadBlock(this.formConfig.data_blocks);
+        if (newRoot) newRoot.refreshGroupTitle(this.formConfig.data_blocks);
+
         this.formConfig.prepareForSave();
         this.highlightCard(block.id);
       },

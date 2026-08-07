@@ -66,6 +66,8 @@
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex flex-column ">
                     <div class="d-flex justify-content-start">
+                      <!-- Group Badge -->
+                      <span class="badge bg-transparent me-2" :title="utils.translate('LBL_DATABLOCK_GROUP')"> 📦 </span>
                       <!-- Optional Badge -->
                       <span class="badge bg-info me-2" x-show="item.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
                       <!-- Repeatable Badge -->
@@ -99,7 +101,7 @@
                               @change="toggleRepeatable(item, $el.checked, false)">
                       </div>
                     </template>
-                    
+
                     <!-- Toggle Group Settings Panel -->
                     <button type="button" class="btn btn-sm btn-outline-primary ms-2" @click="showGroupSettings = !showGroupSettings"
                             :class="{'active': showGroupSettings}" :title="utils.translate('LBL_DATABLOCK_GROUP_CONFIGURE')">
