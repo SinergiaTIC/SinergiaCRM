@@ -490,11 +490,11 @@ class stic_AwfDataBlock {
     visited.add(this.id);
 
     let descendants = [];
-    const children = allBlocks.filter(b => b.group_root === this.id);
+    const children = this.getChildren(allBlocks);
 
     children.forEach(child => {
       descendants.push(child);
-      descendants = descendants.concat(child.getDescendants(allBlocks, visited));
+      descendants.push(...child.getDescendants(allBlocks, visited));
     });
 
     return descendants;
@@ -508,6 +508,31 @@ class stic_AwfDataBlock {
   getGroupRootBlock(dataBlocks) {
     if (!this.group_root) return null;
     return dataBlocks.find(b => b.id === this.group_root) || null;
+  }
+
+  /**
+   * Returns the nesting depth of this block inside the group hierarchy.
+   * 0 = top-level (visual group root), 1 = direct child, 2 = grandchild, etc.
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {number}
+   */
+  getDepth(allDataBlocks) {
+    let depth = 0;
+    let current = this;
+    const visited = new Set([this.id]);
+
+    while (current.group_root) {
+      if (visited.has(current.group_root)) break; // Cycle guard for malformed data
+      visited.add(current.group_root);
+
+      const parent = allDataBlocks.find(b => b.id === current.group_root);
+      if (!parent) break;
+
+      depth++;
+      current = parent;
+    }
+
+    return depth;
   }
 
   /**
@@ -2560,11 +2585,14 @@ class stic_AwfConfiguration {
     this.data_blocks.forEach(block => {
       if (processedIds.has(block.id)) return;
 
-      // Skip child blocks here; they belong to their parent group
+      // Skip child blocks here; they are rendered right after their root (indented)
       if (block.is_child) return;
 
       const descendants = block.getDescendants(this.data_blocks);
-      const isVisualGroup = block.is_repeatable || block.is_optional || descendants.length > 0;
+      // STIC-Custom OC - 20260807 - Only blocks with group cardinality (optional/repeatable)
+      // render as a visual Group container. A plain block with children is a normal block.
+      const isVisualGroup = block.is_repeatable || block.is_optional;
+      // END STIC-Custom OC
 
       if (isVisualGroup) {
         groups.push({
@@ -2573,13 +2601,13 @@ class stic_AwfConfiguration {
           rootBlock: block,
           blocks: [block, ...descendants]
         });
-
-        processedIds.add(block.id);
-        descendants.forEach(c => processedIds.add(c.id));
       } else {
-        standaloneGroup.blocks.push(block);
-        processedIds.add(block.id);
+        // Normal block: render it and its branch (children indented) in the standalone container
+        standaloneGroup.blocks.push(block, ...descendants);
       }
+
+      processedIds.add(block.id);
+      descendants.forEach(c => processedIds.add(c.id));
     });
 
     if (standaloneGroup.blocks.length > 0) {

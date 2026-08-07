@@ -160,7 +160,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_TOGGLE_LABEL' => 'Texto del interruptor para incluir el bloque de datos',
   'LBL_DATABLOCK_ADD_LABEL' => 'Texto del botón de añadir',
   'LBL_DATABLOCK_REMOVE_LABEL' => 'Texto del botón de eliminar',
-  'LBL_DATABLOCK_TOGGLE_DEFAULT' => 'Incluir datos de',
+  'LBL_DATABLOCK_TOGGLE_DEFAULT' => 'Incluir',
   'LBL_DATABLOCK_ADD_INSTANCE_DEFAULT' => 'Añadir otro',
   'LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT' => 'Eliminar',
   // END STIC-Custom OC

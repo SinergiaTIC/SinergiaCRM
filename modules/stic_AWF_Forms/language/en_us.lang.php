@@ -160,7 +160,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_TOGGLE_LABEL' => 'Label for the toggle switch to include the data block',
   'LBL_DATABLOCK_ADD_LABEL' => 'Add button text',
   'LBL_DATABLOCK_REMOVE_LABEL' => 'Remove button text',
-  'LBL_DATABLOCK_TOGGLE_DEFAULT' => 'Include data of',
+  'LBL_DATABLOCK_TOGGLE_DEFAULT' => 'Include',
   'LBL_DATABLOCK_ADD_INSTANCE_DEFAULT' => 'Add another',
   'LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT' => 'Remove',
   // END STIC-Custom OC

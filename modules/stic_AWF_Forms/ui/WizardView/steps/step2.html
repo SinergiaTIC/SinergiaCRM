@@ -155,9 +155,9 @@
                      class="card datablock mb-3" 
                      :class="{
                        'has-errors': !item.isValid(), 
-                       'child-block ms-4 border-info': item.is_child,
-                       'groupdatablock border-primary': item.is_root && (item.is_repeatable || item.is_optional || item.getChildren(formConfig.data_blocks).length > 0)
+                       'child-block ms-4 border-info': item.is_child
                      }" 
+                     :style="'margin-left: ' + (item.getDepth(formConfig.data_blocks) * 1.5) + 'rem;'"
                      x-data="WizardStep2.datablockxData(formConfig, item);">
                     
                   <!-- DataBlock header -->
@@ -167,8 +167,8 @@
                       <!-- Description -->
                       <div class="text-muted small" x-text="item.getTextDescription()"></div>
 
-                      <!-- Options -->
-                      <template x-if="item.getChildren(formConfig.data_blocks).length == 0">
+                      <!-- Options (hidden for the main group head: it is managed from the group header) -->
+                      <template x-if="!(item.is_root && (item.is_optional || item.is_repeatable))">
                         <div class="d-flex align-items-center gap-4 me-3">
                           <!-- Optional Switch -->
                           <template x-if="item.can_be_optional">
@@ -244,8 +244,8 @@
                         </div>
                       </div>
 
-                      <!-- Metadades del grup (Visibles si el bloc actua com a arrel de grup) -->
-                      <template x-if="item.is_root && (item.is_repeatable || item.is_optional || item.getChildren(formConfig.data_blocks).length > 0)">
+                      <!-- Metadades del grup (Visibles només si el bloc té cardinalitat de grup: opcional o repetible) -->
+                      <template x-if="item.is_optional || item.is_repeatable">
                         <div class="mt-3 pt-3 border-top">
                           <div class="row g-2">
                             <!-- Títol del grup -->
