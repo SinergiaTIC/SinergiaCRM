@@ -168,21 +168,27 @@
                       <div class="text-muted small" x-text="item.getTextDescription()"></div>
 
                       <!-- Options -->
-                      <div class="d-flex align-items-center gap-4 me-3">
-                        <!-- Optional Switch -->
-                        <div class="form-check form-switch d-flex align-items-center mb-0">
-                          <label class="form-check-label small me-2" :for="'opt_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
-                          <input class="form-check-input" type="checkbox" role="switch" :id="'opt_switch_' + item.id" :checked="item.is_optional" 
-                                :disabled="!item.can_be_optional" @change="toggleOptional(item, $event.target.checked)">
-                        </div>
+                      <template x-if="item.getChildren(formConfig.data_blocks).length == 0">
+                        <div class="d-flex align-items-center gap-4 me-3">
+                          <!-- Optional Switch -->
+                          <template x-if="item.can_be_optional">
+                            <div class="form-check form-switch d-flex align-items-center mb-0">
+                              <label class="form-check-label small me-2" :for="'opt_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
+                              <input class="form-check-input" type="checkbox" role="switch" :id="'opt_switch_' + item.id" :checked="item.is_optional" 
+                                    @change="toggleOptional(item, $event.target.checked)">
+                            </div>
+                          </template>
 
-                        <!-- Repeatable Switch -->
-                        <div class="form-check form-switch d-flex align-items-center mb-0">
-                          <label class="form-check-label small me-2" :for="'rep_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
-                          <input class="form-check-input" type="checkbox" role="switch" :id="'rep_switch_' + item.id" :checked="item.is_repeatable" 
-                                :disabled="!item.canBeRepeatable(formConfig.data_blocks)" @change="toggleRepeatable(item, $event.target.checked)">
+                          <!-- Repeatable Switch -->
+                          <template x-if="item.canBeRepeatable(formConfig.data_blocks)">
+                            <div class="form-check form-switch d-flex align-items-center mb-0">
+                              <label class="form-check-label small me-2" :for="'rep_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
+                              <input class="form-check-input" type="checkbox" role="switch" :id="'rep_switch_' + item.id" :checked="item.is_repeatable" 
+                                    @change="toggleRepeatable(item, $event.target.checked)">
+                            </div>
+                          </template>
                         </div>
-                      </div>
+                      </template>
                     </div>
 
                     <!-- Title / Relationships / Buttons -->
