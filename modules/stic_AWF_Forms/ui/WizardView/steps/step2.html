@@ -75,7 +75,7 @@
                     </div>
                     <!-- Group title -->
                     <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="mb-0 text-primary fw-bold" :id="`groupDataBlockTitleEdit-${item.id}`" data-model="item.group_title" x-init="sticControls.editableText($el);"></h3>
+                        <h3 class="mb-0 text-primary fw-bold" :id="`groupDataBlockTitleEdit-${item.id}`" data-model="item.custom_group_title" data-reload="reloadGroupTitle(item)" x-init="sticControls.editableText($el);"></h3>
                     </div>
                   </div>
 

@@ -74,6 +74,12 @@ class stic_AwfDataBlock {
 
   get is_child() { return !this.is_root; }
 
+  get custom_group_title() { return this.group_title; }
+  set custom_group_title(value) {
+    this.is_custom_group_title = true;
+    this.group_title = value
+  }
+
   getValidationErrors() {
     let errors = [];
 

@@ -1112,6 +1112,13 @@ class WizardStep2 {
         this.highlightCard(block.id);
       },
 
+      reloadGroupTitle(block) {
+        if (!block) return;
+        
+        block.is_custom_group_title=false;
+        block.refreshGroupTitle(this.formConfig.data_blocks);
+      },
+
       /**
        * Toggles the optional status (min_instances = 0 vs 1) of a DataBlock.
        */
