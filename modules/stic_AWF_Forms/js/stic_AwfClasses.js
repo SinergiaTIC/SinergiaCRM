@@ -458,6 +458,21 @@ class stic_AwfDataBlock {
   }
 
   /**
+   * Returns candidate independent blocks that can be manually added to this group.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]}
+   */
+  getAvailableCandidateChildren(allDataBlocks) {
+    if (!this.is_root) return [];
+    return allDataBlocks.filter(candidate => {
+      if (candidate.id === this.id) return false;
+      if (!candidate.is_root) return false; // Already belongs to another group
+      if (candidate.is_repeatable || candidate.is_optional) return false; // Candidate blocks that are repeatable or optional cannot be children of a group
+      return true;
+    });
+  }
+
+  /**
    * Helper to check if this block could be placed under candidate without violating N x M
    * @param {stic_AwfDataBlock} candidate 
    * @param {stic_AwfDataBlock[]} allDataBlocks 
@@ -599,6 +614,35 @@ class stic_AwfDataBlock {
       this.max_instances = maxVal; // Values >= 2 are kept as limited repeatable blocks
     }
   }
+
+  /**
+   * Gets the root DataBlock of the group to which this block belongs.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getGroupRootBlock(allDataBlocks) {
+    let current = this;
+    const visited = new Set();
+    while (current && current.group_root) {
+      if (visited.has(current.id)) break; 
+      visited.add(current.id);
+      const parent = allDataBlocks.find(b => b.id === current.group_root);
+      if (!parent) break;
+      current = parent;
+    }
+    return current !== this ? current : null;
+  }
+
+  /**
+   * Gets the title of the group to which this blog belongs.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {string}
+   */
+  getGroupTitle(allDataBlocks) {
+    const root = this.getGroupRootBlock(allDataBlocks);
+    return root ? (root.group_title || root.text) : '';
+  }
+
 }
 
 /**
@@ -1807,6 +1851,7 @@ class stic_AwfConfiguration {
         b.refreshGroupTitle(this.data_blocks);
       }
     });
+    this.refreshGroups();
 
     // Update references in Actions
     this.flows.forEach(flow => {
@@ -1908,7 +1953,7 @@ class stic_AwfConfiguration {
     }
 
     this.data_blocks.push(dataBlock);
-
+    this.refreshGroups();
     return dataBlock;
   }
 
@@ -2064,6 +2109,7 @@ class stic_AwfConfiguration {
         });
       });
     });
+    this.refreshGroups();
   }
 
   /**
@@ -2230,6 +2276,7 @@ class stic_AwfConfiguration {
       });
     });
 
+    this.refreshGroups();
     return dataBlock;
   }
 
@@ -2275,6 +2322,8 @@ class stic_AwfConfiguration {
       if (relDatablock) {
         relDatablock.removeRelationship(relName, datablockId);
       }
+      this.refreshGroups();
+
       // Remove RelateRecordsAction for this relationship
       this.flows.forEach(flow => {
         flow.actions = flow.actions.filter(a => {
@@ -2464,7 +2513,7 @@ class stic_AwfConfiguration {
         if (this.isBlockDependentOnParent(candidate, current)) {
           if (current.hasAncestor(candidate, this.data_blocks)) return;
 
-          candidate.group_root = current.id;
+          candidate.group_root = parentBlock.id;
           visited.add(candidate.id);
           queue.push(candidate);
         }
@@ -2522,8 +2571,8 @@ class stic_AwfConfiguration {
         const blockNames = [block.text, ...children.map(c => c.text)];
         block.group_title = blockNames.join(' + ');
       }
-      block.add_button_label = block.add_button_label || utils.translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT');
-      block.remove_button_label = block.remove_button_label || utils.translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT');
+      block.add_button_label = block.add_button_label || utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT');
+      block.remove_button_label = block.remove_button_label || utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT');
     } else {
       block.max_instances = 1;
 
@@ -2561,7 +2610,7 @@ class stic_AwfConfiguration {
         block.group_title = blockNames.join(' + ');
       }
       
-      block.toggle_label = block.toggle_label || `${utils.translate('LBL_DATABLOCK_TOGGLE_DEFAULT')} ${block.group_title}`;
+      block.toggle_label = block.toggle_label || `${utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT')} ${block.group_title}`;
     } else {
       block.min_instances = 1;
 
@@ -2589,6 +2638,32 @@ class stic_AwfConfiguration {
   }
 
   /**
+   * Manually assign a child block to a parent group.
+   * @param {string} parentBlockId 
+   * @param {string} childBlockId 
+   */
+  addChildToGroup(parentBlockId, childBlockId) {
+    const parent = this.data_blocks.find(b => b.id === parentBlockId);
+    const child = this.data_blocks.find(b => b.id === childBlockId);
+    if (parent && child) {
+      child.group_root = parent.id;
+      this.refreshGroups();
+    }
+  }
+
+  /**
+   * Removes a child block from its current group.
+   * @param {string} childBlockId 
+   */
+  removeChildFromGroup(childBlockId) {
+    const child = this.data_blocks.find(b => b.id === childBlockId);
+    if (child) {
+      child.group_root = '';
+      this.refreshGroups();
+    }
+  }
+
+  /**
    * Returns repeatable-group metadata for a block, or null if the block is not part
    * of any repeatable group.
    * @param {stic_AwfDataBlock} block
@@ -2610,6 +2685,19 @@ class stic_AwfConfiguration {
       groupTitle: rootBlock.group_title || rootBlock.text,
       isRoot: isRoot,
     };
+  }
+
+  /**
+   * Re-evaluate and update all groups on the form: orphan adoption and group titles.
+   */
+  refreshGroups() {
+    this.data_blocks.forEach(block => {
+      if (block.is_root && (block.is_repeatable || block.is_optional || block.getChildren(this.data_blocks).length > 0)) {
+        this.adoptRelatedOrphans(block);
+        block.refreshGroupTitle(this.data_blocks);
+      }
+    });
+    this.prepareForSave();
   }
 
   /**

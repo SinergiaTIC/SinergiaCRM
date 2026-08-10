@@ -65,23 +65,28 @@
               <div class="card-header border-bottom p-2">
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex flex-column ">
+                    <!-- Group Badge -->
+                    <template x-if="item.group_root">
+                      <span class="badge bg-transparent text-dark" style="margin-left:-10px; margin-top:-5px;font-weight: normal;" 
+                            x-text="'📦 ' + item.getGroupTitle(formConfig.data_blocks)"></span>
+                    </template>
+                    <!-- Optional and Repeatable Badges -->
                     <div class="d-flex justify-content-start">
-                      <!-- Group Badge -->
-                      <span class="badge bg-transparent me-2" :title="utils.translate('LBL_DATABLOCK_GROUP')"> 📦 </span>
                       <!-- Optional Badge -->
                       <span class="badge bg-info me-2" x-show="item.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
                       <!-- Repeatable Badge -->
                       <span class="badge bg-primary" x-show="item.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
                     </div>
+
                     <!-- Group title -->
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex">
+                        <span class="h3 m-2" :title="utils.translate('LBL_DATABLOCK_GROUP')">📦</span>
                         <h3 class="mb-0 text-primary fw-bold" :id="`groupDataBlockTitleEdit-${item.id}`" data-model="item.custom_group_title" data-reload="reloadGroupTitle(item)" x-init="sticControls.editableText($el);"></h3>
                     </div>
                   </div>
 
                   <!-- Options -->
                   <div class="d-inline-flex align-items-center gap-4">
-
                     <!-- Optional Switch -->
                     <template x-if="item.can_be_optional">
                       <div class="form-check form-switch d-flex align-items-center mb-0">
@@ -122,34 +127,66 @@
 
                 <!-- Group Settings Drawer -->
                 <div x-show="showGroupSettings" x-transition class="mt-3 p-3 border rounded shadow-lg">
+                  <!-- Group Settings -->
                   <div class="row g-3 align-items-center">
 
                     <!-- Text: Toggle Switch Custom Label -->
-                    <div class="col-md-3" x-show="item.is_optional">
-                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_TOGGLE_LABEL') || 'Text de l\'interruptor'"></label>
-                      <input type="text" class="form-control form-control-sm" x-model="item.toggle_label" 
-                             :placeholder="utils.translate('LBL_DATABLOCK_TOGGLE_DEFAULT') + ' ' + (item.group_title || item.text)">
+                    <div class="col-md-4" x-show="item.is_optional" x-init="utils.setInlineHelpQtip()">
+                      <label :for="`groupToggleLabel_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_INCLUDE_LABEL')"></label>
+                      <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                      <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DESC')"></div>
+                      <input type="text" :id="`groupToggleLabel_${item.id}`" class="form-control form-control-sm" x-model="item.toggle_label" 
+                             :placeholder="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT') + ' ' + (item.group_title || item.text)">
                     </div>
 
                     <!-- Max Instances Limit -->
-                    <div class="col-md-2" x-show="item.is_repeatable">
-                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_MAX_INSTANCES') || 'Màxim d\'instàncies'"></label>
-                      <input type="number" min="2" placeholder="∞" class="form-control form-control-sm" 
+                    <div class="col-md-2" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                      <label :for="`groupMaxInstances_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_MAX_REPETITIONS')"></label>
+                      <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                      <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_MAX_REPETITIONS_DESC')"></div>
+                      <input type="number" :id="`groupMaxInstances_${item.id}`" min="2" placeholder="∞" class="form-control form-control-sm" 
                              x-model.number="item.max_instances" @input="item.sanitizeRepeatableLimits()" @blur="item.sanitizeRepeatableLimits()">
                     </div>
 
                     <!-- Text: Add Button Custom Label -->
-                    <div class="col-md-3" x-show="item.is_repeatable">
-                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL') || 'Text botó afegir'"></label>
-                      <input type="text" class="form-control form-control-sm" x-model="item.add_button_label" :placeholder="utils.translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT')">
+                    <div class="col-md-3" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                      <label :for="`groupAddButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_ADD_LABEL')"></label>
+                      <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                      <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL_DESC')"></div>
+                      <input type="text" :id="`groupAddButton_${item.id}`" class="form-control form-control-sm" x-model="item.add_button_label" 
+                             :placeholder="utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT')">
                     </div>
 
                     <!-- Text: Remove Button Custom Label -->
-                    <div class="col-md-3" x-show="item.is_repeatable">
-                      <label class="form-label small mb-1 d-block" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL') || 'Text botó eliminar'"></label>
-                      <input type="text" class="form-control form-control-sm" x-model="item.remove_button_label" :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT')">
+                    <div class="col-md-3" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                      <label :for="`groupRemoveButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_REMOVE_LABEL')"></label>
+                      <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                      <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DESC')"></div>
+                      <input type="text" :id="`groupRemoveButton_${item.id}`" class="form-control form-control-sm" x-model="item.remove_button_label" 
+                             :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT')">
                     </div>
                   </div>
+
+                  <!-- Add DataBlock to Group -->
+                  <template x-if="item.getAvailableCandidateChildren(formConfig.data_blocks).length>0">
+                    <div class="mt-4 row g-2 align-items-center border-top" x-data="{ selectedCandidateId: '' }">
+                      <div class="col-md-4">
+                        <label :for="`selectedCandidateId_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_ADD_TO_GROUP')"></label>
+                        <div class="input-group">
+                          <select :id="`selectedCandidateId_${item.id}`" class="form-select" x-model="selectedCandidateId">
+                            <option value=""></option>
+                            <template x-for="candidate in item.getAvailableCandidateChildren(formConfig.data_blocks)" :key="candidate.id">
+                              <option :value="candidate.id" x-text="candidate.text + (candidate.module ? ' (' + candidate.getModuleText() + ')' : '')"></option>
+                            </template>
+                          </select>
+                          <button type="button" class="btn" :title="utils.translate('LBL_DATABLOCK_ADD_TO_GROUP_TITLE')"
+                                  @click="formConfig.addChildToGroup(item.id, selectedCandidateId); selectedCandidateId = '';">
+                            <span class="suitepicon suitepicon-action-plus"></span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </template>
                 </div>
               </div>
             </template>
@@ -157,9 +194,17 @@
             <!-- Standard DataBlock header -->
             <div class="card-header pb-1 pe-0">
               <!-- Description / Options -->
-              <div class="d-flex justify-content-between align-items-center mb-0 small">
-                <!-- Description -->
-                <div class="text-muted small" x-text="item.getTextDescription()"></div>
+              <div class="d-flex justify-content-between align-items-center mb-0">
+                <!-- Group & Description -->
+                <div class="d-flex flex-column">
+                  <!-- Group Badge -->
+                  <template x-if="item.group_root && !item.isGroupHead(formConfig.data_blocks)">
+                    <span class="badge bg-transparent text-dark" style="margin-left:-15px; margin-top:-5px;font-weight: normal;" 
+                          x-text="'📦 ' + item.getGroupTitle(formConfig.data_blocks)"></span>
+                  </template>
+                  <!-- Description -->
+                  <div class="text-muted small" x-text="item.getTextDescription()"></div>
+                </div>
 
                 <!-- Options (hidden for group DataBlocks) -->
                 <template x-if="!item.isGroupHead(formConfig.data_blocks)">
@@ -212,76 +257,17 @@
                   </button>
                 </div>
               </div>
+<!-- Botó per treure el bloc fill del grup -->
+<button type="button" 
+        class="btn btn-sm btn-outline-danger ms-auto" 
+        title="Treure aquest bloc del grup"
+        @click="formConfig.removeChildFromGroup(item.id)">
+  <i class="suitepicon suitepicon-action-delete"></i> Treure del grup
+</button>
             </div>
 
             <!-- DataBlock body -->
             <div class="card-body" x-show="!isCollapsed" x-transition>
-
-              <!-- Config panel for Grouping and Cardinality -->
-              <div class="bg-light p-3 rounded border mb-3">
-                <div class="row g-3 align-items-center">
-                  
-                  <!-- Selector "Agrupar / Incloure dins de:" -->
-                  <div class="col-md-6" x-show="item.getAvailableGroupRoots(formConfig.data_blocks).length > 0 || item.group_root">
-                    <label class="form-label small fw-bold text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_GROUP_ROOT_LABEL') || 'Agrupar / Incloure dins de:'"></label>
-                    <select class="form-select form-select-sm"
-                            :value="item.group_root"
-                            @change="changeGroupRoot(item, $event.target.value)">
-                      <option value="" x-text="'-- ' + (utils.translate('LBL_DATABLOCK_INDEPENDENT') || 'Cap (Independent)') + ' --'"></option>
-                      <template x-for="candidate in item.getAvailableGroupRoots(formConfig.data_blocks)" :key="candidate.id">
-                        <option :value="candidate.id" 
-                                :selected="candidate.id === item.group_root" 
-                                x-text="'📦 ' + candidate.text + (candidate.getModuleText() ? ' (' + candidate.getModuleText() + ')' : '')">
-                        </option>
-                      </template>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Metadades del grup (Visibles només si el bloc té cardinalitat de grup: opcional o repetible) -->
-                <template x-if="item.is_optional || item.is_repeatable">
-                  <div class="mt-3 pt-3 border-top">
-                    <div class="row g-2">
-                      <!-- Títol del grup -->
-                      <div class="col-md-6">
-                        <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_GROUP_TITLE') || 'Títol visual del grup'"></label>
-                        <input type="text" class="form-control form-control-sm" x-model="item.group_title" />
-                      </div>
-
-                      <!-- Màxim d'instàncies (Només si és repetible) -->
-                      <template x-if="item.is_repeatable">
-                        <div class="col-md-6">
-                          <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_MAX_INSTANCES') || 'Límit màxim d\'instàncies (buit = sense límit)'"></label>
-                          <input type="number" class="form-control form-control-sm" min="2" x-model.number="item.max_instances" placeholder="∞" @change="item.sanitizeRepeatableLimits()" />
-                        </div>
-                      </template>
-
-                      <!-- Etiqueta interruptor d'activació (Només si és opcional) -->
-                      <template x-if="item.is_optional">
-                        <div class="col-md-6 mt-2">
-                          <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_TOGGLE_LABEL') || 'Text de l\'interruptor d\'activació'"></label>
-                          <input type="text" class="form-control form-control-sm" x-model="item.toggle_label" />
-                        </div>
-                      </template>
-
-                      <!-- Etiquetes botons d'instància (Només si és repetible) -->
-                      <template x-if="item.is_repeatable">
-                        <div class="col-md-6 mt-2 d-flex gap-2">
-                          <div class="w-50">
-                            <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_ADD_BTN_LABEL') || 'Text botó afegir'"></label>
-                            <input type="text" class="form-control form-control-sm" x-model="item.add_button_label" />
-                          </div>
-                          <div class="w-50">
-                            <label class="form-label small text-muted mb-1" x-text="utils.translate('LBL_DATABLOCK_REMOVE_BTN_LABEL') || 'Text botó eliminar'"></label>
-                            <input type="text" class="form-control form-control-sm" x-model="item.remove_button_label" />
-                          </div>
-                        </div>
-                      </template>
-                    </div>
-                  </div>
-                </template>
-              </div>
-
               <!-- Alert message -->
               <template x-if="!item.isValid()">
                 <div class="alert alert-danger p-2 mb-3 shadow-sm border-danger">

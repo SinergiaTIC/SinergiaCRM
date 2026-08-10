@@ -519,9 +519,9 @@ class FormHtmlGeneratorService {
      */
     private function generateRepeatableGroupHtml(FormDataBlock $rootBlock, FormTheme $theme, FormConfig $config): string {
         $groupTitle = htmlspecialchars($rootBlock->group_title ?: $rootBlock->text);
-        $toggleLabel = htmlspecialchars($rootBlock->toggle_label ?: "Incloure {$groupTitle}");
-        $addLabel = htmlspecialchars($rootBlock->add_button_label ?: translate('LBL_DATABLOCK_ADD_INSTANCE_DEFAULT', 'stic_AWF_Forms'));
-        $removeLabel = htmlspecialchars($rootBlock->remove_button_label ?: translate('LBL_DATABLOCK_REMOVE_INSTANCE_DEFAULT', 'stic_AWF_Forms'));
+        $toggleLabel = htmlspecialchars($rootBlock->toggle_label ?: translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $groupTitle);
+        $addLabel = htmlspecialchars($rootBlock->add_button_label ?: translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT', 'stic_AWF_Forms'));
+        $removeLabel = htmlspecialchars($rootBlock->remove_button_label ?: translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT', 'stic_AWF_Forms'));
         
         $minInstances = (int)($rootBlock->min_instances ?? 1);
         $maxInstances = $rootBlock->max_instances !== null ? (int)$rootBlock->max_instances : 'null';
@@ -598,7 +598,7 @@ class FormHtmlGeneratorService {
     
                                 // If the child block is optional (min_instances = 0), we wrap it with a local activation switch for that instance.
                                 if ($childBlock->min_instances === 0) {
-                                    $childTitle = htmlspecialchars($childBlock->toggle_label ?: "Incloure {$childBlock->text}");
+                                    $childTitle = htmlspecialchars($rootBlock->toggle_label ?: translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $childBlock->text);
                                     
                                     $html .= "<div class='awf-child-optional-wrapper my-3 p-2 border rounded bg-light' x-data='{ includeChild: false }'>" . $this->newLine('+');
                                     {
