@@ -566,16 +566,106 @@ class stic_AwfDataBlock {
   }
 
   /**
-   * Re-evaluates default group title based on contained blocks,
-   * unless the user has manually customized it.
+   * Gets group member blocks sorted hierarchically (Top-Down BFS)
+   * starting from the group root block.
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]} Array of sorted member blocks
+   */
+  getGroupMembersSorted(allDataBlocks) {
+    if (!allDataBlocks || !Array.isArray(allDataBlocks)) return [];
+
+    const rootId = (this.group_root && this.group_root !== '') ? this.group_root : this.id;
+    
+    // Filter all member blocks belonging to this group root (excluding root itself)
+    const memberBlocks = allDataBlocks.filter(b => b.group_root === rootId && b.id !== rootId);
+
+    if (memberBlocks.length <= 1) {
+      return memberBlocks;
+    }
+
+    // Calculate hierarchical depth (BFS) relative to the group root
+    const depthMap = new Map();
+    depthMap.set(rootId, 0);
+
+    const queue = [rootId];
+    const visited = new Set([rootId]);
+
+    const isChildOf = (child, parentId) => {
+      if (!child || child.id === parentId) return false;
+
+      // A) Check relational fields (relate / dataBlock)
+      const hasFieldDep = child.fields?.some(f =>
+        (f.value_type === 'dataBlock' && f.value === parentId) ||
+        (f.type === 'relate' && f.value === parentId)
+      );
+      if (hasFieldDep) return true;
+
+      // B) Check explicit block-to-block relationships
+      const hasRelDep = child.relationships?.some(r =>
+        r.related_datablock_id === parentId
+      );
+
+      return hasRelDep;
+    };
+
+    while (queue.length > 0) {
+      const parentId = queue.shift();
+      const parentDepth = depthMap.get(parentId);
+
+      allDataBlocks.forEach(candidate => {
+        if (visited.has(candidate.id)) return;
+
+        if (isChildOf(candidate, parentId)) {
+          visited.add(candidate.id);
+          depthMap.set(candidate.id, parentDepth + 1);
+          queue.push(candidate.id);
+        }
+      });
+    }
+
+    // Sort member blocks by depth (Top-Down: closer to root first)
+    return memberBlocks.sort((a, b) => {
+      const depthA = depthMap.get(a.id) ?? 999;
+      const depthB = depthMap.get(b.id) ?? 999;
+
+      if (depthA !== depthB) {
+        return depthA - depthB;
+      }
+
+      return allDataBlocks.indexOf(a) - allDataBlocks.indexOf(b);
+    });
+  }
+
+  /**
+   * Re-evaluates default group title by concatenating the root block's name 
+   * and all member block names in hierarchical Top-Down order.
+   * Unless the user has manually customized it.
    * @param {stic_AwfDataBlock[]} allDataBlocks 
    */
   refreshGroupTitle(allDataBlocks) {
     if (this.is_custom_group_title) return;
 
-    const descendants = this.getDescendants(allDataBlocks);
-    const blockNames = [this.text, ...descendants.map(c => c.text)].filter(Boolean);
-    this.group_title = blockNames.join(' + ');
+    if (!this.is_root && this.group_root) {
+      // If called on a child block, delegate title refresh to the root block
+      const root = allDataBlocks.find(b => b.id === this.group_root);
+      if (root) {
+        root.refreshGroupTitle(allDataBlocks);
+      }
+      return;
+    }
+
+    // 1. Get member blocks sorted hierarchically (Top-Down: Depth 1, Depth 2, etc.)
+    const sortedMembers = this.getGroupMembersSorted(allDataBlocks);
+
+    // 2. The full group list starts with this root block followed by sorted members
+    const fullGroupBlocks = [this, ...sortedMembers];
+
+    // 3. Compose the title joining block texts in exact hierarchical order
+    this.group_title = fullGroupBlocks
+      .map(b => (b.text || '').trim())
+      .filter(t => t.length > 0)
+      .join(' + ');
   }
 
   /**
@@ -641,6 +731,73 @@ class stic_AwfDataBlock {
   getGroupTitle(allDataBlocks) {
     const root = this.getGroupRootBlock(allDataBlocks);
     return root ? (root.group_title || root.text) : '';
+  }
+
+  /**
+   * Returns true if and only if the block is part of a group BUT is not integrated
+   * into the CRM relationship tree of said group root.
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {boolean}
+   */
+  isManualGroupMemberOutsideTree(allDataBlocks) {
+    // 1. If it does not have group_root assigned, it is not part of any group
+    if (!this.group_root) {
+      return false;
+    }
+
+    // 2. Find the root block of the group (R)
+    const rootBlock = allDataBlocks.find(b => b.id === this.group_root);
+    if (!rootBlock) {
+      return false;
+    }
+
+    // 3. Get the set of IDs of all blocks in the relational tree of R
+    const treeBlockIds = this.getGroupTreeBlockIds(rootBlock, allDataBlocks);
+
+    // 4. Condition: has group AND does NOT belong to the relational tree
+    return !treeBlockIds.has(this.id);
+  }
+
+  /**
+   * Get recursively the set of IDs of all descendant blocks related to the root block 
+   * through module relationships (FK / relate).
+   * 
+   * @param {stic_AwfDataBlock} rootBlock
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {Set<string>}
+   */
+  getGroupTreeBlockIds(rootBlock, allDataBlocks) {
+    const treeIds = new Set();
+    const queue = [rootBlock.id];
+
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+      if (treeIds.has(currentId)) continue;
+      
+      treeIds.add(currentId);
+      const currentBlock = allDataBlocks.find(b => b.id === currentId);
+      if (!currentBlock) continue;
+
+      // Find all child blocks that depend relationally on currentBlock
+      allDataBlocks.forEach(candidate => {
+        if (treeIds.has(candidate.id)) return;
+
+        // The candidate depends on the current block if it has a fixed/related field pointing to it
+        // or an explicit relationship registered
+        const isChild = candidate.fields.some(f => 
+          f.value_type === 'dataBlock' && f.value === currentBlock.id
+        ) || candidate.relationships.some(r => 
+          r.related_datablock_id === currentBlock.id
+        );
+
+        if (isChild) {
+          queue.push(candidate.id);
+        }
+      });
+    }
+
+    return treeIds;
   }
 
 }
@@ -2700,31 +2857,104 @@ class stic_AwfConfiguration {
     this.prepareForSave();
   }
 
-  /**
-   * Returns all DataBlocks in a flat array ordered hierarchically using Depth-First Search (DFS).
-   * Ensures parents are immediately followed by their children and grandchildren.
-   * @returns {stic_AwfDataBlock[]}
+/**
+   * Gets all data blocks ordered hierarchically (Top-Down DFS).
+   * Ensures that Group Root blocks ALWAYS precede their child/member blocks.
+   * 
+   * @returns {stic_AwfDataBlock[]} Ordered array of data blocks
    */
   getOrderedDataBlocks() {
     const ordered = [];
     const visited = new Set();
 
-    // DFS Traversal helper
+    /**
+     * Checks if 'child' relationally depends on 'parent'
+     */
+    const isChildOf = (child, parent) => {
+      if (!child || !parent || child.id === parent.id) return false;
+
+      // A) Check relational fields (relate / dataBlock)
+      const hasFieldDep = child.fields?.some(f =>
+        (f.value_type === 'dataBlock' && f.value === parent.id) ||
+        (f.type === 'relate' && f.value === parent.id)
+      );
+      if (hasFieldDep) return true;
+
+      // B) Check explicit block-to-block relationships
+      const hasRelDep = child.relationships?.some(r =>
+        r.related_datablock_id === parent.id &&
+        (!r.initiator_id || r.initiator_id === child.id)
+      );
+
+      return hasRelDep;
+    };
+
+    /**
+     * Gets all direct relational children and group members for a parent block
+     */
+    const getChildrenAndMembers = (parent) => {
+      return this.data_blocks.filter(candidate => {
+        if (candidate.id === parent.id) return false;
+
+        // 1. Direct member of the group
+        if (candidate.group_root === parent.id) return true;
+
+        // 2. Relational child (without explicit external group)
+        if (!candidate.group_root && isChildOf(candidate, parent)) return true;
+
+        return false;
+      });
+    };
+
+    /**
+     * DFS Traversal helper
+     */
     const traverse = (block) => {
       if (!block || visited.has(block.id)) return;
+
+      // GUARANTEE: If block belongs to a group root that hasn't been visited yet,
+      // force traversal of the group root FIRST.
+      if (block.group_root && block.group_root !== block.id && !visited.has(block.group_root)) {
+        const rootBlock = this.data_blocks.find(b => b.id === block.group_root);
+        if (rootBlock) {
+          traverse(rootBlock);
+          return; // The root traversal will recursively visit this child in correct order
+        }
+      }
+
       visited.add(block.id);
       ordered.push(block);
 
-      // Get direct children and recurse immediately below the parent
-      const children = block.getChildren(this.data_blocks);
+      // Get children and group members
+      const children = getChildrenAndMembers(block);
+
+      // Sort children/members Top-Down (parents before their children)
+      children.sort((a, b) => {
+        if (isChildOf(b, a)) return -1; // 'a' is parent of 'b' -> 'a' comes first
+        if (isChildOf(a, b)) return 1;  // 'b' is parent of 'a' -> 'b' comes first
+        return this.data_blocks.indexOf(a) - this.data_blocks.indexOf(b);
+      });
+
+      // Recurse into children
       children.forEach(child => traverse(child));
     };
 
-    // 1. Process root blocks first
-    const rootBlocks = this.data_blocks.filter(b => b.is_root);
+    // 1. Dynamically compute true top-level root blocks
+    // A block is a top-level root IF:
+    // - It has no group_root (or group_root === block.id)
+    // - AND it is NOT a relational child of any other block in data_blocks
+    const rootBlocks = this.data_blocks.filter(candidate => {
+      if (candidate.group_root && candidate.group_root !== candidate.id) {
+        return false; // Belongs to a group -> NOT a top-level root
+      }
+      const hasParentInList = this.data_blocks.some(parent => isChildOf(candidate, parent));
+      return !hasParentInList;
+    });
+
+    // 2. Process top-level root blocks first
     rootBlocks.forEach(root => traverse(root));
 
-    // 2. Safety fallback for orphan cycles or malformed data
+    // 3. Fallback for orphan cycles or unvisited blocks
     this.data_blocks.forEach(block => {
       if (!visited.has(block.id)) {
         traverse(block);

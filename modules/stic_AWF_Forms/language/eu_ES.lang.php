@@ -159,6 +159,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_REMOVE_LABEL_DEFAULT' => 'Eliminar',
   'LBL_DATABLOCK_ADD_TO_GROUP' => 'Añadir un bloque de datos al grupo',
   'LBL_DATABLOCK_ADD_TO_GROUP_TITLE' => 'Añadir al grupo',
+  'LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE' => 'Quitar del grupo de bloques de datos',
 
   // STIC-Custom OC - 20250803 - Datu-bloke errepikagarria
   'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Bloke errepikagarri baten semeak ezin dira modu independentean mugitu.',

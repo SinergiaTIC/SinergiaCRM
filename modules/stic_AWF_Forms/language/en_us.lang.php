@@ -160,6 +160,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_REMOVE_LABEL_DEFAULT' => 'Remove',
   'LBL_DATABLOCK_ADD_TO_GROUP' => 'Add data block to group',
   'LBL_DATABLOCK_ADD_TO_GROUP_TITLE' => 'Add to group',
+  'LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE' => 'Remove from data block group',
 
   // STIC-Custom OC - 20250803 - Repeatable data blocks
   'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Children of a repeatable block cannot be moved independently.',

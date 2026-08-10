@@ -197,11 +197,23 @@
               <div class="d-flex justify-content-between align-items-center mb-0">
                 <!-- Group & Description -->
                 <div class="d-flex flex-column">
-                  <!-- Group Badge -->
-                  <template x-if="item.group_root && !item.isGroupHead(formConfig.data_blocks)">
-                    <span class="badge bg-transparent text-dark" style="margin-left:-15px; margin-top:-5px;font-weight: normal;" 
-                          x-text="'📦 ' + item.getGroupTitle(formConfig.data_blocks)"></span>
-                  </template>
+                  <!-- Group Badge & Remove Button -->
+                    <div class="d-flex">
+                      <!-- Group Badge -->
+                      <template x-if="item.group_root && !item.isGroupHead(formConfig.data_blocks)">
+                          <span class="badge bg-transparent text-dark" style="margin-left:-15px; margin-top:-5px;font-weight: normal;" 
+                                x-text="'📦 ' + item.getGroupTitle(formConfig.data_blocks)"></span>
+                      </template>
+
+                      <!-- Remove from Group Button -->
+                      <template x-if="item.isManualGroupMemberOutsideTree(formConfig.data_blocks)">
+                        <button class="btn" :title="utils.translate('LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE')" style="margin-left:-10px; margin-top:-10px;"
+                                @click="formConfig.removeChildFromGroup(item.id)">
+                          <span class="suitepicon suitepicon-action-clear"></span>
+                        </button>
+                      </template>
+                    </div>
+
                   <!-- Description -->
                   <div class="text-muted small" x-text="item.getTextDescription()"></div>
                 </div>
@@ -257,13 +269,6 @@
                   </button>
                 </div>
               </div>
-<!-- Botó per treure el bloc fill del grup -->
-<button type="button" 
-        class="btn btn-sm btn-outline-danger ms-auto" 
-        title="Treure aquest bloc del grup"
-        @click="formConfig.removeChildFromGroup(item.id)">
-  <i class="suitepicon suitepicon-action-delete"></i> Treure del grup
-</button>
             </div>
 
             <!-- DataBlock body -->
