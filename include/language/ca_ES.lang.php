@@ -1063,7 +1063,7 @@ $app_list_strings = array(
         '' => '--Cap--',
         '\'' => 'Cometes simples (&#39;)',
         '"' => 'Cometes dobles (&#34;)',
-        'other' => 'Altre:',
+        'other' => 'Un altre:',
     ),
     'import_delimeter_options' => array(
         ',' => ',',
@@ -1456,7 +1456,7 @@ $app_strings = array(
     'LBL_SMTPTYPE_GMAIL' => 'Gmail',
     'LBL_SMTPTYPE_YAHOO' => 'Yahoo! Mail',
     'LBL_SMTPTYPE_EXCHANGE' => 'Microsoft Exchange',
-    'LBL_SMTPTYPE_OTHER' => 'Altre',
+    'LBL_SMTPTYPE_OTHER' => 'Un altre',
     'LBL_EMAIL_SPACER_MAIL_SERVER' => '[ Carpetes Remotes ]',
     'LBL_EMAIL_SPACER_LOCAL_FOLDER' => '[ Carpetes de SuiteCRM ]',
     'LBL_EMAIL_SUBJECT' => 'Assumpte',
