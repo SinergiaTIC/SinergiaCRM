@@ -29,7 +29,7 @@
         <h2 class="mb-2" x-text="utils.translate('LBL_FLOWS')"></h2>
         <!-- Tab Headers: Flows -->
         <div class="stic-tabs">
-            <template x-for="flow in formConfig.flows" :key="flow.id">
+            <template x-for="flow in flows" :key="flow.id">
                 <template x-if="flow.id != 1 || bean.processing_mode == 'async'">
                     <div class="stic-tab" :class="{ 'tab-error': flow.id == '-1' || String(flow.id).endsWith('_err') }">
                         <input class="form-check-input" type="radio" :id="`flowTab${flow.id}`" x-model="flowTabSelected" :value="`${flow.id}`"/>

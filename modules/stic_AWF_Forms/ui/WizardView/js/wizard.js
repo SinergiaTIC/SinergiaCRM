@@ -485,6 +485,7 @@ class WizardStep2 {
         if (!Alpine.store('dataBlockRelationships')) {
           Alpine.store('dataBlockRelationships', {
             get formConfig() { return window.alpineComponent.formConfig; },
+            get data_blocks() { return this.formConfig.data_blocks; },
 
             get dataBlockRelationships() { 
               return this.formConfig.getAllDataBlockRelationships(); 
@@ -497,7 +498,7 @@ class WizardStep2 {
             },
             unusedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return [];
               let moduleInfo = utils.getModuleInformation(block.module);
               let seen = new Set();
@@ -539,9 +540,9 @@ class WizardStep2 {
               this.resetDataBlockRelationships();
             },
             getRelationshipTypeLabel(datablockId, relName, otherDatablockId, origDatablockId) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return 'N\u2009\u27f7\u2009M';
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherDatablockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherDatablockId);
               let moduleInfo = utils.getModuleInformation(block.module);
               let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
               let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
@@ -568,7 +569,7 @@ class WizardStep2 {
               return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
             },
             _relArrow(datablockId, relName, otherBlock, initiatorId) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return '⟷';
               let moduleInfo = utils.getModuleInformation(block.module);
               let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
@@ -589,10 +590,10 @@ class WizardStep2 {
               return '⟷';
             },
             getRelText(datablockId, rel) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block || !rel) return rel?.text || '';
               let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherBlockId);
               if (!otherBlock) return rel.text;
 
               let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
@@ -600,8 +601,8 @@ class WizardStep2 {
             },
             getInvolvedBlocksText(datablockId, rel) {
               let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherBlockId);
               if (!block || !otherBlock) return rel.text;
 
               let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
@@ -1082,10 +1083,10 @@ class WizardStep2 {
     };
   }
 
-  static generalDatablocksxData(initial_formConfig) {
+  static generalDatablocksxData() {
     return {
-      formConfig: initial_formConfig,
-
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
       get orderedDataBlocks() { return this.formConfig.getOrderedDataBlocks(); },
 
       /**
@@ -1094,19 +1095,19 @@ class WizardStep2 {
       changeGroupRoot(block, newRootId) {
         if (!block) return;
 
-        const oldRoot = block.getGroupHeadBlock(this.formConfig.data_blocks);
+        const oldRoot = block.getGroupHeadBlock(this.data_blocks);
         block.group_root = newRootId || '';
 
-        if (block.is_child && !block.canBeOptional()) {
+        if (block.is_child && !block.canBeOptional(this.data_blocks)) {
           block.min_instances = 1;
         }
 
         block.sanitizeRepeatableLimits();
 
         // Refresh group titles for old and new roots
-        if (oldRoot) oldRoot.refreshGroupTitle(this.formConfig.data_blocks);
-        const newRoot = block.getGroupHeadBlock(this.formConfig.data_blocks);
-        if (newRoot) newRoot.refreshGroupTitle(this.formConfig.data_blocks);
+        if (oldRoot) oldRoot.refreshGroupTitle(this.data_blocks);
+        const newRoot = block.getGroupHeadBlock(this.data_blocks);
+        if (newRoot) newRoot.refreshGroupTitle(this.data_blocks);
 
         this.formConfig.prepareForSave();
         this.highlightCard(block.id);
@@ -1116,7 +1117,7 @@ class WizardStep2 {
         if (!block) return;
         
         block.is_custom_group_title=false;
-        block.refreshGroupTitle(this.formConfig.data_blocks);
+        block.refreshGroupTitle(this.data_blocks);
       },
 
       /**
@@ -1148,7 +1149,7 @@ class WizardStep2 {
       },
 
       getDataBlockText(dataBlockId) {
-        let dataBlock = this.formConfig.data_blocks.find(d => d.id == dataBlockId);
+        let dataBlock = this.data_blocks.find(d => d.id == dataBlockId);
         if (!dataBlock) return '';
         return `${dataBlock.text} (${dataBlock.getModuleText()})`;
       },
@@ -1174,11 +1175,11 @@ class WizardStep2 {
     };
   }
 
-  static datablockxData(initial_formConfig, dataBlock) {
+  static datablockxData(dataBlock) {
     return {
-      formConfig: initial_formConfig,
       dataBlock: dataBlock,
       isCollapsed: false,
+      get formConfig() { return window.alpineComponent.formConfig; },
 
       toggleCollapse() {
         this.isCollapsed = !this.isCollapsed;
@@ -1216,15 +1217,16 @@ class WizardStep2 {
     };
   }
 
-  static addDataBlockModulexData(initial_formConfig) {
+  static addDataBlockModulexData() {
     return {
-      formConfig: initial_formConfig,
-
       creatingDataBlock: false,          // Modal CRM
       creatingUnlinkedDataBlock: false,  // Modal Unlinked
 
       newDataBlock: {module:'', text:''},
       newUnlinkedDataBlock: {text:''},
+
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
 
       get availableModulesForSelect() {
         if (typeof STIC === 'undefined' || !STIC.enabledModules) return [];
@@ -1273,18 +1275,18 @@ class WizardStep2 {
     };
   }
  
-  static editionFieldxData(fieldStore, config) {
+  static editionFieldxData(fieldStore) {
     return {
-      formConfig: config,
       store: fieldStore,
 
+      get formConfig() { return window.alpineComponent.formConfig; },
       get dataBlock() { return this.store?.dataBlock; },
       get field() { return this.store?.field; },
       get isEdit() { return this.store?.isEdit; },
 
       configValueOptions: false,
-
       showAllFields: false,
+
       get availableFields() {
         if (this.isEdit) {
           return [this.dataBlock?.getModuleInformation()?.fields[this.field.name]];
@@ -1569,10 +1571,11 @@ class WizardStep2 {
     };
   }
 
-  static editionValidationFieldxData(validationStore, config) {
+  static editionValidationFieldxData(validationStore) {
     return {
-      formConfig: config,
       store: validationStore,
+
+      get formConfig() { return window.alpineComponent.formConfig; },
 
       applyCondition: false,
       _activeDef: null,
@@ -1611,12 +1614,14 @@ class WizardStep2 {
     };
   }
 
-  static fieldsSummaryxData(dataBlock, config) {
+  static fieldsSummaryxData(dataBlock) {
     return {
-      formConfig: config,
       dataBlock: dataBlock,
 
       fieldTabSelected: 'form',
+
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
 
       get firstFieldInFormIndex() {
         return this.dataBlock.fields.filter(f => !f.isFieldInForm()).length;
@@ -1685,7 +1690,7 @@ class WizardStep2 {
       getfieldValueText(field) {
         if (!field) return '';
         if (field.value_type == 'dataBlock') {
-          return this.formConfig.data_blocks.find(d => d.id == field.value)?.text;
+          return this.data_blocks.find(d => d.id == field.value)?.text;
         }
         return field.value_text;
       },
@@ -1732,11 +1737,13 @@ class WizardStep2 {
 class WizardStep3 {
   static mainStep3xData() {
     return {
-      get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get flows() { return this.formConfig.flows; },
 
       flowTabSelected: 0,
-      get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
+      get flow() { return this.flows.find(f => f.id == this.flowTabSelected); },
       get actions() { return this.flow?.actions ?? []; },
 
       /**
@@ -1751,7 +1758,7 @@ class WizardStep3 {
         if (!action || !this.formConfig) return null;
         const blockParam = (action.parameters || []).find(p => p.name === 'data_block_id');
         if (blockParam && blockParam.value) {
-          const block = this.formConfig.data_blocks.find(b => b.id === blockParam.value);
+          const block = this.data_blocks.find(b => b.id === blockParam.value);
           if (block) {
             let rootBlock = null;
             let isRoot = false;
@@ -1759,7 +1766,7 @@ class WizardStep3 {
               rootBlock = block;
               isRoot = true;
             } else if (block.group_root && block.group_root !== '') {
-              rootBlock = this.formConfig.data_blocks.find(b => b.id === block.group_root) || null;
+              rootBlock = this.data_blocks.find(b => b.id === block.group_root) || null;
             }
             if (rootBlock) {
               return {
@@ -1787,7 +1794,7 @@ class WizardStep3 {
 
         // If it is a deferred sub-flow (ex: 'awfa123_ok'), check the parent context (deferred action)
         if (flow.id !== '0' && flow.id !== '-1' && flow.id !== '1') {
-          for (const f of this.formConfig.flows) {
+          for (const f of this.flows) {
             const parentAction = f.actions.find(a => a.flow_success_id == flow.id || a.flow_error_id == flow.id);
             if (parentAction) {
               // Check reumptionContext from the deferred action
@@ -2163,7 +2170,7 @@ class WizardStep3 {
               let blocks = [];
               if (!supportedModules) supportedModules = [];
 
-              this.formConfig.data_blocks.forEach(b => {
+              this.data_blocks.forEach(b => {
                 if (supportedModules.length == 0 || supportedModules.includes(b.module)) {
                   blocks.push({
                     id: b.id, 
@@ -2185,7 +2192,7 @@ class WizardStep3 {
               let fields = [];
               if (!supportedDataTypes) supportedDataTypes = [];
 
-              this.formConfig.data_blocks.forEach(block => {
+              this.data_blocks.forEach(block => {
                   block.fields.forEach(field => {
                       const typeInActions = field.getTypeInActions();
                       if (supportedDataTypes.length == 0 || supportedDataTypes.includes(typeInActions)) {
@@ -2280,7 +2287,7 @@ class WizardStep3 {
                                          (paramDef.selectorOptions || []).find(o => o.name == newParam.selectedOption)?.resolvedType === 'dataBlock';
 
                 if (paramIsDataBlock && newParam.value) {
-                  const requiredBlock = this.formConfig.data_blocks.find(b => b.id == newParam.value);
+                  const requiredBlock = this.data_blocks.find(b => b.id == newParam.value);
                   if (requiredBlock && requiredBlock.save_action_id) {
                     requisiteActions.add(requiredBlock.save_action_id);
                   }
@@ -2550,9 +2557,11 @@ class WizardStep4 {
       generatedHtml: '',
       previewTimeout: null,
 
-      get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
-      get sections() { return this.formConfig.layout.structure; },
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get layout() { return this.formConfig.layout; },
+      get sections() { return this.layout.structure; },
 
       get availableContainerTypes() {
         const validCategories = ['panel', 'card'];
@@ -2686,7 +2695,7 @@ class WizardStep4 {
 
       getDataBlock(element) {
         if (element.type == 'datablock') {
-          return this.formConfig.data_blocks.find(d => d.id == element.ref_id);
+          return this.data_blocks.find(d => d.id == element.ref_id);
         }
         return null;
       },
@@ -2721,8 +2730,8 @@ class WizardStep4 {
       moveElementToSection(element, fromSectionId, toSectionId) {
         if (!toSectionId || fromSectionId === toSectionId) return;
 
-        const fromSection = this.formConfig.layout.structure.find(s => s.id == fromSectionId);
-        const toSection = this.formConfig.layout.structure.find(s => s.id == toSectionId);
+        const fromSection = this.sections.find(s => s.id == fromSectionId);
+        const toSection = this.sections.find(s => s.id == toSectionId);
         if (!fromSection || !toSection) return;
 
         const block = this.getDataBlock(element);
@@ -2738,7 +2747,7 @@ class WizardStep4 {
 
         // If this is a repeatable root, drag its children with it
         if (block && block.is_repeatable) {
-          const childIds = new Set(this.formConfig.data_blocks
+          const childIds = new Set(this.data_blocks
             .filter(b => b.group_root === block.id)
             .map(b => b.id));
           const childElements = fromSection.elements.filter(el => el.type === 'datablock' && childIds.has(el.ref_id));
@@ -2748,16 +2757,16 @@ class WizardStep4 {
       },
 
       resetTheme() {
-        this.formConfig.layout.theme = new stic_AwfTheme();
-        this.formConfig.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
-        this.formConfig.layout.closed_form_title = utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE');
-        this.formConfig.layout.closed_form_text = utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE');
-        this.formConfig.layout.processed_form_title = utils.translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE');
-        this.formConfig.layout.processed_form_text = utils.translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE');
-        this.formConfig.layout.receipt_form_title = utils.translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE');
-        this.formConfig.layout.receipt_form_text = utils.translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE');
-        this.formConfig.layout.custom_css = '';
-        this.formConfig.layout.custom_js = '';
+        this.layout.theme = new stic_AwfTheme();
+        this.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
+        this.layout.closed_form_title = utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE');
+        this.layout.closed_form_text = utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE');
+        this.layout.processed_form_title = utils.translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE');
+        this.layout.processed_form_text = utils.translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE');
+        this.layout.receipt_form_title = utils.translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE');
+        this.layout.receipt_form_text = utils.translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE');
+        this.layout.custom_css = '';
+        this.layout.custom_js = '';
       }
     }
   }
