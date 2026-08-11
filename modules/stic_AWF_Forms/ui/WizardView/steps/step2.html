@@ -92,21 +92,21 @@
                   <!-- Options -->
                   <div class="d-inline-flex align-items-center gap-4">
                     <!-- Optional Switch -->
-                    <template x-if="item.canBeOptional(data_blocks)">
+                    <template x-if="item.canBeOptional(data_blocks) || item.is_optional">
                       <div class="form-check form-switch d-flex align-items-center mb-0">
                         <label class="form-check-label small me-2" :for="`groupOptSwitch_${item.id}`" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
                         <input class="form-check-input" type="checkbox" role="switch" :id="`groupOptSwitch_${item.id}`"
-                              :checked="item.is_optional" :disabled="!item.canBeOptional(data_blocks)"
+                              :checked="item.is_optional" :disabled="item.is_optional ? false : !item.canBeOptional(data_blocks)"
                               @change="toggleOptional(item, $el.checked, false)">
                       </div>
                     </template>
 
                     <!-- Repeatable Switch -->
-                    <template x-if="item.canBeRepeatable(data_blocks)">
+                    <template x-if="item.canBeRepeatable(data_blocks) || item.is_repeatable">
                       <div class="form-check form-switch d-flex align-items-center mb-0">
                         <label class="form-check-label small me-2" :for="`groupRepSwitch_${item.id}`" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
                         <input class="form-check-input" type="checkbox" role="switch" :id="`groupRepSwitch_${item.id}`"
-                              :checked="item.is_repeatable" :disabled="!item.canBeRepeatable(data_blocks)"
+                              :checked="item.is_repeatable" :disabled="item.is_repeatable ? false : !item.canBeRepeatable(data_blocks)"
                               @change="toggleRepeatable(item, $el.checked, false)">
                       </div>
                     </template>

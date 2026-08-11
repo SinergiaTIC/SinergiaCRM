@@ -55,6 +55,16 @@ class stic_AwfDataBlock {
     // 2. Overwrite with provided data
     Object.assign(this, data);
 
+    // 2.b Remove any own properties that would shadow the derived getters below.
+    // Legacy saved forms (pre-ADR-1) persisted is_repeatable/is_optional as own props;
+    // if kept, they shadow the prototype getters and produce stale reads (e.g. the
+    // "add to group" dropdown still listing blocks that are already groups).
+    delete this.is_repeatable;
+    delete this.is_optional;
+    delete this.is_root;
+    delete this.is_child;
+    delete this.custom_group_title;
+
     // 3. Map sub-objects and arrays to their classes
     this.fields = (data.fields || this.fields).map(d => new stic_AwfField(d));
     this.duplicate_detections = (data.duplicate_detections || this.duplicate_detections).map(d => new stic_AwfDuplicateDetection(d));
@@ -361,6 +371,7 @@ class stic_AwfDataBlock {
     // Check if block can be converted into a Group Root
     if (!this.canBeGroupRoot(allDataBlocks)) return false;
 
+    // N×M protection — ancestors: no ancestor in the group_root chain may be repeatable.
     let currentParentId = this.group_root;
     const visited = new Set([this.id]);
 
@@ -374,6 +385,17 @@ class stic_AwfDataBlock {
       if (parentBlock.is_repeatable) return false; // Found an ancestor that is already repeatable
 
       currentParentId = parentBlock.group_root;
+    }
+
+    // N×M protection — descendants: no relational descendant in the SAME group may be repeatable.
+    // (Descendants in other groups are blocked by canBeGroupRoot; orphan repeatable descendants
+    // are never adopted by adoptRelatedOrphans, so they don't multiply with this block.)
+    const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
+    const descendants = this.getRelationalDescendants(allDataBlocks);
+    for (const d of descendants) {
+      if (d.id === this.id) continue;
+      const inSameGroup = d.group_root === this.id || (myGroupRoot && d.group_root === myGroupRoot);
+      if (inSameGroup && d.is_repeatable) return false;
     }
 
     return true;
@@ -535,16 +557,12 @@ class stic_AwfDataBlock {
     // Descendants in a DIFFERENT group would be stolen → blocked (restriction 4).
     const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
 
-    // Get all relational descendants that would be adopted into this group/subgroup
+    // Disjoint Trees check: no relational descendant may belong to a DIFFERENT group.
+    // (A descendant that is itself a group head is fine — nested groups are allowed as long
+    // as the N×M rule is respected, which is enforced by canBeRepeatable, not here.)
     const relationalDescendants = this.getRelationalDescendants(allDataBlocks);
-
-    // Disjoint Trees check: verify if any descendant is already in another group
     for (const descendant of relationalDescendants) {
-      // Descendant belongs to a different group than mine -> stealing from another group (restriction 4)
       if (descendant.group_root && descendant.group_root !== this.id && descendant.group_root !== myGroupRoot) return false;
-
-      // Descendant is already a group root (repeatable or optional) -> N x M protection
-      if ((descendant.is_repeatable || descendant.is_optional) && descendant.id !== this.id) return false;
     }
 
     return true;
