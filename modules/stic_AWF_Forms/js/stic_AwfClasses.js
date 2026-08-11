@@ -68,8 +68,6 @@ class stic_AwfDataBlock {
 
   get is_optional() { return parseInt(this.min_instances, 10) === 0; }
 
-  get can_be_optional() { return this.canBeOptional(); }
-
   get is_root() { return !this.group_root || this.group_root === ''; }
 
   get is_child() { return !this.is_root; }
@@ -341,20 +339,22 @@ class stic_AwfDataBlock {
 
   /**
    * Checks if this DataBlock can be configured as optional (min_instances = 0).
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
    * @returns {boolean}
    */
-  canBeOptional() {
-    // 1. System required blocks can never be optional
+  canBeOptional(allDataBlocks) {
+    // System required blocks can never be optional
     if (this.required) return false;
 
-    // 2. Child blocks with a mandatory FK relate field pointing to their parent cannot be optional
-    if (this.is_child && this.group_root) {
-      const hasMandatoryParentLink = this.fields.some(field => 
-        field.required && 
-        field.type === 'relate' && 
-        (field.value === this.group_root || (field.value_type === 'dataBlock' && field.value === this.group_root))
-      );
+    // Check if block can be converted into a Group Root
+    if (!this.canBeGroupRoot(allDataBlocks)) return false;
 
+    // Child blocks with a mandatory FK relate field pointing to their parent cannot be optional
+    if (this.is_child && this.group_root) {
+      const hasMandatoryParentLink = this.fields.some(field => field.required && field.type === 'relate' && 
+                                                               (field.value === this.group_root || 
+                                                                (field.value_type === 'dataBlock' && field.value === this.group_root))
+      );
       if (hasMandatoryParentLink) return false;
     }
 
@@ -368,6 +368,9 @@ class stic_AwfDataBlock {
    * @returns {boolean}
    */
   canBeRepeatable(allDataBlocks) {
+    // Check if block can be converted into a Group Root
+    if (!this.canBeGroupRoot(allDataBlocks)) return false;
+
     let currentParentId = this.group_root;
     const visited = new Set([this.id]);
 
@@ -470,6 +473,81 @@ class stic_AwfDataBlock {
       if (candidate.is_repeatable || candidate.is_optional) return false; // Candidate blocks that are repeatable or optional cannot be children of a group
       return true;
     });
+  }
+
+  /**
+   * Gets all blocks that are relationally dependent on this block (transitive FK / relate tree).
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]} Relational descendant blocks
+   */
+  getRelationalDescendants(allDataBlocks) {
+    const descendants = [];
+    const queue = [this.id];
+    const visited = new Set([this.id]);
+
+    const isRelationalChild = (candidate, parentId) => {
+      if (!candidate || candidate.id === parentId) return false;
+
+      // Check FK / relate fields pointing to parentId
+      const hasFieldDep = candidate.fields?.some(f =>
+        (f.value_type === 'dataBlock' && f.value === parentId) ||
+        (f.type === 'relate' && f.value === parentId)
+      );
+      if (hasFieldDep) return true;
+
+      // Check explicit block relationships
+      const hasRelDep = candidate.relationships?.some(r =>
+        r.related_datablock_id === parentId
+      );
+
+      return hasRelDep;
+    };
+
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+
+      allDataBlocks.forEach(candidate => {
+        if (visited.has(candidate.id)) return;
+
+        if (isRelationalChild(candidate, currentId)) {
+          visited.add(candidate.id);
+          descendants.push(candidate);
+          queue.push(candidate.id);
+        }
+      });
+    }
+
+    return descendants;
+  }
+
+  /**
+   * Checks if this block can be converted into a Group Root (repeatable or optional)
+   * according to the Disjoint Trees rule.
+   * None of its relational descendants can belong to another group.
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  canBeGroupRoot(allDataBlocks) {
+    if (!allDataBlocks || !Array.isArray(allDataBlocks)) return true;
+
+    // If this block itself is already a child of another group, it cannot be a group root
+    if (this.group_root && this.group_root !== this.id) return false;
+
+    // Get all relational descendants that would be adopted into this group
+    const relationalDescendants = this.getRelationalDescendants(allDataBlocks);
+
+    // Disjoint Trees check: verify if any descendant is already in another group
+    for (const descendant of relationalDescendants) {
+      // Descendant already belongs to another group
+      if (descendant.group_root && descendant.group_root !== this.id) return false; 
+
+      // Descendant is already a group root
+      if ((descendant.is_repeatable || descendant.is_optional) && descendant.id !== this.id) return false; 
+    }
+
+    return true;
   }
 
   /**
@@ -655,17 +733,14 @@ class stic_AwfDataBlock {
       return;
     }
 
-    // 1. Get member blocks sorted hierarchically (Top-Down: Depth 1, Depth 2, etc.)
+    // Get member blocks sorted hierarchically (Top-Down: Depth 1, Depth 2, etc.)
     const sortedMembers = this.getGroupMembersSorted(allDataBlocks);
 
-    // 2. The full group list starts with this root block followed by sorted members
+    // The full group list starts with this root block followed by sorted members
     const fullGroupBlocks = [this, ...sortedMembers];
 
-    // 3. Compose the title joining block texts in exact hierarchical order
-    this.group_title = fullGroupBlocks
-      .map(b => (b.text || '').trim())
-      .filter(t => t.length > 0)
-      .join(' + ');
+    // Compose the title joining block texts in exact hierarchical order
+    this.group_title = fullGroupBlocks.map(b => (b.text || '').trim()).filter(t => t.length > 0).join(' + ');
   }
 
   /**
@@ -683,7 +758,7 @@ class stic_AwfDataBlock {
    * - max_instances: null (unlimited repeatable), 1 (simple), or integer >= 2 (limited repeatable).
    */
   sanitizeRepeatableLimits() {
-    // 1. Normalize min_instances (0 o 1)
+    // Normalize min_instances (0 o 1)
     let minVal = parseInt(this.min_instances, 10);
     if (isNaN(minVal) || minVal < 0 || minVal > 1) {
       this.min_instances = 1;
@@ -691,7 +766,7 @@ class stic_AwfDataBlock {
       this.min_instances = minVal;
     }
 
-    // 2. Normalize max_instances
+    // Normalize max_instances
     if (this.max_instances === null || this.max_instances === '') {
       this.max_instances = null; // Unlimited repeatable (null)
       return;
@@ -741,21 +816,17 @@ class stic_AwfDataBlock {
    * @returns {boolean}
    */
   isManualGroupMemberOutsideTree(allDataBlocks) {
-    // 1. If it does not have group_root assigned, it is not part of any group
-    if (!this.group_root) {
-      return false;
-    }
+    // If it does not have group_root assigned, it is not part of any group
+    if (!this.group_root) return false;
 
-    // 2. Find the root block of the group (R)
+    // Find the root block of the group (R)
     const rootBlock = allDataBlocks.find(b => b.id === this.group_root);
-    if (!rootBlock) {
-      return false;
-    }
+    if (!rootBlock) return false;
 
-    // 3. Get the set of IDs of all blocks in the relational tree of R
+    // Get the set of IDs of all blocks in the relational tree of R
     const treeBlockIds = this.getGroupTreeBlockIds(rootBlock, allDataBlocks);
 
-    // 4. Condition: has group AND does NOT belong to the relational tree
+    // Condition: has group AND does NOT belong to the relational tree
     return !treeBlockIds.has(this.id);
   }
 
@@ -785,11 +856,8 @@ class stic_AwfDataBlock {
 
         // The candidate depends on the current block if it has a fixed/related field pointing to it
         // or an explicit relationship registered
-        const isChild = candidate.fields.some(f => 
-          f.value_type === 'dataBlock' && f.value === currentBlock.id
-        ) || candidate.relationships.some(r => 
-          r.related_datablock_id === currentBlock.id
-        );
+        const isChild = candidate.fields.some(f => f.value_type === 'dataBlock' && f.value === currentBlock.id) || 
+                                                   candidate.relationships.some(r => r.related_datablock_id === currentBlock.id);
 
         if (isChild) {
           queue.push(candidate.id);
