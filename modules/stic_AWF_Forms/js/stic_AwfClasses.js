@@ -158,16 +158,6 @@ class stic_AwfDataBlock {
   }
 
   /**
-   * Returns the repeatable root block this block belongs to, if any.
-   * @param {stic_AwfDataBlock[]} dataBlocks
-   * @returns {stic_AwfDataBlock|null}
-   */
-  getRepeatableRoot(dataBlocks) {
-    if (!this.group_root) return null;
-    return dataBlocks.find(b => b.id === this.group_root) || null;
-  }
-
-  /**
    * Gets the text to show in the description of this DataBlock
    * @returns {string}
    */
@@ -476,6 +466,32 @@ class stic_AwfDataBlock {
   }
 
   /**
+   * Checks if this block is a relational child of parentBlockId (depends on it via FK/relate
+   * field or block-to-block relationship where this block is the N side / initiator).
+   * Unified dependency check — replaces the 5 duplicated inline closures.
+   * @param {string} parentId 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  isRelationalChild(parentId, allDataBlocks) {
+    if (!parentId || this.id === parentId) return false;
+
+    // A) Has a relate/FK field pointing to parent
+    if (this.fields?.some(f => f.type === 'relate' &&
+        (f.value === parentId || (f.value_type === 'dataBlock' && f.value === parentId))
+    )) return true;
+
+    // B) Has a relationship entry pointing to parent where THIS block is the initiator (N side)
+    if (this.relationships?.some(r => r.related_datablock_id === parentId && r.initiator_id === this.id)) return true;
+
+    // C) Parent has a relationship entry pointing to this block where THIS block is the initiator
+    const parent = allDataBlocks?.find(b => b.id === parentId);
+    if (parent?.relationships?.some(r => r.related_datablock_id === this.id && r.initiator_id === this.id)) return true;
+
+    return false;
+  }
+
+  /**
    * Gets all blocks that are relationally dependent on this block (transitive FK / relate tree).
    * 
    * @param {stic_AwfDataBlock[]} allDataBlocks 
@@ -486,31 +502,13 @@ class stic_AwfDataBlock {
     const queue = [this.id];
     const visited = new Set([this.id]);
 
-    const isRelationalChild = (candidate, parentId) => {
-      if (!candidate || candidate.id === parentId) return false;
-
-      // Check FK / relate fields pointing to parentId
-      const hasFieldDep = candidate.fields?.some(f =>
-        (f.value_type === 'dataBlock' && f.value === parentId) ||
-        (f.type === 'relate' && f.value === parentId)
-      );
-      if (hasFieldDep) return true;
-
-      // Check explicit block relationships
-      const hasRelDep = candidate.relationships?.some(r =>
-        r.related_datablock_id === parentId
-      );
-
-      return hasRelDep;
-    };
-
     while (queue.length > 0) {
       const currentId = queue.shift();
 
       allDataBlocks.forEach(candidate => {
         if (visited.has(candidate.id)) return;
 
-        if (isRelationalChild(candidate, currentId)) {
+        if (candidate.isRelationalChild(currentId, allDataBlocks)) {
           visited.add(candidate.id);
           descendants.push(candidate);
           queue.push(candidate.id);
@@ -532,19 +530,21 @@ class stic_AwfDataBlock {
   canBeGroupRoot(allDataBlocks) {
     if (!allDataBlocks || !Array.isArray(allDataBlocks)) return true;
 
-    // If this block itself is already a child of another group, it cannot be a group root
-    if (this.group_root && this.group_root !== this.id) return false;
+    // The group this block currently belongs to (if any). With flat model, group_root IS the root.
+    // Descendants in the SAME group can follow this block into a new subgroup — that's fine.
+    // Descendants in a DIFFERENT group would be stolen → blocked (restriction 4).
+    const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
 
-    // Get all relational descendants that would be adopted into this group
+    // Get all relational descendants that would be adopted into this group/subgroup
     const relationalDescendants = this.getRelationalDescendants(allDataBlocks);
 
     // Disjoint Trees check: verify if any descendant is already in another group
     for (const descendant of relationalDescendants) {
-      // Descendant already belongs to another group
-      if (descendant.group_root && descendant.group_root !== this.id) return false; 
+      // Descendant belongs to a different group than mine -> stealing from another group (restriction 4)
+      if (descendant.group_root && descendant.group_root !== this.id && descendant.group_root !== myGroupRoot) return false;
 
-      // Descendant is already a group root
-      if ((descendant.is_repeatable || descendant.is_optional) && descendant.id !== this.id) return false; 
+      // Descendant is already a group root (repeatable or optional) -> N x M protection
+      if ((descendant.is_repeatable || descendant.is_optional) && descendant.id !== this.id) return false;
     }
 
     return true;
@@ -559,15 +559,6 @@ class stic_AwfDataBlock {
   canBeRepeatableInParent(candidate, allDataBlocks) {
     if (candidate.is_repeatable) return false;
     return candidate.canBeRepeatable(allDataBlocks);
-  }
-
-  /**
-   * Returns child blocks that belong directly to this block.
-   * @param {stic_AwfDataBlock[]} dataBlocks
-   * @returns {stic_AwfDataBlock[]}
-   */
-  getChildren(dataBlocks) {
-    return dataBlocks.filter(b => b.group_root === this.id);
   }
 
   /**
@@ -598,22 +589,24 @@ class stic_AwfDataBlock {
    */
   getGroupHeadBlock(dataBlocks) {
     if (this.is_repeatable || this.is_optional) return this;
-    let current = this.getGroupRootBlock(dataBlocks);
+    let current = this.getParentBlock(dataBlocks);
     while (current) {
       if (current.is_repeatable || current.is_optional) {
         return current;
       }
-      current = current.getGroupRootBlock(dataBlocks);
+      current = current.getParentBlock(dataBlocks);
     }
     return null;
   }
 
   /**
-   * Returns the immediate parent block this block belongs to, if any.
+   * Returns the immediate parent block this block belongs to (the block that this.group_root
+   * points to). With flat groups this is the group root; with nested subgroups it is the
+   * subgroup head directly above this block.
    * @param {stic_AwfDataBlock[]} dataBlocks
    * @returns {stic_AwfDataBlock|null}
    */
-  getGroupRootBlock(dataBlocks) {
+  getParentBlock(dataBlocks) {
     if (!this.group_root) return null;
     return dataBlocks.find(b => b.id === this.group_root) || null;
   }
@@ -653,39 +646,19 @@ class stic_AwfDataBlock {
   getGroupMembersSorted(allDataBlocks) {
     if (!allDataBlocks || !Array.isArray(allDataBlocks)) return [];
 
-    const rootId = (this.group_root && this.group_root !== '') ? this.group_root : this.id;
-    
-    // Filter all member blocks belonging to this group root (excluding root itself)
-    const memberBlocks = allDataBlocks.filter(b => b.group_root === rootId && b.id !== rootId);
+    // Members of THIS block's group: blocks whose group_root points to this block
+    const memberBlocks = allDataBlocks.filter(b => b.group_root === this.id && b.id !== this.id);
 
     if (memberBlocks.length <= 1) {
       return memberBlocks;
     }
 
-    // Calculate hierarchical depth (BFS) relative to the group root
+    // Calculate hierarchical depth (BFS) relative to this block
     const depthMap = new Map();
-    depthMap.set(rootId, 0);
+    depthMap.set(this.id, 0);
 
-    const queue = [rootId];
-    const visited = new Set([rootId]);
-
-    const isChildOf = (child, parentId) => {
-      if (!child || child.id === parentId) return false;
-
-      // A) Check relational fields (relate / dataBlock)
-      const hasFieldDep = child.fields?.some(f =>
-        (f.value_type === 'dataBlock' && f.value === parentId) ||
-        (f.type === 'relate' && f.value === parentId)
-      );
-      if (hasFieldDep) return true;
-
-      // B) Check explicit block-to-block relationships
-      const hasRelDep = child.relationships?.some(r =>
-        r.related_datablock_id === parentId
-      );
-
-      return hasRelDep;
-    };
+    const queue = [this.id];
+    const visited = new Set([this.id]);
 
     while (queue.length > 0) {
       const parentId = queue.shift();
@@ -694,7 +667,7 @@ class stic_AwfDataBlock {
       allDataBlocks.forEach(candidate => {
         if (visited.has(candidate.id)) return;
 
-        if (isChildOf(candidate, parentId)) {
+        if (candidate.isRelationalChild(parentId, allDataBlocks)) {
           visited.add(candidate.id);
           depthMap.set(candidate.id, parentDepth + 1);
           queue.push(candidate.id);
@@ -804,8 +777,8 @@ class stic_AwfDataBlock {
    * @returns {string}
    */
   getGroupTitle(allDataBlocks) {
-    const root = this.getGroupRootBlock(allDataBlocks);
-    return root ? (root.group_title || root.text) : '';
+    const parent = this.getParentBlock(allDataBlocks);
+    return parent ? (parent.group_title || parent.text) : '';
   }
 
   /**
@@ -850,16 +823,10 @@ class stic_AwfDataBlock {
       const currentBlock = allDataBlocks.find(b => b.id === currentId);
       if (!currentBlock) continue;
 
-      // Find all child blocks that depend relationally on currentBlock
       allDataBlocks.forEach(candidate => {
         if (treeIds.has(candidate.id)) return;
 
-        // The candidate depends on the current block if it has a fixed/related field pointing to it
-        // or an explicit relationship registered
-        const isChild = candidate.fields.some(f => f.value_type === 'dataBlock' && f.value === currentBlock.id) || 
-                                                   candidate.relationships.some(r => r.related_datablock_id === currentBlock.id);
-
-        if (isChild) {
+        if (candidate.isRelationalChild(currentId, allDataBlocks)) {
           queue.push(candidate.id);
         }
       });
@@ -2680,40 +2647,15 @@ class stic_AwfConfiguration {
 
   /**
    * Helper to check if a candidate block depends on parentBlock via relate field or relationship.
-   * Dependency direction (per requirements: "root drags its dependent child blocks, 1→N"):
-   * the CHILD (candidate) is the N side — it owns the FK/relate field pointing to the parent.
-   * Relationships are stored on BOTH blocks with initiator_id = N-side id, so we must check
-   * that the candidate is the initiator (N side), not merely that a relationship exists.
+   * Thin wrapper around stic_AwfDataBlock::isRelationalChild (unified dependency check).
    * @param {stic_AwfDataBlock} candidate 
    * @param {stic_AwfDataBlock} parentBlock 
    * @returns {boolean}
    */
-  isBlockDependentOnParent(candidate, parentBlock) {
-    if (!candidate || !parentBlock || candidate.id === parentBlock.id) return false;
-
-    // 1. Candidate has a relate field (FK) pointing to parentBlock => candidate is the N side.
-    const hasRelateToParent = candidate.fields.some(f => 
-      f.type === 'relate' && 
-      (f.value === parentBlock.id || (f.value_type === 'dataBlock' && f.value === parentBlock.id))
-    );
-    if (hasRelateToParent) return true;
-
-    // 2. Candidate has a relationship entry pointing to parentBlock where the CANDIDATE is the
-    //    initiator (N side). Stored on the candidate itself.
-    const candidateIsInitiator = candidate.relationships.some(r => 
-      r.related_datablock_id === parentBlock.id && r.initiator_id === candidate.id
-    );
-    if (candidateIsInitiator) return true;
-
-    // 3. Same relationship may only be stored on the parentBlock entry (inverse side):
-    //    parentBlock has an entry pointing to candidate where the CANDIDATE is the initiator.
-    const parentEntryShowsCandidateInitiator = parentBlock.relationships.some(r => 
-      r.related_datablock_id === candidate.id && r.initiator_id === candidate.id
-    );
-    if (parentEntryShowsCandidateInitiator) return true;
-
-    return false;
-  }
+    isBlockDependentOnParent(candidate, parentBlock) {
+      if (!candidate || !parentBlock) return false;
+      return candidate.isRelationalChild(parentBlock.id, this.data_blocks);
+    }
 
   /**
    * Adopts orphan blocks that depend on parentBlock when parentBlock becomes a group root.
@@ -2721,32 +2663,49 @@ class stic_AwfConfiguration {
    * chains like Adult -> Entorn Familiar -> Menor -> Inscripcio are fully grouped.
    * @param {stic_AwfDataBlock} parentBlock 
    */
-  adoptRelatedOrphans(parentBlock) {
-    if (!parentBlock) return;
+   adoptRelatedOrphans(parentBlock) {
+     if (!parentBlock) return;
 
-    const queue = [parentBlock];
-    const visited = new Set([parentBlock.id]);
+     // When parentBlock is a child of another group (subgroup head), blocks in the SAME parent
+     // group can be reparented into this subgroup. Otherwise, only orphan (is_root) blocks are adopted.
+     const parentGroupRoot = (parentBlock.group_root && parentBlock.group_root !== parentBlock.id)
+       ? parentBlock.group_root : null;
 
-    while (queue.length > 0) {
-      const current = queue.shift();
+     const queue = [parentBlock];
+     const visited = new Set([parentBlock.id]);
 
-      this.data_blocks.forEach(candidate => {
-        if (visited.has(candidate.id)) return;
-        if (!candidate.is_root) return;
-        if (candidate.is_repeatable || candidate.is_optional) return;
+     while (queue.length > 0) {
+       const current = queue.shift();
 
-        if (this.isBlockDependentOnParent(candidate, current)) {
-          if (current.hasAncestor(candidate, this.data_blocks)) return;
+       this.data_blocks.forEach(candidate => {
+         if (visited.has(candidate.id)) return;
+         if (candidate.is_repeatable || candidate.is_optional) return; // Skip existing group heads
 
-          candidate.group_root = parentBlock.id;
-          visited.add(candidate.id);
-          queue.push(candidate);
-        }
-      });
-    }
+         // Adopt if: (a) candidate is an orphan (is_root), OR
+         //           (b) candidate is in the same parent group (will be reparented into the subgroup)
+         const isOrphan = candidate.is_root;
+         const isSameGroupChild = parentGroupRoot && candidate.group_root === parentGroupRoot
+           && candidate.id !== parentBlock.id;
+         if (!isOrphan && !isSameGroupChild) return;
 
-    parentBlock.refreshGroupTitle(this.data_blocks);
-  }
+         if (this.isBlockDependentOnParent(candidate, current)) {
+           if (current.hasAncestor(candidate, this.data_blocks)) return; // Cycle guard
+
+           candidate.group_root = parentBlock.id;
+           visited.add(candidate.id);
+           queue.push(candidate); // Its own dependents will be adopted next
+         }
+       });
+     }
+
+     parentBlock.refreshGroupTitle(this.data_blocks);
+
+     // Also refresh the parent group's title (members may have moved into the subgroup)
+     if (parentGroupRoot) {
+       const parentGroup = this.data_blocks.find(b => b.id === parentGroupRoot);
+       if (parentGroup) parentGroup.refreshGroupTitle(this.data_blocks);
+     }
+   }
 
   /**
    * Disbands a group, releasing all its children and resetting group metadata.
@@ -2830,7 +2789,7 @@ class stic_AwfConfiguration {
 
       // Ensure default group labels if missing
       if (!block.group_title || !block.group_title.trim()) {
-        const children = block.getChildren(this.data_blocks);
+        const children = block.getDescendants(this.data_blocks);
         const blockNames = [block.text, ...children.map(c => c.text)];
         block.group_title = blockNames.join(' + ');
       }
@@ -2872,6 +2831,17 @@ class stic_AwfConfiguration {
     const child = this.data_blocks.find(b => b.id === childBlockId);
     if (parent && child) {
       child.group_root = parent.id;
+
+      // Also bring the child's relational dependents into the group (transitive).
+      // Only adopt orphans (is_root) that are not themselves group heads — blocks already
+      // in another group stay where they are (disjoint trees rule).
+      const descendants = child.getRelationalDescendants(this.data_blocks);
+      descendants.forEach(d => {
+        if (d.is_root && !d.is_repeatable && !d.is_optional) {
+          d.group_root = parent.id;
+        }
+      });
+
       this.refreshGroups();
     }
   }
@@ -2916,8 +2886,10 @@ class stic_AwfConfiguration {
    * Re-evaluate and update all groups on the form: orphan adoption and group titles.
    */
   refreshGroups() {
+    // Process EVERY group head (root groups AND subgroup heads).
+    // A block is a head when it holds cardinality (repeatable/optional) or has direct children.
     this.data_blocks.forEach(block => {
-      if (block.is_root && (block.is_repeatable || block.is_optional || block.getChildren(this.data_blocks).length > 0)) {
+      if (block.is_repeatable || block.is_optional || block.getChildren(this.data_blocks).length > 0) {
         this.adoptRelatedOrphans(block);
         block.refreshGroupTitle(this.data_blocks);
       }
@@ -2936,28 +2908,6 @@ class stic_AwfConfiguration {
     const visited = new Set();
 
     /**
-     * Checks if 'child' relationally depends on 'parent'
-     */
-    const isChildOf = (child, parent) => {
-      if (!child || !parent || child.id === parent.id) return false;
-
-      // A) Check relational fields (relate / dataBlock)
-      const hasFieldDep = child.fields?.some(f =>
-        (f.value_type === 'dataBlock' && f.value === parent.id) ||
-        (f.type === 'relate' && f.value === parent.id)
-      );
-      if (hasFieldDep) return true;
-
-      // B) Check explicit block-to-block relationships
-      const hasRelDep = child.relationships?.some(r =>
-        r.related_datablock_id === parent.id &&
-        (!r.initiator_id || r.initiator_id === child.id)
-      );
-
-      return hasRelDep;
-    };
-
-    /**
      * Gets all direct relational children and group members for a parent block
      */
     const getChildrenAndMembers = (parent) => {
@@ -2968,7 +2918,7 @@ class stic_AwfConfiguration {
         if (candidate.group_root === parent.id) return true;
 
         // 2. Relational child (without explicit external group)
-        if (!candidate.group_root && isChildOf(candidate, parent)) return true;
+        if (!candidate.group_root && candidate.isRelationalChild(parent.id, this.data_blocks)) return true;
 
         return false;
       });
@@ -2998,8 +2948,8 @@ class stic_AwfConfiguration {
 
       // Sort children/members Top-Down (parents before their children)
       children.sort((a, b) => {
-        if (isChildOf(b, a)) return -1; // 'a' is parent of 'b' -> 'a' comes first
-        if (isChildOf(a, b)) return 1;  // 'b' is parent of 'a' -> 'b' comes first
+        if (a.isRelationalChild(b.id, this.data_blocks)) return 1;  // 'b' is parent of 'a' -> 'b' comes first
+        if (b.isRelationalChild(a.id, this.data_blocks)) return -1; // 'a' is parent of 'b' -> 'a' comes first
         return this.data_blocks.indexOf(a) - this.data_blocks.indexOf(b);
       });
 
@@ -3008,14 +2958,13 @@ class stic_AwfConfiguration {
     };
 
     // 1. Dynamically compute true top-level root blocks
-    // A block is a top-level root IF:
-    // - It has no group_root (or group_root === block.id)
-    // - AND it is NOT a relational child of any other block in data_blocks
     const rootBlocks = this.data_blocks.filter(candidate => {
       if (candidate.group_root && candidate.group_root !== candidate.id) {
         return false; // Belongs to a group -> NOT a top-level root
       }
-      const hasParentInList = this.data_blocks.some(parent => isChildOf(candidate, parent));
+      const hasParentInList = this.data_blocks.some(parent => 
+        parent.id !== candidate.id && candidate.isRelationalChild(parent.id, this.data_blocks)
+      );
       return !hasParentInList;
     });
 
