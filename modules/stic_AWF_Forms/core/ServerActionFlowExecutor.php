@@ -121,7 +121,7 @@ class ServerActionFlowExecutor {
                 if ($targetBlockId !== null) {
                     $targetBlock = $this->context->formConfig->data_blocks[$targetBlockId] ?? null;
                     if ($targetBlock !== null) {
-                        if ($targetBlock->is_repeatable) {
+                        if ($targetBlock->isRepeatable()) {
                             $repeatRoot = $targetBlock;
                         } elseif (!empty($targetBlock->group_root)) {
                             // STIC-Custom OC - 20260807 - Resolve the TOP-LEVEL branch root, not just the
@@ -142,7 +142,7 @@ class ServerActionFlowExecutor {
                 if ($repeatRoot !== null && $isExpandableAction) {
                     $instances = DataBlockResolved::resolveInstances($repeatRoot, $this->context->formData, $this->context);
                     if (empty($instances)) {
-                        // Optional repeatable group (min_instances = 0) with zero instances: skip the action.
+                        // Optional repeatable group with zero instances: skip the action.
                         $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Repeatable group '{$repeatRoot->name}' has no instances.");
                         $this->context->addActionResult($skippedResult);
                         $lastResult = $skippedResult;

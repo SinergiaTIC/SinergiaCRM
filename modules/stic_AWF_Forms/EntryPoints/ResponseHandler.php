@@ -586,7 +586,7 @@ class ResponseHandler
             if (!empty($block->group_root)) {
                 continue;
             }
-            if ($block->is_repeatable) {
+            if ($block->isRepeatable()) {
                 $context = new ExecutionContext('', '', $data, $config, null, '', null, '');
                 $instances = DataBlockResolved::resolveInstances($block, $data, $context);
                 $minInstances = $block->min_instances;
@@ -806,7 +806,7 @@ class ResponseHandler
             // Child blocks are processed together with their repeatable root
             if (!empty($block->group_root)) continue;
 
-            if ($block->is_repeatable) {
+            if ($block->isRepeatable()) {
                 $instances = DataBlockResolved::resolveInstances($block, $submittedData, $context);
                 // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches)
                 $children = $formConfig->getGroupDescendants($block);

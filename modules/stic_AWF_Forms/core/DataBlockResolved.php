@@ -226,7 +226,7 @@ class DataBlockResolved {
         sort($indexes);
 
         if (empty($indexes)) {
-            if ($block->is_repeatable && $block->min_instances === 0) {
+            if ($block->isRepeatable() && $block->isOptional()) {
                 return [];
             }
             // Return a single empty instance so required-field validation errors are produced

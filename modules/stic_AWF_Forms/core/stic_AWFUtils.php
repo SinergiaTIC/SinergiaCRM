@@ -161,11 +161,11 @@ class stic_AWFUtils {
                 $block = $context->getDataBlockById($element->ref_id);
                 if (!$block) continue;
 
-// STIC-Custom OC - 20250803 - Repeatable data blocks support
+                // STIC-Custom OC - 20250803 - Repeatable data blocks support
                 // Child blocks are rendered together with their repeatable root
                 if (!empty($block->group_root)) continue;
 
-                if ($block->is_repeatable) {
+                if ($block->isRepeatable()) {
                     // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches);
                     // config comes from the context ($formConfig was never defined in this scope).
                     $formConfig = $context->formConfig;
@@ -937,7 +937,7 @@ class stic_AWFUtils {
             // Child blocks are filled together with their repeatable root
             if (!empty($dataBlock->group_root)) continue;
 
-            if ($dataBlock->is_repeatable) {
+            if ($dataBlock->isRepeatable()) {
                 // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches)
                 $blocksInGroup = array_merge([$dataBlock], $formConfig->getGroupDescendants($dataBlock));
                 foreach (['', '_detached_'] as $prefix) {
@@ -1096,7 +1096,7 @@ class stic_AWFUtils {
         foreach ($deferredContext->blockReferences as $blockId => $beanId) {
             if (isset($formConfig->data_blocks[$blockId])) {
                 $block = $formConfig->data_blocks[$blockId];
-                if ($block->is_repeatable || !empty($block->group_root)) {
+                if ($block->isRepeatable() || !empty($block->group_root)) {
                     continue;
                 }
                 $block->setBeanReference($beanId);
@@ -1117,7 +1117,7 @@ class stic_AWFUtils {
         foreach ($context->formConfig->data_blocks as $bId => $b) {
             // STIC-Custom OC - 20250803 - Repeatable data blocks support
             // MVP restriction: deferred actions operate on non-repeatable blocks only.
-            if ($b->is_repeatable || !empty($b->group_root)) {
+            if ($b->isRepeatable() || !empty($b->group_root)) {
                 continue;
             }
             // END STIC-Custom OC

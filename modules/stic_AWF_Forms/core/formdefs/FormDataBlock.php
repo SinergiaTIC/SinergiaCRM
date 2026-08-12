@@ -37,7 +37,6 @@ class FormDataBlock {
     /** @var FormDuplicateRule[] */
     public array $duplicate_detections;   // Definition of duplicate detection
 
-    public bool $is_repeatable = false;      // Indicates if the block can be repeated 0..N times
     public int $min_instances = 1;           // Minimum required instances (0 = optional)
     public ?int $max_instances = 1;          // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
     public string $group_title = '';         // Visual title for the repeat group
@@ -68,7 +67,6 @@ class FormDataBlock {
         $dto->module = $data['module'];
 
         // STIC-Custom OC - 20250803 - Map repeatable data block fields
-        $dto->is_repeatable = $data['is_repeatable'] ?? false;
         $dto->min_instances = isset($data['min_instances']) ? (int)$data['min_instances'] : 1;
         $dto->max_instances = isset($data['max_instances']) && $data['max_instances'] !== '' && $data['max_instances'] !== null ? (int)$data['max_instances'] : null;
         $dto->group_title = $data['group_title'] ?? '';
@@ -96,6 +94,20 @@ class FormDataBlock {
         }
 
         return $dto;
+    }
+
+    /**
+     * Check if the block can be repeated 0..N times 
+     */
+    public function isRepeatable(): bool {
+        return $this->max_instances == null || $this->max_instances > 1;
+    }
+
+    /**
+     * Check if the block is optional 
+     */
+    public function isOptional(): bool {
+        return $this->min_instances == 0;
     }
 
     public function setBeanReference(string $beanId, ?int $index = null): void {

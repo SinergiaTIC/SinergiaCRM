@@ -497,7 +497,7 @@ class FormHtmlGeneratorService {
      */
     private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme, FormConfig $config): string {
         // Delegate repeatable root blocks to the group renderer
-        if ($block->is_repeatable) {
+        if ($block->isRepeatable()) {
             return $this->generateRepeatableGroupHtml($block, $theme, $config);
         }
         $html = "";
@@ -523,9 +523,8 @@ class FormHtmlGeneratorService {
         $addLabel = htmlspecialchars($rootBlock->add_button_label ?: translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT', 'stic_AWF_Forms'));
         $removeLabel = htmlspecialchars($rootBlock->remove_button_label ?: translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT', 'stic_AWF_Forms'));
         
-        $minInstances = (int)($rootBlock->min_instances ?? 1);
         $maxInstances = $rootBlock->max_instances !== null ? (int)$rootBlock->max_instances : 'null';
-        $isRepeatable = $rootBlock->is_repeatable;
+        $isRepeatable = $rootBlock->isRepeatable();
 
         // STIC-Custom OC - 20260807 - Include the whole descendant branch (transitive adoption),
         // not just direct children, so multi-level chains render completely inside the group.
@@ -533,17 +532,17 @@ class FormHtmlGeneratorService {
         // END STIC-Custom OC
 
         // Alpine initialization: If min=0 start empty [], if min=1 start with [{id:0}]
-        $initialActive = ($minInstances > 0) ? 'true' : 'false';
-        $initialInstances = ($minInstances > 0) ? '[{ id: 0 }]' : '[]';
+        $initialActive = $rootBlock->isOptional() ? 'false' : 'true';
+        $initialInstances = $rootBlock->isOptional() ? '[]' : '[{ id: 0 }]';
 
         $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances} }\">" . $this->newLine('+');
         {
-            // 1. Group Header with Master Switch (if min_instances === 0)
+            // 1. Group Header with Master Switch (if isOptional)
             $html .= "<div class='awf-group-header mb-3 pb-2 border-bottom border-primary d-flex align-items-center justify-content-between'>" . $this->newLine('+');
             {
                 $html .= "<div class='d-flex align-items-center'>" . $this->newLine('+');
                 {
-                    if ($minInstances === 0) {
+                    if ($rootBlock->isOptional()) {
                         // Optional activation switch
                         $html .= "<div class='form-check form-switch me-3 mb-0'>" . $this->newLine('+');
                         {
@@ -596,8 +595,8 @@ class FormHtmlGeneratorService {
                             foreach ($children as $childBlock) {
                                 if (!$childBlock->fields) continue;
     
-                                // If the child block is optional (min_instances = 0), we wrap it with a local activation switch for that instance.
-                                if ($childBlock->min_instances === 0) {
+                                // If the child block is optional, wrap it with a local activation switch for that instance.
+                                if ($childBlock->isOptional()) {
                                     $childTitle = htmlspecialchars($rootBlock->toggle_label ?: translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $childBlock->text);
                                     
                                     $html .= "<div class='awf-child-optional-wrapper my-3 p-2 border rounded bg-light' x-data='{ includeChild: false }'>" . $this->newLine('+');

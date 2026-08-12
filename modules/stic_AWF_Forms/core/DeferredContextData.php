@@ -99,7 +99,7 @@ class DeferredContextData
             // MVP restriction: deferred actions operate on non-repeatable blocks only.
             // Blocks inside a repeatable group (repeatable root or children) are excluded
             // from blockReferences because indexed references are not restored yet.
-            if ($b->is_repeatable || !empty($b->group_root)) {
+            if ($b->isRepeatable() || !empty($b->group_root)) {
                 continue;
             }
             // END STIC-Custom OC
