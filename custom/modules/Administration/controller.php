@@ -264,4 +264,28 @@ class CustomAdministrationController extends AdministrationController
         }
     }
 
+    /**
+     * Handle the removal of the digital certificate.
+     *
+     * @return void
+     */
+    public function action_SticDeleteCertificate()
+    {
+        global $current_user;
+
+        if (!is_admin($current_user)) {
+            sugar_die("Not authorized access.");
+        }
+
+        require_once 'custom/include/SticCertificateUtils.php';
+        $deleted = SticCertificateUtils::deleteCertificateFromConfig();
+        if ($deleted) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate deleted successfully.');
+            SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_DELETE_SUCCESS');
+        } else {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Failed to delete certificate.');
+            SugarApplication::redirect('index.php?module=Administration&action=SticManageCertificate&msg=LBL_STIC_CERT_ERROR_DELETE');
+        }
+    }
+
 }

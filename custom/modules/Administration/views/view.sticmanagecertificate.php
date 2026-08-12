@@ -94,7 +94,10 @@ class ViewSticManageCertificate extends SugarView
         
         // Message handling
         if (isset($_REQUEST['msg'])) {
-            $this->ss->assign('MESSAGE', $mod_strings[$_REQUEST['msg']] ?? '');
+            $msgKey = $_REQUEST['msg'];
+            $this->ss->assign('MESSAGE', $mod_strings[$msgKey] ?? '');
+            // Error message keys start with LBL_STIC_CERT_ERROR_; everything else is a success message
+            $this->ss->assign('MSG_ERROR', strpos($msgKey, 'LBL_STIC_CERT_ERROR_') === 0);
         }
 
         echo $this->getModuleTitle(false);

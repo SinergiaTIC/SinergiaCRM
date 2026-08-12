@@ -142,6 +142,10 @@ $mod_strings['LBL_STIC_CERT_TYPE_REPRESENTATIVE'] = 'Personal/Representante';
 $mod_strings['LBL_STIC_CERT_TYPE_UNKNOWN'] = 'No determinado';
 $mod_strings['LBL_STIC_CERT_NOT_FOUND'] = 'No encontrado';
 $mod_strings['LBL_STIC_CERT_EXTRACTED_INFO'] = 'Datos extraídos del certificado que se usarán automáticamente.';
+$mod_strings['LBL_STIC_CERT_DELETE_BTN'] = 'Eliminar Certificado';
+$mod_strings['LBL_STIC_CERT_CONFIRM_DELETE'] = '¿Está seguro de que desea eliminar el certificado? Esta acción no se puede deshacer.';
+$mod_strings['LBL_STIC_CERT_DELETE_SUCCESS'] = 'Certificado eliminado correctamente.';
+$mod_strings['LBL_STIC_CERT_ERROR_DELETE'] = 'Error al eliminar el certificado.';
 
 // AOS Administration - Invoice Series
 $mod_strings['LBL_AOS_INVOICE_SERIES_TITLE'] = 'Series de facturación';

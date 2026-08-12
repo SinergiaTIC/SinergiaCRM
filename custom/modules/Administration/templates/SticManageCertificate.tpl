@@ -23,13 +23,18 @@
     <h2>{$MOD.LBL_STIC_CERT_UPLOAD_TITLE}</h2>
 
     {if $MESSAGE}
-        <div class="error">{$MESSAGE}</div>
-        {if $CERT_METADATA && $MESSAGE == $MOD.LBL_STIC_CERT_SUCCESS}
-            <div style="margin-top: 10px; padding: 10px; background-color: #e8f5e9; border: 1px solid #4caf50;">
-                <strong>{$MOD.LBL_STIC_CERT_UPLOAD_INFO}:</strong><br>
-                <strong>{$MOD.LBL_STIC_CERT_FILENAME}:</strong> {$CERT_METADATA.original_filename}<br>
-                <strong>{$MOD.LBL_STIC_CERT_UPLOAD_DATE}:</strong> {$CERT_METADATA.upload_date_formatted}<br>
-                <strong>{$MOD.LBL_STIC_CERT_UPLOADED_BY}:</strong> {$CERT_METADATA.uploaded_by_name}
+        {if $MSG_ERROR}
+            <div class="stic-cert-alert stic-cert-error">{$MESSAGE}</div>
+        {else}
+            <div class="stic-cert-alert stic-cert-success">
+                <strong>{$MESSAGE}</strong>
+                {if $CERT_METADATA}
+                    <br><br>
+                    <strong>{$MOD.LBL_STIC_CERT_UPLOAD_INFO}:</strong><br>
+                    <strong>{$MOD.LBL_STIC_CERT_FILENAME}:</strong> {$CERT_METADATA.original_filename}<br>
+                    <strong>{$MOD.LBL_STIC_CERT_UPLOAD_DATE}:</strong> {$CERT_METADATA.upload_date_formatted}<br>
+                    <strong>{$MOD.LBL_STIC_CERT_UPLOADED_BY}:</strong> {$CERT_METADATA.uploaded_by_name}
+                {/if}
             </div>
         {/if}
         <br>
@@ -102,6 +107,14 @@
         {/if}
     </div>
 
+    {if $CERT_EXISTS}
+        <form action="index.php" method="POST" id="certificateDeleteForm" style="margin-bottom: 20px;">
+            <input type="hidden" name="module" value="Administration">
+            <input type="hidden" name="action" value="SticDeleteCertificate">
+            <input type="submit" class="button" value="{$MOD.LBL_STIC_CERT_DELETE_BTN}">
+        </form>
+    {/if}
+
     <form action="index.php" method="POST" enctype="multipart/form-data" id="certificateForm">
         <input type="hidden" name="module" value="Administration">
         <input type="hidden" name="action" value="SticSaveCertificate">
@@ -149,6 +162,41 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    var deleteForm = document.getElementById('certificateDeleteForm');
+    if (deleteForm) {
+        deleteForm.addEventListener('submit', function(e) {
+            var confirmMsg = {/literal}'{$MOD.LBL_STIC_CERT_CONFIRM_DELETE}'{literal};
+            if (!confirm(confirmMsg)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    }
 });
 {/literal}
 </script>
+
+<style>
+{literal}
+.stic-cert-alert {
+    margin-bottom: 20px;
+    padding: 12px;
+    border-radius: 4px;
+    border: 1px solid;
+}
+.stic-cert-success {
+    background-color: #e8f5e9;
+    border-color: #4caf50;
+    color: #2e7d32;
+}
+.stic-cert-error {
+    background-color: #fbe9e7;
+    border-color: #d32f2f;
+    color: #c62828;
+}
+.stic-cert-error a {
+    color: #c62828;
+}
+{/literal}
+</style>

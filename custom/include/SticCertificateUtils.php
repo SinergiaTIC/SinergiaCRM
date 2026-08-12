@@ -239,6 +239,19 @@ class SticCertificateUtils
             // Delete all certificate config entries
             $db->query("DELETE FROM config WHERE category = " . $db->quoted(self::CONFIG_CATEGORY));
 
+            // Remove legacy file fallback if present
+            $legacyFiles = array(
+                self::CERT_DIR . 'private_key_encrypted.bin',
+                self::CERT_DIR . 'certificate_encrypted.bin',
+                self::CERT_DIR . 'ca_chain_encrypted.bin',
+                self::METADATA_FILE_PATH,
+            );
+            foreach ($legacyFiles as $file) {
+                if (file_exists($file)) {
+                    unlink($file);
+                }
+            }
+
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate deleted from config table.');
             return true;
 
