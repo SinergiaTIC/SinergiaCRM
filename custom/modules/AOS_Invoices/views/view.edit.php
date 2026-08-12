@@ -156,6 +156,70 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
         echo '<style>
         .stic-disabled { opacity: 0.5; cursor: not-allowed !important; pointer-events: none; }
         input.stic-disabled { background-color: #eee; }
+
+        /* STIC CUSTOM: Stack line item fields vertically on mobile (CorreccionesPendientes #4) */
+        @media (max-width: 768px) {
+            #lineItems table, #lineItems thead, #lineItems tbody, #lineItems tfoot,
+            #lineItems tr, #lineItems td {
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            #lineItems .group {
+                white-space: normal !important;
+            }
+            #lineItems thead[id$="_head"] {
+                display: none !important;
+            }
+            #lineItems tr[id*="_line"] {
+                margin: 0 0 12px 0;
+                padding: 6px 8px;
+                border: 1px solid #E0E0E0;
+                border-radius: 4px;
+            }
+            #lineItems tr[id*="_line"] td {
+                padding: 4px 0;
+                text-align: left;
+                min-height: 0;
+            }
+            #lineItems tr[id*="_note_line"] {
+                margin-top: -6px;
+                border-top: none;
+                border-top-left-radius: 0;
+                border-top-right-radius: 0;
+                background: #F7F7F7;
+            }
+            #lineItems tr[id*="_note_line"] td > span,
+            #lineItems tr[id*="_note_line"] td > textarea {
+                display: block;
+                width: 100%;
+            }
+            #lineItems .alignedLabel {
+                display: block;
+                visibility: visible;
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+                color: #6B6B6B;
+                margin-bottom: 2px;
+            }
+            #lineItems input[type="text"], #lineItems textarea, #lineItems select {
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box;
+            }
+            #lineItems textarea.product_item_description,
+            #lineItems textarea.product_description,
+            #lineItems textarea.service_name {
+                width: 100% !important;
+            }
+            #lineItems .group > thead > tr > td {
+                padding: 0;
+            }
+            #lineItems tfoot td {
+                padding-top: 6px;
+            }
+        }
         </style>';
         echo '<input type="hidden" name="customer_id_number" id="customer_id_number" value="' . htmlspecialchars($customerIdNumber, ENT_QUOTES, 'UTF-8') . '">';
 
