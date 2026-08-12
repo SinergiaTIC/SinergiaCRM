@@ -2,6 +2,10 @@
   <h2>{$MOD.LBL_VERIFACTU_QUERY_TITLE}</h2>
 </div>
 
+<div id="verifactuPeriodError" class="alert alert-danger" style="display: none; clear: both; margin-bottom: 12px; padding: 12px; border-left: 4px solid #a94442; background-color: #f2dede;">
+  <strong>{$MOD.LBL_VERIFACTU_QUERY_ERROR_PREFIX}</strong> {$MOD.LBL_VERIFACTU_QUERY_PERIOD_REQUIRED}
+</div>
+
 <div class="panel panel-default" id="verifactuFilterPanel" style="margin-bottom: 20px; clear: both;">
   <div class="panel-heading" data-toggle="collapse" data-target="#filterPanel" role="button" tabindex="0">
     <div style="display: flex; align-items: center; gap: 6px; padding: 0 12px; height: 32px; line-height: 32px;">
@@ -13,7 +17,7 @@
         <span style="display: inline-block; font-size: 11px; font-weight: 500; padding: 1px 7px; margin: 0 3px; background: rgba(255,255,255,0.2); color: #fff; border-radius: 3px; line-height: 20px; vertical-align: middle;">{$filter}</span>
         {/foreach}
       </span>
-      <span onclick="window.location.href='index.php?module=AOS_Invoices&action=QueryAeatInvoices'" style="display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; background: #D32F2F; color: #fff; border-radius: 3px; font-size: 14px; font-weight: 700; cursor: pointer; vertical-align: middle; font-family: Arial, sans-serif;" title="{$MOD.LBL_VERIFACTU_QUERY_CLEAR}">X</span>
+      <span id="clearVerifactuFilters" onclick="VerifactuQuery.clearFilters()" style="display: inline-block; width: 20px; height: 20px; line-height: 20px; text-align: center; background: #D32F2F; color: #fff; border-radius: 3px; font-size: 14px; font-weight: 700; cursor: pointer; vertical-align: middle; font-family: Arial, sans-serif;" title="{$MOD.LBL_VERIFACTU_QUERY_CLEAR}">X</span>
       {/if}
       {if $HAS_RESULT && $RESULT_SUCCESS}
       <span style="margin-left: auto; font-size: 12px; font-weight: 500; color: #fff; white-space: nowrap;">{$RESULT_COUNT} {$MOD.LBL_VERIFACTU_QUERY_REGISTROS}</span>
@@ -35,17 +39,12 @@
             <input type="number" name="year" value="{$FORM_YEAR}" min="2024" max="2099" style="width: 100%;" required>
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
-            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_PERIOD}</label>
-            <select name="period" style="width: 100%;">
-              <option value="">--</option>
+            <label for="verifactuPeriodSelect" style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_PERIOD}</label>
+            <select name="period[]" id="verifactuPeriodSelect" multiple size="4" style="width: 100%; height: auto; min-height: 32px;">
               {foreach from=$FORM_PERIOD_OPTIONS item=opt}
               <option value="{$opt.VALUE}"{if $opt.SELECTED} selected{/if}>{$opt.LABEL}</option>
               {/foreach}
             </select>
-          </div>
-          <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
-            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_SERIE_NUMBER}</label>
-            <input type="text" name="serie_number" value="{$FORM_SERIE_NUMBER}" placeholder="{$MOD.LBL_VERIFACTU_QUERY_SERIE_NUMBER_PLACEHOLDER}" style="width: 100%;">
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_DATE_FROM}</label>
@@ -54,6 +53,10 @@
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_DATE_TO}</label>
             <input type="date" name="date_to" value="{$FORM_DATE_TO}" style="width: 100%;">
+          </div>
+          <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
+            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_SERIE_NUMBER}</label>
+            <input type="text" name="serie_number" value="{$FORM_SERIE_NUMBER}" placeholder="{$MOD.LBL_VERIFACTU_QUERY_SERIE_NUMBER_PLACEHOLDER}" style="width: 100%;">
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_COUNTERPARTY_NIF}</label>
@@ -149,14 +152,19 @@
   line-height: 32px;
 }
 #verifactuFilterPanel .panel-body input:not([type="checkbox"]):not([type="hidden"]),
-#verifactuFilterPanel .panel-body select {
+#verifactuFilterPanel .panel-body select:not([multiple]) {
   height: 32px;
+  box-sizing: border-box;
+}
+#verifactuPeriodSelect {
   box-sizing: border-box;
 }
 
 </style>
 <script>
 (function () {
+  var STORAGE_KEY = 'verifactu_query_filters';
+
   var $toggle = jQuery('#filterToggleIcon');
   var $panel = jQuery('#filterPanel');
 
@@ -169,6 +177,178 @@
       $toggle.css('transform', 'rotate(-90deg)');
       jQuery('#panel_state').val('collapsed');
     });
+  }
+
+  var periodSelect = document.getElementById('verifactuPeriodSelect');
+  if (periodSelect) {
+    periodSelect.addEventListener('change', hideValidationMessage);
+    periodSelect.addEventListener('focus', hideValidationMessage);
+  }
+
+  window.VerifactuQuery = window.VerifactuQuery || {};
+
+  function getPeriodSelect(form) {
+    return (form && (form.elements['period'] || form.elements['period[]']))
+      || document.getElementById('verifactuPeriodSelect');
+  }
+
+  function getSelectedPeriods(form) {
+    var sel = getPeriodSelect(form);
+    var values = [];
+    if (sel) {
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].selected && sel.options[i].value !== '') {
+          values.push(sel.options[i].value);
+        }
+      }
+    }
+    return values;
+  }
+
+  function hasDateRange(form) {
+    return !!((form.elements['date_from'] && form.elements['date_from'].value)
+      || (form.elements['date_to'] && form.elements['date_to'].value));
+  }
+
+  function isValidQuery(form) {
+    return getSelectedPeriods(form).length > 0 || hasDateRange(form);
+  }
+
+  VerifactuQuery.clearFilters = function () {
+    var form = document.forms['VerifactuQueryForm'];
+    if (!form) {
+      return;
+    }
+    if (form.elements['year']) {
+      form.elements['year'].value = String(new Date().getFullYear());
+    }
+    var periodSel = getPeriodSelect(form);
+    if (periodSel) {
+      for (var i = 0; i < periodSel.options.length; i++) {
+        periodSel.options[i].selected = false;
+      }
+    }
+    ['serie_number', 'date_from', 'date_to', 'counterparty_nif', 'counterparty_name'].forEach(function (name) {
+      if (form.elements[name]) {
+        form.elements[name].value = '';
+      }
+    });
+    if (form.elements['nest_rectified']) {
+      form.elements['nest_rectified'].checked = true;
+    }
+    saveFilterState();
+    window.location.href = 'index.php?module=AOS_Invoices&action=QueryAeatInvoices';
+  };
+
+  function setPeriodControlBorder(color) {
+    var sel = document.getElementById('verifactuPeriodSelect');
+    if (sel) {
+      sel.style.borderColor = color || '';
+    }
+  }
+
+  function showValidationMessage() {
+    var el = document.getElementById('verifactuPeriodError');
+    if (el) {
+      el.style.display = 'block';
+    }
+    setPeriodControlBorder('#a94442');
+  }
+
+  function hideValidationMessage() {
+    var el = document.getElementById('verifactuPeriodError');
+    if (el) {
+      el.style.display = 'none';
+    }
+    setPeriodControlBorder('');
+  }
+
+  function readFilterState() {
+    var form = document.forms['VerifactuQueryForm'];
+    if (!form) {
+      return null;
+    }
+    return {
+      year: form.elements['year'] ? form.elements['year'].value : '',
+      period: getSelectedPeriods(form),
+      serie_number: form.elements['serie_number'] ? form.elements['serie_number'].value : '',
+      date_from: form.elements['date_from'] ? form.elements['date_from'].value : '',
+      date_to: form.elements['date_to'] ? form.elements['date_to'].value : '',
+      counterparty_nif: form.elements['counterparty_nif'] ? form.elements['counterparty_nif'].value : '',
+      counterparty_name: form.elements['counterparty_name'] ? form.elements['counterparty_name'].value : '',
+      nest_rectified: form.elements['nest_rectified'] ? form.elements['nest_rectified'].checked : false,
+      panel_state: form.elements['panel_state'] ? form.elements['panel_state'].value : '',
+    };
+  }
+
+  function saveFilterState() {
+    var state = readFilterState();
+    if (state) {
+      try {
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+      }
+    }
+  }
+
+  function restoreFilterState() {
+    var form = document.forms['VerifactuQueryForm'];
+    var state = null;
+    try {
+      state = sessionStorage.getItem(STORAGE_KEY);
+    } catch (e) {
+      return;
+    }
+    if (!state || !form) {
+      return;
+    }
+    try {
+      state = JSON.parse(state);
+    } catch (e) {
+      return;
+    }
+    var periodSel = getPeriodSelect(form);
+    if (periodSel) {
+      var months = Array.isArray(state['period']) ? state['period'] : (state['period'] ? [state['period']] : []);
+      for (var i = 0; i < periodSel.options.length; i++) {
+        periodSel.options[i].selected = months.indexOf(periodSel.options[i].value) !== -1;
+      }
+    }
+    ['year', 'serie_number', 'date_from', 'date_to', 'counterparty_nif', 'counterparty_name'].forEach(function (name) {
+      if (form.elements[name] && typeof state[name] !== 'undefined') {
+        form.elements[name].value = state[name];
+      }
+    });
+    if (form.elements['nest_rectified'] && typeof state['nest_rectified'] !== 'undefined') {
+      form.elements['nest_rectified'].checked = !!state['nest_rectified'];
+    }
+    if (form.elements['panel_state'] && typeof state['panel_state'] !== 'undefined' && state['panel_state']) {
+      form.elements['panel_state'].value = state['panel_state'];
+    }
+  }
+
+  var form = document.forms['VerifactuQueryForm'];
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      saveFilterState();
+      if (!isValidQuery(form)) {
+        e.preventDefault();
+        showValidationMessage();
+      } else {
+        hideValidationMessage();
+      }
+    });
+
+    var HAS_POSTBACK = {/literal}{$FORM_HAS_POSTBACK|default:0}{literal};
+    if (HAS_POSTBACK !== 1) {
+      restoreFilterState();
+      if (!isValidQuery(form)) {
+        showValidationMessage();
+      } else {
+        saveFilterState();
+        form.submit();
+      }
+    }
   }
 
   setTimeout(function () {

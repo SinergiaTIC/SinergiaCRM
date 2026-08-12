@@ -31,7 +31,13 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         $currentMonth = date('m');
 
         $selectedYear = $_POST['year'] ?? $currentYear;
-        $selectedPeriod = $_POST['period'] ?? $currentMonth;
+        $selectedPeriods = $_POST['period'] ?? [];
+        if (!is_array($selectedPeriods)) {
+            $selectedPeriods = [$selectedPeriods];
+        }
+        $selectedPeriods = array_values(array_filter($selectedPeriods, function ($p) {
+            return preg_match('/^(0[1-9]|1[0-2])$/', (string) $p);
+        }));
         $serieNumber = $_POST['serie_number'] ?? '';
         $dateFrom = $_POST['date_from'] ?? '';
         $dateTo = $_POST['date_to'] ?? '';
@@ -46,7 +52,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
             $periodOptions[] = [
                 'VALUE' => $val,
                 'LABEL' => $val,
-                'SELECTED' => ($val === $selectedPeriod),
+                'SELECTED' => in_array($val, $selectedPeriods, true),
             ];
         }
         $this->ss->assign('FORM_PERIOD_OPTIONS', $periodOptions);
@@ -69,8 +75,8 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         $this->ss->assign('FORM_NEST_CHECKED', $nestChecked);
 
         $activeFilters = [];
-        if ($hasPostback) {
-            $activeFilters[] = 'Mes: ' . $selectedPeriod;
+        if ($hasPostback && !empty($selectedPeriods) && empty($dateFrom) && empty($dateTo)) {
+            $activeFilters[] = 'Meses: ' . implode(', ', $selectedPeriods);
         }
         if (!empty($serieNumber)) {
             $activeFilters[] = 'Serie: ' . $serieNumber;
@@ -89,6 +95,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         }
         $this->ss->assign('FORM_ACTIVE_FILTERS', $activeFilters);
         $this->ss->assign('FORM_ACTIVE_COUNT', count($activeFilters));
+        $this->ss->assign('FORM_HAS_POSTBACK', $hasPostback ? 1 : 0);
 
         $result = $_SESSION['VERIFACTU_QUERY_RESULT'] ?? null;
         $this->ss->assign('HAS_RESULT', $result !== null);
@@ -381,11 +388,6 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         }
 
         echo $this->ss->fetch('custom/modules/AOS_Invoices/tpls/QueryAeatInvoices.tpl');
-
-        // Auto-submit form on initial load to show results immediately
-        if (empty($_POST['query'])) {
-            echo '<script>document.forms["VerifactuQueryForm"].submit();</script>';
-        }
 
         SticViews::display($this);
     }

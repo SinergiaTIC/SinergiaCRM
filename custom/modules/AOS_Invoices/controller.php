@@ -537,7 +537,13 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
 
         if (!empty($_POST['query'])) {
             $year = $_POST['year'] ?? date('Y');
-            $period = $_POST['period'] ?? date('m');
+            $periods = $_POST['period'] ?? [];
+            if (!is_array($periods)) {
+                $periods = [$periods];
+            }
+            $periods = array_values(array_filter($periods, function ($p) {
+                return preg_match('/^(0[1-9]|1[0-2])$/', (string) $p);
+            }));
             $serieNumber = $_POST['serie_number'] ?? '';
             $dateFrom = $_POST['date_from'] ?? '';
             $dateTo = $_POST['date_to'] ?? '';
@@ -552,21 +558,127 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
                 $dateTo = date('d-m-Y', strtotime($dateTo));
             }
 
-            $result = AOS_InvoicesUtils::queryAeatInvoices(
-                $year,
-                $period,
-                null, // serieNumber: filtering done client-side for substring support
-                !empty($dateFrom) ? $dateFrom : null,
-                !empty($dateTo) ? $dateTo : null,
-                !empty($counterpartyNif) ? $counterpartyNif : null,
-                !empty($counterpartyName) ? $counterpartyName : null,
-                $filterBySif,
-            );
+            // If a date range is given, it takes precedence over the month
+            // selector: one AEAT query is executed per month spanned by the
+            // range (AEAT only accepts a single PeriodoImputacion per call).
+            $periodList = [];
+            if (!empty($dateFrom) || !empty($dateTo)) {
+                $periodList = self::buildPeriodListFromRange($dateFrom, $dateTo);
+            } else {
+                foreach ($periods as $p) {
+                    $periodList[] = ['year' => $year, 'period' => $p];
+                }
+            }
 
-            $_SESSION['VERIFACTU_QUERY_RESULT'] = $result;
+            if (empty($periodList)) {
+                $_SESSION['VERIFACTU_QUERY_RESULT'] = [
+                    'success' => false,
+                    'message' => $mod_strings['LBL_VERIFACTU_QUERY_PERIOD_REQUIRED'] ?? 'Select at least one month or a date range to query AEAT.',
+                ];
+            } else {
+                $mergedRegistros = [];
+                $hasMore = false;
+                $firstError = null;
+                foreach ($periodList as $entry) {
+                    $result = AOS_InvoicesUtils::queryAeatInvoices(
+                        $entry['year'],
+                        $entry['period'],
+                        null, // serieNumber: filtering done client-side for substring support
+                        !empty($dateFrom) ? $dateFrom : null,
+                        !empty($dateTo) ? $dateTo : null,
+                        !empty($counterpartyNif) ? $counterpartyNif : null,
+                        !empty($counterpartyName) ? $counterpartyName : null,
+                        $filterBySif,
+                    );
+
+                    if (!empty($result['success'])) {
+                        $data = $result['data'] ?? [];
+                        $regs = $data['registros'] ?? [];
+                        if (!empty($regs)) {
+                            $mergedRegistros = array_merge($mergedRegistros, $regs);
+                        }
+                        if (($data['indicadorPaginacion'] ?? 'N') === 'S') {
+                            $hasMore = true;
+                        }
+                    } else {
+                        $firstError = $firstError ?: ($result['message'] ?? 'Unknown error');
+                    }
+                }
+
+                if (!empty($mergedRegistros)) {
+                    $_SESSION['VERIFACTU_QUERY_RESULT'] = [
+                        'success' => true,
+                        'data' => [
+                            'resultadoConsulta' => 'ConDatos',
+                            'registros' => $mergedRegistros,
+                            'indicadorPaginacion' => $hasMore ? 'S' : 'N',
+                            'clavePaginacion' => [],
+                        ],
+                    ];
+                } elseif ($firstError !== null) {
+                    $_SESSION['VERIFACTU_QUERY_RESULT'] = ['success' => false, 'message' => $firstError];
+                } else {
+                    $_SESSION['VERIFACTU_QUERY_RESULT'] = [
+                        'success' => true,
+                        'data' => [
+                            'resultadoConsulta' => 'SinDatos',
+                            'registros' => [],
+                            'indicadorPaginacion' => 'N',
+                        ],
+                    ];
+                }
+            }
         }
 
         $this->view = 'queryaeatinvoices';
+    }
+
+    /**
+     * Builds the list of year/period pairs spanned by a date range (inclusive).
+     * Dates are expected in d-m-Y format. If only one bound is provided, the
+     * other is clamped to the same calendar year (Jan or Dec).
+     */
+    protected static function buildPeriodListFromRange(?string $dateFrom, ?string $dateTo): array
+    {
+        $start = !empty($dateFrom) ? DateTimeImmutable::createFromFormat('d-m-Y', $dateFrom) : null;
+        $end = !empty($dateTo) ? DateTimeImmutable::createFromFormat('d-m-Y', $dateTo) : null;
+        if ($start === false) {
+            $start = null;
+        }
+        if ($end === false) {
+            $end = null;
+        }
+        if (!$start && !$end) {
+            return [];
+        }
+        if ($start && $end && $start > $end) {
+            [$start, $end] = [$end, $start];
+        }
+        if (!$start) {
+            $start = DateTimeImmutable::createFromFormat('Y-m-d', $end->format('Y') . '-01-01');
+        }
+        if (!$end) {
+            $end = DateTimeImmutable::createFromFormat('Y-m-d', $start->format('Y') . '-12-31');
+        }
+        if (!$start || !$end) {
+            return [];
+        }
+        $start = $start->modify('first day of this month');
+        $end = $end->modify('first day of this month');
+
+        $list = [];
+        $cursor = $start;
+        while ($cursor <= $end) {
+            $list[$cursor->format('Y|m')] = [
+                'year' => $cursor->format('Y'),
+                'period' => $cursor->format('m'),
+            ];
+            $cursor = $cursor->modify('+1 month');
+            if (count($list) > 13) {
+                break;
+            }
+        }
+        return array_values($list);
     }
 
     /**
