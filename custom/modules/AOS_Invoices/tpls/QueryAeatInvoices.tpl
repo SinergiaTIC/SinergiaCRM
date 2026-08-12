@@ -39,12 +39,12 @@
             <input type="number" name="year" value="{$FORM_YEAR}" min="2024" max="2099" style="width: 100%;" required>
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
-            <label for="verifactuPeriodSelect" style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_PERIOD}</label>
-            <select name="period[]" id="verifactuPeriodSelect" multiple size="4" style="width: 100%; height: auto; min-height: 32px;">
+            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_PERIOD}</label>
+            <div id="verifactuPeriodChips" class="period-chips">
               {foreach from=$FORM_PERIOD_OPTIONS item=opt}
-              <option value="{$opt.VALUE}"{if $opt.SELECTED} selected{/if}>{$opt.LABEL}</option>
+              <button type="button" class="period-chip{if $opt.SELECTED} selected{/if}" data-value="{$opt.VALUE}" onclick="VerifactuQuery.togglePeriod(this)">{$opt.LABEL}</button>
               {/foreach}
-            </select>
+            </div>
           </div>
           <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px;">
             <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_DATE_FROM}</label>
@@ -151,13 +151,52 @@
   font-size: 16px;
   line-height: 32px;
 }
-#verifactuFilterPanel .panel-body input:not([type="checkbox"]):not([type="hidden"]),
-#verifactuFilterPanel .panel-body select:not([multiple]) {
+#verifactuFilterPanel .panel-body input:not([type="checkbox"]):not([type="hidden"]) {
   height: 32px;
   box-sizing: border-box;
 }
-#verifactuPeriodSelect {
+.period-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #b5bc31;
+  border-radius: 4px;
+  background: #fff;
   box-sizing: border-box;
+  width: 100%;
+}
+.period-chips.error {
+  border-color: #a94442;
+}
+.period-chip {
+  flex-shrink: 0;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  background: #f5f5f5;
+  color: #534D64;
+  padding: 4px 0;
+  min-width: 22px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  box-sizing: border-box;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  text-align: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.period-chip:hover {
+  border-color: #7f7f7f;
+}
+.period-chip.selected {
+  background: #353535;
+  border-color: #353535;
+  color: #fff;
 }
 
 </style>
@@ -179,31 +218,50 @@
     });
   }
 
-  var periodSelect = document.getElementById('verifactuPeriodSelect');
-  if (periodSelect) {
-    periodSelect.addEventListener('change', hideValidationMessage);
-    periodSelect.addEventListener('focus', hideValidationMessage);
-  }
-
   window.VerifactuQuery = window.VerifactuQuery || {};
 
-  function getPeriodSelect(form) {
-    return (form && (form.elements['period'] || form.elements['period[]']))
-      || document.getElementById('verifactuPeriodSelect');
+  function getPeriodInputs(form) {
+    var els = form && form.elements['period[]'];
+    if (!els) {
+      return [];
+    }
+    return els.length !== undefined ? Array.prototype.slice.call(els) : [els];
   }
 
   function getSelectedPeriods(form) {
-    var sel = getPeriodSelect(form);
-    var values = [];
-    if (sel) {
-      for (var i = 0; i < sel.options.length; i++) {
-        if (sel.options[i].selected && sel.options[i].value !== '') {
-          values.push(sel.options[i].value);
-        }
-      }
-    }
-    return values;
+    return getPeriodInputs(form).map(function (input) {
+      return input.value;
+    }).filter(function (value) {
+      return value !== '';
+    });
   }
+
+  function syncPeriodInputs(form) {
+    var chips = document.querySelectorAll('#verifactuPeriodChips .period-chip.selected');
+    var months = Array.prototype.map.call(chips, function (chip) {
+      return chip.getAttribute('data-value');
+    });
+    getPeriodInputs(form).forEach(function (input) {
+      input.parentNode.removeChild(input);
+    });
+    months.forEach(function (month) {
+      var hidden = document.createElement('input');
+      hidden.type = 'hidden';
+      hidden.name = 'period[]';
+      hidden.value = month;
+      form.appendChild(hidden);
+    });
+  }
+
+  VerifactuQuery.togglePeriod = function (chip) {
+    chip.classList.toggle('selected');
+    var form = document.forms['VerifactuQueryForm'];
+    if (form) {
+      syncPeriodInputs(form);
+      saveFilterState();
+    }
+    hideValidationMessage();
+  };
 
   function hasDateRange(form) {
     return !!((form.elements['date_from'] && form.elements['date_from'].value)
@@ -222,12 +280,11 @@
     if (form.elements['year']) {
       form.elements['year'].value = String(new Date().getFullYear());
     }
-    var periodSel = getPeriodSelect(form);
-    if (periodSel) {
-      for (var i = 0; i < periodSel.options.length; i++) {
-        periodSel.options[i].selected = false;
-      }
-    }
+    var chips = document.querySelectorAll('#verifactuPeriodChips .period-chip.selected');
+    Array.prototype.forEach.call(chips, function (chip) {
+      chip.classList.remove('selected');
+    });
+    syncPeriodInputs(form);
     ['serie_number', 'date_from', 'date_to', 'counterparty_nif', 'counterparty_name'].forEach(function (name) {
       if (form.elements[name]) {
         form.elements[name].value = '';
@@ -241,9 +298,9 @@
   };
 
   function setPeriodControlBorder(color) {
-    var sel = document.getElementById('verifactuPeriodSelect');
-    if (sel) {
-      sel.style.borderColor = color || '';
+    var chips = document.getElementById('verifactuPeriodChips');
+    if (chips) {
+      chips.classList.toggle('error', color === '#a94442');
     }
   }
 
@@ -307,13 +364,12 @@
     } catch (e) {
       return;
     }
-    var periodSel = getPeriodSelect(form);
-    if (periodSel) {
-      var months = Array.isArray(state['period']) ? state['period'] : (state['period'] ? [state['period']] : []);
-      for (var i = 0; i < periodSel.options.length; i++) {
-        periodSel.options[i].selected = months.indexOf(periodSel.options[i].value) !== -1;
-      }
-    }
+    var months = Array.isArray(state['period']) ? state['period'] : (state['period'] ? [state['period']] : []);
+    var chips = document.querySelectorAll('#verifactuPeriodChips .period-chip');
+    Array.prototype.forEach.call(chips, function (chip) {
+      chip.classList.toggle('selected', months.indexOf(chip.getAttribute('data-value')) !== -1);
+    });
+    syncPeriodInputs(form);
     ['year', 'serie_number', 'date_from', 'date_to', 'counterparty_nif', 'counterparty_name'].forEach(function (name) {
       if (form.elements[name] && typeof state[name] !== 'undefined') {
         form.elements[name].value = state[name];
