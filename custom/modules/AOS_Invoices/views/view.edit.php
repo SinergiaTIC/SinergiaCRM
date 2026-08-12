@@ -101,6 +101,24 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
         }
         // === End Legacy mode ===
 
+        // === Duplicate mode: hide status field ===
+        // When duplicating an emitted invoice, the edit view would show the original status
+        // ("Emitted"), but the duplicate is always saved as "Draft". Hide the field to avoid confusion.
+        $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1')
+            || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true')
+            || (!empty($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] === 'true');
+
+        if ($isDuplicate) {
+            foreach ($this->ev->defs['panels'] as $panelName => &$panel) {
+                foreach ($panel as $rowNum => &$row) {
+                    $row = array_values(array_filter($row, function($field) {
+                        return !(is_array($field) && isset($field['name']) && $field['name'] === 'status');
+                    }));
+                }
+            }
+        }
+        // === End Duplicate mode ===
+
         // === Sort series dropdown by usage count (desc), then alphabetically ===
         if (AOS_InvoicesUtils::isVerifactuActivated()) {
             $usageQuery = "SELECT c.verifactu_invoice_type_c, COUNT(*) AS cnt FROM aos_invoices_cstm c INNER JOIN aos_invoices i ON c.id_c = i.id WHERE i.deleted = 0 AND c.verifactu_invoice_type_c IS NOT NULL AND c.verifactu_invoice_type_c != '' GROUP BY c.verifactu_invoice_type_c";
