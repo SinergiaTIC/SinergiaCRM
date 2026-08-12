@@ -96,8 +96,11 @@ function display_lines($focus, $field, $value, $view)
         $result = $focus->db->query($sql);
         $sep = get_number_separators();
 
-        $html .= "<table border='0' width='100%' cellpadding='0' cellspacing='0'>";
-
+        // STIC CUSTOM 20260812 JCH - Wrap DetailView lines table for responsive scrolling (CorreccionesPendientes #8)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+        // $html .= "<table border='0' width='100%' cellpadding='0' cellspacing='0'>";
+        $html .= "<div class='stic-lines-wrapper'><table id='detailLines' border='0' width='100%' cellpadding='0' cellspacing='0'>";
+        // END STIC CUSTOM
         $i = 0;
         $productCount = 0;
         $serviceCount = 0;
@@ -215,7 +218,11 @@ function display_lines($focus, $field, $value, $view)
             }
         }
         $html .= $groupStart.$product.$service.$groupEnd;
-        $html .= "</table>";
+        // STIC CUSTOM 20260812 JCH - Wrap DetailView lines table for responsive scrolling (CorreccionesPendientes #8)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
+        // $html .= "</table>";
+        $html .= "</table></div>";
+        // END STIC CUSTOM
     }
     return $html;
 }

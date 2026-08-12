@@ -133,5 +133,30 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
         
         // Write here the SinergiaCRM code that must be executed for this module and view
         echo getVersionedScript("custom/modules/AOS_Invoices/SticUtils.js");
+
+        // STIC CUSTOM 20260812 JCH - Responsive line items table in DetailView (CorreccionesPendientes #8)
+        // On mobile, prevent the line items columns from being compressed by allowing horizontal scroll.
+        echo '<style>
+        @media (max-width: 768px) {
+            .detail-view-row-item,
+            .detail-view-field {
+                min-width: 0;
+            }
+            .stic-lines-wrapper {
+                width: 100%;
+                max-width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            .stic-lines-wrapper table {
+                min-width: 720px;
+                white-space: nowrap;
+            }
+            .stic-lines-wrapper td {
+                padding: 4px 8px;
+            }
+        }
+        </style>';
+        // === End STIC CUSTOM ===
     }
 }
