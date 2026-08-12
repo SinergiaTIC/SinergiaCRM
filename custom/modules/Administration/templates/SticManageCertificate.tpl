@@ -40,13 +40,12 @@
         <br>
     {/if}
 
-    <div style="margin-bottom: 20px; padding: 10px; background-color: #f9f9f9; border: 1px solid #ccc;">
-        <strong>{$MOD.LBL_STIC_CERT_CURRENT_STATUS}</strong> 
+    <div class="stic-cert-box">
+        <div class="stic-cert-box-title">{$MOD.LBL_STIC_CERT_CURRENT_STATUS}</div>
         {if $CERT_EXISTS}
             <span style="color: green; font-weight: bold;">{$MOD.LBL_STIC_CERT_EXISTS}</span>
             {if $CERT_METADATA}
-                <br><br>
-                <div style="margin-left: 15px;">
+                <div style="margin-left: 15px; margin-top: 10px;">
                     <strong>{$MOD.LBL_STIC_CERT_FILENAME}:</strong> {$CERT_METADATA.original_filename}<br>
                     <strong>{$MOD.LBL_STIC_CERT_UPLOAD_DATE}:</strong> {$CERT_METADATA.upload_date_formatted}<br>
                     <strong>{$MOD.LBL_STIC_CERT_UPLOADED_BY}:</strong> {$CERT_METADATA.uploaded_by_name}
@@ -102,67 +101,51 @@
                     {/if}
                 </div>
             {/if}
+            <form action="index.php" method="POST" id="certificateDeleteForm" style="margin-top: 15px; display: flex; justify-content: flex-end;">
+                <input type="hidden" name="module" value="Administration">
+                <input type="hidden" name="action" value="SticDeleteCertificate">
+                <input type="submit" class="button" value="{$MOD.LBL_STIC_CERT_DELETE_BTN}">
+            </form>
         {else}
             <span style="color: red; font-weight: bold;">{$MOD.LBL_STIC_CERT_NOT_EXISTS}</span>
         {/if}
     </div>
 
-    {if $CERT_EXISTS}
-        <form action="index.php" method="POST" id="certificateDeleteForm" style="margin-bottom: 20px;">
-            <input type="hidden" name="module" value="Administration">
-            <input type="hidden" name="action" value="SticDeleteCertificate">
-            <input type="submit" class="button" value="{$MOD.LBL_STIC_CERT_DELETE_BTN}">
-        </form>
+    {if !$CERT_EXISTS}
+        <div class="stic-cert-box">
+            <div class="stic-cert-box-title">{$MOD.LBL_STIC_CERT_INSTALL_TITLE}</div>
+            <form action="index.php" method="POST" enctype="multipart/form-data" id="certificateForm">
+                <input type="hidden" name="module" value="Administration">
+                <input type="hidden" name="action" value="SticSaveCertificate">
+                
+                <div class="stic-cert-field">
+                    <div class="stic-cert-field-label">{$MOD.LBL_STIC_CERT_FILE}</div>
+                    <div class="stic-cert-field-value">
+                        <input type="file" name="certificate_file" required>
+                        <span class="stic-cert-help">{$MOD.LBL_STIC_CERT_FILE_HELP}</span>
+                    </div>
+                </div>
+                <div class="stic-cert-field">
+                    <div class="stic-cert-field-label">{$MOD.LBL_STIC_CERT_PASSWORD}<span style="color:red;">*</span></div>
+                    <div class="stic-cert-field-value">
+                        <input type="password" name="certificate_password" id="certificate_password" required autocomplete="off">
+                        <span class="stic-cert-help">{$MOD.LBL_STIC_CERT_PASSWORD_HELP}</span>
+                    </div>
+                </div>
+                <div class="stic-cert-field">
+                    <div class="stic-cert-field-label"></div>
+                    <div class="stic-cert-field-value stic-cert-field-actions">
+                        <input type="submit" class="button primary" value="{$MOD.LBL_STIC_CERT_UPLOAD_BTN}">
+                    </div>
+                </div>
+            </form>
+        </div>
     {/if}
-
-    <form action="index.php" method="POST" enctype="multipart/form-data" id="certificateForm">
-        <input type="hidden" name="module" value="Administration">
-        <input type="hidden" name="action" value="SticSaveCertificate">
-        
-        <table class="edit view" width="100%" border="0" cellspacing="0" cellpadding="0">
-            <tr>
-                <td width="20%" scope="row" style="vertical-align: middle;">
-                    {$MOD.LBL_STIC_CERT_FILE}
-                </td>
-                <td width="80%">
-                    <input type="file" name="certificate_file" required>
-                    <br><span style="font-size: 0.9em; color: #666;">{$MOD.LBL_STIC_CERT_FILE_HELP}</span>
-                </td>
-            </tr>
-            <tr>
-                <td width="20%" scope="row" style="vertical-align: middle;">
-                    {$MOD.LBL_STIC_CERT_PASSWORD}<span style="color:red;">*</span>
-                </td>
-                <td width="80%">
-                    <input type="password" name="certificate_password" id="certificate_password" required autocomplete="off">
-                    <br><span style="font-size: 0.9em; color: #666;">{$MOD.LBL_STIC_CERT_PASSWORD_HELP}</span>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" style="padding-top: 20px;">
-                    <input type="submit" class="button primary" value="{$MOD.LBL_STIC_CERT_UPLOAD_BTN}">
-                </td>
-            </tr>
-        </table>
-    </form>
 </div>
 
 <script type="text/javascript">
 {literal}
 document.addEventListener('DOMContentLoaded', function() {
-    var form = document.getElementById('certificateForm');
-    var certExists = {/literal}{if $CERT_EXISTS}true{else}false{/if}{literal};
-    
-    if (form && certExists) {
-        form.addEventListener('submit', function(e) {
-            var confirmMsg = {/literal}'{$MOD.LBL_STIC_CERT_CONFIRM_OVERWRITE}'{literal};
-            if (!confirm(confirmMsg)) {
-                e.preventDefault();
-                return false;
-            }
-        });
-    }
-
     var deleteForm = document.getElementById('certificateDeleteForm');
     if (deleteForm) {
         deleteForm.addEventListener('submit', function(e) {
@@ -197,6 +180,59 @@ document.addEventListener('DOMContentLoaded', function() {
 }
 .stic-cert-error a {
     color: #c62828;
+}
+.stic-cert-box {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.stic-cert-box-title {
+    font-weight: bold;
+    font-size: 1.05em;
+    margin-bottom: 15px;
+}
+.stic-cert-field {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    margin-bottom: 12px;
+}
+.stic-cert-field-label {
+    width: 20%;
+    padding-right: 15px;
+    box-sizing: border-box;
+}
+.stic-cert-field-value {
+    width: 80%;
+    box-sizing: border-box;
+}
+.stic-cert-field-value input[type="file"],
+.stic-cert-field-value input[type="password"] {
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+.stic-cert-help {
+    display: block;
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 4px;
+}
+.stic-cert-field-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+@media (max-width: 768px) {
+    .stic-cert-field-label,
+    .stic-cert-field-value {
+        width: 100%;
+        padding-right: 0;
+    }
+    .stic-cert-field-label {
+        margin-bottom: 4px;
+    }
 }
 {/literal}
 </style>
