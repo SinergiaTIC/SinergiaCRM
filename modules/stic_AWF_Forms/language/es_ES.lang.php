@@ -160,6 +160,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_ADD_TO_GROUP' => 'Añadir un bloque de datos al grupo',
   'LBL_DATABLOCK_ADD_TO_GROUP_TITLE' => 'Añadir al grupo',
   'LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE' => 'Quitar del grupo de bloques de datos',
+  'LBL_DATABLOCK_IN_GROUP_TITLE' => 'Pertenece al grupo',
 
   // STIC-Custom OC - 20250803 - Bloque de datos repetible
   'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Los hijos de un bloque repetible no pueden moverse de forma independiente.',
@@ -275,7 +276,6 @@ $mod_strings = array (
   'LBL_ACTION_ACTIONS' => 'Acciones',
   'LBL_ACTION_AUTOMATIC' => 'Automática',
   'LBL_ACTION_AUTOMATIC_TITLE' => 'Acción automática',
-  'LBL_ACTION_REPEATABLE_GROUP_TITLE' => 'Pertenece al grupo repetible',
   'LBL_ACTION_NO_PARAMS' => 'Sin parámetros',
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Seleccionar --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Módulo',

@@ -201,8 +201,9 @@
                     <div class="d-flex">
                       <!-- Group Badge -->
                       <template x-if="item.group_root && !item.isGroupHead(data_blocks)">
-                          <span class="badge bg-transparent text-dark" style="margin-left:-15px; margin-top:-5px;font-weight: normal;" 
-                                x-text="'📦 ' + item.getGroupTitle(data_blocks)"></span>
+                        <span class="badge bg-transparent text-dark" style="margin-left:-15px; margin-top:-5px;font-weight: normal;" 
+                              :title="utils.translateForFieldLabel('LBL_DATABLOCK_IN_GROUP_TITLE') + ' ' + item.getGroupTitle(data_blocks)"
+                              x-text="'📦 ' + item.getGroupTitle(data_blocks)"></span>
                       </template>
 
                       <!-- Remove from Group Button -->

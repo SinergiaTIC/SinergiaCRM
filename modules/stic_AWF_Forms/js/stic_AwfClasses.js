@@ -55,16 +55,6 @@ class stic_AwfDataBlock {
     // 2. Overwrite with provided data
     Object.assign(this, data);
 
-    // 2.b Remove any own properties that would shadow the derived getters below.
-    // Legacy saved forms (pre-ADR-1) persisted is_repeatable/is_optional as own props;
-    // if kept, they shadow the prototype getters and produce stale reads (e.g. the
-    // "add to group" dropdown still listing blocks that are already groups).
-    delete this.is_repeatable;
-    delete this.is_optional;
-    delete this.is_root;
-    delete this.is_child;
-    delete this.custom_group_title;
-
     // 3. Map sub-objects and arrays to their classes
     this.fields = (data.fields || this.fields).map(d => new stic_AwfField(d));
     this.duplicate_detections = (data.duplicate_detections || this.duplicate_detections).map(d => new stic_AwfDuplicateDetection(d));

@@ -47,26 +47,32 @@
                         <div :id="action.id+'_Header'" class="mt-1 mb-1 pe-2 btn accordion-header accordion-button p-0 align-items-center" :class="{'collapsed': !opened}">
                             <div class="d-flex flex-grow-1 align-items-center py-3 ps-3 pe-2" role="button" @click="opened = !opened"
                                  data-bs-toggle="collapse" :data-bs-target="'#'+action.id+'_Content'" :aria-controls="action.id+'_Content'">
-                                <!-- Condition -->
-                                <template x-if="action.conditions && action.conditions.length > 0 && action.conditions[0].field_name">
-                                    <span class="badge rounded-pill bg-warning-subtle text-dark me-2" :title="utils.translate('LBL_ACTION_CONDITION_TEXT')">
-                                        <i class="suitepicon suitepicon-action-confirm"></i>
-                                        <span x-text="getActionConditionLabel(action)">
-                                    </span>
-                                </template>
-                                <!-- Automatic badge -->
-                                <template x-if="action.is_automatic">
-                                    <span class="badge rounded-pill bg-info text-dark me-2" x-text="utils.translate('LBL_ACTION_AUTOMATIC')"
-                                          :title="utils.translate('LBL_ACTION_AUTOMATIC_TITLE')"></span>
-                                </template>
-                                <!-- Repeatable group badge -->
-                                <template x-if="getActionRepeatGroup(action)">
-                                    <span class="badge rounded-pill bg-secondary text-light me-2"
-                                          :title="utils.translate('LBL_ACTION_REPEATABLE_GROUP_TITLE') + ': ' + getActionRepeatGroup(action).groupTitle">
-                                        <i class="suitepicon suitepicon-module-listview"></i>
-                                        <span x-text="getActionRepeatGroup(action).groupTitle"></span>
-                                    </span>
-                                </template>
+                                <div class="flex-column">
+                                    <!-- Group badge -->
+                                    <template x-if="getActionRepeatGroup(action)">
+                                        <div class="d-flex">
+                                            <span class="badge bg-transparent text-dark" style="margin-left:-15px; font-weight: normal;" 
+                                                  :title="utils.translateForFieldLabel('LBL_DATABLOCK_IN_GROUP_TITLE') + ' ' + getActionRepeatGroup(action).groupTitle"
+                                                  x-text="'📦 ' + getActionRepeatGroup(action).groupTitle"></span>
+                                        </div>
+                                    </template>
+                                    <!-- Automatic badge -->
+                                    <template x-if="action.is_automatic">
+                                        <div class="d-flex">
+                                            <span class="badge rounded-pill bg-info text-dark me-2" x-text="utils.translate('LBL_ACTION_AUTOMATIC')"
+                                                  :title="utils.translate('LBL_ACTION_AUTOMATIC_TITLE')"></span>
+                                        </div>
+                                    </template>
+                                    <!-- Condition -->
+                                    <template x-if="action.conditions && action.conditions.length > 0 && action.conditions[0].field_name">
+                                        <div class="d-flex">
+                                            <span class="badge rounded-pill bg-warning-subtle text-dark me-2" :title="utils.translate('LBL_ACTION_CONDITION_TEXT')">
+                                                <i class="suitepicon suitepicon-action-confirm"></i>
+                                                <span x-text="getActionConditionLabel(action)">
+                                            </span>
+                                        </div>
+                                    </template>
+                                </div>
                                 <!-- Action Text -->
                                 <div class="fw-bold text-truncate">
                                     <span :id="`actionTextEdit-${action.id}`" data-model="action.text" x-init="sticControls.editableText($el);"></span>

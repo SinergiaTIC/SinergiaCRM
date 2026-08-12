@@ -1843,6 +1843,7 @@ class WizardStep3 {
             _activeConditionFieldDef: null,
 
             get formConfig() { return window.alpineComponent.formConfig; },
+            get data_blocks() { return this.formConfig.data_blocks; },
 
             get availableFieldsInForm() { return this.formConfig?.getAllFieldsInForm() ?? []; },
             get availableFieldsInFormForSelect() { return this.availableFieldsInForm.map(field => ({ id: field.name, label: field.text })); },
