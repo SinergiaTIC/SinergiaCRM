@@ -499,12 +499,37 @@
                                                                     <div :id="`sectionContent${section.id}_Body`" class="accordion-body"> 
                                                                         <!-- Content -->
                                                                         <template x-for="(element, index) in section.elements" :key="element.id">
-                                                                            <div class="card mb-2 border-secondary">
+                                                                            <div class="card mb-2 border-secondary"
+                                                                                 :class="{
+                                                                                    'groupdatablock': getDataBlock(element)?.isGroupHead(data_blocks),
+                                                                                    'child-block': getDataBlock(element)?.is_child
+                                                                                 }">
                                                                                 <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
-                                                                                    <strong x-text="getElementHeader(element)"></strong>
+                                                                                    <div class="d-flex align-items-center gap-2">
+                                                                                        <!-- Group badge for group heads -->
+                                                                                        <template x-if="getDataBlock(element)?.isGroupHead(data_blocks) && getDataBlock(element)?.group_title">
+                                                                                            <span class="badge bg-transparent text-dark ps-0" style="font-weight: normal;"
+                                                                                                  x-text="'📦 ' + getDataBlock(element).group_title"></span>
+                                                                                        </template>
+                                                                                        <!-- Group badge for child blocks -->
+                                                                                        <template x-if="getDataBlock(element)?.is_child">
+                                                                                            <span class="badge bg-transparent text-muted ps-0" style="font-weight: normal; font-size: 0.85em;"
+                                                                                                  :title="utils.translateForFieldLabel('LBL_DATABLOCK_IN_GROUP_TITLE') + ' ' + getDataBlock(element)?.getGroupTitle(data_blocks)"
+                                                                                                  x-text="'📦 ' + getDataBlock(element)?.getGroupTitle(data_blocks)"></span>
+                                                                                        </template>
+                                                                                        <strong x-text="getElementHeader(element)"></strong>
+                                                                                        <!-- Optional/Repeatable badges for group heads -->
+                                                                                        <template x-if="getDataBlock(element)?.isGroupHead(data_blocks)">
+                                                                                            <span class="d-inline-flex gap-1">
+                                                                                                <span class="badge bg-info" x-show="getDataBlock(element)?.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
+                                                                                                <span class="badge bg-primary" x-show="getDataBlock(element)?.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
+                                                                                            </span>
+                                                                                        </template>
+                                                                                    </div>
                                                                                     <div class="d-inline-flex gap-2">
                                                                                         <select class="form-select small text-muted w-auto" @change="moveElementToSection(element, section.id, $event.target.value)"
-                                                                                                style="min-width: 100px;">
+                                                                                                style="min-width: 100px;"
+                                                                                                :disabled="getDataBlock(element)?.is_child">
                                                                                             <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
                                                                                             <template x-for="sec in sections" :key="sec.id">
                                                                                                 <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')" 
@@ -514,11 +539,11 @@
 
                                                                                         <div class="input-group flex-shrink-0" role="group">
                                                                                             <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                                                                    :disabled="index === 0" @click="moveElementUp(section, index);">
+                                                                                                    :disabled="index === 0 || getDataBlock(element)?.is_child" @click="moveElementUp(section, index);">
                                                                                                 <span class="suitepicon suitepicon-action-move-up"></span>
                                                                                             </button>
                                                                                             <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                                                                    :disabled="index === section.elements.length - 1" @click="moveElementDown(section, index)">                                                                                
+                                                                                                    :disabled="index === section.elements.length - 1 || getDataBlock(element)?.is_child" @click="moveElementDown(section, index)">                                                                                
                                                                                                 <span class="suitepicon suitepicon-action-move-down"></span>
                                                                                             </button>
                                                                                         </div> 

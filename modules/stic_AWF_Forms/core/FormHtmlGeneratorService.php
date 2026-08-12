@@ -35,6 +35,28 @@ class FormHtmlGeneratorService {
     private $indent = 0;
 
     /**
+     * Helper to check if a block has any renderable field
+     */
+    private static function blockHasRenderableFields(FormDataBlock $block): bool {
+        foreach ($block->fields as $field) {
+            if ($field->type_field === DataBlockFieldType::FIXED) continue;
+            if ($field->type_in_form === 'hidden') continue;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Helper to check if a group has any renderable field
+     */
+    private static function groupHasRenderableFields(array $groupBlocks): bool {
+        foreach ($groupBlocks as $b) {
+            if (self::blockHasRenderableFields($b)) return true;
+        }
+        return false;
+    }
+
+    /**
      * Generates the full HTML document (doctype, head, body).
      * For standalone or iframe views.
      * If you want to generate only the form HTML (for embedding in other pages), use the generateFormHtml method instead, 
@@ -362,6 +384,41 @@ class FormHtmlGeneratorService {
                     $html .= "<div class='awf-grid-sections'>" .$this->newLine('+');
                     {
                         foreach ($layout->structure as $section) {
+                            // Skip sections that have no renderable block content.
+                            // A section is renderable if at least one of its elements is a datablock
+                            // that will produce visible HTML (standalone block with fields, or a
+                            // group head whose root or any descendant has fields).
+                            $hasRenderableContent = false;
+                            foreach ($section->elements as $element) {
+                                if ($element->type !== 'datablock') { $hasRenderableContent = true; break; }
+                                $block = $config->data_blocks[$element->ref_id] ?? null;
+                                if (!$block) continue;
+                                // Children are rendered inside their root — check the root's group
+                                if (!empty($block->group_root)) {
+                                    $rootBlock = $config->data_blocks[$block->group_root] ?? null;
+                                    if (!$rootBlock) continue;
+                                    // Is the root also in this section? If so, the root check covers it.
+                                    // If not, the child alone doesn't render — skip.
+                                    $rootInSection = false;
+                                    foreach ($section->elements as $el2) {
+                                        if ($el2->type === 'datablock' && $el2->ref_id === $rootBlock->id) { $rootInSection = true; break; }
+                                    }
+                                    if ($rootInSection) continue; // root will be checked below
+                                    // Root not in section: child won't render
+                                    continue;
+                                }
+                                // Group head or standalone: check if root or any descendant has fields
+                                $blockChildren = $config->getGroupChildren($block);
+                                if (!empty($blockChildren)) {
+                                    $descendants = $config->getGroupDescendants($block);
+                                    $groupBlocks = array_merge([$block], $descendants);
+                                    if (self::groupHasRenderableFields($groupBlocks)) { $hasRenderableContent = true; break; }
+                                } else {
+                                    if (self::blockHasRenderableFields($block)) { $hasRenderableContent = true; break; }
+                                }
+                            }
+                            if (!$hasRenderableContent) continue;
+
                             $containerClass = ($section->containerType === 'card') ? 'awf-section-card' : 'awf-section-panel';
                             $sectionPanelId = "awf_sect_" . md5($section->title ?? uniqid());
 
@@ -496,53 +553,69 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML for the data block as a string
      */
     private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme, FormConfig $config): string {
-        // Delegate repeatable root blocks to the group renderer
-        if ($block->isRepeatable()) {
-            return $this->generateRepeatableGroupHtml($block, $theme, $config);
+        // Delegate group heads to the group renderer.
+        // Repeatable and optional groups use the indexed Alpine x-for wrapper (instance-aware).
+        // Simple groups (mandatory, max=1) with children render the root fields directly + children
+        // inline with STATIC field names (no instance index) so non-expandable actions and legacy
+        // behavior keep working until generic unrolling (B-4) lands.
+        $children = $config->getGroupChildren($block);
+        if ($block->isRepeatable() || $block->isOptional()) {
+            return $this->generateGroupHtml($block, $theme, $config);
         }
         $html = "";
+        // Root block fields (scalar rendering)
         foreach ($block->fields as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
             $html .= $this->renderField($field, $theme);
         }
+        // Simple group with children: render children inline (static, no instance index)
+        foreach ($children as $childBlock) {
+            if (!$childBlock->fields) continue;
+            $html .= $this->renderBlockPanel($childBlock, $theme);
+        }
         return $html;
     }
 
-/**
-     * Renders a repeatable group for a root data block. Each instance renders structured
-     * panels for the root block and all child blocks, sharing the same instance index.
+    /**
+     * Renders a group for a root data block. Handles three group types:
+     * - Repeatable (max > 1): x-for loop with add/remove buttons
+     * - Optional (min = 0, max = 1): master switch + single instance
+     * - Simple with children (min = 1, max = 1): single instance, no switch
      *
-     * @param FormDataBlock $rootBlock The repeatable root block
+     * Direct children are rendered recursively (subgroup heads) or as panels (simple/optional children).
+     *
+     * @param FormDataBlock $rootBlock The group root block
      * @param FormTheme $theme The form theme
-     * @param FormConfig $config The full form configuration (to resolve children)
-     * @return string The generated HTML for the repeatable group
+     * @param FormConfig $config The full form configuration
+     * @return string The generated HTML for the group
      */
-    private function generateRepeatableGroupHtml(FormDataBlock $rootBlock, FormTheme $theme, FormConfig $config): string {
+    private function generateGroupHtml(FormDataBlock $rootBlock, FormTheme $theme, FormConfig $config): string {
         $groupTitle = htmlspecialchars($rootBlock->group_title ?: $rootBlock->text);
         $toggleLabel = htmlspecialchars($rootBlock->toggle_label ?: translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $groupTitle);
         $addLabel = htmlspecialchars($rootBlock->add_button_label ?: translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT', 'stic_AWF_Forms'));
         $removeLabel = htmlspecialchars($rootBlock->remove_button_label ?: translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT', 'stic_AWF_Forms'));
-        
+
         $maxInstances = $rootBlock->max_instances !== null ? (int)$rootBlock->max_instances : 'null';
         $isRepeatable = $rootBlock->isRepeatable();
+        $isOptional = $rootBlock->isOptional();
 
-        // STIC-Custom OC - 20260807 - Include the whole descendant branch (transitive adoption),
-        // not just direct children, so multi-level chains render completely inside the group.
-        $children = $config->getGroupDescendants($rootBlock);
-        // END STIC-Custom OC
+        // Direct children only (subgroup heads will be rendered recursively)
+        $children = $config->getGroupChildren($rootBlock);
 
-        // Alpine initialization: If min=0 start empty [], if min=1 start with [{id:0}]
-        $initialActive = $rootBlock->isOptional() ? 'false' : 'true';
-        $initialInstances = $rootBlock->isOptional() ? '[]' : '[{ id: 0 }]';
+        // Alpine initialization:
+        // - Optional: start inactive with empty instances []
+        // - Mandatory (repeatable or simple): start active with one instance [{id:0}]
+        $initialActive = $isOptional ? 'false' : 'true';
+        $initialInstances = $isOptional ? '[]' : '[{ id: 0 }]';
 
         $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances} }\">" . $this->newLine('+');
         {
-            // 1. Group Header with Master Switch (if isOptional)
+            // 1. Group Header with Master Switch (if optional) or title (if mandatory)
             $html .= "<div class='awf-group-header mb-3 pb-2 border-bottom border-primary d-flex align-items-center justify-content-between'>" . $this->newLine('+');
             {
                 $html .= "<div class='d-flex align-items-center'>" . $this->newLine('+');
                 {
-                    if ($rootBlock->isOptional()) {
+                    if ($isOptional) {
                         // Optional activation switch
                         $html .= "<div class='form-check form-switch me-3 mb-0'>" . $this->newLine('+');
                         {
@@ -560,7 +633,7 @@ class FormHtmlGeneratorService {
             }
             $html .= "</div>" . $this->newLine('-');
 
-            // 2. Instance Loop (Executed if active is true)
+            // 2. Instance Loop (visible if active)
             $html .= "<div x-show='active' x-transition>" . $this->newLine('+');
             {
                 $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
@@ -572,8 +645,8 @@ class FormHtmlGeneratorService {
                         {
                             $instanceTitle = $isRepeatable ? "'{$groupTitle} #' + (index + 1)" : "'{$groupTitle}'";
                             $html .= "<span class='fw-bold text-secondary' x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
-                            
-                            // Remove button: ONLY visible if index > 0 (not the first row)
+
+                            // Remove button: ONLY for repeatable groups, and only if index > 0
                             if ($isRepeatable) {
                                 $html .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance)\">" . $this->newLine('+');
                                 {
@@ -585,20 +658,28 @@ class FormHtmlGeneratorService {
                         }
                         $html .= "</div>" . $this->newLine('-');
 
-                        // Instance card body (Panels of the parent and child blocks)
+                        // Instance card body: root panel + children
                         $html .= "<div class='card-body p-3 bg-white'>" . $this->newLine('+');
                         {
                             // Panel of the root block
                             $html .= $this->renderBlockInstancePanel($rootBlock, $theme, 'index');
-                            
-                            // Panels of the child blocks
+
+                            // Render direct children (NOT all descendants — subgroup heads are handled recursively)
                             foreach ($children as $childBlock) {
                                 if (!$childBlock->fields) continue;
-    
-                                // If the child block is optional, wrap it with a local activation switch for that instance.
-                                if ($childBlock->isOptional()) {
-                                    $childTitle = htmlspecialchars($rootBlock->toggle_label ?: translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $childBlock->text);
-                                    
+
+                                // Check if this child is itself a group head (subgroup)
+                                $childHasChildren = !empty($config->getGroupChildren($childBlock));
+                                $childIsGroupHead = $childBlock->isRepeatable() || $childBlock->isOptional() || $childHasChildren;
+
+                                if ($childIsGroupHead) {
+                                    // Recursive: render the subgroup inside this instance.
+                                    // The subgroup inherits the parent's index (N×M rule: only one repeatable per branch).
+                                    $html .= $this->generateGroupHtml($childBlock, $theme, $config);
+                                } elseif ($childBlock->isOptional()) {
+                                    // Optional child (not a subgroup head): per-instance activation toggle
+                                    $childTitle = htmlspecialchars($childBlock->toggle_label ?: translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $childBlock->text);
+
                                     $html .= "<div class='awf-child-optional-wrapper my-3 p-2 border rounded bg-light' x-data='{ includeChild: false }'>" . $this->newLine('+');
                                     {
                                         $html .= "<div class='form-check form-switch mb-0'>" . $this->newLine('+');
@@ -608,7 +689,6 @@ class FormHtmlGeneratorService {
                                         }
                                         $html .= "</div>" . $this->newLine('-');
 
-                                        // The panel of fields is only rendered if the instance switch is active
                                         $html .= "<template x-if='includeChild'>" . $this->newLine('+');
                                         {
                                             $html .= "<div class='mt-2'>" . $this->newLine('+');
@@ -621,7 +701,7 @@ class FormHtmlGeneratorService {
                                     }
                                     $html .= "</div>" . $this->newLine('-');
                                 } else {
-                                    // Mandatory child block: displayed directly
+                                    // Mandatory simple child: displayed directly
                                     $html .= $this->renderBlockInstancePanel($childBlock, $theme, 'index');
                                 }
                             }
@@ -632,7 +712,7 @@ class FormHtmlGeneratorService {
                 }
                 $html .= "</template>" . $this->newLine('-');
 
-                // 3. Add more instances button (Only if the group is repeatable and the maximum has not been reached)
+                // 3. Add more instances button (ONLY for repeatable groups)
                 if ($isRepeatable) {
                     $html .= "<button type='button' class='btn btn-outline-primary awf-add-instance-btn mt-1' " .
                             "@click=\"instances.push({ id: nextInstanceId++ })\" " .
@@ -641,6 +721,34 @@ class FormHtmlGeneratorService {
                         $html .= "<span>+ {$addLabel}</span>" . $this->newLine();
                     }
                     $html .= "</button>" . $this->newLine('-');
+                }
+            }
+            $html .= "</div>" . $this->newLine('-');
+        }
+        $html .= "</div>" . $this->newLine('-');
+
+        return $html;
+    }
+
+    /**
+     * Renders a structured panel (.awf-block-panel) for a DataBlock with STATIC field names
+     * (no instance index). Used for children of simple (non-repeatable, non-optional) groups.
+     *
+     * @param FormDataBlock $block The data block to render
+     * @param FormTheme $theme The form theme
+     * @return string Generated HTML for the block panel
+     */
+    private function renderBlockPanel(FormDataBlock $block, FormTheme $theme): string {
+        $blockTitle = htmlspecialchars($block->text);
+
+        $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
+        {
+            $html .= "<h5 class='awf-block-title text-dark'>{$blockTitle}</h5>" . $this->newLine();
+            $html .= "<div class='awf-grid-fields'>" . $this->newLine('+');
+            {
+                foreach ($block->fields as $field) {
+                    if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                    $html .= $this->renderField($field, $theme);
                 }
             }
             $html .= "</div>" . $this->newLine('-');

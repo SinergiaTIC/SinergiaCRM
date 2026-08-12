@@ -1611,9 +1611,13 @@ class stic_AwfLayout {
     const placedBlockIds = new Set(); // Set of placed blocks
     const cleanStructure = [];
 
+    // Map: blockId -> section where it's placed (for child-parent cohesion)
+    const blockSectionMap = new Map();
+
     // Cleanup of the blocks of the visual structure
+    const hasRenderableFields = (blk) => blk.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
     this.structure.forEach(section => {
-      const validElements = section.elements = section.elements.filter(el => {
+      const validElements = section.elements.filter(el => {
         if (el.type != 'datablock') return true; // It's not a block: keep it
 
         // We check that the block exists
@@ -1622,12 +1626,29 @@ class stic_AwfLayout {
         if (!block) return false; // The block no longer exists
         if (placedBlockIds.has(el.ref_id)) return false; // It's a duplicate
         
-        // Check field visibility
-        // (if it has only fixed or hidden fields, it should not be in the layout)
-        if (!block.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return false;
+        // Field visibility check:
+        // - Group heads: keep if the root OR any descendant has renderable fields
+        // - Group children: keep regardless of their own fields (they render inside the root;
+        //   discarding them individually would break the group cohesion)
+        // - Standalone blocks: keep only if they have renderable fields
+        const isGroupHead = block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
+        const isChild = !!(block.group_root && block.group_root !== '');
+
+        if (isChild) {
+          // Children are kept; their visibility is tied to their root
+          placedBlockIds.add(el.ref_id);
+          blockSectionMap.set(el.ref_id, section);
+          return true;
+        }
+        if (isGroupHead) {
+          if (!hasRenderableFields(block) && !block.getDescendants(dataBlocks).some(hasRenderableFields)) return false;
+        } else {
+          if (!hasRenderableFields(block)) return false;
+        }
           
-        // Mark the block as placed
-        placedBlockIds.add(el.ref_id); 
+        // Mark the block as placed and record its section
+        placedBlockIds.add(el.ref_id);
+        blockSectionMap.set(el.ref_id, section);
         return true;
       });
       section.elements = validElements;
@@ -1639,19 +1660,79 @@ class stic_AwfLayout {
 
     this.structure = cleanStructure;
 
-    // Add the missing blocks
+    // Master Section: ensure children are in the SAME section as their root.
+    // Move any misplaced child element to its root's section.
+    dataBlocks.forEach(block => {
+      if (!block.group_root || block.group_root === '') return; // Not a child
+      if (!placedBlockIds.has(block.id)) return; // Child not placed yet (handled below)
+
+      const rootSection = blockSectionMap.get(block.group_root);
+      const childSection = blockSectionMap.get(block.id);
+      if (!rootSection || !childSection) return;
+      if (rootSection.id === childSection.id) return; // Already together
+
+      // Move the child element to the root's section
+      const childEl = childSection.elements.find(el => el.type === 'datablock' && el.ref_id === block.id);
+      if (childEl) {
+        childSection.elements = childSection.elements.filter(el => el.id !== childEl.id);
+        rootSection.elements.push(childEl);
+        blockSectionMap.set(block.id, rootSection);
+      }
+    });
+
+    // Clean up empty sections after moving children
+    this.structure = this.structure.filter(s => s.elements.length > 0);
+
+    // Add the missing blocks (orphans)
     const orphanBlocks = dataBlocks.filter(b => {
       if (placedBlockIds.has(b.id)) return false; // The block is placed
-      if (b.group_root && b.group_root !== '') return false; // Children of a repeatable root are handled by their root
-      if (!b.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return false; // Only has fixed or hidden fields
+      if (b.group_root && b.group_root !== '') return false; // Children are handled by their root
+
+      // A section is only created if the block (or, for a group head, ANY of its descendants)
+      // has at least one visible field to render. Groups where neither the root nor any child
+      // has renderable fields are excluded — same rule as standalone blocks.
+      const hasRenderableFields = (blk) => blk.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
+      if (!hasRenderableFields(b)) {
+        // For group heads, check descendants before discarding
+        const children = b.getDescendants(dataBlocks);
+        if (!children.some(hasRenderableFields)) return false;
+      }
 
       return true;
     });
 
     if (orphanBlocks.length > 0) {
-      // Create a section for each block
+      // Create a section for each orphan root block and add its children to the same section
       orphanBlocks.forEach(block => {
-        this._addSectionWithBlock(block);
+        // Group sections use the group title and hide the section header
+        // (the group renders its own header inside the wrapper). Standalone blocks keep
+        // the block text as the section title with the header visible.
+        const isGroupHead = block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
+        const section = new stic_AwfLayoutSection({
+          title: isGroupHead ? (block.group_title || block.text) : block.text,
+          showTitle: !isGroupHead,
+        });
+
+        // Add the root block
+        section.elements.push(new stic_AwfLayoutElement({
+          type: 'datablock',
+          ref_id: block.id
+        }));
+        placedBlockIds.add(block.id);
+
+        // Add the block's descendants (children, grandchildren, etc.) to the same section
+        const descendants = block.getDescendants(dataBlocks);
+        descendants.forEach(child => {
+          if (placedBlockIds.has(child.id)) return;
+          if (!child.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return;
+          section.elements.push(new stic_AwfLayoutElement({
+            type: 'datablock',
+            ref_id: child.id
+          }));
+          placedBlockIds.add(child.id);
+        });
+
+        this.structure.push(section);
       });
     }
   }
@@ -2778,6 +2859,7 @@ class stic_AwfConfiguration {
     block.sanitizeRepeatableLimits();
     this.cleanGroupMetadataIfNeeded(block);
     this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
   }
 
   /**
@@ -2817,6 +2899,7 @@ class stic_AwfConfiguration {
     block.sanitizeRepeatableLimits();
     this.cleanGroupMetadataIfNeeded(block);
     this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
   }
   
   /**
@@ -2827,6 +2910,7 @@ class stic_AwfConfiguration {
     if (!block) return;
     this.disbandGroup(block);
     this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
   }
 
   /**
@@ -3074,6 +3158,7 @@ class stic_AwfConfiguration {
       }
     });
     this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
   }
 
 /**

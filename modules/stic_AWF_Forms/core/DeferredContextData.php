@@ -96,10 +96,20 @@ class DeferredContextData
         $this->blockReferences = [];
         foreach ($context->formConfig->data_blocks as $bId => $b) {
             // STIC-Custom OC - 20250803 - Repeatable data blocks support
-            // MVP restriction: deferred actions operate on non-repeatable blocks only.
-            // Blocks inside a repeatable group (repeatable root or children) are excluded
-            // from blockReferences because indexed references are not restored yet.
-            if ($b->isRepeatable() || !empty($b->group_root)) {
+            // MVP restriction: deferred actions operate on non-grouped blocks only.
+            // Blocks inside a repeatable or optional group (head or children) are excluded because
+            // indexed references are not restored yet. Children of SIMPLE groups keep scalar refs.
+            $blockChildren = $context->formConfig->getGroupChildren($b);
+            $isInRepeatableOrOptionalGroup = false;
+            if ($b->isRepeatable() || $b->isOptional() || !empty($blockChildren)) {
+                $isInRepeatableOrOptionalGroup = true;
+            } elseif (!empty($b->group_root)) {
+                $rootBlock = $context->formConfig->data_blocks[$b->group_root] ?? null;
+                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                    $isInRepeatableOrOptionalGroup = true;
+                }
+            }
+            if ($isInRepeatableOrOptionalGroup) {
                 continue;
             }
             // END STIC-Custom OC

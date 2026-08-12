@@ -121,14 +121,17 @@ class ServerActionFlowExecutor {
                 if ($targetBlockId !== null) {
                     $targetBlock = $this->context->formConfig->data_blocks[$targetBlockId] ?? null;
                     if ($targetBlock !== null) {
-                        if ($targetBlock->isRepeatable()) {
+                        //  Repeatable and optional groups trigger instance-based execution.
+                        // Simple groups (mandatory, max=1) keep the scalar path (no instance index)
+                        // to preserve backward compatibility with non-expandable actions until B-4.
+                        if ($targetBlock->isRepeatable() || $targetBlock->isOptional()) {
                             $repeatRoot = $targetBlock;
                         } elseif (!empty($targetBlock->group_root)) {
-                            // STIC-Custom OC - 20260807 - Resolve the TOP-LEVEL branch root, not just the
-                            // immediate parent: with multi-level adoption a level-2+ child's group_root
-                            // points to its (non-repeatable) immediate parent.
-                            $repeatRoot = $this->context->formConfig->getGroupRootBlock($targetBlock);
-                            // END STIC-Custom OC
+                            // Child of a repeatable/optional group → resolve the top-level root
+                            $rootBlock = $this->context->formConfig->getGroupRootBlock($targetBlock);
+                            if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                                $repeatRoot = $rootBlock;
+                            }
                         }
                     }
                 }

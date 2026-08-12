@@ -581,12 +581,25 @@ class ResponseHandler
             // Datablock is detached
             if (empty($block->module)) continue;
 
-            // STIC-Custom OC - 20250803 - Repeatable blocks validation
-            // Child blocks (group_root set) are validated together with their repeatable root
+            // STIC-Custom OC - 20250803 - Repeatable data blocks support
+            // Child blocks (group_root set) are validated together with their root when the root
+            // is a repeatable or optional group. Children of SIMPLE groups (mandatory, max=1) are
+            // validated individually as scalar blocks (they use static field names).
             if (!empty($block->group_root)) {
-                continue;
+                $rootBlock = $config->data_blocks[$block->group_root] ?? null;
+                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                    continue;
+                }
+                // Simple group child: fall through to scalar validation below
             }
-            if ($block->isRepeatable()) {
+
+            // Repeatable and optional groups are processed as groups:
+            // resolve instances, validate root + descendants per instance.
+            // Simple groups (mandatory, max=1) with children keep the scalar path: the root
+            // is validated as a normal block, and children are validated individually (they
+            // use static field names). This preserves backward compatibility with non-expandable
+            // actions until generic unrolling (B-4) lands.
+            if ($block->isRepeatable() || $block->isOptional()) {
                 $context = new ExecutionContext('', '', $data, $config, null, '', null, '');
                 $instances = DataBlockResolved::resolveInstances($block, $data, $context);
                 $minInstances = $block->min_instances;
@@ -803,10 +816,17 @@ class ResponseHandler
         // STIC-Custom OC - 20250803 - Repeatable data blocks support
         $context = new ExecutionContext('', '', $submittedData, $formConfig, null, '', null, '');
         foreach ($formConfig->data_blocks as $block) {
-            // Child blocks are processed together with their repeatable root
-            if (!empty($block->group_root)) continue;
+            // Child blocks are processed together with their root when the root is repeatable/optional.
+            // Children of SIMPLE groups fall through to scalar detail generation.
+            if (!empty($block->group_root)) {
+                $rootBlock = $formConfig->data_blocks[$block->group_root] ?? null;
+                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                    continue;
+                }
+            }
 
-            if ($block->isRepeatable()) {
+            // Repeatable and optional groups: generate details for root + descendants per instance.
+            if ($block->isRepeatable() || $block->isOptional()) {
                 $instances = DataBlockResolved::resolveInstances($block, $submittedData, $context);
                 // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches)
                 $children = $formConfig->getGroupDescendants($block);

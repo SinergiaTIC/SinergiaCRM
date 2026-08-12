@@ -162,10 +162,17 @@ class stic_AWFUtils {
                 if (!$block) continue;
 
                 // STIC-Custom OC - 20250803 - Repeatable data blocks support
-                // Child blocks are rendered together with their repeatable root
-                if (!empty($block->group_root)) continue;
+                // Child blocks are rendered together with their root when the root is repeatable/optional.
+                // Children of SIMPLE groups fall through to scalar summary rendering.
+                if (!empty($block->group_root)) {
+                    $rootBlock = $context->formConfig->data_blocks[$block->group_root] ?? null;
+                    if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                        continue;
+                    }
+                }
 
-                if ($block->isRepeatable()) {
+                // Repeatable and optional groups render as per-instance rows in the summary.
+                if ($block->isRepeatable() || $block->isOptional()) {
                     // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches);
                     // config comes from the context ($formConfig was never defined in this scope).
                     $formConfig = $context->formConfig;
@@ -934,10 +941,17 @@ class stic_AWFUtils {
     public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
         foreach ($formConfig->data_blocks as $dataBlock) {
             // STIC-Custom OC - 20250803 - Repeatable data blocks support
-            // Child blocks are filled together with their repeatable root
-            if (!empty($dataBlock->group_root)) continue;
+            // Child blocks are filled together with their root when the root is repeatable/optional.
+            // Children of SIMPLE groups fall through to scalar boolean filling.
+            if (!empty($dataBlock->group_root)) {
+                $rootBlock = $formConfig->data_blocks[$dataBlock->group_root] ?? null;
+                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                    continue;
+                }
+            }
 
-            if ($dataBlock->isRepeatable()) {
+            // Repeatable and optional groups process boolean fields for all instances.
+            if ($dataBlock->isRepeatable() || $dataBlock->isOptional()) {
                 // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches)
                 $blocksInGroup = array_merge([$dataBlock], $formConfig->getGroupDescendants($dataBlock));
                 foreach (['', '_detached_'] as $prefix) {

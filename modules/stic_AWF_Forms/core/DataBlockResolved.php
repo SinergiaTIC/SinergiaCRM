@@ -226,10 +226,11 @@ class DataBlockResolved {
         sort($indexes);
 
         if (empty($indexes)) {
-            if ($block->isRepeatable() && $block->isOptional()) {
+            // Optional blocks (repeatable or not) with no submitted instances → no instances.
+            // Mandatory blocks → one empty instance so required-field validation errors are produced.
+            if ($block->isOptional()) {
                 return [];
             }
-            // Return a single empty instance so required-field validation errors are produced
             return [new DataBlockResolved($block, $formData, $context, 0)];
         }
 
