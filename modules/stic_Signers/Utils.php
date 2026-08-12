@@ -83,12 +83,14 @@ class stic_SignersUtils
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
 
-        // Set From and FromName using current user or system defaults
-        $fromEmail = $current_user->email1 ?: $defaults['email'];
-        $mail->From = $fromEmail;
+        // Use system default email for From header (SMTP compatibility)
+        $mail->From = $defaults['email'];
+        $mail->FromName = $defaults['name'];
 
-        $fromName = $current_user->name ?: $defaults['name'];
-        $mail->FromName = $fromName;
+        // Add current user as Reply-To so recipients can respond directly
+        if (!empty($current_user->email1)) {
+            $mail->AddReplyTo($current_user->email1, $current_user->name);
+        }
 
         // Add recipient
         if (empty($destAddress)) {
@@ -206,12 +208,14 @@ class stic_SignersUtils
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
 
-        // Set From and FromName
-        $fromEmail = $current_user->email1 ?: $defaults['email'];
-        $mail->From = $fromEmail;
+        // Use system default email for From header (SMTP compatibility)
+        $mail->From = $defaults['email'];
+        $mail->FromName = $defaults['name'];
 
-        $fromName = $current_user->name ?: $defaults['name'];
-        $mail->FromName = $fromName;
+        // Add current user as Reply-To so recipients can respond directly
+        if (!empty($current_user->email1)) {
+            $mail->AddReplyTo($current_user->email1, $current_user->name);
+        }
 
         // Add recipient
         if (empty($destAddress)) {
