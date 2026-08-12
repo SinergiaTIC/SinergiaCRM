@@ -2891,6 +2891,177 @@ class stic_AwfConfiguration {
   }
 
   /**
+   * Resolves the block referenced by a parameter value.
+   * - DATA_BLOCK parameters: value is the block id directly.
+   * - FIELD / FIELD_LIST / CRM_RECORD parameters: value is "BlockName.field" (or "_detached.BlockName.field"),
+   *   resolve to the owning block by name.
+   * @param {stic_AwfActionParameter} param
+   * @returns {stic_AwfDataBlock|null}
+   */
+  _getBlockForActionParameter(param) {
+    if (!param || !param.value) return null;
+    // Direct data-block reference
+    if (param.type === 'dataBlock') {
+      return this.data_blocks.find(b => b.id === param.value) || null;
+    }
+    // Field-based reference: value is "<prefix>BlockName.field"
+    if (param.type === 'field' || param.type === 'field_list' || param.type === 'crmRecord') {
+      const raw = String(param.value);
+      const stripped = raw.startsWith('_detached.') ? raw.slice('_detached.'.length) : raw;
+      const dotPos = stripped.indexOf('.');
+      if (dotPos <= 0) return null;
+      const blockName = stripped.slice(0, dotPos);
+      return this.data_blocks.find(b => b.name === blockName) || null;
+    }
+    return null;
+  }
+
+  /**
+   * Returns the motor group of a block: the nearest ancestor (or self) that acts as a
+   * repeatable group head (cardinality > 1). Returns null for scalar blocks.
+   * Uses getGroupHeadBlock which walks the immediate-parent chain (supports subgroups).
+   * @param {stic_AwfDataBlock} block
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getBlockMotorGroup(block) {
+    if (!block) return null;
+    // Only repeatable heads are motor groups (optional-only groups are 0..1, not motor).
+    if (block.is_repeatable) return block;
+    const head = block.getGroupHeadBlock(this.data_blocks);
+    return (head && head.is_repeatable) ? head : null;
+  }
+
+  /**
+   * Returns the group head of a block for DISPLAY purposes: the nearest ancestor (or self)
+   * that acts as a group head — repeatable, optional, OR a simple block with children.
+   * Unlike getBlockMotorGroup, this includes optional and simple groups (not just repeatable).
+   * @param {stic_AwfDataBlock} block
+   * @returns {stic_AwfDataBlock|null}
+   */
+  _getBlockGroupHead(block) {
+    if (!block) return null;
+    if (block.is_repeatable || block.is_optional || block.getChildren(this.data_blocks).length > 0) return block;
+    let current = block.getParentBlock(this.data_blocks);
+    while (current) {
+      if (current.is_repeatable || current.is_optional || current.getChildren(this.data_blocks).length > 0) return current;
+      current = current.getParentBlock(this.data_blocks);
+    }
+    return null;
+  }
+
+  /**
+   * Returns the group binding of an action for DISPLAY purposes (badge, grouping).
+   * Inspects ALL parameters (dataBlock, field, field_list, crmRecord types) and execution
+   * conditions — not just `data_block_id` — so custom actions with non-standard parameter
+   * names are correctly detected. Detects any group type (repeatable, optional, or simple
+   * with children). Always computed LIVE from the current data-block structure.
+   * @param {stic_AwfAction} action
+   * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+   */
+  getActionGroupBinding(action) {
+    if (!action) return null;
+    const blocksReferenced = new Set();
+
+    // 1. All parameters — resolve block via _getBlockForActionParameter (handles dataBlock,
+    //    field, field_list, crmRecord types, not just data_block_id)
+    (action.parameters || []).forEach(param => {
+      const block = this._getBlockForActionParameter(param);
+      if (block) blocksReferenced.add(block.id);
+    });
+
+    // 2. Conditions — field_name is "BlockName.field"
+    (action.conditions || []).forEach(cond => {
+      if (!cond.field_name) return;
+      const raw = String(cond.field_name);
+      const stripped = raw.startsWith('_detached.') ? raw.slice('_detached.'.length) : raw;
+      const dotPos = stripped.indexOf('.');
+      if (dotPos <= 0) return;
+      const blockName = stripped.slice(0, dotPos);
+      const block = this.data_blocks.find(b => b.name === blockName);
+      if (block) blocksReferenced.add(block.id);
+    });
+
+    // Find the first referenced block whose group head exists.
+    for (const blockId of blocksReferenced) {
+      const block = this.data_blocks.find(b => b.id === blockId);
+      if (!block) continue;
+      const head = this._getBlockGroupHead(block);
+      if (head) {
+        return {
+          rootBlockId: head.id,
+          groupTitle: head.group_title || head.text,
+          isRoot: head.id === block.id,
+        };
+      }
+    }
+    return null;
+  }
+
+  /**
+   * AWF Paso 3 §2 — Returns the single Motor Group of an action.
+   * An action belongs to Grup X if any of its parameters (required or not) or its
+   * execution conditions reference a block that belongs to Grup X (root or relational child).
+   * Terminal/global actions always return null (§3.2): they cannot bind to repeatable groups.
+   * @param {stic_AwfAction} action
+   * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null if the action is scalar-only
+   */
+  getActionMotorGroup(action) {
+    if (!action) return null;
+    // Terminal / global actions cannot be bound to a repeatable group (§3.2)
+    if (action.is_terminal) return null;
+    const def = utils.getDefinedActions()?.find(d => d.name === action.name);
+    if (def && def.resumptionContext === 'original_user' && !def.isTerminal) {
+      // Pure global actions (e.g. one-off admin notice) — no motor group.
+      // Heuristic: treat deferred "original_user" non-terminal actions as global.
+      // (Terminal flag is authoritative; this is a secondary guard.)
+    }
+
+    const blocksReferenced = new Set();
+    // 1. Parameters
+    (action.parameters || []).forEach(param => {
+      const block = this._getBlockForActionParameter(param);
+      if (block) blocksReferenced.add(block.id);
+    });
+    // 2. Conditions — field_name is "BlockName.field"
+    (action.conditions || []).forEach(cond => {
+      if (!cond.field_name) return;
+      const raw = String(cond.field_name);
+      const stripped = raw.startsWith('_detached.') ? raw.slice('_detached.'.length) : raw;
+      const dotPos = stripped.indexOf('.');
+      if (dotPos <= 0) return;
+      const blockName = stripped.slice(0, dotPos);
+      const block = this.data_blocks.find(b => b.name === blockName);
+      if (block) blocksReferenced.add(block.id);
+    });
+
+    // Find the first referenced block whose motor group is repeatable.
+    // All repeatable-bound references must share the SAME motor group (disjoint rule, §2.3);
+    // if two different motor groups are found, the action is in an inconsistent state —
+    // return the first so the UI can highlight the conflict.
+    let motorFound = null;
+    for (const blockId of blocksReferenced) {
+      const block = this.data_blocks.find(b => b.id === blockId);
+      if (!block) continue;
+      const motor = this.getBlockMotorGroup(block);
+      if (motor) {
+        if (!motorFound) {
+          motorFound = motor;
+        } else if (motor.id !== motorFound.id) {
+          // Cross-group conflict — keep the first detected motor; the UI layer
+          // (getAllowedParamBlocks) will prevent adding the conflicting reference.
+          break;
+        }
+      }
+    }
+    if (!motorFound) return null;
+    return {
+      rootBlockId: motorFound.id,
+      groupTitle: motorFound.group_title || motorFound.text,
+      isRoot: true,
+    };
+  }
+
+  /**
    * Re-evaluate and update all groups on the form: orphan adoption and group titles.
    */
   refreshGroups() {
@@ -3308,6 +3479,22 @@ class stic_AwfConfiguration {
     const autoActions = flow.actions.filter(a => a.is_automatic);
     const manualActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order >= -1);
     const terminalActions = flow.actions.filter(a => a.is_terminal);
+
+    // AWF Paso 3 §ADR-5 — Contiguous per-branch grouping of automatic actions.
+    // Within autoActions, keep topological order but cluster actions of the SAME
+    // hierarchy branch (group_root) together so all persistence of one branch
+    // resolves in sequence. A stable sort by branch key preserves the topo order
+    // inside each branch.
+    const branchKey = (a) => {
+      const motor = this.getActionMotorGroup(a);
+      return motor ? motor.rootBlockId : '';
+    };
+    autoActions.sort((a, b) => {
+      const ka = branchKey(a), kb = branchKey(b);
+      if (ka === kb) return (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0);
+      return ka < kb ? -1 : 1; // empty branch key ('') groups scalar auto-actions first
+    });
+
     flow.actions = [...preAutoActions, ...autoActions, ...manualActions, ...terminalActions];
 
     // Reassign order property.

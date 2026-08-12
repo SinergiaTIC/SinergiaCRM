@@ -44,59 +44,60 @@
             <div class="accordion">
                 <template x-for="action in actions" :key="action.id">
                     <div class="accordion-item" x-data="{opened:false}">
-                        <div :id="action.id+'_Header'" class="mt-1 mb-1 pe-2 btn accordion-header accordion-button p-0 align-items-center" :class="{'collapsed': !opened}">
-                            <div class="d-flex flex-grow-1 align-items-center py-3 ps-3 pe-2" role="button" @click="opened = !opened"
-                                 data-bs-toggle="collapse" :data-bs-target="'#'+action.id+'_Content'" :aria-controls="action.id+'_Content'">
-                                <div class="flex-column">
-                                    <!-- Group badge -->
-                                    <template x-if="getActionRepeatGroup(action)">
-                                        <div class="d-flex">
-                                            <span class="badge bg-transparent text-dark" style="margin-left:-15px; font-weight: normal;" 
-                                                  :title="utils.translateForFieldLabel('LBL_DATABLOCK_IN_GROUP_TITLE') + ' ' + getActionRepeatGroup(action).groupTitle"
-                                                  x-text="'📦 ' + getActionRepeatGroup(action).groupTitle"></span>
-                                        </div>
-                                    </template>
-                                    <!-- Automatic badge -->
-                                    <template x-if="action.is_automatic">
-                                        <div class="d-flex">
-                                            <span class="badge rounded-pill bg-info text-dark me-2" x-text="utils.translate('LBL_ACTION_AUTOMATIC')"
-                                                  :title="utils.translate('LBL_ACTION_AUTOMATIC_TITLE')"></span>
-                                        </div>
-                                    </template>
-                                    <!-- Condition -->
-                                    <template x-if="action.conditions && action.conditions.length > 0 && action.conditions[0].field_name">
-                                        <div class="d-flex">
-                                            <span class="badge rounded-pill bg-warning-subtle text-dark me-2" :title="utils.translate('LBL_ACTION_CONDITION_TEXT')">
-                                                <i class="suitepicon suitepicon-action-confirm"></i>
-                                                <span x-text="getActionConditionLabel(action)">
-                                            </span>
-                                        </div>
-                                    </template>
-                                </div>
-                                <!-- Action Text -->
-                                <div class="fw-bold text-truncate">
-                                    <span :id="`actionTextEdit-${action.id}`" data-model="action.text" x-init="sticControls.editableText($el);"></span>
-                                </div>
-                                <!-- Title -->
-                                <div class="text-muted small text-truncate px-2" style="flex: 1; text-align: end;">
-                                    <span x-text="action.title"></span>
-                                </div> 
-                            </div>
-                            <!-- Buttons -->
-                            <div class="d-flex align-items-center pe-3">
-                                <!-- Reorder buttons: only for manual, non-terminal actions -->
-                                <template x-if="!action.is_automatic && !action.is_terminal">
-                                    <div class="d-inline-flex input-group" role="group">
-                                        <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                :disabled="!canMoveUpAction(action);" @click="moveUpAction(action);">
-                                            <span class="suitepicon suitepicon-action-move-up"></span>
-                                        </button>
-                                        <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                :disabled="!canMoveDownAction(action);" @click="moveDownAction(action);">
-                                            <span class="suitepicon suitepicon-action-move-down"></span>
-                                        </button>
+                        <div :id="action.id+'_Header'" class="accordion-header">
+                            <!-- Group Badge -->
+                            <template x-if="getActionRepeatGroup(action)">
+                                <span class="badge bg-transparent text-dark ps-1" style="font-weight: normal;"
+                                      :title="utils.translateForFieldLabel('LBL_DATABLOCK_IN_GROUP_TITLE') + ' ' + getActionRepeatGroup(action).groupTitle"
+                                      x-text="'📦 ' + getActionRepeatGroup(action).groupTitle">
+                                </span>
+                            </template>
+                            <div class="accordion-button mt-1 mb-1 pe-2 btn p-0 align-items-center" :class="{'collapsed': !opened}">
+                                <div class="d-flex flex-grow-1 align-items-center py-3 ps-3 pe-2" role="button" @click="opened = !opened"
+                                    data-bs-toggle="collapse" :data-bs-target="'#'+action.id+'_Content'" :aria-controls="action.id+'_Content'">
+                                    <div class="flex-column">
+                                        <!-- Automatic badge -->
+                                        <template x-if="action.is_automatic">
+                                            <div class="d-flex">
+                                                <span class="badge rounded-pill bg-info text-dark me-2" x-text="utils.translate('LBL_ACTION_AUTOMATIC')"
+                                                    :title="utils.translate('LBL_ACTION_AUTOMATIC_TITLE')"></span>
+                                            </div>
+                                        </template>
+                                        <!-- Condition -->
+                                        <template x-if="action.conditions && action.conditions.length > 0 && action.conditions[0].field_name">
+                                            <div class="d-flex">
+                                                <span class="badge rounded-pill bg-warning-subtle text-dark me-2" :title="utils.translate('LBL_ACTION_CONDITION_TEXT')">
+                                                    <i class="suitepicon suitepicon-action-confirm"></i>
+                                                    <span x-text="getActionConditionLabel(action)">
+                                                </span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                    <!-- Action Text -->
+                                    <div class="fw-bold text-truncate">
+                                        <span :id="`actionTextEdit-${action.id}`" data-model="action.text" x-init="sticControls.editableText($el);"></span>
+                                    </div>
+                                    <!-- Title -->
+                                    <div class="text-muted small text-truncate px-2" style="flex: 1; text-align: end;">
+                                        <span x-text="action.title"></span>
                                     </div> 
-                                </template>
+                                </div>
+                                <!-- Buttons -->
+                                <div class="d-flex align-items-center pe-3">
+                                    <!-- Reorder buttons: only for manual, non-terminal actions -->
+                                    <template x-if="!action.is_automatic && !action.is_terminal">
+                                        <div class="d-inline-flex input-group" role="group">
+                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                    :disabled="!canMoveUpAction(action);" @click="moveUpAction(action);">
+                                                <span class="suitepicon suitepicon-action-move-up"></span>
+                                            </button>
+                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                    :disabled="!canMoveDownAction(action);" @click="moveDownAction(action);">
+                                                <span class="suitepicon suitepicon-action-move-down"></span>
+                                            </button>
+                                        </div> 
+                                    </template>
+                                </div>
                             </div>
                         </div>
                         <div :id="action.id+'_Content'" class="accordion-collapse collapse" :aria-labelledby="action.id+'_Header'">
@@ -268,7 +269,7 @@
                                 <i class="suitepicon suitepicon-action-settings me-2"></i>
                                 <div class="flex-grow-1">
                                     <h4 class="mb-0" id="ModalAction-title" data-model="$store.actionEditor.action.text" x-init="sticControls.editableText($el);"></h4>
-                                    <span class="ms-3 small" x-text="$store.actionEditor.definition.description"></span>
+                                    <span class="ms-3 small" x-text="$store.actionEditor.definition?.description"></span>
                                 </div>
                             </div>
                             <!-- Condition -->
@@ -286,8 +287,8 @@
                                         <template x-if="$store.actionEditor.applyCondition && $store.actionEditor.action.conditions && $store.actionEditor.action.conditions.length > 0">
                                             <div class="col-4">
                                                 <label for="action_ConditionField" class="form-label" x-text="utils.translateForFieldLabel('LBL_CONDITION_FIELD_NAME')"></label>
-                                                <stic-select id="action_ConditionField" x-bind:disabled="$store.actionEditor.availableFieldsInForm.length<=1"
-                                                             options="$store.actionEditor.availableFieldsInFormForSelect" model="$store.actionEditor.action.conditions[0].field_name" 
+                                                <stic-select id="action_ConditionField" x-bind:disabled="$store.actionEditor.availableFieldsInFormForConditionForSelect.length<=1"
+                                                             options="$store.actionEditor.availableFieldsInFormForConditionForSelect" model="$store.actionEditor.action.conditions[0].field_name" 
                                                              @change="$store.actionEditor.updateActiveConditionFieldDef($store.actionEditor.action.conditions[0].field_name);"></stic-select>
                                             </div>
                                         </template>
@@ -318,7 +319,7 @@
                                 </div>
                             </div>
                             <!-- Continue on Error -->
-                            <template x-if="!$store.actionEditor.action.is_terminal && $store.actionEditor.definition?.type !== 'Deferred'">
+                            <template x-if="$store.actionEditor.action && !$store.actionEditor.action.is_terminal && $store.actionEditor.definition?.type !== 'Deferred'">
                                 <div class="card shadow-sm mb-3">
                                     <div class="card-body py-2">
                                         <div class="form-switch">
@@ -337,13 +338,14 @@
                                 <div class="card-body">
                                     <form id="ModalActionConfigForm">
                                         <div class="row g-3">
-                                            <template x-if="$store.actionEditor.definition.parameters.length == 0">
+                                            <template x-if="$store.actionEditor.definition && $store.actionEditor.definition.parameters.length == 0">
                                                 <span class="text-muted small fst-italic" x-text="utils.translate('LBL_ACTION_NO_PARAMS')"></span>
                                             </template>
 
-                                            <template x-for="param in $store.actionEditor.action.parameters" :key="param.name">
+                                            <template x-if="$store.actionEditor.action && $store.actionEditor.action.parameters">
+                                                <template x-for="param in $store.actionEditor.action.parameters" :key="param.name">
                                                 <div class="mb-3" :class="paramDef ? (paramDef.colSize || 'col-4') : 'col-4'" 
-                                                     x-data="{ paramDef: $store.actionEditor.definition.parameters.find(p => p.name == param.name) }" x-show="paramDef">
+                                                     x-data="{ paramDef: $store.actionEditor.definition?.parameters.find(p => p.name == param.name) }" x-show="paramDef">
                                                     <!-- Label, required, description -->
                                                     <label :for="'ModalAction-param-'+paramDef.name" class="form-label" x-init="utils.setInlineHelpQtip()">
                                                         <span x-text="utils.toFieldLabelText(paramDef.text)"></span>
@@ -392,7 +394,7 @@
                                                     <template x-if="paramDef.type == 'field'">
                                                         <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" :required="paramDef.required">
                                                             <option value="" disabled :selected="!param.value" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                                                            <template x-for="field in $store.actionEditor.getSupportedFieldsList(paramDef.supportedDataTypes)" :key="field.id">
+                                                            <template x-for="field in $store.actionEditor.getSupportedFieldsList(paramDef.supportedDataTypes, $store.actionEditor.action)" :key="field.id">
                                                                 <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)" :selected="field.id == param.value"></option>
                                                             </template>
                                                         </select>
@@ -401,7 +403,7 @@
                                                     <!-- Type: field_list -->
                                                     <template x-if="paramDef.type == 'field_list'">
                                                         <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" multiple :required="paramDef.required">
-                                                            <template x-for="field in $store.actionEditor.getSupportedFieldsList(paramDef.supportedDataTypes)" :key="field.id">
+                                                            <template x-for="field in $store.actionEditor.getSupportedFieldsList(paramDef.supportedDataTypes, $store.actionEditor.action)" :key="field.id">
                                                                 <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)" :selected="param.value && param.value.includes(field.id)"></option>
                                                             </template>
                                                         </select>
@@ -413,7 +415,7 @@
                                                                 @change="param.value_text = $event.target.options[$event.target.selectedIndex].text"
                                                                 :required="paramDef.required">
                                                             <option value="" disabled :selected="!param.value" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                                                            <template x-for="block in $store.actionEditor.getSupportedDataBlocksList(paramDef.supportedModules)" :key="block.id">
+                                                            <template x-for="block in $store.actionEditor.getSupportedDataBlocksList(paramDef.supportedModules, $store.actionEditor.action)" :key="block.id">
                                                                 <option :value="block.id" x-text="block.text" :selected="block.id == param.value"></option>
                                                             </template>
                                                         </select>
@@ -487,7 +489,7 @@
                                                                 <template x-if="activeOpt && activeOpt.resolvedType == 'field'">
                                                                     <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" :required="paramDef.required">
                                                                         <option value="" disabled :selected="!param.value" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                                                                        <template x-for="field in $store.actionEditor.getSupportedFieldsList(activeOpt.supportedDataTypes)" :key="field.id">
+                                                                        <template x-for="field in $store.actionEditor.getSupportedFieldsList(activeOpt.supportedDataTypes, $store.actionEditor.action)" :key="field.id">
                                                                             <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)" :selected="field.id == param.value"></option>
                                                                         </template>
                                                                     </select>
@@ -496,7 +498,7 @@
                                                                 <!-- Resolved Type: field_list-->
                                                                 <template x-if="activeOpt && activeOpt.resolvedType == 'field_list'">
                                                                     <select :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name" class="form-select" x-model="param.value" multiple :required="paramDef.required">
-                                                                        <template x-for="field in $store.actionEditor.getSupportedFieldsList(activeOpt.supportedDataTypes)" :key="field.id">
+                                                                        <template x-for="field in $store.actionEditor.getSupportedFieldsList(activeOpt.supportedDataTypes, $store.actionEditor.action)" :key="field.id">
                                                                             <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)" :selected="param.value && param.value.includes(field.id)"></option>
                                                                         </template>
                                                                     </select>
@@ -508,7 +510,7 @@
                                                                             @change="param.value_text = $event.target.options[$event.target.selectedIndex].text"
                                                                             :required="paramDef.required">
                                                                         <option value="" disabled :selected="!param.value" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
-                                                                        <template x-for="block in $store.actionEditor.getSupportedDataBlocksList(activeOpt.supportedModules)" :key="block.id">
+                                                                        <template x-for="block in $store.actionEditor.getSupportedDataBlocksList(activeOpt.supportedModules, $store.actionEditor.action)" :key="block.id">
                                                                             <option :value="block.id" x-text="block.text" :selected="block.id == param.value"></option>
                                                                         </template>
                                                                     </select>
@@ -543,6 +545,7 @@
                                                         </div>
                                                     </template>
                                                 </div>
+                                            </template>
                                             </template>
                                         </div>
                                     </form>

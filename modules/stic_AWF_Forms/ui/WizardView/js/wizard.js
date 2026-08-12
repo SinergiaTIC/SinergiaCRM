@@ -1747,37 +1747,17 @@ class WizardStep3 {
       get actions() { return this.flow?.actions ?? []; },
 
       /**
-       * Returns repeatable-group metadata for an action, or null if the action does not
-       * target a block of a repeatable group. Computed live from the action's
-       * data_block_id parameter so it works for manual, automatic and legacy actions;
-       * falls back to the repeat_group field stored on automatically generated actions.
+       * Returns the group metadata for an action, or null if the action does not
+       * target a block that belongs to a group (repeatable OR optional OR simple with children).
+       * Always computed LIVE from the current data-block structure so it reflects
+       * the latest group configuration. Inspects ALL parameters and conditions — not just
+       * `data_block_id` — so custom actions are correctly detected.
        * @param {stic_AwfAction} action
        * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
        */
       getActionRepeatGroup(action) {
         if (!action || !this.formConfig) return null;
-        const blockParam = (action.parameters || []).find(p => p.name === 'data_block_id');
-        if (blockParam && blockParam.value) {
-          const block = this.data_blocks.find(b => b.id === blockParam.value);
-          if (block) {
-            let rootBlock = null;
-            let isRoot = false;
-            if (block.is_repeatable) {
-              rootBlock = block;
-              isRoot = true;
-            } else if (block.group_root && block.group_root !== '') {
-              rootBlock = this.data_blocks.find(b => b.id === block.group_root) || null;
-            }
-            if (rootBlock) {
-              return {
-                rootBlockId: rootBlock.id,
-                groupTitle: rootBlock.group_title || rootBlock.text,
-                isRoot: isRoot,
-              };
-            }
-          }
-        }
-        return action.repeat_group || null;
+        return this.formConfig.getActionGroupBinding(action);
       },
 
       selectedCategory: '', 
@@ -1994,8 +1974,11 @@ class WizardStep3 {
 
               this.currentStep = 1;
 
-              // For creation, we start without action or definition: A definition must be selected
-              this.action = null;
+              // For creation, we start without a definition: A definition must be selected.
+              // NOTE: action is NOT nulled here — keeping the previous action avoids Alpine
+              // "Cannot read properties of null" errors when x-if step-2 expressions (data-model
+              // via editableText) are re-evaluated reactively before the x-if removes the DOM.
+              // Step 2 won't show because `definition` is null (x-if guard is false).
               this.definition = null;
               this.isTerminalFilter = isTerminal;
               this.selectedActionDefName = '';
@@ -2162,17 +2145,55 @@ class WizardStep3 {
               }
             },
 
+            /**
+             * AWF Paso 3 §2.1 — Motor Group of the action being edited.
+             * Delegates to formConfig.getActionMotorGroup(action).
+             * @param {stic_AwfAction} action
+             * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+             */
+            getActionMotorGroup(action) {
+              return this.formConfig.getActionMotorGroup(action);
+            },
+
+            /**
+             * AWF Paso 3 §2.3 — Disjoint-groups filter for parameter block selectors.
+             * Returns true if `block` is allowed given the action's current Motor Group:
+             *  - Terminal/global actions: only scalar blocks (no repeatable group).
+             *  - If the action already has a Motor Group X: allow blocks of Grup X (root + children/subgroups)
+             *    AND scalar blocks (no motor group). Block from a disjoint repeatable group → false.
+             *  - If the action has no Motor Group yet: all blocks allowed.
+             * @param {stic_AwfDataBlock} block
+             * @param {stic_AwfAction} action
+             * @returns {boolean}
+             */
+            isBlockAllowedForAction(block, action) {
+              if (!block || !action) return true;
+              // Terminal/global actions cannot bind to any repeatable group (§3.2)
+              if (action.is_terminal) {
+                const motor = this.formConfig.getBlockMotorGroup(block);
+                return !motor;
+              }
+              const motorGroup = this.formConfig.getActionMotorGroup(action);
+              if (!motorGroup) return true; // No motor group yet: everything allowed
+              // Action already bound to a motor group → only same group (incl. subgroups) + scalars
+              const blockMotor = this.formConfig.getBlockMotorGroup(block);
+              if (!blockMotor) return true; // scalar: allowed as constant (§2.2)
+              return blockMotor.id === motorGroup.rootBlockId;
+            },
+
             /** 
              * Returns the list of Data Blocks available to assign in the parameters 
              * @param {Array} supportedModules List of Data Block modules to display 
+             * @param {stic_AwfAction} [action] Current action (for disjoint-groups filtering, §2.3)
              * @returns {Array} List of {id, text, module} data blocks 
              */
-            getSupportedDataBlocksList(supportedModules = []) {
+            getSupportedDataBlocksList(supportedModules = [], action = null) {
               let blocks = [];
               if (!supportedModules) supportedModules = [];
 
               this.data_blocks.forEach(b => {
-                if (supportedModules.length == 0 || supportedModules.includes(b.module)) {
+                if ((supportedModules.length == 0 || supportedModules.includes(b.module)) &&
+                    this.isBlockAllowedForAction(b, action)) {
                   blocks.push({
                     id: b.id, 
                     text: `${b.text} (${b.getModuleText()})`,
@@ -2186,14 +2207,16 @@ class WizardStep3 {
             /** 
              * Returns the list of fields available in the form 
              * @param {Array} supportedDataTypes List of the data types of the fields to display 
+             * @param {stic_AwfAction} [action] Current action (for disjoint-groups filtering, §2.3)
              * @returns List of {id, text, typeInActions} fields 
              */
-            getSupportedFieldsList(supportedDataTypes = []) {
+            getSupportedFieldsList(supportedDataTypes = [], action = null) {
               // Format value: "BlockName.FieldName" / "_detached.BlockName.FieldName"
               let fields = [];
               if (!supportedDataTypes) supportedDataTypes = [];
 
               this.data_blocks.forEach(block => {
+                  if (!this.isBlockAllowedForAction(block, action)) return;
                   block.fields.forEach(field => {
                       const typeInActions = field.getTypeInActions();
                       if (supportedDataTypes.length == 0 || supportedDataTypes.includes(typeInActions)) {
@@ -2207,6 +2230,40 @@ class WizardStep3 {
                   });
               });
               return fields;
+            },
+
+            /**
+             * AWF Paso 3 §3.1 / §3.2 — Fields available for the action's execution condition.
+             * - If the action has NO motor group yet (no repeatable block referenced): ALL fields
+             *   are shown (scalars + repeatable), so the user can pick any field freely.
+             * - If the action already has a Motor Group X: only fields of Grup X + scalar fields
+             *   (disjoint repeatable groups are excluded, §2.3).
+             * - Terminal/global actions: only scalar fields (§3.2).
+             * @param {stic_AwfAction} [action]
+             * @returns {Array} List of {id, label} fields for the condition <stic-select>
+             */
+            availableFieldsInFormForCondition(action = null) {
+              const fields = [];
+              const isTerminal = action && action.is_terminal;
+              const motorGroup = (!isTerminal && action) ? this.formConfig.getActionMotorGroup(action) : null;
+              this.data_blocks.forEach(block => {
+                const blockMotor = this.formConfig.getBlockMotorGroup(block);
+                // Terminal actions: only scalar fields (§3.2)
+                if (isTerminal && blockMotor) return;
+                // Non-terminal with a motor group: exclude disjoint repeatable groups (§2.3)
+                if (motorGroup && blockMotor && blockMotor.id !== motorGroup.rootBlockId) return;
+                // No motor group yet: all fields allowed (scalars + repeatable)
+                block.fields.forEach(field => {
+                  if (field.type_field === 'fixed') return;
+                  const fullName = block.getFieldInputName(field);
+                  const label = field.label || field.text_original;
+                  fields.push({ id: fullName, label: `${block.text} » ${utils.fromFieldLabelText(label)}` });
+                });
+              });
+              return fields;
+            },
+            get availableFieldsInFormForConditionForSelect() {
+              return this.availableFieldsInFormForCondition(this.action);
             },
 
             getParameterValueInputType(paramDataType) {
