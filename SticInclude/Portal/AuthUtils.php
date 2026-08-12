@@ -217,11 +217,12 @@ class SticPortalAuthUtils
 
     public static function validateRememberToken($cookieToken)
     {
+        global $db;
+
         if (empty($cookieToken)) {
             return null;
         }
         $hashed = $db->quoted(hash('sha256', $cookieToken));
-        global $db;
         $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.deleted=0 AND cc.stic_portal_remember_token_c=$hashed", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {

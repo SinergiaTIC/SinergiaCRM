@@ -33,3 +33,4 @@ INSERT IGNORE INTO config (category, name, value) VALUES
 ('portal','PORTAL_TMPL_NOTIFY_LOGIN','bf01ff0f-6017-11f1-8186-2299bea897ad'),
 ('portal','PORTAL_TMPL_NOTIFY_LOCK','bf02dda3-6017-11f1-8186-2299bea897ad'),
 ('portal','PORTAL_TMPL_NOTIFY_RESET','bf03d86f-6017-11f1-8186-2299bea897ad');
+INSERT IGNORE INTO config (category, name, value) VALUES ('portal', 'PORTAL_INVITATION_LIMIT', '100');

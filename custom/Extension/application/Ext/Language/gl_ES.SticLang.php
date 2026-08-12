@@ -110,6 +110,7 @@ $app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nova notificación por mensaxe elect
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_CONVERSATION_LABEL'] = 'Enviar mensaje (conversación)';
 
 // Envío masivo de correos
+$app_strings['LBL_PORTAL_INVITATION_LIMIT_ALERT'] = 'Superouse o limite de invitacions.';
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'O envío só se aplicará aos rexistros da páxina actual. Para envíos masivos recoméndase utilizar o módulo Campañas.';
 
 // Campos de filtro en relaciones muchos a muchos

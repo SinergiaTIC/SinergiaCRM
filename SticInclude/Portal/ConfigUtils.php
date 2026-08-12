@@ -70,6 +70,16 @@ class SticPortalConfigUtils
         return $out;
     }
 
+    /**
+     * Save portal configuration settings from a POST array.
+     * Only keys starting with 'PORTAL_' will be saved.
+     * @param array $post The $_POST array from a form submission.
+     * @return array The list of keys that were saved.
+     * @see SticPortalConfigUtils::set()
+     * @see SticPortalConfigUtils::get()
+     * @see SticPortalConfigUtils::getAll()
+     * @see SticPortalConfigUtils::delete()
+     */
     public static function saveFromPost($post)
     {
         $saved = array();
@@ -83,6 +93,11 @@ class SticPortalConfigUtils
         return $saved;
     }
 
+    /**
+     * Get the URL of the portal logo image.
+     * If a custom logo is set in the PORTAL_LOGO setting, return its URL; otherwise return the default company logo URL.
+     * @return string The URL of the logo image
+     */
     public static function getLogoUrl()
     {
         $logoFile = self::get('PORTAL_LOGO', '');
@@ -95,6 +110,13 @@ class SticPortalConfigUtils
         return SugarThemeRegistry::current()->getImageURL('company_logo.png');
     }
 
+    /**
+     * Handle a logo file upload from a form submission.
+     * Validates the file type (PNG, JPG, SVG) and moves it to the custom/themes/default/images directory.
+     * Updates the PORTAL_LOGO setting with the new filename.
+     * @param array $fileField The $_FILES array for the uploaded file.
+     * @return string|false The new filename if successful, or false on failure.
+     */
     public static function handleLogoUpload($fileField)
     {
         if (empty($fileField) || empty($fileField['tmp_name']) || $fileField['error'] !== UPLOAD_ERR_OK) {
@@ -122,6 +144,13 @@ class SticPortalConfigUtils
         return $targetName;
     }
 
+    /** 
+     * Clear all portal lockouts and failed login attempts for contacts and accounts.
+     * This will reset the `stic_portal_failed_attempts_c` and `stic_portal_locked_until_c` fields to 0/NULL, and delete all records from `stic_portal_login_attempts`.
+     * Use with caution, as this will allow previously locked users to attempt login again.
+     * Using SQL directly for performance, as this may affect many records.
+     * @return void
+     */
     public static function clearAllLockouts()
     {
         global $db;
@@ -131,6 +160,13 @@ class SticPortalConfigUtils
         $GLOBALS['log']->info(__METHOD__ . " - All lockouts cleared");
     }
 
+    /**
+     * Clear all portal sessions for contacts and accounts.
+     * This will reset the `stic_portal_session_id_c` field to NULL for all contacts and accounts.
+     * Use with caution, as this will log out all currently logged-in users.
+     * Using SQL directly for performance, as this may affect many records.
+     * @return void
+     */
     public static function clearAllSessions()
     {
         global $db;
@@ -139,6 +175,12 @@ class SticPortalConfigUtils
         $GLOBALS['log']->info(__METHOD__ . " - All sessions cleared");
     }
 
+    /**
+     * Purge old portal login audit records based on the configured retention period.
+     * The retention period is defined by the `PORTAL_AUDIT_RETENTION_DAYS` setting, defaulting to 365 days if not set.
+     * This will delete records from the `stic_portal_login_audit` table that are older than the specified number of days.
+     * @return int The number of records deleted.
+     */
     public static function purgeOldAudit()
     {
         global $db;
@@ -147,18 +189,4 @@ class SticPortalConfigUtils
         $db->query("DELETE FROM stic_portal_login_audit WHERE date_entered < DATE_SUB(NOW(), INTERVAL $days DAY)");
         $GLOBALS['log']->info(__METHOD__ . " - Purged audit older than $days days");
     }
-
-
-    /**
-     * Add Portal Authentication panel to Contacts or Accounts views.
-     * Uses SuiteCRM ParserFactory — same API as Studio, Connectors, Module Installer.
-     * @param string $module "Contacts" or "Accounts"
-     * @return int Number of views patched
-     */
-
-
-    /**
-     * Add Portal Authentication panel to Contacts or Accounts views.
-     * Direct metadata file manipulation — same pattern as the metadata fixer scripts.
-     */
 }

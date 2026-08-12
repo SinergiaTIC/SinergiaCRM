@@ -172,6 +172,17 @@
     <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_CONCURRENT_SESSIONS}</td>
     <td width="25%" valign="middle"><input type="checkbox" name="PORTAL_ALLOW_CONCURRENT_SESSIONS" value="1" {if $SETTINGS.PORTAL_ALLOW_CONCURRENT_SESSIONS eq '1'}checked{/if}></td>
 </tr>
+<tr>
+    <td width="25%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_INVITATION_LIMIT}
+        <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="11b" aria-describedby="qtip-11b"></i>
+<script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_INVITATION_LIMIT_HELP}</div>
+    </td>
+    <td width="25%" valign="middle"><input type="number" name="PORTAL_INVITATION_LIMIT" value="{$SETTINGS.PORTAL_INVITATION_LIMIT|default:'100'}" min="1" max="999" class="portal-input-narrow"> {$MOD.LBL_STIC_PORTAL_RECORDS}</td>
+    <td width="25%" scope="row" valign="middle"></td>
+    <td width="25%" valign="middle"></td>
+</tr>
 </table>
 
 <!-- MAGIC LINK -->

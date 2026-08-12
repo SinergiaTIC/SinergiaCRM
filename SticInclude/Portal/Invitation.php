@@ -40,8 +40,10 @@ $allConfig = SticPortalConfigUtils::getAll();
 $portalTitle = !empty($allConfig['PORTAL_TITLE']) ? $allConfig['PORTAL_TITLE'] : 'SinergiaCRM Portal';
 $portalUrl   = !empty($allConfig['PORTAL_HOME_URL']) ? rtrim($allConfig['PORTAL_HOME_URL'], '/') : $sugar_config['site_url'];
 $redirectUri = $_REQUEST['redirect_uri'] ?? '';
+
+$loginUrl = $portalUrl . '/index.php?entryPoint=sticPortalLogin';
 // If a specific external app was selected, use its URL; otherwise show the portal login URL
-$appUrl = !empty($redirectUri) ? $redirectUri : $portalUrl . '/index.php?entryPoint=sticPortalLogin';
+$appUrl = !empty($redirectUri) ? $redirectUri : $loginUrl;
 $templateKey = ($module === 'Accounts') ? 'PORTAL_TMPL_CRED_ACCOUNTS' : 'PORTAL_TMPL_CRED_CONTACTS';
 $templateId  = $allConfig[$templateKey] ?? '';
 
@@ -128,7 +130,7 @@ foreach ($idList as $id) {
     $sent = $mailer->Send();
 
     if ($sent) {
-        SticPortalAuthUtils::recordLoginAudit($bean, 'RESET_SENT', $bean->$usernameField,
+        SticPortalAuthUtils::recordLoginAudit($bean, $bean->module_name, $bean->$usernameField,
             $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'invitation');
         $sentCount++;
     } else {

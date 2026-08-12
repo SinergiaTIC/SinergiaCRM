@@ -49,7 +49,9 @@ class PortalPopupUtils
         while ($row = $db->fetchByAssoc($r)) {
             $clients[] = array('name' => $row['name'], 'url' => $row['redirect_url']);
         }
-        echo '<script>STIC.portalClients = ' . json_encode($clients) . ";</script>\n";
+        echo '<script>STIC.portalClients = ' . json_encode($clients) . "</script>\n";
+        echo '<script>function getPortalInvitationLimit() {return ' . (int)SticPortalConfigUtils::get('PORTAL_INVITATION_LIMIT', 100) . ';}</script>' . "\n";
+        echo '<script src="' . getVersionedScript('SticInclude/Portal/PortalActions.js') . '"></script>' . "\n";
 
         $titleHelp = $mod_strings['LBL_STIC_PORTAL_ACTIONS_HELP'] ?? 'Send an invitation or password reset.';
         $actionHelp = $mod_strings['LBL_STIC_PORTAL_ACTION_TYPE_HELP'] ?? 'Invitation vs Password Reset.';
