@@ -83,12 +83,6 @@ class stic_SignersUtils
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
 
-        // Set From and FromName using current user or system defaults
-        $fromEmail = $current_user->email1 ?: $defaults['email'];
-        $mail->From = $fromEmail;
-
-        $fromName = $current_user->name ?: $defaults['name'];
-        $mail->FromName = $fromName;
 
         // Add recipient
         if (empty($destAddress)) {
@@ -206,12 +200,7 @@ class stic_SignersUtils
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
 
-        // Set From and FromName
-        $fromEmail = $current_user->email1 ?: $defaults['email'];
-        $mail->From = $fromEmail;
 
-        $fromName = $current_user->name ?: $defaults['name'];
-        $mail->FromName = $fromName;
 
         // Add recipient
         if (empty($destAddress)) {
