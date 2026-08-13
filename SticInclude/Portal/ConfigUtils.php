@@ -29,63 +29,106 @@ if (!defined('sugarEntry') || !sugarEntry) {
  *
  * Read / write helpers for the portal configuration settings.
  * Settings are stored in the SuiteCRM `config` table under the
- * category `portal`.
+ * category `portal`, using the core Administration bean for CRUD.
  */
 class SticPortalConfigUtils
 {
     const CATEGORY = 'portal';
 
+    /**
+     * Get the Administration bean with settings loaded for the portal category.
+     * @return Administration The bean with portal settings cached in memory.
+     */
+    private static function getAdmin()
+    {
+        if (empty($GLOBALS['sticPortalConfigAdmin'])) {
+            $admin = BeanFactory::newBean('Administration');
+            $admin->retrieveSettings(self::CATEGORY, true);
+            $GLOBALS['sticPortalConfigAdmin'] = $admin;
+        }
+        return $GLOBALS['sticPortalConfigAdmin'];
+    }
+
+    /**
+     * Clear the cached Administration bean so the next call reloads from DB.
+     */
+    private static function clearAdminCache()
+    {
+        unset($GLOBALS['sticPortalConfigAdmin']);
+    }
+
+    /**
+     * Get a single portal configuration value.
+     * @param string $name    The setting key (e.g., 'PORTAL_TITLE').
+     * @param mixed  $default Value to return if the key is not set.
+     * @return mixed The stored value or the default.
+     */
     public static function get($name, $default = null)
     {
-        global $db;
-        $result = $db->limitQuery("SELECT value FROM config WHERE category=" . $db->quoted(self::CATEGORY) . " AND name=" . $db->quoted($name), 0, 1);
-        $row = $db->fetchByAssoc($result);
-        return $row ? $row['value'] : $default;
+        $admin = self::getAdmin();
+        return $admin->settings[self::CATEGORY . '_' . $name] ?? $default;
     }
 
+    /**
+     * Set a single portal configuration value.
+     * Uses the core Administration::saveSetting() which writes to the `config` table.
+     * @param string $name  The setting key (e.g., 'PORTAL_TITLE').
+     * @param mixed  $value The value to store. Will be cast to string.
+     */
     public static function set($name, $value)
     {
-        global $db;
-        $cat   = $db->quoted(self::CATEGORY);
-        $nameQ = $db->quoted($name);
-        $valQ  = $db->quoted((string) $value);
-        $db->query("INSERT INTO config (category, name, value) VALUES ($cat, $nameQ, $valQ) ON DUPLICATE KEY UPDATE value = $valQ");
-        $GLOBALS['log']->debug(__METHOD__ . " - Set $name = $value");
+        $admin = self::getAdmin();
+        $admin->saveSetting(self::CATEGORY, $name, (string) $value);
+        // Refresh the cached value so subsequent get() returns the new value
+        $admin->settings[self::CATEGORY . '_' . $name] = (string) $value;
     }
 
+    /**
+     * Delete a portal configuration value from the config table.
+     * @param string $name The setting key to remove.
+     */
     public static function delete($name)
     {
         global $db;
         $db->query("DELETE FROM config WHERE category=" . $db->quoted(self::CATEGORY) . " AND name=" . $db->quoted($name));
+        self::clearAdminCache();
     }
 
+    /**
+     * Get all portal configuration settings as an associative array.
+     * @return array Associative array of name => value for all portal settings.
+     */
     public static function getAll()
     {
-        global $db;
-        $result = $db->query("SELECT name, value FROM config WHERE category=" . $db->quoted(self::CATEGORY));
+        $admin = self::getAdmin();
+        $prefix = self::CATEGORY . '_';
+        $plen = strlen($prefix);
         $out = array();
-        while ($row = $db->fetchByAssoc($result)) {
-            $out[$row['name']] = $row['value'];
+        foreach ($admin->settings as $k => $v) {
+            if (strpos($k, $prefix) === 0) {
+                $out[substr($k, $plen)] = $v;
+            }
         }
         return $out;
     }
 
     /**
      * Save portal configuration settings from a POST array.
-     * Only keys starting with 'PORTAL_' will be saved.
+     * Only keys starting with 'PORTAL_' will be saved. Uses the core
+     * Administration bean's saveSetting() to persist each key.
+     *
      * @param array $post The $_POST array from a form submission.
      * @return array The list of keys that were saved.
-     * @see SticPortalConfigUtils::set()
-     * @see SticPortalConfigUtils::get()
-     * @see SticPortalConfigUtils::getAll()
-     * @see SticPortalConfigUtils::delete()
      */
     public static function saveFromPost($post)
     {
+        $admin = self::getAdmin();
         $saved = array();
         foreach ($post as $k => $v) {
             if (strpos($k, 'PORTAL_') === 0) {
-                self::set($k, is_array($v) ? implode(',', $v) : (string) $v);
+                $val = is_array($v) ? implode(',', $v) : (string) $v;
+                $admin->saveSetting(self::CATEGORY, $k, $val);
+                $admin->settings[self::CATEGORY . '_' . $k] = $val;
                 $saved[] = $k;
             }
         }
@@ -95,8 +138,9 @@ class SticPortalConfigUtils
 
     /**
      * Get the URL of the portal logo image.
-     * If a custom logo is set in the PORTAL_LOGO setting, return its URL; otherwise return the default company logo URL.
-     * @return string The URL of the logo image
+     * If a custom logo is set in the PORTAL_LOGO setting, return its URL;
+     * otherwise return the default company logo URL.
+     * @return string The URL of the logo image.
      */
     public static function getLogoUrl()
     {
@@ -112,8 +156,9 @@ class SticPortalConfigUtils
 
     /**
      * Handle a logo file upload from a form submission.
-     * Validates the file type (PNG, JPG, SVG) and moves it to the custom/themes/default/images directory.
-     * Updates the PORTAL_LOGO setting with the new filename.
+     * Validates the file type (PNG, JPG, SVG) and moves it to the
+     * custom/themes/default/images directory. Updates the PORTAL_LOGO setting.
+     *
      * @param array $fileField The $_FILES array for the uploaded file.
      * @return string|false The new filename if successful, or false on failure.
      */
@@ -144,12 +189,11 @@ class SticPortalConfigUtils
         return $targetName;
     }
 
-    /** 
+    /**
      * Clear all portal lockouts and failed login attempts for contacts and accounts.
-     * This will reset the `stic_portal_failed_attempts_c` and `stic_portal_locked_until_c` fields to 0/NULL, and delete all records from `stic_portal_login_attempts`.
-     * Use with caution, as this will allow previously locked users to attempt login again.
-     * Using SQL directly for performance, as this may affect many records.
-     * @return void
+     * Resets stic_portal_failed_attempts_c and stic_portal_locked_until_c fields,
+     * and deletes all records from stic_portal_login_attempts.
+     * Uses SQL directly for performance — may affect many records.
      */
     public static function clearAllLockouts()
     {
@@ -162,10 +206,8 @@ class SticPortalConfigUtils
 
     /**
      * Clear all portal sessions for contacts and accounts.
-     * This will reset the `stic_portal_session_id_c` field to NULL for all contacts and accounts.
-     * Use with caution, as this will log out all currently logged-in users.
-     * Using SQL directly for performance, as this may affect many records.
-     * @return void
+     * Resets stic_portal_session_id_c to NULL for all records.
+     * Uses SQL directly for performance — may affect many records.
      */
     public static function clearAllSessions()
     {
@@ -177,8 +219,7 @@ class SticPortalConfigUtils
 
     /**
      * Purge old portal login audit records based on the configured retention period.
-     * The retention period is defined by the `PORTAL_AUDIT_RETENTION_DAYS` setting, defaulting to 365 days if not set.
-     * This will delete records from the `stic_portal_login_audit` table that are older than the specified number of days.
+     * Deletes records from stic_portal_login_audit older than the configured number of days.
      * @return int The number of records deleted.
      */
     public static function purgeOldAudit()

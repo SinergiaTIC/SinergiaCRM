@@ -23,6 +23,8 @@
 
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
+require_once 'SticInclude/Portal/ConfigUtils.php';
+
 /**
  * Portal Actions popup utilities for Contacts and Accounts detail views.
  * Injects OAuth2 client list and popup HTML into the detail view.
@@ -51,7 +53,7 @@ class PortalPopupUtils
         }
         echo '<script>STIC.portalClients = ' . json_encode($clients) . "</script>\n";
         echo '<script>function getPortalInvitationLimit() {return ' . (int)SticPortalConfigUtils::get('PORTAL_INVITATION_LIMIT', 100) . ';}</script>' . "\n";
-        echo '<script src="' . getVersionedScript('SticInclude/Portal/PortalActions.js') . '"></script>' . "\n";
+        echo getVersionedScript('SticInclude/Portal/PortalActions.js') . "\n";
 
         $titleHelp = $mod_strings['LBL_STIC_PORTAL_ACTIONS_HELP'] ?? 'Send an invitation or password reset.';
         $actionHelp = $mod_strings['LBL_STIC_PORTAL_ACTION_TYPE_HELP'] ?? 'Invitation vs Password Reset.';
