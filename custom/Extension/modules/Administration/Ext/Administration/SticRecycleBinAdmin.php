@@ -22,11 +22,11 @@
  */
 
 $admin_option_defs = [];
-$admin_option_defs['Administration']['stic_RecycleBin'] = [
-    'stic_RecycleBin',
-    'LBL_STIC_RECYCLEBIN_LINK_TITLE',
-    'LBL_STIC_RECYCLEBIN_LINK_DESC',
-    './index.php?module=stic_RecycleBin&action=index',
+$admin_option_defs['Administration']['stic_Recycle_Bin'] = [
+    'stic_Recycle_Bin',
+    'LBL_STIC_RECYCLE_BIN_LINK_TITLE',
+    'LBL_STIC_RECYCLE_BIN_LINK_DESC',
+    './index.php?module=stic_Recycle_Bin&action=index',
 ];
 
 if (!isset($admin_group_header['LBL_SINERGIACRM_TAB_TITLE']) || !isset($admin_group_header['LBL_SINERGIACRM_TAB_TITLE'][3])) {

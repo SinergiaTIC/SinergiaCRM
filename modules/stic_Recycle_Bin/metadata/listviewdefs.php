@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$viewdefs['stic_RecycleBin']['ListView'] = array(
+$viewdefs['stic_Recycle_Bin']['ListView'] = array(
     'templateMeta' => array(
         'form' => array(
             'actions' => array(
@@ -40,7 +40,7 @@ $viewdefs['stic_RecycleBin']['ListView'] = array(
     ),
 );
 
-$listViewDefs['stic_RecycleBin'] = array(
+$listViewDefs['stic_Recycle_Bin'] = array(
     'RECYCLE_RECORD_NAME' => array(
         'width' => '25%',
         'label' => 'LBL_RECYCLE_RECORD_NAME',

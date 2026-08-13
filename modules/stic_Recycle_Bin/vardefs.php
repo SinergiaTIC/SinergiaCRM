@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$dictionary['stic_RecycleBin'] = array(
+$dictionary['stic_Recycle_Bin'] = array(
     'table' => 'stic_recycle_bin',
     'audited' => false,
     'inline_edit' => false,

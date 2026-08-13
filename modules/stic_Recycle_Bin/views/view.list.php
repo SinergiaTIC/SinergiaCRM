@@ -28,7 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once 'include/MVC/View/views/view.list.php';
 require_once 'SticInclude/Views.php';
 
-class stic_RecycleBinViewList extends ViewList
+class stic_Recycle_BinViewList extends ViewList
 {
     public function __construct()
     {
@@ -82,9 +82,9 @@ class stic_RecycleBinViewList extends ViewList
     {
         global $log;
 
-        $alertNoSelected = translate('LBL_LISTVIEW_NO_SELECTED', 'stic_RecycleBin');
-        $alertAllAlready = translate('LBL_MASS_RESTORE_ALL_ALREADY_RESTORED', 'stic_RecycleBin');
-        $confirmMixed = translate('LBL_MASS_RESTORE_MIXED_CONFIRM', 'stic_RecycleBin');
+        $alertNoSelected = translate('LBL_LISTVIEW_NO_SELECTED', 'stic_Recycle_Bin');
+        $alertAllAlready = translate('LBL_MASS_RESTORE_ALL_ALREADY_RESTORED', 'stic_Recycle_Bin');
+        $confirmMixed = translate('LBL_MASS_RESTORE_MIXED_CONFIRM', 'stic_Recycle_Bin');
 
         $restoredMap = array();
         if (!empty($this->lv->data['data']) && is_array($this->lv->data['data'])) {
@@ -118,7 +118,7 @@ class stic_RecycleBinViewList extends ViewList
             . 'if(already>0&&already===checked.length){alert(' . json_encode($alertAllAlready) . ');return false;}'
             . 'if(already>0&&!window.confirm(' . json_encode($confirmMixed) . ')){return false;}'
             . 'var f=document.createElement("form");f.method="POST";f.action="index.php";'
-            . 'var m=document.createElement("input");m.name="module";m.type="hidden";m.value="stic_RecycleBin";f.appendChild(m);'
+            . 'var m=document.createElement("input");m.name="module";m.type="hidden";m.value="stic_Recycle_Bin";f.appendChild(m);'
             . 'var a=document.createElement("input");a.name="action";a.type="hidden";a.value="mass_restore";f.appendChild(a);'
             . 'var u=document.createElement("textarea");u.name="uid";u.style.display="none";'
             . 'var ids=[];for(var j=0;j<checked.length;j++){ids.push(checked[j].value);}'

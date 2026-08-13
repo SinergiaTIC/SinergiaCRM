@@ -45,7 +45,7 @@ class SticRecycleBinHookCode
             return;
         }
 
-        if ($bean->module_dir === 'stic_RecycleBin') {
+        if ($bean->module_dir === 'stic_Recycle_Bin') {
             return;
         }
 

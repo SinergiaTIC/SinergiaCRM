@@ -25,21 +25,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$viewdefs['stic_RecycleBin']['DetailView'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30'),
-        ),
-    ),
-    'panels' => array(
-        'LBL_DEFAULT_PANEL' => array(
-            array('recycle_record_name', 'recycle_module'),
-            array('recycle_date_deleted', 'recycle_user_deleted_name'),
-            array('recycle_restored', ''),
-            array('recycle_date_restored', 'recycle_user_restored_name'),
-            array('date_entered', 'date_modified'),
-        ),
-    ),
-);
+global $mod_strings;
+
+if (ACLController::checkAccess('stic_Recycle_Bin', 'list', true)) {
+    $module_menu[] = array(
+        'index.php?module=stic_Recycle_Bin&action=index&return_module=stic_Recycle_Bin&return_action=index',
+        $mod_strings['LNK_LIST'],
+        'View',
+        'stic_Recycle_Bin',
+    );
+}

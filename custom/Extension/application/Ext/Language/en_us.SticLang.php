@@ -186,7 +186,7 @@ $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Advanced Web Forms';
 $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Form Deferred Tickets';
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Form External Notifications';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversations';
-$app_list_strings['moduleList']['stic_RecycleBin'] = 'Recycle Bin';
+$app_list_strings['moduleList']['stic_Recycle_Bin'] = 'Recycle Bin';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
@@ -252,7 +252,7 @@ $app_list_strings['moduleListSingular']['stic_AWF_Forms'] = 'Advanced Web Form';
 $app_list_strings['moduleListSingular']['stic_AWF_Deferred_Tickets'] = 'Form Deferred Ticket';
 $app_list_strings['moduleListSingular']['stic_AWF_Incoming_Events'] = 'Form External Notification';
 $app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversation';
-$app_list_strings['moduleListSingular']['stic_RecycleBin'] = 'Recycle Bin';
+$app_list_strings['moduleListSingular']['stic_Recycle_Bin'] = 'Recycle Bin';
 
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
@@ -300,7 +300,7 @@ $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transactions';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['parent_type_display']['stic_Assets'] = 'Assets';
 $app_list_strings['parent_type_display']['stic_Conversations'] = 'Conversations';
-$app_list_strings['parent_type_display']['stic_RecycleBin'] = 'Recycle Bin';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin'] = 'Recycle Bin';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display']['Contacts'] = 'Contacts';
@@ -350,7 +350,7 @@ $app_list_strings['record_type_display']['stic_Transactions'] = 'Transactions';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['record_type_display']['stic_Assets'] = 'Assets';
 $app_list_strings['record_type_display']['stic_Conversations'] = 'Conversations';
-$app_list_strings['record_type_display']['stic_RecycleBin'] = 'Recycle Bin';
+$app_list_strings['record_type_display']['stic_Recycle_Bin'] = 'Recycle Bin';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
@@ -400,7 +400,7 @@ $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacti
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['record_type_display_notes']['stic_Assets'] = 'Assets';
 $app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Conversations';
-$app_list_strings['record_type_display_notes']['stic_RecycleBin'] = 'Recycle Bin';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin'] = 'Recycle Bin';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Events';

@@ -25,20 +25,32 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$viewdefs['stic_RecycleBin']['EditView'] = array(
+$searchdefs['stic_Recycle_Bin'] = array(
     'templateMeta' => array(
-        'form' => array(
-            'buttons' => array(),
-        ),
-        'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30'),
-        ),
+        'maxColumns' => '3',
+        'widths' => array('label' => '10', 'field' => '30'),
     ),
-    'panels' => array(
-        'LBL_DEFAULT_PANEL' => array(
-            array('name', ''),
+    'layout' => array(
+        'basic_search' => array(
+            'recycle_record_name' => array(
+                'name' => 'recycle_record_name',
+                'default' => true,
+            ),
+            'recycle_module' => array(
+                'name' => 'recycle_module',
+                'default' => true,
+            ),
+        ),
+        'advanced_search' => array(
+            'recycle_record_name' => array('name' => 'recycle_record_name'),
+            'recycle_module' => array('name' => 'recycle_module'),
+            'recycle_date_deleted' => array('name' => 'recycle_date_deleted'),
+            'recycle_restored' => array('name' => 'recycle_restored'),
+            'recycle_user_deleted_id' => array(
+                'name' => 'recycle_user_deleted_id',
+                'type' => 'enum',
+                'function' => array('name' => 'get_user_array'),
+            ),
         ),
     ),
 );

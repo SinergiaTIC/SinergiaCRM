@@ -26,12 +26,12 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 #[\AllowDynamicProperties]
-class stic_RecycleBinUtils
+class stic_Recycle_BinUtils
 {
     /**
      * Restores a single deleted record and all its relationships.
      *
-     * @param string $recycleBinId ID of the stic_RecycleBin entry
+     * @param string $recycleBinId ID of the stic_Recycle_Bin entry
      * @return array Result with success flag, message, and counters
      */
     public static function restoreRecord($recycleBinId)
@@ -42,16 +42,16 @@ class stic_RecycleBinUtils
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': invalid recycleBinId: ' . $recycleBinId);
             return [
                 'success' => false,
-                'message' => translate('LBL_RESTORE_INVALID_ID', 'stic_RecycleBin'),
+                'message' => translate('LBL_RESTORE_INVALID_ID', 'stic_Recycle_Bin'),
             ];
         }
 
-        $binBean = BeanFactory::getBean('stic_RecycleBin', $recycleBinId);
+        $binBean = BeanFactory::getBean('stic_Recycle_Bin', $recycleBinId);
         if (!$binBean || empty($binBean->recycle_record_id)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recycle bin entry not found: ' . $recycleBinId);
             return [
                 'success' => false,
-                'message' => translate('LBL_RESTORE_NOT_FOUND', 'stic_RecycleBin'),
+                'message' => translate('LBL_RESTORE_NOT_FOUND', 'stic_Recycle_Bin'),
             ];
         }
 
@@ -59,14 +59,14 @@ class stic_RecycleBinUtils
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': invalid recycle_record_id: ' . $binBean->recycle_record_id);
             return [
                 'success' => false,
-                'message' => translate('LBL_RESTORE_INVALID_ID', 'stic_RecycleBin'),
+                'message' => translate('LBL_RESTORE_INVALID_ID', 'stic_Recycle_Bin'),
             ];
         }
 
         if (!empty($binBean->recycle_restored)) {
             return [
                 'success' => false,
-                'message' => translate('LBL_RESTORE_ALREADY', 'stic_RecycleBin'),
+                'message' => translate('LBL_RESTORE_ALREADY', 'stic_Recycle_Bin'),
             ];
         }
 
@@ -78,7 +78,7 @@ class stic_RecycleBinUtils
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': cannot resolve table for module: ' . $module);
             return [
                 'success' => false,
-                'message' => translate('LBL_RESTORE_NO_TABLE', 'stic_RecycleBin'),
+                'message' => translate('LBL_RESTORE_NO_TABLE', 'stic_Recycle_Bin'),
             ];
         }
 
@@ -126,7 +126,7 @@ class stic_RecycleBinUtils
     /**
      * Restores multiple records.
      *
-     * @param array $ids Array of stic_RecycleBin IDs
+     * @param array $ids Array of stic_Recycle_Bin IDs
      * @return array Summary with counters
      */
     public static function massRestoreRecords($ids)

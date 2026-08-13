@@ -19,10 +19,10 @@
 -- You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
 
 -- =========================================================================
--- Feature: stic_RecycleBin module
+-- Feature: stic_Recycle_Bin module
 -- Creates the second table for the recycle bin: stic_recycle_bin_relationships
 -- (The stic_recycle_bin table itself is created automatically by Quick Repair
--- and Rebuild from modules/stic_RecycleBin/vardefs.php.)
+-- and Rebuild from modules/stic_Recycle_Bin/vardefs.php.)
 -- =========================================================================
 
 CREATE TABLE IF NOT EXISTS `stic_recycle_bin_relationships` (

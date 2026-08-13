@@ -28,7 +28,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once 'include/MVC/View/views/view.detail.php';
 require_once 'SticInclude/Views.php';
 
-class stic_RecycleBinViewDetail extends ViewDetail
+class stic_Recycle_BinViewDetail extends ViewDetail
 {
     public function __construct()
     {
@@ -102,8 +102,8 @@ class stic_RecycleBinViewDetail extends ViewDetail
             return $html;
         }
 
-        $confirmMsg = translate('LBL_RESTORE_CONFIRM', 'stic_RecycleBin');
-        $buttonLabel = translate('LBL_RESTORE_RECORD', 'stic_RecycleBin');
+        $confirmMsg = translate('LBL_RESTORE_CONFIRM', 'stic_Recycle_Bin');
+        $buttonLabel = translate('LBL_RESTORE_RECORD', 'stic_Recycle_Bin');
         $buttonLabelEsc = htmlspecialchars($buttonLabel, ENT_QUOTES);
         $formId = 'stic_rb_restore_' . preg_replace('/[^a-zA-Z0-9]/', '', $recordId);
 
@@ -112,7 +112,7 @@ class stic_RecycleBinViewDetail extends ViewDetail
                    . '</li>';
 
         $hiddenForm = '<form id="' . $formId . '" method="post" action="index.php" style="display:none">'
-                    . '<input type="hidden" name="module" value="stic_RecycleBin"/>'
+                    . '<input type="hidden" name="module" value="stic_Recycle_Bin"/>'
                     . '<input type="hidden" name="action" value="restore"/>'
                     . '<input type="hidden" name="record" value="' . htmlspecialchars($recordId, ENT_QUOTES) . '"/>'
                     . '</form>';
@@ -163,9 +163,9 @@ class stic_RecycleBinViewDetail extends ViewDetail
             $relations[] = $row;
         }
 
-        echo '<h4>' . translate('LBL_RECYCLE_BIN_RELATIONSHIPS', 'stic_RecycleBin') . '</h4>';
+        echo '<h4>' . translate('LBL_RECYCLE_BIN_RELATIONSHIPS', 'stic_Recycle_Bin') . '</h4>';
         if (empty($relations)) {
-            echo '<p><em>' . translate('LBL_NO_RELATIONSHIPS', 'stic_RecycleBin') . '</em></p>';
+            echo '<p><em>' . translate('LBL_NO_RELATIONSHIPS', 'stic_Recycle_Bin') . '</em></p>';
             return;
         }
 
@@ -174,18 +174,18 @@ class stic_RecycleBinViewDetail extends ViewDetail
         echo '<table class="list view table-responsive" cellspacing="0" cellpadding="0" border="0" width="100%">';
         echo '<thead>';
         echo '<tr>';
-        echo '<th>' . translate('LBL_RECYCLE_RELATED_MODULE', 'stic_RecycleBin') . '</th>';
-        echo '<th>' . translate('LBL_RECYCLE_RELATED_RECORD_NAME', 'stic_RecycleBin') . '</th>';
-        echo '<th>' . translate('LBL_RECYCLE_RELATIONSHIP_NAME', 'stic_RecycleBin') . '</th>';
-        echo '<th>' . translate('LBL_RECYCLE_JOIN_TABLE', 'stic_RecycleBin') . '</th>';
-        echo '<th>' . translate('LBL_RECYCLE_RESTORED', 'stic_RecycleBin') . '</th>';
+        echo '<th>' . translate('LBL_RECYCLE_RELATED_MODULE', 'stic_Recycle_Bin') . '</th>';
+        echo '<th>' . translate('LBL_RECYCLE_RELATED_RECORD_NAME', 'stic_Recycle_Bin') . '</th>';
+        echo '<th>' . translate('LBL_RECYCLE_RELATIONSHIP_NAME', 'stic_Recycle_Bin') . '</th>';
+        echo '<th>' . translate('LBL_RECYCLE_JOIN_TABLE', 'stic_Recycle_Bin') . '</th>';
+        echo '<th>' . translate('LBL_RECYCLE_RESTORED', 'stic_Recycle_Bin') . '</th>';
         echo '</tr>';
         echo '</thead>';
         echo '<tbody>';
         foreach ($relations as $rel) {
             $restoredLabel = !empty($rel['recycle_restored'])
-                ? translate('LBL_YES', 'stic_RecycleBin')
-                : translate('LBL_NO', 'stic_RecycleBin');
+                ? translate('LBL_YES', 'stic_Recycle_Bin')
+                : translate('LBL_NO', 'stic_Recycle_Bin');
             $moduleKey = $rel['recycle_related_module'];
             $moduleLabel = !empty($app_list_strings['moduleList'][$moduleKey])
                 ? $app_list_strings['moduleList'][$moduleKey]

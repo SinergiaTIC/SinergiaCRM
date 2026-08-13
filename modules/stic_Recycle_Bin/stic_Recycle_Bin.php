@@ -26,11 +26,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 #[\AllowDynamicProperties]
-class stic_RecycleBin extends Basic
+class stic_Recycle_Bin extends Basic
 {
     public $new_schema = true;
-    public $module_dir = 'stic_RecycleBin';
-    public $object_name = 'stic_RecycleBin';
+    public $module_dir = 'stic_Recycle_Bin';
+    public $object_name = 'stic_Recycle_Bin';
     public $table_name = 'stic_recycle_bin';
     public $importable = false;
     public $disable_row_level_security = false;

@@ -25,13 +25,21 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$module_name = 'stic_RecycleBin';
-
-$metafiles[$module_name] = array(
-    'detailviewdefs' => 'modules/' . $module_name . '/metadata/detailviewdefs.php',
-    'editviewdefs' => 'modules/' . $module_name . '/metadata/editviewdefs.php',
-    'listviewdefs' => 'modules/' . $module_name . '/metadata/listviewdefs.php',
-    'searchdefs' => 'modules/' . $module_name . '/metadata/searchdefs.php',
-    'popupdefs' => 'modules/' . $module_name . '/metadata/popupdefs.php',
-    'subpaneldefs' => 'modules/' . $module_name . '/metadata/subpaneldefs.php',
+$viewdefs['stic_Recycle_Bin']['DetailView'] = array(
+    'templateMeta' => array(
+        'maxColumns' => '2',
+        'widths' => array(
+            array('label' => '10', 'field' => '30'),
+            array('label' => '10', 'field' => '30'),
+        ),
+    ),
+    'panels' => array(
+        'LBL_DEFAULT_PANEL' => array(
+            array('recycle_record_name', 'recycle_module'),
+            array('recycle_date_deleted', 'recycle_user_deleted_name'),
+            array('recycle_restored', ''),
+            array('recycle_date_restored', 'recycle_user_restored_name'),
+            array('date_entered', 'date_modified'),
+        ),
+    ),
 );

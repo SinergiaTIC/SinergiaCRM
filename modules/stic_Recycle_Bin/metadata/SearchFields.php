@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$searchFields['stic_RecycleBin'] = array(
+$searchFields['stic_Recycle_Bin'] = array(
     'recycle_record_name' => array('query_type' => 'default'),
     'recycle_module' => array('query_type' => 'default'),
     'recycle_date_deleted' => array(

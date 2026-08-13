@@ -25,9 +25,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once 'modules/stic_RecycleBin/Utils.php';
+require_once 'modules/stic_Recycle_Bin/Utils.php';
 
-class stic_RecycleBinController extends SugarController
+class stic_Recycle_BinController extends SugarController
 {
     /**
      * Single record recovery from the detail view.
@@ -38,10 +38,10 @@ class stic_RecycleBinController extends SugarController
     {
         global $log;
 
-        if (!ACLController::checkAccess('stic_RecycleBin', 'edit', true)) {
+        if (!ACLController::checkAccess('stic_Recycle_Bin', 'edit', true)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ACL denied for restore action');
-            SugarApplication::appendErrorMessage(translate('LBL_NO_ACCESS', 'stic_RecycleBin'));
-            SugarApplication::redirect('index.php?module=stic_RecycleBin&action=index');
+            SugarApplication::appendErrorMessage(translate('LBL_NO_ACCESS', 'stic_Recycle_Bin'));
+            SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
             return;
         }
 
@@ -49,19 +49,19 @@ class stic_RecycleBinController extends SugarController
 
         if (empty($recordId) || !self::isValidId($recordId)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': missing or invalid record id');
-            SugarApplication::appendErrorMessage(translate('LBL_NO_RECORDS_SELECTED', 'stic_RecycleBin'));
-            SugarApplication::redirect('index.php?module=stic_RecycleBin&action=index');
+            SugarApplication::appendErrorMessage(translate('LBL_NO_RECORDS_SELECTED', 'stic_Recycle_Bin'));
+            SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
             return;
         }
 
         $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': restoring record: ' . $recordId);
 
         try {
-            $result = stic_RecycleBinUtils::restoreRecord($recordId);
+            $result = stic_Recycle_BinUtils::restoreRecord($recordId);
         } catch (Throwable $e) {
             $log->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': exception: ' . $e->getMessage());
-            SugarApplication::appendErrorMessage(translate('LBL_RESTORE_FAIL', 'stic_RecycleBin'));
-            SugarApplication::redirect('index.php?module=stic_RecycleBin&action=index');
+            SugarApplication::appendErrorMessage(translate('LBL_RESTORE_FAIL', 'stic_Recycle_Bin'));
+            SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
             return;
         }
 
@@ -69,15 +69,15 @@ class stic_RecycleBinController extends SugarController
             $relationsRestored = $result['relations_restored'] ?? 0;
             $relationsSkipped = $result['relations_skipped'] ?? 0;
             SugarApplication::appendSuccessMessage(
-                translate('LBL_RESTORE_SUCCESS', 'stic_RecycleBin') . ' ' .
-                sprintf(translate('LBL_RESTORE_RELATIONS_RESTORED', 'stic_RecycleBin'), $relationsRestored) . ' ' .
-                sprintf(translate('LBL_RESTORE_RELATIONS_SKIPPED', 'stic_RecycleBin'), $relationsSkipped)
+                translate('LBL_RESTORE_SUCCESS', 'stic_Recycle_Bin') . ' ' .
+                sprintf(translate('LBL_RESTORE_RELATIONS_RESTORED', 'stic_Recycle_Bin'), $relationsRestored) . ' ' .
+                sprintf(translate('LBL_RESTORE_RELATIONS_SKIPPED', 'stic_Recycle_Bin'), $relationsSkipped)
             );
         } else {
-            SugarApplication::appendErrorMessage($result['message'] ?? translate('LBL_RESTORE_FAIL', 'stic_RecycleBin'));
+            SugarApplication::appendErrorMessage($result['message'] ?? translate('LBL_RESTORE_FAIL', 'stic_Recycle_Bin'));
         }
 
-        SugarApplication::redirect('index.php?module=stic_RecycleBin&action=index');
+        SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
     }
 
     /**
@@ -89,10 +89,10 @@ class stic_RecycleBinController extends SugarController
     {
         global $log;
 
-        if (!ACLController::checkAccess('stic_RecycleBin', 'edit', true)) {
+        if (!ACLController::checkAccess('stic_Recycle_Bin', 'edit', true)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ACL denied for mass restore action');
-            SugarApplication::appendErrorMessage(translate('LBL_NO_ACCESS', 'stic_RecycleBin'));
-            SugarApplication::redirect('index.php?module=stic_RecycleBin&action=index');
+            SugarApplication::appendErrorMessage(translate('LBL_NO_ACCESS', 'stic_Recycle_Bin'));
+            SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
             return;
         }
 
@@ -110,37 +110,37 @@ class stic_RecycleBinController extends SugarController
 
         if (empty($ids)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': no valid ids in mass restore request');
-            SugarApplication::appendErrorMessage(translate('LBL_NO_RECORDS_SELECTED', 'stic_RecycleBin'));
-            SugarApplication::redirect('index.php?module=stic_RecycleBin&action=index');
+            SugarApplication::appendErrorMessage(translate('LBL_NO_RECORDS_SELECTED', 'stic_Recycle_Bin'));
+            SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
             return;
         }
 
         $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': mass restore for ' . count($ids) . ' records');
 
         try {
-            $result = stic_RecycleBinUtils::massRestoreRecords($ids);
+            $result = stic_Recycle_BinUtils::massRestoreRecords($ids);
         } catch (Throwable $e) {
             $log->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': exception: ' . $e->getMessage());
-            SugarApplication::appendErrorMessage(translate('LBL_RESTORE_FAIL', 'stic_RecycleBin'));
-            SugarApplication::redirect('index.php?module=stic_RecycleBin&action=index');
+            SugarApplication::appendErrorMessage(translate('LBL_RESTORE_FAIL', 'stic_Recycle_Bin'));
+            SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
             return;
         }
 
         if ($result['success'] > 0 && $result['failed'] === 0) {
             SugarApplication::appendSuccessMessage(
-                sprintf(translate('LBL_MASS_RESTORE_SUCCESS', 'stic_RecycleBin'), $result['success'])
+                sprintf(translate('LBL_MASS_RESTORE_SUCCESS', 'stic_Recycle_Bin'), $result['success'])
             );
         } elseif ($result['success'] > 0 && $result['failed'] > 0) {
             SugarApplication::appendErrorMessage(
-                sprintf(translate('LBL_MASS_RESTORE_PARTIAL', 'stic_RecycleBin'), $result['success'], $result['failed'])
+                sprintf(translate('LBL_MASS_RESTORE_PARTIAL', 'stic_Recycle_Bin'), $result['success'], $result['failed'])
             );
         } else {
             SugarApplication::appendErrorMessage(
-                sprintf(translate('LBL_MASS_RESTORE_ALL_ALREADY', 'stic_RecycleBin'), $result['failed'])
+                sprintf(translate('LBL_MASS_RESTORE_ALL_ALREADY', 'stic_Recycle_Bin'), $result['failed'])
             );
         }
 
-        SugarApplication::redirect('index.php?module=stic_RecycleBin&action=index');
+        SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
     }
 
     /**

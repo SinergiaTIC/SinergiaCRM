@@ -25,32 +25,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$searchdefs['stic_RecycleBin'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '3',
-        'widths' => array('label' => '10', 'field' => '30'),
-    ),
-    'layout' => array(
-        'basic_search' => array(
-            'recycle_record_name' => array(
-                'name' => 'recycle_record_name',
-                'default' => true,
-            ),
-            'recycle_module' => array(
-                'name' => 'recycle_module',
-                'default' => true,
-            ),
-        ),
-        'advanced_search' => array(
-            'recycle_record_name' => array('name' => 'recycle_record_name'),
-            'recycle_module' => array('name' => 'recycle_module'),
-            'recycle_date_deleted' => array('name' => 'recycle_date_deleted'),
-            'recycle_restored' => array('name' => 'recycle_restored'),
-            'recycle_user_deleted_id' => array(
-                'name' => 'recycle_user_deleted_id',
-                'type' => 'enum',
-                'function' => array('name' => 'get_user_array'),
-            ),
-        ),
-    ),
+$module_name = 'stic_Recycle_Bin';
+
+$metafiles[$module_name] = array(
+    'detailviewdefs' => 'modules/' . $module_name . '/metadata/detailviewdefs.php',
+    'editviewdefs' => 'modules/' . $module_name . '/metadata/editviewdefs.php',
+    'listviewdefs' => 'modules/' . $module_name . '/metadata/listviewdefs.php',
+    'searchdefs' => 'modules/' . $module_name . '/metadata/searchdefs.php',
+    'popupdefs' => 'modules/' . $module_name . '/metadata/popupdefs.php',
+    'subpaneldefs' => 'modules/' . $module_name . '/metadata/subpaneldefs.php',
 );

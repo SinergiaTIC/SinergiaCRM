@@ -186,7 +186,7 @@ $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Formularios Web Avanzados';
 $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Procesos en espera de formularios';
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Notificacións externas de formularios';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversacións';
-$app_list_strings['moduleList']['stic_RecycleBin'] = 'Papelera de reciclaje';
+$app_list_strings['moduleList']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
@@ -252,7 +252,7 @@ $app_list_strings['moduleListSingular']['stic_AWF_Forms'] = 'Formulario Web Avan
 $app_list_strings['moduleListSingular']['stic_AWF_Deferred_Tickets'] = 'Procesos en espera de formularios';
 $app_list_strings['moduleListSingular']['stic_AWF_Incoming_Events'] = 'Notificación externas de formularios';
 $app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversación';
-$app_list_strings['moduleListSingular']['stic_RecycleBin'] = 'Papelera de reciclaje';
+$app_list_strings['moduleListSingular']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
 
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';
@@ -300,7 +300,7 @@ $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transaccións';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Produtos financeiros';
 $app_list_strings['parent_type_display']['stic_Assets'] = 'Activos';
 $app_list_strings['parent_type_display']['stic_Conversations'] = 'Conversacións';
-$app_list_strings['parent_type_display']['stic_RecycleBin'] = 'Papelera de reciclaje';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display']['Contacts'] = 'Persoas';
@@ -350,7 +350,7 @@ $app_list_strings['record_type_display']['stic_Transactions'] = 'Transaccións';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Produtos financeiros';
 $app_list_strings['record_type_display']['stic_Assets'] = 'Activos';
 $app_list_strings['record_type_display']['stic_Conversations'] = 'Conversacións';
-$app_list_strings['record_type_display']['stic_RecycleBin'] = 'Papelera de reciclaje';
+$app_list_strings['record_type_display']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizacións';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persoas';
@@ -400,7 +400,7 @@ $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacci
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Produtos financeiros';
 $app_list_strings['record_type_display_notes']['stic_Assets'] = 'Activos';
 $app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Conversacións';
-$app_list_strings['record_type_display_notes']['stic_RecycleBin'] = 'Papelera de reciclaje';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencións';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
