@@ -265,7 +265,7 @@ $pdf->outputPDF($file_name, 'D');
 function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 'table')
 {
     // STIC-Custom 20260813 ART - Repeated Headers in PDF Templates with Invoices
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1381
     // $firstValue = '';
     // $firstNum = 0;
 
