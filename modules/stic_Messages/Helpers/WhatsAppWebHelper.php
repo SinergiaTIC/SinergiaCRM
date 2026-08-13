@@ -68,7 +68,7 @@ class WhatsAppWebHelper extends stic_MessagesHelper {
             'lockSender' => true,
             'fixedStatus' => 'redirected',
             'canRetry' => false,
-            'allowedStatus' => ['sent', 'redirected'],
+            'allowedStatus' => ['redirected'],
         ];
     }
 
