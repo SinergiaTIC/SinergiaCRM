@@ -28,7 +28,6 @@
 .inline-help-content{display:none}
 .sda-actions-row{text-align:center;padding:12px 0}
 .sda-actions-row .button{margin:0 8px}
-.sda-debug-row{text-align:center;padding:4px 0 12px}
 .sda-save-row{text-align:center;padding:16px 0 8px}
 </style>
 {/literal}
@@ -44,21 +43,7 @@
 <input type="hidden" name="doaction" value="save">
 
 <table class="edit view" style="margin-top:10px;">
-	<tr>
-		<td width="30%" scope="row" valign="middle">
-			{$MOD.LBL_STIC_SINERGIADA_ENABLED_LABEL}
-			<i class="inline-help glyphicon glyphicon-info-sign"></i>
-			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_ENABLED_HELP}</div>
-		</td>
-		<td width="70%" colspan="3" valign="middle">
-			<input type="hidden" name="enabled" value="0"><input type="checkbox" name="enabled" value="1" {if $SDA_CONFIG.enabled}checked{/if}>
-		</td>
-	</tr>
-</table>
 
-<div id="sda-ui-fields">
-
-<table class="edit view" id="sda-actions-table">
 	<tr>
 		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_ACTIONS_SECTION}</h4></th>
 	</tr>
@@ -69,29 +54,29 @@
 			</button>
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
 			<div class="inline-help-content">{$MOD.LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION}</div>
-			<button id="sda-link" type="button" class="button">
+			{if $CURRENT_USER_ID eq '2'}
+				<label style="margin-left:16px"><input type="checkbox" id="debug-check" checked=""> {$MOD.LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL}</label>
+			{/if}
+			<button id="sda-link" type="button" class="button" style="margin-left:24px">
 				<span class="glyphicon glyphicon-link text-success"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}
 			</button>
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
 			<div class="inline-help-content">{$MOD.LBL_STIC_GO_TO_SDA_DESCRIPTION|default:'Abre la instancia de SinergiaDA en una nueva pestaña.'}</div>
 		</td>
 	</tr>
-	{if $CURRENT_USER_ID eq '2'}
-	<tr>
-		<td colspan="4" class="sda-debug-row">
-			<label><input type="checkbox" id="debug-check" checked=""> {$MOD.LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL}</label>
-		</td>
-	</tr>
-	{/if}
-</table>
 
-<div id="rebuild-feedback"></div>
-
-<table class="edit view" id="sda-general-table">
 	<tr>
 		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_GENERAL}</h4></th>
 	</tr>
 	<tr>
+		<td width="25%" scope="row" valign="middle">
+			{$MOD.LBL_STIC_SINERGIADA_ENABLED_LABEL}
+			<i class="inline-help glyphicon glyphicon-info-sign"></i>
+			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_ENABLED_HELP}</div>
+		</td>
+		<td width="25%" valign="middle">
+			<input type="hidden" name="enabled" value="0"><input type="checkbox" name="enabled" value="1" {if $SDA_CONFIG.enabled}checked{/if}>
+		</td>
 		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_AUTO_REBUILD_LABEL}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
@@ -100,6 +85,8 @@
 		<td width="25%" valign="middle">
 			<input type="hidden" name="auto_rebuild_on_studio_events" value="0"><input type="checkbox" name="auto_rebuild_on_studio_events" value="1" {if $SDA_CONFIG.auto_rebuild_on_studio_events|default:true}checked{/if}>
 		</td>
+	</tr>
+	<tr>
 		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_URL_LABEL}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
@@ -108,8 +95,6 @@
 		<td width="25%" valign="middle">
 			<input type="text" name="public_url" value="{$SDA_PUBLIC_URL}" size="30">
 		</td>
-	</tr>
-	<tr>
 		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_MAX_USERS_LABEL}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
@@ -118,12 +103,14 @@
 		<td width="25%" valign="middle">
 			<input type="number" name="max_users_processed" value="{$SDA_CONFIG.max_users_processed}" min="0">
 		</td>
+	</tr>
+	<tr>
 		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_LABEL}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
 			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_HELP}</div>
 		</td>
-		<td width="25%" valign="middle">
+		<td width="25%" colspan="3" valign="middle">
 			<select id="publish_as_table" name="publish_as_table[]" multiple placeholder="..." class="form-control">
 				{foreach from=$SDA_MODULES item=mod}
 					<option value="{$mod.name}" {if is_array($SDA_CONFIG.publish_as_table) && in_array($mod.name, $SDA_CONFIG.publish_as_table)}selected{/if}>{$mod.label}</option>
@@ -141,9 +128,7 @@
 			<input type="hidden" name="group_permissions_enabled" value="0"><input type="checkbox" name="group_permissions_enabled" value="1" {if $SDA_CONFIG.group_permissions_enabled}checked{/if}>
 		</td>
 	</tr>
-</table>
 
-<table class="edit view" id="sda-cache-table">
 	<tr>
 		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_CACHE}</h4></th>
 	</tr>
@@ -200,9 +185,7 @@
 		</td>
 	</tr>
 	</tbody>
-</table>
 
-<table class="edit view" id="sda-extra-table">
 	<tr>
 		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA}</h4></th>
 	</tr>
@@ -215,12 +198,12 @@
 	</tr>
 	{/foreach}
 	<tr id="sda-add-extra-row">
-		<td scope="row" valign="middle">
+		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
 			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_HELP|default:'Configuraciones adicionales en formato clave-valor. Use con precaución.'}</div>
 		</td>
-		<td colspan="3" valign="middle">
+		<td width="75%" colspan="3" valign="middle">
 			<input type="text" id="sda-new-extra-key" placeholder="{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY}" style="display:none;">
 			<input type="text" id="sda-new-extra-value" placeholder="{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE}" style="display:none;">
 			<button type="button" id="sda-add-extra-btn" class="button sda-btn-add">+</button>
@@ -228,14 +211,14 @@
 	</tr>
 </table>
 
+<div id="rebuild-feedback"></div>
+
 <div class="sda-save-row">
 	<button type="button" class="button primary" onclick="this.form.submit()">
 		<span class="glyphicon glyphicon-floppy-disk text-success"></span> {$MOD.LBL_STIC_SINERGIADA_CONFIG_SAVE}
 		<i class="inline-help glyphicon glyphicon-info-sign"></i>
 		<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_CONFIG_SAVE_HELP}</div>
 	</button>
-</div>
-
 </div>
 
 </form>
