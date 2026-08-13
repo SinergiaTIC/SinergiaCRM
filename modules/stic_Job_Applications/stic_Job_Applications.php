@@ -81,6 +81,7 @@ class stic_Job_Applications extends Basic
 
         // If it is a new record, the assigned user of the offer is indicated in the job application
         if (!empty($offerBean) &&
+            empty($this->fetched_row['id']) &&
             $this->assigned_user_id != $offerBean->assigned_user_id) {
             $this->assigned_user_id = $offerBean->assigned_user_id;
         }
