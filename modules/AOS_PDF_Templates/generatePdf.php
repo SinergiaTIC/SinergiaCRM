@@ -180,90 +180,232 @@ if ($task === 'pdf' || $task === 'emailpdf') {
 
 function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 'table')
 {
-    $firstValue = '';
-    $firstNum = 0;
+    // STIC-Custom 20260813 ART - Repeated Headers in PDF Templates with Invoices
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // $firstValue = '';
+    // $firstNum = 0;
 
-    $lastValue = '';
-    $lastNum = 0;
+    // $lastValue = '';
+    // $lastNum = 0;
 
+    // $startElement = '<' . $element;
+    // $endElement = '</' . $element . '>';
+
+
+    // $groups = BeanFactory::newBean('AOS_Line_Item_Groups');
+    // foreach ($groups->field_defs as $name => $arr) {
+    //     if (!((isset($arr['dbType']) && strtolower($arr['dbType']) == 'id') || $arr['type'] == 'id' || $arr['type'] == 'link')) {
+    //         $curNum = strpos((string) $text, '$aos_line_item_groups_' . $name);
+    //         if ($curNum) {
+    //             if ($curNum < $firstNum || $firstNum == 0) {
+    //                 $firstValue = '$aos_line_item_groups_' . $name;
+    //                 $firstNum = $curNum;
+    //             }
+    //             if ($curNum > $lastNum) {
+    //                 $lastValue = '$aos_line_item_groups_' . $name;
+    //                 $lastNum = $curNum;
+    //             }
+    //         }
+    //     }
+    // }
+    // if ($firstValue !== '' && $lastValue !== '') {
+    //     //Converting Text
+    //     $parts = explode($firstValue, $text);
+    //     $text = $parts[0];
+    //     $parts = explode($lastValue, $parts[1]);
+    //     if ($lastValue === $firstValue) {
+    //         $groupPart = $firstValue . $parts[0];
+    //     } else {
+    //         $groupPart = $firstValue . $parts[0] . $lastValue;
+    //     }
+
+    //     if ((is_countable($lineItemsGroups) ? count($lineItemsGroups) : 0) != 0) {
+    //         //Read line start <tr> value
+    //         $tcount = strrpos($text, $startElement);
+    //         $lsValue = substr($text, $tcount);
+    //         $tcount = strpos($lsValue, ">") + 1;
+    //         $lsValue = substr($lsValue, 0, $tcount);
+
+
+    //         //Read line end values
+    //         $tcount = strpos($parts[1], $endElement) + strlen($endElement);
+    //         $leValue = substr($parts[1], 0, $tcount);
+
+    //         //Converting Line Items
+    //         $obb = array();
+
+    //         $tdTemp = explode($lsValue, $text);
+
+    //         $groupPart = $lsValue . $tdTemp[(is_countable($tdTemp) ? count($tdTemp) : 0) - 1] . $groupPart . $leValue;
+
+    //         $text = $tdTemp[0];
+
+    //         foreach ($lineItemsGroups as $group_id => $lineItemsArray) {
+    //             $groupPartTemp = populate_product_lines($groupPart, $lineItemsArray);
+    //             $groupPartTemp = populate_service_lines($groupPartTemp, $lineItemsArray);
+
+    //             $obb['AOS_Line_Item_Groups'] = $group_id;
+    //             $text .= templateParser::parse_template($groupPartTemp, $obb);
+    //             $text .= '<br />';
+    //         }
+    //         $tcount = strpos($parts[1], $endElement) + strlen($endElement);
+    //         $parts[1] = substr($parts[1], $tcount);
+    //     } else {
+    //         $tcount = strrpos($text, $startElement);
+    //         $text = substr($text, 0, $tcount);
+
+    //         $tcount = strpos($parts[1], $endElement) + strlen($endElement);
+    //         $parts[1] = substr($parts[1], $tcount);
+    //     }
+
+    //     $text .= $parts[1];
+    // } else {
+    //     $text = populate_product_lines($text, $lineItems);
+    //     $text = populate_service_lines($text, $lineItems);
+    // }
+
+
+    // return $text;
     $startElement = '<' . $element;
     $endElement = '</' . $element . '>';
 
-
     $groups = BeanFactory::newBean('AOS_Line_Item_Groups');
+    $groupVarNames = array();
     foreach ($groups->field_defs as $name => $arr) {
         if (!((isset($arr['dbType']) && strtolower($arr['dbType']) == 'id') || $arr['type'] == 'id' || $arr['type'] == 'link')) {
-            $curNum = strpos((string) $text, '$aos_line_item_groups_' . $name);
-            if ($curNum) {
-                if ($curNum < $firstNum || $firstNum == 0) {
-                    $firstValue = '$aos_line_item_groups_' . $name;
-                    $firstNum = $curNum;
-                }
-                if ($curNum > $lastNum) {
-                    $lastValue = '$aos_line_item_groups_' . $name;
-                    $lastNum = $curNum;
-                }
-            }
+            $groupVarNames[] = '$aos_line_item_groups_' . $name;
         }
     }
-    if ($firstValue !== '' && $lastValue !== '') {
-        //Converting Text
-        $parts = explode($firstValue, $text);
-        $text = $parts[0];
-        $parts = explode($lastValue, $parts[1]);
-        if ($lastValue === $firstValue) {
-            $groupPart = $firstValue . $parts[0];
-        } else {
-            $groupPart = $firstValue . $parts[0] . $lastValue;
+
+    if (empty($groupVarNames)) {
+        $text = populate_product_lines($text, $lineItems);
+        $text = populate_service_lines($text, $lineItems);
+        return $text;
+    }
+
+    // Check if any group variable exists in the text
+    $hasGroupVars = false;
+    foreach ($groupVarNames as $var) {
+        if (strpos((string) $text, $var) !== false) {
+            $hasGroupVars = true;
+            break;
+        }
+    }
+
+    if (!$hasGroupVars) {
+        $text = populate_product_lines($text, $lineItems);
+        $text = populate_service_lines($text, $lineItems);
+        return $text;
+    }
+
+    // Find all table blocks and process each one that contains group variables
+    $aosVarPattern = '/\$aos_[a-z_]+/i';
+    $processedText = '';
+    $remainingText = $text;
+
+    while (($tableStartPos = strpos($remainingText, $startElement)) !== false) {
+        // Find the end of this table
+        $tableEndPos = strpos($remainingText, $endElement, $tableStartPos);
+        if ($tableEndPos === false) {
+            break;
+        }
+        $tableEndPos += strlen($endElement);
+
+        // Extract text before this table
+        $beforeTable = substr($remainingText, 0, $tableStartPos);
+        $tableBlock = substr($remainingText, $tableStartPos, $tableEndPos - $tableStartPos);
+
+        // Check if this table contains group variables
+        $tableHasGroupVars = false;
+        foreach ($groupVarNames as $var) {
+            if (strpos($tableBlock, $var) !== false) {
+                $tableHasGroupVars = true;
+                break;
+            }
         }
 
-        if ((is_countable($lineItemsGroups) ? count($lineItemsGroups) : 0) != 0) {
-            //Read line start <tr> value
-            $tcount = strrpos($text, $startElement);
-            $lsValue = substr($text, $tcount);
-            $tcount = strpos($lsValue, ">") + 1;
-            $lsValue = substr($lsValue, 0, $tcount);
+        if ($tableHasGroupVars && (is_countable($lineItemsGroups) ? count($lineItemsGroups) : 0) != 0) {
+            // Extract all <tr>...</tr> blocks from this table
+            $trStartTag = '<tr';
+            $trEndTag = '</tr>';
+            $rows = array();
+            $searchPos = 0;
 
+            while (($rowStart = strpos($tableBlock, $trStartTag, $searchPos)) !== false) {
+                $rowEnd = strpos($tableBlock, $trEndTag, $rowStart);
+                if ($rowEnd === false) {
+                    break;
+                }
+                $rowEnd += strlen($trEndTag);
+                $rows[] = substr($tableBlock, $rowStart, $rowEnd - $rowStart);
+                $searchPos = $rowEnd;
+            }
 
-            //Read line end values
-            $tcount = strpos($parts[1], $endElement) + strlen($endElement);
-            $leValue = substr($parts[1], 0, $tcount);
+            // Separate header rows (no $aos_* variables) from content rows
+            $headerRows = array();
+            $contentRows = array();
 
-            //Converting Line Items
+            foreach ($rows as $row) {
+                if (!preg_match($aosVarPattern, $row)) {
+                    $headerRows[] = $row;
+                } else {
+                    $contentRows[] = $row;
+                }
+            }
+
+            // Extract the opening <table...> tag once
+            $tableOpenTag = '';
+            if (preg_match('/(<table[^>]*>)/i', $tableBlock, $matches)) {
+                $tableOpenTag = $matches[1];
+            }
+
+            // Build the table header (rendered once, no $aos_* variables)
+            $tableHeaderHtml = '';
+            if (!empty($headerRows) && $tableOpenTag !== '') {
+                $tableHeaderHtml = $tableOpenTag . '<tbody>' . implode('', $headerRows) . '</tbody></table>';
+            }
+
+            // Build the table for group iteration (content rows with $aos_* variables only)
+            $tableForIteration = '';
+            if (!empty($contentRows)) {
+                if ($tableOpenTag !== '') {
+                    $tableForIteration = $tableOpenTag . '<tbody>' . implode('', $contentRows) . '</tbody></table>';
+                } else {
+                    $tableForIteration = implode('', $contentRows);
+                }
+            }
+
+            // Append text before table
+            $processedText .= $beforeTable;
+
+            // Render table header once
+            if (!empty($tableHeaderHtml)) {
+                $processedText .= templateParser::parse_template($tableHeaderHtml, array());
+            }
+
+            // Iterate through groups
             $obb = array();
-
-            $tdTemp = explode($lsValue, $text);
-
-            $groupPart = $lsValue . $tdTemp[(is_countable($tdTemp) ? count($tdTemp) : 0) - 1] . $groupPart . $leValue;
-
-            $text = $tdTemp[0];
-
             foreach ($lineItemsGroups as $group_id => $lineItemsArray) {
-                $groupPartTemp = populate_product_lines($groupPart, $lineItemsArray);
+                $groupPartTemp = populate_product_lines($tableForIteration, $lineItemsArray);
                 $groupPartTemp = populate_service_lines($groupPartTemp, $lineItemsArray);
 
                 $obb['AOS_Line_Item_Groups'] = $group_id;
-                $text .= templateParser::parse_template($groupPartTemp, $obb);
-                $text .= '<br />';
+                $processedText .= templateParser::parse_template($groupPartTemp, $obb);
+                $processedText .= '<br />';
             }
-            $tcount = strpos($parts[1], $endElement) + strlen($endElement);
-            $parts[1] = substr($parts[1], $tcount);
         } else {
-            $tcount = strrpos($text, $startElement);
-            $text = substr($text, 0, $tcount);
-
-            $tcount = strpos($parts[1], $endElement) + strlen($endElement);
-            $parts[1] = substr($parts[1], $tcount);
+            // Table without group variables - keep as is
+            $processedText .= $beforeTable . $tableBlock;
         }
 
-        $text .= $parts[1];
-    } else {
-        $text = populate_product_lines($text, $lineItems);
-        $text = populate_service_lines($text, $lineItems);
+        $remainingText = substr($remainingText, $tableEndPos);
     }
 
+    // Append any remaining text after the last table
+    $processedText .= $remainingText;
 
-    return $text;
+    return $processedText;
+    // END STIC-Custom
 }
 
 function populate_product_lines($text, $lineItems, $element = 'tr')
