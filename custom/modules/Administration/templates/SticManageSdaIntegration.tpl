@@ -153,8 +153,8 @@
 		</td>
 		<td width="25%" valign="middle">
 			<select name="cache_units">
-				<option value="days" {if $SDA_CONFIG.config.cache_units eq 'days'}selected{/if}>{'days'|capitalize}</option>
-				<option value="hours" {if $SDA_CONFIG.config.cache_units eq 'hours'}selected{/if}>{'hours'|capitalize}</option>
+				<option value="days" {if $SDA_CONFIG.config.cache_units eq 'days'}selected{/if}>{$MOD.LBL_STIC_SINERGIADA_CACHE_UNITS_DAYS}</option>
+				<option value="hours" {if $SDA_CONFIG.config.cache_units eq 'hours'}selected{/if}>{$MOD.LBL_STIC_SINERGIADA_CACHE_UNITS_HOURS}</option>
 			</select>
 		</td>
 		<td width="25%" scope="row" valign="middle">
@@ -163,7 +163,7 @@
 			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_CACHE_QUANTITY_HELP}</div>
 		</td>
 		<td width="25%" valign="middle">
-			<input type="number" name="cache_quantity" value="{$SDA_CONFIG.config.cache_quantity}" min="0">
+			<input type="number" name="cache_quantity" id="cache_quantity" value="{$SDA_CONFIG.config.cache_quantity}" min="1" max="30">
 		</td>
 	</tr>
 	<tr>
@@ -173,7 +173,7 @@
 			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_CACHE_HOURS_HELP}</div>
 		</td>
 		<td width="25%" valign="middle">
-			<input type="text" name="cache_hours" value="{$SDA_CONFIG.config.cache_hours}" maxlength="2" size="4">
+			<input type="number" name="cache_hours" value="{$SDA_CONFIG.config.cache_hours}" min="0" max="23" size="4">
 		</td>
 		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_CACHE_MINUTES_LABEL}
@@ -181,7 +181,7 @@
 			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_CACHE_MINUTES_HELP}</div>
 		</td>
 		<td width="25%" valign="middle">
-			<input type="text" name="cache_minutes" value="{$SDA_CONFIG.config.cache_minutes}" maxlength="2" size="4">
+			<input type="number" name="cache_minutes" value="{$SDA_CONFIG.config.cache_minutes}" min="0" max="59" size="4">
 		</td>
 	</tr>
 	</tbody>
@@ -301,6 +301,18 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 		jQuery('input[type="checkbox"][name="enabled"], input[type="checkbox"][name="cache_enabled"]').each(function() {
 			jQuery(this).on('change', function() { toggleDependents(this); });
 			toggleDependents(this);
+		});
+
+		jQuery('select[name="cache_units"]').on('change', function() {
+			var $qty = jQuery('#cache_quantity');
+			if (this.value === 'hours') {
+				$qty.attr('max', 24);
+			} else {
+				$qty.attr('max', 365);
+			}
+			if (parseInt($qty.val()) > parseInt($qty.attr('max'))) {
+				$qty.val($qty.attr('max'));
+			}
 		});
 
 		var $addBtn = jQuery("#sda-add-extra-btn");
