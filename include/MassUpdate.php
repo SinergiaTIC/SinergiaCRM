@@ -113,7 +113,7 @@ class MassUpdate
         unset($_REQUEST[session_name()]);
         unset($_REQUEST['PHPSESSID']);
         // STIC-Custom 20260813 ART - Export with special characters in the filter and select all
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1378
         // $query = json_encode($_REQUEST);
         // Encode special HTML characters as \uXXXX JSON escapes to prevent breaking the single-quoted HTML attribute
         $query = json_encode($_REQUEST, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP);
