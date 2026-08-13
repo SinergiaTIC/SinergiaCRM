@@ -112,6 +112,10 @@ class ViewSticManageSdaIntegration extends SugarView
         });
         $this->ss->assign('SDA_MODULES', $moduleOptions);
 
+        echo '<link rel="stylesheet" type="text/css" href="include/javascript/qtip/jquery.qtip.min.css" />';
+        echo '<script type="text/javascript" src="include/javascript/qtip/jquery.qtip.min.js"></script>';
+        echo '<script type="text/javascript" src="SticInclude/js/SticQtip.js"></script>';
+
         $output = $this->ss->fetch('custom/modules/Administration/templates/SticManageSdaIntegration.tpl');
         if (!empty($output)) {
             echo $output;

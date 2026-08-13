@@ -67,6 +67,7 @@ $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE'] = 'Reconstruir ahora';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION'] = 'Reconstruye y repara las vistas y los elementos necesarios para la integración con Sinergia Data Analytics. Añade nuevos campos si los hay.';
 $mod_strings['LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL'] = 'Activar modo de depuración';
 $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Ir a Sinergia Data Analytics';
+$mod_strings['LBL_STIC_GO_TO_SDA_DESCRIPTION'] = 'Abre la instancia de SinergiaDA en una nueva pestaña.';
 $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'La reconstrucción de Sinergia Data Analytics se ha completado con éxito.';
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Durante la reconstrucción de Sinergia Data Analytics se han encontrado los siguientes errores. Contacte con el soporte técnico de SinergiaTIC si lo considera necesario.';
 
@@ -138,6 +139,7 @@ $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA'] = 'Otras configuraciones';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY'] = 'Nueva clave';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE'] = 'Valor';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD'] = 'Añadir configuración';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_HELP'] = 'Configuraciones adicionales en formato clave-valor. Use con precaución.';
 $mod_strings['LBL_STIC_DA_DEBUG_TITLE'] = 'Resultado de depuración';
 $mod_strings['LBL_STIC_DA_DEBUG_HIDE'] = 'Ocultar';
 $mod_strings['LBL_STIC_DA_DEBUG_SHOW'] = 'Mostrar';
