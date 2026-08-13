@@ -225,6 +225,17 @@ class stic_PaymentsController extends SugarController
         global $current_user, $mod_strings;
 
         $userId = $_REQUEST['assigned_user_id'];
+
+        // Check if the current user and target user share at least one security group; if not, deny sending the email
+        require_once 'modules/SecurityGroups/SecurityGroup.php';
+        $currentUserSecurityGroups = SecurityGroup::getUserSecurityGroups($current_user->id);
+        $targetUserSecurityGroups = SecurityGroup::getUserSecurityGroups($userId);
+        $sharedGroups = array_intersect_key($currentUserSecurityGroups, $targetUserSecurityGroups);
+        if (empty($sharedGroups)) {
+            echo json_encode(false);
+            die();
+        }
+
         $userBean = BeanFactory::getBean('Users', $userId);
         $destAddress = $userBean->email1;
 

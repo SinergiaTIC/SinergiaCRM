@@ -185,6 +185,7 @@ while ($row = $db->fetchByAssoc($res)) {
 
     $warningAttendancesData[$warningAttendances]['name'] = SticUtils::createLinkToDetailView('stic_Attendances', $row['attendance_id'], $row['attendance_name']);
     $warningAttendancesData[$warningAttendances]['attendance_id'] = $attendanceId;
+    $warningAttendancesData[$warningAttendances]['payment_id'] = $row['payment_id'] ?? '';
 
     $warningAttendancesData[$warningAttendances]['assigned_user_id'] = "";
     $warningAttendancesData[$warningAttendances]['assigned_user'] = "";
@@ -282,6 +283,7 @@ $res = $db->query($aggregatedQuery);
 $completePayments = 0;
 $processedAttendances = 0;
 $completePaymentsId = array();
+$processedAttendanceIds = array();
 
 // Process included payments
 while ($row = $db->fetchByAssoc($res)) {
@@ -299,6 +301,7 @@ while ($row = $db->fetchByAssoc($res)) {
     foreach ($attendancesId as $attendanceId) {
         $paymentBean->stic_payments_stic_attendances->add($attendanceId);
         $processedAttendances++;
+        $processedAttendanceIds[] = $attendanceId;
     }
 
     // Set the payment amount
@@ -321,6 +324,7 @@ $warningPayments = 0;
 foreach ($includedPaymentsData as $includedPaymentId => $includedPaymentData) {
     if (!in_array($includedPaymentId, $uncompletePaymentsId) && !in_array($includedPaymentId, $completePaymentsId)) {
         $warningPaymentsData[$warningPayments]['name'] = SticUtils::createLinkToDetailView('stic_Payments', $includedPaymentData['payment_id'], $includedPaymentData['payment_name']);
+        $warningPaymentsData[$warningPayments]['payment_id'] = $includedPaymentData['payment_id'];
 
         $warningPaymentsData[$warningPayments]['assigned_user_id'] = "";
         $warningPaymentsData[$warningPayments]['assigned_user'] = "";
@@ -336,6 +340,117 @@ foreach ($includedPaymentsData as $includedPaymentId => $includedPaymentData) {
         }
         $warningPayments++;
     }
+}
+
+// Filter results by security groups for the current user
+require_once 'modules/SecurityGroups/SecurityGroup.php';
+$userSecurityGroups = SecurityGroup::getUserSecurityGroups($current_user->id);
+$userGroupIds = array_keys($userSecurityGroups);
+
+if (!empty($userGroupIds)) {
+    $userGroupIdsStr = "'" . implode("','", array_map(function ($id) use ($db) {
+        return $db->quote($id);
+    }, $userGroupIds)) . "'";
+
+    // Get accessible attendance IDs
+    $accessibleAttendanceIds = array();
+    $allAttendanceIdsToCheck = array_unique(array_merge(
+        array_column($warningAttendancesData, 'attendance_id'),
+        $processedAttendanceIds
+    ));
+    if (!empty($allAttendanceIdsToCheck)) {
+        $attendanceIdsStr = "'" . implode("','", array_map(function ($id) use ($db) {
+            return $db->quote($id);
+        }, $allAttendanceIdsToCheck)) . "'";
+
+        $accessQuery = "SELECT DISTINCT secr.record_id
+            FROM securitygroups_records secr
+            WHERE secr.deleted = 0
+            AND secr.module = 'stic_Attendances'
+            AND secr.securitygroup_id IN ($userGroupIdsStr)
+            AND secr.record_id IN ($attendanceIdsStr)";
+        $res = $db->query($accessQuery);
+        while ($row = $db->fetchByAssoc($res)) {
+            $accessibleAttendanceIds[$row['record_id']] = true;
+        }
+    }
+
+    // Get accessible payment IDs
+    $accessiblePaymentIds = array();
+    $allPaymentIdsToCheck = array_keys($includedPaymentsData);
+    if (!empty($allPaymentIdsToCheck)) {
+        $paymentIdsStr = "'" . implode("','", array_map(function ($id) use ($db) {
+            return $db->quote($id);
+        }, $allPaymentIdsToCheck)) . "'";
+
+        $accessQuery = "SELECT DISTINCT secr.record_id
+            FROM securitygroups_records secr
+            WHERE secr.deleted = 0
+            AND secr.module = 'stic_Payments'
+            AND secr.securitygroup_id IN ($userGroupIdsStr)
+            AND secr.record_id IN ($paymentIdsStr)";
+        $res = $db->query($accessQuery);
+        while ($row = $db->fetchByAssoc($res)) {
+            $accessiblePaymentIds[$row['record_id']] = true;
+        }
+    }
+
+    // Filter warning attendances to only include those in accessible security groups
+    $filteredWarningAttendances = array();
+    $filteredUncompletePaymentsId = array();
+    foreach ($warningAttendancesData as $item) {
+        if (isset($accessibleAttendanceIds[$item['attendance_id']])) {
+            $filteredWarningAttendances[] = $item;
+            if (!in_array($item['payment_id'], $filteredUncompletePaymentsId)) {
+                $filteredUncompletePaymentsId[] = $item['payment_id'];
+            }
+        }
+    }
+    $warningAttendancesData = $filteredWarningAttendances;
+    $uncompletePaymentsId = $filteredUncompletePaymentsId;
+    $warningAttendances = count($warningAttendancesData);
+    $uncompletePayments = count($uncompletePaymentsId);
+
+    // Filter warning payments to only include those in accessible security groups
+    $filteredWarningPayments = array();
+    foreach ($warningPaymentsData as $item) {
+        $paymentId = $item['payment_id'];
+        if (isset($accessiblePaymentIds[$paymentId])
+            && !in_array($paymentId, $uncompletePaymentsId)
+            && !in_array($paymentId, $completePaymentsId)
+        ) {
+            $filteredWarningPayments[] = $item;
+        }
+    }
+    $warningPaymentsData = $filteredWarningPayments;
+    $warningPayments = count($warningPaymentsData);
+
+    // Filter included payments count by SG
+    $filteredIncludedPayments = 0;
+    foreach (array_keys($includedPaymentsData) as $paymentId) {
+        if (isset($accessiblePaymentIds[$paymentId])) {
+            $filteredIncludedPayments++;
+        }
+    }
+    $includedPayments = $filteredIncludedPayments;
+
+    // Filter complete payments count by SG
+    $filteredCompletePayments = 0;
+    foreach ($completePaymentsId as $paymentId) {
+        if (isset($accessiblePaymentIds[$paymentId])) {
+            $filteredCompletePayments++;
+        }
+    }
+    $completePayments = $filteredCompletePayments;
+
+    // Filter processed attendances count by SG
+    $filteredProcessedAttendances = 0;
+    foreach ($processedAttendanceIds as $attendanceId) {
+        if (isset($accessibleAttendanceIds[$attendanceId])) {
+            $filteredProcessedAttendances++;
+        }
+    }
+    $processedAttendances = $filteredProcessedAttendances;
 }
 
 // Prepare the summary view
