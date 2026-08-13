@@ -2370,7 +2370,6 @@ INSERT INTO `config` (`category`, `name`, `value`) VALUES
 ('info', 'sugar_version', '6.5.25'),
 ('MySettings', 'tab', 'YToyMDp7aTowO3M6NDoiSG9tZSI7aToxO3M6ODoiQWNjb3VudHMiO2k6MjtzOjg6IkNvbnRhY3RzIjtpOjY7czo4OiJDYWxlbmRhciI7aTo3O3M6OToiRG9jdW1lbnRzIjtpOjg7czo2OiJFbWFpbHMiO2k6OTtzOjU6IlNwb3RzIjtpOjExO3M6NToiQ2FsbHMiO2k6MTI7czo4OiJNZWV0aW5ncyI7aToxMztzOjU6IlRhc2tzIjtpOjE0O3M6NToiTm90ZXMiO2k6Mjc7czoxNzoiQU9TX1BERl9UZW1wbGF0ZXMiO2k6Mjg7czo5OiJqandnX01hcHMiO2k6Mjk7czoxMjoiamp3Z19NYXJrZXJzIjtpOjMwO3M6MTA6Impqd2dfQXJlYXMiO2k6MzE7czoxODoiamp3Z19BZGRyZXNzX0NhY2hlIjtpOjMyO3M6MTE6IkFPUl9SZXBvcnRzIjtpOjMzO3M6MTI6IkFPV19Xb3JrRmxvdyI7aTozNjtzOjE0OiJFbWFpbFRlbXBsYXRlcyI7aTozNztzOjc6IlN1cnZleXMiO30='),
 ('portal', 'on', '0'),
-('portal', 'PORTAL_INVITATION_LIMIT', '100'),
 ('tracker', 'Tracker', '1'),
 ('system', 'skypeout_on', '1'),
 ('sugarfeed', 'enabled', '1'),
