@@ -57,11 +57,69 @@ class ViewSticManageSdaIntegration extends SugarView
     public function display()
     {
         
-        global $mod_strings;
+        global $mod_strings, $current_user, $sugar_config, $app_list_strings;
         
         $this->ss->assign('MOD', $GLOBALS['mod_strings']);
         $this->ss->assign('title', $this->getModuleTitle(false));
+        $this->ss->assign('CURRENT_USER_ID', $current_user->id);
+        $sdaConfig = $sugar_config['stic_sinergiada'] ?? [];
+        $knownCacheKeys = ['cache_enabled', 'cache_units', 'cache_quantity', 'cache_hours', 'cache_minutes'];
+        $defaultCache = [
+            'cache_enabled' => false,
+            'cache_units' => 'days',
+            'cache_quantity' => 2,
+            'cache_hours' => '04',
+            'cache_minutes' => '30',
+        ];
+        if (!isset($sdaConfig['config']) || !is_array($sdaConfig['config'])) {
+            $sdaConfig['config'] = $defaultCache;
+        } else {
+            $sdaConfig['config'] = array_merge($defaultCache, $sdaConfig['config']);
+        }
+        $extraConfig = [];
+        foreach ($sdaConfig['config'] as $key => $value) {
+            if (!in_array($key, $knownCacheKeys)) {
+                $extraConfig[$key] = $value;
+            }
+        }
+        $this->ss->assign('SDA_EXTRA_CONFIG', $extraConfig);
+        $this->ss->assign('SDA_CONFIG', $sdaConfig);
+        $this->ss->assign('SDA_PUBLIC_URL', $sugar_config['stic_sinergiada_public']['url'] ?? '');
 
-        echo $this->ss->fetch('custom/modules/Administration/templates/SticManageSdaIntegration.tpl');
+        // Build module list for publish_as_table selector, replicating SinergiaDA module filtering
+        include_once 'modules/MySettings/TabController.php';
+        $controller = new TabController();
+        $visibleModules = $controller->get_system_tabs();
+        $evenExcludedModules = [
+            'Administration', 'AM_ProjectTemplates', 'AOBH_BusinessHours', 'AOK_Knowledge_Base_Categories',
+            'AOK_KnowledgeBase', 'AOR_Reports', 'AOR_Scheduled_Reports', 'AOS_PDF_Templates', 'AOW_WorkFlow',
+            'Bugs', 'Calendar', 'DHA_PlantillasDocumentos', 'Documents', 'EmailTemplates', 'FP_events',
+            'Home', 'jjwg_Address_Cache', 'jjwg_Areas', 'jjwg_Maps', 'jjwg_Markers', 'KReports',
+            'ProspectLists', 'Prospects', 'ResourceCalendar', 'SecurityGroups', 'Spots',
+            'stic_Bookings_Calendar', 'stic_Sepe_Files', 'stic_Settings', 'stic_Validation_Actions',
+            'stic_Web_Forms', 'stic_Incorpora_Locations', 'stic_Validation_Results', 'stic_Custom_Views',
+        ];
+        $modulesList = array_diff($visibleModules, $evenExcludedModules);
+        $modulesList['Users'] = 'Users';
+        natsort($modulesList);
+        $moduleOptions = [];
+        foreach ($modulesList as $moduleName) {
+            $txModuleName = $app_list_strings['moduleList'][$moduleName] ?? $moduleName;
+            $moduleOptions[] = ['name' => $moduleName, 'label' => $txModuleName];
+        }
+        usort($moduleOptions, function ($a, $b) {
+            return strcmp($a['label'], $b['label']);
+        });
+        $this->ss->assign('SDA_MODULES', $moduleOptions);
+
+        echo '<link rel="stylesheet" type="text/css" href="include/javascript/qtip/jquery.qtip.min.css" />';
+        echo '<script type="text/javascript" src="include/javascript/qtip/jquery.qtip.min.js"></script>';
+        echo '<script type="text/javascript" src="SticInclude/js/SticQtip.js"></script>';
+
+        $output = $this->ss->fetch('custom/modules/Administration/templates/SticManageSdaIntegration.tpl');
+        if (!empty($output)) {
+            echo $output;
+        }
     }
+
 }
