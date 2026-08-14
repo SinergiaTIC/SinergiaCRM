@@ -90,8 +90,14 @@ if ($result['ok'] !== 0) {
 }
 
 if ($result['ko'] !== 0) {
-    SugarApplication::appendErrorMessage("<p class='label label-error'><strong>{$result['ko']}</strong> " . translate('LBL_SIGNERS_NOT_ADDED_MSG', 'stic_Signatures') . ".</p>");
-    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$result['ko']} signers could not be added because they already exist or an error occurred.");
+    $moduleSingular = translate($result['module_name'] ?? '', $result['module_name']);
+    if ($result['allow_multiple_signers']) {
+        $msg = "<p class='msg-error'><strong>{$result['ko']}</strong> " . sprintf(translate('LBL_SIGNERS_NOT_ADDED_DUPLICATE_MSG', 'stic_Signatures'), "<strong>{$moduleSingular}</strong>") . ".</p>";
+    } else {
+        $msg = "<p class='msg-error'><strong>{$result['ko']}</strong> " . translate('LBL_SIGNERS_NOT_ADDED_SINGLE_MSG', 'stic_Signatures') . ".</p>";
+    }
+    SugarApplication::appendErrorMessage($msg);
+    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": {$result['ko']} signers could not be added.");
 }
 
 SugarApplication::redirect('index.php?module=stic_Signatures&action=DetailView&record=' . $signatureId);

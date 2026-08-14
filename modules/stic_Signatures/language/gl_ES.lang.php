@@ -94,7 +94,9 @@ $mod_strings = array(
     'LBL_EXPIRATION_DATE_ERROR' => 'A data de caducidad debe ser posterior á data de activación.',
     'LBL_SIGNERS_ADDED_MSG' => 'Asinantes engadidos correctamente',
     'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Para que os novos asinantes poidan asinar o documento é necesario cambiar o estado a Aberto ou Permanente.',
-    'LBL_SIGNERS_NOT_ADDED_MSG' => 'Asinantes non engadidos, xa existen ou ocorreu un erro',
+    'LBL_SIGNERS_NOT_ADDED_MSG' => 'Asinantes non engadidos.',
+    'LBL_SIGNERS_NOT_ADDED_SINGLE_MSG' => 'Asinante(s) non engadido(s). Cada persoa só pode engadirse unha vez por proceso de firma. Para engadir a mesma persoa desde outro rexistro, activa "Permitir mesmo asinante varias veces" na configuración da firma.',
+    'LBL_SIGNERS_NOT_ADDED_DUPLICATE_MSG' => 'Asinante(s) non engadido(s). A mesma persoa só pode engadirse unha vez por rexistro orixe. Se necesitas engadir a mesma persoa de novo, selecciona un rexistro de %s diferente.',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Omítese o seguinte rexistro porque non se atoparon asinantes',
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'Creouse unha campaña de notificación para a sinatura: ',
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Xa existe unha campaña de notificación para a sinatura: ',
@@ -210,4 +212,8 @@ $mod_strings = array(
     'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Plantilla de correo para enviar o documento asinado aos asinantes. Se non se indica o contrario, utilízase a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70331&action=DetailView">Plantilla por defecto.', 
     'LBL_EMAIL_TEMPLATE_OTP_HELP' => 'Plantilla de correo para enviar o código dun só uso ao correo electrónico dos asinantes. Se non se indica o contrario, utilízase a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70332&action=DetailView">Plantilla por defecto.', 
     'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => 'Plantilla de mensaxe SMS para enviar o código dun só uso ao teléfono dos asinantes. Se non se indica o contrario, utilízase a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView">Plantilla por defecto.',
+
+    // Allow multiple signers
+    'LBL_ALLOW_MULTIPLE_SIGNERS' => 'Permitir mesmo asinante varias veces',
+    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => 'Cando está habilitado, a mesma persoa/usuario pode ter múltiples rexistros de asinante dentro deste proceso de firma, sempre que veñan de rexistros orixe diferentes (por exemplo, diferentes inscricións, eventos ou pagos). Cando está deshabilitado (valor por defecto), cada persoa/usuario só pode ter un rexistro de asinante por proceso de firma.',
 );

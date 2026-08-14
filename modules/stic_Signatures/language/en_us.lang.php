@@ -94,7 +94,9 @@ $mod_strings = array(
     'LBL_EXPIRATION_DATE_ERROR' => 'The expiration date must be after the activation date.',
     'LBL_SIGNERS_ADDED_MSG' => 'signer(s) added successfully',
     'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'New signers will not be able to sign the document because the signature status that does not allow it. Please remember to change the status to Open or Permanent if you want the new signers to be able to sign the document.',
-    'LBL_SIGNERS_NOT_ADDED_MSG' => 'Signers not added, already exist or an error occurred.',
+    'LBL_SIGNERS_NOT_ADDED_MSG' => 'Signers not added.',
+    'LBL_SIGNERS_NOT_ADDED_SINGLE_MSG' => 'Signer(s) not added. Each person can only be added once per signature process. To add the same person from a different record, enable "Allow same signer multiple times" in the signature settings.',
+    'LBL_SIGNERS_NOT_ADDED_DUPLICATE_MSG' => 'Signer(s) not added. The same person can only be added once per source record. If you need to add the same person again, select a different %s record.',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'The following record will be skipped because no signers were found.',
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'A notification campaign has been created for the signature: ',
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'A notification campaign already exists for the signature: ',
@@ -218,4 +220,8 @@ $mod_strings = array(
     'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Email template to send the signed document to signers. Unless otherwise indicated, the <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70331&action=DetailView">default template</a> will be used.',
     'LBL_EMAIL_TEMPLATE_OTP_HELP' => "Email template to send the one time code to the signers' email. Unless otherwise indicated, the <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70332&action=DetailView'>default template</a> will be used.",
     'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => "SMS message template to send the one time code to the signers' phone. Unless otherwise indicated, the <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView'>default template</a> will be used.",
+
+    // Allow multiple signers
+    'LBL_ALLOW_MULTIPLE_SIGNERS' => 'Allow same signer multiple times',
+    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => 'When enabled, the same person/user can have multiple signer records within this signature process, as long as they come from different source records (e.g., different enrollments, events, or payments). When disabled (default), each person/user can only have one signer record per signature process.',
 );
