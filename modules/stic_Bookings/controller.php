@@ -69,7 +69,7 @@ class stic_BookingsController extends SugarController
             return;
         }
         
-        $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
+        $config_place_fields = stic_BookingsUtils::getConfigPlaceFields();
 
         $db = DBManagerFactory::getInstance();
         $centerIdsArray = explode(',', $centerIds);
@@ -169,6 +169,7 @@ class stic_BookingsController extends SugarController
 
     public function action_loadExistingResources()
     {
+        require_once 'modules/stic_Bookings/Utils.php';
         $bookingId = $_REQUEST['bookingId'] ?? null;
         
         if (empty($bookingId)) {
@@ -176,11 +177,11 @@ class stic_BookingsController extends SugarController
             return;
         }
         
-        $config_place_fields = require 'modules/stic_Bookings/configPlaceFields.php';
-        
+        $config_place_fields = stic_BookingsUtils::getConfigPlaceFields();
+
         $db = DBManagerFactory::getInstance();
         $resources = [];
-        
+
         $booking = BeanFactory::getBean('stic_Bookings', $bookingId);
         if ($booking && $booking->load_relationship('stic_resources_stic_bookings')) {
             foreach ($booking->stic_resources_stic_bookings->getBeans() as $resourceBean) {

@@ -54,12 +54,19 @@ $entry_point_registry['sticSignatureSignersSelect'] = array('file' => 'modules/s
 $entry_point_registry['sticSign'] = array('file' => 'modules/stic_Signatures/SignaturePortal/SignaturePortalEntryPoint.php', 'auth' => false);
 $entry_point_registry['sticGenerateSignedPdf'] = array('file' => 'modules/stic_Signatures/sticGenerateSignedPdf.php', 'auth' => false);
 
+// These entry points are used by the Stic Messages module
+$entry_point_registry['sticMessagesTwilioResponse'] = array('file' => 'modules/stic_Messages/Entrypoints/WhatsAppWebhookEntryPoint.php', 'auth' => false);
+$entry_point_registry['sticWhatsappMedia'] = array('file' => 'modules/stic_Messages/Entrypoints/WhatsAppMediaEntryPoint.php', 'auth' => false);
+$entry_point_registry['sticConversationMessages'] = array('file' => 'modules/stic_Messages/Entrypoints/WhatsAppViewEntryPoint.php', 'auth' => true);
+
 // Entry points used by Stic Advanced Web Forms
 $entry_point_registry['stic_AWF_checkStatus'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/CheckStatus.php', 'auth' => false);
 $entry_point_registry['stic_AWF_renderForm'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/RenderForm.php', 'auth' => false);
 $entry_point_registry['stic_AWF_responseHandler'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/ResponseHandler.php', 'auth' => false);
 $entry_point_registry['stic_AWF_checkSession'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/CheckSession.php', 'auth' => false);
-$entry_point_registry['stic_AWF_webhookHanlder'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/WebhookHandler.php', 'auth' => false);
+$entry_point_registry['stic_AWF_webhookHandler'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/WebhookHandler.php', 'auth' => false);
+$entry_point_registry['stic_AWF_returnHandler'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/ReturnHandler.php', 'auth' => false);
+$entry_point_registry['stic_AWF_resumeHandler'] = array('file' => 'modules/stic_AWF_Forms/EntryPoints/ResumeHandler.php', 'auth' => false);
 
 // Entry point for async ListView count
 $entry_point_registry['sticAsyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
