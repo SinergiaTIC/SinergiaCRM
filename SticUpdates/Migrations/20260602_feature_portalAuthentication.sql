@@ -181,5 +181,5 @@ INSERT IGNORE INTO `config` (`category`, `name`, `value`) VALUES
 ('portal', 'PORTAL_AUDIT_RETENTION_DAYS',            '365'),
 ('portal', 'PORTAL_CAPTCHA_AFTER_FAILURES',          '3'),
 ('portal', 'PORTAL_CAPTCHA_SITE_KEY',                ''),
-('portal', 'PORTAL_CAPTCHA_SECRET_KEY',              '');
+('portal', 'PORTAL_CAPTCHA_SECRET_KEY',              ''),
 ('portal', 'PORTAL_INVITATION_LIMIT',               '100');
