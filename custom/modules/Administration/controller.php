@@ -191,8 +191,8 @@ class CustomAdministrationController extends AdministrationController
         $configurator->config['stic_sinergiada']['config']['cache_enabled'] = !empty($_POST['cache_enabled']);
         $configurator->config['stic_sinergiada']['config']['cache_units'] = $_POST['cache_units'] ?? 'days';
         $configurator->config['stic_sinergiada']['config']['cache_quantity'] = $_POST['cache_quantity'] !== '' ? (int) $_POST['cache_quantity'] : '';
-        $configurator->config['stic_sinergiada']['config']['cache_hours'] = $_POST['cache_hours'] ?? '';
-        $configurator->config['stic_sinergiada']['config']['cache_minutes'] = $_POST['cache_minutes'] ?? '';
+        $configurator->config['stic_sinergiada']['config']['cache_hours'] = isset($_POST['cache_hours']) ? str_pad((string)(int)$_POST['cache_hours'], 2, '0', STR_PAD_LEFT) : '00';
+        $configurator->config['stic_sinergiada']['config']['cache_minutes'] = isset($_POST['cache_minutes']) ? str_pad((string)(int)$_POST['cache_minutes'], 2, '0', STR_PAD_LEFT) : '00';
 
         // Extra / unknown config keys (from "Otras configuraciones" section)
         $extraConfig = $_POST['extra_config'] ?? [];
