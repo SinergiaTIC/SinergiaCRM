@@ -34,7 +34,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $t = BeanFactory::newBean('OAuth2Tokens');
     $t->retrieve_by_string_fields(['access_token' => $tokenVal]);
     if (!$t->id || $t->token_is_revoked == '1') { http_response_code(401); echo json_encode(['error' => 'invalid_token']); exit; }
-    echo json_encode(['valid' => true, 'portal_id' => $t->assigned_user_id]);
+    if (!empty($t->access_token_expires) && strtotime($t->access_token_expires) < time()) {
+        http_response_code(401); echo json_encode(['error' => 'token_expired']); exit;
+    }
+    // Portal info is stored in the description field as "Contact|{id}" or "Account|{id}"
+    $descParts = explode('|', $t->description ?? '');
+    echo json_encode([
+        'valid' => true,
+        'portal_type' => $descParts[0] ?? '',
+        'portal_id' => $descParts[1] ?? '',
+    ]);
     exit;
 }
 
