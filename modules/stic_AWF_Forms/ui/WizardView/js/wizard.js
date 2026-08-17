@@ -2758,6 +2758,13 @@ class WizardStep4 {
         return null;
       },
 
+      isGroupSection(section) {
+        const firstElement = section.elements.find(el => el.type === 'datablock');
+        if (!firstElement) return false;
+        const block = this.getDataBlock(firstElement);
+        return block ? block.isGroupHead(this.data_blocks) : false;
+      },
+
       getFields(element) {
         return this.getDataBlock(element)?.fields.filter(f => f.type_field != 'fixed');
       },
@@ -2792,9 +2799,19 @@ class WizardStep4 {
         const toSection = this.sections.find(s => s.id == toSectionId);
         if (!fromSection || !toSection) return;
 
+        // Blocks inside a group section cannot leave it
+        if (this.isGroupSection(fromSection)) return;
+        // No block can move INTO a group section from outside
+        if (this.isGroupSection(toSection)) return;
+
         const block = this.getDataBlock(element);
         if (block && block.group_root && block.group_root !== '') {
           // Children of a repeatable root cannot be moved independently
+          alert(utils.translate('LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD'));
+          return;
+        }
+        if (block && block.isGroupHead(this.data_blocks)) {
+          // The group head cannot leave its group section
           alert(utils.translate('LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD'));
           return;
         }
@@ -2802,16 +2819,6 @@ class WizardStep4 {
         // Move the element itself
         fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
         toSection.elements.push(element);
-
-        // If this is a repeatable root, drag its children with it
-        if (block && block.is_repeatable) {
-          const childIds = new Set(this.data_blocks
-            .filter(b => b.group_root === block.id)
-            .map(b => b.id));
-          const childElements = fromSection.elements.filter(el => el.type === 'datablock' && childIds.has(el.ref_id));
-          fromSection.elements = fromSection.elements.filter(el => !childIds.has(el.ref_id));
-          toSection.elements.push(...childElements);
-        }
       },
 
       resetTheme() {

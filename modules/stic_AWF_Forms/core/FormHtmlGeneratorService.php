@@ -57,6 +57,19 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * Helper to check if a block or ANY of its descendants (subgroup tree)
+     * has renderable fields. Mirrors the design-side filtering: a group head is
+     * kept if the root OR any descendant has at least one visible field.
+     */
+    private static function groupSubtreeHasRenderableFields(FormDataBlock $block, FormConfig $config): bool {
+        if (self::blockHasRenderableFields($block)) return true;
+        foreach ($config->getGroupChildren($block) as $child) {
+            if (self::groupSubtreeHasRenderableFields($child, $config)) return true;
+        }
+        return false;
+    }
+
+    /**
      * Generates the full HTML document (doctype, head, body).
      * For standalone or iframe views.
      * If you want to generate only the form HTML (for embedding in other pages), use the generateFormHtml method instead, 
@@ -570,7 +583,9 @@ class FormHtmlGeneratorService {
         }
         // Simple group with children: render children inline (static, no instance index)
         foreach ($children as $childBlock) {
-            if (!$childBlock->fields) continue;
+            // Skip blocks with no renderable fields anywhere in their subtree
+            // (matches the design filtering: empty blocks/groups are not shown)
+            if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
             $html .= $this->renderBlockPanel($childBlock, $theme);
         }
         return $html;
@@ -610,28 +625,19 @@ class FormHtmlGeneratorService {
 
         $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances} }\">" . $this->newLine('+');
         {
-            // 1. Group Header with Master Switch (if optional) or title (if mandatory)
-            $html .= "<div class='awf-group-header mb-3 pb-2 border-bottom border-primary d-flex align-items-center justify-content-between'>" . $this->newLine('+');
-            {
-                $html .= "<div class='d-flex align-items-center'>" . $this->newLine('+');
+            // No group header is rendered: the group name is shown by the section
+            // title (visible by default), avoiding duplication with the primary color.
+
+            // 1. Optional activation switch: below the section title/subtitle, styled as a normal field
+            if ($isOptional) {
+                $html .= "<div class='form-check form-switch mb-3'>" . $this->newLine('+');
                 {
-                    if ($isOptional) {
-                        // Optional activation switch
-                        $html .= "<div class='form-check form-switch me-3 mb-0'>" . $this->newLine('+');
-                        {
-                            $html .= "<input class='form-check-input' type='checkbox' role='switch' id='switch_{$rootBlock->id}' x-model='active' " .
-                                    "@change=\"if (!active) { instances = []; } else if (instances.length === 0) { instances.push({ id: nextInstanceId++ }); }\">" . $this->newLine();
-                            $html .= "<label class='form-check-label fw-bold text-primary h5 mb-0' for='switch_{$rootBlock->id}'>{$toggleLabel}</label>" . $this->newLine();
-                        }
-                        $html .= "</div>" . $this->newLine('-');
-                    } else {
-                        $html .= "<span class='badge bg-primary me-2'>" . translate('LBL_DATABLOCK_GROUP', 'stic_AWF_Forms') . "</span>" . $this->newLine();
-                        $html .= "<h4 class='awf-group-title text-primary mb-0 fw-bold'>{$groupTitle}</h4>" . $this->newLine();
-                    }
+                    $html .= "<input class='form-check-input' type='checkbox' role='switch' id='switch_{$rootBlock->id}' x-model='active' " .
+                            "@change=\"if (!active) { instances = []; } else if (instances.length === 0) { instances.push({ id: nextInstanceId++ }); }\">" . $this->newLine();
+                    $html .= "<label class='form-check-label mb-0' for='switch_{$rootBlock->id}'>{$toggleLabel}</label>" . $this->newLine();
                 }
                 $html .= "</div>" . $this->newLine('-');
             }
-            $html .= "</div>" . $this->newLine('-');
 
             // 2. Instance Loop (visible if active)
             $html .= "<div x-show='active' x-transition>" . $this->newLine('+');
@@ -650,7 +656,6 @@ class FormHtmlGeneratorService {
                             if ($isRepeatable) {
                                 $html .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance)\">" . $this->newLine('+');
                                 {
-                                    $html .= "<i class='suitepicon suitepicon-action-delete me-1'></i>";
                                     $html .= "<span>{$removeLabel}</span>" . $this->newLine();
                                 }
                                 $html .= "</button>" . $this->newLine('-');
@@ -666,7 +671,9 @@ class FormHtmlGeneratorService {
 
                             // Render direct children (NOT all descendants — subgroup heads are handled recursively)
                             foreach ($children as $childBlock) {
-                                if (!$childBlock->fields) continue;
+                                // Skip blocks with no renderable fields anywhere in their subtree
+                                // (matches the design filtering: empty blocks/groups are not shown)
+                                if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
 
                                 // Check if this child is itself a group head (subgroup)
                                 $childHasChildren = !empty($config->getGroupChildren($childBlock));
@@ -714,11 +721,11 @@ class FormHtmlGeneratorService {
 
                 // 3. Add more instances button (ONLY for repeatable groups)
                 if ($isRepeatable) {
-                    $html .= "<button type='button' class='btn btn-outline-primary awf-add-instance-btn mt-1' " .
+                    $html .= "<button type='button' class='btn btn-sm btn-outline-primary awf-add-instance-btn mt-1' " .
                             "@click=\"instances.push({ id: nextInstanceId++ })\" " .
                             "x-show=\"!{$maxInstances} || instances.length < {$maxInstances}\">" . $this->newLine('+');
                     {
-                        $html .= "<span>+ {$addLabel}</span>" . $this->newLine();
+                        $html .= "<span>{$addLabel}</span>" . $this->newLine();
                     }
                     $html .= "</button>" . $this->newLine('-');
                 }
@@ -739,6 +746,8 @@ class FormHtmlGeneratorService {
      * @return string Generated HTML for the block panel
      */
     private function renderBlockPanel(FormDataBlock $block, FormTheme $theme): string {
+        // A block with no renderable fields renders nothing (empty sub-section)
+        if (!self::blockHasRenderableFields($block)) return "";
         $blockTitle = htmlspecialchars($block->text);
 
         $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
@@ -768,6 +777,8 @@ class FormHtmlGeneratorService {
      * @return string Generated HTML for the block panel
      */
     private function renderBlockInstancePanel(FormDataBlock $block, FormTheme $theme, string $instanceIndexVar): string {
+        // A block with no renderable fields renders nothing (empty sub-section)
+        if (!self::blockHasRenderableFields($block)) return "";
         $blockTitle = htmlspecialchars($block->text);
 
         $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');

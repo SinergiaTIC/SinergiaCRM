@@ -22,6 +22,25 @@
  */
  -->
  
+<style>
+    /* Sections that contain a group: highlighted so the user recognizes them as special (OC - group sections) */
+    .stic_panel .card.group-section {
+        border-color: var(--bs-primary) !important;
+        box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.15);
+    }
+    .stic_panel .card.group-section > .card-header {
+        border-bottom-color: var(--bs-primary);
+    }
+    /* Elements (blocks) inside a group section: styled as blocks, not as sections */
+    .stic_panel .card.datablock-element {
+        border: 1px dashed rgba(0, 0, 0, 0.25);
+        border-left: 4px solid var(--bs-primary);
+    }
+    .stic_panel .card.datablock-element > .card-header {
+        background-color: #ffffff;
+    }
+</style>
+
  <!-- Main Panel -->
 <main x-data="WizardStep4.mainStep4xData();">
     <div class="row h-100 g-0">
@@ -407,9 +426,16 @@
                                         <div class="flex-fill border rounded p-2 overflow-auto">
                                             <h4 class="mb-2" x-text="utils.translate('LBL_SECTIONS')"></h3>
                                             <template x-for="(section, index) in sections" :key="section.id">
-                                                <div class="card datablock">
+                                                <div class="card datablock"
+                                                     :class="{'group-section': isGroupSection(section)}">
                                                     <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                                                        <span :id="`sectionTitleEdit-${section.id}`" data-model="section.title" x-init="sticControls.editableText($el);"></span>
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <template x-if="isGroupSection(section)">
+                                                                <span class="badge bg-primary" :title="utils.translate('LBL_DATABLOCK_GROUP')"
+                                                                      x-text="'📦 ' + utils.translate('LBL_DATABLOCK_GROUP')"></span>
+                                                            </template>
+                                                            <span :id="`sectionTitleEdit-${section.id}`" data-model="section.title" x-init="sticControls.editableText($el);"></span>
+                                                        </div>
                                                         <!-- Buttons -->
                                                         <div class="d-inline-flex">
                                                             <div class="d-inline-flex input-group" role="group">
@@ -502,7 +528,8 @@
                                                                             <div class="card mb-2 border-secondary"
                                                                                  :class="{
                                                                                     'groupdatablock': getDataBlock(element)?.isGroupHead(data_blocks),
-                                                                                    'child-block': getDataBlock(element)?.is_child
+                                                                                    'child-block': getDataBlock(element)?.is_child,
+                                                                                    'datablock-element': isGroupSection(section)
                                                                                  }">
                                                                                 <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
                                                                                     <div class="d-flex align-items-center gap-2">
@@ -529,11 +556,11 @@
                                                                                     <div class="d-inline-flex gap-2">
                                                                                         <select class="form-select small text-muted w-auto" @change="moveElementToSection(element, section.id, $event.target.value)"
                                                                                                 style="min-width: 100px;"
-                                                                                                :disabled="getDataBlock(element)?.is_child">
+                                                                                                :disabled="isGroupSection(section) || getDataBlock(element)?.is_child || getDataBlock(element)?.isGroupHead(data_blocks)">
                                                                                             <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
                                                                                             <template x-for="sec in sections" :key="sec.id">
                                                                                                 <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')" 
-                                                                                                        x-show="sec.id !== section.id"></option>
+                                                                                                        x-show="sec.id !== section.id && !isGroupSection(sec)"></option>
                                                                                             </template>
                                                                                         </select>
 

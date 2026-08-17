@@ -1628,14 +1628,16 @@ class stic_AwfLayout {
         
         // Field visibility check:
         // - Group heads: keep if the root OR any descendant has renderable fields
-        // - Group children: keep regardless of their own fields (they render inside the root;
-        //   discarding them individually would break the group cohesion)
+        // - Group children: keep only if they (or their own subtree) have renderable
+        //   fields — a child without visible fields would show in the design but not
+        //   in the form preview, which is inconsistent
         // - Standalone blocks: keep only if they have renderable fields
         const isGroupHead = block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
         const isChild = !!(block.group_root && block.group_root !== '');
 
         if (isChild) {
-          // Children are kept; their visibility is tied to their root
+          // Children are kept only if they (or their descendants) have renderable fields
+          if (!hasRenderableFields(block) && !block.getDescendants(dataBlocks).some(hasRenderableFields)) return false;
           placedBlockIds.add(el.ref_id);
           blockSectionMap.set(el.ref_id, section);
           return true;
@@ -1652,6 +1654,18 @@ class stic_AwfLayout {
         return true;
       });
       section.elements = validElements;
+
+      // Group sections: if the section starts with a group head, it belongs to the
+      // group — use the group title and keep the section title visible by default
+      // (like any other section). This also renames sections that were created
+      // before their block became a group head.
+      const firstElement = section.elements.find(el => el.type === 'datablock');
+      const firstBlock = firstElement ? dataBlocks.find(b => b.id === firstElement.ref_id) : null;
+      const firstIsGroupHead = firstBlock && (firstBlock.is_repeatable || firstBlock.is_optional || firstBlock.getChildren(dataBlocks).length > 0);
+      if (firstIsGroupHead) {
+        section.title = firstBlock.group_title || firstBlock.text;
+        section.showTitle = true;
+      }
 
       if (section.elements.length > 0) {
         cleanStructure.push(section);
@@ -1704,13 +1718,11 @@ class stic_AwfLayout {
     if (orphanBlocks.length > 0) {
       // Create a section for each orphan root block and add its children to the same section
       orphanBlocks.forEach(block => {
-        // Group sections use the group title and hide the section header
-        // (the group renders its own header inside the wrapper). Standalone blocks keep
-        // the block text as the section title with the header visible.
+        // Group sections use the group title as the section title (visible by
+        // default, like any other section). Standalone blocks keep the block text.
         const isGroupHead = block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
         const section = new stic_AwfLayoutSection({
           title: isGroupHead ? (block.group_title || block.text) : block.text,
-          showTitle: !isGroupHead,
         });
 
         // Add the root block
@@ -1724,7 +1736,9 @@ class stic_AwfLayout {
         const descendants = block.getDescendants(dataBlocks);
         descendants.forEach(child => {
           if (placedBlockIds.has(child.id)) return;
-          if (!child.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return;
+          // Keep the child if it or its own subtree has renderable fields
+          const childHasRenderable = hasRenderableFields(child) || child.getDescendants(dataBlocks).some(hasRenderableFields);
+          if (!childHasRenderable) return;
           section.elements.push(new stic_AwfLayoutElement({
             type: 'datablock',
             ref_id: child.id
