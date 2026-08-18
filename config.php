@@ -72,6 +72,7 @@ $sugar_config = array(
         2 => 'png',
         3 => 'jpeg',
         4 => 'jpg',
+        5 => 'webp',
     ),
     'anti_malware_scanners' => array(
         'SuiteCRM\\Utility\\AntiMalware\\Providers\\ClamTCP' => array(
@@ -536,6 +537,7 @@ $sugar_config = array(
         3 => 'jpeg',
         4 => 'svg',
         5 => 'bmp',
+        6 => 'webp',
     ),
     'vcal_time' => '2',
     'verify_client_ip' => true,
