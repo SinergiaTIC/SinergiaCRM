@@ -79,11 +79,12 @@ class stic_Job_Applications extends Basic
             $this->name = $contact_name .' - '.$offer_name;
         }
 
-        // If it is a new record, the assigned user of the offer is indicated in the job application
-        if (!empty($offerBean) &&
-            empty($this->fetched_row['id']) &&
-            $this->assigned_user_id != $offerBean->assigned_user_id) {
-            $this->assigned_user_id = $offerBean->assigned_user_id;
+        // If it is a new record, inherit the assigned user from the related offer, unless the user has manually changed it
+        global $current_user;
+        if (empty($this->fetched_row['id']) && !empty($offerBean) && !empty($offerBean->id)) {
+            if ($this->assigned_user_id === $current_user->id) {
+                $this->assigned_user_id = $offerBean->assigned_user_id;
+            }
         }
 
         parent::save($check_notify);
