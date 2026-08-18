@@ -41,9 +41,6 @@ class FormDataBlock {
     public ?int $max_instances = 1;          // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
     public string $group_title = '';         // Visual title for the repeat group
     public bool $is_custom_group_title = false; // Flag to track manual title overrides
-    public string $toggle_label = '';        // Label for the "include instance data" toggle switch
-    public string $add_button_label = '';    // Label for the "add instance" button
-    public string $remove_button_label = ''; // Label for the "remove instance" button
     public string $group_root = '';  // ID of the repeatable root this block belongs to
 
     private ?BeanReference $beanReference = null; // Bean where the data block has been saved
@@ -72,9 +69,6 @@ class FormDataBlock {
         $dto->group_title = $data['group_title'] ?? '';
         $dto->is_custom_group_title = isset($data['is_custom_group_title']) ? (bool)$data['is_custom_group_title'] : false;
         
-        $dto->toggle_label = $data['toggle_label'] ?? '';
-        $dto->add_button_label = $data['add_button_label'] ?? '';
-        $dto->remove_button_label = $data['remove_button_label'] ?? '';
         $dto->group_root = $data['group_root'] ?? '';
         // END STIC-Custom OC
 

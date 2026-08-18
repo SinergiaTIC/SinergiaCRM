@@ -25,20 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-class FormLayoutElement extends FormLayoutNode{
-    public FormLayoutSection $section;  // The section it belongs to
-
-    public string $ref_id;              // ID of the data block
-
-    public static function fromJsonArray(FormLayoutSection $section, array $data): self {
-        $dto = new self();
-
-        $dto->section = $section;
-
-        $dto->id = $data['id'] ?? uniqid('el');
-        $dto->type = $data['type'] ?? 'datablock';
-        $dto->ref_id = $data['ref_id'] ?? '';
-
-        return $dto;
-    }
+abstract class FormLayoutNode {
+    public string $id;
+    public string $type;                // 'datablock', 'section', etc.
 }

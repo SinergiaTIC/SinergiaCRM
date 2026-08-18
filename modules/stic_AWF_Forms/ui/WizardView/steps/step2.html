@@ -135,13 +135,13 @@
                   <div class="row g-3 align-items-center">
 
                     <!-- Text: Toggle Switch Custom Label -->
-                    <div class="col-md-3" x-show="item.is_optional" x-init="utils.setInlineHelpQtip()">
+                    <!-- <div class="col-md-3" x-show="item.is_optional" x-init="utils.setInlineHelpQtip()">
                       <label :for="`groupToggleLabel_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_INCLUDE_LABEL')"></label>
                       <i class="inline-help glyphicon glyphicon-info-sign"></i>
                       <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DESC')"></div>
                       <input type="text" :id="`groupToggleLabel_${item.id}`" class="form-control form-control-sm" x-model="item.toggle_label" 
                              :placeholder="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT') + ' ' + (item.group_title || item.text)">
-                    </div>
+                    </div> -->
 
                     <!-- Max Instances Limit -->
                     <div class="col-md-1" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
@@ -153,22 +153,22 @@
                     </div>
 
                     <!-- Text: Add Button Custom Label -->
-                    <div class="col-md-3" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                    <!-- <div class="col-md-3" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
                       <label :for="`groupAddButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_ADD_LABEL')"></label>
                       <i class="inline-help glyphicon glyphicon-info-sign"></i>
                       <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL_DESC')"></div>
                       <input type="text" :id="`groupAddButton_${item.id}`" class="form-control form-control-sm" x-model="item.add_button_label" 
                              :placeholder="utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT')">
-                    </div>
+                    </div> -->
 
                     <!-- Text: Remove Button Custom Label -->
-                    <div class="col-md-2" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                    <!-- <div class="col-md-2" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
                       <label :for="`groupRemoveButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_REMOVE_LABEL')"></label>
                       <i class="inline-help glyphicon glyphicon-info-sign"></i>
                       <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DESC')"></div>
                       <input type="text" :id="`groupRemoveButton_${item.id}`" class="form-control form-control-sm" x-model="item.remove_button_label" 
                              :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT')">
-                    </div>
+                    </div> -->
 
                     <!-- Add DataBlock to Group -->
                     <div class="col-md-3" x-show="item.getAvailableCandidateChildren(data_blocks).length>0" x-data="{ selectedCandidateId: '' }">

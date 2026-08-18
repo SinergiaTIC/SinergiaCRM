@@ -46,9 +46,6 @@ class stic_AwfDataBlock {
       max_instances: 1,         // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
       group_title: '',          // Visual title for the repeat group
       is_custom_group_title: false, // Flag to track manual title overrides
-      toggle_label: '',         // Label for the "include instance data" toggle switch
-      add_button_label: '',     // Label for the "add new instance" button
-      remove_button_label: '',  // Label for the "remove instance" button
       group_root: '',           // ID of the immediate parent block (List Adjacency)
     });
 
@@ -1839,25 +1836,47 @@ class stic_AwfTheme {
 }
 
 /**
+ * Defines a base visual node (container or element)
+ */
+class stic_AwfLayoutNode {
+  constructor(data = {}) {
+    this.id = data.id || utils.newId('node');
+    this.type = data.type || 'datablock';
+  }
+}
+
+/**
  * Defines a visual container
  */
-class stic_AwfLayoutSection {
+class stic_AwfLayoutSection extends stic_AwfLayoutNode {
   constructor(data = {}) {
+    super(data);
     Object.assign(this, {
       id: utils.newId('sect'), // ID of the section
+      type: 'section',
+
       title: "",               // Title to display
       subtitle: "",            // Subtitle to display
       showTitle: true,         // Indicates if the title will be shown
       isCollapsible: false,    // Indicates if the section can be collapsed
       isCollapsed: false,      // Indicates if the section will appear initially collapsed
+
+      toggle_label: '',        // Label for the "include instance data" toggle switch
+      add_button_label: '',    // Label for the "add new instance" button
+      remove_button_label: '', // Label for the "remove instance" button
       
       containerType: 'panel',  // Type of visual container: 'panel' (simple), 'card' (with border), 'tabs', 'accordion'
-      elements: [],
+      elements: [],            // Can contain instances of stic_AwfLayoutElement or stic_AwfLayoutSection
     });
 
     Object.assign(this, data);
 
-    this.elements = (data.elements || this.elements).map(e => new stic_AwfLayoutElement(e));
+    this.elements = (data.elements || []).map(e => {
+      if (e.type === 'section' || Array.isArray(e.elements)) {
+        return new stic_AwfLayoutSection(e);
+      }
+      return new stic_AwfLayoutElement(e);
+    });
   }
 
   static containerType_in_formList(asString = false){
@@ -1871,11 +1890,12 @@ class stic_AwfLayoutSection {
 /**
  * Element inside a visual container
  */
-class stic_AwfLayoutElement {
+class stic_AwfLayoutElement extends stic_AwfLayoutNode {
   constructor(data = {}) {
+    super(data);
     Object.assign(this, {
       id: utils.newId('el'),  // ID of the element
-      
+
       type: 'datablock',      // Element type: 'datablock' (possible extensions: 'line', etc)
       ref_id: '',             // Reference ID (the ID of the stic_AwfDataBlock)
     });
