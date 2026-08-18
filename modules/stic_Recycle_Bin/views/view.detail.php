@@ -57,8 +57,6 @@ class stic_Recycle_BinViewDetail extends ViewDetail
 
         echo $html;
 
-        $this->displayActionsAndRelationships();
-
         SticViews::display($this);
     }
 
@@ -135,130 +133,6 @@ class stic_Recycle_BinViewDetail extends ViewDetail
     }
 
     /**
-     * Renders the relationships table at the bottom of the detail view.
-     *
-     * @return void
-     */
-    private function displayActionsAndRelationships()
-    {
-        global $db, $app_list_strings;
-
-        $recycleBinId = $this->bean->id;
-        if (!self::isValidId($recycleBinId)) {
-            return;
-        }
-        $parentModule = $this->bean->recycle_module;
-
-        $rows = $db->query(
-            "SELECT recycle_related_module, recycle_related_record_name,
-                    recycle_relationship_name, recycle_join_table, recycle_restored
-             FROM stic_recycle_bin_relationships
-             WHERE recyclebin_id = " . $db->quoted($recycleBinId) . "
-             AND deleted = 0
-             ORDER BY recycle_related_module, recycle_related_record_name"
-        );
-
-        $relations = array();
-        while ($row = $db->fetchByAssoc($rows)) {
-            $relations[] = $row;
-        }
-
-        echo '<h4>' . translate('LBL_RECYCLE_BIN_RELATIONSHIPS', 'stic_Recycle_Bin') . '</h4>';
-        if (empty($relations)) {
-            echo '<p><em>' . translate('LBL_NO_RELATIONSHIPS', 'stic_Recycle_Bin') . '</em></p>';
-            return;
-        }
-
-        $relLabels = $this->resolveRelationshipLabels($relations, $parentModule);
-
-        echo '<table class="list view table-responsive" cellspacing="0" cellpadding="0" border="0" width="100%">';
-        echo '<thead>';
-        echo '<tr>';
-        echo '<th>' . translate('LBL_RECYCLE_RELATED_MODULE', 'stic_Recycle_Bin') . '</th>';
-        echo '<th>' . translate('LBL_RECYCLE_RELATED_RECORD_NAME', 'stic_Recycle_Bin') . '</th>';
-        echo '<th>' . translate('LBL_RECYCLE_RELATIONSHIP_NAME', 'stic_Recycle_Bin') . '</th>';
-        echo '<th>' . translate('LBL_RECYCLE_JOIN_TABLE', 'stic_Recycle_Bin') . '</th>';
-        echo '<th>' . translate('LBL_RECYCLE_RESTORED', 'stic_Recycle_Bin') . '</th>';
-        echo '</tr>';
-        echo '</thead>';
-        echo '<tbody>';
-        foreach ($relations as $rel) {
-            $restoredLabel = !empty($rel['recycle_restored'])
-                ? translate('LBL_YES', 'stic_Recycle_Bin')
-                : translate('LBL_NO', 'stic_Recycle_Bin');
-            $moduleKey = $rel['recycle_related_module'];
-            $moduleLabel = !empty($app_list_strings['moduleList'][$moduleKey])
-                ? $app_list_strings['moduleList'][$moduleKey]
-                : $moduleKey;
-            $moduleDisplay = ($moduleKey !== $moduleLabel)
-                ? htmlspecialchars($moduleLabel) . ' - ' . htmlspecialchars($moduleKey)
-                : htmlspecialchars($moduleKey);
-            $relInternal = $rel['recycle_relationship_name'];
-            $relLabel = !empty($relLabels[$relInternal]) ? $relLabels[$relInternal] : $relInternal;
-            $relDisplay = ($relLabel !== $relInternal)
-                ? htmlspecialchars($relLabel) . ' - ' . htmlspecialchars($relInternal)
-                : htmlspecialchars($relInternal);
-            echo '<tr>';
-            echo '<td>' . $moduleDisplay . '</td>';
-            echo '<td>' . htmlspecialchars($rel['recycle_related_record_name']) . '</td>';
-            echo '<td>' . $relDisplay . '</td>';
-            echo '<td>' . htmlspecialchars($rel['recycle_join_table']) . '</td>';
-            echo '<td>' . $restoredLabel . '</td>';
-            echo '</tr>';
-        }
-        echo '</tbody>';
-        echo '</table>';
-    }
-
-    /**
-     * Resolves translated labels for relationship link names from the parent module's
-     * vardefs and from the relationship definition. Falls back to the internal name
-     * when no translation is available.
-     *
-     * @param array $relations Captured relationship rows
-     * @param string $parentModule Parent module name
-     * @return array Map of link internal name to translated label
-     */
-    private function resolveRelationshipLabels($relations, $parentModule)
-    {
-        $labels = array();
-        if (empty($parentModule) || !self::isValidModule($parentModule)) {
-            return $labels;
-        }
-        $parentBean = BeanFactory::newBean($parentModule);
-        if (!$parentBean) {
-            return $labels;
-        }
-        foreach ($relations as $rel) {
-            $linkName = $rel['recycle_relationship_name'];
-            if (empty($linkName) || isset($labels[$linkName])) {
-                continue;
-            }
-
-            $label = null;
-            if (!empty($parentBean->field_defs[$linkName]['vname'])) {
-                $vname = $parentBean->field_defs[$linkName]['vname'];
-                $translated = translate($vname, $parentModule);
-                if (!empty($translated) && $translated !== $vname) {
-                    $label = $translated;
-                }
-            }
-
-            if (empty($label) && $parentBean->load_relationship($linkName)) {
-                $relObj = $parentBean->$linkName->getRelationshipObject();
-                if ($relObj && !empty($relObj->def['label'])) {
-                    $label = $relObj->def['label'];
-                }
-            }
-
-            if (!empty($label)) {
-                $labels[$linkName] = $label;
-            }
-        }
-        return $labels;
-    }
-
-    /**
      * Validates a SugarCRM-style UUID.
      *
      * @param string $id ID to validate
@@ -267,16 +141,5 @@ class stic_Recycle_BinViewDetail extends ViewDetail
     private static function isValidId($id)
     {
         return is_string($id) && preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i', $id) === 1;
-    }
-
-    /**
-     * Validates a module name.
-     *
-     * @param string $module Module name
-     * @return bool true if the value is a safe module name
-     */
-    private static function isValidModule($module)
-    {
-        return is_string($module) && preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $module) === 1;
     }
 }

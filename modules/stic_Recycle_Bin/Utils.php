@@ -91,7 +91,7 @@ class stic_Recycle_BinUtils
 
         $relsResult = $db->query(
             'SELECT * FROM stic_recycle_bin_relationships
-             WHERE recyclebin_id = ' . $db->quoted($recycleBinId) . '
+             WHERE stic_recycle_bin_id = ' . $db->quoted($recycleBinId) . '
              AND deleted = 0 AND recycle_restored = 0'
         );
 
@@ -106,13 +106,14 @@ class stic_Recycle_BinUtils
 
         $nowDb = $GLOBALS['timedate']->nowDb();
         $currentUserId = $current_user->id ?? '1';
-        $db->query(
-            'UPDATE stic_recycle_bin SET
-                recycle_date_restored = ' . $db->quoted($nowDb) . ',
-                recycle_user_restored_id = ' . $db->quoted($currentUserId) . ',
-                recycle_restored = 1
-             WHERE id = ' . $db->quoted($recycleBinId)
-        );
+
+        $recycleBean = BeanFactory::getBean('stic_Recycle_Bin', $recycleBinId);
+        if ($recycleBean && !empty($recycleBean->id)) {
+            $recycleBean->recycle_date_restored = $nowDb;
+            $recycleBean->recycle_user_restored_id = $currentUserId;
+            $recycleBean->recycle_restored = 1;
+            $recycleBean->save(true);
+        }
 
         $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': record restored: ' . $relationsRestored . ' relations, ' . $relationsSkipped . ' skipped');
 

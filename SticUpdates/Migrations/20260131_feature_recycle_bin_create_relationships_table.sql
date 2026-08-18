@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `stic_recycle_bin_relationships` (
     `created_by` VARCHAR(36) NULL,
     `description` TEXT NULL,
     `deleted` TINYINT(1) DEFAULT 0,
-    `recyclebin_id` VARCHAR(36) NULL,
+    `stic_recycle_bin_id` VARCHAR(36) NULL,
     `recycle_record_id` VARCHAR(36) NULL,
     `recycle_relationship_name` VARCHAR(255) NULL,
     `recycle_join_table` VARCHAR(255) NULL,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `stic_recycle_bin_relationships` (
     `recycle_restored` TINYINT(1) DEFAULT 0,
     `recycle_join_lhs_key` VARCHAR(100) NULL,
     `recycle_join_rhs_key` VARCHAR(100) NULL,
-    INDEX `idx_stic_rbr_bin_id` (`recyclebin_id`),
+    INDEX `idx_stic_rbr_recycle_bin_id` (`stic_recycle_bin_id`),
     INDEX `idx_stic_rbr_record_id` (`recycle_record_id`),
     INDEX `idx_stic_rbr_related_id` (`recycle_related_record_id`),
     INDEX `idx_stic_rbr_restored` (`recycle_restored`)

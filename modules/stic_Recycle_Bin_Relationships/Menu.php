@@ -25,21 +25,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$viewdefs['stic_Recycle_Bin']['DetailView'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30'),
-        ),
-    ),
-    'panels' => array(
-        'LBL_DEFAULT_PANEL' => array(
-            array('recycle_record_name', 'recycle_module'),
-            array('assigned_user_name', 'recycle_user_deleted_name'),
-            array('recycle_date_deleted', 'recycle_restored'),
-            array('recycle_date_restored', 'recycle_user_restored_name'),
-            array('date_entered', 'date_modified'),
-        ),
-    ),
-);
+// This module is intentionally hidden from the main navigation.
+// It is exposed only as a subpanel of stic_Recycle_Bin detail view.
+// No menu entries are registered here.

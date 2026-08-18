@@ -25,21 +25,40 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$viewdefs['stic_Recycle_Bin']['DetailView'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-            array('label' => '10', 'field' => '30'),
-        ),
+$listViewDefs['stic_Recycle_Bin_Relationships'] = array(
+    'STIC_RECYCLE_BIN_NAME' => array(
+        'width' => '20%',
+        'label' => 'LBL_STIC_RECYCLE_BIN',
+        'default' => true,
     ),
-    'panels' => array(
-        'LBL_DEFAULT_PANEL' => array(
-            array('recycle_record_name', 'recycle_module'),
-            array('assigned_user_name', 'recycle_user_deleted_name'),
-            array('recycle_date_deleted', 'recycle_restored'),
-            array('recycle_date_restored', 'recycle_user_restored_name'),
-            array('date_entered', 'date_modified'),
-        ),
+    'RECYCLE_RELATED_MODULE' => array(
+        'width' => '12%',
+        'label' => 'LBL_RECYCLE_RELATED_MODULE',
+        'default' => true,
+    ),
+    'RECYCLE_RELATED_RECORD_NAME' => array(
+        'width' => '20%',
+        'label' => 'LBL_RECYCLE_RELATED_RECORD_NAME',
+        'default' => true,
+    ),
+    'RECYCLE_RELATIONSHIP_NAME' => array(
+        'width' => '16%',
+        'label' => 'LBL_RECYCLE_RELATIONSHIP_NAME',
+        'default' => true,
+    ),
+    'RECYCLE_JOIN_TABLE' => array(
+        'width' => '12%',
+        'label' => 'LBL_RECYCLE_JOIN_TABLE',
+        'default' => false,
+    ),
+    'RECYCLE_RESTORED' => array(
+        'width' => '8%',
+        'label' => 'LBL_RECYCLE_RESTORED',
+        'default' => true,
+    ),
+    'DATE_ENTERED' => array(
+        'width' => '12%',
+        'label' => 'LBL_DATE_ENTERED',
+        'default' => true,
     ),
 );

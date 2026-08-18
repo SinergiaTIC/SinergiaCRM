@@ -178,16 +178,16 @@ class stic_Recycle_BinViewList extends ViewList
 
         $idList = implode(',', $recycleBinIds);
         $countResult = $db->query(
-            "SELECT recyclebin_id, recycle_related_module, COUNT(*) AS rel_count
+            "SELECT stic_recycle_bin_id, recycle_related_module, COUNT(*) AS rel_count
              FROM stic_recycle_bin_relationships
-             WHERE recyclebin_id IN ($idList) AND deleted = 0
-             GROUP BY recyclebin_id, recycle_related_module
-             ORDER BY recyclebin_id, rel_count DESC, recycle_related_module"
+             WHERE stic_recycle_bin_id IN ($idList) AND deleted = 0
+             GROUP BY stic_recycle_bin_id, recycle_related_module
+             ORDER BY stic_recycle_bin_id, rel_count DESC, recycle_related_module"
         );
         $relModules = array();
         $relTotals = array();
         while ($r = $db->fetchByAssoc($countResult)) {
-            $binId = $r['recyclebin_id'];
+            $binId = $r['stic_recycle_bin_id'];
             $relModules[$binId][] = $r['recycle_related_module'];
             $relTotals[$binId] = isset($relTotals[$binId]) ? $relTotals[$binId] + (int)$r['rel_count'] : (int)$r['rel_count'];
         }

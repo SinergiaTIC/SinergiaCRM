@@ -53,7 +53,6 @@ class SticRecycleBinHookCode
 
         global $db, $current_user;
 
-        $recycleBinId = create_guid();
         $module = $bean->module_dir;
         $recordId = $bean->id;
         $recordName = $bean->name ?? '';
@@ -61,23 +60,21 @@ class SticRecycleBinHookCode
         $userId = $current_user->id ?? ($bean->modified_user_id ?? '1');
         $createdById = $current_user->id ?? '1';
 
-        $sql = "INSERT INTO stic_recycle_bin (
-                    id, name, date_entered, date_modified, created_by,
-                    recycle_module, recycle_record_id, recycle_record_name,
-                    recycle_date_deleted, recycle_user_deleted_id
-                ) VALUES (
-                    " . $db->quoted($recycleBinId) . ",
-                    " . $db->quoted($recordName) . ",
-                    " . $db->quoted($dateDeleted) . ",
-                    " . $db->quoted($dateDeleted) . ",
-                    " . $db->quoted($createdById) . ",
-                    " . $db->quoted($module) . ",
-                    " . $db->quoted($recordId) . ",
-                    " . $db->quoted($recordName) . ",
-                    " . $db->quoted($dateDeleted) . ",
-                    " . $db->quoted($userId) . "
-                )";
-        $db->query($sql);
+        $recycleBinId = create_guid();
+        $recycleBean = BeanFactory::newBean('stic_Recycle_Bin');
+        $recycleBean->new_with_id = true;
+        $recycleBean->id = $recycleBinId;
+        $recycleBean->name = $recordName;
+        $recycleBean->date_entered = $dateDeleted;
+        $recycleBean->date_modified = $dateDeleted;
+        $recycleBean->created_by = $createdById;
+        $recycleBean->recycle_module = $module;
+        $recycleBean->recycle_record_id = $recordId;
+        $recycleBean->recycle_record_name = $recordName;
+        $recycleBean->recycle_date_deleted = $dateDeleted;
+        $recycleBean->recycle_user_deleted_id = $userId;
+        $recycleBean->assigned_user_id = $bean->assigned_user_id ?? '';
+        $recycleBean->save(false);
 
         $this->captureRelationships($bean, $recycleBinId, $db);
     }
@@ -208,7 +205,7 @@ class SticRecycleBinHookCode
 
         $sql = "INSERT INTO stic_recycle_bin_relationships (
                     id, name, date_entered, date_modified, created_by,
-                    recyclebin_id, recycle_record_id, recycle_relationship_name,
+                    stic_recycle_bin_id, recycle_record_id, recycle_relationship_name,
                     recycle_join_table, recycle_related_module,
                     recycle_related_record_id, recycle_related_record_name,
                     recycle_join_lhs_key, recycle_join_rhs_key
