@@ -1190,11 +1190,12 @@ class stic_AwfField {
     this.value_options = [];
     if (originalOptions) {
       originalOptions.forEach(o => {
+        const optionText = (typeof o.text === 'string') ? utils.decodeHTMLString(o.text) : o.text;
         this.value_options.push(new stic_AwfValueOption({
           value: o.id,
           is_visible: true,
-          text_original: o.text,
-          text: o.text,
+          text_original: optionText,
+          text: optionText,
         }));
       });
     }

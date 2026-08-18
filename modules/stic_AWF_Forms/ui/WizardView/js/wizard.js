@@ -213,6 +213,15 @@ function wizardForm() {
       let jsonString = "{}";
       if (this.bean?.configuration) {
         jsonString = this.bean.configuration;
+        // Decode HTML entities (&quot; -> ", &#039; -> ') until stable, to handle
+        // values that arrive single or double encoded from the server
+        if (typeof jsonString === 'string' && jsonString.includes('&')) {
+          for (let i = 0; i < 3; i++) {
+            const decoded = new DOMParser().parseFromString(jsonString, 'text/html').documentElement.textContent;
+            if (decoded === jsonString) break;
+            jsonString = decoded;
+          }
+        }
       }
       try {
         this.formConfig = stic_AwfConfiguration.fromJSON(jsonString);
