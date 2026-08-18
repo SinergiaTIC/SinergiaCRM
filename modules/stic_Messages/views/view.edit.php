@@ -110,14 +110,12 @@ class stic_MessagesViewEdit extends ViewEdit
     }
 
     /**
-     * Builds the HTML for the attachment widget.
-     * Now uses external HTML file.
+     * Builds the HTML for the attachment widget using Smarty template.
      */
     private function _buildAttachmentWidget(array $mod_strings): string
     {
-        ob_start();
-        include 'modules/stic_Messages/include/Attachment/stic_MessagesAttachment.tpl';
-        return ob_get_clean();
+        $this->ss->assign('MOD', $mod_strings);
+        return $this->ss->fetch('modules/stic_Messages/include/Attachment/stic_MessagesAttachment.tpl');
     }
 
     /**
