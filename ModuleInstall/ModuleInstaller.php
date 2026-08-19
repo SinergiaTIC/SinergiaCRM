@@ -214,6 +214,19 @@ class ModuleInstaller
             require_once("modules/Administration/upgrade_custom_relationships.php");
             upgrade_custom_relationships($this->installed_modules);
             $this->rebuild_all(true);
+
+            // STIC-Custom 20260819 ART - Export Customizations from Studio 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1392
+            // Clear language cache for all modules so custom field labels appear immediately after customization-only packages
+            global $sugar_config;
+            require_once('include/SugarObjects/LanguageManager.php');
+            if (!empty($sugar_config['languages']) && is_array($sugar_config['languages'])) {
+                foreach ($sugar_config['languages'] as $language => $value) {
+                    LanguageManager::clearLanguageCache('', $language);
+                }
+            }
+            // END STIC-Custom
+
             require_once('modules/Administration/QuickRepairAndRebuild.php');
             $rac = new RepairAndClear();
             $rac->repairAndClearAll($selectedActions, $this->installed_modules, true, false);
@@ -1336,6 +1349,64 @@ class ModuleInstaller
                     $fieldObject->populateFromRow($field);
                     $mod->custom_fields->use_existing_labels =  true;
                     $mod->custom_fields->addFieldObject($fieldObject);
+
+                    // STIC-Custom 20260819 ART - Export Customizations from Studio 
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1392
+                    // Ensure fields_meta_data exists after addFieldObject by inserting it if STIC update logic skipped saving
+                    // Check whether the metadata row was actually created
+                    $fmdCheck = BeanFactory::newBean('EditCustomFields');
+                    $fieldId = $field['module'] . $field['name'];
+                    $existingId = $fmdCheck->retrieve($fieldId, true, false);
+                    if (empty($existingId)) {
+                        $GLOBALS['log']->debug("Inserting missing fields_meta_data record for field {$fieldId}");
+
+                        // Allow only valid fields_meta_data columns
+                        $allowedColumns = array(
+                            'id', 'name', 'vname', 'comments', 'help', 'custom_module', 'type', 'len',
+                            'required', 'default_value', 'date_modified', 'deleted', 'audited',
+                            'massupdate', 'duplicate_merge', 'reportable', 'importable',
+                            'ext1', 'ext2', 'ext3', 'ext4', 'inline_edit',
+                        );
+
+                        // Map installer keys to DB column names
+                        $fieldMap = array(
+                            'module' => 'custom_module',
+                            'label' => 'vname',
+                            'require_option' => 'required',
+                            'mass_update' => 'massupdate',
+                            'max_size' => 'len',
+                        );
+
+                        // Build the INSERT payload from the field definition
+                        $columns = array();
+                        $values = array();
+                        foreach ($field as $key => $value) {
+                            $dbCol = isset($fieldMap[$key]) ? $fieldMap[$key] : $key;
+                            if (!in_array($dbCol, $allowedColumns)) {
+                                continue;
+                            }
+                            if ($dbCol === 'date_modified' && (empty($value) || $value === '0000-00-00 00:00:00')) {
+                                $value = gmdate('Y-m-d H:i:s');
+                            }
+                            $columns[] = $dbCol;
+                            $values[] = is_null($value) ? 'NULL' : "'" . $this->db->quote($value) . "'";
+                        }
+
+                        // Ensure required defaults for a new metadata row
+                        if (!in_array('deleted', $columns)) {
+                            $columns[] = 'deleted';
+                            $values[] = "'0'";
+                        }
+                        if (!in_array('date_modified', $columns)) {
+                            $columns[] = 'date_modified';
+                            $values[] = "'" . gmdate('Y-m-d H:i:s') . "'";
+                        }
+
+                        // Insert a fallback row so Studio labels are available immediately
+                        $insertSql = "INSERT INTO fields_meta_data (" . implode(',', $columns) . ") VALUES (" . implode(',', $values) . ")";
+                        $this->db->query($insertSql, true, 'Cannot insert fields_meta_data record');
+                    }
+                    // END STIC-Custom
                 }
             }
             if (!$installed) {
