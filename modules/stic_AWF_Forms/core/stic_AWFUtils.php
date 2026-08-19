@@ -161,7 +161,6 @@ class stic_AWFUtils {
                 $block = $context->getDataBlockById($element->ref_id);
                 if (!$block) continue;
 
-                // STIC-Custom OC - 20250803 - Repeatable data blocks support
                 // Child blocks are rendered together with their root when the root is repeatable/optional.
                 // Children of SIMPLE groups fall through to scalar summary rendering.
                 if (!empty($block->group_root)) {
@@ -173,7 +172,7 @@ class stic_AWFUtils {
 
                 // Repeatable and optional groups render as per-instance rows in the summary.
                 if ($block->isRepeatable() || $block->isOptional()) {
-                    // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches);
+                    // Use transitive descendants (multi-level branches);
                     // config comes from the context ($formConfig was never defined in this scope).
                     $formConfig = $context->formConfig;
                     $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
@@ -202,7 +201,6 @@ class stic_AWFUtils {
                     }
                     continue;
                 }
-                // END STIC-Custom OC
 
                 foreach ($block->fields as $fieldDef) {
                     // Only show visible fields in the form
@@ -235,7 +233,6 @@ class stic_AWFUtils {
         return $html;
     }
 
-    // STIC-Custom OC - 20250803 - Extracted summary field row renderer (supports repeatable instances)
     /**
      * Renders a single summary table row for a field with the given value.
      * @param FormDataBlockField $fieldDef Field definition
@@ -416,7 +413,6 @@ class stic_AWFUtils {
 
         return $html;
     }
-    // END STIC-Custom OC
 
     /**
      * Generates a plain-text summary with all form data based on the Layout.
@@ -940,7 +936,6 @@ class stic_AWFUtils {
      */
     public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
         foreach ($formConfig->data_blocks as $dataBlock) {
-            // STIC-Custom OC - 20250803 - Repeatable data blocks support
             // Child blocks are filled together with their root when the root is repeatable/optional.
             // Children of SIMPLE groups fall through to scalar boolean filling.
             if (!empty($dataBlock->group_root)) {
@@ -952,7 +947,7 @@ class stic_AWFUtils {
 
             // Repeatable and optional groups process boolean fields for all instances.
             if ($dataBlock->isRepeatable() || $dataBlock->isOptional()) {
-                // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches)
+                // Use transitive descendants (multi-level branches)
                 $blocksInGroup = array_merge([$dataBlock], $formConfig->getGroupDescendants($dataBlock));
                 foreach (['', '_detached_'] as $prefix) {
                     foreach ($blocksInGroup as $blockInGroup) {
@@ -975,7 +970,6 @@ class stic_AWFUtils {
                 }
                 continue;
             }
-            // END STIC-Custom OC
 
             foreach ($dataBlock->fields as $field) {
                 if ($field->type === 'bool' || $field->type === 'checkbox' || in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) {
@@ -1103,8 +1097,7 @@ class stic_AWFUtils {
         $context->deferredContext = $deferredContext;
 
         // Datablock references to beans
-        // STIC-Custom OC - 20250803 - Repeatable data blocks support
-        // MVP restriction: deferred actions operate on non-repeatable blocks only.
+        // Restriction: deferred actions operate on non-repeatable blocks only.
         // Repeatable blocks (or children of a repeatable root) are never restored here
         // because indexed references are not supported for deferred flows.
         foreach ($deferredContext->blockReferences as $blockId => $beanId) {
@@ -1116,7 +1109,6 @@ class stic_AWFUtils {
                 $block->setBeanReference($beanId);
             }
         }
-        // END STIC-Custom OC
 
         return $context;
     }
@@ -1129,12 +1121,10 @@ class stic_AWFUtils {
     {
         $blockReferences = [];
         foreach ($context->formConfig->data_blocks as $bId => $b) {
-            // STIC-Custom OC - 20250803 - Repeatable data blocks support
-            // MVP restriction: deferred actions operate on non-repeatable blocks only.
+            // Restriction: deferred actions operate on non-repeatable blocks only.
             if ($b->isRepeatable() || !empty($b->group_root)) {
                 continue;
             }
-            // END STIC-Custom OC
             if ($b->getBeanReference() !== null) {
                 $blockReferences[$bId] = $b->getBeanReference()->beanId;
             }

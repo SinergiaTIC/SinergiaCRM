@@ -2813,6 +2813,7 @@ class WizardStep4 {
         // No block can move INTO a group section from outside
         if (this.isGroupSection(toSection)) return;
 
+        // IEPA!! Revisar
         const block = this.getDataBlock(element);
         if (block && block.group_root && block.group_root !== '') {
           // Children of a repeatable root cannot be moved independently

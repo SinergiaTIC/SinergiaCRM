@@ -113,10 +113,8 @@ $mod_strings = array (
   'LBL_ERROR_ENUM_FIELD' => 'Invalid option for the dropdown.',
   'LBL_ERROR_EMAIL_FIELD' => 'Value must be a valid email address.',
   'LBL_ERROR_VALUE_FIELD' => 'Value is not valid for the field.',
-  // STIC-Custom OC - 20250803 - Repeatable data blocks
   'LBL_ERROR_REPEATABLE_MAX_INSTANCES' => 'The maximum number of entries has been exceeded.',
   'LBL_ERROR_REPEATABLE_MIN_INSTANCES' => 'This field requires a minimum number of entries.',
-  // END STIC-Custom OC
   
   // Subpanels
   'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_LINKS_TITLE' => 'Form Response Links',

@@ -108,7 +108,6 @@ class FormDataBlockField {
         return str_replace('.', '_', $this->getKey());
     }
 
-    // STIC-Custom OC - 20250803 - Instance-aware key methods for repeatable data blocks
     public function getKeyForInstance(?int $index = null): string {
         $prefix = $this->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
         if ($index === null) {
@@ -137,5 +136,4 @@ class FormDataBlockField {
         }
         return $prefix . $this->data_block->name . '_' . $index . '_' . $this->name;
     }
-    // END STIC-Custom OC
 }

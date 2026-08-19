@@ -161,10 +161,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_ADD_TO_GROUP_TITLE' => 'Añadir al grupo',
   'LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE' => 'Quitar del grupo de bloques de datos',
   'LBL_DATABLOCK_IN_GROUP_TITLE' => 'Pertenece al grupo',
-
-  // STIC-Custom OC - 20250803 - Datu-bloke errepikagarria
-  'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Bloke errepikagarri baten semeak ezin dira modu independentean mugitu.',
-  // END STIC-Custom OC
+  'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Los hijos de un bloque repetible no pueden moverse de forma independiente.',
 
   // DataBlock -> Fields
   'LBL_FIELDS' => 'Campos',

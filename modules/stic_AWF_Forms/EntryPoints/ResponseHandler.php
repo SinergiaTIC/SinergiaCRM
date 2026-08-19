@@ -581,7 +581,6 @@ class ResponseHandler
             // Datablock is detached
             if (empty($block->module)) continue;
 
-            // STIC-Custom OC - 20250803 - Repeatable data blocks support
             // Child blocks (group_root set) are validated together with their root when the root
             // is a repeatable or optional group. Children of SIMPLE groups (mandatory, max=1) are
             // validated individually as scalar blocks (they use static field names).
@@ -614,7 +613,6 @@ class ResponseHandler
                                                                    translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
                     $errors['errors'][$block->name] = translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
                 }
-                // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches)
                 $children = $config->getGroupDescendants($block);
                 foreach ($instances as $resolvedBlock) {
                     $blocksToValidate = array_merge([$block], $children);
@@ -629,7 +627,6 @@ class ResponseHandler
                 }
                 continue;
             }
-            // END STIC-Custom OC
 
             $resolvedBlock = new DataBlockResolved($block, $data, new ExecutionContext('', '', $data, $config, null, '', null, ''));
             $this->validateBlockFields($block, $resolvedBlock, $data, $errors);
@@ -638,7 +635,6 @@ class ResponseHandler
         return $errors;
     }
 
-    // STIC-Custom OC - 20250803 - Extracted field validation for non-repeatable and repeatable blocks
     /**
      * Validate all fields of a block against a resolved data block.
      * @param FormDataBlock $block
@@ -794,7 +790,6 @@ class ResponseHandler
             }
         }
     }
-    // END STIC-Custom OC
 
     /**
      * Generates response details for storage and subsequent analysis.
@@ -813,7 +808,6 @@ class ResponseHandler
         //     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship 'details_link' in Responses bean.");
         // }
 
-        // STIC-Custom OC - 20250803 - Repeatable data blocks support
         $context = new ExecutionContext('', '', $submittedData, $formConfig, null, '', null, '');
         foreach ($formConfig->data_blocks as $block) {
             // Child blocks are processed together with their root when the root is repeatable/optional.
@@ -828,7 +822,6 @@ class ResponseHandler
             // Repeatable and optional groups: generate details for root + descendants per instance.
             if ($block->isRepeatable() || $block->isOptional()) {
                 $instances = DataBlockResolved::resolveInstances($block, $submittedData, $context);
-                // STIC-Custom OC - 20260807 - Use transitive descendants (multi-level branches)
                 $children = $formConfig->getGroupDescendants($block);
                 foreach ($instances as $instance) {
                     $blocksToProcess = array_merge([$block], $children);
@@ -838,13 +831,11 @@ class ResponseHandler
                 }
                 continue;
             }
-            // END STIC-Custom OC
 
             $this->generateBlockDetails($block, $responseBean, $formBean, $submittedData, null, $orderCounter);
         }
     }
 
-    // STIC-Custom OC - 20250803 - Extracted per-block response details generation (supports repeatable instances)
     /**
      * Generates the analytical response details beans for all fields of a block.
      * @param FormDataBlock $block Block to process
@@ -954,7 +945,6 @@ class ResponseHandler
             $detailBean->save();
         }
     }
-    // END STIC-Custom OC
 
     /** 
      * Helper function to find an option object by its value in a list of options

@@ -63,14 +63,13 @@ class FormDataBlock {
         $dto->text = $data['text'];
         $dto->module = $data['module'];
 
-        // STIC-Custom OC - 20250803 - Map repeatable data block fields
+        // Map repeatable data block fields
         $dto->min_instances = isset($data['min_instances']) ? (int)$data['min_instances'] : 1;
         $dto->max_instances = isset($data['max_instances']) && $data['max_instances'] !== '' && $data['max_instances'] !== null ? (int)$data['max_instances'] : null;
         $dto->group_title = $data['group_title'] ?? '';
         $dto->is_custom_group_title = isset($data['is_custom_group_title']) ? (bool)$data['is_custom_group_title'] : false;
         
         $dto->group_root = $data['group_root'] ?? '';
-        // END STIC-Custom OC
 
         $dto->fields = [];
         if (isset($data['fields'])) {
@@ -105,25 +104,20 @@ class FormDataBlock {
     }
 
     public function setBeanReference(string $beanId, ?int $index = null): void {
-        // STIC-Custom OC - 20250803 - Support indexed bean references for repeatable blocks
         if ($index === null) {
             $this->beanReference = new BeanReference($this->module, $beanId);
             return;
         }
         $this->beanReferences[$index] = new BeanReference($this->module, $beanId);
-        // END STIC-Custom OC
     }
 
     public function getBeanReference(?int $index = null): ?BeanReference {
-        // STIC-Custom OC - 20250803 - Support indexed bean references for repeatable blocks
         if ($index === null) {
             return $this->beanReference;
         }
         return $this->beanReferences[$index] ?? null;
-        // END STIC-Custom OC
     }
 
-    // STIC-Custom OC - 20250803 - Intra-POST duplicate detection support
     /**
      * Returns the bean references already registered for repeatable instances
      * during the current request execution.
@@ -132,5 +126,4 @@ class FormDataBlock {
     public function getIndexedBeanReferences(): array {
         return $this->beanReferences;
     }
-    // END STIC-Custom OC
 }

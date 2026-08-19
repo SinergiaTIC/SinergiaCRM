@@ -251,7 +251,6 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-submit-container { width: 100%; text-align: " . ($submitWidthVal === '100%' ? 'center' : 'right') . "; }
 #{$wrapperId} .was-validated .form-control:valid, #{$wrapperId} .was-validated .form-select:valid, #{$wrapperId} .was-validated .form-check-input:valid { border-color: var(--bs-border-color); background-image: none; box-shadow: none; }
 #{$wrapperId} .was-validated .form-control:invalid, #{$wrapperId} .was-validated .form-select:invalid { background-image: none !important; border-color: #dc3545; }
-/* STIC-Custom OC - 20250803 - Repeatable group frontend styles */
 #{$wrapperId} .awf-group-container { margin-bottom: 1.5rem; }
 #{$wrapperId} .awf-group-title { font-size: 1.25em; margin-bottom: 1rem; font-weight: 600; }
 #{$wrapperId} .awf-instance-card { border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; margin-bottom: 1rem; background-color: rgba(0,0,0,0.02); }
@@ -262,7 +261,7 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-group-container { grid-column: 1 / -1; width: 100%; margin-bottom: 1.5rem; }
 #{$wrapperId} .awf-block-panel { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; margin-bottom: 1rem; }
 #{$wrapperId} .awf-block-title { font-size: 1em; font-weight: 600; margin-bottom: 0.75rem; padding-bottom: 0.25rem; border-bottom: 1px solid var(--bs-border-color); }
-/* END STIC-Custom OC */";
+";
         if ($inputCssProps !== "")  $html .= "\n".$inputCssProps;
         if ($selectCssProps !== "")  $html .= "\n".$selectCssProps;
         if ($floatingLabelFix !== "") $html .= "\n".$floatingLabelFix;
@@ -569,11 +568,10 @@ class FormHtmlGeneratorService {
         $block = $config->data_blocks[$element->ref_id] ?? null;
         if (!$block) return '';
 
-        // STIC-Custom OC - 20250803 - Children of repeatable roots are rendered inside the root's loop
+        // Children of repeatable roots are rendered inside the root's loop
         if ($block->group_root && $block->group_root !== '') {
             return "<!-- Child block '{$block->name}' is rendered inside its repeatable root -->" . $this->newLine();
         }
-        // END STIC-Custom OC
 
         return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $parentSection);
     }
@@ -916,23 +914,22 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML
      */
     private function renderFieldInternal(FormDataBlockField $field, FormTheme $theme, ?string $instanceIndexVar = null): string {
-        // STIC-Custom OC - 20250803 - Instance-aware field rendering for repeatable groups
+        // Instance-aware field rendering for repeatable groups
         $isInstance = $instanceIndexVar !== null;
         $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
+        
         // Template for dynamic name attribute inside the x-for loop (Alpine expression)
         $inputNameTemplate = $inputName;
         if ($isInstance) {
             $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
             $inputNameTemplate = $namePrefix . $field->data_block->name . "[' + {$instanceIndexVar} + '][" . $field->name . "]";
         }
+        
         // The logical key used for the dynamic input ID (matches getKeyForId() validation error keys)
-        $inputKeyForId = $isInstance
-            ? $field->data_block->name . "_' + {$instanceIndexVar} + '_" . $field->name
-            : $field->getKeyForId();
+        $inputKeyForId = $isInstance ? $field->data_block->name . "_' + {$instanceIndexVar} + '_" . $field->name : $field->getKeyForId();
         if ($isInstance && $field->type_field === DataBlockFieldType::UNLINKED) {
             $inputKeyForId = '_detached.' . $field->data_block->name . "_' + {$instanceIndexVar} + '_" . $field->name;
         }
-        // END STIC-Custom OC
 
         // Render hidden fields differently: only input without label or wrapper
         if ($field->type_in_form === 'hidden') {
@@ -964,7 +961,7 @@ class FormHtmlGeneratorService {
             }
         }
 
-        // STIC-Custom OC - 20250803 - Dynamic help ID and input IDs for repeatable fields
+        // Dynamic help ID and input IDs for repeatable fields
         $description = "";
         $ariaDescribedBy = "";
         if ($field->description != '') {
@@ -979,7 +976,6 @@ class FormHtmlGeneratorService {
                 $ariaDescribedBy = "aria-describedby='{$helpId}'";
             }
         }
-        // END STIC-Custom OC
 
         // --- SPECIAL CASES (Single Checkbox / Switch) with own representation ---
 

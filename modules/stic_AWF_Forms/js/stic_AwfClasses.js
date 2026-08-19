@@ -2906,7 +2906,7 @@ class stic_AwfConfiguration {
 
   /**
    * Disbands a group, releasing all its children and resetting group metadata.
-   * STIC-Custom OC - 20260807 - Releases the whole descendant branch (transitive), not just
+   * Releases the whole descendant branch (transitive), not just
    * direct children: with multi-level adoption a level-2+ descendant would otherwise keep
    * pointing to an already-disbanded intermediate parent.
    * @param {stic_AwfDataBlock} parentBlock 

@@ -95,10 +95,6 @@ class DeferredContextData
     public function captureBlockReferences(ExecutionContext $context): void {
         $this->blockReferences = [];
         foreach ($context->formConfig->data_blocks as $bId => $b) {
-            // STIC-Custom OC - 20250803 - Repeatable data blocks support
-            // MVP restriction: deferred actions operate on non-grouped blocks only.
-            // Blocks inside a repeatable or optional group (head or children) are excluded because
-            // indexed references are not restored yet. Children of SIMPLE groups keep scalar refs.
             $blockChildren = $context->formConfig->getGroupChildren($b);
             $isInRepeatableOrOptionalGroup = false;
             if ($b->isRepeatable() || $b->isOptional() || !empty($blockChildren)) {
@@ -112,7 +108,6 @@ class DeferredContextData
             if ($isInRepeatableOrOptionalGroup) {
                 continue;
             }
-            // END STIC-Custom OC
             if ($b->getBeanReference() !== null) {
                 $this->blockReferences[$bId] = $b->getBeanReference()->beanId;
             }

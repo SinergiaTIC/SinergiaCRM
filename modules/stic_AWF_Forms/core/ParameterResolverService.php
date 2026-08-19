@@ -177,14 +177,12 @@ class ParameterResolverService {
             return null;
         }
 
-        // STIC-Custom OC - 20250803 - Repeatable data blocks support
         // When executing an instance of a repeatable group, resolve that instance's data
         $instanceIndex = $context->getCurrentInstanceIndex();
         $isInRepeatableGroup = $dataBlockConfig->isRepeatable() || !empty($dataBlockConfig->group_root);
         if ($instanceIndex !== null && $isInRepeatableGroup) {
             return new DataBlockResolved($dataBlockConfig, $context->formData, $context, $instanceIndex);
         }
-        // END STIC-Custom OC
 
         return new DataBlockResolved($dataBlockConfig, $context->formData, $context);
     }
@@ -251,7 +249,6 @@ class ParameterResolverService {
         $crmFieldType = $fieldDefinition?->type ?? 'text';
         $finalValue = null;
 
-        // STIC-Custom OC - 20250803 - Repeatable data blocks support
         // If an instance is being executed and the field belongs to a repeatable group,
         // read the value from the indexed form structure: formData['Block'][index]['field']
         $instanceIndex = $context->getCurrentInstanceIndex();
@@ -264,7 +261,6 @@ class ParameterResolverService {
                 $finalValue = stic_AWFUtils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
             }
         } else {
-            // END STIC-Custom OC
             if (array_key_exists($phpKey, $context->formData)) {
                 // Fill value from form data
                 $finalValue = stic_AWFUtils::castCrmValue($context->formData[$phpKey], $crmFieldType, $context);
@@ -274,9 +270,7 @@ class ParameterResolverService {
                     $finalValue = stic_AWFUtils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
                 }
             }
-        // STIC-Custom OC - 20250803 - Repeatable data blocks support
         }
-        // END STIC-Custom OC
         return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $finalValue);
     }
 

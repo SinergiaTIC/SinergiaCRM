@@ -51,13 +51,12 @@ class DataBlockResolved {
         $this->dataBlock = $config;
         $this->instanceIndex = $instanceIndex;
 
-        // STIC-Custom OC - 20250803 - Indexed form data for repeatable blocks
+        // Indexed form data for repeatable blocks
         $isIndexed = $instanceIndex !== null;
         if ($isIndexed) {
             $this->resolveIndexedInstance($config, $fullFormData, $context, $instanceIndex);
             return;
         }
-        // END STIC-Custom OC
 
         // Load default values (fixed/hidden) from the configuration
         // These values can be overridden by form-submitted values
@@ -143,7 +142,9 @@ class DataBlockResolved {
 
     }
 
-    // STIC-Custom OC - 20250803 - Resolve a single instance of a repeatable block
+    /**
+     * Resolve a single instance of a repeatable block
+     */
     private function resolveIndexedInstance(FormDataBlock $config, array $fullFormData, ExecutionContext $context, int $instanceIndex): void {
         $blockName = $config->name;
         $linkedKey = $blockName;
@@ -240,7 +241,6 @@ class DataBlockResolved {
         }
         return $instances;
     }
-    // END STIC-Custom OC
 
     /**
      * Gets the resolved field data for a given CRM field name. Returns null if the field is not present in the form.

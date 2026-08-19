@@ -97,7 +97,6 @@ class ServerActionFlowExecutor {
                     }
                 }
 
-                // STIC-Custom OC - 20250803 - Repeatable data blocks support
                 $paramDefinitions  = $actionExecutor->getParameters();
                 $paramConfigurations = $actionConfig->parameters;
 
@@ -153,13 +152,11 @@ class ServerActionFlowExecutor {
                     }
                     $instanceIndexes = array_map(fn($instance) => $instance->instanceIndex, $instances);
                 }
-                // END STIC-Custom OC
 
                 foreach ($instanceIndexes as $instanceIndex) {
-                    // STIC-Custom OC - 20250803 - The context instance index MUST be set before any
+                    // The context instance index MUST be set before any
                     // parameter resolution so that per-instance form fields and bean references are read.
                     $this->context->setCurrentInstanceIndex($instanceIndex);
-                    // END STIC-Custom OC
 
                     // Parameter resolution
                     $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
@@ -204,9 +201,8 @@ class ServerActionFlowExecutor {
                     }
                 }
 
-                // STIC-Custom OC - 20250803 - Reset the instance index after the action execution
+                // Reset the instance index after the action execution
                 $this->context->setCurrentInstanceIndex(null);
-                // END STIC-Custom OC
             }
         } catch (\Throwable $t) {
             // Catch any Exception or PHP Fatal Error and convert it into a context error

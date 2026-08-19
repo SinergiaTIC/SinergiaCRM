@@ -76,7 +76,6 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         // Duplicate detection logic
         $duplicateRules = $block->dataBlock->duplicate_detections ?? [];
 
-        // STIC-Custom OC - 20250803 - Intra-POST duplicate detection for repeatable blocks
         // When a repeatable block submits several instances in the same request, a later
         // instance may be a duplicate of one created earlier in this same request. Detect it
         // against the block's indexed reference map (beans registered by previous instances)
@@ -128,7 +127,6 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 }
             }
         }
-        // END STIC-Custom OC
 
         if ($bean === null) {
         foreach ($duplicateRules as $rule) {
@@ -252,7 +250,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 break; // Stop searching, we found one
             }
         }
-        } // END STIC-Custom OC: skip standard DB duplicate detection when intra-POST match was found
+        } // skip standard DB duplicate detection when intra-POST match was found
 
         // Action Logic (Create or Handle Duplicate) and performed modifications
         $modificationType = null;
@@ -537,15 +535,12 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 continue;
             }
 
-            // STIC-Custom OC - 20250803 - Instance-aware relation FK injection
             // If the target block belongs to a repeatable group, read its per-instance
             // bean reference using the current instance index. Otherwise use the scalar reference.
             $instanceIndex = $context->getCurrentInstanceIndex();
             $isTargetRepeatable = $targetBlock->isRepeatable() || !empty($targetBlock->group_root);
-            $targetBeanRef = $isTargetRepeatable
-                ? $targetBlock->getBeanReference($instanceIndex)
-                : $targetBlock->getBeanReference();
-            // END STIC-Custom OC
+            $targetBeanRef = $isTargetRepeatable ? $targetBlock->getBeanReference($instanceIndex) : $targetBlock->getBeanReference();
+
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
                 $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlock->name}' has no bean ID. Check action order.");
                 continue;
