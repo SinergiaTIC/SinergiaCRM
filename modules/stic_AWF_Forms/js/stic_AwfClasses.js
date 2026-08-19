@@ -1609,9 +1609,6 @@ class stic_AwfLayout {
     const placedBlockIds = new Set(); // Set of placed blocks
     const cleanStructure = [];
 
-    // Map: blockId -> section where it's placed (for child-parent cohesion)
-    const blockSectionMap = new Map();
-
     // Cleanup of the blocks of the visual structure
     const hasRenderableFields = (blk) => blk.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
     this.structure.forEach(section => {
@@ -1637,7 +1634,6 @@ class stic_AwfLayout {
           // Children are kept only if they (or their descendants) have renderable fields
           if (!hasRenderableFields(block) && !block.getDescendants(dataBlocks).some(hasRenderableFields)) return false;
           placedBlockIds.add(el.ref_id);
-          blockSectionMap.set(el.ref_id, section);
           return true;
         }
         if (isGroupHead) {
@@ -1646,9 +1642,8 @@ class stic_AwfLayout {
           if (!hasRenderableFields(block)) return false;
         }
           
-        // Mark the block as placed and record its section
+        // Mark the block as placed
         placedBlockIds.add(el.ref_id);
-        blockSectionMap.set(el.ref_id, section);
         return true;
       });
       section.elements = validElements;
@@ -1672,32 +1667,110 @@ class stic_AwfLayout {
 
     this.structure = cleanStructure;
 
-    // Master Section: ensure children are in the SAME section as their root.
-    // Move any misplaced child element to its root's section.
-    dataBlocks.forEach(block => {
-      if (!block.group_root || block.group_root === '') return; // Not a child
-      if (!placedBlockIds.has(block.id)) return; // Child not placed yet (handled below)
+    // ---- Root-section reassignment (grouped/ungrouped blocks, AWF Paso 4) ----
+    // Every placed element belongs to the section of its TOP-LEVEL root (the whole
+    // group_root chain is walked, so nested groups are handled order-independently).
+    // A root block that stopped being a member of another root (ungrouped in step 2)
+    // leaves its former section and gets its own section, carrying its members with
+    // it. Sections without a group-root owner (shared sections built manually in
+    // step 4) keep their standalone roots: only group heads (which must own their
+    // section) are extracted from them.
+    const topRootIdOf = (block, seen = new Set()) => {
+      if (!block.group_root || block.group_root === '') return block.id;
+      if (seen.has(block.id)) return block.id; // Cycle guard
+      seen.add(block.id);
+      const parent = dataBlocks.find(b => b.id === block.group_root);
+      return parent ? topRootIdOf(parent, seen) : block.id;
+    };
 
-      const rootSection = blockSectionMap.get(block.group_root);
-      const childSection = blockSectionMap.get(block.id);
-      if (!rootSection || !childSection) return;
-      if (rootSection.id === childSection.id) return; // Already together
-
-      // Move the child element to the root's section
-      const childEl = childSection.elements.find(el => el.type === 'datablock' && el.ref_id === block.id);
-      if (childEl) {
-        childSection.elements = childSection.elements.filter(el => el.id !== childEl.id);
-        rootSection.elements.push(childEl);
-        blockSectionMap.set(block.id, rootSection);
+    // Owner root of each existing section: its first datablock element with no group_root
+    const ownerRootOfSection = new Map(); // sectionId -> owner root id
+    const rootSectionOf = new Map(); // rootId -> section (owner or extraction)
+    this.structure.forEach(section => {
+      const firstElement = section.elements.find(el => el.type === 'datablock');
+      if (!firstElement) return;
+      const block = dataBlocks.find(b => b.id === firstElement.ref_id);
+      if (block && (!block.group_root || block.group_root === '')) {
+        ownerRootOfSection.set(section.id, block.id);
+        rootSectionOf.set(block.id, section);
       }
     });
 
-    // Clean up empty sections after moving children
+    const isGroupHead = (block) => block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
+    const newRootSections = []; // { rootId, section, sourceSection } created during extraction
+
+    this.structure.forEach(section => {
+      const ownerRootId = ownerRootOfSection.get(section.id);
+      const ownerRoot = ownerRootId !== undefined ? dataBlocks.find(b => b.id === ownerRootId) : null;
+      const ownerIsGroupHead = !!ownerRoot && isGroupHead(ownerRoot);
+
+      // Moves an element to the section of its top-level root, creating the
+      // section if the root has none yet (extraction of ungrouped roots)
+      const moveToRootSection = (el, rootBlock) => {
+        let rootSection = rootSectionOf.get(rootBlock.id);
+        if (!rootSection) {
+          rootSection = new stic_AwfLayoutSection({
+            title: isGroupHead(rootBlock) ? (rootBlock.group_title || rootBlock.text) : rootBlock.text,
+          });
+          rootSectionOf.set(rootBlock.id, rootSection);
+          newRootSections.push({ rootId: rootBlock.id, section: rootSection, sourceSection: section });
+        }
+        rootSection.elements.push(el);
+      };
+
+      const survivors = [];
+      section.elements.forEach(el => {
+        if (el.type !== 'datablock') { survivors.push(el); return; }
+        const block = dataBlocks.find(b => b.id === el.ref_id);
+        if (!block) { survivors.push(el); return; }
+        const rootId = topRootIdOf(block);
+        const rootBlock = dataBlocks.find(b => b.id === rootId);
+
+        // Members-only section (its root moved away): every element goes to its
+        // top-level root's section — the Master-Section rule for group members
+        if (ownerRootId === undefined) {
+          if (rootBlock) moveToRootSection(el, rootBlock);
+          else survivors.push(el);
+          return;
+        }
+
+        if (rootId === ownerRootId) { survivors.push(el); return; } // Own member: stays
+
+        // Foreign block of this section: move it to its own root's section when the
+        // section belongs to a group (group section) or the block is a group head
+        const mustExtract = ownerIsGroupHead || (!!rootBlock && isGroupHead(rootBlock));
+        if (!mustExtract) { survivors.push(el); return; } // Shared manual section: keep
+        if (rootBlock) moveToRootSection(el, rootBlock);
+      });
+      section.elements = survivors;
+    });
+
+    // Insert the new root sections right after their source section (in element order)
+    const insertionsBySource = new Map(); // sourceSection -> [section]
+    newRootSections.forEach(({ rootId, section, sourceSection }) => {
+      // The root element comes first (re-created if it was dropped during cleanup)
+      const rootIndex = section.elements.findIndex(el => el.type === 'datablock' && el.ref_id === rootId);
+      if (rootIndex === -1) {
+        section.elements.unshift(new stic_AwfLayoutElement({ type: 'datablock', ref_id: rootId }));
+      } else if (rootIndex > 0) {
+        const [rootElement] = section.elements.splice(rootIndex, 1);
+        section.elements.unshift(rootElement);
+      }
+      if (!insertionsBySource.has(sourceSection)) insertionsBySource.set(sourceSection, []);
+      insertionsBySource.get(sourceSection).push(section);
+    });
+    insertionsBySource.forEach((insertedSections, sourceSection) => {
+      const sourceIndex = this.structure.indexOf(sourceSection);
+      this.structure.splice(sourceIndex + 1, 0, ...insertedSections);
+    });
+
+    // Clean up empty sections after moving roots (e.g. a root that joined another root)
     this.structure = this.structure.filter(s => s.elements.length > 0);
 
     // Add the missing blocks (orphans)
     const orphanBlocks = dataBlocks.filter(b => {
-      if (placedBlockIds.has(b.id)) return false; // The block is placed
+      if (rootSectionOf.has(b.id)) return false; // The block already has a section (owner or extracted)
+      if (placedBlockIds.has(b.id)) return false; // The block is placed (shared section)
       if (b.group_root && b.group_root !== '') return false; // Children are handled by their root
 
       // A section is only created if the block (or, for a group head, ANY of its descendants)
