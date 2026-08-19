@@ -1,0 +1,31 @@
+{
+  "name": "sinergiacrm-playwright",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#pages/*": "./pages/*.ts",
+    "#helpers/*": "./helpers/*.ts",
+    "#specs/*": "./specs/*.ts",
+    "#models/*": "./models/*.ts",
+    "#settings": "./settings.ts",
+    "#global-setup": "./global-setup.ts"
+  },
+  "scripts": {
+    "test": "npx playwright test",
+    "test:smoke": "npx playwright test --project=smoke-tests",
+    "test:functional": "npx playwright test --project=functional-desktop --project=functional-tablet --project=functional-mobile",
+    "test:visual": "npx playwright test --project=visual-desktop --project=visual-tablet --project=visual-mobile",
+    "test:ui": "npx playwright test --ui",
+    "test:ui:smoke": "npx playwright test --ui --project=smoke-tests",
+    "test:ui:functional": "npx playwright test --ui --project=functional-desktop --project=functional-tablet --project=functional-mobile",
+    "test:ui:visual": "npx playwright test --ui --project=visual-desktop --project=visual-tablet --project=visual-mobile",
+    "test:debug": "npx playwright test --debug",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^22.0.0",
+    "dotenv": "^17.4.2",
+    "typescript": "^5.6.0"
+  }
+}
