@@ -216,7 +216,7 @@ class ModuleInstaller
             $this->rebuild_all(true);
 
             // STIC-Custom 20260819 ART - Export Customizations from Studio 
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1392
             // Clear language cache for all modules so custom field labels appear immediately after customization-only packages
             global $sugar_config;
             require_once('include/SugarObjects/LanguageManager.php');
@@ -1351,7 +1351,7 @@ class ModuleInstaller
                     $mod->custom_fields->addFieldObject($fieldObject);
 
                     // STIC-Custom 20260819 ART - Export Customizations from Studio 
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1392
                     // Ensure fields_meta_data exists after addFieldObject by inserting it if STIC update logic skipped saving
                     // Check whether the metadata row was actually created
                     $fmdCheck = BeanFactory::newBean('EditCustomFields');

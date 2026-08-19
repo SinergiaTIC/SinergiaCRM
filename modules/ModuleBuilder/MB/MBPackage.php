@@ -480,7 +480,7 @@ class MBPackage
                 if ($va === 'language') {
                     $this->getLanguageManifestForModule($value, $installdefs);
                     // STIC-Custom 20260819 ART - Export Customizations from Studio 
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1392
                     // $this->getCustomFieldsManifestForModule($value, $installdefs);
                     // END STIC-Custom
                 }//fi
@@ -489,7 +489,7 @@ class MBPackage
                 }//fi
             }//foreach
             // STIC-Custom 20260819 ART - Export Customizations from Studio 
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1392
             // Always include custom fields regardless of language directory presence
             $this->getCustomFieldsManifestForModule($value, $installdefs);
             // END STIC-Custom
