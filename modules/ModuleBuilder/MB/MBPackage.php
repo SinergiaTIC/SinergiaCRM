@@ -479,12 +479,20 @@ class MBPackage
             foreach ($custom_module as $va) {
                 if ($va === 'language') {
                     $this->getLanguageManifestForModule($value, $installdefs);
-                    $this->getCustomFieldsManifestForModule($value, $installdefs);
+                    // STIC-Custom 20260819 ART - Export Customizations from Studio 
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // $this->getCustomFieldsManifestForModule($value, $installdefs);
+                    // END STIC-Custom
                 }//fi
                 if ($va === 'metadata') {
                     $this->getCustomMetadataManifestForModule($value, $installdefs);
                 }//fi
             }//foreach
+            // STIC-Custom 20260819 ART - Export Customizations from Studio 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // Always include custom fields regardless of language directory presence
+            $this->getCustomFieldsManifestForModule($value, $installdefs);
+            // END STIC-Custom
             $relationshipsMetaFiles = $this->getCustomRelationshipsMetaFilesByModuleName($value, true, true, $modules);
             if ($relationshipsMetaFiles) {
                 foreach ($relationshipsMetaFiles as $file) {
