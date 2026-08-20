@@ -2725,7 +2725,7 @@ class WizardStep4 {
       deleteSection(section) {
         if (!this.canDeleteSection(section)) return;
 
-        this.formConfig.layout.structure = this.formConfig.layout.structure.filter(s => s.id != section.id);
+        this.layout.structure = this.sections.filter(s => s.id != section.id);
       },
 
       canMoveUpSection(section) {
@@ -2768,10 +2768,26 @@ class WizardStep4 {
       },
 
       isGroupSection(section) {
+        const group = this.getGroup(section);
+        if (!group) return false;
+        return true;
+      },
+
+      groupName(section) {
+        const group = this.getGroup(section);
+        if (!group) return null;
+        
+        return group.group_title;
+      },
+
+      getGroup(section) {
         const firstElement = section.elements.find(el => el.type === 'datablock');
-        if (!firstElement) return false;
+        if (!firstElement) return null;
+        
         const block = this.getDataBlock(firstElement);
-        return block ? block.isGroupHead(this.data_blocks) : false;
+        if (!block) return null;
+
+        return block.isGroupHead(this.data_blocks) ? block : null;
       },
 
       getFields(element) {

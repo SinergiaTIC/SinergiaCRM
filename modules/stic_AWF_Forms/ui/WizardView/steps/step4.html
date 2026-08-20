@@ -22,26 +22,7 @@
  */
  -->
  
-<style>
-    /* Sections that contain a group: highlighted so the user recognizes them as special (OC - group sections) */
-    .stic_panel .card.group-section {
-        border-color: var(--bs-primary) !important;
-        box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.15);
-    }
-    .stic_panel .card.group-section > .card-header {
-        border-bottom-color: var(--bs-primary);
-    }
-    /* Elements (blocks) inside a group section: styled as blocks, not as sections */
-    .stic_panel .card.datablock-element {
-        border: 1px dashed rgba(0, 0, 0, 0.25);
-        border-left: 4px solid var(--bs-primary);
-    }
-    .stic_panel .card.datablock-element > .card-header {
-        background-color: #ffffff;
-    }
-</style>
-
- <!-- Main Panel -->
+<!-- Main Panel -->
 <main x-data="WizardStep4.mainStep4xData();">
     <div class="row h-100 g-0">
         <!-- Themes and configurations -->
@@ -426,35 +407,164 @@
                                         <div class="flex-fill border rounded p-2 overflow-auto">
                                             <h4 class="mb-2" x-text="utils.translate('LBL_SECTIONS')"></h3>
                                             <template x-for="(section, index) in sections" :key="section.id">
-                                                <div class="card datablock"
-                                                     :class="{'group-section': isGroupSection(section)}">
-                                                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
-                                                        <div class="d-flex align-items-center gap-2">
-                                                            <template x-if="isGroupSection(section)">
-                                                                <span class="badge bg-primary" :title="utils.translate('LBL_DATABLOCK_GROUP')"
-                                                                      x-text="'📦 ' + utils.translate('LBL_DATABLOCK_GROUP')"></span>
-                                                            </template>
-                                                            <span :id="`sectionTitleEdit-${section.id}`" data-model="section.title" x-init="sticControls.editableText($el);"></span>
+                                                <div class="card datablock mb-3 shadow-sm transition-all" x-data="{showSettings: false, isCollapsed: false}">
+                                                    <!-- Integrated Group header (Rendered ONLY if item is a group head/subgroup) -->
+                                                    <template x-if="isGroupSection(section)">
+                                                        <!-- Group Header -->
+                                                        <div class="card-header border-bottom p-2">
+                                                            <!-- Group Info -->
+                                                            <div class="d-flex align-items-center justify-content-between">
+                                                                <!-- Group Title -->
+                                                                <div class="d-flex flex-column ">
+                                                                    <!-- Group Badge -->
+                                                                    <span class="badge bg-transparent text-dark" style="margin-left:-10px; margin-top:-5px;font-weight: normal;" 
+                                                                          x-text="'📦 ' + groupName(section)" :title="utils.translate('LBL_DATABLOCK_GROUP')"></span>
+                                                                    <!-- Optional and Repeatable Badges -->
+                                                                    <div class="d-flex justify-content-start">
+                                                                        <!-- Optional Badge -->
+                                                                        <span class="badge bg-info me-2" x-show="getGroup(section).is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
+                                                                        <!-- Repeatable Badge -->
+                                                                        <span class="badge bg-primary" x-show="getGroup(section).is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                        <!-- Buttons -->
-                                                        <div class="d-inline-flex">
-                                                            <div class="d-inline-flex input-group" role="group">
-                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                                        :disabled="!canMoveUpSection(section);" @click="moveUpSection(section);">
-                                                                    <span class="suitepicon suitepicon-action-move-up"></span>
+                                                    </template>
+
+                                                    <!-- Standard Section header -->
+                                                    <div class="card-header pb-1 pe-0">
+                                                        <div class="d-flex align-items-center">
+                                                            <!-- Section Title -->
+                                                            <h3 class="flex-grow-1 mb-0" :id="`sectionTitleEdit-${section.id}`" data-model="section.title" x-init="sticControls.editableText($el);"></h3>
+
+                                                            <!-- Buttons -->
+                                                            <div class="d-flex align-items-center ms-auto">
+                                                                <!-- Toggle Config Panel -->
+                                                                <button type="button" class="btn btn-sm btn-outline-primary ms-2" @click="showSettings = !showSettings"
+                                                                        :class="{'active': showSettings}" :title="utils.translate('LBL_SECTION_CONFIG')">
+                                                                    <template x-if="!showSettings">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+                                                                            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+                                                                            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+                                                                        </svg>
+                                                                    </template>
+                                                                    <template x-if="showSettings">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                                                                            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                                                                        </svg>
+                                                                    </template>
                                                                 </button>
-                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                                        :disabled="!canMoveDownSection(section);" @click="moveDownSection(section);">
-                                                                    <span class="suitepicon suitepicon-action-move-down"></span>
+
+                                                                <!-- Move Up/Down -->
+                                                                <div class="d-inline-flex input-group" role="group" style="min-width: 64px;">
+                                                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                                            :disabled="!canMoveUpSection(section);" @click="moveUpSection(section);">
+                                                                        <span class="suitepicon suitepicon-action-move-up"></span>
+                                                                    </button>
+                                                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                                            :disabled="!canMoveDownSection(section);" @click="moveDownSection(section);">
+                                                                        <span class="suitepicon suitepicon-action-move-down"></span>
+                                                                    </button>
+                                                                </div>
+
+                                                                <!-- Delete -->
+                                                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
+                                                                        :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-delete"></span>
                                                                 </button>
-                                                            </div> 
-                                                            <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
-                                                                    :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
-                                                                <span class="suitepicon suitepicon-action-delete"></span>
-                                                            </button>
+
+                                                                <!-- Chevron -->
+                                                                <button class="btn btn-sm btn-link text-decoration-none" @click="isCollapsed = !isCollapsed">
+                                                                    <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Config Drawer -->
+                                                        <div x-show="showSettings" x-transition class="m-2 border rounded shadow-lg">
+                                                            <!-- Section Configuration -->
+                                                            <div :id="`sectionConfig${section.id}`" class="row p-3 align-items-center">
+                                                                <div class="row">
+                                                                    <!-- Container Type -->
+                                                                    <div class="col-3">
+                                                                        <label :for="`section${section.id}_containerType`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_CONTAINER')"></label>
+                                                                        <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType">
+                                                                            <template x-for="type in availableContainerTypes" :key="type.id">
+                                                                                <option :value="type.id" x-text="type.text" :selected="type.id == section.containerType"></option>
+                                                                            </template>
+                                                                        </select>
+                                                                    </div>
+                                                                    <!-- Show Title -->
+                                                                    <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
+                                                                        <label :for="`section${section.id}_showTitle`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_SHOW_TITLE')"></label>
+                                                                        <input :id="`section${section.id}_showTitle`" class="form-check-input" type="checkbox" role="switch" x-model="section.showTitle"
+                                                                                @change="if(!section.showTitle) { section.isCollapsible = false; section.isCollapsed = false; }"/>
+                                                                    </div>
+                                                                    <!-- Collapsible -->
+                                                                    <template x-if="section.showTitle">
+                                                                        <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
+                                                                            <label :for="`section${section.id}_isCollapsible`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_IS_COLLAPSIBLE')"></label>
+                                                                            <input :id="`section${section.id}_isCollapsible`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsible"
+                                                                                    @change="if(!section.isCollapsible) { section.isCollapsed = false; }"/>
+                                                                        </div>
+                                                                    </template>
+                                                                    <!-- Collaped -->
+                                                                    <template x-if="section.showTitle && section.isCollapsible">
+                                                                        <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
+                                                                            <label :for="`section${section.id}_isCollapsed`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_ISCOLLAPSED')"></label>
+                                                                            <input :id="`section${section.id}_isCollapsed`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsed"/>
+                                                                        </div>
+                                                                    </template>
+                                                                </div>
+                                                                <!-- Title & Subtitle -->
+                                                                <template x-if="section.showTitle">
+                                                                    <div class="row">
+                                                                        <!-- Title -->
+                                                                        <div class="col-3">
+                                                                            <label :for="`section${section.id}_title`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_TITLE')"></label>
+                                                                            <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title"/>
+                                                                        </div>
+                                                                        <!-- Subtitle -->
+                                                                        <div class="col-9">
+                                                                            <label :for="`section${section.id}_subtitle`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_SUBTITLE')"></label>
+                                                                            <input :id="`section${section.id}_subtitle`" type="text" class="form-control" autocomplete="off" x-model="section.subtitle"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+
+                                                                <!-- Text: Toggle Switch Custom Label -->
+                                                                <!-- <div class="col-md-3" x-show="item.is_optional" x-init="utils.setInlineHelpQtip()">
+                                                                <label :for="`groupToggleLabel_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_INCLUDE_LABEL')"></label>
+                                                                <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                                <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DESC')"></div>
+                                                                <input type="text" :id="`groupToggleLabel_${item.id}`" class="form-control form-control-sm" x-model="item.toggle_label" 
+                                                                        :placeholder="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT') + ' ' + (item.group_title || item.text)">
+                                                                </div> -->
+
+                                                                <!-- Text: Add Button Custom Label -->
+                                                                <!-- <div class="col-md-3" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                                                                <label :for="`groupAddButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_ADD_LABEL')"></label>
+                                                                <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                                <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL_DESC')"></div>
+                                                                <input type="text" :id="`groupAddButton_${item.id}`" class="form-control form-control-sm" x-model="item.add_button_label" 
+                                                                        :placeholder="utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT')">
+                                                                </div> -->
+
+                                                                <!-- Text: Remove Button Custom Label -->
+                                                                <!-- <div class="col-md-2" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                                                                <label :for="`groupRemoveButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_REMOVE_LABEL')"></label>
+                                                                <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                                <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DESC')"></div>
+                                                                <input type="text" :id="`groupRemoveButton_${item.id}`" class="form-control form-control-sm" x-model="item.remove_button_label" 
+                                                                        :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT')">
+                                                                </div> -->
+
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                    <div class="card-body bg-white">
+
+                                                    <!-- Section Body -->
+                                                    <div class="card-body" x-show="!isCollapsed" x-transition>
                                                         <div class="accordion">
                                                             <!-- Configuration -->
                                                             <div class="accordion-item" x-data="{opened:false}">
