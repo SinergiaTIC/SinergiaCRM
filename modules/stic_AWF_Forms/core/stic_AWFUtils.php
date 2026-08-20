@@ -161,6 +161,47 @@ class stic_AWFUtils {
                 $block = $context->getDataBlockById($element->ref_id);
                 if (!$block) continue;
 
+                // Child blocks are rendered together with their root when the root is repeatable/optional.
+                // Children of SIMPLE groups fall through to scalar summary rendering.
+                if (!empty($block->group_root)) {
+                    $rootBlock = $context->formConfig->data_blocks[$block->group_root] ?? null;
+                    if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                        continue;
+                    }
+                }
+
+                // Repeatable and optional groups render as per-instance rows in the summary.
+                if ($block->isRepeatable() || $block->isOptional()) {
+                    // Use transitive descendants (multi-level branches);
+                    // config comes from the context ($formConfig was never defined in this scope).
+                    $formConfig = $context->formConfig;
+                    $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
+                    $instances = DataBlockResolved::resolveInstances($block, $formData, new ExecutionContext('', '', $formData, $formConfig, null, '', null, ''));
+                    $instanceNumber = 1;
+                    foreach ($instances as $instance) {
+                        $instanceLabel = rtrim($block->text, ' :') . " #" . $instanceNumber;
+                        $html .= "<tr><td colspan=\"2\" style=\"padding: 8px 12px;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.05);border-bottom: 1px solid {$borderColor};\">" . htmlspecialchars($instanceLabel) . "</td></tr>";
+                        $hasFields = true;
+                        $instanceNumber++;
+
+                        foreach ($groupBlocks as $groupBlock) {
+                            foreach ($groupBlock->fields as $fieldDef) {
+                                // Only show visible fields in the form
+                                if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+                                // If it has no label, it is not displayed
+                                if (empty($fieldDef->label)) continue;
+
+                                $isUnlinked = $fieldDef->type_field === DataBlockFieldType::UNLINKED;
+                                $blockArrayKey = ($isUnlinked ? '_detached_' : '') . $groupBlock->name;
+                                // Value to display
+                                $value = $formData[$blockArrayKey][$instance->instanceIndex][$fieldDef->name] ?? '';
+                                $html .= self::renderSummaryFieldRow($fieldDef, $value, $borderColor, $textColor, $hasFields);
+                            }
+                        }
+                    }
+                    continue;
+                }
+
                 foreach ($block->fields as $fieldDef) {
                     // Only show visible fields in the form
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) {
@@ -172,175 +213,10 @@ class stic_AWFUtils {
                     }
 
                     $formKey = $fieldDef->getPhpKey();
-                    
+
                     // Value to display
                     $value = $formData[$formKey] ?? '';
-                    $isHtmlValue = false; // Flag to indicate if the value contains HTML (for proper escaping)
-
-                    // Render rating fields with icons
-                    if ($fieldDef->type_in_form === 'rating') { 
-                        $rawNum = (int)$value;
-                        $subtype = !empty($fieldDef->subtype_in_form) ? $fieldDef->subtype_in_form : 'rating_stars';
-                        $isHtmlValue = true; 
-                        
-                        if ($value === '' || $value === null) {
-                            $displayValue = '<em style="color:#9aa0a6;">[ '.translate('LBL_EMPTY', 'stic_AWF_Responses').' ]</em>';
-                        } else {
-                            $displayValue = '<div style="display:inline-flex; gap:10px; align-items:center; font-size:1.5em; line-height:1;">';
-                            
-                            // Stars, emojis, thumbs or lights
-                            if (in_array($subtype, ['rating_stars', 'rating_emoji', 'rating_thumbs', 'rating_lights'])) {
-                                $options = [];
-                                $isCumulative = false;
-                                $isLight = false;
-                                $baseColors = []; 
-                                
-                                // Get official icons and colors from Iconify API based on the subtype
-                                if ($subtype === 'rating_stars') {
-                                    $isCumulative = true;
-                                    for ($i = 1; $i <= 5; $i++) {
-                                        $options[$i] = ['empty' => 'bi:star', 'fill' => 'bi:star-fill'];
-                                        $baseColors[$i] = 'ffc107'; // Yellow for all stars
-                                    }
-                                } elseif ($subtype === 'rating_emoji') {
-                                    $options = [
-                                        1 => ['empty' => 'bi:emoji-angry',   'fill' => 'bi:emoji-angry-fill'],
-                                        2 => ['empty' => 'bi:emoji-frown',   'fill' => 'bi:emoji-frown-fill'],
-                                        3 => ['empty' => 'bi:emoji-neutral', 'fill' => 'bi:emoji-neutral-fill'],
-                                        4 => ['empty' => 'bi:emoji-smile',   'fill' => 'bi:emoji-smile-fill'],
-                                        5 => ['empty' => 'bi:emoji-laughing','fill' => 'bi:emoji-laughing-fill']
-                                    ];
-                                    $baseColors = [1 => 'dc3545', 2 => 'fd7e14', 3 => 'ffc107', 4 => '20c997', 5 => '198754'];
-                                } elseif ($subtype === 'rating_thumbs') {
-                                    $options = [
-                                        1 => ['empty' => 'bi:hand-thumbs-down', 'fill' => 'bi:hand-thumbs-down-fill'],
-                                        5 => ['empty' => 'bi:hand-thumbs-up',   'fill' => 'bi:hand-thumbs-up-fill']
-                                    ];
-                                    $baseColors = [1 => 'dc3545', 5 => '198754'];
-                                } elseif ($subtype === 'rating_lights') {
-                                    $isLight = true;
-                                    $options = [
-                                        1 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill'],
-                                        3 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill'],
-                                        5 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill']
-                                    ];
-                                    $baseColors = [1 => 'dc3545', 3 => 'ffc107', 5 => '198754'];
-                                }
-                                $displayValue = '<div style="display:inline-flex; gap:12px; align-items:center;">';
-
-                                // Render each icon
-                                foreach ($options as $val => $iconNames) {
-                                    $active = $isCumulative ? ($val <= $rawNum) : ($val === $rawNum);
-                                    
-                                    $iconName = $active ? $iconNames['fill'] : $iconNames['empty'];
-                                    $targetColor = $baseColors[$val];
-
-                                    if ($active) {
-                                        $colorHex = $targetColor;
-                                        $scale = 'transform: scale(1.6);';
-                                    } else {
-                                        $colorHex = $isLight ? $targetColor : 'adb5bd';
-                                        $alfa = $isLight ? '20' : '80'; 
-                                        $colorHex .= $alfa;
-                                        $scale = '';
-                                    }
-                                    
-                                    $imgUrl = "https://api.iconify.design/{$iconName}.svg?color=%23{$colorHex}";
-                                    $displayValue .= "<img src='{$imgUrl}' style='{$scale} display:inline-block; vertical-align:middle; margin-right:6px;' alt='rating' />";
-                                }
-                                $displayValue .= '</div>';
-                            }
-
-                            // NPS (0 to 10)
-                            elseif ($subtype === 'rating_nps') {
-                                $displayValue = '<div style="display:flex; width:100%; gap:2px;">';
-                                for ($i = 0; $i <= 10; $i++) {
-                                    $active = ($i === $rawNum);
-                                    if ($active) {
-                                        if ($i <= 6) { $bg = '#dc3545'; $color = '#fff'; $border = '#dc3545'; }
-                                        elseif ($i <= 8) { $bg = '#ffc107'; $color = '#212529'; $border = '#ffc107'; }
-                                        else { $bg = '#198754'; $color = '#fff'; $border = '#198754'; }
-                                    } else {
-                                        $bg = 'transparent'; $color = '#6c757d'; $border = '#dee2e6';
-                                    }
-                                    $opacity = $active ? '1' : '0.6';
-                                    $displayValue .= "<span style='flex:1; text-align:center; padding:5px 2px; font-weight:bold; background-color:{$bg}; color:{$color}; border:1px solid {$border}; border-radius:3px; opacity:{$opacity};'>{$i}</span>";
-                                }
-                                $displayValue .= '</div>';
-                            }
-                            $displayValue .= '</div>';
-                        }
-                    }
-                    // Boolean (checkboxes and Switches)
-                    elseif ($fieldDef->type === 'bool' || $fieldDef->type === 'checkbox' || in_array($fieldDef->subtype_in_form, ['select_checkbox', 'select_switch'])) {
-                        global $app_strings;
-                        $isTrue = ($value === '1' || $value === 'on' || $value === 'true' || $value === true);
-                        $yesStr = $app_strings['LBL_YES'] ?? 'Yes';
-                        $noStr  = $app_strings['LBL_NO'] ?? 'No';
-                        
-                        if ($isTrue) {
-                            $displayValue = "<span style='color: #198754; font-weight: bold;'>✓ {$yesStr}</span>";
-                        } else {
-                            $displayValue = "<span style='color: #dc3545;'>✗ {$noStr}</span>";
-                        }
-                        $isHtmlValue = true; // Do not scape the string
-                    }
-                    // Dates and times
-                    elseif (in_array($fieldDef->type, ['date', 'datetime', 'datetimecombo']) || in_array($fieldDef->subtype_in_form, ['date', 'date_time', 'date_datetime'])) {
-                        if ($value === '' || $value === null) {
-                            $displayValue = '<em style="color:#9aa0a6;">[ '.translate('LBL_EMPTY', 'stic_AWF_Responses').' ]</em>';
-                            $isHtmlValue = true;
-                        } else {
-                            global $timedate;
-                            try {
-                                $dt = new \DateTime($value);
-                                if ($fieldDef->type === 'date' || $fieldDef->subtype_in_form === 'date') {
-                                    $displayValue = $timedate->asUserDate($dt);
-                                } elseif ($fieldDef->subtype_in_form === 'date_time') {
-                                    $displayValue = $timedate->asUserTime($dt);
-                                } else {
-                                    $displayValue = $timedate->asUser($dt);
-                                }
-                            } catch (\Exception $e) {
-                                $displayValue = $value; 
-                            }
-                        }
-                    }
-                    // Enum and multienum with value options: we display the text instead of the value
-                    elseif (!empty($fieldDef->value_options)) {
-                        // Helper function to find the text of a value
-                        $findLabel = function($val) use ($fieldDef) {
-                            foreach ($fieldDef->value_options as $opt) {
-                                if ($opt->value == $val) return $opt->text;
-                            }
-                            return $val; 
-                        };
-    
-                        if (is_array($value)) {
-                            $labels = array_map($findLabel, $value);
-                            $displayValue = implode(', ', $labels);
-                        } else {
-                            $displayValue = $findLabel($value);
-                        }
-                    } 
-                    // For other fields, we display the value directly (after converting arrays to strings)
-                    else {
-                        if (is_array($value)) {
-                            $value = implode(', ', $value);
-                        }
-                        $displayValue = $value;
-                    }
-                    
-                    // If the value does not contain HTML (like the rating field), we escape it to prevent XSS and preserve formatting
-                    if (!$isHtmlValue) {
-                        $displayValue = nl2br(htmlspecialchars((string)$displayValue));
-                    }
-
-                    $html .= "<tr>";
-                    $html .= "<td style=\"padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;width: 35%;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.02);\">" . htmlspecialchars($fieldDef->label) . "</td>";
-                    $html .= "<td style=\"padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;width: 65%;\">" . $displayValue . "</td>";
-                    $html .= "</tr>";
-                    $hasFields = true;
+                    $html .= self::renderSummaryFieldRow($fieldDef, $value, $borderColor, $textColor, $hasFields);
                 }
             }
 
@@ -354,6 +230,187 @@ class stic_AWFUtils {
         $html .= "</div>";
         $html .= "</div>";
         
+        return $html;
+    }
+
+    /**
+     * Renders a single summary table row for a field with the given value.
+     * @param FormDataBlockField $fieldDef Field definition
+     * @param mixed $value Raw form value
+     * @param string $borderColor Table border color
+     * @param string $textColor Table text color
+     * @param bool $hasFields Set to true when a row is rendered
+     * @return string The generated <tr> HTML
+     */
+    private static function renderSummaryFieldRow(FormDataBlockField $fieldDef, mixed $value, string $borderColor, string $textColor, bool &$hasFields): string {
+        $isHtmlValue = false; // Flag to indicate if the value contains HTML (for proper escaping)
+        $html = '';
+
+        // Render rating fields with icons
+        if ($fieldDef->type_in_form === 'rating') { 
+            $rawNum = (int)$value;
+            $subtype = !empty($fieldDef->subtype_in_form) ? $fieldDef->subtype_in_form : 'rating_stars';
+            $isHtmlValue = true; 
+            
+            if ($value === '' || $value === null) {
+                $displayValue = '<em style="color:#9aa0a6;">[ '.translate('LBL_EMPTY', 'stic_AWF_Responses').' ]</em>';
+            } else {
+                $displayValue = '<div style="display:inline-flex; gap:10px; align-items:center; font-size:1.5em; line-height:1;">';
+                
+                // Stars, emojis, thumbs or lights
+                if (in_array($subtype, ['rating_stars', 'rating_emoji', 'rating_thumbs', 'rating_lights'])) {
+                    $options = [];
+                    $isCumulative = false;
+                    $isLight = false;
+                    $baseColors = []; 
+                    
+                    // Get official icons and colors from Iconify API based on the subtype
+                    if ($subtype === 'rating_stars') {
+                        $isCumulative = true;
+                        for ($i = 1; $i <= 5; $i++) {
+                            $options[$i] = ['empty' => 'bi:star', 'fill' => 'bi:star-fill'];
+                            $baseColors[$i] = 'ffc107'; // Yellow for all stars
+                        }
+                    } elseif ($subtype === 'rating_emoji') {
+                        $options = [
+                            1 => ['empty' => 'bi:emoji-angry',   'fill' => 'bi:emoji-angry-fill'],
+                            2 => ['empty' => 'bi:emoji-frown',   'fill' => 'bi:emoji-frown-fill'],
+                            3 => ['empty' => 'bi:emoji-neutral', 'fill' => 'bi:emoji-neutral-fill'],
+                            4 => ['empty' => 'bi:emoji-smile',   'fill' => 'bi:emoji-smile-fill'],
+                            5 => ['empty' => 'bi:emoji-laughing','fill' => 'bi:emoji-laughing-fill']
+                        ];
+                        $baseColors = [1 => 'dc3545', 2 => 'fd7e14', 3 => 'ffc107', 4 => '20c997', 5 => '198754'];
+                    } elseif ($subtype === 'rating_thumbs') {
+                        $options = [
+                            1 => ['empty' => 'bi:hand-thumbs-down', 'fill' => 'bi:hand-thumbs-down-fill'],
+                            5 => ['empty' => 'bi:hand-thumbs-up',   'fill' => 'bi:hand-thumbs-up-fill']
+                        ];
+                        $baseColors = [1 => 'dc3545', 5 => '198754'];
+                    } elseif ($subtype === 'rating_lights') {
+                        $isLight = true;
+                        $options = [
+                            1 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill'],
+                            3 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill'],
+                            5 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill']
+                        ];
+                        $baseColors = [1 => 'dc3545', 3 => 'ffc107', 5 => '198754'];
+                    }
+                    $displayValue = '<div style="display:inline-flex; gap:12px; align-items:center;">';
+
+                    // Render each icon
+                    foreach ($options as $val => $iconNames) {
+                        $active = $isCumulative ? ($val <= $rawNum) : ($val === $rawNum);
+                        
+                        $iconName = $active ? $iconNames['fill'] : $iconNames['empty'];
+                        $targetColor = $baseColors[$val];
+
+                        if ($active) {
+                            $colorHex = $targetColor;
+                            $scale = 'transform: scale(1.6);';
+                        } else {
+                            $colorHex = $isLight ? $targetColor : 'adb5bd';
+                            $alfa = $isLight ? '20' : '80'; 
+                            $colorHex .= $alfa;
+                            $scale = '';
+                        }
+                        
+                        $imgUrl = "https://api.iconify.design/{$iconName}.svg?color=%23{$colorHex}";
+                        $displayValue .= "<img src='{$imgUrl}' style='{$scale} display:inline-block; vertical-align:middle; margin-right:6px;' alt='rating' />";
+                    }
+                    $displayValue .= '</div>';
+                }
+
+                // NPS (0 to 10)
+                elseif ($subtype === 'rating_nps') {
+                    $displayValue = '<div style="display:flex; width:100%; gap:2px;">';
+                    for ($i = 0; $i <= 10; $i++) {
+                        $active = ($i === $rawNum);
+                        if ($active) {
+                            if ($i <= 6) { $bg = '#dc3545'; $color = '#fff'; $border = '#dc3545'; }
+                            elseif ($i <= 8) { $bg = '#ffc107'; $color = '#212529'; $border = '#ffc107'; }
+                            else { $bg = '#198754'; $color = '#fff'; $border = '#198754'; }
+                        } else {
+                            $bg = 'transparent'; $color = '#6c757d'; $border = '#dee2e6';
+                        }
+                        $opacity = $active ? '1' : '0.6';
+                        $displayValue .= "<span style='flex:1; text-align:center; padding:5px 2px; font-weight:bold; background-color:{$bg}; color:{$color}; border:1px solid {$border}; border-radius:3px; opacity:{$opacity};'>{$i}</span>";
+                    }
+                    $displayValue .= '</div>';
+                }
+                $displayValue .= '</div>';
+            }
+        }
+        // Boolean (checkboxes and Switches)
+        elseif ($fieldDef->type === 'bool' || $fieldDef->type === 'checkbox' || in_array($fieldDef->subtype_in_form, ['select_checkbox', 'select_switch'])) {
+            global $app_strings;
+            $isTrue = ($value === '1' || $value === 'on' || $value === 'true' || $value === true);
+            $yesStr = $app_strings['LBL_YES'] ?? 'Yes';
+            $noStr  = $app_strings['LBL_NO'] ?? 'No';
+            
+            if ($isTrue) {
+                $displayValue = "<span style='color: #198754; font-weight: bold;'>✓ {$yesStr}</span>";
+            } else {
+                $displayValue = "<span style='color: #dc3545;'>✗ {$noStr}</span>";
+            }
+            $isHtmlValue = true; // Do not scape the string
+        }
+        // Dates and times
+        elseif (in_array($fieldDef->type, ['date', 'datetime', 'datetimecombo']) || in_array($fieldDef->subtype_in_form, ['date', 'date_time', 'date_datetime'])) {
+            if ($value === '' || $value === null) {
+                $displayValue = '<em style="color:#9aa0a6;">[ '.translate('LBL_EMPTY', 'stic_AWF_Responses').' ]</em>';
+                $isHtmlValue = true;
+            } else {
+                global $timedate;
+                try {
+                    $dt = new \DateTime($value);
+                    if ($fieldDef->type === 'date' || $fieldDef->subtype_in_form === 'date') {
+                        $displayValue = $timedate->asUserDate($dt);
+                    } elseif ($fieldDef->subtype_in_form === 'date_time') {
+                        $displayValue = $timedate->asUserTime($dt);
+                    } else {
+                        $displayValue = $timedate->asUser($dt);
+                    }
+                } catch (\Exception $e) {
+                    $displayValue = $value; 
+                }
+            }
+        }
+        // Enum and multienum with value options: we display the text instead of the value
+        elseif (!empty($fieldDef->value_options)) {
+            // Helper function to find the text of a value
+            $findLabel = function($val) use ($fieldDef) {
+                foreach ($fieldDef->value_options as $opt) {
+                    if ($opt->value == $val) return $opt->text;
+                }
+                return $val; 
+            };
+
+            if (is_array($value)) {
+                $labels = array_map($findLabel, $value);
+                $displayValue = implode(', ', $labels);
+            } else {
+                $displayValue = $findLabel($value);
+            }
+        } 
+        // For other fields, we display the value directly (after converting arrays to strings)
+        else {
+            if (is_array($value)) {
+                $value = implode(', ', $value);
+            }
+            $displayValue = $value;
+        }
+        
+        // If the value does not contain HTML (like the rating field), we escape it to prevent XSS and preserve formatting
+        if (!$isHtmlValue) {
+            $displayValue = nl2br(htmlspecialchars((string)$displayValue));
+        }
+
+        $html .= "<tr>";
+        $html .= "<td style=\"padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;width: 35%;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.02);\">" . htmlspecialchars($fieldDef->label) . "</td>";
+        $html .= "<td style=\"padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;width: 65%;\">" . $displayValue . "</td>";
+        $html .= "</tr>";
+        $hasFields = true;
+
         return $html;
     }
 
@@ -879,6 +936,41 @@ class stic_AWFUtils {
      */
     public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
         foreach ($formConfig->data_blocks as $dataBlock) {
+            // Child blocks are filled together with their root when the root is repeatable/optional.
+            // Children of SIMPLE groups fall through to scalar boolean filling.
+            if (!empty($dataBlock->group_root)) {
+                $rootBlock = $formConfig->data_blocks[$dataBlock->group_root] ?? null;
+                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                    continue;
+                }
+            }
+
+            // Repeatable and optional groups process boolean fields for all instances.
+            if ($dataBlock->isRepeatable() || $dataBlock->isOptional()) {
+                // Use transitive descendants (multi-level branches)
+                $blocksInGroup = array_merge([$dataBlock], $formConfig->getGroupDescendants($dataBlock));
+                foreach (['', '_detached_'] as $prefix) {
+                    foreach ($blocksInGroup as $blockInGroup) {
+                        $blockKey = $prefix . $blockInGroup->name;
+                        if (!is_array($formData[$blockKey] ?? null)) continue;
+                        foreach (array_keys($formData[$blockKey]) as $index) {
+                            if (!is_int($index)) continue;
+                            foreach ($blockInGroup->fields as $field) {
+                                if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                                if ($field->type !== 'bool' && $field->type !== 'checkbox' && !in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) continue;
+                                $isUnlinked = $field->type_field === DataBlockFieldType::UNLINKED;
+                                if ($prefix === '_detached_' && !$isUnlinked) continue;
+                                if ($prefix === '' && $isUnlinked) continue;
+                                if (!isset($formData[$blockKey][$index][$field->name])) {
+                                    $formData[$blockKey][$index][$field->name] = '0';
+                                }
+                            }
+                        }
+                    }
+                }
+                continue;
+            }
+
             foreach ($dataBlock->fields as $field) {
                 if ($field->type === 'bool' || $field->type === 'checkbox' || in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) {
                     $phpKey = $field->getPhpKey();
@@ -1005,9 +1097,16 @@ class stic_AWFUtils {
         $context->deferredContext = $deferredContext;
 
         // Datablock references to beans
+        // Restriction: deferred actions operate on non-repeatable blocks only.
+        // Repeatable blocks (or children of a repeatable root) are never restored here
+        // because indexed references are not supported for deferred flows.
         foreach ($deferredContext->blockReferences as $blockId => $beanId) {
             if (isset($formConfig->data_blocks[$blockId])) {
-                $formConfig->data_blocks[$blockId]->setBeanReference($beanId);
+                $block = $formConfig->data_blocks[$blockId];
+                if ($block->isRepeatable() || !empty($block->group_root)) {
+                    continue;
+                }
+                $block->setBeanReference($beanId);
             }
         }
 
@@ -1022,6 +1121,10 @@ class stic_AWFUtils {
     {
         $blockReferences = [];
         foreach ($context->formConfig->data_blocks as $bId => $b) {
+            // Restriction: deferred actions operate on non-repeatable blocks only.
+            if ($b->isRepeatable() || !empty($b->group_root)) {
+                continue;
+            }
             if ($b->getBeanReference() !== null) {
                 $blockReferences[$bId] = $b->getBeanReference()->beanId;
             }

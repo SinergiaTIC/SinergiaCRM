@@ -42,6 +42,11 @@ class stic_AwfDataBlock {
       relationships: [],        // Block-to-block relationships [{ name, related_datablock_id }]
       duplicate_detections: [], // Duplicate detection definition
       save_action_id: "",       // ID of the data block save action
+      min_instances: 1,         // Minimum required instances (0 = optional)
+      max_instances: 1,         // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
+      group_title: '',          // Visual title for the repeat group
+      is_custom_group_title: false, // Flag to track manual title overrides
+      group_root: '',           // ID of the immediate parent block (List Adjacency)
     });
 
     // 2. Overwrite with provided data
@@ -54,6 +59,20 @@ class stic_AwfDataBlock {
     if (this.duplicate_detections.length == 0) {
       this.duplicate_detections.push(new stic_AwfDuplicateDetection());
     }
+  }
+
+  get is_repeatable() { return this.max_instances === null || parseInt(this.max_instances, 10) > 1;}
+
+  get is_optional() { return parseInt(this.min_instances, 10) === 0; }
+
+  get is_root() { return !this.group_root || this.group_root === ''; }
+
+  get is_child() { return !this.is_root; }
+
+  get custom_group_title() { return this.group_title; }
+  set custom_group_title(value) {
+    this.is_custom_group_title = true;
+    this.group_title = value
   }
 
   getValidationErrors() {
@@ -109,6 +128,30 @@ class stic_AwfDataBlock {
   getFieldInputName(field) {
     const prefix = field.type_field === 'unlinked' ? '_detached.' : '';
     return `${prefix}${this.name}.${field.name}`;
+  }
+
+  /**
+   * Gets the instance-aware field input name for repeatable blocks.
+   * For non-repeatable blocks, delegates to getFieldInputName.
+   * @param {stic_AwfField} field
+   * @param {number|null} index Instance index
+   * @returns {string}
+   */
+  getFieldInputNameForInstance(field, index) {
+    if (index === null || index === undefined) {
+      return this.getFieldInputName(field);
+    }
+    const prefix = field.type_field === 'unlinked' ? '_detached.' : '';
+    return `${prefix}${this.name}[${index}].${field.name}`;
+  }
+
+  /**
+   * Returns child blocks that belong to this repeatable root.
+   * @param {stic_AwfDataBlock[]} dataBlocks
+   * @returns {stic_AwfDataBlock[]}
+   */
+  getChildren(dataBlocks) {
+    return dataBlocks.filter(b => b.group_root === this.id);
   }
 
   /**
@@ -266,26 +309,6 @@ class stic_AwfDataBlock {
     return field.name;
   }
 
-  /**
-   * Gets a suggested text for a new DataBlock for a module
-   * @param {string} moduleName The module
-   * @returns {string} The suggested text for a new DataBlock
-   */
-  suggestDataBlockText(moduleName) {
-    let module = utils.getModuleInformation(moduleName);
-    if (!module || !module.textSingular) {
-      return "";
-    }
-
-    let text = module.textSingular;
-    let index = 0;
-    while(this.data_blocks.some((b) => b.text === text || b.name === name)) {
-      index++;
-      text = `${module.textSingular} ${index}`;
-    }
-    return text;
-  }
-
   addRelationship(relName, relatedBlockId, relationshipType = 'many-to-many') {
     // Prevent exact duplicates (same name + same block)
     if (this.relationships.some(r => r.name === relName && r.related_datablock_id === relatedBlockId)) return false;
@@ -300,6 +323,523 @@ class stic_AwfDataBlock {
       this.relationships = this.relationships.filter(r => r.name !== relName);
     }
   }
+
+  /**
+   * Checks if this DataBlock can be configured as optional (min_instances = 0).
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  canBeOptional(allDataBlocks) {
+    // System required blocks can never be optional
+    if (this.required) return false;
+
+    // Check if block can be converted into a Group Root
+    if (!this.canBeGroupRoot(allDataBlocks)) return false;
+
+    // Child blocks with a mandatory FK relate field pointing to their parent cannot be optional
+    if (this.is_child && this.group_root) {
+      const hasMandatoryParentLink = this.fields.some(field => field.required && field.type === 'relate' && 
+                                                               (field.value === this.group_root || 
+                                                                (field.value_type === 'dataBlock' && field.value === this.group_root))
+      );
+      if (hasMandatoryParentLink) return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Checks if this block can be set as repeatable without violating
+   * the single repeatable block per hierarchy branch rule (protects N x M).
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  canBeRepeatable(allDataBlocks) {
+    // Check if block can be converted into a Group Root
+    if (!this.canBeGroupRoot(allDataBlocks)) return false;
+
+    // N×M protection — ancestors: no ancestor in the group_root chain may be repeatable.
+    let currentParentId = this.group_root;
+    const visited = new Set([this.id]);
+
+    while (currentParentId) {
+      if (visited.has(currentParentId)) break; // Prevent infinite loop in malformed data
+      visited.add(currentParentId);
+
+      const parentBlock = allDataBlocks.find(b => b.id === currentParentId);
+      if (!parentBlock) break;
+
+      if (parentBlock.is_repeatable) return false; // Found an ancestor that is already repeatable
+
+      currentParentId = parentBlock.group_root;
+    }
+
+    // N×M protection — descendants: no relational descendant in the SAME group may be repeatable.
+    // (Descendants in other groups are blocked by canBeGroupRoot; orphan repeatable descendants
+    // are never adopted by adoptRelatedOrphans, so they don't multiply with this block.)
+    const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
+    const descendants = this.getRelationalDescendants(allDataBlocks);
+    for (const d of descendants) {
+      if (d.id === this.id) continue;
+      const inSameGroup = d.group_root === this.id || (myGroupRoot && d.group_root === myGroupRoot);
+      if (inSameGroup && d.is_repeatable) return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Checks if the given candidate ID is a descendant of this block.
+   * @param {string} candidateId 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  isDescendant(candidateId, allDataBlocks) {
+    const queue = [this.id];
+    const visited = new Set();
+
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+      if (visited.has(currentId)) continue;
+      visited.add(currentId);
+
+      const children = allDataBlocks.filter(b => b.group_root === currentId);
+      for (const child of children) {
+        if (child.id === candidateId) return true;
+        queue.push(child.id);
+      }
+    }
+
+    return false;
+  }  
+
+  /**
+   * Checks whether candidate is an ancestor of this block in the group_root chain.
+   * Used to prevent adoption cycles (A -> B -> A) during transitive adoption.
+   * @param {stic_AwfDataBlock} candidate
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {boolean}
+   */
+  hasAncestor(candidate, allDataBlocks) {
+    let currentParentId = this.group_root;
+    const visited = new Set([this.id]);
+
+    while (currentParentId) {
+      if (currentParentId === candidate.id) return true;
+      if (visited.has(currentParentId)) break; // Prevent infinite loop in malformed data
+      visited.add(currentParentId);
+
+      const parentBlock = allDataBlocks.find(b => b.id === currentParentId);
+      if (!parentBlock) break;
+      currentParentId = parentBlock.group_root;
+    }
+
+    return false;
+  }
+
+  /**
+   * Returns valid candidate parent blocks for this block to join as a child.
+   * Filters out self, descendants (cycle prevention), and invalid N x M combinations.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]}
+   */
+  getAvailableGroupRoots(allDataBlocks) {
+    return allDataBlocks.filter(candidate => {
+      // 1. Cannot be itself
+      if (candidate.id === this.id) return false;
+
+      // 2. Cannot be an existing descendant (prevents cycles)
+      if (this.isDescendant(candidate.id, allDataBlocks)) return false;
+
+      // 3. If this block is ALREADY repeatable, candidates MUST NOT be repeatable
+      //    nor have repeatable ancestors (prevents N x M)
+      if (this.is_repeatable && !this.canBeRepeatableInParent(candidate, allDataBlocks)) return false;
+
+      return true;
+    });
+  }
+
+  /**
+   * Returns candidate independent blocks that can be manually added to this group.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]}
+   */
+  getAvailableCandidateChildren(allDataBlocks) {
+    if (!this.is_root) return [];
+    return allDataBlocks.filter(candidate => {
+      if (candidate.id === this.id) return false;
+      if (!candidate.is_root) return false; // Already belongs to another group
+      if (candidate.is_repeatable || candidate.is_optional) return false; // Candidate blocks that are repeatable or optional cannot be children of a group
+      return true;
+    });
+  }
+
+  /**
+   * Checks if this block is a relational child of parentBlockId (depends on it via FK/relate
+   * field or block-to-block relationship where this block is the N side / initiator).
+   * Unified dependency check — replaces the 5 duplicated inline closures.
+   * @param {string} parentId 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  isRelationalChild(parentId, allDataBlocks) {
+    if (!parentId || this.id === parentId) return false;
+
+    // A) Has a relate/FK field pointing to parent
+    if (this.fields?.some(f => f.type === 'relate' &&
+        (f.value === parentId || (f.value_type === 'dataBlock' && f.value === parentId))
+    )) return true;
+
+    // B) Has a relationship entry pointing to parent where THIS block is the initiator (N side)
+    if (this.relationships?.some(r => r.related_datablock_id === parentId && r.initiator_id === this.id)) return true;
+
+    // C) Parent has a relationship entry pointing to this block where THIS block is the initiator
+    const parent = allDataBlocks?.find(b => b.id === parentId);
+    if (parent?.relationships?.some(r => r.related_datablock_id === this.id && r.initiator_id === this.id)) return true;
+
+    return false;
+  }
+
+  /**
+   * Gets all blocks that are relationally dependent on this block (transitive FK / relate tree).
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]} Relational descendant blocks
+   */
+  getRelationalDescendants(allDataBlocks) {
+    const descendants = [];
+    const queue = [this.id];
+    const visited = new Set([this.id]);
+
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+
+      allDataBlocks.forEach(candidate => {
+        if (visited.has(candidate.id)) return;
+
+        if (candidate.isRelationalChild(currentId, allDataBlocks)) {
+          visited.add(candidate.id);
+          descendants.push(candidate);
+          queue.push(candidate.id);
+        }
+      });
+    }
+
+    return descendants;
+  }
+
+  /**
+   * Checks if this block can be converted into a Group Root (repeatable or optional)
+   * according to the Disjoint Trees rule.
+   * None of its relational descendants can belong to another group.
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  canBeGroupRoot(allDataBlocks) {
+    if (!allDataBlocks || !Array.isArray(allDataBlocks)) return true;
+
+    // The group this block currently belongs to (if any). With flat model, group_root IS the root.
+    // Descendants in the SAME group can follow this block into a new subgroup — that's fine.
+    // Descendants in a DIFFERENT group would be stolen → blocked (restriction 4).
+    const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
+
+    // Disjoint Trees check: no relational descendant may belong to a DIFFERENT group.
+    // (A descendant that is itself a group head is fine — nested groups are allowed as long
+    // as the N×M rule is respected, which is enforced by canBeRepeatable, not here.)
+    const relationalDescendants = this.getRelationalDescendants(allDataBlocks);
+    for (const descendant of relationalDescendants) {
+      if (descendant.group_root && descendant.group_root !== this.id && descendant.group_root !== myGroupRoot) return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Helper to check if this block could be placed under candidate without violating N x M
+   * @param {stic_AwfDataBlock} candidate 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  canBeRepeatableInParent(candidate, allDataBlocks) {
+    if (candidate.is_repeatable) return false;
+    return candidate.canBeRepeatable(allDataBlocks);
+  }
+
+  /**
+   * Obté tots els descendents d'un DataBlock evitant bucles infinits.
+   * @param {stic_AwfDataBlock[]} allBlocks 
+   * @param {Set<string>} visited 
+   * @returns {stic_AwfDataBlock[]}
+   */
+  getDescendants(allBlocks, visited = new Set()) {
+    if (visited.has(this.id)) return [];
+    visited.add(this.id);
+
+    let descendants = [];
+    const children = this.getChildren(allBlocks);
+
+    children.forEach(child => {
+      descendants.push(child);
+      descendants.push(...child.getDescendants(allBlocks, visited));
+    });
+
+    return descendants;
+  }
+
+  /**
+   * Returns the nearest ancestor (or self) that actually holds group cardinality (optional or repeatable).
+   * @param {stic_AwfDataBlock[]} dataBlocks 
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getGroupHeadBlock(dataBlocks) {
+    if (this.is_repeatable || this.is_optional) return this;
+    let current = this.getParentBlock(dataBlocks);
+    while (current) {
+      if (current.is_repeatable || current.is_optional) {
+        return current;
+      }
+      current = current.getParentBlock(dataBlocks);
+    }
+    return null;
+  }
+
+  /**
+   * Returns the immediate parent block this block belongs to (the block that this.group_root
+   * points to). With flat groups this is the group root; with nested subgroups it is the
+   * subgroup head directly above this block.
+   * @param {stic_AwfDataBlock[]} dataBlocks
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getParentBlock(dataBlocks) {
+    if (!this.group_root) return null;
+    return dataBlocks.find(b => b.id === this.group_root) || null;
+  }
+
+  /**
+   * Returns the nesting depth of this block inside the group hierarchy.
+   * 0 = top-level (visual group root), 1 = direct child, 2 = grandchild, etc.
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {number}
+   */
+  getDepth(allDataBlocks) {
+    let depth = 0;
+    let current = this;
+    const visited = new Set([this.id]);
+
+    while (current && current.group_root) {
+      if (visited.has(current.group_root)) break; // Cycle guard for malformed data
+      visited.add(current.group_root);
+
+      const parent = allDataBlocks.find(b => b.id === current.group_root);
+      if (!parent) break;
+
+      depth++;
+      current = parent;
+    }
+
+    return depth;
+  }
+
+  /**
+   * Gets group member blocks sorted hierarchically (Top-Down BFS)
+   * starting from the group root block.
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]} Array of sorted member blocks
+   */
+  getGroupMembersSorted(allDataBlocks) {
+    if (!allDataBlocks || !Array.isArray(allDataBlocks)) return [];
+
+    // Members of THIS block's group: blocks whose group_root points to this block
+    const memberBlocks = allDataBlocks.filter(b => b.group_root === this.id && b.id !== this.id);
+
+    if (memberBlocks.length <= 1) {
+      return memberBlocks;
+    }
+
+    // Calculate hierarchical depth (BFS) relative to this block
+    const depthMap = new Map();
+    depthMap.set(this.id, 0);
+
+    const queue = [this.id];
+    const visited = new Set([this.id]);
+
+    while (queue.length > 0) {
+      const parentId = queue.shift();
+      const parentDepth = depthMap.get(parentId);
+
+      allDataBlocks.forEach(candidate => {
+        if (visited.has(candidate.id)) return;
+
+        if (candidate.isRelationalChild(parentId, allDataBlocks)) {
+          visited.add(candidate.id);
+          depthMap.set(candidate.id, parentDepth + 1);
+          queue.push(candidate.id);
+        }
+      });
+    }
+
+    // Sort member blocks by depth (Top-Down: closer to root first)
+    return memberBlocks.sort((a, b) => {
+      const depthA = depthMap.get(a.id) ?? 999;
+      const depthB = depthMap.get(b.id) ?? 999;
+
+      if (depthA !== depthB) {
+        return depthA - depthB;
+      }
+
+      return allDataBlocks.indexOf(a) - allDataBlocks.indexOf(b);
+    });
+  }
+
+  /**
+   * Re-evaluates default group title by concatenating the root block's name 
+   * and all member block names in hierarchical Top-Down order.
+   * Unless the user has manually customized it.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   */
+  refreshGroupTitle(allDataBlocks) {
+    if (this.is_custom_group_title) return;
+
+    if (!this.is_root && this.group_root) {
+      // If called on a child block, delegate title refresh to the root block
+      const root = allDataBlocks.find(b => b.id === this.group_root);
+      if (root) {
+        root.refreshGroupTitle(allDataBlocks);
+      }
+      return;
+    }
+
+    // Get member blocks sorted hierarchically (Top-Down: Depth 1, Depth 2, etc.)
+    const sortedMembers = this.getGroupMembersSorted(allDataBlocks);
+
+    // The full group list starts with this root block followed by sorted members
+    const fullGroupBlocks = [this, ...sortedMembers];
+
+    // Compose the title joining block texts in exact hierarchical order
+    this.group_title = fullGroupBlocks.map(b => (b.text || '').trim()).filter(t => t.length > 0).join(' + ');
+  }
+
+  /**
+   * Checks if this block acts as a group head (root group or sub-group head).
+   * @param {stic_AwfDataBlock[]} dataBlocks 
+   * @returns {boolean}
+   */
+  isGroupHead(dataBlocks) {
+    return this.is_repeatable || this.is_optional || this.getChildren(dataBlocks).length > 0;
+  }
+
+  /**
+   * Ensures min_instances and max_instances constraints are strictly coherent:
+   * - min_instances: normalized to 0 (optional) or 1 (mandatory).
+   * - max_instances: null (unlimited repeatable), 1 (simple), or integer >= 2 (limited repeatable).
+   */
+  sanitizeRepeatableLimits() {
+    // Normalize min_instances (0 o 1)
+    let minVal = parseInt(this.min_instances, 10);
+    if (isNaN(minVal) || minVal < 0 || minVal > 1) {
+      this.min_instances = 1;
+    } else {
+      this.min_instances = minVal;
+    }
+
+    // Normalize max_instances
+    if (this.max_instances === null || this.max_instances === '') {
+      this.max_instances = null; // Unlimited repeatable (null)
+      return;
+    }
+
+    let maxVal = parseInt(this.max_instances, 10);
+    if (isNaN(maxVal) || maxVal <= 1) {
+      this.max_instances = 1; // Any value <= 1 is converted to a simple block (1)
+    } else {
+      this.max_instances = maxVal; // Values >= 2 are kept as limited repeatable blocks
+    }
+  }
+
+  /**
+   * Gets the root DataBlock of the group to which this block belongs.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getGroupRootBlock(allDataBlocks) {
+    let current = this;
+    const visited = new Set();
+    while (current && current.group_root) {
+      if (visited.has(current.id)) break; 
+      visited.add(current.id);
+      const parent = allDataBlocks.find(b => b.id === current.group_root);
+      if (!parent) break;
+      current = parent;
+    }
+    return current !== this ? current : null;
+  }
+
+  /**
+   * Gets the title of the group to which this blog belongs.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {string}
+   */
+  getGroupTitle(allDataBlocks) {
+    const parent = this.getParentBlock(allDataBlocks);
+    return parent ? (parent.group_title || parent.text) : '';
+  }
+
+  /**
+   * Returns true if and only if the block is part of a group BUT is not integrated
+   * into the CRM relationship tree of said group root.
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {boolean}
+   */
+  isManualGroupMemberOutsideTree(allDataBlocks) {
+    // If it does not have group_root assigned, it is not part of any group
+    if (!this.group_root) return false;
+
+    // Find the root block of the group (R)
+    const rootBlock = allDataBlocks.find(b => b.id === this.group_root);
+    if (!rootBlock) return false;
+
+    // Get the set of IDs of all blocks in the relational tree of R
+    const treeBlockIds = this.getGroupTreeBlockIds(rootBlock, allDataBlocks);
+
+    // Condition: has group AND does NOT belong to the relational tree
+    return !treeBlockIds.has(this.id);
+  }
+
+  /**
+   * Get recursively the set of IDs of all descendant blocks related to the root block 
+   * through module relationships (FK / relate).
+   * 
+   * @param {stic_AwfDataBlock} rootBlock
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {Set<string>}
+   */
+  getGroupTreeBlockIds(rootBlock, allDataBlocks) {
+    const treeIds = new Set();
+    const queue = [rootBlock.id];
+
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+      if (treeIds.has(currentId)) continue;
+      
+      treeIds.add(currentId);
+      const currentBlock = allDataBlocks.find(b => b.id === currentId);
+      if (!currentBlock) continue;
+
+      allDataBlocks.forEach(candidate => {
+        if (treeIds.has(candidate.id)) return;
+
+        if (candidate.isRelationalChild(currentId, allDataBlocks)) {
+          queue.push(candidate.id);
+        }
+      });
+    }
+
+    return treeIds;
+  }
+
 }
 
 /**
@@ -647,11 +1187,12 @@ class stic_AwfField {
     this.value_options = [];
     if (originalOptions) {
       originalOptions.forEach(o => {
+        const optionText = (typeof o.text === 'string') ? utils.decodeHTMLString(o.text) : o.text;
         this.value_options.push(new stic_AwfValueOption({
           value: o.id,
           is_visible: true,
-          text_original: o.text,
-          text: o.text,
+          text_original: optionText,
+          text: optionText,
         }));
       });
     }
@@ -944,6 +1485,7 @@ class stic_AwfAction {
       flow_error_id: null,      // ID of the failure flow
       flow_success_text: null,  // Final text for the success flow
       flow_error_text: null,    // Final text for the failure flow
+      repeat_group: null,       // { rootBlockId, groupTitle, isRoot } when the action targets a block of a repeatable group, null otherwise
     });
 
     this.flow_success_text = utils.translate("LBL_FLOW_DEFERRED_MAIN");
@@ -1068,8 +1610,9 @@ class stic_AwfLayout {
     const cleanStructure = [];
 
     // Cleanup of the blocks of the visual structure
+    const hasRenderableFields = (blk) => blk.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
     this.structure.forEach(section => {
-      const validElements = section.elements = section.elements.filter(el => {
+      const validElements = section.elements.filter(el => {
         if (el.type != 'datablock') return true; // It's not a block: keep it
 
         // We check that the block exists
@@ -1078,15 +1621,44 @@ class stic_AwfLayout {
         if (!block) return false; // The block no longer exists
         if (placedBlockIds.has(el.ref_id)) return false; // It's a duplicate
         
-        // Check field visibility
-        // (if it has only fixed or hidden fields, it should not be in the layout)
-        if (!block.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return false;
+        // Field visibility check:
+        // - Group heads: keep if the root OR any descendant has renderable fields
+        // - Group children: keep only if they (or their own subtree) have renderable
+        //   fields — a child without visible fields would show in the design but not
+        //   in the form preview, which is inconsistent
+        // - Standalone blocks: keep only if they have renderable fields
+        const isGroupHead = block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
+        const isChild = !!(block.group_root && block.group_root !== '');
+
+        if (isChild) {
+          // Children are kept only if they (or their descendants) have renderable fields
+          if (!hasRenderableFields(block) && !block.getDescendants(dataBlocks).some(hasRenderableFields)) return false;
+          placedBlockIds.add(el.ref_id);
+          return true;
+        }
+        if (isGroupHead) {
+          if (!hasRenderableFields(block) && !block.getDescendants(dataBlocks).some(hasRenderableFields)) return false;
+        } else {
+          if (!hasRenderableFields(block)) return false;
+        }
           
         // Mark the block as placed
-        placedBlockIds.add(el.ref_id); 
+        placedBlockIds.add(el.ref_id);
         return true;
       });
       section.elements = validElements;
+
+      // Group sections: if the section starts with a group head, it belongs to the
+      // group — use the group title and keep the section title visible by default
+      // (like any other section). This also renames sections that were created
+      // before their block became a group head.
+      const firstElement = section.elements.find(el => el.type === 'datablock');
+      const firstBlock = firstElement ? dataBlocks.find(b => b.id === firstElement.ref_id) : null;
+      const firstIsGroupHead = firstBlock && (firstBlock.is_repeatable || firstBlock.is_optional || firstBlock.getChildren(dataBlocks).length > 0);
+      if (firstIsGroupHead) {
+        section.title = firstBlock.group_title || firstBlock.text;
+        section.showTitle = true;
+      }
 
       if (section.elements.length > 0) {
         cleanStructure.push(section);
@@ -1095,18 +1667,157 @@ class stic_AwfLayout {
 
     this.structure = cleanStructure;
 
-    // Add the missing blocks
+    // ---- Root-section reassignment (grouped/ungrouped blocks, AWF Paso 4) ----
+    // Every placed element belongs to the section of its TOP-LEVEL root (the whole
+    // group_root chain is walked, so nested groups are handled order-independently).
+    // A root block that stopped being a member of another root (ungrouped in step 2)
+    // leaves its former section and gets its own section, carrying its members with
+    // it. Sections without a group-root owner (shared sections built manually in
+    // step 4) keep their standalone roots: only group heads (which must own their
+    // section) are extracted from them.
+    const topRootIdOf = (block, seen = new Set()) => {
+      if (!block.group_root || block.group_root === '') return block.id;
+      if (seen.has(block.id)) return block.id; // Cycle guard
+      seen.add(block.id);
+      const parent = dataBlocks.find(b => b.id === block.group_root);
+      return parent ? topRootIdOf(parent, seen) : block.id;
+    };
+
+    // Owner root of each existing section: its first datablock element with no group_root
+    const ownerRootOfSection = new Map(); // sectionId -> owner root id
+    const rootSectionOf = new Map(); // rootId -> section (owner or extraction)
+    this.structure.forEach(section => {
+      const firstElement = section.elements.find(el => el.type === 'datablock');
+      if (!firstElement) return;
+      const block = dataBlocks.find(b => b.id === firstElement.ref_id);
+      if (block && (!block.group_root || block.group_root === '')) {
+        ownerRootOfSection.set(section.id, block.id);
+        rootSectionOf.set(block.id, section);
+      }
+    });
+
+    const isGroupHead = (block) => block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
+    const newRootSections = []; // { rootId, section, sourceSection } created during extraction
+
+    this.structure.forEach(section => {
+      const ownerRootId = ownerRootOfSection.get(section.id);
+      const ownerRoot = ownerRootId !== undefined ? dataBlocks.find(b => b.id === ownerRootId) : null;
+      const ownerIsGroupHead = !!ownerRoot && isGroupHead(ownerRoot);
+
+      // Moves an element to the section of its top-level root, creating the
+      // section if the root has none yet (extraction of ungrouped roots)
+      const moveToRootSection = (el, rootBlock) => {
+        let rootSection = rootSectionOf.get(rootBlock.id);
+        if (!rootSection) {
+          rootSection = new stic_AwfLayoutSection({
+            title: isGroupHead(rootBlock) ? (rootBlock.group_title || rootBlock.text) : rootBlock.text,
+          });
+          rootSectionOf.set(rootBlock.id, rootSection);
+          newRootSections.push({ rootId: rootBlock.id, section: rootSection, sourceSection: section });
+        }
+        rootSection.elements.push(el);
+      };
+
+      const survivors = [];
+      section.elements.forEach(el => {
+        if (el.type !== 'datablock') { survivors.push(el); return; }
+        const block = dataBlocks.find(b => b.id === el.ref_id);
+        if (!block) { survivors.push(el); return; }
+        const rootId = topRootIdOf(block);
+        const rootBlock = dataBlocks.find(b => b.id === rootId);
+
+        // Members-only section (its root moved away): every element goes to its
+        // top-level root's section — the Master-Section rule for group members
+        if (ownerRootId === undefined) {
+          if (rootBlock) moveToRootSection(el, rootBlock);
+          else survivors.push(el);
+          return;
+        }
+
+        if (rootId === ownerRootId) { survivors.push(el); return; } // Own member: stays
+
+        // Foreign block of this section: move it to its own root's section when the
+        // section belongs to a group (group section) or the block is a group head
+        const mustExtract = ownerIsGroupHead || (!!rootBlock && isGroupHead(rootBlock));
+        if (!mustExtract) { survivors.push(el); return; } // Shared manual section: keep
+        if (rootBlock) moveToRootSection(el, rootBlock);
+      });
+      section.elements = survivors;
+    });
+
+    // Insert the new root sections right after their source section (in element order)
+    const insertionsBySource = new Map(); // sourceSection -> [section]
+    newRootSections.forEach(({ rootId, section, sourceSection }) => {
+      // The root element comes first (re-created if it was dropped during cleanup)
+      const rootIndex = section.elements.findIndex(el => el.type === 'datablock' && el.ref_id === rootId);
+      if (rootIndex === -1) {
+        section.elements.unshift(new stic_AwfLayoutElement({ type: 'datablock', ref_id: rootId }));
+      } else if (rootIndex > 0) {
+        const [rootElement] = section.elements.splice(rootIndex, 1);
+        section.elements.unshift(rootElement);
+      }
+      if (!insertionsBySource.has(sourceSection)) insertionsBySource.set(sourceSection, []);
+      insertionsBySource.get(sourceSection).push(section);
+    });
+    insertionsBySource.forEach((insertedSections, sourceSection) => {
+      const sourceIndex = this.structure.indexOf(sourceSection);
+      this.structure.splice(sourceIndex + 1, 0, ...insertedSections);
+    });
+
+    // Clean up empty sections after moving roots (e.g. a root that joined another root)
+    this.structure = this.structure.filter(s => s.elements.length > 0);
+
+    // Add the missing blocks (orphans)
     const orphanBlocks = dataBlocks.filter(b => {
-      if (placedBlockIds.has(b.id)) return false; // The block is placed
-      if (!b.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return false; // Only has fixed or hidden fields
+      if (rootSectionOf.has(b.id)) return false; // The block already has a section (owner or extracted)
+      if (placedBlockIds.has(b.id)) return false; // The block is placed (shared section)
+      if (b.group_root && b.group_root !== '') return false; // Children are handled by their root
+
+      // A section is only created if the block (or, for a group head, ANY of its descendants)
+      // has at least one visible field to render. Groups where neither the root nor any child
+      // has renderable fields are excluded — same rule as standalone blocks.
+      const hasRenderableFields = (blk) => blk.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
+      if (!hasRenderableFields(b)) {
+        // For group heads, check descendants before discarding
+        const children = b.getDescendants(dataBlocks);
+        if (!children.some(hasRenderableFields)) return false;
+      }
 
       return true;
     });
 
     if (orphanBlocks.length > 0) {
-      // Create a section for each block
+      // Create a section for each orphan root block and add its children to the same section
       orphanBlocks.forEach(block => {
-        this._addSectionWithBlock(block);
+        // Group sections use the group title as the section title (visible by
+        // default, like any other section). Standalone blocks keep the block text.
+        const isGroupHead = block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
+        const section = new stic_AwfLayoutSection({
+          title: isGroupHead ? (block.group_title || block.text) : block.text,
+        });
+
+        // Add the root block
+        section.elements.push(new stic_AwfLayoutElement({
+          type: 'datablock',
+          ref_id: block.id
+        }));
+        placedBlockIds.add(block.id);
+
+        // Add the block's descendants (children, grandchildren, etc.) to the same section
+        const descendants = block.getDescendants(dataBlocks);
+        descendants.forEach(child => {
+          if (placedBlockIds.has(child.id)) return;
+          // Keep the child if it or its own subtree has renderable fields
+          const childHasRenderable = hasRenderableFields(child) || child.getDescendants(dataBlocks).some(hasRenderableFields);
+          if (!childHasRenderable) return;
+          section.elements.push(new stic_AwfLayoutElement({
+            type: 'datablock',
+            ref_id: child.id
+          }));
+          placedBlockIds.add(child.id);
+        });
+
+        this.structure.push(section);
       });
     }
   }
@@ -1198,25 +1909,47 @@ class stic_AwfTheme {
 }
 
 /**
+ * Defines a base visual node (container or element)
+ */
+class stic_AwfLayoutNode {
+  constructor(data = {}) {
+    this.id = data.id || utils.newId('node');
+    this.type = data.type || 'datablock';
+  }
+}
+
+/**
  * Defines a visual container
  */
-class stic_AwfLayoutSection {
+class stic_AwfLayoutSection extends stic_AwfLayoutNode {
   constructor(data = {}) {
+    super(data);
     Object.assign(this, {
       id: utils.newId('sect'), // ID of the section
+      type: 'section',
+
       title: "",               // Title to display
       subtitle: "",            // Subtitle to display
       showTitle: true,         // Indicates if the title will be shown
       isCollapsible: false,    // Indicates if the section can be collapsed
       isCollapsed: false,      // Indicates if the section will appear initially collapsed
+
+      toggle_label: '',        // Label for the "include instance data" toggle switch
+      add_button_label: '',    // Label for the "add new instance" button
+      remove_button_label: '', // Label for the "remove instance" button
       
       containerType: 'panel',  // Type of visual container: 'panel' (simple), 'card' (with border), 'tabs', 'accordion'
-      elements: [],
+      elements: [],            // Can contain instances of stic_AwfLayoutElement or stic_AwfLayoutSection
     });
 
     Object.assign(this, data);
 
-    this.elements = (data.elements || this.elements).map(e => new stic_AwfLayoutElement(e));
+    this.elements = (data.elements || []).map(e => {
+      if (e.type === 'section' || Array.isArray(e.elements)) {
+        return new stic_AwfLayoutSection(e);
+      }
+      return new stic_AwfLayoutElement(e);
+    });
   }
 
   static containerType_in_formList(asString = false){
@@ -1230,11 +1963,12 @@ class stic_AwfLayoutSection {
 /**
  * Element inside a visual container
  */
-class stic_AwfLayoutElement {
+class stic_AwfLayoutElement extends stic_AwfLayoutNode {
   constructor(data = {}) {
+    super(data);
     Object.assign(this, {
       id: utils.newId('el'),  // ID of the element
-      
+
       type: 'datablock',      // Element type: 'datablock' (possible extensions: 'line', etc)
       ref_id: '',             // Reference ID (the ID of the stic_AwfDataBlock)
     });
@@ -1420,7 +2154,7 @@ class stic_AwfConfiguration {
     });
   }
 
- /**
+  /**
    * Gets a suggested text for a new DataBlock for a module
    * @param {string} moduleName The module
    * @returns {string} The suggested text for a new DataBlock
@@ -1499,6 +2233,14 @@ class stic_AwfConfiguration {
       text = `${baseText} ${index}`;
     }
     dataBlock.text = text;
+
+    // Refresh group titles across the hierarchy
+    this.data_blocks.forEach(b => {
+      if (b.isGroupHead(this.data_blocks)) {
+        b.refreshGroupTitle(this.data_blocks);
+      }
+    });
+    this.refreshGroups();
 
     // Update references in Actions
     this.flows.forEach(flow => {
@@ -1600,7 +2342,7 @@ class stic_AwfConfiguration {
     }
 
     this.data_blocks.push(dataBlock);
-
+    this.refreshGroups();
     return dataBlock;
   }
 
@@ -1697,6 +2439,13 @@ class stic_AwfConfiguration {
 
     // Remove DataBlock
     this.data_blocks = this.data_blocks.filter(d => d.id != dataBlock.id);
+
+    // Clear group_root for children of the deleted block
+    this.data_blocks.forEach(d => {
+      if (d.group_root === dataBlock.id) {
+        d.group_root = '';
+      }
+    });
   }
 
   deleteDataBlockField(dataBlock, field) {
@@ -1749,6 +2498,7 @@ class stic_AwfConfiguration {
         });
       });
     });
+    this.refreshGroups();
   }
 
   /**
@@ -1756,10 +2506,14 @@ class stic_AwfConfiguration {
    * @param {string} excludeField (Optional) The field name to exclude from the list (to avoid circular references)
    * @returns {Array} [{name: 'Block.Field', text: 'BlockName » Field label'}]
    */
-  getAllFieldsInForm(excludeName = null) {
+  getAllFieldsInForm(excludeName = null, includeRepeatable = false) {
     let allFields = [];
 
     this.data_blocks.forEach(block => {
+      // Exclude fields from repeatable blocks from global conditions
+      if (!includeRepeatable && (block.is_repeatable || (block.group_root && block.group_root !== ''))) {
+        return;
+      }
       block.fields.forEach(field => {
         if (field.type_field === 'fixed') return;
         let fullName = block.getFieldInputName(field);
@@ -1911,6 +2665,7 @@ class stic_AwfConfiguration {
       });
     });
 
+    this.refreshGroups();
     return dataBlock;
   }
 
@@ -1956,6 +2711,8 @@ class stic_AwfConfiguration {
       if (relDatablock) {
         relDatablock.removeRelationship(relName, datablockId);
       }
+      this.refreshGroups();
+
       // Remove RelateRecordsAction for this relationship
       this.flows.forEach(flow => {
         flow.actions = flow.actions.filter(a => {
@@ -2068,6 +2825,535 @@ class stic_AwfConfiguration {
   }
 
   /**
+   * Cleans group metadata ONLY if the block is no longer a group at all.
+   * A block is a group if: it is repeatable OR optional OR has children.
+   * @param {stic_AwfDataBlock} block
+   */
+  cleanGroupMetadataIfNeeded(block) {
+    if (!block) return;
+    const children = block.getChildren(this.data_blocks);
+    const isStillGroup = block.is_repeatable || block.is_optional || children.length > 0;
+
+    if (!isStillGroup) {
+      block.group_title = '';
+      block.toggle_label = '';
+      block.add_button_label = '';
+      block.remove_button_label = '';
+    }
+  }
+
+  /**
+   * Helper to check if a candidate block depends on parentBlock via relate field or relationship.
+   * Thin wrapper around stic_AwfDataBlock::isRelationalChild (unified dependency check).
+   * @param {stic_AwfDataBlock} candidate 
+   * @param {stic_AwfDataBlock} parentBlock 
+   * @returns {boolean}
+   */
+    isBlockDependentOnParent(candidate, parentBlock) {
+      if (!candidate || !parentBlock) return false;
+      return candidate.isRelationalChild(parentBlock.id, this.data_blocks);
+    }
+
+  /**
+   * Adopts orphan blocks that depend on parentBlock when parentBlock becomes a group root.
+   * Traverses transitively (BFS): adopted children also adopt their own dependents, so
+   * chains like Adult -> Entorn Familiar -> Menor -> Inscripcio are fully grouped.
+   * @param {stic_AwfDataBlock} parentBlock 
+   */
+   adoptRelatedOrphans(parentBlock) {
+     if (!parentBlock) return;
+
+     // When parentBlock is a child of another group (subgroup head), blocks in the SAME parent
+     // group can be reparented into this subgroup. Otherwise, only orphan (is_root) blocks are adopted.
+     const parentGroupRoot = (parentBlock.group_root && parentBlock.group_root !== parentBlock.id)
+       ? parentBlock.group_root : null;
+
+     const queue = [parentBlock];
+     const visited = new Set([parentBlock.id]);
+
+     while (queue.length > 0) {
+       const current = queue.shift();
+
+       this.data_blocks.forEach(candidate => {
+         if (visited.has(candidate.id)) return;
+         if (candidate.is_repeatable || candidate.is_optional) return; // Skip existing group heads
+
+         // Adopt if: (a) candidate is an orphan (is_root), OR
+         //           (b) candidate is in the same parent group (will be reparented into the subgroup)
+         const isOrphan = candidate.is_root;
+         const isSameGroupChild = parentGroupRoot && candidate.group_root === parentGroupRoot
+           && candidate.id !== parentBlock.id;
+         if (!isOrphan && !isSameGroupChild) return;
+
+         if (this.isBlockDependentOnParent(candidate, current)) {
+           if (current.hasAncestor(candidate, this.data_blocks)) return; // Cycle guard
+
+           candidate.group_root = parentBlock.id;
+           visited.add(candidate.id);
+           queue.push(candidate); // Its own dependents will be adopted next
+         }
+       });
+     }
+
+     parentBlock.refreshGroupTitle(this.data_blocks);
+
+     // Also refresh the parent group's title (members may have moved into the subgroup)
+     if (parentGroupRoot) {
+       const parentGroup = this.data_blocks.find(b => b.id === parentGroupRoot);
+       if (parentGroup) parentGroup.refreshGroupTitle(this.data_blocks);
+     }
+   }
+
+  /**
+   * Disbands a group, releasing all its children and resetting group metadata.
+   * Releases the whole descendant branch (transitive), not just
+   * direct children: with multi-level adoption a level-2+ descendant would otherwise keep
+   * pointing to an already-disbanded intermediate parent.
+   * @param {stic_AwfDataBlock} parentBlock 
+   */
+  disbandGroup(parentBlock) {
+    if (!parentBlock) return;
+
+    // 1. Release ALL descendant blocks in the branch (BFS)
+    const descendants = parentBlock.getDescendants(this.data_blocks);
+    descendants.forEach(child => {
+      child.group_root = '';
+    });
+
+    // 2. Reset limits and clear group metadata
+    parentBlock.min_instances = 1;
+    parentBlock.max_instances = 1;
+    parentBlock.group_title = '';
+    parentBlock.is_custom_group_title = false;
+    parentBlock.toggle_label = '';
+    parentBlock.add_button_label = '';
+    parentBlock.remove_button_label = '';
+  }
+
+  /**
+   * Toggles repeatable status without destroying optionality (0..N <-> 0..1).
+   * @param {stic_AwfDataBlock} block 
+   * @param {boolean} isRepeatable 
+   */
+  setBlockRepeatable(block, isRepeatable) {
+    if (!block) return;
+
+    if (isRepeatable) {
+      if (!block.canBeRepeatable(this.data_blocks)) return;
+      block.max_instances = null; // Unlimited (>1)
+
+      // Auto-adopt orphan dependent blocks
+      this.adoptRelatedOrphans(block);
+      block.refreshGroupTitle(this.data_blocks);
+
+      // Ensure default group title if missing
+      if (!block.group_title || !block.group_title.trim()) {
+        const children = block.getDescendants(this.data_blocks);
+        const blockNames = [block.text, ...children.map(c => c.text)];
+        block.group_title = blockNames.join(' + ');
+      }
+      block.add_button_label = block.add_button_label || utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT');
+      block.remove_button_label = block.remove_button_label || utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT');
+    } else {
+      block.max_instances = 1;
+
+      // If it is also NOT optional, completely disband the group
+      if (!block.is_optional) {
+        this.ungroupBlock(block);
+        return;
+      }
+    }
+
+    block.sanitizeRepeatableLimits();
+    this.cleanGroupMetadataIfNeeded(block);
+    this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
+  }
+
+  /**
+   * Toggles optional status without destroying repeatability (0..N <-> 1..N).
+   * @param {stic_AwfDataBlock} block 
+   * @param {boolean} isOptional 
+   */
+  setBlockOptional(block, isOptional) {
+    if (!block) return;
+
+    if (isOptional) {
+      block.min_instances = 0;
+
+      // Auto-adopt orphan dependent blocks
+      this.adoptRelatedOrphans(block);
+      block.refreshGroupTitle(this.data_blocks);
+
+      // Ensure default group labels if missing
+      if (!block.group_title || !block.group_title.trim()) {
+        const children = block.getDescendants(this.data_blocks);
+        const blockNames = [block.text, ...children.map(c => c.text)];
+        block.group_title = blockNames.join(' + ');
+      }
+      
+      block.toggle_label = block.toggle_label || `${utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT')} ${block.group_title}`;
+    } else {
+      block.min_instances = 1;
+
+      // If it is also NOT repeatable, completely disband the group
+      if (!block.is_repeatable) {
+        this.ungroupBlock(block);
+        return;
+      }
+    }
+
+
+    block.sanitizeRepeatableLimits();
+    this.cleanGroupMetadataIfNeeded(block);
+    this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
+  }
+  
+  /**
+   * Hard reset: completely disbands a group into a standard 1..1 standalone block.
+   * @param {stic_AwfDataBlock} block 
+   */
+  ungroupBlock(block) {
+    if (!block) return;
+    this.disbandGroup(block);
+    this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
+  }
+
+  /**
+   * Manually assign a child block to a parent group.
+   * @param {string} parentBlockId 
+   * @param {string} childBlockId 
+   */
+  addChildToGroup(parentBlockId, childBlockId) {
+    const parent = this.data_blocks.find(b => b.id === parentBlockId);
+    const child = this.data_blocks.find(b => b.id === childBlockId);
+    if (parent && child) {
+      child.group_root = parent.id;
+
+      // Also bring the child's relational dependents into the group (transitive).
+      // Only adopt orphans (is_root) that are not themselves group heads — blocks already
+      // in another group stay where they are (disjoint trees rule).
+      const descendants = child.getRelationalDescendants(this.data_blocks);
+      descendants.forEach(d => {
+        if (d.is_root && !d.is_repeatable && !d.is_optional) {
+          d.group_root = parent.id;
+        }
+      });
+
+      this.refreshGroups();
+    }
+  }
+
+  /**
+   * Removes a child block from its current group.
+   * @param {string} childBlockId 
+   */
+  removeChildFromGroup(childBlockId) {
+    const child = this.data_blocks.find(b => b.id === childBlockId);
+    if (child) {
+      child.group_root = '';
+      this.refreshGroups();
+    }
+  }
+
+  /**
+   * Returns repeatable-group metadata for a block, or null if the block is not part
+   * of any repeatable group.
+   * @param {stic_AwfDataBlock} block
+   * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+   */
+  getRepeatGroupInfo(block) {
+    if (!block) return null;
+    let rootBlock = null;
+    let isRoot = false;
+    if (block.is_repeatable) {
+      rootBlock = block;
+      isRoot = true;
+    } else if (block.group_root && block.group_root !== '') {
+      rootBlock = this.data_blocks.find(b => b.id === block.group_root) || null;
+    }
+    if (!rootBlock) return null;
+    return {
+      rootBlockId: rootBlock.id,
+      groupTitle: rootBlock.group_title || rootBlock.text,
+      isRoot: isRoot,
+    };
+  }
+
+  /**
+   * Resolves the block referenced by a parameter value.
+   * - DATA_BLOCK parameters: value is the block id directly.
+   * - FIELD / FIELD_LIST / CRM_RECORD parameters: value is "BlockName.field" (or "_detached.BlockName.field"),
+   *   resolve to the owning block by name.
+   * @param {stic_AwfActionParameter} param
+   * @returns {stic_AwfDataBlock|null}
+   */
+  _getBlockForActionParameter(param) {
+    if (!param || !param.value) return null;
+    // Direct data-block reference
+    if (param.type === 'dataBlock') {
+      return this.data_blocks.find(b => b.id === param.value) || null;
+    }
+    // Field-based reference: value is "<prefix>BlockName.field"
+    if (param.type === 'field' || param.type === 'field_list' || param.type === 'crmRecord') {
+      const raw = String(param.value);
+      const stripped = raw.startsWith('_detached.') ? raw.slice('_detached.'.length) : raw;
+      const dotPos = stripped.indexOf('.');
+      if (dotPos <= 0) return null;
+      const blockName = stripped.slice(0, dotPos);
+      return this.data_blocks.find(b => b.name === blockName) || null;
+    }
+    return null;
+  }
+
+  /**
+   * Returns the motor group of a block: the nearest ancestor (or self) that acts as a
+   * repeatable group head (cardinality > 1). Returns null for scalar blocks.
+   * Uses getGroupHeadBlock which walks the immediate-parent chain (supports subgroups).
+   * @param {stic_AwfDataBlock} block
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getBlockMotorGroup(block) {
+    if (!block) return null;
+    // Only repeatable heads are motor groups (optional-only groups are 0..1, not motor).
+    if (block.is_repeatable) return block;
+    const head = block.getGroupHeadBlock(this.data_blocks);
+    return (head && head.is_repeatable) ? head : null;
+  }
+
+  /**
+   * Returns the group head of a block for DISPLAY purposes: the nearest ancestor (or self)
+   * that acts as a group head — repeatable, optional, OR a simple block with children.
+   * Unlike getBlockMotorGroup, this includes optional and simple groups (not just repeatable).
+   * @param {stic_AwfDataBlock} block
+   * @returns {stic_AwfDataBlock|null}
+   */
+  _getBlockGroupHead(block) {
+    if (!block) return null;
+    if (block.is_repeatable || block.is_optional || block.getChildren(this.data_blocks).length > 0) return block;
+    let current = block.getParentBlock(this.data_blocks);
+    while (current) {
+      if (current.is_repeatable || current.is_optional || current.getChildren(this.data_blocks).length > 0) return current;
+      current = current.getParentBlock(this.data_blocks);
+    }
+    return null;
+  }
+
+  /**
+   * Returns the group binding of an action for DISPLAY purposes (badge, grouping).
+   * Inspects ALL parameters (dataBlock, field, field_list, crmRecord types) and execution
+   * conditions — not just `data_block_id` — so custom actions with non-standard parameter
+   * names are correctly detected. Detects any group type (repeatable, optional, or simple
+   * with children). Always computed LIVE from the current data-block structure.
+   * @param {stic_AwfAction} action
+   * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+   */
+  getActionGroupBinding(action) {
+    if (!action) return null;
+    const blocksReferenced = new Set();
+
+    // 1. All parameters — resolve block via _getBlockForActionParameter (handles dataBlock,
+    //    field, field_list, crmRecord types, not just data_block_id)
+    (action.parameters || []).forEach(param => {
+      const block = this._getBlockForActionParameter(param);
+      if (block) blocksReferenced.add(block.id);
+    });
+
+    // 2. Conditions — field_name is "BlockName.field"
+    (action.conditions || []).forEach(cond => {
+      if (!cond.field_name) return;
+      const raw = String(cond.field_name);
+      const stripped = raw.startsWith('_detached.') ? raw.slice('_detached.'.length) : raw;
+      const dotPos = stripped.indexOf('.');
+      if (dotPos <= 0) return;
+      const blockName = stripped.slice(0, dotPos);
+      const block = this.data_blocks.find(b => b.name === blockName);
+      if (block) blocksReferenced.add(block.id);
+    });
+
+    // Find the first referenced block whose group head exists.
+    for (const blockId of blocksReferenced) {
+      const block = this.data_blocks.find(b => b.id === blockId);
+      if (!block) continue;
+      const head = this._getBlockGroupHead(block);
+      if (head) {
+        return {
+          rootBlockId: head.id,
+          groupTitle: head.group_title || head.text,
+          isRoot: head.id === block.id,
+        };
+      }
+    }
+    return null;
+  }
+
+  /**
+   * AWF Paso 3 §2 — Returns the single Motor Group of an action.
+   * An action belongs to Grup X if any of its parameters (required or not) or its
+   * execution conditions reference a block that belongs to Grup X (root or relational child).
+   * Terminal/global actions always return null (§3.2): they cannot bind to repeatable groups.
+   * @param {stic_AwfAction} action
+   * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null if the action is scalar-only
+   */
+  getActionMotorGroup(action) {
+    if (!action) return null;
+    // Terminal / global actions cannot be bound to a repeatable group (§3.2)
+    if (action.is_terminal) return null;
+    const def = utils.getDefinedActions()?.find(d => d.name === action.name);
+    if (def && def.resumptionContext === 'original_user' && !def.isTerminal) {
+      // Pure global actions (e.g. one-off admin notice) — no motor group.
+      // Heuristic: treat deferred "original_user" non-terminal actions as global.
+      // (Terminal flag is authoritative; this is a secondary guard.)
+    }
+
+    const blocksReferenced = new Set();
+    // 1. Parameters
+    (action.parameters || []).forEach(param => {
+      const block = this._getBlockForActionParameter(param);
+      if (block) blocksReferenced.add(block.id);
+    });
+    // 2. Conditions — field_name is "BlockName.field"
+    (action.conditions || []).forEach(cond => {
+      if (!cond.field_name) return;
+      const raw = String(cond.field_name);
+      const stripped = raw.startsWith('_detached.') ? raw.slice('_detached.'.length) : raw;
+      const dotPos = stripped.indexOf('.');
+      if (dotPos <= 0) return;
+      const blockName = stripped.slice(0, dotPos);
+      const block = this.data_blocks.find(b => b.name === blockName);
+      if (block) blocksReferenced.add(block.id);
+    });
+
+    // Find the first referenced block whose motor group is repeatable.
+    // All repeatable-bound references must share the SAME motor group (disjoint rule, §2.3);
+    // if two different motor groups are found, the action is in an inconsistent state —
+    // return the first so the UI can highlight the conflict.
+    let motorFound = null;
+    for (const blockId of blocksReferenced) {
+      const block = this.data_blocks.find(b => b.id === blockId);
+      if (!block) continue;
+      const motor = this.getBlockMotorGroup(block);
+      if (motor) {
+        if (!motorFound) {
+          motorFound = motor;
+        } else if (motor.id !== motorFound.id) {
+          // Cross-group conflict — keep the first detected motor; the UI layer
+          // (getAllowedParamBlocks) will prevent adding the conflicting reference.
+          break;
+        }
+      }
+    }
+    if (!motorFound) return null;
+    return {
+      rootBlockId: motorFound.id,
+      groupTitle: motorFound.group_title || motorFound.text,
+      isRoot: true,
+    };
+  }
+
+  /**
+   * Re-evaluate and update all groups on the form: orphan adoption and group titles.
+   */
+  refreshGroups() {
+    // Process EVERY group head (root groups AND subgroup heads).
+    // A block is a head when it holds cardinality (repeatable/optional) or has direct children.
+    this.data_blocks.forEach(block => {
+      if (block.is_repeatable || block.is_optional || block.getChildren(this.data_blocks).length > 0) {
+        this.adoptRelatedOrphans(block);
+        block.refreshGroupTitle(this.data_blocks);
+      }
+    });
+    this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
+  }
+
+/**
+   * Gets all data blocks ordered hierarchically (Top-Down DFS).
+   * Ensures that Group Root blocks ALWAYS precede their child/member blocks.
+   * 
+   * @returns {stic_AwfDataBlock[]} Ordered array of data blocks
+   */
+  getOrderedDataBlocks() {
+    const ordered = [];
+    const visited = new Set();
+
+    /**
+     * Gets all direct relational children and group members for a parent block
+     */
+    const getChildrenAndMembers = (parent) => {
+      return this.data_blocks.filter(candidate => {
+        if (candidate.id === parent.id) return false;
+
+        // 1. Direct member of the group
+        if (candidate.group_root === parent.id) return true;
+
+        // 2. Relational child (without explicit external group)
+        if (!candidate.group_root && candidate.isRelationalChild(parent.id, this.data_blocks)) return true;
+
+        return false;
+      });
+    };
+
+    /**
+     * DFS Traversal helper
+     */
+    const traverse = (block) => {
+      if (!block || visited.has(block.id)) return;
+
+      // GUARANTEE: If block belongs to a group root that hasn't been visited yet,
+      // force traversal of the group root FIRST.
+      if (block.group_root && block.group_root !== block.id && !visited.has(block.group_root)) {
+        const rootBlock = this.data_blocks.find(b => b.id === block.group_root);
+        if (rootBlock) {
+          traverse(rootBlock);
+          return; // The root traversal will recursively visit this child in correct order
+        }
+      }
+
+      visited.add(block.id);
+      ordered.push(block);
+
+      // Get children and group members
+      const children = getChildrenAndMembers(block);
+
+      // Sort children/members Top-Down (parents before their children)
+      children.sort((a, b) => {
+        if (a.isRelationalChild(b.id, this.data_blocks)) return 1;  // 'b' is parent of 'a' -> 'b' comes first
+        if (b.isRelationalChild(a.id, this.data_blocks)) return -1; // 'a' is parent of 'b' -> 'a' comes first
+        return this.data_blocks.indexOf(a) - this.data_blocks.indexOf(b);
+      });
+
+      // Recurse into children
+      children.forEach(child => traverse(child));
+    };
+
+    // 1. Dynamically compute true top-level root blocks
+    const rootBlocks = this.data_blocks.filter(candidate => {
+      if (candidate.group_root && candidate.group_root !== candidate.id) {
+        return false; // Belongs to a group -> NOT a top-level root
+      }
+      const hasParentInList = this.data_blocks.some(parent => 
+        parent.id !== candidate.id && candidate.isRelationalChild(parent.id, this.data_blocks)
+      );
+      return !hasParentInList;
+    });
+
+    // 2. Process top-level root blocks first
+    rootBlocks.forEach(root => traverse(root));
+
+    // 3. Fallback for orphan cycles or unvisited blocks
+    this.data_blocks.forEach(block => {
+      if (!visited.has(block.id)) {
+        traverse(block);
+      }
+    });
+
+    return ordered;
+  }
+
+  /**
    * Regenerates automatic actions (Save and Relate) based on current Data Blocks.
    * It should be called before entering action configuration (Step 3).
    */
@@ -2160,6 +3446,7 @@ class stic_AwfConfiguration {
         if (newAction) {
           block.save_action_id = newAction.id;
           newAction.text = `${utils.translate('LBL_SAVE_RECORD_ACTION_TITLE')}: ${block.text}`;
+          newAction.repeat_group = this.getRepeatGroupInfo(block);
           outgoing1n.forEach(r => handledRelationshipNames.add(r.name));
         }
       }
@@ -2211,6 +3498,7 @@ class stic_AwfConfiguration {
                 const newAction = this.addAction(actionDef, params, '0');
                 if (newAction) {
                   newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${block.text}.${field.text_original || field.name} = ${field.value_text || field.value}`;
+                  newAction.repeat_group = this.getRepeatGroupInfo(block);
                 }
               }
             }
@@ -2272,6 +3560,9 @@ class stic_AwfConfiguration {
               const newAction = this.addAction(actionDef, params, '0');
               if (newAction) {
                 newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${blockOrig.text} ${arrow} ${blockDest.text}`;
+                // A block-to-block relationship belongs to a group if either side is part of one.
+                // The group of the initiator side (blockOrig) takes precedence; otherwise fall back to dest.
+                newAction.repeat_group = this.getRepeatGroupInfo(blockOrig) || this.getRepeatGroupInfo(blockDest);
               }
             }
           }
@@ -2381,6 +3672,22 @@ class stic_AwfConfiguration {
     const autoActions = flow.actions.filter(a => a.is_automatic);
     const manualActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order >= -1);
     const terminalActions = flow.actions.filter(a => a.is_terminal);
+
+    // AWF Paso 3 §ADR-5 — Contiguous per-branch grouping of automatic actions.
+    // Within autoActions, keep topological order but cluster actions of the SAME
+    // hierarchy branch (group_root) together so all persistence of one branch
+    // resolves in sequence. A stable sort by branch key preserves the topo order
+    // inside each branch.
+    const branchKey = (a) => {
+      const motor = this.getActionMotorGroup(a);
+      return motor ? motor.rootBlockId : '';
+    };
+    autoActions.sort((a, b) => {
+      const ka = branchKey(a), kb = branchKey(b);
+      if (ka === kb) return (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0);
+      return ka < kb ? -1 : 1; // empty branch key ('') groups scalar auto-actions first
+    });
+
     flow.actions = [...preAutoActions, ...autoActions, ...manualActions, ...terminalActions];
 
     // Reassign order property.

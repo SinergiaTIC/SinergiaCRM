@@ -24,9 +24,9 @@
  
  <!-- Main Panel -->
 <main x-data="WizardStep2.mainStep2xData();">
-  <div x-data="WizardStep2.addDataBlockModulexData(formConfig);">
+  <div x-data="WizardStep2.addDataBlockModulexData();">
     <!-- No Data Block Configured -->
-    <div x-show="formConfig.data_blocks.length === 0" class="text-center p-3 border rounded bg-light">
+    <div x-show="data_blocks.length === 0" class="text-center p-3 border rounded bg-light">
       <h2 class="mb-4" x-text="utils.translate('LBL_WIZARD_TITLE_STEP2_START')"></h2>
       <div class="d-flex justify-content-center gap-3 mt-3">
         <!-- Button: Add Datablock -->
@@ -43,42 +43,239 @@
     </div>
 
     <!-- Data Blocks -->
-    <div x-show="formConfig.data_blocks.length > 0"  
-        x-data="WizardStep2.generalDatablocksxData(formConfig);">
+    <div x-show="data_blocks.length > 0" x-data="WizardStep2.generalDatablocksxData();">
       <h2 class="mb-2" x-text="utils.translate('LBL_DATABLOCKS')"></h2>
       <!-- Main Content -->
 
       <!-- DataBlocks -->
       <div class="work-area-container" style="position: relative; padding-bottom: 20px;">
-        <template x-for="item in formConfig.data_blocks" :key="item.id">
+        <template x-for="item in orderedDataBlocks" :key="item.id">
           <!-- DataBlock -->
-          <div :id="'dataBlock_' + item.id" class="card datablock" :class="{'has-errors':!item.isValid()}" x-data="WizardStep2.datablockxData(formConfig, item);">
-            <!-- DataBlock header -->
-            <div class="card-header d-flex flex-column">
-              <div class="d-flex justify-content-start datablock-module">
-                <span class="mb-0 text-muted small" x-text="item.getTextDescription()"></span>
+          <div :id="'dataBlock_' + item.id" class="card datablock mb-3 shadow-sm transition-all"
+               :class="{
+                  'has-errors': !item.isValid(), 
+                  'child-block border-info': item.is_child,
+                  'groupdatablock border-primary': item.isGroupHead(data_blocks)
+               }" 
+               :style="'margin-left: ' + (item.getDepth(data_blocks) * 2.75) + 'rem;'"
+               x-data="{ showGroupSettings: false, ...WizardStep2.datablockxData(item) }">
+            
+            <!-- Integrated Group header (Rendered ONLY if item is a group head/subgroup) -->
+            <template x-if="item.isGroupHead(data_blocks)">
+              <!-- Group Header -->
+              <div class="card-header border-bottom p-2">
+                <!-- Group Info -->
+                <div class="d-flex align-items-center justify-content-between">
+                  <!-- Group Title -->
+                  <div class="d-flex flex-column ">
+                    <!-- Group Badge -->
+                    <template x-if="item.group_root">
+                      <span class="badge bg-transparent text-dark" style="margin-left:-10px; margin-top:-5px;font-weight: normal;" 
+                            x-text="'📦 ' + item.getGroupTitle(data_blocks)"></span>
+                    </template>
+
+                    <!-- Optional and Repeatable Badges -->
+                    <div class="d-flex justify-content-start">
+                      <!-- Optional Badge -->
+                      <span class="badge bg-info me-2" x-show="item.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
+                      <!-- Repeatable Badge -->
+                      <span class="badge bg-primary" x-show="item.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
+                    </div>
+
+                    <!-- Group title -->
+                    <div class="d-flex">
+                        <span class="h3 m-2" :title="utils.translate('LBL_DATABLOCK_GROUP')">📦</span>
+                        <h3 class="mb-0 text-primary fw-bold" :id="`groupDataBlockTitleEdit-${item.id}`" data-model="item.custom_group_title" data-reload="reloadGroupTitle(item)" x-init="sticControls.editableText($el);"></h3>
+                    </div>
+                  </div>
+
+                  <!-- Options -->
+                  <div class="d-inline-flex align-items-center gap-4">
+                    <!-- Optional Switch -->
+                    <template x-if="item.canBeOptional(data_blocks) || item.is_optional">
+                      <div class="form-check form-switch d-flex align-items-center mb-0">
+                        <label class="form-check-label small me-2" :for="`groupOptSwitch_${item.id}`" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
+                        <input class="form-check-input" type="checkbox" role="switch" :id="`groupOptSwitch_${item.id}`"
+                              :checked="item.is_optional" :disabled="item.is_optional ? false : !item.canBeOptional(data_blocks)"
+                              @change="toggleOptional(item, $el.checked, false)">
+                      </div>
+                    </template>
+
+                    <!-- Repeatable Switch -->
+                    <template x-if="item.canBeRepeatable(data_blocks) || item.is_repeatable">
+                      <div class="form-check form-switch d-flex align-items-center mb-0">
+                        <label class="form-check-label small me-2" :for="`groupRepSwitch_${item.id}`" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
+                        <input class="form-check-input" type="checkbox" role="switch" :id="`groupRepSwitch_${item.id}`"
+                              :checked="item.is_repeatable" :disabled="item.is_repeatable ? false : !item.canBeRepeatable(data_blocks)"
+                              @change="toggleRepeatable(item, $el.checked, false)">
+                      </div>
+                    </template>
+
+                    <!-- Toggle Group Settings Panel -->
+                    <button type="button" class="btn btn-sm btn-outline-primary ms-2" @click="showGroupSettings = !showGroupSettings"
+                            :class="{'active': showGroupSettings && (item.is_repeatable || item.getAvailableCandidateChildren(data_blocks).length>0)}"
+                            :disabled="!item.is_repeatable && item.getAvailableCandidateChildren(data_blocks).length==0" 
+                            :title="utils.translate('LBL_DATABLOCK_GROUP_CONFIGURE')">
+                      <template x-if="!(showGroupSettings && (item.is_repeatable || item.getAvailableCandidateChildren(data_blocks).length>0))">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+                          <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
+                          <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
+                        </svg>
+                      </template>
+                      <template x-if="(showGroupSettings && (item.is_repeatable || item.getAvailableCandidateChildren(data_blocks).length>0))">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                          <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                        </svg>
+                      </template>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Group Settings Drawer -->
+                <div x-show="(showGroupSettings && (item.is_repeatable || item.getAvailableCandidateChildren(data_blocks).length>0))" x-transition class="mt-3 p-3 border rounded shadow-lg">
+                  <!-- Group Settings -->
+                  <div class="row g-3 align-items-center">
+
+                    <!-- Text: Toggle Switch Custom Label -->
+                    <!-- <div class="col-md-3" x-show="item.is_optional" x-init="utils.setInlineHelpQtip()">
+                      <label :for="`groupToggleLabel_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_INCLUDE_LABEL')"></label>
+                      <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                      <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DESC')"></div>
+                      <input type="text" :id="`groupToggleLabel_${item.id}`" class="form-control form-control-sm" x-model="item.toggle_label" 
+                             :placeholder="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT') + ' ' + (item.group_title || item.text)">
+                    </div> -->
+
+                    <!-- Max Instances Limit -->
+                    <div class="col-md-3" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                      <label :for="`groupMaxInstances_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_MAX_REPETITIONS')"></label>
+                      <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                      <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_MAX_REPETITIONS_DESC')"></div>
+                      <input type="number" :id="`groupMaxInstances_${item.id}`" min="2" placeholder="∞" class="form-control form-control-sm" 
+                             x-model.number="item.max_instances" @input="item.sanitizeRepeatableLimits()" @blur="item.sanitizeRepeatableLimits()">
+                    </div>
+
+                    <!-- Text: Add Button Custom Label -->
+                    <!-- <div class="col-md-3" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                      <label :for="`groupAddButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_ADD_LABEL')"></label>
+                      <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                      <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL_DESC')"></div>
+                      <input type="text" :id="`groupAddButton_${item.id}`" class="form-control form-control-sm" x-model="item.add_button_label" 
+                             :placeholder="utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT')">
+                    </div> -->
+
+                    <!-- Text: Remove Button Custom Label -->
+                    <!-- <div class="col-md-2" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                      <label :for="`groupRemoveButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_REMOVE_LABEL')"></label>
+                      <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                      <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DESC')"></div>
+                      <input type="text" :id="`groupRemoveButton_${item.id}`" class="form-control form-control-sm" x-model="item.remove_button_label" 
+                             :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT')">
+                    </div> -->
+
+                    <!-- Add DataBlock to Group -->
+                    <div class="col-md-3" x-show="item.getAvailableCandidateChildren(data_blocks).length>0" x-data="{ selectedCandidateId: '' }">
+                      <label :for="`selectedCandidateId_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_ADD_TO_GROUP')"></label>
+                      <div class="input-group">
+                        <select :id="`selectedCandidateId_${item.id}`" class="form-select" x-model="selectedCandidateId">
+                          <option value=""></option>
+                          <template x-for="candidate in item.getAvailableCandidateChildren(data_blocks)" :key="candidate.id">
+                            <option :value="candidate.id" x-text="candidate.text + (candidate.module ? ' (' + candidate.getModuleText() + ')' : '')"></option>
+                          </template>
+                        </select>
+                        <button type="button" class="btn" :title="utils.translate('LBL_DATABLOCK_ADD_TO_GROUP_TITLE')"
+                                @click="formConfig.addChildToGroup(item.id, selectedCandidateId); selectedCandidateId = '';">
+                          <span class="suitepicon suitepicon-action-plus"></span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="d-flex justify-content-between align-items-center">
-                <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h3>
-                <div>
+            </template>
+
+            <!-- Standard DataBlock header -->
+            <div class="card-header pb-1 pe-0">
+              <!-- Description / Options -->
+              <div class="d-flex justify-content-between align-items-center mb-0">
+                <!-- Group & Description -->
+                <div class="d-flex flex-column">
+                  <!-- Group Badge & Remove Button -->
+                    <div class="d-flex">
+                      <!-- Group Badge -->
+                      <template x-if="item.group_root && !item.isGroupHead(data_blocks)">
+                        <span class="badge bg-transparent text-dark" style="margin-left:-15px; margin-top:-5px; font-weight: normal;" 
+                              :title="utils.translateForFieldLabel('LBL_DATABLOCK_IN_GROUP_TITLE') + ' ' + item.getGroupTitle(data_blocks)"
+                              x-text="'📦 ' + item.getGroupTitle(data_blocks)"></span>
+                      </template>
+
+                      <!-- Remove from Group Button -->
+                      <template x-if="item.isManualGroupMemberOutsideTree(data_blocks)">
+                        <button class="btn" :title="utils.translate('LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE')" style="margin-left:-10px; margin-top:-10px;"
+                                @click="formConfig.removeChildFromGroup(item.id)">
+                          <span class="suitepicon suitepicon-action-clear"></span>
+                        </button>
+                      </template>
+                    </div>
+
+                  <!-- Description -->
+                  <div class="text-muted small" x-text="item.getTextDescription()"></div>
+                </div>
+
+                <!-- Options (hidden for group DataBlocks) -->
+                <template x-if="!item.isGroupHead(data_blocks)">
+                  <div class="d-flex align-items-center gap-4 me-3">
+                    <!-- Optional Switch -->
+                    <template x-if="item.canBeOptional(data_blocks)">
+                      <div class="form-check form-switch d-flex align-items-center mb-0">
+                        <label class="form-check-label small me-2" :for="'opt_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
+                        <input class="form-check-input" type="checkbox" role="switch" :id="'opt_switch_' + item.id" :checked="item.is_optional" 
+                              @change="toggleOptional(item, $event.target.checked)">
+                      </div>
+                    </template>
+
+                    <!-- Repeatable Switch -->
+                    <template x-if="item.canBeRepeatable(data_blocks)">
+                      <div class="form-check form-switch d-flex align-items-center mb-0">
+                        <label class="form-check-label small me-2" :for="'rep_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
+                        <input class="form-check-input" type="checkbox" role="switch" :id="'rep_switch_' + item.id" :checked="item.is_repeatable" 
+                              @change="toggleRepeatable(item, $event.target.checked)">
+                      </div>
+                    </template>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Title / Relationships / Buttons -->
+              <div class="d-flex align-items-center">
+                <!-- Title -->
+                <h3 class="flex-grow-1 mb-0" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h3>
+
+                <!-- Relationships -->
+                <div class="datablock-relationships mx-2">
                   <template x-for="(rel, index) in $store.dataBlockRelationships.usedDatablockRelationships(item.id)">
-                    <div class="text-muted" x-text="$store.dataBlockRelationships.getRelText(item.id, rel);"></div>
+                    <div class="text-muted small" x-text="$store.dataBlockRelationships.getRelText(item.id, rel)"></div>
                   </template>
                 </div>
+
                 <!-- Buttons -->
-                <div class="d-inline-flex">
-                  <!-- Delete DataBlock -->
+                <div class="d-flex align-items-center ms-auto">
+                  <!-- Delete Button -->
                   <template x-if="!item.required">
-                    <button type="button" class="btn ms-2" @click="deleteDataBlock(item);"
-                            :title="utils.translate('LBL_BUTTON_DELETE')">
+                    <button type="button" class="btn" @click="deleteDataBlock(item)" :title="utils.translate('LBL_BUTTON_DELETE')">
                       <span class="suitepicon suitepicon-action-delete"></span>
                     </button>
                   </template>
+
+                  <!-- Chevron -->
+                  <button class="btn btn-sm btn-link text-decoration-none" @click="toggleCollapse()">
+                    <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
+                  </button>
                 </div>
               </div>
             </div>
+
             <!-- DataBlock body -->
-            <div class="card-body">
+            <div class="card-body" x-show="!isCollapsed" x-transition>
               <!-- Alert message -->
               <template x-if="!item.isValid()">
                 <div class="alert alert-danger p-2 mb-3 shadow-sm border-danger">
@@ -94,11 +291,12 @@
                     </div>
                   </div>
                 </div>
-              </template>              
+              </template>
+
               <!-- Fields Definition -->
               <div :id="`dataBlockFields${item.id}`">
                 <!-- Fields summary Tabs -->
-                <div x-data="WizardStep2.fieldsSummaryxData(item, formConfig);">
+                <div x-data="WizardStep2.fieldsSummaryxData(item);">
                   <!-- Tab Headers: Fields -->
                   <div class="stic-tabs">
                     <div class="stic-tab">
@@ -253,6 +451,7 @@
                   </div>
               </div>
               </div>
+
               <!-- Duplicate Definition -->
               <template x-if="item && item.module">
                 <div :id="`dataBlockDuplicates${item.id}`">
@@ -311,6 +510,7 @@
                   </button>
                 </div>
               </template>
+
               <!-- Relationships Definition -->
               <template x-if="item && item.module">
                 <div :id="`dataBlockRels${item.id}`">
@@ -357,14 +557,14 @@
               <template x-if="!item.module">
                 <div :id="`dataDef_${item.id}`" :class="{'has-errors':!item.isValid()}" :data-sections="JSON.stringify([
                         {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
-                      ]);" x-init="sticControls.accordion($el)"></div>
+                      ]);" x-init="$nextTick(() => sticControls.accordion($el))"></div>
               </template>
               <template x-if="item.module">
                 <div :id="`dataDef_${item.id}`" :data-sections="JSON.stringify([
                         {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
                         {headerText:`utils.translate('LBL_DUPLICATE_CHECK')`, selected:false, contentId:'dataBlockDuplicates'+item.id},
                         {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
-                      ]);" x-init="sticControls.accordion($el)"></div>
+                      ]);" x-init="$nextTick(() => sticControls.accordion($el))"></div>
               </template>
             </div>
           </div>
@@ -392,7 +592,7 @@
       <div x-show="$store.fieldEditor.isOpen" x-cloak class="custom-modal-wrapper">
         <div class="custom-modal-backdrop"></div>
         <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalEditFieldTitle">
-          <div class="custom-modal-content" x-data="WizardStep2.editionFieldxData($store.fieldEditor, formConfig);">
+          <div class="custom-modal-content" x-data="WizardStep2.editionFieldxData($store.fieldEditor);">
             <div class="custom-modal-header">
               <div>
                 <h3 class="modal-title" id="modalEditFieldTitle" x-text="store.title"></h3>
@@ -850,7 +1050,7 @@
       <div x-show="$store.fieldValidationEditor.isOpen" x-cloak class="custom-modal-wrapper">
         <div class="custom-modal-backdrop"></div>
         <div class="custom-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="modalEditValidationTitle">
-          <div class="custom-modal-content" x-data="WizardStep2.editionValidationFieldxData($store.fieldValidationEditor, formConfig);">
+          <div class="custom-modal-content" x-data="WizardStep2.editionValidationFieldxData($store.fieldValidationEditor);">
             <div class="custom-modal-header">
               <div>
                 <h3 class="modal-title" id="modalEditValidationTitle" x-text="store.title"></h3>
@@ -939,7 +1139,7 @@
                                       :id="'val_param_' + param.name" :placeholder="param.defaultValue || ''" :required="param.required"
                                       x-model="validation.params[param.name]">
                             </template>
-                            <div x-show="param.description" class="form-text extra-small text-muted" x-text="param.description"></div>
+                            <div x-show="param.description" class="form-text small text-muted" x-text="param.description"></div>
                           </div>
                         </template>
                       </template>

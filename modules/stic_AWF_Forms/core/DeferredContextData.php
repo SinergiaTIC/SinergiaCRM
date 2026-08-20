@@ -95,6 +95,19 @@ class DeferredContextData
     public function captureBlockReferences(ExecutionContext $context): void {
         $this->blockReferences = [];
         foreach ($context->formConfig->data_blocks as $bId => $b) {
+            $blockChildren = $context->formConfig->getGroupChildren($b);
+            $isInRepeatableOrOptionalGroup = false;
+            if ($b->isRepeatable() || $b->isOptional() || !empty($blockChildren)) {
+                $isInRepeatableOrOptionalGroup = true;
+            } elseif (!empty($b->group_root)) {
+                $rootBlock = $context->formConfig->data_blocks[$b->group_root] ?? null;
+                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                    $isInRepeatableOrOptionalGroup = true;
+                }
+            }
+            if ($isInRepeatableOrOptionalGroup) {
+                continue;
+            }
             if ($b->getBeanReference() !== null) {
                 $this->blockReferences[$bId] = $b->getBeanReference()->beanId;
             }

@@ -37,8 +37,8 @@ abstract class ServerBeanActionDefinition extends ServerDataBlockActionDefinitio
 
     final public function executeWithBlock(ExecutionContext $context, FormAction $actionConfig, DataBlockResolved $block): ActionResult
     {
-        // Get the Bean reference saved for the Data Block 
-        $beanRef = $block->dataBlock->getBeanReference();
+        // Get the Bean reference saved for the Data Block
+        $beanRef = $block->dataBlock->getBeanReference($block->instanceIndex);
         if ($beanRef === null) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "There is no saved Bean for DataBlock {$block->dataBlock->name}.");
         }

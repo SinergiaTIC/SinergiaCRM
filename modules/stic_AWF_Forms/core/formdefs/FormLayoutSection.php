@@ -25,17 +25,20 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-class FormLayoutSection {
+class FormLayoutSection extends FormLayoutNode {
     public FormLayout $layout;       // The layout it belongs to
 
-    public string $id;
     public string $title;
     public string $subtitle;
     public string $containerType;    // 'panel', 'card', 'tabs', 'accordion'
     public bool $showTitle;
     public bool $isCollapsible;
     public bool $isCollapsed;
-    /** @var FormLayoutElement[] */
+    public string $toggle_label = '';        // Label for the "include instance data" toggle switch
+    public string $add_button_label = '';    // Label for the "add instance" button
+    public string $remove_button_label = ''; // Label for the "remove instance" button
+
+    /** @var FormLayoutNode[] */
     public array $elements = [];
 
     public static function fromJsonArray(FormLayout $layout, array $data): self {
@@ -44,6 +47,7 @@ class FormLayoutSection {
         $dto->layout = $layout;
 
         $dto->id = $data['id'] ?? uniqid('sect');
+        $dto->type = 'section';
         $dto->title = $data['title'] ?? '';
         $dto->subtitle = $data['subtitle'] ?? '';
         $dto->showTitle = $data['showTitle'];
@@ -51,9 +55,17 @@ class FormLayoutSection {
         $dto->isCollapsed = $data['isCollapsed'];
         $dto->containerType = $data['containerType'] ?? 'panel';
         
+        $dto->toggle_label = $data['toggle_label'] ?? '';
+        $dto->add_button_label = $data['add_button_label'] ?? '';
+        $dto->remove_button_label = $data['remove_button_label'] ?? '';
+        
         if (isset($data['elements']) && is_array($data['elements'])) {
             foreach ($data['elements'] as $elData) {
-                $dto->elements[] = FormLayoutElement::fromJsonArray($dto, $elData);
+                if (($elData['type'] ?? '') === 'section' || isset($elData['elements'])) {
+                    $dto->elements[] = self::fromJsonArray($layout, $elData);
+                } else {
+                    $dto->elements[] = FormLayoutElement::fromJsonArray($dto, $elData);
+                }
             }
         }
 

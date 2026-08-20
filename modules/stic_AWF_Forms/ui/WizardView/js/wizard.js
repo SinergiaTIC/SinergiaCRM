@@ -213,6 +213,15 @@ function wizardForm() {
       let jsonString = "{}";
       if (this.bean?.configuration) {
         jsonString = this.bean.configuration;
+        // Decode HTML entities (&quot; -> ", &#039; -> ') until stable, to handle
+        // values that arrive single or double encoded from the server
+        if (typeof jsonString === 'string' && jsonString.includes('&')) {
+          for (let i = 0; i < 3; i++) {
+            const decoded = new DOMParser().parseFromString(jsonString, 'text/html').documentElement.textContent;
+            if (decoded === jsonString) break;
+            jsonString = decoded;
+          }
+        }
       }
       try {
         this.formConfig = stic_AwfConfiguration.fromJSON(jsonString);
@@ -485,6 +494,7 @@ class WizardStep2 {
         if (!Alpine.store('dataBlockRelationships')) {
           Alpine.store('dataBlockRelationships', {
             get formConfig() { return window.alpineComponent.formConfig; },
+            get data_blocks() { return this.formConfig.data_blocks; },
 
             get dataBlockRelationships() { 
               return this.formConfig.getAllDataBlockRelationships(); 
@@ -497,7 +507,7 @@ class WizardStep2 {
             },
             unusedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return [];
               let moduleInfo = utils.getModuleInformation(block.module);
               let seen = new Set();
@@ -539,9 +549,9 @@ class WizardStep2 {
               this.resetDataBlockRelationships();
             },
             getRelationshipTypeLabel(datablockId, relName, otherDatablockId, origDatablockId) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return 'N\u2009\u27f7\u2009M';
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherDatablockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherDatablockId);
               let moduleInfo = utils.getModuleInformation(block.module);
               let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
               let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
@@ -568,7 +578,7 @@ class WizardStep2 {
               return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
             },
             _relArrow(datablockId, relName, otherBlock, initiatorId) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return '⟷';
               let moduleInfo = utils.getModuleInformation(block.module);
               let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
@@ -589,10 +599,10 @@ class WizardStep2 {
               return '⟷';
             },
             getRelText(datablockId, rel) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block || !rel) return rel?.text || '';
               let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherBlockId);
               if (!otherBlock) return rel.text;
 
               let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
@@ -600,8 +610,8 @@ class WizardStep2 {
             },
             getInvolvedBlocksText(datablockId, rel) {
               let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherBlockId);
               if (!block || !otherBlock) return rel.text;
 
               let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
@@ -1000,7 +1010,6 @@ class WizardStep2 {
           });
         }
         
-
         // Store for the Relationship Creator management
         if (!Alpine.store('relCreator')) {
           Alpine.store('relCreator', {
@@ -1083,27 +1092,107 @@ class WizardStep2 {
     };
   }
 
-  static generalDatablocksxData(initial_formConfig) {
+  static generalDatablocksxData() {
     return {
-      formConfig: initial_formConfig,
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get orderedDataBlocks() { return this.formConfig.getOrderedDataBlocks(); },
+
+      /**
+       * Reassigns the group_root of a DataBlock and provides visual feedback.
+       */
+      changeGroupRoot(block, newRootId) {
+        if (!block) return;
+
+        const oldRoot = block.getGroupHeadBlock(this.data_blocks);
+        block.group_root = newRootId || '';
+
+        if (block.is_child && !block.canBeOptional(this.data_blocks)) {
+          block.min_instances = 1;
+        }
+
+        block.sanitizeRepeatableLimits();
+
+        // Refresh group titles for old and new roots
+        if (oldRoot) oldRoot.refreshGroupTitle(this.data_blocks);
+        const newRoot = block.getGroupHeadBlock(this.data_blocks);
+        if (newRoot) newRoot.refreshGroupTitle(this.data_blocks);
+
+        this.formConfig.prepareForSave();
+        this.highlightCard(block.id);
+      },
+
+      reloadGroupTitle(block) {
+        if (!block) return;
+        
+        block.is_custom_group_title=false;
+        block.refreshGroupTitle(this.data_blocks);
+      },
+
+      /**
+       * Toggles the optional status (min_instances = 0 vs 1) of a DataBlock.
+       */
+      toggleOptional(block, isOptional, highlight = true) {
+        if (!block) return;
+        this.formConfig.setBlockOptional(block, isOptional);
+        if (highlight) {
+          this.highlightCard(block.id);
+        } 
+      },
+
+      /**
+       * Toggles the repeatable status (is_repeatable) of a DataBlock.
+       */
+      toggleRepeatable(block, isRepeatable, highlight = true) {
+        if (!block) return;
+        this.formConfig.setBlockRepeatable(block, isRepeatable);
+        if (highlight) {
+          this.highlightCard(block.id);
+        }
+      },
 
       deleteDataBlock(dataBlock) {
+        if (!dataBlock) return;
         this.formConfig.deleteDataBlock(dataBlock);
         Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
       },
 
       getDataBlockText(dataBlockId) {
-        let dataBlock = this.formConfig.data_blocks.find(d => d.id == dataBlockId);
+        let dataBlock = this.data_blocks.find(d => d.id == dataBlockId);
         if (!dataBlock) return '';
         return `${dataBlock.text} (${dataBlock.getModuleText()})`;
+      },
+
+      /**
+       * Scrolls to the card and triggers the flash glow animation.
+       */
+      highlightCard(blockId) {
+        this.$nextTick(() => {
+          const element = document.getElementById('dataBlock_' + blockId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            element.classList.remove('awf-card-highlight');
+            // Force DOM reflow to restart animation if triggered consecutively
+            void element.offsetWidth;
+            element.classList.add('awf-card-highlight');
+            setTimeout(() => {
+              element.classList.remove('awf-card-highlight');
+            }, 1200);
+          }
+        });
       }
     };
   }
 
-  static datablockxData(initial_formConfig, dataBlock) {
+  static datablockxData(dataBlock) {
     return {
-      formConfig: initial_formConfig,
       dataBlock: dataBlock,
+      isCollapsed: false,
+      get formConfig() { return window.alpineComponent.formConfig; },
+
+      toggleCollapse() {
+        this.isCollapsed = !this.isCollapsed;
+      },
 
       init() {
         this.$watch('dataBlock.text', (newText, oldText) => {
@@ -1137,15 +1226,16 @@ class WizardStep2 {
     };
   }
 
-  static addDataBlockModulexData(initial_formConfig) {
+  static addDataBlockModulexData() {
     return {
-      formConfig: initial_formConfig,
-
       creatingDataBlock: false,          // Modal CRM
       creatingUnlinkedDataBlock: false,  // Modal Unlinked
 
       newDataBlock: {module:'', text:''},
       newUnlinkedDataBlock: {text:''},
+
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
 
       get availableModulesForSelect() {
         if (typeof STIC === 'undefined' || !STIC.enabledModules) return [];
@@ -1194,18 +1284,18 @@ class WizardStep2 {
     };
   }
  
-  static editionFieldxData(fieldStore, config) {
+  static editionFieldxData(fieldStore) {
     return {
-      formConfig: config,
       store: fieldStore,
 
+      get formConfig() { return window.alpineComponent.formConfig; },
       get dataBlock() { return this.store?.dataBlock; },
       get field() { return this.store?.field; },
       get isEdit() { return this.store?.isEdit; },
 
       configValueOptions: false,
-
       showAllFields: false,
+
       get availableFields() {
         if (this.isEdit) {
           return [this.dataBlock?.getModuleInformation()?.fields[this.field.name]];
@@ -1490,10 +1580,11 @@ class WizardStep2 {
     };
   }
 
-  static editionValidationFieldxData(validationStore, config) {
+  static editionValidationFieldxData(validationStore) {
     return {
-      formConfig: config,
       store: validationStore,
+
+      get formConfig() { return window.alpineComponent.formConfig; },
 
       applyCondition: false,
       _activeDef: null,
@@ -1532,12 +1623,14 @@ class WizardStep2 {
     };
   }
 
-  static fieldsSummaryxData(dataBlock, config) {
+  static fieldsSummaryxData(dataBlock) {
     return {
-      formConfig: config,
       dataBlock: dataBlock,
 
       fieldTabSelected: 'form',
+
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
 
       get firstFieldInFormIndex() {
         return this.dataBlock.fields.filter(f => !f.isFieldInForm()).length;
@@ -1606,7 +1699,7 @@ class WizardStep2 {
       getfieldValueText(field) {
         if (!field) return '';
         if (field.value_type == 'dataBlock') {
-          return this.formConfig.data_blocks.find(d => d.id == field.value)?.text;
+          return this.data_blocks.find(d => d.id == field.value)?.text;
         }
         return field.value_text;
       },
@@ -1653,12 +1746,28 @@ class WizardStep2 {
 class WizardStep3 {
   static mainStep3xData() {
     return {
-      get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get flows() { return this.formConfig.flows; },
 
       flowTabSelected: 0,
-      get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
+      get flow() { return this.flows.find(f => f.id == this.flowTabSelected); },
       get actions() { return this.flow?.actions ?? []; },
+
+      /**
+       * Returns the group metadata for an action, or null if the action does not
+       * target a block that belongs to a group (repeatable OR optional OR simple with children).
+       * Always computed LIVE from the current data-block structure so it reflects
+       * the latest group configuration. Inspects ALL parameters and conditions — not just
+       * `data_block_id` — so custom actions are correctly detected.
+       * @param {stic_AwfAction} action
+       * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+       */
+      getActionRepeatGroup(action) {
+        if (!action || !this.formConfig) return null;
+        return this.formConfig.getActionGroupBinding(action);
+      },
 
       selectedCategory: '', 
       selectedActionDefName: '', 
@@ -1674,7 +1783,7 @@ class WizardStep3 {
 
         // If it is a deferred sub-flow (ex: 'awfa123_ok'), check the parent context (deferred action)
         if (flow.id !== '0' && flow.id !== '-1' && flow.id !== '1') {
-          for (const f of this.formConfig.flows) {
+          for (const f of this.flows) {
             const parentAction = f.actions.find(a => a.flow_success_id == flow.id || a.flow_error_id == flow.id);
             if (parentAction) {
               // Check reumptionContext from the deferred action
@@ -1723,6 +1832,7 @@ class WizardStep3 {
             _activeConditionFieldDef: null,
 
             get formConfig() { return window.alpineComponent.formConfig; },
+            get data_blocks() { return this.formConfig.data_blocks; },
 
             get availableFieldsInForm() { return this.formConfig?.getAllFieldsInForm() ?? []; },
             get availableFieldsInFormForSelect() { return this.availableFieldsInForm.map(field => ({ id: field.name, label: field.text })); },
@@ -1873,8 +1983,11 @@ class WizardStep3 {
 
               this.currentStep = 1;
 
-              // For creation, we start without action or definition: A definition must be selected
-              this.action = null;
+              // For creation, we start without a definition: A definition must be selected.
+              // NOTE: action is NOT nulled here — keeping the previous action avoids Alpine
+              // "Cannot read properties of null" errors when x-if step-2 expressions (data-model
+              // via editableText) are re-evaluated reactively before the x-if removes the DOM.
+              // Step 2 won't show because `definition` is null (x-if guard is false).
               this.definition = null;
               this.isTerminalFilter = isTerminal;
               this.selectedActionDefName = '';
@@ -2041,17 +2154,55 @@ class WizardStep3 {
               }
             },
 
+            /**
+             * AWF Paso 3 §2.1 — Motor Group of the action being edited.
+             * Delegates to formConfig.getActionMotorGroup(action).
+             * @param {stic_AwfAction} action
+             * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+             */
+            getActionMotorGroup(action) {
+              return this.formConfig.getActionMotorGroup(action);
+            },
+
+            /**
+             * AWF Paso 3 §2.3 — Disjoint-groups filter for parameter block selectors.
+             * Returns true if `block` is allowed given the action's current Motor Group:
+             *  - Terminal/global actions: only scalar blocks (no repeatable group).
+             *  - If the action already has a Motor Group X: allow blocks of Grup X (root + children/subgroups)
+             *    AND scalar blocks (no motor group). Block from a disjoint repeatable group → false.
+             *  - If the action has no Motor Group yet: all blocks allowed.
+             * @param {stic_AwfDataBlock} block
+             * @param {stic_AwfAction} action
+             * @returns {boolean}
+             */
+            isBlockAllowedForAction(block, action) {
+              if (!block || !action) return true;
+              // Terminal/global actions cannot bind to any repeatable group (§3.2)
+              if (action.is_terminal) {
+                const motor = this.formConfig.getBlockMotorGroup(block);
+                return !motor;
+              }
+              const motorGroup = this.formConfig.getActionMotorGroup(action);
+              if (!motorGroup) return true; // No motor group yet: everything allowed
+              // Action already bound to a motor group → only same group (incl. subgroups) + scalars
+              const blockMotor = this.formConfig.getBlockMotorGroup(block);
+              if (!blockMotor) return true; // scalar: allowed as constant (§2.2)
+              return blockMotor.id === motorGroup.rootBlockId;
+            },
+
             /** 
              * Returns the list of Data Blocks available to assign in the parameters 
              * @param {Array} supportedModules List of Data Block modules to display 
+             * @param {stic_AwfAction} [action] Current action (for disjoint-groups filtering, §2.3)
              * @returns {Array} List of {id, text, module} data blocks 
              */
-            getSupportedDataBlocksList(supportedModules = []) {
+            getSupportedDataBlocksList(supportedModules = [], action = null) {
               let blocks = [];
               if (!supportedModules) supportedModules = [];
 
-              this.formConfig.data_blocks.forEach(b => {
-                if (supportedModules.length == 0 || supportedModules.includes(b.module)) {
+              this.data_blocks.forEach(b => {
+                if ((supportedModules.length == 0 || supportedModules.includes(b.module)) &&
+                    this.isBlockAllowedForAction(b, action)) {
                   blocks.push({
                     id: b.id, 
                     text: `${b.text} (${b.getModuleText()})`,
@@ -2065,14 +2216,16 @@ class WizardStep3 {
             /** 
              * Returns the list of fields available in the form 
              * @param {Array} supportedDataTypes List of the data types of the fields to display 
+             * @param {stic_AwfAction} [action] Current action (for disjoint-groups filtering, §2.3)
              * @returns List of {id, text, typeInActions} fields 
              */
-            getSupportedFieldsList(supportedDataTypes = []) {
+            getSupportedFieldsList(supportedDataTypes = [], action = null) {
               // Format value: "BlockName.FieldName" / "_detached.BlockName.FieldName"
               let fields = [];
               if (!supportedDataTypes) supportedDataTypes = [];
 
-              this.formConfig.data_blocks.forEach(block => {
+              this.data_blocks.forEach(block => {
+                  if (!this.isBlockAllowedForAction(block, action)) return;
                   block.fields.forEach(field => {
                       const typeInActions = field.getTypeInActions();
                       if (supportedDataTypes.length == 0 || supportedDataTypes.includes(typeInActions)) {
@@ -2086,6 +2239,40 @@ class WizardStep3 {
                   });
               });
               return fields;
+            },
+
+            /**
+             * AWF Paso 3 §3.1 / §3.2 — Fields available for the action's execution condition.
+             * - If the action has NO motor group yet (no repeatable block referenced): ALL fields
+             *   are shown (scalars + repeatable), so the user can pick any field freely.
+             * - If the action already has a Motor Group X: only fields of Grup X + scalar fields
+             *   (disjoint repeatable groups are excluded, §2.3).
+             * - Terminal/global actions: only scalar fields (§3.2).
+             * @param {stic_AwfAction} [action]
+             * @returns {Array} List of {id, label} fields for the condition <stic-select>
+             */
+            availableFieldsInFormForCondition(action = null) {
+              const fields = [];
+              const isTerminal = action && action.is_terminal;
+              const motorGroup = (!isTerminal && action) ? this.formConfig.getActionMotorGroup(action) : null;
+              this.data_blocks.forEach(block => {
+                const blockMotor = this.formConfig.getBlockMotorGroup(block);
+                // Terminal actions: only scalar fields (§3.2)
+                if (isTerminal && blockMotor) return;
+                // Non-terminal with a motor group: exclude disjoint repeatable groups (§2.3)
+                if (motorGroup && blockMotor && blockMotor.id !== motorGroup.rootBlockId) return;
+                // No motor group yet: all fields allowed (scalars + repeatable)
+                block.fields.forEach(field => {
+                  if (field.type_field === 'fixed') return;
+                  const fullName = block.getFieldInputName(field);
+                  const label = field.label || field.text_original;
+                  fields.push({ id: fullName, label: `${block.text} » ${utils.fromFieldLabelText(label)}` });
+                });
+              });
+              return fields;
+            },
+            get availableFieldsInFormForConditionForSelect() {
+              return this.availableFieldsInFormForCondition(this.action);
             },
 
             getParameterValueInputType(paramDataType) {
@@ -2167,7 +2354,7 @@ class WizardStep3 {
                                          (paramDef.selectorOptions || []).find(o => o.name == newParam.selectedOption)?.resolvedType === 'dataBlock';
 
                 if (paramIsDataBlock && newParam.value) {
-                  const requiredBlock = this.formConfig.data_blocks.find(b => b.id == newParam.value);
+                  const requiredBlock = this.data_blocks.find(b => b.id == newParam.value);
                   if (requiredBlock && requiredBlock.save_action_id) {
                     requisiteActions.add(requiredBlock.save_action_id);
                   }
@@ -2437,9 +2624,11 @@ class WizardStep4 {
       generatedHtml: '',
       previewTimeout: null,
 
-      get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
-      get sections() { return this.formConfig.layout.structure; },
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get layout() { return this.formConfig.layout; },
+      get sections() { return this.layout.structure; },
 
       get availableContainerTypes() {
         const validCategories = ['panel', 'card'];
@@ -2536,7 +2725,7 @@ class WizardStep4 {
       deleteSection(section) {
         if (!this.canDeleteSection(section)) return;
 
-        this.formConfig.layout.structure = this.formConfig.layout.structure.filter(s => s.id != section.id);
+        this.layout.structure = this.sections.filter(s => s.id != section.id);
       },
 
       canMoveUpSection(section) {
@@ -2573,9 +2762,32 @@ class WizardStep4 {
 
       getDataBlock(element) {
         if (element.type == 'datablock') {
-          return this.formConfig.data_blocks.find(d => d.id == element.ref_id);
+          return this.data_blocks.find(d => d.id == element.ref_id);
         }
         return null;
+      },
+
+      isGroupSection(section) {
+        const group = this.getGroup(section);
+        if (!group) return false;
+        return true;
+      },
+
+      groupName(section) {
+        const group = this.getGroup(section);
+        if (!group) return null;
+        
+        return group.group_title;
+      },
+
+      getGroup(section) {
+        const firstElement = section.elements.find(el => el.type === 'datablock');
+        if (!firstElement) return null;
+        
+        const block = this.getDataBlock(firstElement);
+        if (!block) return null;
+
+        return block.isGroupHead(this.data_blocks) ? block : null;
       },
 
       getFields(element) {
@@ -2608,26 +2820,44 @@ class WizardStep4 {
       moveElementToSection(element, fromSectionId, toSectionId) {
         if (!toSectionId || fromSectionId === toSectionId) return;
 
-        const fromSection = this.formConfig.layout.structure.find(s => s.id == fromSectionId);
-        const toSection = this.formConfig.layout.structure.find(s => s.id == toSectionId);
+        const fromSection = this.sections.find(s => s.id == fromSectionId);
+        const toSection = this.sections.find(s => s.id == toSectionId);
+        if (!fromSection || !toSection) return;
 
-        if (fromSection && toSection) {
-          fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
-          toSection.elements.push(element);
+        // Blocks inside a group section cannot leave it
+        if (this.isGroupSection(fromSection)) return;
+        // No block can move INTO a group section from outside
+        if (this.isGroupSection(toSection)) return;
+
+        // IEPA!! Revisar
+        const block = this.getDataBlock(element);
+        if (block && block.group_root && block.group_root !== '') {
+          // Children of a repeatable root cannot be moved independently
+          alert(utils.translate('LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD'));
+          return;
         }
+        if (block && block.isGroupHead(this.data_blocks)) {
+          // The group head cannot leave its group section
+          alert(utils.translate('LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD'));
+          return;
+        }
+
+        // Move the element itself
+        fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
+        toSection.elements.push(element);
       },
 
       resetTheme() {
-        this.formConfig.layout.theme = new stic_AwfTheme();
-        this.formConfig.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
-        this.formConfig.layout.closed_form_title = utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE');
-        this.formConfig.layout.closed_form_text = utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE');
-        this.formConfig.layout.processed_form_title = utils.translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE');
-        this.formConfig.layout.processed_form_text = utils.translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE');
-        this.formConfig.layout.receipt_form_title = utils.translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE');
-        this.formConfig.layout.receipt_form_text = utils.translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE');
-        this.formConfig.layout.custom_css = '';
-        this.formConfig.layout.custom_js = '';
+        this.layout.theme = new stic_AwfTheme();
+        this.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
+        this.layout.closed_form_title = utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE');
+        this.layout.closed_form_text = utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE');
+        this.layout.processed_form_title = utils.translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE');
+        this.layout.processed_form_text = utils.translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE');
+        this.layout.receipt_form_title = utils.translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE');
+        this.layout.receipt_form_text = utils.translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE');
+        this.layout.custom_css = '';
+        this.layout.custom_js = '';
       }
     }
   }
