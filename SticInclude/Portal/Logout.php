@@ -28,7 +28,11 @@ require_once 'SticInclude/Portal/AuthUtils.php';
 
 session_start();
 if (!empty($_SESSION['portal_user_id'])) {
-    SticPortalAuthUtils::destroyPortalSession();
+    $bean = null;
+    if (!empty($_SESSION['portal_user_type'])) {
+        $bean = BeanFactory::getBean($_SESSION['portal_user_type'] . 's', $_SESSION['portal_user_id']);
+    }
+    SticPortalAuthUtils::destroyPortalSession($bean && $bean->id ? $bean : null);
 }
 session_write_close();
 if (session_status() === PHP_SESSION_ACTIVE) session_destroy();

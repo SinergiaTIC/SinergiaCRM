@@ -202,7 +202,7 @@
 <script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
         <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_MAGIC_EXPIRATION_HELP}</div>
     </td>
-    <td width="25%" valign="middle"><input type="number" name="PORTAL_MAGIC_LINK_EXPIRATION_MINUTES" value="{$SETTINGS.PORTAL_MAGIC_LINK_EXPIRATION_MINUTES|default:'15'}" min="1" max="1440" class="portal-input-narrow"> {$MOD.LBL_STIC_PORTAL_MINUTES}</td>
+    <td width="25%" valign="middle"><input type="number" name="PORTAL_MAGIC_LINK_EXP_MIN" value="{$SETTINGS.PORTAL_MAGIC_LINK_EXP_MIN|default:'15'}" min="1" max="1440" class="portal-input-narrow"> {$MOD.LBL_STIC_PORTAL_MINUTES}</td>
 </tr>
 </table>
 

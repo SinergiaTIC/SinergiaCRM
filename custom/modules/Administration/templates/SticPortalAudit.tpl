@@ -21,20 +21,20 @@
  *}
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="actionsContainer">
 <tr><td>
-    <input type="button" class="button" onclick="document.location.href='index.php?module=Administration&action=sticportalconfig'" value="Back to Portal Configuration">
+    <input type="button" class="button" onclick="document.location.href='index.php?module=Administration&action=sticportalconfig'" value="{$MOD.LBL_STIC_PORTAL_BACK_CONFIG|default:'Back to Portal Configuration'|escape}">
 </td></tr>
 </table>
-<h2>Portal Login Audit Log</h2>
+<h2>{$MOD.LBL_STIC_PORTAL_LOGIN_AUDIT|default:'Portal Login Audit Log'|escape}</h2>
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="list view">
 <thead>
 <tr>
-    <th width="15%">Date</th>
-    <th width="20%">Username</th>
-    <th width="8%">Type</th>
-    <th width="12%">IP Address</th>
-    <th width="10%">Result</th>
-    <th width="15%">Reason / Method</th>
-    <th width="20%">User Agent</th>
+    <th width="15%">{$MOD.LBL_STIC_PORTAL_AUDIT_DATE|default:'Date'|escape}</th>
+    <th width="20%">{$MOD.LBL_STIC_PORTAL_AUDIT_USERNAME|default:'Username'|escape}</th>
+    <th width="8%">{$MOD.LBL_STIC_PORTAL_AUDIT_TYPE|default:'Type'|escape}</th>
+    <th width="12%">{$MOD.LBL_STIC_PORTAL_AUDIT_IP|default:'IP Address'|escape}</th>
+    <th width="10%">{$MOD.LBL_STIC_PORTAL_AUDIT_RESULT|default:'Result'|escape}</th>
+    <th width="15%">{$MOD.LBL_STIC_PORTAL_AUDIT_REASON_METHOD|default:'Reason / Method'|escape}</th>
+    <th width="20%">{$MOD.LBL_STIC_PORTAL_AUDIT_USER_AGENT|default:'User Agent'|escape}</th>
 </tr>
 </thead>
 <tbody>
@@ -42,14 +42,14 @@
 <tr>
     <td>{$r.date_entered|escape}</td>
     <td>{$r.username|escape}</td>
-    <td>{$r.parent_type|escape}</td>
+    <td>{$r.type_label|escape}</td>
     <td>{$r.ip_address|escape}</td>
-    <td>{if $r.success}Success{else}Failure{/if}</td>
-    <td>{$r.failure_reason|escape} / {$r.auth_method|escape}</td>
+    <td>{$r.result_label|escape}</td>
+    <td>{if $r.reason_label}{$r.reason_label|escape} / {/if}{$r.method_label|escape}</td>
     <td style="font-size:10px;word-break:break-all">{$r.user_agent|escape|truncate:80}</td>
 </tr>
 {foreachelse}
-<tr><td colspan="7" align="center">No records found</td></tr>
+<tr><td colspan="7" align="center">{$MOD.LBL_STIC_PORTAL_AUDIT_NO_RECORDS|default:'No records found'|escape}</td></tr>
 {/foreach}
 </tbody>
 </table>

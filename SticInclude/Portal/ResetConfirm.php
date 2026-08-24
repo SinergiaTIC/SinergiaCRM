@@ -54,10 +54,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Set hashed_c directly with plaintext — processBeforeSave validates policy, checks history, and hashes
             $bean->stic_portal_hashed_c = $newPassword;
             $bean->stic_portal_force_pw_change_c = 0;
-            $bean->stic_portal_reset_token_c = null;
-            $bean->stic_portal_reset_expires_c = null;
+            $bean->stic_portal_reset_token_c = '';
+            $bean->stic_portal_reset_expires_c = '';
             $bean->stic_portal_failed_attempts_c = 0;
-            $bean->stic_portal_locked_until_c = null;
+            $bean->stic_portal_locked_until_c = '';
             $GLOBALS['log']->debug("ResetConfirm: about to save (single) with hashed_c=" . substr($newPassword, 0, 20) . "...");
             $bean->save();
             $GLOBALS['log']->info("ResetConfirm: save done, hashed=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40));

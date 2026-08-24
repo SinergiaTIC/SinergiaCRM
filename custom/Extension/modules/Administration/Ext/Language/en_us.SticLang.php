@@ -214,3 +214,27 @@ $mod_strings['LBL_STIC_PORTAL_NOTIFY_LOCK_SUBJECT'] = '{$portal_title} - Account
 $mod_strings['LBL_STIC_PORTAL_NOTIFY_LOCK_BODY'] = 'Account locked due to failed attempts at {$notification_time} from IP {$notification_ip}. Will unlock automatically or contact support.';
 $mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_SUBJECT'] = '{$portal_title} - Password reset requested';
 $mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_BODY'] = 'Reset requested at {$notification_time} from IP {$notification_ip}. Contact support if not you.';
+
+// Portal Login Audit Log display labels
+$mod_strings['LBL_STIC_PORTAL_BACK_CONFIG'] = 'Back to Portal Configuration';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_DATE'] = 'Date';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_USERNAME'] = 'Username';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE'] = 'Type';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_IP'] = 'IP Address';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RESULT'] = 'Result';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_METHOD'] = 'Reason / Method';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_USER_AGENT'] = 'User Agent';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_NO_RECORDS'] = 'No records found';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RESULT_SUCCESS'] = 'Success';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RESULT_FAILURE'] = 'Failure';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE_CONTACT'] = 'Contact';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE_ACCOUNT'] = 'Account';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE_RESET_SENT'] = 'Password reset';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_INVALID_CREDENTIALS'] = 'Invalid credentials';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_NOT_FOUND'] = 'User not found';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_LOCKED_OUT'] = 'Account locked out';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_IP_LOCKED'] = 'IP locked out';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_PASSWORD'] = 'Password';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_INVITATION'] = 'Invitation';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_MAGIC_LINK'] = 'Magic link';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_ADMIN_RESET'] = 'Admin reset';

@@ -90,6 +90,20 @@ if (isset($_GET['logged_in'])) $message = 'You are now logged in.';
 
 $loggedIn = SticPortalAuthUtils::validatePortalSession() !== null;
 
+// Remember-me auto-login: if not logged in and a valid remember cookie exists,
+// restore the portal session and redirect to the portal home.
+if (!$loggedIn && $_SERVER['REQUEST_METHOD'] !== 'POST' && !empty($_COOKIE['portal_remember'])) {
+    $remembered = SticPortalAuthUtils::validateRememberToken($_COOKIE['portal_remember']);
+    if ($remembered) {
+        SticPortalAuthUtils::recordLoginAudit($remembered['bean'], $remembered['type'], $remembered['bean']->stic_portal_username_c, $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'remember');
+        SticPortalAuthUtils::createPortalSession($remembered['bean'], $remembered['type']);
+        $redirect = SticPortalConfigUtils::get('PORTAL_HOME_URL', 'index.php?entryPoint=sticPortalLogin');
+        if ($redirect === 'index.php?entryPoint=sticPortalLogin') $redirect .= '&logged_in=1';
+        header('Location: ' . $redirect);
+        exit;
+    }
+}
+
 $ss = new Sugar_Smarty();
 $ss->assign('TITLE', SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal'));
 $ss->assign('LOGO_URL', SticPortalConfigUtils::getLogoUrl());

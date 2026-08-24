@@ -130,9 +130,12 @@ class SticPortalAuthUtils
     {
         $locked = $bean->stic_portal_locked_until_c;
         if (!empty($locked) && $locked !== '0000-00-00 00:00:00') {
-            $ts = strtotime($locked);
-            if ($ts !== false && $ts > time()) {
-                return array('locked' => true, 'remaining_seconds' => $ts - time());
+            $lockDate = self::td()->fromDb($locked);
+            if ($lockDate !== null) {
+                $ts = $lockDate->getTimestamp();
+                if ($ts > time()) {
+                    return array('locked' => true, 'remaining_seconds' => $ts - time());
+                }
             }
         }
         return array('locked' => false, 'remaining_seconds' => 0);
@@ -164,7 +167,7 @@ class SticPortalAuthUtils
     public static function resetFailedAttempts($bean)
     {
         $bean->stic_portal_failed_attempts_c = 0;
-        $bean->stic_portal_locked_until_c = null;
+        $bean->stic_portal_locked_until_c = '';
         $bean->save();
     }
 
@@ -175,8 +178,11 @@ class SticPortalAuthUtils
         $ip = $db->quoted($ipAddress);
         $result = $db->limitQuery("SELECT locked_until FROM stic_portal_login_attempts WHERE ip_address=$ip AND deleted=0", 0, 1);
         $row = $db->fetchByAssoc($result);
-        if ($row && !empty($row['locked_until']) && strtotime($row['locked_until']) > time()) {
-            return true;
+        if ($row && !empty($row['locked_until'])) {
+            $lockDate = self::td()->fromDb($row['locked_until']);
+            if ($lockDate !== null && $lockDate->getTimestamp() > time()) {
+                return true;
+            }
         }
         return false;
     }
@@ -246,7 +252,7 @@ class SticPortalAuthUtils
 
     public static function clearRememberToken($bean)
     {
-        $bean->stic_portal_remember_token_c = null;
+        $bean->stic_portal_remember_token_c = '';
         $bean->save();
         setcookie('portal_remember', '', time() - 3600, '/');
     }
@@ -315,8 +321,8 @@ class SticPortalAuthUtils
         if (empty($expires) || $expires === '0000-00-00 00:00:00' || $expires === '0000-00-00') {
             return false;
         }
-        $ts = strtotime($expires);
-        return ($ts !== false && $ts <= time());
+        $expireDate = self::td()->fromDb($expires);
+        return ($expireDate !== null && $expireDate->getTimestamp() <= time());
     }
 
     public static function setPasswordExpiration($bean)
@@ -325,7 +331,7 @@ class SticPortalAuthUtils
         if ($days > 0) {
             $bean->stic_portal_password_expires_c = self::futureDb($days * 86400);
         } else {
-            $bean->stic_portal_password_expires_c = null;
+            $bean->stic_portal_password_expires_c = '';
         }
     }
 
@@ -366,8 +372,8 @@ class SticPortalAuthUtils
 
     public static function clearResetToken($bean)
     {
-        $bean->stic_portal_reset_token_c = null;
-        $bean->stic_portal_reset_expires_c = null;
+        $bean->stic_portal_reset_token_c = '';
+        $bean->stic_portal_reset_expires_c = '';
         $bean->save();
     }
 
@@ -376,7 +382,7 @@ class SticPortalAuthUtils
     {
         $rawToken = bin2hex(random_bytes(32));
         $bean->stic_portal_magic_token_c = hash('sha256', $rawToken);
-        $mins = (int)SticPortalConfigUtils::get('PORTAL_MAGIC_LINK_EXPIRATION_MINUTES', 15);
+        $mins = (int)SticPortalConfigUtils::get('PORTAL_MAGIC_LINK_EXP_MIN', 15);
         $bean->stic_portal_magic_expires_c = self::futureDb($mins * 60);
         $bean->save();
         self::sendMagicLinkEmail($bean, $rawToken);
@@ -393,8 +399,8 @@ class SticPortalAuthUtils
         $row = $db->fetchByAssoc($result);
         if ($row) {
             $bean = BeanFactory::getBean('Contacts', $row['id']);
-            $bean->stic_portal_magic_token_c = null;
-            $bean->stic_portal_magic_expires_c = null;
+            $bean->stic_portal_magic_token_c = '';
+            $bean->stic_portal_magic_expires_c = '';
             $bean->save();
             return array('bean' => $bean, 'type' => 'Contact');
         }
@@ -402,8 +408,8 @@ class SticPortalAuthUtils
         $row = $db->fetchByAssoc($result);
         if ($row) {
             $bean = BeanFactory::getBean('Accounts', $row['id']);
-            $bean->stic_portal_magic_token_c = null;
-            $bean->stic_portal_magic_expires_c = null;
+            $bean->stic_portal_magic_token_c = '';
+            $bean->stic_portal_magic_expires_c = '';
             $bean->save();
             return array('bean' => $bean, 'type' => 'Account');
         }
@@ -462,7 +468,7 @@ class SticPortalAuthUtils
     public static function destroyPortalSession($bean = null)
     {
         if ($bean) {
-            $bean->stic_portal_session_id_c = null;
+            $bean->stic_portal_session_id_c = '';
             $bean->save();
         }
         session_unset();
@@ -572,8 +578,8 @@ class SticPortalAuthUtils
                 $bean->stic_portal_password_changed_c = self::nowDb();
                 $bean->stic_portal_force_pw_change_c = 0;
                 self::setPasswordExpiration($bean);
-                $bean->stic_portal_reset_token_c = null;
-                $bean->stic_portal_reset_expires_c = null;
+                $bean->stic_portal_reset_token_c = '';
+                $bean->stic_portal_reset_expires_c = '';
                 return;
             }
             $GLOBALS['log']->debug($logPrefix . "plaintext (len=" . strlen($plain) . ") — validating and hashing");
@@ -586,8 +592,8 @@ class SticPortalAuthUtils
             $bean->stic_portal_password_changed_c = self::nowDb();
             $bean->stic_portal_force_pw_change_c = 0;
             self::setPasswordExpiration($bean);
-            $bean->stic_portal_reset_token_c = null;
-            $bean->stic_portal_reset_expires_c = null;
+            $bean->stic_portal_reset_token_c = '';
+            $bean->stic_portal_reset_expires_c = '';
         }
     }
 

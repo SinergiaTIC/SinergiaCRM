@@ -105,3 +105,28 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = "Indiqueu la plantilla de cor
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticació OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = "Activa l'autenticació OAuth";
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = "Si activeu aquesta opció, els usuaris podran autenticar-se mitjançant OAuth 2.0, a més de poder fer-ho amb usuari i contrasenya. Després d'activar aquesta opció s'haurà de configurar, com a mínim, un dels proveïdors externs. Per a més informació, consulteu la <a href='https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth' target='_blank'>documentació</a>.";
+
+// Portal Login Audit Log - etiquetes de visualització
+$mod_strings['LBL_STIC_PORTAL_BACK_CONFIG'] = 'Torna a la configuració del portal';
+$mod_strings['LBL_STIC_PORTAL_LOGIN_AUDIT'] = 'Registre d\'auditoria d\'inici de sessió';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_DATE'] = 'Data';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_USERNAME'] = 'Usuari';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE'] = 'Tipus';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_IP'] = 'Adreça IP';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RESULT'] = 'Resultat';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_METHOD'] = 'Motiu / Mètode';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_USER_AGENT'] = 'Agent d\'usuari';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_NO_RECORDS'] = 'No s\'han trobat registres';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RESULT_SUCCESS'] = 'Èxit';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RESULT_FAILURE'] = 'Error';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE_CONTACT'] = 'Contacte';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE_ACCOUNT'] = 'Compte';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE_RESET_SENT'] = 'Restabliment de contrasenya';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_INVALID_CREDENTIALS'] = 'Credencials no vàlides';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_NOT_FOUND'] = 'Usuari no trobat';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_LOCKED_OUT'] = 'Compte bloquejat';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_IP_LOCKED'] = 'IP bloquejada';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_PASSWORD'] = 'Contrasenya';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_INVITATION'] = 'Invitació';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_MAGIC_LINK'] = 'Enllaç màgic';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_ADMIN_RESET'] = 'Restabliment per administrador';
