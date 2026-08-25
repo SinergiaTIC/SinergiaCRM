@@ -37,20 +37,28 @@ $error   = '';
 $success = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $current = $_POST['current_password'] ?? '';
-    $new     = $_POST['new_password'] ?? '';
-    $confirm = $_POST['confirm_password'] ?? '';
-    $changeResult = SticPortalAuthUtils::changePassword($bean, $current, $new, $confirm);
-    if ($changeResult['success']) {
-        $success = true;
+    if (empty($_POST['csrf_token']) || empty($_SESSION['portal_csrf_token']) || $_POST['csrf_token'] !== $_SESSION['portal_csrf_token']) {
+        $error = 'Invalid request. Please try again.';
     } else {
-        $error = $changeResult['error'];
+        $current = $_POST['current_password'] ?? '';
+        $new     = $_POST['new_password'] ?? '';
+        $confirm = $_POST['confirm_password'] ?? '';
+        $changeResult = SticPortalAuthUtils::changePassword($bean, $current, $new, $confirm);
+        if ($changeResult['success']) {
+            $success = true;
+        } else {
+            $error = $changeResult['error'];
+        }
     }
 }
+
+if (empty($_SESSION['portal_csrf_token'])) $_SESSION['portal_csrf_token'] = bin2hex(random_bytes(32));
+$csrfToken = $_SESSION['portal_csrf_token'];
 
 $ss = new Sugar_Smarty();
 $ss->assign('ERROR', $error);
 $ss->assign('SUCCESS', $success);
+$ss->assign('CSRF_TOKEN', $csrfToken);
 $ss->assign('PW_MIN_LENGTH', SticPortalConfigUtils::get('PORTAL_PASSWORD_MIN_LENGTH', '8'));
 $ss->assign('PW_REQUIRE_UPPER', SticPortalConfigUtils::get('PORTAL_PASSWORD_REQUIRE_UPPER', '0'));
 $ss->assign('PW_REQUIRE_LOWER', SticPortalConfigUtils::get('PORTAL_PASSWORD_REQUIRE_LOWER', '0'));

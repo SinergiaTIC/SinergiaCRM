@@ -24,26 +24,38 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'SticInclude/Portal/AuthUtils.php';
 
+if (session_status() === PHP_SESSION_NONE) session_start();
 $message = '';
 $error   = $_GET["error"] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $result = SticPortalAuthUtils::getPortalUserByUsername($username);
-    if ($result) {
-        $bean = $result['bean'];
-        $rawToken = SticPortalAuthUtils::generateResetToken($bean);
-        SticPortalAuthUtils::sendSecurityNotification($bean, 'reset_requested');
-        // Also send the actual reset link email
-        sendResetLinkEmail($bean, $rawToken);
+    // Honeypot: bots auto-fill the hidden field; skip silently (generic response either way).
+    if (!empty($_POST['reset_hp'])) {
+        $message = 'If the account exists, a reset link has been sent to your email.';
+    } elseif (empty($_POST['csrf_token']) || empty($_SESSION['portal_csrf_token']) || $_POST['csrf_token'] !== $_SESSION['portal_csrf_token']) {
+        $error = 'Invalid request. Please try again.';
+    } else {
+        $username = $_POST['username'] ?? '';
+        $result = SticPortalAuthUtils::getPortalUserByUsername($username);
+        if ($result) {
+            $bean = $result['bean'];
+            $rawToken = SticPortalAuthUtils::generateResetToken($bean);
+            SticPortalAuthUtils::sendSecurityNotification($bean, 'reset_requested');
+            // Also send the actual reset link email
+            sendResetLinkEmail($bean, $rawToken);
+        }
+        $message = 'If the account exists, a reset link has been sent to your email.';
     }
-    $message = 'If the account exists, a reset link has been sent to your email.';
 }
+
+if (empty($_SESSION['portal_csrf_token'])) $_SESSION['portal_csrf_token'] = bin2hex(random_bytes(32));
+$csrfToken = $_SESSION['portal_csrf_token'];
 
 $ss = new Sugar_Smarty();
 $ss->assign('TITLE', 'Reset Password');
 $ss->assign('ERROR', $error);
 $ss->assign('MESSAGE', $message);
+$ss->assign('CSRF_TOKEN', $csrfToken);
 $ss->display('custom/themes/SuiteP/tpls/SticPortalReset.tpl');
 
 function sendResetLinkEmail($bean, $rawToken) {

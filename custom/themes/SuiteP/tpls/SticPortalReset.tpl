@@ -152,6 +152,8 @@
   <div class="msg msg-success">{$MESSAGE|escape}</div>
 {/if}
     <form method="post">
+      <input type="hidden" name="csrf_token" value="{$CSRF_TOKEN}">
+      <input type="text" name="reset_hp" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;">
       <label>Username</label>
       <input type="text" name="username" autocomplete="username" required>
       <button type="submit" class="btn">Send Reset Link</button>

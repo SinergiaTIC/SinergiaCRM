@@ -52,12 +52,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') { http_response_code(405); echo json_
 $grantType    = $_POST['grant_type'] ?? '';
 $code         = $_POST['code'] ?? '';
 $clientId     = $_POST['client_id'] ?? '';
+$clientSecret = $_POST['client_secret'] ?? '';
 $redirectUri  = $_POST['redirect_uri'] ?? '';
 $refreshToken = $_POST['refresh_token'] ?? '';
 
 if ($grantType === 'authorization_code') {
     if (empty($code) || empty($clientId)) { http_response_code(400); echo json_encode(['error' => 'invalid_request']); exit; }
-    $client = SticPortalOAuthUtils::validateClient($clientId, $redirectUri);
+    $client = SticPortalOAuthUtils::validateClient($clientId, $redirectUri, $clientSecret);
     if (!$client) { http_response_code(400); echo json_encode(['error' => 'invalid_client']); exit; }
 
     // Retrieve auth code via Bean
@@ -169,13 +170,16 @@ if ($grantType === 'authorization_code') {
 
 if ($grantType === 'refresh_token') {
     if (empty($refreshToken) || empty($clientId)) { http_response_code(400); echo json_encode(['error' => 'invalid_request']); exit; }
-    $client = SticPortalOAuthUtils::validateClient($clientId, '');
+    $client = SticPortalOAuthUtils::validateClient($clientId, '', $clientSecret);
     if (!$client) { http_response_code(400); echo json_encode(['error' => 'invalid_client']); exit; }
 
     // Retrieve and revoke old token via Bean
     $old = BeanFactory::newBean('OAuth2Tokens');
     $old->retrieve_by_string_fields(['refresh_token' => $refreshToken]);
-    if (!$old->id || $old->token_is_revoked == '1') { http_response_code(400); echo json_encode(['error' => 'invalid_grant']); exit; }
+    // The refresh token must belong to the requesting client (stolen-token / cross-client protection)
+    if (!$old->id || $old->token_is_revoked == '1' || $old->client !== $clientId) {
+        http_response_code(400); echo json_encode(['error' => 'invalid_grant']); exit;
+    }
     $old->token_is_revoked = 1;
     $old->save();
 

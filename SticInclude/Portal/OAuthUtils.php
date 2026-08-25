@@ -25,18 +25,39 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class SticPortalOAuthUtils
 {
     /**
-     * Validate that a client_id exists in OAuth2Clients and the redirect_uri
-     * starts with the registered redirect_url. Returns the client row or null.
+     * Validate that a client_id exists, uses the portal authorization-code grant
+     * type, and (for confidential clients with a stored secret) that the supplied
+     * client_secret matches. Also verifies that redirect_uri starts with the
+     * client's registered redirect_url when one is configured.
+     *
+     * @param string $clientId
+     * @param string $redirectUri
+     * @param string $clientSecret Optional secret supplied by the caller.
+     * @return SugarBean|null The validated client bean, or null.
      */
-    public static function validateClient($clientId, $redirectUri)
+    public static function validateClient($clientId, $redirectUri, $clientSecret = '')
     {
         $client = BeanFactory::getBean('OAuth2Clients', $clientId);
         if (!$client || !$client->id || $client->deleted == 1) {
             $GLOBALS['log']->debug(__METHOD__ . " - Client not found: $clientId");
             return null;
         }
-        if (!empty($redirectUri) && !empty($client->redirect_url) && strpos($redirectUri, $client->redirect_url) !== 0) {
-            $GLOBALS['log']->debug(__METHOD__ . " - Redirect URI mismatch: $redirectUri vs registered {$client->redirect_url}");
+        if ($client->allowed_grant_type !== 'portal_authorization_code') {
+            $GLOBALS['log']->debug(__METHOD__ . " - Client {$client->name} has grant type {$client->allowed_grant_type}, not portal_authorization_code");
+            return null;
+        }
+        if (!empty($redirectUri)) {
+            $registered = $client->redirect_url ?? '';
+            // A registered redirect_url must exist and the supplied URI must start with it,
+            // otherwise any redirect_uri would be accepted (open-redirect / code-capture vector).
+            if (empty($registered) || strpos($redirectUri, $registered) !== 0) {
+                $GLOBALS['log']->debug(__METHOD__ . " - Redirect URI mismatch: $redirectUri vs registered " . ($registered ?: '(none)'));
+                return null;
+            }
+        }
+        // Confidential clients (those with a stored secret) must authenticate with client_secret.
+        if (!empty($client->secret) && hash('sha256', (string)$clientSecret) !== $client->secret) {
+            $GLOBALS['log']->debug(__METHOD__ . " - Client secret mismatch for: $clientId");
             return null;
         }
         $GLOBALS['log']->debug(__METHOD__ . " - Client validated: $clientId");

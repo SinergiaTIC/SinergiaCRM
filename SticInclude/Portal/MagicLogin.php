@@ -52,6 +52,12 @@ if (!$bean->stic_portal_enabled_c) {
     exit;
 }
 
+// IP lockout applies to magic-link auto-login too (brute-force resilience)
+if (SticPortalAuthUtils::isIpLocked($_SERVER['REMOTE_ADDR'] ?? '')) {
+    header('Location: index.php?entryPoint=sticPortalLogin&error=invalid_link');
+    exit;
+}
+
 // Success: create session
 SticPortalAuthUtils::resetFailedAttempts($bean);
 SticPortalAuthUtils::recordLoginAudit($bean, $type, $bean->stic_portal_username_c, $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'magic_link');

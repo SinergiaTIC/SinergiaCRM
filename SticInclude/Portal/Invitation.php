@@ -65,7 +65,7 @@ foreach ($idList as $id) {
     }
 
     $token   = bin2hex(random_bytes(32));
-    $expires = date('Y-m-d H:i:s', time() + 86400);
+    $expires = SticPortalAuthUtils::futureDb(86400); // UTC, consistent with validateResetToken() UTC_TIMESTAMP() comparison
     $bean->stic_portal_reset_token_c   = hash('sha256', $token);
     $bean->stic_portal_reset_expires_c = $expires;
     $bean->stic_portal_enabled_c = 1; // Auto-enable portal when invitation is sent

@@ -165,6 +165,8 @@
           letter.{/if}{if $PW_REQUIRE_LOWER eq "1"} Must contain a lowercase letter.{/if}{if $PW_REQUIRE_NUMBER eq "1"} Must
           contain a number.{/if}{if $PW_REQUIRE_SPECIAL eq "1"} Must contain a special character.{/if}</div>
         <form method="post">
+          <input type="hidden" name="csrf_token" value="{$CSRF_TOKEN}">
+          <input type="text" name="reset_hp" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;">
           <label>New Password</label><input type="password" name="new_password" required autocomplete="new-password">
           <label>Confirm Password</label><input type="password" name="confirm_password" required
             autocomplete="new-password">

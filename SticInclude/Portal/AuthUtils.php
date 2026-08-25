@@ -55,7 +55,7 @@ class SticPortalAuthUtils
     }
 
     /** @return string Future datetime in DB format, $seconds from now. */
-    private static function futureDb($seconds)
+    public static function futureDb($seconds)
     {
         return self::td()->getNow()->modify("+{$seconds} seconds")->asDb();
     }
@@ -217,7 +217,9 @@ class SticPortalAuthUtils
         $bean->save();
         $days = (int)SticPortalConfigUtils::get('PORTAL_REMEMBER_ME_DAYS', 30);
         $expire = time() + $days * 86400;
-        setcookie('portal_remember', $rawToken, $expire, '/', '', false, true);
+        $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            || (!empty($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443);
+        setcookie('portal_remember', $rawToken, $expire, '/', '', $secure, true);
         return $rawToken;
     }
 
@@ -229,7 +231,7 @@ class SticPortalAuthUtils
             return null;
         }
         $hashed = $db->quoted(hash('sha256', $cookieToken));
-        $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.deleted=0 AND cc.stic_portal_remember_token_c=$hashed", 0, 1);
+        $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.deleted=0 AND cc.stic_portal_enabled_c=1 AND cc.stic_portal_remember_token_c=$hashed", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
             $bean = BeanFactory::getBean('Contacts', $row['id']);
@@ -238,7 +240,7 @@ class SticPortalAuthUtils
                 return array('bean' => $bean, 'type' => 'Contact');
             }
         }
-        $result = $db->limitQuery("SELECT a.id FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id WHERE a.deleted=0 AND ac.stic_portal_remember_token_c=$hashed", 0, 1);
+        $result = $db->limitQuery("SELECT a.id FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id WHERE a.deleted=0 AND ac.stic_portal_enabled_c=1 AND ac.stic_portal_remember_token_c=$hashed", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
             $bean = BeanFactory::getBean('Accounts', $row['id']);
@@ -252,6 +254,7 @@ class SticPortalAuthUtils
 
     public static function clearRememberToken($bean)
     {
+        if (!$bean) return;
         $bean->stic_portal_remember_token_c = '';
         $bean->save();
         setcookie('portal_remember', '', time() - 3600, '/');
@@ -470,10 +473,10 @@ class SticPortalAuthUtils
         if ($bean) {
             $bean->stic_portal_session_id_c = '';
             $bean->save();
+            self::clearRememberToken($bean);
         }
         session_unset();
         session_destroy();
-        self::clearRememberToken($bean);
     }
 
     public static function validatePortalSession()
@@ -487,7 +490,10 @@ class SticPortalAuthUtils
         $_SESSION['portal_last_activity'] = time();
         if (empty($_SESSION['portal_user_type']) || empty($_SESSION['portal_user_id'])) return null;
         $bean = BeanFactory::getBean($_SESSION['portal_user_type'] . 's', $_SESSION['portal_user_id']);
-        if (!$bean || !$bean->id || $bean->stic_portal_session_id_c !== session_id() || !$bean->stic_portal_enabled_c) return null;
+        if (!$bean || !$bean->id || !$bean->stic_portal_enabled_c) return null;
+        // Single-session enforcement unless the admin explicitly allows concurrent sessions
+        $allowConcurrent = SticPortalConfigUtils::get('PORTAL_ALLOW_CONCURRENT_SESSIONS', '0') === '1';
+        if (!$allowConcurrent && $bean->stic_portal_session_id_c !== session_id()) return null;
         return $bean;
     }
 

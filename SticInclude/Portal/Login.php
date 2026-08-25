@@ -35,7 +35,12 @@ $isOAuth = !empty($oauthClientId) && !empty($oauthRedirectUri);
 
 if ($isOAuth) {
     $oauthClient = \BeanFactory::getBean('OAuth2Clients', $oauthClientId);
-    if (!$oauthClient || !$oauthClient->id || $oauthClient->deleted == 1 || (strpos($oauthRedirectUri, $oauthClient->redirect_url ?? '') !== 0)) {
+    $registeredUrl = $oauthClient->redirect_url ?? '';
+    $validClient = $oauthClient && $oauthClient->id
+        && $oauthClient->deleted != 1
+        && $oauthClient->allowed_grant_type === 'portal_authorization_code'
+        && !empty($registeredUrl) && strpos($oauthRedirectUri, $registeredUrl) === 0;
+    if (!$validClient) {
         $error = 'Invalid OAuth client or redirect URI.'; $isOAuth = false;
     }
 }

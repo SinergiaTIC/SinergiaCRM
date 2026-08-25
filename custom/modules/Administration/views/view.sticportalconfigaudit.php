@@ -16,6 +16,9 @@ class AdministrationViewSticportalconfigaudit extends SugarView
     public function display()
     {
         global $mod_strings, $db;
+        // Purge audit records older than the configured retention period (admin-triggered maintenance)
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        SticPortalConfigUtils::purgeOldAudit();
         $audit = [];
         $r = $db->query("SELECT * FROM stic_portal_login_audit WHERE deleted=0 ORDER BY date_entered DESC LIMIT 100");
         while ($row = $db->fetchByAssoc($r)) {

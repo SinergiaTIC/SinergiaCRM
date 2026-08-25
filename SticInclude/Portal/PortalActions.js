@@ -30,17 +30,5 @@ function executePortalAction() {
         location.href = "index.php?entryPoint=sticPortalResetRequest&" + params;
     }
 }
-function onClickPortalInvitationButton() {
-    sugarListView.get_checks();
-    if (sugarListView.get_checks_count() < 1) {
-        alert(SUGAR.language.get("app_strings", "LBL_LISTVIEW_NO_SELECTED"));
-        return false;
-    }
-    if (sugarListView.get_checks_count() > getPortalInvitationLimit()) {
-        alert(SUGAR.language.get("app_strings", "LBL_PORTAL_INVITATION_LIMIT_ALERT") || "The invitation limit has been exceeded.");
-        return false;
-    }
-    var ids = [];
-    document.querySelectorAll("input[name=mass\\[]]:checked").forEach(function(cb) { ids.push(cb.value); });
-    location.href = "index.php?entryPoint=sticPortalInvitation&id=" + ids.join(",") + "&return_module=" + module + "&return_action=index";
-}
+// NOTE: onClickPortalInvitationButton() (list-view bulk action) lives in the
+// module SticUtils.js files — PortalActions.js is only loaded on detail views.

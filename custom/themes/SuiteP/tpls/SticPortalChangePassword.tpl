@@ -153,6 +153,7 @@
           letter.{/if}{if $PW_REQUIRE_LOWER eq "1"} Must contain a lowercase letter.{/if}{if $PW_REQUIRE_NUMBER eq "1"} Must
           contain a number.{/if}{if $PW_REQUIRE_SPECIAL eq "1"} Must contain a special character.{/if}</div>
         <form method="post">
+          <input type="hidden" name="csrf_token" value="{$CSRF_TOKEN}">
           <label>Current Password</label><input type="password" name="current_password" required
             autocomplete="current-password">
           <label>New Password</label><input type="password" name="new_password" required autocomplete="new-password">

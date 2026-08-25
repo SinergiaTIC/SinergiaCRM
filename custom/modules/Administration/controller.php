@@ -161,14 +161,10 @@ class CustomAdministrationController extends AdministrationController
     public function action_sticportalconfig_save() {
         require_once 'SticInclude/Portal/ConfigUtils.php';
         SticPortalConfigUtils::saveFromPost($_POST);
+        // Logo upload goes through handleLogoUpload() which validates the MIME type
+        // (rejects arbitrary/scriptable files) and stores via the portal config.
         if (!empty($_FILES['portal_logo_file']['tmp_name'])) {
-            $file = $_FILES['portal_logo_file'];
-            $tmp = $file['tmp_name'];
-            $dest = 'custom/themes/default/images/portal_logo.png';
-            @mkdir(dirname($dest), 0777, true);
-            move_uploaded_file($tmp, $dest);
-            @chmod($dest, 0644);
-            SticPortalConfigUtils::set('PORTAL_LOGO', 'portal_logo.png');
+            SticPortalConfigUtils::handleLogoUpload($_FILES['portal_logo_file']);
         }
         header('Location: index.php?module=Administration&action=index');
         exit;
