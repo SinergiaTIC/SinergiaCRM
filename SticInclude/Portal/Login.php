@@ -1,0 +1,122 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+require_once 'SticInclude/Portal/AuthUtils.php';
+require_once 'SticInclude/Portal/ConfigUtils.php';
+require_once 'SticInclude/Portal/OAuthRepository.php';
+
+session_start();
+$message = ''; $error = ''; $mode = 'password';
+$oauthClientId = $_GET['client_id'] ?? $_POST['client_id'] ?? '';
+$oauthRedirectUri = $_GET['redirect_uri'] ?? $_POST['redirect_uri'] ?? '';
+$oauthState = $_GET['state'] ?? $_POST['state'] ?? '';
+$isOAuth = !empty($oauthClientId) && !empty($oauthRedirectUri);
+
+if ($isOAuth) {
+    $oauthClient = \BeanFactory::getBean('OAuth2Clients', $oauthClientId);
+    $registeredUrl = $oauthClient->redirect_url ?? '';
+    $validClient = $oauthClient && $oauthClient->id
+        && $oauthClient->deleted != 1
+        && $oauthClient->allowed_grant_type === 'portal_authorization_code'
+        && !empty($registeredUrl) && strpos($oauthRedirectUri, $registeredUrl) === 0;
+    if (!$validClient) {
+        $error = 'Invalid OAuth client or redirect URI.'; $isOAuth = false;
+    }
+}
+
+// Honeypot: hidden field that bots auto-fill. Humans can't see it.
+// Note: Bot UA blacklist intentionally NOT implemented — OAuth authorization
+// endpoints must accept all legitimate clients regardless of User-Agent.
+// Brute-force is handled by per-credential lockout, IP lockout, and CSRF.
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!empty($_POST['portal_hp'])) {
+        $error = 'Invalid credentials.';
+    } elseif (empty($_POST['csrf_token']) || empty($_SESSION['portal_csrf_token']) || $_POST['csrf_token'] !== $_SESSION['portal_csrf_token']) {
+        $error = 'Invalid request. Please try again.';
+    } else {
+        $username = $_POST['username'] ?? '';
+        $mode = $_POST['portal_mode'] ?? 'password';
+        if ($mode === 'magic_link' && SticPortalConfigUtils::get('PORTAL_MAGIC_LINK_ENABLED','0') === '1') {
+            $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+            if (SticPortalAuthUtils::isMagicLinkRateLimited($username,'username') || SticPortalAuthUtils::isMagicLinkRateLimited($ip,'ip')) {
+                $message = 'If the account exists, a magic link has been sent to your email.';
+            } else {
+                $result = SticPortalAuthUtils::getPortalUserByUsername($username);
+                if ($result) SticPortalAuthUtils::generateMagicLinkToken($result['bean']);
+                $message = 'If the account exists, a magic link has been sent to your email.';
+            }
+        } else {
+            $password = $_POST['password'] ?? '';
+            $remember = !empty($_POST['remember']);
+            $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+            $auth = SticPortalAuthUtils::authenticate($username, $password, $remember, $ip);
+            if ($auth['success']) {
+                if ($isOAuth) SticPortalAuthCodeGenerator::generateAndRedirect($auth['bean']->id, $auth['type'], $oauthClientId, $oauthRedirectUri, $oauthState);
+                $redirect = SticPortalConfigUtils::get('PORTAL_HOME_URL', 'index.php?entryPoint=sticPortalLogin');
+                if ($auth['must_change_password']) $redirect = 'index.php?entryPoint=sticPortalChangePassword';
+                // Avoid blank page after generic login — redirect back to login with success flag
+                if (!$isOAuth && $redirect === 'index.php?entryPoint=sticPortalLogin') $redirect .= '&logged_in=1';
+                header('Location: ' . $redirect); exit;
+            }
+            $error = ($auth['error_code'] === 'locked' || $auth['error_code'] === 'ip_locked')
+                ? 'Too many failed attempts. If the account exists and exceeded the limit, an email has been sent with instructions.'
+                : 'Invalid credentials.';
+        }
+    }
+}
+
+if (empty($_SESSION['portal_csrf_token'])) $_SESSION['portal_csrf_token'] = bin2hex(random_bytes(32));
+$csrfToken = $_SESSION['portal_csrf_token'];
+if (isset($_GET['error']) && $_GET['error'] === 'invalid_link') $error = 'Invalid or expired link. Please request a new one.';
+if (isset($_GET['error']) && $_GET['error'] === 'session_expired') $error = 'Session expired. Please log in again.';
+if (isset($_GET['logged_in'])) $message = 'You are now logged in.';
+
+$loggedIn = SticPortalAuthUtils::validatePortalSession() !== null;
+
+// Remember-me auto-login: if not logged in and a valid remember cookie exists,
+// restore the portal session and redirect to the portal home.
+if (!$loggedIn && $_SERVER['REQUEST_METHOD'] !== 'POST' && !empty($_COOKIE['portal_remember'])) {
+    $remembered = SticPortalAuthUtils::validateRememberToken($_COOKIE['portal_remember']);
+    if ($remembered) {
+        SticPortalAuthUtils::recordLoginAudit($remembered['bean'], $remembered['type'], $remembered['bean']->stic_portal_username_c, $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'remember');
+        SticPortalAuthUtils::createPortalSession($remembered['bean'], $remembered['type']);
+        $redirect = SticPortalConfigUtils::get('PORTAL_HOME_URL', 'index.php?entryPoint=sticPortalLogin');
+        if ($redirect === 'index.php?entryPoint=sticPortalLogin') $redirect .= '&logged_in=1';
+        header('Location: ' . $redirect);
+        exit;
+    }
+}
+
+$ss = new Sugar_Smarty();
+$ss->assign('TITLE', SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal'));
+$ss->assign('LOGO_URL', SticPortalConfigUtils::getLogoUrl());
+$ss->assign('LOGO_WIDTH', SticPortalConfigUtils::get('PORTAL_LOGO_WIDTH', '212'));
+$ss->assign('MAGIC_ENABLED', SticPortalConfigUtils::get('PORTAL_MAGIC_LINK_ENABLED', '0'));
+$ss->assign('ERROR', $error); $ss->assign('MESSAGE', $message);
+$ss->assign('MODE', $mode); $ss->assign('CSRF_TOKEN', $csrfToken);
+$ss->assign('OAUTH_CLIENT_ID', $oauthClientId); $ss->assign('OAUTH_REDIRECT_URI', $oauthRedirectUri);
+$ss->assign('OAUTH_STATE', $oauthState); $ss->assign('IS_OAUTH', $isOAuth);
+$ss->assign('LOGGED_IN', $loggedIn);
+$ss->display('custom/themes/SuiteP/tpls/SticPortalLogin.tpl');

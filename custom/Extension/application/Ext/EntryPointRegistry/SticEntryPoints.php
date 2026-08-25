@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
@@ -70,4 +71,13 @@ $entry_point_registry['stic_AWF_resumeHandler'] = array('file' => 'modules/stic_
 // Entry point for async ListView count
 $entry_point_registry['sticAsyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
 
-
+// Portal authentication entry points
+$entry_point_registry['sticPortalLogin'] = array('file' => 'SticInclude/Portal/Login.php', 'auth' => false);
+$entry_point_registry['sticPortalLogout'] = array('file' => 'SticInclude/Portal/Logout.php', 'auth' => false);
+$entry_point_registry['sticPortalReset'] = array('file' => 'SticInclude/Portal/Reset.php', 'auth' => false);
+$entry_point_registry['sticPortalResetConfirm'] = array('file' => 'SticInclude/Portal/ResetConfirm.php', 'auth' => false);
+$entry_point_registry['sticPortalMagicLogin'] = array('file' => 'SticInclude/Portal/MagicLogin.php', 'auth' => false);
+$entry_point_registry['sticPortalChangePassword'] = array('file' => 'SticInclude/Portal/ChangePassword.php', 'auth' => false);
+$entry_point_registry['sticPortalOAuthToken'] = array('file' => 'SticInclude/Portal/OAuthToken.php', 'auth' => false);
+$entry_point_registry['sticPortalInvitation'] = array('file' => 'SticInclude/Portal/Invitation.php', 'auth' => true);
+$entry_point_registry['sticPortalResetRequest'] = array('file' => 'SticInclude/Portal/ResetRequest.php', 'auth' => true);

@@ -163,3 +163,38 @@ $mod_strings['LBL_STIC_PA_PASSWORD'] = 'Private area password';
 $mod_strings['LBL_STIC_PA_ENABLE'] = 'Enable private area';
 $mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'In order for the account to access the private area, this field must be checked. If not, it will not be possible to access it even if a username and password are available. When checking this field, if the setting <a href="index.php?module=stic_Settings&action=DetailView&record=f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11" target="_blank">PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE</a> is enabled, the access credentials will be automatically sent to the account. Otherwise, it will have to be done manually.';
 $mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'To edit the password, the "Enable private area" field must be checked.';
+
+$mod_strings['LBL_STIC_PANEL_PORTAL_AUTHENTICATION'] = 'Portal Authentication';
+
+$mod_strings['LBL_STIC_PORTAL_ENABLED'] = 'Portal Enabled';
+
+$mod_strings['LBL_STIC_PORTAL_USERNAME'] = 'Portal Username';
+
+$mod_strings['LBL_STIC_PORTAL_LAST_LOGIN'] = 'Last Login';
+
+$mod_strings['LBL_STIC_PORTAL_FAILED_ATTEMPTS'] = 'Failed Attempts';
+
+$mod_strings['LBL_STIC_PORTAL_LOCKED_UNTIL'] = 'Locked Until';
+
+$mod_strings['LBL_STIC_PORTAL_FORCE_PW_CHANGE'] = 'Force Password Change';
+
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_CHANGED'] = 'Password Changed';
+
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRES'] = 'Password Expires';
+
+$mod_strings['LBL_STIC_SEND_PORTAL_INVITATION'] = 'Send Portal Invitation';
+
+$mod_strings["LBL_STIC_PORTAL_ACTIONS"] = "Portal Actions";
+$mod_strings['LBL_STIC_PORTAL_USERNAME_C_HELP'] = 'Email address used for portal login. Must be unique across all Contacts and Accounts.';
+$mod_strings['LBL_STIC_PORTAL_ENABLED_C_HELP'] = 'Enable portal access for this record. When enabled, the user can log in at the portal login page.';
+$mod_strings['LBL_STIC_PORTAL_FORCE_PW_CHANGE_C_HELP'] = 'Force the user to change their password on the next portal login. Useful after an admin password reset.';
+$mod_strings['LBL_STIC_PORTAL_LAST_LOGIN_C_HELP'] = 'Date and time of the last successful portal login. Read-only, set automatically by the system.';
+$mod_strings['LBL_STIC_PORTAL_FAILED_ATTEMPTS_C_HELP'] = 'Number of consecutive failed portal login attempts. Read-only, set automatically by the system.';
+$mod_strings['LBL_STIC_PORTAL_LOCKED_UNTIL_C_HELP'] = 'If the account is locked due to failed attempts, the date and time when it will be automatically unlocked. Read-only.';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_CHANGED_C_HELP'] = 'Date when the portal password was last changed. Read-only, updated automatically.';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRES_C_HELP'] = 'Date when the portal password expires. After this date, the user will be forced to change it on login. Read-only.';
+$mod_strings['LBL_STIC_PORTAL_ACTIONS_HELP'] = 'The portal allows external contacts and accounts to log in securely via OAuth2 to access their data and relationships. Use this popup to send a portal invitation or password reset email. The recipient will receive a link to set their password and can then access the portal. The account\'s portal access is automatically enabled when the invitation or reset is sent.';
+$mod_strings['LBL_STIC_PORTAL_ACTION_TYPE_HELP'] = '<b>Send Invitation Email:</b> Sends a welcome email with portal access URL, username, and a password setup link. The email template can be customized in Administration > Portal Configuration > Email Templates > Portal credentials (Contacts/Accounts).<br><br><b>Send Password Reset:</b> Sends only the password setup link without the welcome message. The email template can be customized in Administration > Portal Configuration > Email Templates > Password reset.<br><br>In both cases, the portal username is auto-set from the account\'s email if empty, and the %PORTAL_ENABLED_LABEL% field is automatically enabled.';
+$mod_strings['LBL_STIC_PORTAL_TARGET_APP_HELP'] = 'After setting their password, the account is redirected to the selected external application via OAuth2 authorization code flow. The apps listed here come from OAuth2 Clients configured in the CRM (Administration > OAuth2 Clients).<br><br>To add a new app, go to <b>OAuth2 Clients > New Portal Client (Authorization Code)</b>, fill in the Name and Redirect URL, and it will appear in this dropdown.<br><br>Choose <b>Generic (no specific app)</b> to skip the redirect and show the portal login page instead.';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_SUBJECT'] = 'SinergiaCRM Portal - Access your portal';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_BODY'] = 'Hello<br><br>Your organization portal account is ready.<br><br>Access: <a href=\"{$portal_address}\">{$portal_address}</a><br>Username: {$account_stic_portal_username_c}<br><br>Click here to set your password: <a href=\"{$portal_reset_link}\">Set Password</a><br><br>This link expires in 24 hours.';

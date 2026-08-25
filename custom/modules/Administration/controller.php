@@ -156,6 +156,32 @@ class CustomAdministrationController extends AdministrationController
         // Add specific logic for manage main menu
         require_once('custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.php');
 
-    } 
+    }
+
+    public function action_sticportalconfig_save() {
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        SticPortalConfigUtils::saveFromPost($_POST);
+        // Logo upload goes through handleLogoUpload() which validates the MIME type
+        // (rejects arbitrary/scriptable files) and stores via the portal config.
+        if (!empty($_FILES['portal_logo_file']['tmp_name'])) {
+            SticPortalConfigUtils::handleLogoUpload($_FILES['portal_logo_file']);
+        }
+        header('Location: index.php?module=Administration&action=index');
+        exit;
+    }
+
+    public function action_sticportalconfig_clearlockouts() {
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        SticPortalConfigUtils::clearAllLockouts();
+        header('Location: index.php?module=Administration&action=index');
+        exit;
+    }
+
+    public function action_sticportalconfig_clearsessions() {
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        SticPortalConfigUtils::clearAllSessions();
+        header('Location: index.php?module=Administration&action=index');
+        exit;
+    }
 
 }
