@@ -115,19 +115,46 @@ class SticRecycleBinHookCode
             }
 
             $relDef = $relObj->def;
-            $relatedBeans = $link->getBeans();
-            if (empty($relatedBeans)) {
+            $relatedIds = $link->get();
+            if (empty($relatedIds) || !is_array($relatedIds)) {
                 continue;
             }
 
             $joinTable = $relDef['join_table'] ?? '';
             $lhsKey = $relDef['join_key_lhs'] ?? $this->resolveLhsKey($bean, $fieldName, $def, $relDef);
-            $rhsKey = $relDef['join_key_rhs'] ?? 'id';
+            $rhsKey = $relDef['join_key_rhs'] ?? $relDef['rhs_key'] ?? 'id';
 
-            foreach ($relatedBeans as $relatedBean) {
-                if (!$relatedBean || empty($relatedBean->id) || !self::isValidId($relatedBean->id)) {
-                    continue;
+            $lhsModule = $relDef['lhs_module'] ?? '';
+            $rhsModule = $relDef['rhs_module'] ?? '';
+            $relatedModule = ($lhsModule === $bean->module_dir) ? $rhsModule : $lhsModule;
+            if (!$relatedModule) {
+                continue;
+            }
+            $relatedSeed = BeanFactory::newBean($relatedModule);
+            if (!$relatedSeed) {
+                continue;
+            }
+            $relatedTable = $relatedSeed->table_name;
+
+            $quotedIds = array();
+            foreach (array_keys($relatedIds) as $rid) {
+                if (self::isValidId($rid)) {
+                    $quotedIds[] = $db->quoted($rid);
                 }
+            }
+            if (empty($quotedIds)) {
+                continue;
+            }
+
+            $selectSql = 'SELECT id, name FROM `' . $relatedTable . '` WHERE id IN (' . implode(',', $quotedIds) . ') AND deleted = 0';
+            $selectResult = $db->query($selectSql);
+
+            while ($row = $db->fetchByAssoc($selectResult)) {
+                $relatedBean = new stdClass();
+                $relatedBean->id = $row['id'];
+                $relatedBean->name = $row['name'] ?? '';
+                $relatedBean->module_dir = $relatedModule;
+                $relatedBean->deleted = 0;
                 $this->insertRelationshipRow(
                     $bean, $fieldName, $relatedBean, $recycleBinId, $db,
                     $joinTable, $lhsKey, $rhsKey
@@ -187,7 +214,7 @@ class SticRecycleBinHookCode
      */
     private function insertRelationshipRow($bean, $fieldName, $relatedBean, $recycleBinId, $db, $joinTable, $lhsKey, $rhsKey)
     {
-        if (!self::isValidIdentifier($lhsKey) || !self::isValidIdentifier($rhsKey)) {
+        if (!self::isValidIdentifier($lhsKey) || !self::isValidIdentifier($rhsKey) || !self::isValidIdentifier($fieldName)) {
             return;
         }
 

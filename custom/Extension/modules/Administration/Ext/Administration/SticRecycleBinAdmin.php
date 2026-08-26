@@ -21,13 +21,14 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-$admin_option_defs = [];
-$admin_option_defs['Administration']['stic_Recycle_Bin'] = [
+$admin_option_defs = array();
+$admin_option_defs['Administration']['stic_Recycle_Bin'] = array(
     'stic_Recycle_Bin',
     'LBL_STIC_RECYCLE_BIN_LINK_TITLE',
-    'LBL_STIC_RECYCLE_BIN_LINK_DESC',
+    'LBL_STIC_RECYCLE_BIN_DESCRIPTION',
     './index.php?module=stic_Recycle_Bin&action=index',
-];
+    'stic-recycle-bin',
+);
 
 if (!isset($admin_group_header['LBL_SINERGIACRM_TAB_TITLE']) || !isset($admin_group_header['LBL_SINERGIACRM_TAB_TITLE'][3])) {
     $admin_group_header['LBL_SINERGIACRM_TAB_TITLE'] = [

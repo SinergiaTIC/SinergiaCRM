@@ -101,12 +101,13 @@ class stic_Recycle_BinViewDetail extends ViewDetail
         }
 
         $confirmMsg = translate('LBL_RESTORE_CONFIRM', 'stic_Recycle_Bin');
+        $confirmMsgJs = json_encode($confirmMsg);
         $buttonLabel = translate('LBL_RESTORE_RECORD', 'stic_Recycle_Bin');
         $buttonLabelEsc = htmlspecialchars($buttonLabel, ENT_QUOTES);
         $formId = 'stic_rb_restore_' . preg_replace('/[^a-zA-Z0-9]/', '', $recordId);
 
         $restoreLi = '<li>'
-                   . '<input type="button" class="button" onclick="if(confirm(\'' . $confirmMsg . '\')){document.getElementById(\'' . $formId . '\').submit();}" value="' . $buttonLabelEsc . '"/>'
+                   . '<input type="button" class="button" onclick="if(confirm(' . $confirmMsgJs . ')){document.getElementById(\'' . $formId . '\').submit();}" value="' . $buttonLabelEsc . '"/>'
                    . '</li>';
 
         $hiddenForm = '<form id="' . $formId . '" method="post" action="index.php" style="display:none">'

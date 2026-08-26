@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-$mod_strings = [
+$mod_strings = array(
     // Module info
     'LBL_MODULE_NAME' => 'Paperera de reciclatge',
     'LBL_MODULE_TITLE' => 'Paperera de reciclatge',
@@ -116,4 +116,4 @@ $mod_strings = [
 
     // Module list
     'LBL_RECYCLE_MODULE_LIST' => 'Tots els mòduls',
-];
+);

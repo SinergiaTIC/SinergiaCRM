@@ -31,7 +31,7 @@ if (!isset($hook_array['before_delete']) || !is_array($hook_array['before_delete
 $hook_array['before_delete'][] = array(
     1,
     'STIC Recycle Bin - Capture deleted record',
-    'custom/Extension/application/Ext/LogicHooksCode/SticRecycleBinHookCode.php',
+    'modules/stic_Recycle_Bin/LogicHooksCode.php',
     'SticRecycleBinHookCode',
     'captureDeletedRecord'
 );

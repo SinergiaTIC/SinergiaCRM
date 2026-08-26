@@ -52,6 +52,17 @@ class stic_Recycle_Bin_Relationships extends Basic
     public $assigned_user_link;
     public $SecurityGroups;
 
+    public $stic_recycle_bin_id;
+    public $recycle_record_id;
+    public $recycle_relationship_name;
+    public $recycle_join_table;
+    public $recycle_related_module;
+    public $recycle_related_record_id;
+    public $recycle_related_record_name;
+    public $recycle_restored;
+    public $recycle_join_lhs_key;
+    public $recycle_join_rhs_key;
+
     public function __construct()
     {
         parent::__construct();
