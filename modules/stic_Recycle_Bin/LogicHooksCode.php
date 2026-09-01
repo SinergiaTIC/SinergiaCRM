@@ -137,7 +137,7 @@ class SticRecycleBinHookCode
             $relatedTable = $relatedSeed->table_name;
 
             $quotedIds = array();
-            foreach (array_keys($relatedIds) as $rid) {
+            foreach ($relatedIds as $rid) {
                 if (self::isValidId($rid)) {
                     $quotedIds[] = $db->quoted($rid);
                 }
@@ -146,13 +146,13 @@ class SticRecycleBinHookCode
                 continue;
             }
 
-            $selectSql = 'SELECT id, name FROM `' . $relatedTable . '` WHERE id IN (' . implode(',', $quotedIds) . ') AND deleted = 0';
+            $selectSql = 'SELECT * FROM `' . $relatedTable . '` WHERE id IN (' . implode(',', $quotedIds) . ') AND deleted = 0';
             $selectResult = $db->query($selectSql);
 
             while ($row = $db->fetchByAssoc($selectResult)) {
                 $relatedBean = new stdClass();
                 $relatedBean->id = $row['id'];
-                $relatedBean->name = $row['name'] ?? '';
+                $relatedBean->name = $row['name'] ?? $row['email_address'] ?? $row['filename'] ?? $row['recipient_name'] ?? '';
                 $relatedBean->module_dir = $relatedModule;
                 $relatedBean->deleted = 0;
                 $this->insertRelationshipRow(

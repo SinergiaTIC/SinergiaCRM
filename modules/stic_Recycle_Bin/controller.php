@@ -68,11 +68,14 @@ class stic_Recycle_BinController extends SugarController
         if ($result['success']) {
             $relationsRestored = $result['relations_restored'] ?? 0;
             $relationsSkipped = $result['relations_skipped'] ?? 0;
-            SugarApplication::appendSuccessMessage(
-                translate('LBL_RESTORE_SUCCESS', 'stic_Recycle_Bin') . ' ' .
-                sprintf(translate('LBL_RESTORE_RELATIONS_RESTORED', 'stic_Recycle_Bin'), $relationsRestored) . ' ' .
-                sprintf(translate('LBL_RESTORE_RELATIONS_SKIPPED', 'stic_Recycle_Bin'), $relationsSkipped)
-            );
+            $msg = translate('LBL_RESTORE_SUCCESS', 'stic_Recycle_Bin');
+            if ($relationsRestored > 0) {
+                $msg .= ' ' . sprintf(translate('LBL_RESTORE_RELATIONS_RESTORED', 'stic_Recycle_Bin'), $relationsRestored);
+            }
+            if ($relationsSkipped > 0) {
+                $msg .= ' ' . sprintf(translate('LBL_RESTORE_RELATIONS_SKIPPED', 'stic_Recycle_Bin'), $relationsSkipped);
+            }
+            SugarApplication::appendSuccessMessage($msg);
         } else {
             SugarApplication::appendErrorMessage($result['message'] ?? translate('LBL_RESTORE_FAIL', 'stic_Recycle_Bin'));
         }

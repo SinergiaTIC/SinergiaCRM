@@ -104,7 +104,12 @@ class stic_Recycle_BinUtils
             }
         }
 
-        self::recalculateDenormalizedFields($module, $recordId);
+        $bean = BeanFactory::getBean($module, $recordId, array(), true);
+        if ($bean && !empty($bean->id)) {
+            $bean->mark_undeleted($recordId);
+        }
+
+        self::replayRelationshipAddHooks($bean, $recycleBinId, $db);
 
         $nowDb = $GLOBALS['timedate']->nowDb();
         $currentUserId = $current_user->id ?? '1';
@@ -153,6 +158,69 @@ class stic_Recycle_BinUtils
             'success' => $success,
             'failed' => $failed,
         ];
+    }
+
+    /**
+     * Replays the framework's after_relationship_add event for every relationship
+     * restored with the given record.
+     *
+     * @param SugarBean $bean Restored record bean
+     * @param string $recycleBinId Recycle bin entry ID
+     * @param object $db Database instance
+     * @return void
+     */
+    private static function replayRelationshipAddHooks($bean, $recycleBinId, $db)
+    {
+        global $log;
+
+        $relRows = $db->query(
+            'SELECT recycle_relationship_name, recycle_related_module, recycle_related_record_id
+             FROM stic_recycle_bin_relationships
+             WHERE stic_recycle_bin_id = ' . $db->quoted($recycleBinId) . '
+             AND deleted = 0 AND recycle_restored = 1'
+        );
+
+        while ($rel = $db->fetchByAssoc($relRows)) {
+            $linkName = $rel['recycle_relationship_name'];
+            if (empty($linkName) || !self::isValidModule($rel['recycle_related_module']) || !self::isValidId($rel['recycle_related_record_id'])) {
+                continue;
+            }
+
+            $relatedBean = BeanFactory::getBean($rel['recycle_related_module'], $rel['recycle_related_record_id']);
+            if (!$relatedBean || empty($relatedBean->id)) {
+                continue;
+            }
+
+            $relationshipName = $bean->field_defs[$linkName]['relationship'] ?? '';
+
+            try {
+                $bean->call_custom_logic('after_relationship_add', array(
+                    'id' => $bean->id,
+                    'related_id' => $relatedBean->id,
+                    'module' => $bean->module_dir,
+                    'related_module' => $relatedBean->module_dir,
+                    'related_bean' => $relatedBean,
+                    'link' => $linkName,
+                    'relationship' => $relationshipName,
+                ));
+            } catch (Exception $e) {
+                $log->warn(__METHOD__ . ': after_relationship_add replay failed for ' . $bean->module_dir . ' / ' . $bean->id . ': ' . $e->getMessage());
+            }
+
+            try {
+                $relatedBean->call_custom_logic('after_relationship_add', array(
+                    'id' => $relatedBean->id,
+                    'related_id' => $bean->id,
+                    'module' => $relatedBean->module_dir,
+                    'related_module' => $bean->module_dir,
+                    'related_bean' => $bean,
+                    'link' => '',
+                    'relationship' => $relationshipName,
+                ));
+            } catch (Exception $e) {
+                $log->warn(__METHOD__ . ': after_relationship_add replay failed for ' . $relatedBean->module_dir . ' / ' . $relatedBean->id . ': ' . $e->getMessage());
+            }
+        }
     }
 
     /**
@@ -383,92 +451,6 @@ class stic_Recycle_BinUtils
         $affected = $db->getAffectedRowCount($result);
         $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': inserted, affected rows: ' . $affected);
         return $affected > 0;
-    }
-
-    /**
-     * Recalculates denormalized fields after restoring a record and its relationships.
-     *
-     * @param string $module Module name
-     * @param string $recordId Record ID
-     * @return void
-     */
-    private static function recalculateDenormalizedFields($module, $recordId)
-    {
-        global $log;
-
-        switch ($module) {
-            case 'Contacts':
-                if (file_exists('modules/stic_Contacts_Relationships/Utils.php')) {
-                    require_once 'modules/stic_Contacts_Relationships/Utils.php';
-                    stic_Contacts_RelationshipsUtils::setRelationshipType($recordId);
-                    $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recalculated stic_relationship_type_c for Contact ' . $recordId);
-                }
-                break;
-
-            case 'Accounts':
-                if (file_exists('modules/stic_Accounts_Relationships/Utils.php')) {
-                    require_once 'modules/stic_Accounts_Relationships/Utils.php';
-                    stic_Accounts_RelationshipsUtils::setRelationshipType($recordId);
-                    $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recalculated stic_relationship_type_c for Account ' . $recordId);
-                }
-                break;
-
-            case 'stic_Events':
-                if (file_exists('modules/stic_Events/Utils.php')) {
-                    require_once 'modules/stic_Events/Utils.php';
-                    stic_EventsUtils::setEventTotalHours($recordId);
-                    $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recalculated total_hours for stic_Event ' . $recordId);
-                }
-                if (file_exists('modules/stic_Registrations/Utils.php')) {
-                    require_once 'modules/stic_Registrations/Utils.php';
-                    stic_RegistrationsUtils::recalculateTotalAttendees(null, $recordId);
-                    $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recalculated status counters for stic_Event ' . $recordId);
-                }
-                break;
-
-            case 'stic_Sessions':
-                if (file_exists('modules/stic_Sessions/Utils.php')) {
-                    require_once 'modules/stic_Sessions/Utils.php';
-                    stic_SessionsUtils::setSessionAttendancesCounters($recordId);
-                    $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recalculated attendance counters for stic_Session ' . $recordId);
-                }
-                break;
-
-            case 'stic_Registrations':
-                if (file_exists('modules/stic_Attendances/Utils.php')) {
-                    require_once 'modules/stic_Attendances/Utils.php';
-                    stic_AttendancesUtils::setRegistrationTotalHoursAndPercentage($recordId);
-                    $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recalculated attendance hours/percentage for stic_Registration ' . $recordId);
-                }
-                break;
-
-            case 'stic_Financial_Products':
-                if (file_exists('modules/stic_Transactions/Utils.php')) {
-                    require_once 'modules/stic_Transactions/Utils.php';
-                    stic_TransactionsUtils::recalculateProductBalance($recordId);
-                    $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recalculated current_balance for stic_Financial_Product ' . $recordId);
-                }
-                break;
-
-            case 'stic_Job_Offers':
-                if (file_exists('modules/stic_Job_Offers/Utils.php')) {
-                    require_once 'modules/stic_Job_Offers/Utils.php';
-                    stic_Job_OffersUtils::updateApplicationsCounts($recordId);
-                    $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recalculated application counters for stic_Job_Offer ' . $recordId);
-                }
-                break;
-
-            case 'stic_Payment_Commitments':
-                if (file_exists('modules/stic_Payment_Commitments/Utils.php')) {
-                    require_once 'modules/stic_Payment_Commitments/Utils.php';
-                    $pcBean = BeanFactory::getBean('stic_Payment_Commitments', $recordId);
-                    if ($pcBean && !empty($pcBean->id)) {
-                        stic_Payment_CommitmentsUtils::setPaidAnnualizedFee($pcBean);
-                        $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recalculated paid_annualized_fee for stic_Payment_Commitment ' . $recordId);
-                    }
-                }
-                break;
-        }
     }
 
     /**

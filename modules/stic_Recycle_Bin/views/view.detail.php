@@ -101,7 +101,7 @@ class stic_Recycle_BinViewDetail extends ViewDetail
         }
 
         $confirmMsg = translate('LBL_RESTORE_CONFIRM', 'stic_Recycle_Bin');
-        $confirmMsgJs = json_encode($confirmMsg);
+        $confirmMsgJs = "'" . addslashes($confirmMsg) . "'";
         $buttonLabel = translate('LBL_RESTORE_RECORD', 'stic_Recycle_Bin');
         $buttonLabelEsc = htmlspecialchars($buttonLabel, ENT_QUOTES);
         $formId = 'stic_rb_restore_' . preg_replace('/[^a-zA-Z0-9]/', '', $recordId);

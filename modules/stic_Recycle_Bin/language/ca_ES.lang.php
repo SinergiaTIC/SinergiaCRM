@@ -105,8 +105,8 @@ $mod_strings = array(
     'LBL_RESTORE_RESULTS' => 'Resultats de la restauració',
     'LBL_RESTORE_RECORDS_RESTORED' => 'registres restaurats correctament.',
     'LBL_RESTORE_RECORDS_FAILED' => 'registres que no s\'han pogut restaurar.',
-    'LBL_RESTORE_RELATIONS_RESTORED' => 'relacions restaurades.',
-    'LBL_RESTORE_RELATIONS_SKIPPED' => 'relacions omeses (els registres relacionats ja no estan disponibles).',
+    'LBL_RESTORE_RELATIONS_RESTORED' => '%d relacions restaurades.',
+    'LBL_RESTORE_RELATIONS_SKIPPED' => '%d relacions omeses (els registres relacionats ja no estan disponibles).',
 
     // Generic
     'LBL_YES' => 'Sí',

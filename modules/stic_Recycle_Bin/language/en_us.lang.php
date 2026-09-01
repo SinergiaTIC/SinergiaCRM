@@ -105,8 +105,8 @@ $mod_strings = array(
     'LBL_RESTORE_RESULTS' => 'Restore Results',
     'LBL_RESTORE_RECORDS_RESTORED' => 'records restored successfully.',
     'LBL_RESTORE_RECORDS_FAILED' => 'records failed to restore.',
-    'LBL_RESTORE_RELATIONS_RESTORED' => 'relationships restored.',
-    'LBL_RESTORE_RELATIONS_SKIPPED' => 'relationships skipped (related records no longer available).',
+    'LBL_RESTORE_RELATIONS_RESTORED' => '%d relationships restored.',
+    'LBL_RESTORE_RELATIONS_SKIPPED' => '%d relationships skipped (related records no longer available).',
 
     // Generic
     'LBL_YES' => 'Yes',
