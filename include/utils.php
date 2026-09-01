@@ -223,7 +223,10 @@ function make_sugar_config(&$sugar_config)
         ) : $upload_badext,
         'valid_image_ext' => [
             'gif',
+			// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+			// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
             'webp',
+			// END STIC-Custom
             'png',
             'jpg',
             'jpeg',
@@ -233,7 +236,10 @@ function make_sugar_config(&$sugar_config)
         'upload_maxsize' => empty($upload_maxsize) ? 30000000 : $upload_maxsize,
         'allowed_preview' => [
             'gif',
+			// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+			// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
             'webp',
+			// END STIC-Custom
             'png',
             'jpeg',
             'jpg'
@@ -497,7 +503,10 @@ function get_sugar_config_defaults(): array
         ],
         'valid_image_ext' => [
             'gif',
+			// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+			// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
             'webp',
+			// END STIC-Custom
             'png',
             'jpg',
             'jpeg',
@@ -506,7 +515,10 @@ function get_sugar_config_defaults(): array
         ],
         'allowed_preview' => [
             'gif',
+			// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+			// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
             'webp',
+			// END STIC-Custom
             'png',
             'jpeg',
             'jpg'
@@ -6080,7 +6092,10 @@ function has_valid_image_extension($fieldName, $name)
 
     $validExtensions = [
         'gif',
+		// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+		// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
         'webp',
+		// END STIC-Custom
         'png',
         'jpg',
         'jpeg',
@@ -6109,7 +6124,10 @@ function has_valid_image_mime_type(string $mimeType): bool
 
     $validExtensions = [
         'gif',
+		// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+		// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
         'webp',
+		// END STIC-Custom
         'png',
         'jpg',
         'jpeg',
