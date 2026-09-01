@@ -5477,7 +5477,8 @@ function verify_image_file($path, $jpeg = false)
             if (file_put_contents($path, $image)) {
                 return true;
             }
-        // STIC-Custom OC - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+        // STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+		// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
         } elseif ($filetype == 'image/gif') {
             // else if the filetype is gif, create gif
             ob_start();
@@ -5494,7 +5495,7 @@ function verify_image_file($path, $jpeg = false)
             if (file_put_contents($path, $image)) {
                 return true;
             }
-        // END STIC-Custom OC
+        // END STIC-Custom
         } else {
             return false;
         }
@@ -5516,6 +5517,11 @@ function verify_image_file($path, $jpeg = false)
 function verify_uploaded_image($path, $jpeg_only = false)
 {
     global $sugar_config;
+	// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+	// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+	// $supportedExtensions = $sugar_config['image_ext'] ?? ['image/jpeg', 'image/png', 'image/gif', 'tmp' => 'tmp'];
+	// END STIC-Custom
+	
     $supportedExtensions = $sugar_config['image_ext'] ?? ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'tmp' => 'tmp'];
 
     if (!$jpeg_only) {
