@@ -2549,7 +2549,7 @@ class SugarBean
                 }
 
                 // STIC-Custom 20260901 JCH - Avoid using property "key" if it is not set for html/longhtml fields
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/XXXX
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1399
                 // if (isset($def['type']) && ($def['type'] == 'html' || $def['type'] == 'longhtml')) {
                 if (isset($def['type']) && ($def['type'] == 'html' || $def['type'] == 'longhtml') && property_exists($this, $key)) {
                 // END STIC-Custom (JCH 20260901)
