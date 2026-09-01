@@ -5532,9 +5532,8 @@ function verify_uploaded_image($path, $jpeg_only = false)
 	// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
 	// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
 	// $supportedExtensions = $sugar_config['image_ext'] ?? ['image/jpeg', 'image/png', 'image/gif', 'tmp' => 'tmp'];
+	$supportedExtensions = $sugar_config['image_ext'] ?? ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'tmp' => 'tmp'];
 	// END STIC-Custom
-	
-    $supportedExtensions = $sugar_config['image_ext'] ?? ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'tmp' => 'tmp'];
 
     if (!$jpeg_only) {
         $supportedExtensions['png'] = 'image/png';
