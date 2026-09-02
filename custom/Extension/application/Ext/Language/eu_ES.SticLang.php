@@ -44,6 +44,9 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Deslucrativizado por SinergiaCR
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM ha sido desarrollado por la Asociación SinergiaTIC. El software se proporciona TAL CUAL ES, sin garantía de ningún tipo. Bajo la licencia AGPLv3. Para más información, visite el <a href="https://www.sinergiacrm.org">web de SinergiaCRM</a>.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa es software libre. Se permite redistribuirlo y/o modificarlo bajo los términos de la Licencia Pública General Affero de GNU versión 3, publicada por la Free Software Foundation, incluyendo cualquier permiso adicional indicado en la cabecera del código fuente.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos los nombres de otras empresas y productos mencionados aquí pueden ser marcas registradas de sus respectivas compañías asociadas.';
+$app_strings['ERR_OPT_IN_RELATION_INCORRECT'] = 'Para autorizar es necesario que el correo esté relacionado con una Organización/Persona/Interesado/Público Objetivo';
+$app_strings['LBL_CONFIRM_OPT_IN_ONLY_FOR_PERSON'] = 'Envío de correo de confirmación de autorización sólo para Organizaciones/Personas/Interesados/Público Objetivo';
+$app_strings['LBL_LIST_ACCOUNT_NAME'] = 'Organización';
 
 // Creación de registro horario vía cabecera
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crear registro';
