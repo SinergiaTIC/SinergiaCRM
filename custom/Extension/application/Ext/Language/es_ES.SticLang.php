@@ -46,7 +46,8 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa es software
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos los nombres de otras empresas y productos mencionados aquí pueden ser marcas registradas de sus respectivas compañías asociadas.';
 $app_strings['ERR_OPT_IN_RELATION_INCORRECT'] = 'Para autorizar es necesario que el correo esté relacionado con una Organización/Persona/Interesado/Público Objetivo';
 $app_strings['LBL_CONFIRM_OPT_IN_ONLY_FOR_PERSON'] = 'Envío de correo de confirmación de autorización sólo para Organizaciones/Personas/Interesados/Público Objetivo';
-  
+$app_strings['LBL_LIST_ACCOUNT_NAME'] = 'Organización';
+
 // Creación de registro horario vía cabecera
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crear registro';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'Se creará un registro horario con la siguiente información';
