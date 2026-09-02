@@ -293,9 +293,13 @@ class stic_SignaturesUtils
      * @param string $signerId The ID of the signer.
      * @param string|null $signatureImgSrc Optional signature image src URL. When provided, the signature
      * placeholder is replaced before HTML cleaning so it survives the tag-stripping process.
+     * @param string|null $appendHtml Optional HTML appended to the template description before HTML cleaning
+     * (e.g. the audit page). Appending it here (instead of modifying the template bean in the caller) makes
+     * the result independent of BeanFactory's in-memory bean cache, which can evict and re-fetch the
+     * template bean from the database, silently losing in-memory modifications.
      * @return array An associative array containing the parsed 'header', 'converted' (content), and 'footer'.
      */
-    public static function getParsedTemplate($signerId, $signatureImgSrc = null)
+    public static function getParsedTemplate($signerId, $signatureImgSrc = null, $appendHtml = null)
     {
         require_once 'SticInclude/Utils.php';
         // Use common functions for PDF generation
@@ -389,6 +393,13 @@ class stic_SignaturesUtils
             $templateBean->pdfheader = str_replace($plainPlaceholder, htmlspecialchars($plainSignatureImg), (string) $templateBean->pdfheader);
             $templateBean->pdffooter = str_replace($plainPlaceholder, htmlspecialchars($plainSignatureImg), (string) $templateBean->pdffooter);
             $templateBean->description = str_replace($plainPlaceholder, htmlspecialchars($plainSignatureImg), (string) $templateBean->description);
+        }
+
+        // Append custom HTML (e.g. audit page) to the description, entity-encoded so it
+        // survives the tag-stripping regex below and is decoded back into real HTML tags
+        // by the entity-decoding patterns.
+        if ($appendHtml !== null) {
+            $templateBean->description .= htmlspecialchars($appendHtml);
         }
 
         // Clean the template content (header, footer, description)
