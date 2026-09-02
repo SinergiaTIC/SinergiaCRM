@@ -291,9 +291,11 @@ class stic_SignaturesUtils
      * and returns the resulting HTML header, content, and footer.
      *
      * @param string $signerId The ID of the signer.
+     * @param string|null $signatureImgSrc Optional signature image src URL. When provided, the signature
+     * placeholder is replaced before HTML cleaning so it survives the tag-stripping process.
      * @return array An associative array containing the parsed 'header', 'converted' (content), and 'footer'.
      */
-    public static function getParsedTemplate($signerId)
+    public static function getParsedTemplate($signerId, $signatureImgSrc = null)
     {
         require_once 'SticInclude/Utils.php';
         // Use common functions for PDF generation
@@ -372,6 +374,22 @@ class stic_SignaturesUtils
             "'",
             'chr(%1)',
         ];
+
+        if ($signatureImgSrc !== null) {
+            $encodedPlaceholder = '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;';
+            $encodedSignatureImg = '&lt;img class=&quot;signature&quot; src=&quot;' . $signatureImgSrc . '&quot; width=&quot;200&quot; /&gt;';
+
+            $templateBean->pdfheader = str_replace($encodedPlaceholder, $encodedSignatureImg, (string) $templateBean->pdfheader);
+            $templateBean->pdffooter = str_replace($encodedPlaceholder, $encodedSignatureImg, (string) $templateBean->pdffooter);
+            $templateBean->description = str_replace($encodedPlaceholder, $encodedSignatureImg, (string) $templateBean->description);
+
+            $plainPlaceholder = '<img class="signature" src="themes/SuiteP/images/SignaturePlaceholder.png" alt="" width="200" />';
+            $plainSignatureImg = '<img class="signature" src="' . $signatureImgSrc . '" width="200" />';
+
+            $templateBean->pdfheader = str_replace($plainPlaceholder, htmlspecialchars($plainSignatureImg), (string) $templateBean->pdfheader);
+            $templateBean->pdffooter = str_replace($plainPlaceholder, htmlspecialchars($plainSignatureImg), (string) $templateBean->pdffooter);
+            $templateBean->description = str_replace($plainPlaceholder, htmlspecialchars($plainSignatureImg), (string) $templateBean->description);
+        }
 
         // Clean the template content (header, footer, description)
         $header = preg_replace($search, $replace, $templateBean->pdfheader);

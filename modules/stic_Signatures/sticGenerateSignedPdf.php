@@ -307,48 +307,32 @@ class sticGenerateSignedPdf
         }
         // END STIC-Custom 20240125
 
-        // Apply cleaning to header and footer
-        $header = preg_replace($search, $replace, (string) $templateBean->pdfheader);
-        $footer = preg_replace($search, $replace, (string) $templateBean->pdffooter);
-
-        // Final template parsing using the utility function, which handles advanced placeholders
-        $parsedText = stic_SignaturesUtils::getParsedTemplate($signerBean->id);
-        $converted = $parsedText['converted'];
-        $header = $parsedText['header'];
-        $footer = $parsedText['footer'];
-
-        // Replace the signature src with the actual signature image/acceptance image.
-        $stringToreplace = 'src="themes/SuiteP/images/SignaturePlaceholder.png"';
-
-        // Set time in user format and UTC for use later in audit/acceptance
+        // Determine the signature image URL based on signed mode
+        $signatureImgSrc = null;
         $userTime = (new DateTime())->format('Y-m-d H:i:s (\U\T\C P)');
-
-        $replaceWith = '';
-        // Prepare the replacement HTML based on the signed mode
         switch ($signedMode) {
             case 'handwritten':
-                // Use the drawn signature image URL from the signer bean
-                $replaceWith = 'src="' . $signerBean->signature_image . '";';
+                $signatureImgSrc = $signerBean->signature_image;
                 break;
             case 'button':
-                // Generate an acceptance image with signer details and timestamp
                 $textArray = [
-                    'Document accepted by:',
+                    $mod_strings['LBL_PORTAL_DOCUMENT_ACCEPTED_BY'],
                     $signerBean->parent_name,
                     $signerBean->email_address,
                     $userTime,
                 ];
-
-                $acceptImage = stic_SignaturesUtils::generateAcceptImage($textArray);
-                $replaceWith = 'src="' . $acceptImage . '";';
-                break;
-            default:
-                // Default case, no replacement
+                $signatureImgSrc = stic_SignaturesUtils::generateAcceptImage($textArray);
                 break;
         }
 
-        // Perform the replacement in the $text
-        $converted = str_replace($stringToreplace, $replaceWith, (string) $converted);
+        // Final template parsing with signature replacement handled inside getParsedTemplate.
+        // The signature image is passed so it is replaced BEFORE HTML cleaning, ensuring
+        // it survives the tag-stripping regex regardless of whether the template uses
+        // tables, plain HTML, or HTML-encoded placeholders.
+        $parsedText = stic_SignaturesUtils::getParsedTemplate($signerBean->id, $signatureImgSrc);
+        $converted = $parsedText['converted'];
+        $header = $parsedText['header'];
+        $footer = $parsedText['footer'];
 
         // Replace newlines with HTML line breaks for PDF generation
         $printable = str_replace("\n", "<br />", (string) $converted);
