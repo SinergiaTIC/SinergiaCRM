@@ -46,6 +46,7 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Aquest programa és progr
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = "Tots els noms d'altres empreses i productes esmentats poden ser marques registrades de les empreses amb les quals s'associen.";
 $app_strings['ERR_OPT_IN_RELATION_INCORRECT'] = 'Per autoritzar cal que el correu estigui relacionat amb una Organització/Persona/Interessat/Públic Objectiu';
 $app_strings['LBL_CONFIRM_OPT_IN_ONLY_FOR_PERSON'] = "Enviament de correu de confirmació d'autorització només per a Organitzacions/Persones/Interessats/Públic Objectiu";
+$app_strings['LBL_LIST_ACCOUNT_NAME'] = 'Organització';
 
 // Creació de registre horari via capçalera
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crea un registre';
