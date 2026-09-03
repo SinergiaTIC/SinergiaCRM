@@ -27,7 +27,6 @@ class stic_Medication_LogUtils
      * createLogs Creates medication logs according to the parameters provided
      *
      * @param String $date String in Y-m-d format '2019-05-05' Optional, default null (apply current_date)
-     * @param String $prescriptionId Optional, default null
      * @return void
      */
     public static function createLogs($date = null)
