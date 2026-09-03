@@ -102,6 +102,12 @@ class CustomAOS_InvoicesViewList extends ViewList
 
         SticViews::display($this);
 
+        // === Hide standard Mass Update and Duplicate & Mass Update actions when Verifactu is activated ===
+        if (!empty($verifactuStatus['activated'])) {
+            echo '<style>#massupdate_listview_top, #massupdate_listview_bottom { display: none !important; }</style>';
+        }
+        // === End hide Mass Update actions ===
+
         echo '<script>var verifactuActivated = ' . (!empty($verifactuStatus['activated']) ? 'true' : 'false') . ';
 var verifactuInlineEditRestricted = "' . addslashes(translate('LBL_VERIFACTU_INLINE_EDIT_RESTRICTED', 'AOS_Invoices')) . '";</script>';
         echo getVersionedScript("custom/modules/AOS_Invoices/SticUtils.js");
