@@ -152,7 +152,7 @@ class stic_Prescription extends Basic
                 $stopGeneratingDate = strtotime($stopGeneratingDate);
 
                 if ($this->stic_prescription_contactscontacts_ida instanceof Link2) {
-                    $contactBean = SticUtils::getRelatedBeanObject($this, 'stic_prescription_stic_medication');
+                    $contactBean = SticUtils::getRelatedBeanObject($this, 'stic_prescription_contacts');
                     if ($contactBean) {
                         $contactId = $contactBean->id;
                     }
