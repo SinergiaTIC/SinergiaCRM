@@ -146,13 +146,13 @@ class stic_Prescription extends Basic
 
             // Logs are only generated if the prescription started before creation date
             $currentDate = date('Y-m-d');
-            if ($startDate < $currentDate) {
+            if ($startDate <= $currentDate) {
                 $scheduleList = explode('^,^', trim($this->schedule, '^'));
                 $iterationDate = strtotime($startDate);
                 $stopGeneratingDate = strtotime($stopGeneratingDate);
 
                 if ($this->stic_prescription_contactscontacts_ida instanceof Link2) {
-                    $contactBean = SticUtils::getRelatedBeanObject($this, 'stic_prescription_stic_medication');
+                    $contactBean = SticUtils::getRelatedBeanObject($this, 'stic_prescription_contacts');
                     if ($contactBean) {
                         $contactId = $contactBean->id;
                     }
