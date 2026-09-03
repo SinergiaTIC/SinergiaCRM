@@ -146,7 +146,7 @@ class stic_Prescription extends Basic
 
             // Logs are only generated if the prescription started before creation date
             $currentDate = date('Y-m-d');
-            if ($startDate < $currentDate) {
+            if ($startDate <= $currentDate) {
                 $scheduleList = explode('^,^', trim($this->schedule, '^'));
                 $iterationDate = strtotime($startDate);
                 $stopGeneratingDate = strtotime($stopGeneratingDate);
