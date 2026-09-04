@@ -321,10 +321,34 @@ switch (viewType()) {
 }
 
 
-// Only show rectified invoice panel if the invoice is rectified
-if (STIC?.record?.verifactu_is_rectified_c == '0') {
-  $("[data-label=LBL_VERIFACTU_RECTIFIED_PANEL]").closest('.panel').hide();
+// Only show rectified invoice panel if the invoice is rectified.
+// The panel lives inside the "Datos generales" tab (tab-panel-0). SuiteCRM's selectTab() /
+// selectTabOnError() call .show() on every panel of the active tab, so the panel would
+// reappear when the user switches tabs or after a failed save. Wrapping selectTab lets us
+// reapply the visibility in the same turn, right after the tab is shown, avoiding any flicker.
+function syncRectifiedPanelVisibility() {
+  var panel = $("[data-label=LBL_VERIFACTU_RECTIFIED_PANEL]").closest('.panel');
+  if (!panel.length) {
+    return;
+  }
+  var checkbox = document.getElementById('verifactu_is_rectified_c');
+  panel.toggle(!!(checkbox && checkbox.checked));
 }
+
+$(document).ready(function() {
+  syncRectifiedPanelVisibility();
+  $('#verifactu_is_rectified_c').on('change', syncRectifiedPanelVisibility);
+
+  // Wrap the core selectTab() (used on tab click and on selectTabOnError) so the rectified
+  // panel visibility is reapplied right after the chosen tab is shown.
+  if (typeof window.selectTab === 'function') {
+    var originalSelectTab = window.selectTab;
+    window.selectTab = function(tab) {
+      originalSelectTab(tab);
+      syncRectifiedPanelVisibility();
+    };
+  }
+});
 
 
 
