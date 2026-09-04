@@ -195,6 +195,30 @@ switch (viewType()) {
               }
           }, 0);
       });
+
+      // The invoice province fields are plain text, while the source module (Account/Contact)
+      // stores the province as an enum internal key (e.g. '28' for Madrid, '39' for Cantabria).
+      // When an address is autocompleted from the selected customer, translate any valid key to
+      // its localized label so the invoice shows 'Madrid' instead of '28'. Foreign/free-text
+      // values that are not keys of the province list are left untouched.
+      // SUGAR.language.get returns the raw key (e.g. the string "undefined") when the list does
+      // not exist, so guard with a real object check to avoid calling hasOwnProperty on a string.
+      var provinceList = SUGAR.language.get('app_list_strings', 'stic_spain_provinces_list');
+      provinceList = (provinceList !== null && typeof provinceList === 'object' && !Array.isArray(provinceList)) ? provinceList : {};
+      function resolveProvinceLabel() {
+          $('#billing_address_state, #shipping_address_state').each(function() {
+              var $this = $(this);
+              var value = $this.val();
+              if (typeof value === 'string' && value !== '' && provinceList.hasOwnProperty(value)) {
+                  $this.val(provinceList[value]);
+              }
+          });
+      }
+      // Listen to change/blur and also poll periodically: popups and quicksearch may set the
+      // value programmatically without firing a reliable 'change' event, so polling guarantees
+      // the key is translated to its label even in those cases.
+      $('#billing_address_state, #shipping_address_state').on('change blur', resolveProvinceLabel);
+      setInterval(resolveProvinceLabel, 500);
     });
     break;
 
