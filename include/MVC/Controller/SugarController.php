@@ -651,6 +651,7 @@ class SugarController
             if (isset($_POST[$field])) {
                 if (is_array($_POST[$field]) && !empty($properties['isMultiSelect'])) {
                     // STIC-Custom 20260904 EPS - Value lost when only selected an element whose key is 0
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1407
                     // if (empty($_POST[$field][0])) {
                     if (empty($_POST[$field][0]) && $_POST[$field][0] !== '0') {
                     // END STIC-Custom 20260904 EPS
