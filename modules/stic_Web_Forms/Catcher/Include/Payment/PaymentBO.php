@@ -969,10 +969,14 @@ class PaymentBO extends WebFormDataBO
         $paymentBean = null;
         $pcBean = null;
 
-        if ($invoice->subscription != null) {
+        $subscriptionId = $invoice->subscription
+            ?? ($invoice->parent->subscription_details ?? null)->subscription
+            ?? null;
+
+        if ($subscriptionId != null) {
             // Load the Payment Commitment from subscription, then the Payment
             $pcBean = Beanfactory::getBean('stic_Payment_Commitments');
-            $pcBean = $pcBean->retrieve_by_string_fields(array('stripe_subscr_id' => $invoice->subscription));
+            $pcBean = $pcBean->retrieve_by_string_fields(array('stripe_subscr_id' => $subscriptionId));
             $paymentBean = $this->getBeanPaymentFromStripePaymentCommitment($pcBean, $invoice->created);
         }
 
