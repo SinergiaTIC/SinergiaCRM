@@ -650,7 +650,10 @@ class SugarController
             $sf = $sfh::getSugarField(ucfirst($type), true);
             if (isset($_POST[$field])) {
                 if (is_array($_POST[$field]) && !empty($properties['isMultiSelect'])) {
-                    if (empty($_POST[$field][0])) {
+                    // STIC-Custom 20260904 EPS - Value lost when only selected an element whose key is 0
+                    // if (empty($_POST[$field][0])) {
+                    if (empty($_POST[$field][0]) && $_POST[$field][0] !== '0') {
+                    // END STIC-Custom 20260904 EPS
                         unset($_POST[$field][0]);
                     }
                     $_POST[$field] = encodeMultienumValue($_POST[$field]);
