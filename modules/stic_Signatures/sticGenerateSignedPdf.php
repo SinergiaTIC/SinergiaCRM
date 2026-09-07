@@ -143,18 +143,11 @@ class sticGenerateSignedPdf
             LoggerManager::getLogger()->warn('PDFException: ' . $e->getMessage());
         }
 
-        // Set time in user format for use in the audit page and the acceptance image
+        // Set time in user format and UTC for use later in audit/acceptance
         $userTime = (new DateTime())->format('Y-m-d H:i:s (\U\T\C P)');
+        $utcTime = (new DateTime('UTC'))->format('Y-m-d H:i:s P');
 
-        // Build the audit page HTML if enabled. It is intentionally NOT appended here to the
-        // template bean description: BeanFactory's in-memory bean cache is limited (oldest beans
-        // are evicted), so the template bean can be re-fetched from the database inside
-        // getParsedTemplate, silently losing any in-memory modifications made here. The audit
-        // HTML is passed as a parameter instead, so it is appended inside getParsedTemplate
-        // after the template bean is loaded, independent of the cache state.
-        $auditHtml = null;
-
-        // If 'pdf_audit_page' is enabled, build the audit page HTML to append to the PDF content
+        // If 'pdf_audit_page' is enabled, append an audit page to the PDF content
         if (!empty($signatureBean->pdf_audit_page) && $signatureBean->pdf_audit_page && $signedMode != 'unsigned') {
 
             // Get logs related to the signer
@@ -183,38 +176,54 @@ class sticGenerateSignedPdf
 
             $sugar_smarty->assign('SIGNER_LOG', $signerLog);
 
-            // Construct the audit HTML content (page break followed by the audit data)
+            // Construct the audit HTML content
             $auditHtml = '<p style="page-break-before: always;">&nbsp;</p>';
             $auditHtml .= $sugar_smarty->fetch('modules/stic_Signatures/AuditPageTemplate.tpl');
+
+            // Append the audit page HTML (encoded) to the template description
+            $templateBean->description .= htmlspecialchars($auditHtml);
         }
 
-        // Determine the signature image URL based on signed mode
-        $signatureImgSrc = null;
+        // Determine the signature image HTML based on signed mode. The signature
+        // marker is normalized to a plain-text token inside
+        // stic_SignaturesUtils::getParsedTemplate() (before the HTML cleaning
+        // pipeline), so this replacement is applied AFTER the template is parsed.
+        // Note: no closing </div> is appended, as an unmatched </div> makes TCPDF
+        // drop the rest of the document when the signature is inside a table cell.
+        $replaceWith = '';
         switch ($signedMode) {
             case 'handwritten':
-                $signatureImgSrc = $signerBean->signature_image;
+                // Use the drawn signature image URL from the signer bean
+                $replaceWith = '<img class="signature" src="' . $signerBean->signature_image . '" width="200">';
                 break;
             case 'button':
+                // Generate an acceptance image with signer details and timestamp
                 $textArray = [
                     $mod_strings['LBL_PORTAL_DOCUMENT_ACCEPTED_BY'],
                     $signerBean->parent_name,
                     $signerBean->email_address,
                     $userTime,
                 ];
-                $signatureImgSrc = stic_SignaturesUtils::generateAcceptImage($textArray);
+                $acceptImage = stic_SignaturesUtils::generateAcceptImage($textArray);
+                $replaceWith = '<img class="signature" src="' . $acceptImage . '" width="200">';
+                break;
+            default:
+                // Default case, no replacement
                 break;
         }
 
-        // Final template parsing with signature replacement handled inside getParsedTemplate.
-        // The signature image and the audit page HTML are passed as parameters so all
-        // replacements and appends happen inside getParsedTemplate, on the template bean
-        // it loads itself, BEFORE HTML cleaning. This ensures they survive the tag-stripping
-        // process regardless of whether the template stores placeholders as plain HTML or
-        // HTML-encoded, and regardless of the state of BeanFactory's in-memory bean cache.
-        $parsedText = stic_SignaturesUtils::getParsedTemplate($signerBean->id, $signatureImgSrc, $auditHtml);
+        // Final template parsing using the utility function, which handles
+        // advanced placeholders.
+        $parsedText = stic_SignaturesUtils::getParsedTemplate($signerBean->id);
         $converted = $parsedText['converted'];
         $header = $parsedText['header'];
         $footer = $parsedText['footer'];
+
+        // Replace the plain-text signature token with the actual signature
+        // image/acceptance image. The token survived the HTML cleaning pipeline,
+        // so this replacement works regardless of whether the marker was inside
+        // a table or not.
+        $converted = str_replace(stic_SignaturesUtils::SIGNATURE_TOKEN, $replaceWith, (string) $converted);
 
         // Replace newlines with HTML line breaks for PDF generation
         $printable = str_replace("\n", "<br />", (string) $converted);

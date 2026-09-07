@@ -29,6 +29,14 @@
 class stic_SignaturesUtils
 {
     /**
+     * Plain-text token used as a safe placeholder for the signature marker.
+     * It replaces the raw <img> marker before the HTML cleaning pipeline so that
+     * it survives the tag-stripping regexes, and is later replaced by the real
+     * signature image after the template is parsed.
+     */
+    const SIGNATURE_TOKEN = '@@SIGNATURE_IMAGE@@';
+
+    /**
      * Retrieves the relationships and fields for a given SuiteCRM module.
      * This function fetches a module's own reportable fields and also
      * identifies and lists reportable fields from related modules.
@@ -291,15 +299,9 @@ class stic_SignaturesUtils
      * and returns the resulting HTML header, content, and footer.
      *
      * @param string $signerId The ID of the signer.
-     * @param string|null $signatureImgSrc Optional signature image src URL. When provided, the signature
-     * placeholder is replaced before HTML cleaning so it survives the tag-stripping process.
-     * @param string|null $appendHtml Optional HTML appended to the template description before HTML cleaning
-     * (e.g. the audit page). Appending it here (instead of modifying the template bean in the caller) makes
-     * the result independent of BeanFactory's in-memory bean cache, which can evict and re-fetch the
-     * template bean from the database, silently losing in-memory modifications.
      * @return array An associative array containing the parsed 'header', 'converted' (content), and 'footer'.
      */
-    public static function getParsedTemplate($signerId, $signatureImgSrc = null, $appendHtml = null)
+    public static function getParsedTemplate($signerId)
     {
         require_once 'SticInclude/Utils.php';
         // Use common functions for PDF generation
@@ -379,28 +381,18 @@ class stic_SignaturesUtils
             'chr(%1)',
         ];
 
-        if ($signatureImgSrc !== null) {
-            $encodedPlaceholder = '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;';
-            $encodedSignatureImg = '&lt;img class=&quot;signature&quot; src=&quot;' . $signatureImgSrc . '&quot; width=&quot;200&quot; /&gt;';
-
-            $templateBean->pdfheader = str_replace($encodedPlaceholder, $encodedSignatureImg, (string) $templateBean->pdfheader);
-            $templateBean->pdffooter = str_replace($encodedPlaceholder, $encodedSignatureImg, (string) $templateBean->pdffooter);
-            $templateBean->description = str_replace($encodedPlaceholder, $encodedSignatureImg, (string) $templateBean->description);
-
-            $plainPlaceholder = '<img class="signature" src="themes/SuiteP/images/SignaturePlaceholder.png" alt="" width="200" />';
-            $plainSignatureImg = '<img class="signature" src="' . $signatureImgSrc . '" width="200" />';
-
-            $templateBean->pdfheader = str_replace($plainPlaceholder, htmlspecialchars($plainSignatureImg), (string) $templateBean->pdfheader);
-            $templateBean->pdffooter = str_replace($plainPlaceholder, htmlspecialchars($plainSignatureImg), (string) $templateBean->pdffooter);
-            $templateBean->description = str_replace($plainPlaceholder, htmlspecialchars($plainSignatureImg), (string) $templateBean->description);
-        }
-
-        // Append custom HTML (e.g. audit page) to the description, entity-encoded so it
-        // survives the tag-stripping regex below and is decoded back into real HTML tags
-        // by the entity-decoding patterns.
-        if ($appendHtml !== null) {
-            $templateBean->description .= htmlspecialchars($appendHtml);
-        }
+        // Normalize every possible representation of the signature marker to a
+        // plain-text token BEFORE the HTML cleaning pipeline. This way the marker
+        // survives the tag-stripping regexes even when it is placed inside a table,
+        // and can be replaced by the real signature image after the template is parsed.
+        $signatureToken = self::SIGNATURE_TOKEN;
+        $signatureMarkers = [
+            '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;',
+            '<img class="signature" src="themes/SuiteP/images/SignaturePlaceholder.png" alt="" width="200" />',
+        ];
+        $templateBean->pdfheader = str_replace($signatureMarkers, $signatureToken, (string) $templateBean->pdfheader);
+        $templateBean->pdffooter = str_replace($signatureMarkers, $signatureToken, (string) $templateBean->pdffooter);
+        $templateBean->description = str_replace($signatureMarkers, $signatureToken, (string) $templateBean->description);
 
         // Clean the template content (header, footer, description)
         $header = preg_replace($search, $replace, $templateBean->pdfheader);
