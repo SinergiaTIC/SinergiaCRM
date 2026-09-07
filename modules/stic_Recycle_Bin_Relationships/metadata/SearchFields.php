@@ -40,29 +40,29 @@ $searchFields['stic_Recycle_Bin_Relationships'] = array(
         'db_field' => array('id'),
         'vname' => 'LBL_STIC_RECYCLE_BIN',
     ),
-    'recycle_related_module' => array(
+    'related_module' => array(
         'query_type' => 'default',
         'operator' => '=',
-        'vname' => 'LBL_RECYCLE_RELATED_MODULE',
+        'vname' => 'LBL_RELATED_MODULE',
     ),
-    'recycle_related_record_name' => array(
+    'related_record_name' => array(
         'query_type' => 'default',
         'operator' => 'contains',
-        'vname' => 'LBL_RECYCLE_RELATED_RECORD_NAME',
+        'vname' => 'LBL_RELATED_RECORD_NAME',
     ),
-    'recycle_relationship_name' => array(
+    'relationship_name' => array(
         'query_type' => 'default',
         'operator' => 'contains',
-        'vname' => 'LBL_RECYCLE_RELATIONSHIP_NAME',
+        'vname' => 'LBL_RELATIONSHIP_NAME',
     ),
-    'recycle_join_table' => array(
+    'join_table' => array(
         'query_type' => 'default',
         'operator' => 'contains',
-        'vname' => 'LBL_RECYCLE_JOIN_TABLE',
+        'vname' => 'LBL_JOIN_TABLE',
     ),
-    'recycle_restored' => array(
+    'restored' => array(
         'query_type' => 'default',
         'operator' => '=',
-        'vname' => 'LBL_RECYCLE_RESTORED',
+        'vname' => 'LBL_RESTORED',
     ),
 );

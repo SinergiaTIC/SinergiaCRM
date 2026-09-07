@@ -45,15 +45,12 @@ $mod_strings = array(
     // Fields
     'LBL_STIC_RECYCLE_BIN_ID' => 'ID de paperera',
     'LBL_STIC_RECYCLE_BIN' => 'Paperera',
-    'LBL_RECYCLE_RECORD_ID' => 'ID del registre original',
-    'LBL_RECYCLE_RELATIONSHIP_NAME' => 'Nom de la relació',
-    'LBL_RECYCLE_JOIN_TABLE' => 'Taula d\'unió',
-    'LBL_RECYCLE_RELATED_MODULE' => 'Mòdul relacionat',
-    'LBL_RECYCLE_RELATED_RECORD_ID' => 'ID del registre relacionat',
-    'LBL_RECYCLE_RELATED_RECORD_NAME' => 'Nom del registre relacionat',
-    'LBL_RECYCLE_RESTORED' => 'Restaurada',
-    'LBL_RECYCLE_JOIN_LHS_KEY' => 'Columna LHS',
-    'LBL_RECYCLE_JOIN_RHS_KEY' => 'Columna RHS',
+    'LBL_RELATIONSHIP_NAME' => 'Nom de la relació',
+    'LBL_JOIN_TABLE' => 'Taula d\'unió',
+    'LBL_RELATED_MODULE' => 'Mòdul relacionat',
+    'LBL_RELATED_RECORD_ID' => 'ID del registre relacionat',
+    'LBL_RELATED_RECORD_NAME' => 'Nom del registre relacionat',
+    'LBL_RESTORED' => 'Restaurat',
 
     // Subpanel
     'LBL_RECYCLE_BIN_RELATIONSHIPS_SUBPANEL_TITLE' => 'Relacions de la paperera',

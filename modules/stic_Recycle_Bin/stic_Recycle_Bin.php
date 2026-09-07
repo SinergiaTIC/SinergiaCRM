@@ -53,14 +53,16 @@ class stic_Recycle_Bin extends Basic
     public $SecurityGroups;
 
     // Custom fields
-    public $recycle_module;
-    public $recycle_record_id;
-    public $recycle_record_name;
-    public $recycle_date_deleted;
-    public $recycle_user_deleted_id;
-    public $recycle_date_restored;
-    public $recycle_user_restored_id;
-    public $recycle_restored;
+    public $record_module;
+    public $record_id;
+    public $record_name;
+    public $date_deleted;
+    public $user_deleted_id;
+    public $date_restored;
+    public $user_restored_id;
+    public $restored;
+    public $original_assigned_user_id;
+    public $original_assigned_to;
 
     public function __construct()
     {

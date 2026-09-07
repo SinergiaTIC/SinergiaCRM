@@ -40,23 +40,20 @@ $viewdefs['stic_Recycle_Bin_Relationships']['DetailView'] = array(
         array(
             'LBL_RECYCLE_RELATIONSHIP_INFO' => array(
                 'stic_recycle_bin_name',
-                'recycle_relationship_name',
-                'recycle_join_table',
-                'recycle_join_lhs_key',
-                'recycle_join_rhs_key',
+                'relationship_name',
+                'join_table',
             ),
         ),
         array(
             'LBL_RECYCLE_RELATED_RECORD' => array(
-                'recycle_related_module',
-                'recycle_related_record_name',
-                'recycle_related_record_id',
-                'recycle_record_id',
+                'related_module',
+                'related_record_name',
+                'related_record_id',
             ),
         ),
         array(
             'LBL_RECYCLE_STATUS' => array(
-                'recycle_restored',
+                'restored',
                 'date_entered',
                 'date_modified',
             ),

@@ -32,22 +32,22 @@ $searchdefs['stic_Recycle_Bin'] = array(
     ),
     'layout' => array(
         'basic_search' => array(
-            'recycle_record_name' => array(
-                'name' => 'recycle_record_name',
+            'record_name' => array(
+                'name' => 'record_name',
                 'default' => true,
             ),
-            'recycle_module' => array(
-                'name' => 'recycle_module',
+            'record_module' => array(
+                'name' => 'record_module',
                 'default' => true,
             ),
         ),
         'advanced_search' => array(
-            'recycle_record_name' => array('name' => 'recycle_record_name'),
-            'recycle_module' => array('name' => 'recycle_module'),
-            'recycle_date_deleted' => array('name' => 'recycle_date_deleted'),
-            'recycle_restored' => array('name' => 'recycle_restored'),
-            'recycle_user_deleted_id' => array(
-                'name' => 'recycle_user_deleted_id',
+            'record_name' => array('name' => 'record_name'),
+            'record_module' => array('name' => 'record_module'),
+            'date_deleted' => array('name' => 'date_deleted'),
+            'restored' => array('name' => 'restored'),
+            'user_deleted_id' => array(
+                'name' => 'user_deleted_id',
                 'type' => 'enum',
                 'function' => array('name' => 'get_user_array'),
             ),

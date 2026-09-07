@@ -112,59 +112,41 @@ $dictionary['stic_Recycle_Bin_Relationships'] = array(
             'bean_name' => 'stic_Recycle_Bin',
             'vname' => 'LBL_STIC_RECYCLE_BIN',
         ),
-        'recycle_record_id' => array(
-            'name' => 'recycle_record_id',
-            'vname' => 'LBL_RECYCLE_RECORD_ID',
-            'type' => 'varchar',
-            'len' => 36,
-        ),
-        'recycle_relationship_name' => array(
-            'name' => 'recycle_relationship_name',
-            'vname' => 'LBL_RECYCLE_RELATIONSHIP_NAME',
+        'relationship_name' => array(
+            'name' => 'relationship_name',
+            'vname' => 'LBL_RELATIONSHIP_NAME',
             'type' => 'varchar',
             'len' => 255,
         ),
-        'recycle_join_table' => array(
-            'name' => 'recycle_join_table',
-            'vname' => 'LBL_RECYCLE_JOIN_TABLE',
+        'join_table' => array(
+            'name' => 'join_table',
+            'vname' => 'LBL_JOIN_TABLE',
             'type' => 'varchar',
             'len' => 255,
         ),
-        'recycle_related_module' => array(
-            'name' => 'recycle_related_module',
-            'vname' => 'LBL_RECYCLE_RELATED_MODULE',
+        'related_module' => array(
+            'name' => 'related_module',
+            'vname' => 'LBL_RELATED_MODULE',
             'type' => 'varchar',
             'len' => 100,
         ),
-        'recycle_related_record_id' => array(
-            'name' => 'recycle_related_record_id',
-            'vname' => 'LBL_RECYCLE_RELATED_RECORD_ID',
+        'related_record_id' => array(
+            'name' => 'related_record_id',
+            'vname' => 'LBL_RELATED_RECORD_ID',
             'type' => 'varchar',
             'len' => 36,
         ),
-        'recycle_related_record_name' => array(
-            'name' => 'recycle_related_record_name',
-            'vname' => 'LBL_RECYCLE_RELATED_RECORD_NAME',
+        'related_record_name' => array(
+            'name' => 'related_record_name',
+            'vname' => 'LBL_RELATED_RECORD_NAME',
             'type' => 'varchar',
             'len' => 255,
         ),
-        'recycle_restored' => array(
-            'name' => 'recycle_restored',
-            'vname' => 'LBL_RECYCLE_RESTORED',
+        'restored' => array(
+            'name' => 'restored',
+            'vname' => 'LBL_RESTORED',
             'type' => 'bool',
             'default' => 0,
-        ),
-        'recycle_join_lhs_key' => array(
-            'name' => 'recycle_join_lhs_key',
-            'vname' => 'LBL_RECYCLE_JOIN_LHS_KEY',
-            'type' => 'varchar',
-            'len' => 100,
-        ),
-        'recycle_join_rhs_key' => array(
-            'name' => 'recycle_join_rhs_key',
-            'vname' => 'LBL_RECYCLE_JOIN_RHS_KEY',
-            'type' => 'varchar',
-            'len' => 100,
         ),
     ),
     'indices' => array(
@@ -174,19 +156,14 @@ $dictionary['stic_Recycle_Bin_Relationships'] = array(
             'fields' => array('stic_recycle_bin_id'),
         ),
         array(
-            'name' => 'idx_stic_rbr_record_id',
-            'type' => 'index',
-            'fields' => array('recycle_record_id'),
-        ),
-        array(
             'name' => 'idx_stic_rbr_related_id',
             'type' => 'index',
-            'fields' => array('recycle_related_record_id'),
+            'fields' => array('related_record_id'),
         ),
         array(
             'name' => 'idx_stic_rbr_restored',
             'type' => 'index',
-            'fields' => array('recycle_restored'),
+            'fields' => array('restored'),
         ),
     ),
     'relationships' => array(

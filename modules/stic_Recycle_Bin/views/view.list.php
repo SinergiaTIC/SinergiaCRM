@@ -94,7 +94,7 @@ class stic_Recycle_BinViewList extends ViewList
                 }
                 $restoredMap[] = array(
                     'id' => $row['ID'],
-                    'restored' => !empty($row['RECYCLE_RESTORED']) ? 1 : 0,
+                    'restored' => !empty($row['RESTORED']) ? 1 : 0,
                 );
             }
         }
@@ -132,7 +132,7 @@ class stic_Recycle_BinViewList extends ViewList
     /**
      * Enriches the list view data with computed columns:
      *  - RELATIONSHIP_COUNT: comma-separated module labels with total count.
-     *  - RECYCLE_USER_*_NAME: user_name lookup for the deleted_by / restored_by users.
+     *  - USER_*_NAME: user_name lookup for the deleted_by / restored_by users.
      *
      * @return void
      */
@@ -178,17 +178,17 @@ class stic_Recycle_BinViewList extends ViewList
 
         $idList = implode(',', $recycleBinIds);
         $countResult = $db->query(
-            "SELECT stic_recycle_bin_id, recycle_related_module, COUNT(*) AS rel_count
+            "SELECT stic_recycle_bin_id, related_module, COUNT(*) AS rel_count
              FROM stic_recycle_bin_relationships
              WHERE stic_recycle_bin_id IN ($idList) AND deleted = 0
-             GROUP BY stic_recycle_bin_id, recycle_related_module
-             ORDER BY stic_recycle_bin_id, rel_count DESC, recycle_related_module"
+             GROUP BY stic_recycle_bin_id, related_module
+             ORDER BY stic_recycle_bin_id, rel_count DESC, related_module"
         );
         $relModules = array();
         $relTotals = array();
         while ($r = $db->fetchByAssoc($countResult)) {
             $binId = $r['stic_recycle_bin_id'];
-            $relModules[$binId][] = $r['recycle_related_module'];
+            $relModules[$binId][] = $r['related_module'];
             $relTotals[$binId] = isset($relTotals[$binId]) ? $relTotals[$binId] + (int)$r['rel_count'] : (int)$r['rel_count'];
         }
 
@@ -230,11 +230,11 @@ class stic_Recycle_BinViewList extends ViewList
     {
         $userIds = array();
         foreach ($this->lv->data['data'] as $row) {
-            if (!empty($row['RECYCLE_USER_DELETED_ID']) && self::isValidId($row['RECYCLE_USER_DELETED_ID'])) {
-                $userIds[$row['RECYCLE_USER_DELETED_ID']] = true;
+            if (!empty($row['USER_DELETED_ID']) && self::isValidId($row['USER_DELETED_ID'])) {
+                $userIds[$row['USER_DELETED_ID']] = true;
             }
-            if (!empty($row['RECYCLE_USER_RESTORED_ID']) && self::isValidId($row['RECYCLE_USER_RESTORED_ID'])) {
-                $userIds[$row['RECYCLE_USER_RESTORED_ID']] = true;
+            if (!empty($row['USER_RESTORED_ID']) && self::isValidId($row['USER_RESTORED_ID'])) {
+                $userIds[$row['USER_RESTORED_ID']] = true;
             }
         }
 
@@ -252,14 +252,14 @@ class stic_Recycle_BinViewList extends ViewList
         }
 
         foreach ($this->lv->data['data'] as &$dataRow) {
-            if (!empty($dataRow['RECYCLE_USER_DELETED_ID'])) {
-                $dataRow['RECYCLE_USER_DELETED_NAME'] = isset($userNames[$dataRow['RECYCLE_USER_DELETED_ID']])
-                    ? $userNames[$dataRow['RECYCLE_USER_DELETED_ID']]
+            if (!empty($dataRow['USER_DELETED_ID'])) {
+                $dataRow['USER_DELETED_NAME'] = isset($userNames[$dataRow['USER_DELETED_ID']])
+                    ? $userNames[$dataRow['USER_DELETED_ID']]
                     : '';
             }
-            if (!empty($dataRow['RECYCLE_USER_RESTORED_ID'])) {
-                $dataRow['RECYCLE_USER_RESTORED_NAME'] = isset($userNames[$dataRow['RECYCLE_USER_RESTORED_ID']])
-                    ? $userNames[$dataRow['RECYCLE_USER_RESTORED_ID']]
+            if (!empty($dataRow['USER_RESTORED_ID'])) {
+                $dataRow['USER_RESTORED_NAME'] = isset($userNames[$dataRow['USER_RESTORED_ID']])
+                    ? $userNames[$dataRow['USER_RESTORED_ID']]
                     : '';
             }
         }

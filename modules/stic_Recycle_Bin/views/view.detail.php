@@ -91,7 +91,7 @@ class stic_Recycle_BinViewDetail extends ViewDetail
      */
     private function injectRestoreAction($html)
     {
-        if (!empty($this->bean->recycle_restored)) {
+        if (!empty($this->bean->restored)) {
             return $html;
         }
 

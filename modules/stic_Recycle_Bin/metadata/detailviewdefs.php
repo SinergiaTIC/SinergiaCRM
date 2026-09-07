@@ -35,10 +35,11 @@ $viewdefs['stic_Recycle_Bin']['DetailView'] = array(
     ),
     'panels' => array(
         'LBL_DEFAULT_PANEL' => array(
-            array('recycle_record_name', 'recycle_module'),
-            array('assigned_user_name', 'recycle_user_deleted_name'),
-            array('recycle_date_deleted', 'recycle_restored'),
-            array('recycle_date_restored', 'recycle_user_restored_name'),
+            array('record_name', 'record_module'),
+            array('assigned_user_name', 'user_deleted_name'),
+            array('original_assigned_to', ''),
+            array('date_deleted', 'restored'),
+            array('date_restored', 'user_restored_name'),
             array('date_entered', 'date_modified'),
         ),
     ),

@@ -29,17 +29,17 @@ $searchdefs['stic_Recycle_Bin_Relationships'] = array(
     'layout' => array(
         'basic_search' => array(
             'name' => array('name' => 'name', 'type' => 'name'),
-            'recycle_related_module' => array('name' => 'recycle_related_module', 'type' => 'varchar'),
-            'recycle_related_record_name' => array('name' => 'recycle_related_record_name', 'type' => 'varchar'),
+            'related_module' => array('name' => 'related_module', 'type' => 'varchar'),
+            'related_record_name' => array('name' => 'related_record_name', 'type' => 'varchar'),
         ),
         'advanced_search' => array(
             'name' => array('name' => 'name', 'type' => 'name'),
             'stic_recycle_bin_name' => array('name' => 'stic_recycle_bin_name', 'type' => 'relate'),
-            'recycle_related_module' => array('name' => 'recycle_related_module', 'type' => 'varchar'),
-            'recycle_related_record_name' => array('name' => 'recycle_related_record_name', 'type' => 'varchar'),
-            'recycle_relationship_name' => array('name' => 'recycle_relationship_name', 'type' => 'varchar'),
-            'recycle_join_table' => array('name' => 'recycle_join_table', 'type' => 'varchar'),
-            'recycle_restored' => array('name' => 'recycle_restored', 'type' => 'bool'),
+            'related_module' => array('name' => 'related_module', 'type' => 'varchar'),
+            'related_record_name' => array('name' => 'related_record_name', 'type' => 'varchar'),
+            'relationship_name' => array('name' => 'relationship_name', 'type' => 'varchar'),
+            'join_table' => array('name' => 'join_table', 'type' => 'varchar'),
+            'restored' => array('name' => 'restored', 'type' => 'bool'),
         ),
     ),
     'templateMeta' => array(

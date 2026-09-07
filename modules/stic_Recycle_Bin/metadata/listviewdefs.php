@@ -41,25 +41,25 @@ $viewdefs['stic_Recycle_Bin']['ListView'] = array(
 );
 
 $listViewDefs['stic_Recycle_Bin'] = array(
-    'RECYCLE_RECORD_NAME' => array(
+    'RECORD_NAME' => array(
         'width' => '25%',
-        'label' => 'LBL_RECYCLE_RECORD_NAME',
+        'label' => 'LBL_RECORD_NAME',
         'default' => true,
         'link' => true,
     ),
-    'RECYCLE_MODULE' => array(
+    'RECORD_MODULE' => array(
         'width' => '15%',
-        'label' => 'LBL_RECYCLE_MODULE',
+        'label' => 'LBL_RECORD_MODULE',
         'default' => true,
     ),
-    'RECYCLE_DATE_DELETED' => array(
+    'DATE_DELETED' => array(
         'width' => '15%',
-        'label' => 'LBL_RECYCLE_DATE_DELETED',
+        'label' => 'LBL_DATE_DELETED',
         'default' => true,
     ),
-    'RECYCLE_USER_DELETED_NAME' => array(
+    'USER_DELETED_NAME' => array(
         'width' => '12%',
-        'label' => 'LBL_RECYCLE_USER_DELETED',
+        'label' => 'LBL_USER_DELETED',
         'default' => true,
     ),
     'RELATIONSHIP_COUNT' => array(
@@ -67,15 +67,15 @@ $listViewDefs['stic_Recycle_Bin'] = array(
         'label' => 'LBL_RELATIONSHIP_COUNT',
         'default' => true,
     ),
-    'RECYCLE_RESTORED' => array(
+    'RESTORED' => array(
         'width' => '10%',
-        'label' => 'LBL_RECYCLE_RESTORED',
+        'label' => 'LBL_RESTORED',
         'default' => true,
         'type' => 'bool',
     ),
-    'RECYCLE_DATE_RESTORED' => array(
+    'DATE_RESTORED' => array(
         'width' => '10%',
-        'label' => 'LBL_RECYCLE_DATE_RESTORED',
+        'label' => 'LBL_DATE_RESTORED',
         'default' => false,
     ),
     'DATE_MODIFIED' => array(

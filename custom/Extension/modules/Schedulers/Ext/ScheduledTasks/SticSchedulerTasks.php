@@ -160,10 +160,9 @@ function sticPurgeDatabase()
                 // Clean recycle bin entries for this record (skip recycle bin tables themselves)
                 if ($table !== 'stic_recycle_bin' && $table !== 'stic_recycle_bin_relationships') {
                     $db->query('DELETE FROM stic_recycle_bin_relationships
-                                WHERE recycle_record_id = ' . $id . '
-                                OR recycle_related_record_id = ' . $id);
+                                WHERE related_record_id = ' . $id);
                     $db->query('DELETE FROM stic_recycle_bin
-                                WHERE recycle_record_id = ' . $id);
+                                WHERE record_id = ' . $id);
                 }
 
                 if (!empty($custom_columns) && !empty($aDel['id'])) {

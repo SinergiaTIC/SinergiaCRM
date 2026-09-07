@@ -47,7 +47,7 @@ class stic_Recycle_BinUtils
         }
 
         $binBean = BeanFactory::getBean('stic_Recycle_Bin', $recycleBinId);
-        if (!$binBean || empty($binBean->recycle_record_id)) {
+        if (!$binBean || empty($binBean->record_id)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': recycle bin entry not found: ' . $recycleBinId);
             return [
                 'success' => false,
@@ -55,23 +55,23 @@ class stic_Recycle_BinUtils
             ];
         }
 
-        if (!self::isValidId($binBean->recycle_record_id)) {
-            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': invalid recycle_record_id: ' . $binBean->recycle_record_id);
+        if (!self::isValidId($binBean->record_id)) {
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': invalid record_id: ' . $binBean->record_id);
             return [
                 'success' => false,
                 'message' => translate('LBL_RESTORE_INVALID_ID', 'stic_Recycle_Bin'),
             ];
         }
 
-        if (!empty($binBean->recycle_restored)) {
+        if (!empty($binBean->restored)) {
             return [
                 'success' => false,
                 'message' => translate('LBL_RESTORE_ALREADY', 'stic_Recycle_Bin'),
             ];
         }
 
-        $module = $binBean->recycle_module;
-        $recordId = $binBean->recycle_record_id;
+        $module = $binBean->record_module;
+        $recordId = $binBean->record_id;
 
         $table = self::getTableForModule($module);
         if (!$table) {
@@ -92,7 +92,7 @@ class stic_Recycle_BinUtils
         $relsResult = $db->query(
             'SELECT * FROM stic_recycle_bin_relationships
              WHERE stic_recycle_bin_id = ' . $db->quoted($recycleBinId) . '
-             AND deleted = 0 AND recycle_restored = 0'
+             AND deleted = 0 AND restored = 0'
         );
 
         while ($rel = $db->fetchByAssoc($relsResult)) {
@@ -116,9 +116,9 @@ class stic_Recycle_BinUtils
 
         $recycleBean = BeanFactory::getBean('stic_Recycle_Bin', $recycleBinId);
         if ($recycleBean && !empty($recycleBean->id)) {
-            $recycleBean->recycle_date_restored = $nowDb;
-            $recycleBean->recycle_user_restored_id = $currentUserId;
-            $recycleBean->recycle_restored = 1;
+            $recycleBean->date_restored = $nowDb;
+            $recycleBean->user_restored_id = $currentUserId;
+            $recycleBean->restored = 1;
             $recycleBean->save(true);
         }
 
@@ -174,19 +174,19 @@ class stic_Recycle_BinUtils
         global $log;
 
         $relRows = $db->query(
-            'SELECT recycle_relationship_name, recycle_related_module, recycle_related_record_id
+            'SELECT relationship_name, related_module, related_record_id
              FROM stic_recycle_bin_relationships
              WHERE stic_recycle_bin_id = ' . $db->quoted($recycleBinId) . '
-             AND deleted = 0 AND recycle_restored = 1'
+             AND deleted = 0 AND restored = 1'
         );
 
         while ($rel = $db->fetchByAssoc($relRows)) {
-            $linkName = $rel['recycle_relationship_name'];
-            if (empty($linkName) || !self::isValidModule($rel['recycle_related_module']) || !self::isValidId($rel['recycle_related_record_id'])) {
+            $linkName = $rel['relationship_name'];
+            if (empty($linkName) || !self::isValidModule($rel['related_module']) || !self::isValidId($rel['related_record_id'])) {
                 continue;
             }
 
-            $relatedBean = BeanFactory::getBean($rel['recycle_related_module'], $rel['recycle_related_record_id']);
+            $relatedBean = BeanFactory::getBean($rel['related_module'], $rel['related_record_id']);
             if (!$relatedBean || empty($relatedBean->id)) {
                 continue;
             }
@@ -237,28 +237,26 @@ class stic_Recycle_BinUtils
     {
         global $log;
 
-        $linkName = $rel['recycle_relationship_name'];
-        $joinTable = $rel['recycle_join_table'];
-        $lhsKey = $rel['recycle_join_lhs_key'];
-        $rhsKey = $rel['recycle_join_rhs_key'];
+        $linkName = $rel['relationship_name'];
+        $joinTable = $rel['join_table'];
 
         if (empty($linkName)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': empty linkName, skipping');
             return false;
         }
 
-        if (!self::isValidModule($rel['recycle_related_module'])) {
-            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': invalid related module: ' . $rel['recycle_related_module']);
+        if (!self::isValidModule($rel['related_module'])) {
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': invalid related module: ' . $rel['related_module']);
             return false;
         }
-        if (!self::isValidId($rel['recycle_related_record_id'])) {
-            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': invalid related id: ' . $rel['recycle_related_record_id']);
+        if (!self::isValidId($rel['related_record_id'])) {
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': invalid related id: ' . $rel['related_record_id']);
             return false;
         }
 
-        $relatedBean = BeanFactory::getBean($rel['recycle_related_module'], $rel['recycle_related_record_id'], [], true);
+        $relatedBean = BeanFactory::getBean($rel['related_module'], $rel['related_record_id'], [], true);
         if (!$relatedBean || !empty($relatedBean->deleted) || empty($relatedBean->id)) {
-            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': related record not available (soft-deleted or missing): ' . $rel['recycle_related_module'] . ' / ' . $rel['recycle_related_record_id']);
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': related record not available (soft-deleted or missing): ' . $rel['related_module'] . ' / ' . $rel['related_record_id']);
             return false;
         }
 
@@ -276,24 +274,24 @@ class stic_Recycle_BinUtils
         }
 
         $relDef = $relObj->def;
-        $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': restoring relationship: link=' . $linkName . ' relatedModule=' . $rel['recycle_related_module'] . ' relatedId=' . $rel['recycle_related_record_id'] . ' joinTable=' . $joinTable . ' lhsKey=' . $lhsKey . ' rhsKey=' . $rhsKey);
+        $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': restoring relationship: link=' . $linkName . ' relatedModule=' . $rel['related_module'] . ' relatedId=' . $rel['related_record_id'] . ' joinTable=' . $joinTable);
 
         $restored = false;
         if (empty($joinTable)) {
-            $restored = self::restoreOneToMany($bean, $linkName, $recordId, $relatedBean, $relDef, $lhsKey, $db);
+            $restored = self::restoreOneToMany($bean, $linkName, $recordId, $relatedBean, $relDef, $db);
         } else {
-            $restored = self::restoreManyToMany($module, $linkName, $recordId, $relatedBean, $relDef, $lhsKey, $rhsKey, $joinTable, $db);
+            $restored = self::restoreManyToMany($module, $linkName, $recordId, $relatedBean, $relDef, $joinTable, $db);
         }
 
         if ($restored) {
             $db->query(
-                'UPDATE stic_recycle_bin_relationships SET recycle_restored = 1
+                'UPDATE stic_recycle_bin_relationships SET restored = 1
                  WHERE id = ' . $db->quoted($rel['id'])
             );
             return true;
         }
 
-        $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': relationship UPDATE affected 0 rows or failed: link=' . $linkName . ' relatedId=' . $rel['recycle_related_record_id']);
+        $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': relationship UPDATE affected 0 rows or failed: link=' . $linkName . ' relatedId=' . $rel['related_record_id']);
         return false;
     }
 
@@ -308,7 +306,7 @@ class stic_Recycle_BinUtils
      *
      * @return bool true if the UPDATE affected at least one row
      */
-    private static function restoreOneToMany($bean, $linkName, $recordId, $relatedBean, $relDef, $lhsKey, $db)
+    private static function restoreOneToMany($bean, $linkName, $recordId, $relatedBean, $relDef, $db)
     {
         global $log;
 
@@ -326,7 +324,7 @@ class stic_Recycle_BinUtils
             }
         }
         if (empty($ourColumn)) {
-            $ourColumn = !empty($relDef['rhs_key']) ? $relDef['rhs_key'] : (!empty($relDef['join_key_lhs']) ? $relDef['join_key_lhs'] : (!empty($lhsKey) ? $lhsKey : 'parent_id'));
+            $ourColumn = !empty($relDef['rhs_key']) ? $relDef['rhs_key'] : (!empty($relDef['join_key_lhs']) ? $relDef['join_key_lhs'] : 'parent_id');
         }
         if (!self::isValidIdentifier($ourColumn)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': invalid ourColumn: ' . $ourColumn);
@@ -361,13 +359,11 @@ class stic_Recycle_BinUtils
      * @param string $recordId Parent record ID
      * @param SugarBean $relatedBean Related record
      * @param array $relDef Relationship definition from the rel object
-     * @param string $lhsKey Join key for LHS side
-     * @param string $rhsKey Join key for RHS side
      * @param string $joinTable M2M join table
      * @param object $db Database instance
      * @return bool true if the row was undeleted or inserted
      */
-    private static function restoreManyToMany($module, $linkName, $recordId, $relatedBean, $relDef, $lhsKey, $rhsKey, $joinTable, $db)
+    private static function restoreManyToMany($module, $linkName, $recordId, $relatedBean, $relDef, $joinTable, $db)
     {
         global $log;
 
@@ -378,6 +374,8 @@ class stic_Recycle_BinUtils
 
         $lhsModule = $relDef['lhs_module'] ?? '';
         $rhsModule = $relDef['rhs_module'] ?? '';
+        $lhsKey = $relDef['join_key_lhs'] ?? '';
+        $rhsKey = $relDef['join_key_rhs'] ?? $relDef['rhs_key'] ?? 'id';
 
         if ($lhsModule === $module) {
             $ourKey = $lhsKey;

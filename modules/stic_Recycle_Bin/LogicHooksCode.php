@@ -68,11 +68,12 @@ class SticRecycleBinHookCode
         $recycleBean->date_entered = $dateDeleted;
         $recycleBean->date_modified = $dateDeleted;
         $recycleBean->created_by = $createdById;
-        $recycleBean->recycle_module = $module;
-        $recycleBean->recycle_record_id = $recordId;
-        $recycleBean->recycle_record_name = $recordName;
-        $recycleBean->recycle_date_deleted = $dateDeleted;
-        $recycleBean->recycle_user_deleted_id = $userId;
+        $recycleBean->record_module = $module;
+        $recycleBean->record_id = $recordId;
+        $recycleBean->record_name = $recordName;
+        $recycleBean->date_deleted = $dateDeleted;
+        $recycleBean->user_deleted_id = $userId;
+        $recycleBean->original_assigned_user_id = $bean->assigned_user_id ?? '';
         $recycleBean->assigned_user_id = $bean->assigned_user_id ?? '';
         $recycleBean->save(false);
 
@@ -155,9 +156,10 @@ class SticRecycleBinHookCode
                 $relatedBean->name = $row['name'] ?? $row['email_address'] ?? $row['filename'] ?? $row['recipient_name'] ?? '';
                 $relatedBean->module_dir = $relatedModule;
                 $relatedBean->deleted = 0;
+
                 $this->insertRelationshipRow(
                     $bean, $fieldName, $relatedBean, $recycleBinId, $db,
-                    $joinTable, $lhsKey, $rhsKey
+                    $joinTable
                 );
             }
         }
@@ -208,48 +210,39 @@ class SticRecycleBinHookCode
      * @param string $recycleBinId Recycle bin entry ID
      * @param object $db Database instance
      * @param string $joinTable M2M join table or empty for 1:M
-     * @param string $lhsKey LHS join key
-     * @param string $rhsKey RHS join key
      * @return void
      */
-    private function insertRelationshipRow($bean, $fieldName, $relatedBean, $recycleBinId, $db, $joinTable, $lhsKey, $rhsKey)
+    private function insertRelationshipRow($bean, $fieldName, $relatedBean, $recycleBinId, $db, $joinTable)
     {
-        if (!self::isValidIdentifier($lhsKey) || !self::isValidIdentifier($rhsKey) || !self::isValidIdentifier($fieldName)) {
+        if (!self::isValidIdentifier($fieldName)) {
             return;
         }
 
         $relId = create_guid();
         $relRecordName = $db->quoted($relatedBean->name ?? '');
         $binId = $db->quoted($recycleBinId);
-        $recId = $db->quoted($bean->id);
         $userIdQ = $db->quoted($bean->modified_user_id ?? '1');
         $relNameQ = $db->quoted($fieldName);
         $joinTableQ = $db->quoted($joinTable);
         $relModule = $db->quoted($relatedBean->module_dir);
         $relRecordId = $db->quoted($relatedBean->id);
-        $lhsKeyQ = $db->quoted($lhsKey);
-        $rhsKeyQ = $db->quoted($rhsKey);
 
         $sql = "INSERT INTO stic_recycle_bin_relationships (
                     id, name, date_entered, date_modified, created_by,
-                    stic_recycle_bin_id, recycle_record_id, recycle_relationship_name,
-                    recycle_join_table, recycle_related_module,
-                    recycle_related_record_id, recycle_related_record_name,
-                    recycle_join_lhs_key, recycle_join_rhs_key
+                    stic_recycle_bin_id, relationship_name,
+                    join_table, related_module,
+                    related_record_id, related_record_name
                 ) VALUES (
                     " . $db->quoted($relId) . ",
                     " . $relRecordName . ",
                     NOW(), NOW(),
                     " . $userIdQ . ",
                     " . $binId . ",
-                    " . $recId . ",
                     " . $relNameQ . ",
                     " . $joinTableQ . ",
                     " . $relModule . ",
                     " . $relRecordId . ",
-                    " . $relRecordName . ",
-                    " . $lhsKeyQ . ",
-                    " . $rhsKeyQ . "
+                    " . $relRecordName . "
                 )";
         $db->query($sql);
     }

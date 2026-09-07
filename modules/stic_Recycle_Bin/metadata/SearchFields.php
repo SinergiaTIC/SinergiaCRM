@@ -26,17 +26,17 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $searchFields['stic_Recycle_Bin'] = array(
-    'recycle_record_name' => array('query_type' => 'default'),
-    'recycle_module' => array('query_type' => 'default'),
-    'recycle_date_deleted' => array(
+    'record_name' => array('query_type' => 'default'),
+    'record_module' => array('query_type' => 'default'),
+    'date_deleted' => array(
         'query_type' => 'default',
         'operator' => '=',
-        'db_field' => array('recycle_date_deleted'),
+        'db_field' => array('date_deleted'),
     ),
-    'recycle_restored' => array('query_type' => 'default'),
-    'recycle_user_deleted_id' => array(
+    'restored' => array('query_type' => 'default'),
+    'user_deleted_id' => array(
         'query_type' => 'default',
         'operator' => '=',
-        'db_field' => array('recycle_user_deleted_id'),
+        'db_field' => array('user_deleted_id'),
     ),
 );

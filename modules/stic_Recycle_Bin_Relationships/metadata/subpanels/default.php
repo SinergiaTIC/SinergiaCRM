@@ -37,33 +37,33 @@ $subpanel_layout = array(
             'target_module' => 'stic_Recycle_Bin',
             'target_record_key' => 'stic_recycle_bin_id',
         ),
-        'recycle_related_module' => array(
+        'related_module' => array(
             'type' => 'varchar',
-            'vname' => 'LBL_RECYCLE_RELATED_MODULE',
+            'vname' => 'LBL_RELATED_MODULE',
             'width' => '12%',
             'default' => true,
         ),
-        'recycle_related_record_name' => array(
+        'related_record_name' => array(
             'type' => 'varchar',
-            'vname' => 'LBL_RECYCLE_RELATED_RECORD_NAME',
+            'vname' => 'LBL_RELATED_RECORD_NAME',
             'width' => '20%',
             'default' => true,
         ),
-        'recycle_relationship_name' => array(
+        'relationship_name' => array(
             'type' => 'varchar',
-            'vname' => 'LBL_RECYCLE_RELATIONSHIP_NAME',
+            'vname' => 'LBL_RELATIONSHIP_NAME',
             'width' => '16%',
             'default' => true,
         ),
-        'recycle_join_table' => array(
+        'join_table' => array(
             'type' => 'varchar',
-            'vname' => 'LBL_RECYCLE_JOIN_TABLE',
+            'vname' => 'LBL_JOIN_TABLE',
             'width' => '12%',
             'default' => false,
         ),
-        'recycle_restored' => array(
+        'restored' => array(
             'type' => 'bool',
-            'vname' => 'LBL_RECYCLE_RESTORED',
+            'vname' => 'LBL_RESTORED',
             'width' => '8%',
             'default' => true,
         ),

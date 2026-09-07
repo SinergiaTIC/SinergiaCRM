@@ -31,29 +31,29 @@ $listViewDefs['stic_Recycle_Bin_Relationships'] = array(
         'label' => 'LBL_STIC_RECYCLE_BIN',
         'default' => true,
     ),
-    'RECYCLE_RELATED_MODULE' => array(
+    'RELATED_MODULE' => array(
         'width' => '12%',
-        'label' => 'LBL_RECYCLE_RELATED_MODULE',
+        'label' => 'LBL_RELATED_MODULE',
         'default' => true,
     ),
-    'RECYCLE_RELATED_RECORD_NAME' => array(
+    'RELATED_RECORD_NAME' => array(
         'width' => '20%',
-        'label' => 'LBL_RECYCLE_RELATED_RECORD_NAME',
+        'label' => 'LBL_RELATED_RECORD_NAME',
         'default' => true,
     ),
-    'RECYCLE_RELATIONSHIP_NAME' => array(
+    'RELATIONSHIP_NAME' => array(
         'width' => '16%',
-        'label' => 'LBL_RECYCLE_RELATIONSHIP_NAME',
+        'label' => 'LBL_RELATIONSHIP_NAME',
         'default' => true,
     ),
-    'RECYCLE_JOIN_TABLE' => array(
+    'JOIN_TABLE' => array(
         'width' => '12%',
-        'label' => 'LBL_RECYCLE_JOIN_TABLE',
+        'label' => 'LBL_JOIN_TABLE',
         'default' => false,
     ),
-    'RECYCLE_RESTORED' => array(
+    'RESTORED' => array(
         'width' => '8%',
-        'label' => 'LBL_RECYCLE_RESTORED',
+        'label' => 'LBL_RESTORED',
         'default' => true,
     ),
     'DATE_ENTERED' => array(
