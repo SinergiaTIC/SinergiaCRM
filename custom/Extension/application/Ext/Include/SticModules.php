@@ -75,6 +75,8 @@ $moduleList[] = 'stic_Financial_Products';
 $moduleList[] = 'stic_Assets';
 $moduleList[] = 'stic_AWF_Forms';
 $moduleList[] = 'stic_Conversations';
+$moduleList[] = 'stic_Recycle_Bin';
+$moduleList[] = 'stic_Recycle_Bin_Relationships';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -140,6 +142,8 @@ $beanList['stic_AWF_Response_Details'] = 'stic_AWF_Response_Details';
 $beanList['stic_AWF_Deferred_Tickets'] = 'stic_AWF_Deferred_Tickets';
 $beanList['stic_AWF_Incoming_Events'] = 'stic_AWF_Incoming_Events';
 $beanList['stic_Conversations'] = 'stic_Conversations';
+$beanList['stic_Recycle_Bin'] = 'stic_Recycle_Bin';
+$beanList['stic_Recycle_Bin_Relationships'] = 'stic_Recycle_Bin_Relationships';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -204,6 +208,8 @@ $beanFiles['stic_AWF_Response_Details'] = 'modules/stic_AWF_Response_Details/sti
 $beanFiles['stic_AWF_Deferred_Tickets'] = 'modules/stic_AWF_Deferred_Tickets/stic_AWF_Deferred_Tickets.php';
 $beanFiles['stic_AWF_Incoming_Events'] = 'modules/stic_AWF_Incoming_Events/stic_AWF_Incoming_Events.php';
 $beanFiles['stic_Conversations'] = 'modules/stic_Conversations/stic_Conversations.php';
+$beanFiles['stic_Recycle_Bin'] = 'modules/stic_Recycle_Bin/stic_Recycle_Bin.php';
+$beanFiles['stic_Recycle_Bin_Relationships'] = 'modules/stic_Recycle_Bin_Relationships/stic_Recycle_Bin_Relationships.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';
@@ -223,6 +229,8 @@ $modInvisList[] = 'stic_AWF_Links';
 $modInvisList[] = 'stic_AWF_Response_Details';
 $modInvisList[] = 'stic_AWF_Deferred_Tickets';
 $modInvisList[] = 'stic_AWF_Incoming_Events';
+$modInvisList[] = 'stic_Recycle_Bin';
+$modInvisList[] = 'stic_Recycle_Bin_Relationships';
 
 // Modules that have been hidden with $modInvisList, but have to be shown as subpanels
 $modules_exempt_from_availability_check['stic_Validation_Actions'] = 'stic_Validation_Actions';
@@ -231,6 +239,7 @@ $modules_exempt_from_availability_check['stic_Custom_View_Customizations'] = 'st
 $modules_exempt_from_availability_check['stic_AWF_Responses'] = 'stic_AWF_Responses';
 $modules_exempt_from_availability_check['stic_AWF_Links'] = 'stic_AWF_Links';
 $modules_exempt_from_availability_check['stic_AWF_Response_Details'] = 'stic_AWF_Response_Details';
+$modules_exempt_from_availability_check['stic_Recycle_Bin_Relationships'] = 'stic_Recycle_Bin_Relationships';
 
 // Modules that have been hidden with $modInvisList, but must be available in reporting
 // $report_include_modules['stic_XXXXXXXXXX'] = 'stic_XXXXXXXXXX'; // sample value
@@ -243,6 +252,7 @@ $adminOnlyList['stic_Security_Groups_Rules'] = array('all' => 1);
 $adminOnlyList['stic_Custom_Views'] = array('all' => 1);
 $adminOnlyList['stic_MessagesMan'] = array('all' => 1);
 $adminOnlyList['Trackers'] = array('all' => 1);
+$adminOnlyList['stic_Recycle_Bin'] = array('all' => 1);
 
 // Totally hide FP_Events because it can be confused with stic_Events
 $modInvisList[] = 'FP_events';

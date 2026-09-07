@@ -8444,3 +8444,17 @@ $dictionary["contacts_stic_conversations"] = array (
         array ('name' => 'contacts_stic_conversations_alt', 'type' => 'alternate_key', 'fields' => array ('stic_conversations_idb')),
     ),
 );
+$dictionary["stic_recycle_bin_recycle_bin_relationships"] = array (
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array (
+        'stic_recycle_bin_recycle_bin_relationships' => array (
+            'lhs_module' => 'stic_Recycle_Bin',
+            'lhs_table' => 'stic_recycle_bin',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Recycle_Bin_Relationships',
+            'rhs_table' => 'stic_recycle_bin_relationships',
+            'rhs_key' => 'stic_recycle_bin_id',
+            'relationship_type' => 'one-to-many',
+        ),
+    ),
+);
