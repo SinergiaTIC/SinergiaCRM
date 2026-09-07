@@ -143,49 +143,9 @@ class sticGenerateSignedPdf
             LoggerManager::getLogger()->warn('PDFException: ' . $e->getMessage());
         }
 
-        // Array for template parsing
-        $object_arr = [$sourceBean->module_dir => $sourceBean->id];
-
-        // Add related Accounts ID if the source is Contacts for backward compatibility
-        if ($sourceBean->module_dir === 'Contacts' && isset($sourceBean->account_id)) {
-            $object_arr['Accounts'] = $sourceBean->account_id;
-        }
-
-        // Replace the signature placeholder with the actual signature image/acceptance image.
-        // The placeholder string is HTML-encoded.
-        $stringToreplace = '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;';
-
         // Set time in user format and UTC for use later in audit/acceptance
         $userTime = (new DateTime())->format('Y-m-d H:i:s (\U\T\C P)');
         $utcTime = (new DateTime('UTC'))->format('Y-m-d H:i:s P');
-
-        $replaceWith = '';
-        // Prepare the replacement HTML based on the signed mode
-        switch ($signedMode) {
-            case 'handwritten':
-                // Use the drawn signature image URL from the signer bean
-                $replaceWith = htmlspecialchars('<img class="signature" src="' . $signerBean->signature_image . '" width="200"></div>');
-                break;
-            case 'button':
-                // Generate an acceptance image with signer details and timestamp
-                $textArray = [
-                    $mod_strings['LBL_PORTAL_DOCUMENT_ACCEPTED_BY'],
-                    $signerBean->parent_name,
-                    $signerBean->email_address,
-                    $userTime,
-                    // $utcTime // UTC time is commented out but available
-                ];
-
-                $acceptImage = stic_SignaturesUtils::generateAcceptImage($textArray);
-                $replaceWith = htmlspecialchars('<img class="signature" src="' . $acceptImage . '" width="200"></div>');
-                break;
-            default:
-                // Default case, no replacement
-                break;
-        }
-
-        // Perform the replacement in the template description
-        $templateBean->description = str_replace($stringToreplace, $replaceWith, (string) $templateBean->description);
 
         // If 'pdf_audit_page' is enabled, append an audit page to the PDF content
         if (!empty($signatureBean->pdf_audit_page) && $signatureBean->pdf_audit_page && $signedMode != 'unsigned') {
@@ -224,131 +184,46 @@ class sticGenerateSignedPdf
             $templateBean->description .= htmlspecialchars($auditHtml);
         }
 
-        // HTML Cleaning and Replacement preparation
-        $search = [
-            '@<script[^>]*?>.*?</script>@si', // Strip out javascript
-            '@<[\/\!]*?[^<>]*?>@si', // Strip out HTML tags
-            '@([\r\n])[\s]+@', // Strip out white space
-            '@&(quot|#34);@i', // Replace HTML entities
-            '@&(amp|#38);@i',
-            '@&(lt|#60);@i',
-            '@&(gt|#62);@i',
-            '@&(nbsp|#160);@i',
-            '@&(iexcl|#161);@i',
-            '@<address[^>]*?>@si',
-        ];
-
-        $replace = [
-            '',
-            '',
-            '\1',
-            '"',
-            '&',
-            '<',
-            '>',
-            ' ',
-            chr(161),
-            '<br>',
-        ];
-
-        // Apply initial cleaning to the description
-        $text = preg_replace($search, $replace, (string) $templateBean->description);
-
-        // Replace {DATE <format>} placeholders with the current date
-        $text = preg_replace_callback(
-            '/{DATE\s+(.*?)}/',
-            function ($matches) {
-                return date($matches[1]);
-            },
-            $text
-        );
-
-        // STIC-Custom 20240125 JBL - Product line items in pdf
-        // Handle AOS (Advanced OpenSales) specific modules for line items
-        if (str_starts_with($sourceModule, "AOS_")) {
-            $variableName = strtolower($sourceBean->module_dir);
-            $lineItemsGroups = [];
-            $lineItems = [];
-
-            // Query to fetch line items and groups
-            $sql = "SELECT pg.id, pg.product_id, pg.group_id FROM aos_products_quotes pg LEFT JOIN aos_line_item_groups lig ON pg.group_id = lig.id WHERE pg.parent_type = '" . $sourceBean->object_name . "' AND pg->parent_id = '" . $sourceBean->id . "' AND pg->deleted = 0 ORDER BY lig.number ASC, pg.number ASC";
-            $res = $sourceBean->db->query($sql);
-            while ($row = $sourceBean->db->fetchByAssoc($res)) {
-                $lineItemsGroups[$row['group_id']][$row['id']] = $row['product_id'];
-                $lineItems[$row['id']] = $row['product_id'];
-            }
-
-            // Backward compatibility for related beans in AOS modules
-            if (isset($sourceBean->billing_account_id)) {
-                $object_arr['Accounts'] = $sourceBean->billing_account_id;
-            }
-            if (isset($sourceBean->billing_contact_id)) {
-                $object_arr['Contacts'] = $sourceBean->billing_contact_id;
-            }
-            if (isset($sourceBean->assigned_user_id)) {
-                $object_arr['Users'] = $sourceBean->assigned_user_id;
-            }
-            if (isset($sourceBean->currency_id)) {
-                $object_arr['Currencies'] = $sourceBean->currency_id;
-            }
-
-            // Replace specific AOS variables with dynamic ones
-            $text = str_replace("\$aos_quotes", "\$" . $variableName, $text);
-            $text = str_replace("\$aos_invoices", "\$" . $variableName, $text);
-            $text = str_replace("\$total_amt", "\$" . $variableName . "_total_amt", $text);
-            $text = str_replace("\$discount_amount", "\$" . $variableName . "_discount_amount", $text);
-            $text = str_replace("\$subtotal_amount", "\$" . $variableName . "_subtotal_amount", $text);
-            $text = str_replace("\$tax_amount", "\$" . $variableName . "_tax_amount", $text);
-            $text = str_replace("\$shipping_amount", "\$" . $variableName . "_shipping_amount", $text);
-            $text = str_replace("\$total_amount", "\$" . $variableName . "_total_amount", $text);
-
-            // Populate group lines (products/services) in the template
-            $text = populate_group_lines($text, $lineItemsGroups, $lineItems);
-        }
-        // END STIC-Custom 20240125
-
-        // Apply cleaning to header and footer
-        $header = preg_replace($search, $replace, (string) $templateBean->pdfheader);
-        $footer = preg_replace($search, $replace, (string) $templateBean->pdffooter);
-
-        // Final template parsing using the utility function, which handles advanced placeholders
-        $parsedText = stic_SignaturesUtils::getParsedTemplate($signerBean->id);
-        $converted = $parsedText['converted'];
-        $header = $parsedText['header'];
-        $footer = $parsedText['footer'];
-
-        // Replace the signature src with the actual signature image/acceptance image.
-        $stringToreplace = 'src="themes/SuiteP/images/SignaturePlaceholder.png"';
-
-        // Set time in user format and UTC for use later in audit/acceptance
-        $userTime = (new DateTime())->format('Y-m-d H:i:s (\U\T\C P)');
-
+        // Determine the signature image HTML based on signed mode. The signature
+        // marker is normalized to a plain-text token inside
+        // stic_SignaturesUtils::getParsedTemplate() (before the HTML cleaning
+        // pipeline), so this replacement is applied AFTER the template is parsed.
+        // Note: no closing </div> is appended, as an unmatched </div> makes TCPDF
+        // drop the rest of the document when the signature is inside a table cell.
         $replaceWith = '';
-        // Prepare the replacement HTML based on the signed mode
         switch ($signedMode) {
             case 'handwritten':
                 // Use the drawn signature image URL from the signer bean
-                $replaceWith = 'src="' . $signerBean->signature_image . '";';
+                $replaceWith = '<img class="signature" src="' . $signerBean->signature_image . '" width="200">';
                 break;
             case 'button':
                 // Generate an acceptance image with signer details and timestamp
                 $textArray = [
-                    'Document accepted by:',
+                    $mod_strings['LBL_PORTAL_DOCUMENT_ACCEPTED_BY'],
                     $signerBean->parent_name,
                     $signerBean->email_address,
                     $userTime,
                 ];
-
                 $acceptImage = stic_SignaturesUtils::generateAcceptImage($textArray);
-                $replaceWith = 'src="' . $acceptImage . '";';
+                $replaceWith = '<img class="signature" src="' . $acceptImage . '" width="200">';
                 break;
             default:
                 // Default case, no replacement
                 break;
         }
 
-        // Perform the replacement in the $text
-        $converted = str_replace($stringToreplace, $replaceWith, (string) $converted);
+        // Final template parsing using the utility function, which handles
+        // advanced placeholders.
+        $parsedText = stic_SignaturesUtils::getParsedTemplate($signerBean->id);
+        $converted = $parsedText['converted'];
+        $header = $parsedText['header'];
+        $footer = $parsedText['footer'];
+
+        // Replace the plain-text signature token with the actual signature
+        // image/acceptance image. The token survived the HTML cleaning pipeline,
+        // so this replacement works regardless of whether the marker was inside
+        // a table or not.
+        $converted = str_replace(stic_SignaturesUtils::SIGNATURE_TOKEN, $replaceWith, (string) $converted);
 
         // Replace newlines with HTML line breaks for PDF generation
         $printable = str_replace("\n", "<br />", (string) $converted);

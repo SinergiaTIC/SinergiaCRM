@@ -29,6 +29,14 @@
 class stic_SignaturesUtils
 {
     /**
+     * Plain-text token used as a safe placeholder for the signature marker.
+     * It replaces the raw <img> marker before the HTML cleaning pipeline so that
+     * it survives the tag-stripping regexes, and is later replaced by the real
+     * signature image after the template is parsed.
+     */
+    const SIGNATURE_TOKEN = '@@SIGNATURE_IMAGE@@';
+
+    /**
      * Retrieves the relationships and fields for a given SuiteCRM module.
      * This function fetches a module's own reportable fields and also
      * identifies and lists reportable fields from related modules.
@@ -372,6 +380,19 @@ class stic_SignaturesUtils
             "'",
             'chr(%1)',
         ];
+
+        // Normalize every possible representation of the signature marker to a
+        // plain-text token BEFORE the HTML cleaning pipeline. This way the marker
+        // survives the tag-stripping regexes even when it is placed inside a table,
+        // and can be replaced by the real signature image after the template is parsed.
+        $signatureToken = self::SIGNATURE_TOKEN;
+        $signatureMarkers = [
+            '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;',
+            '<img class="signature" src="themes/SuiteP/images/SignaturePlaceholder.png" alt="" width="200" />',
+        ];
+        $templateBean->pdfheader = str_replace($signatureMarkers, $signatureToken, (string) $templateBean->pdfheader);
+        $templateBean->pdffooter = str_replace($signatureMarkers, $signatureToken, (string) $templateBean->pdffooter);
+        $templateBean->description = str_replace($signatureMarkers, $signatureToken, (string) $templateBean->description);
 
         // Clean the template content (header, footer, description)
         $header = preg_replace($search, $replace, $templateBean->pdfheader);
