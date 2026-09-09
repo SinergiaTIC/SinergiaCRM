@@ -800,6 +800,7 @@ class PaymentBO extends WebFormDataBO
             case 'checkout.session.expired':
                 return $this->processStripeCheckout($event->data->object, $event->type, $paymentMailer, $transaction_code, $retCode);
 
+            case 'customer.subscription.created':
             case 'customer.subscription.deleted':
                 return $this->processStripeSubscription($event->data->object, $event->type, $paymentMailer, $retCode);
 
@@ -891,10 +892,16 @@ class PaymentBO extends WebFormDataBO
             $paymentBean = $paymentBean->retrieve_by_string_fields(array('transaction_code' => $transaction_code));
             $pcBean = SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
             // Update Subscription Id
-            if ($session->subscription != null && isset($pcBean)) {
-                $pcBean->stripe_subscr_id = $session->subscription;
+            $subscriptionId = $session->subscription ?? null;
+            if ($subscriptionId != null && isset($pcBean)) {
+                $pcBean->stripe_subscr_id = $subscriptionId;
                 $pcBean->save();
             }
+            // If the subscription id is not available here (API 2025-03-31.basil can create the
+            // subscription after the payment completes), it is persisted later when the
+            // customer.subscription.created event is processed. For that, the transaction_code
+            // is propagated to the subscription via subscription_data.metadata (see PaymentController)
+            // and persistSubscriptionIdFromSubscription() links it to the Payment Commitment.
         } else {
             if ($session->subscription != null) {
                 // Load the Payment Commitment from subscription, then the Payment
@@ -930,6 +937,12 @@ class PaymentBO extends WebFormDataBO
             return true;
         }
 
+        // Skip invoices with zero amount (e.g. proration credits, credit notes) so they don't modify payments in the CRM
+        if ($invoice->amount_paid == 0) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Skipping invoice {$invoice->id} with amount_paid=0 (billing_reason: {$invoice->billing_reason}, subtotal: {$invoice->subtotal})");
+            return true;
+        }
+
         // Load Data with Stripe Invoice
         if (!$this->loadPaymentBeansFromStripeInvoice($invoice)) {
             // Data can not be retrieved from DB: Can not process the event. Stripe will throw it again later
@@ -947,7 +960,8 @@ class PaymentBO extends WebFormDataBO
             return false; 
         }
         $paymentBean = $this->getLastPayment();
-        if ($invoice->paid) {
+        $isPaid = isset($invoice->paid) ? $invoice->paid : ($invoice->status === 'paid');
+        if ($isPaid) {
             $paymentBean->status = 'paid';
             $paymentBean->amount = $invoice->amount_paid/100;
         } else {
@@ -966,14 +980,51 @@ class PaymentBO extends WebFormDataBO
      * @return boolean
      */
     private function loadPaymentBeansFromStripeInvoice($invoice) {
+        require_once 'SticInclude/Utils.php';
+
         $paymentBean = null;
         $pcBean = null;
 
-        if ($invoice->subscription != null) {
-            // Load the Payment Commitment from subscription, then the Payment
+        $subscriptionId = $invoice->subscription
+            ?? ($invoice->parent->subscription_details ?? null)->subscription
+            ?? null;
+
+        if ($subscriptionId != null) {
+            // Guard: ensure the Payment Commitment bean can be instantiated
             $pcBean = Beanfactory::getBean('stic_Payment_Commitments');
-            $pcBean = $pcBean->retrieve_by_string_fields(array('stripe_subscr_id' => $invoice->subscription));
-            $paymentBean = $this->getBeanPaymentFromStripePaymentCommitment($pcBean, $invoice->created);
+            if ($pcBean == null) {
+                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not instantiate stic_Payment_Commitments for Stripe subscription {$subscriptionId}.");
+                $this->setLastPayment(null);
+                $this->setLastPC(null);
+                return false;
+            }
+
+            // Load the Payment Commitment from subscription, then the Payment
+            $pcBean = $pcBean->retrieve_by_string_fields(array('stripe_subscr_id' => $subscriptionId));
+
+            if ($pcBean != null) {
+                $paymentBean = $this->getBeanPaymentFromStripePaymentCommitment($pcBean, $invoice->created);
+            }
+        }
+
+        // Fallback: the invoice event may arrive before the subscription id is persisted in the
+        // Payment Commitment (API >= 2025-03-31.basil creates the subscription after the payment).
+        // In that case the Payment Commitment cannot be found by stripe_subscr_id, so retrieve the
+        // Payment by the transaction_code propagated in the invoice metadata, as done for PayPal.
+        if ($pcBean == null) {
+            $transactionCode = $invoice->parent->subscription_details->metadata->transaction_code ?? null;
+            if (empty($transactionCode)) {
+                $transactionCode = $invoice->lines->data[0]->metadata->transaction_code ?? null;
+            }
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Payment Commitment not found by Stripe subscription. Trying with transaction code [{$transactionCode}]...");
+            if (!empty($transactionCode)) {
+                $paymentBean = BeanFactory::getBean('stic_Payments');
+                $paymentBean = $paymentBean->retrieve_by_string_fields(array('transaction_code' => $transactionCode));
+                if ($paymentBean->id != '') {
+                    $pcBean = SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
+                    $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Retrieved {$paymentBean->id} payment for transaction code {$transactionCode}.");
+                }
+            }
         }
 
         $this->setLastPayment($paymentBean);
@@ -995,6 +1046,16 @@ class PaymentBO extends WebFormDataBO
         if ($subscription == null) {
             $retCode = "STRIPE_INVALID_SUBSCRIPTION";
             return false;
+        }
+
+        // New subscription created: persist the subscription id in the Payment Commitment.
+        // In API >= 2025-03-31.basil the subscription is created after the payment, so the
+        // checkout.session.completed event may arrive without session.subscription and the id
+        // would not be persisted otherwise. The transaction_code propagated via
+        // subscription_data.metadata (see PaymentController) lets us find the Payment Commitment.
+        if ($eventType == 'customer.subscription.created') {
+            $this->persistSubscriptionIdFromSubscription($subscription);
+            return true;
         }
 
         // Process only deleted subscriptions
@@ -1027,6 +1088,37 @@ class PaymentBO extends WebFormDataBO
             $pcBean->save();
         }
         return true;
+    }
+
+    /**
+     * Persist the Stripe subscription id in the Payment Commitment related to a subscription
+     * created event, using the transaction_code propagated via subscription_data.metadata.
+     *
+     * @param Stripe\Subscription $subscription
+     * @return void
+     */
+    private function persistSubscriptionIdFromSubscription($subscription) {
+        require_once 'SticInclude/Utils.php';
+
+        $transactionCode = $subscription->metadata['transaction_code'] ?? null;
+        if (empty($transactionCode)) {
+            // Subscription not created from a web form checkout (no transaction_code): nothing to link
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Skipping Stripe subscription {$subscription->id} without transaction_code in metadata.");
+            return;
+        }
+
+        // Load the Payment from transaction_code, then the Payment Commitment
+        $paymentBean = BeanFactory::getBean('stic_Payments');
+        $paymentBean = $paymentBean->retrieve_by_string_fields(array('transaction_code' => $transactionCode));
+        $pcBean = SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
+
+        if (isset($pcBean) && $pcBean->stripe_subscr_id != $subscription->id) {
+            $pcBean->stripe_subscr_id = $subscription->id;
+            $pcBean->save();
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Persisted Stripe subscription id {$subscription->id} in Payment Commitment {$pcBean->id}.");
+        } else {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": No Payment Commitment found for transaction_code {$transactionCode} or subscription id already persisted.");
+        }
     }
 
     /**
