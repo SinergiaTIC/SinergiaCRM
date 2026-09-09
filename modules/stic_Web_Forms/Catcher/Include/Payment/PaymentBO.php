@@ -891,10 +891,16 @@ class PaymentBO extends WebFormDataBO
             $paymentBean = $paymentBean->retrieve_by_string_fields(array('transaction_code' => $transaction_code));
             $pcBean = SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
             // Update Subscription Id
-            if ($session->subscription != null && isset($pcBean)) {
-                $pcBean->stripe_subscr_id = $session->subscription;
+            $subscriptionId = $session->subscription ?? null;
+            if ($subscriptionId != null && isset($pcBean)) {
+                $pcBean->stripe_subscr_id = $subscriptionId;
                 $pcBean->save();
             }
+            // If the subscription id is not available here (API 2025-03-31.basil can create the
+            // subscription after the payment completes), it is NOT persisted at this point.
+            // Note: loadPaymentBeansFromStripeInvoice does not persist stripe_subscr_id either,
+            // so in that case the Payment Commitment keeps no subscription id and the renewals
+            // of that subscription cannot be matched (known limitation of the basil flow).
         } else {
             if ($session->subscription != null) {
                 // Load the Payment Commitment from subscription, then the Payment
@@ -930,6 +936,12 @@ class PaymentBO extends WebFormDataBO
             return true;
         }
 
+        // Skip invoices with zero amount (e.g. proration credits, credit notes) so they don't modify payments in the CRM
+        if ($invoice->amount_paid == 0) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Skipping invoice {$invoice->id} with amount_paid=0 (billing_reason: {$invoice->billing_reason}, subtotal: {$invoice->subtotal})");
+            return true;
+        }
+
         // Load Data with Stripe Invoice
         if (!$this->loadPaymentBeansFromStripeInvoice($invoice)) {
             // Data can not be retrieved from DB: Can not process the event. Stripe will throw it again later
@@ -947,7 +959,8 @@ class PaymentBO extends WebFormDataBO
             return false; 
         }
         $paymentBean = $this->getLastPayment();
-        if ($invoice->paid) {
+        $isPaid = isset($invoice->paid) ? $invoice->paid : ($invoice->status === 'paid');
+        if ($isPaid) {
             $paymentBean->status = 'paid';
             $paymentBean->amount = $invoice->amount_paid/100;
         } else {
@@ -974,10 +987,21 @@ class PaymentBO extends WebFormDataBO
             ?? null;
 
         if ($subscriptionId != null) {
-            // Load the Payment Commitment from subscription, then the Payment
+            // Guard: ensure the Payment Commitment bean can be instantiated
             $pcBean = Beanfactory::getBean('stic_Payment_Commitments');
+            if ($pcBean == null) {
+                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not instantiate stic_Payment_Commitments for Stripe subscription {$subscriptionId}.");
+                $this->setLastPayment(null);
+                $this->setLastPC(null);
+                return false;
+            }
+
+            // Load the Payment Commitment from subscription, then the Payment
             $pcBean = $pcBean->retrieve_by_string_fields(array('stripe_subscr_id' => $subscriptionId));
-            $paymentBean = $this->getBeanPaymentFromStripePaymentCommitment($pcBean, $invoice->created);
+
+            if ($pcBean != null) {
+                $paymentBean = $this->getBeanPaymentFromStripePaymentCommitment($pcBean, $invoice->created);
+            }
         }
 
         $this->setLastPayment($paymentBean);
