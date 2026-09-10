@@ -31,6 +31,7 @@ $message = ''; $error = ''; $mode = 'password';
 $oauthClientId = $_GET['client_id'] ?? $_POST['client_id'] ?? '';
 $oauthRedirectUri = $_GET['redirect_uri'] ?? $_POST['redirect_uri'] ?? '';
 $oauthState = $_GET['state'] ?? $_POST['state'] ?? '';
+$oauthClientName = '';
 $isOAuth = !empty($oauthClientId) && !empty($oauthRedirectUri);
 
 if ($isOAuth) {
@@ -42,6 +43,9 @@ if ($isOAuth) {
         && !empty($registeredUrl) && strpos($oauthRedirectUri, $registeredUrl) === 0;
     if (!$validClient) {
         $error = 'Invalid OAuth client or redirect URI.'; $isOAuth = false;
+    } else {
+        // Show the human-readable client name on the consent notice (fall back to the raw id)
+        $oauthClientName = $oauthClient->name ?: $oauthClientId;
     }
 }
 
@@ -117,6 +121,7 @@ $ss->assign('MAGIC_ENABLED', SticPortalConfigUtils::get('PORTAL_MAGIC_LINK_ENABL
 $ss->assign('ERROR', $error); $ss->assign('MESSAGE', $message);
 $ss->assign('MODE', $mode); $ss->assign('CSRF_TOKEN', $csrfToken);
 $ss->assign('OAUTH_CLIENT_ID', $oauthClientId); $ss->assign('OAUTH_REDIRECT_URI', $oauthRedirectUri);
+$ss->assign('OAUTH_CLIENT_NAME', $oauthClientName);
 $ss->assign('OAUTH_STATE', $oauthState); $ss->assign('IS_OAUTH', $isOAuth);
 $ss->assign('LOGGED_IN', $loggedIn);
 $ss->display('custom/themes/SuiteP/tpls/SticPortalLogin.tpl');

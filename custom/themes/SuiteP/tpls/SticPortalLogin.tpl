@@ -256,7 +256,7 @@
         <input type="hidden" name="client_id" value="{$OAUTH_CLIENT_ID|escape}">
         <input type="hidden" name="redirect_uri" value="{$OAUTH_REDIRECT_URI|escape}">
         <input type="hidden" name="state" value="{$OAUTH_STATE|escape}">
-        <div class="help">You are signing in to authorize: <strong>{$OAUTH_CLIENT_ID|escape|truncate:40}</strong></div>
+        <div class="help">You are signing in to authorize: <strong>{$OAUTH_CLIENT_NAME|default:$OAUTH_CLIENT_ID|escape|truncate:60}</strong></div>
       {/if}
       <div id="ct-password" class="tab-content {if $MODE neq 'magic_link'}active{/if}">
         <label>Username</label><input type="text" name="username" autocomplete="username" required>
