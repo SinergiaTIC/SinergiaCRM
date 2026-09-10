@@ -460,6 +460,108 @@ class SticCertificateUtils
     }
 
     /**
+     * Get the instance base URL used to bind the certificate.
+     * Reconstructs the full URL (protocol, host:port and base path) from the
+     * current web request, so it identifies the exact instance/subdomain the
+     * certificate was installed in.
+     * No fallback value is used (e.g. site_url config is intentionally ignored
+     * because it could be modified and weaken the binding). In the absence of a
+     * web request the URL is empty, which makes any validation fail closed.
+     *
+     * @return string Normalized base URL (e.g. "http://localhost:8000/sinergiacrm/")
+     */
+    public static function getInstanceHost()
+    {
+        // Determine protocol from request
+        $scheme = 'http';
+        if ((!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off')
+            || ($_SERVER['SERVER_PORT'] ?? '') == '443'
+            || strtolower($_SERVER['REQUEST_SCHEME'] ?? '') === 'https') {
+            $scheme = 'https';
+        }
+
+        $host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? '';
+
+        // Determine base path from the current script location (e.g. /sinergiacrm)
+        $basePath = '';
+        if (!empty($_SERVER['SCRIPT_NAME'])) {
+            $basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
+            if ($basePath === '.' || $basePath === '/') {
+                $basePath = '';
+            }
+        }
+
+        // If there is no web request host (e.g. CLI), return empty so validation fails closed
+        if (empty($host)) {
+            return '';
+        }
+
+        // Normalize: lowercase scheme/host (and path) and ensure trailing slash
+        return strtolower($scheme . '://' . $host . $basePath) . '/';
+    }
+
+    /**
+     * Compute the instance binding hash for a given base URL.
+     * The hash combines the instance base URL (protocol, host:port and base path)
+     * with the instance unique_key, so the certificate is only valid in the
+     * exact instance that installed it.
+     *
+     * @param string $host Base URL to compute the binding for (defaults to current instance URL)
+     * @return string HMAC-SHA256 binding hash
+     */
+    public static function getInstanceBindingHash($host = null)
+    {
+        global $sugar_config;
+
+        if ($host === null) {
+            $host = self::getInstanceHost();
+        }
+
+        $uniqueKey = $sugar_config['unique_key'] ?? '';
+
+        return hash_hmac('sha256', $host, $uniqueKey);
+    }
+
+    /**
+     * Validate that the installed certificate is bound to the current instance.
+     * A certificate uploaded before this feature was introduced has no binding
+     * metadata and is considered invalid (must be reinstalled).
+     *
+     * @return array Array with 'valid' (bool), 'bound_host' (?string) and 'reason' ('no_binding'|'mismatch'|'valid')
+     */
+    public static function validateInstanceBinding()
+    {
+        $metadata = self::getCertificateMetadata();
+
+        // No metadata or no binding stored: certificate predates this feature
+        if (empty($metadata) || empty($metadata['instance_binding_hash'])) {
+            return array(
+                'valid' => false,
+                'bound_host' => null,
+                'reason' => 'no_binding',
+            );
+        }
+
+        $currentHash = self::getInstanceBindingHash();
+
+        if (hash_equals($metadata['instance_binding_hash'], $currentHash)) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate binding valid for instance.');
+            return array(
+                'valid' => true,
+                'bound_host' => $metadata['instance_host'] ?? null,
+                'reason' => 'valid',
+            );
+        }
+
+        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ': Certificate binding does not match current instance. Bound host: ' . ($metadata['instance_host'] ?? 'unknown'));
+        return array(
+            'valid' => false,
+            'bound_host' => $metadata['instance_host'] ?? null,
+            'reason' => 'mismatch',
+        );
+    }
+
+    /**
      * Get parsed certificate information
      * This method reads and parses the certificate from PEM format
      *

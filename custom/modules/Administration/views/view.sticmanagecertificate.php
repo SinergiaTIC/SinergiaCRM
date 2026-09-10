@@ -56,27 +56,46 @@ class ViewSticManageCertificate extends SugarView
             // Get metadata using utility class
             $metadata = SticCertificateUtils::getCertificateMetadata();
             $GLOBALS['log']->debug('ViewSticManageCertificate - METADATA: ' . print_r($metadata, true));
-            
-            // Get certificate components
-            $components = SticCertificateUtils::getCertificateComponents();
-            $GLOBALS['log']->debug('ViewSticManageCertificate - COMPONENTS: ' . ($components ? 'found (len: ' . strlen($components['certificate']) . ')' : 'null'));
-            
-            // Format upload date for display
-            if (!empty($metadata['upload_date'])) {
-                $uploadDate = DateTime::createFromFormat('Y-m-d H:i:s', $metadata['upload_date']);
-                if ($uploadDate) {
-                    $metadata['upload_date_formatted'] = $uploadDate->format('d/m/Y H:i:s');
+
+            // Check certificate instance/subdomain binding status
+            $bindingStatus = SticCertificateUtils::validateInstanceBinding();
+            $GLOBALS['log']->debug('ViewSticManageCertificate - INSTANCE_BINDING: ' . print_r($bindingStatus, true));
+            $this->ss->assign('INSTANCE_BINDING', $bindingStatus);
+            $this->ss->assign('BINDING_VALID', $bindingStatus['valid']);
+
+            if ($bindingStatus['valid']) {
+                // Certificate is valid for this instance: expose certificate data
+                // Get certificate components
+                $components = SticCertificateUtils::getCertificateComponents();
+                $GLOBALS['log']->debug('ViewSticManageCertificate - COMPONENTS: ' . ($components ? 'found (len: ' . strlen($components['certificate']) . ')' : 'null'));
+
+                // Format upload date for display
+                if (!empty($metadata['upload_date'])) {
+                    $uploadDate = DateTime::createFromFormat('Y-m-d H:i:s', $metadata['upload_date']);
+                    if ($uploadDate) {
+                        $metadata['upload_date_formatted'] = $uploadDate->format('d/m/Y H:i:s');
+                    }
                 }
+
+                // Extract NIF, holder name and certificate type from certificate for display
+                $extractedNif = SticCertificateUtils::getCertificateNif();
+                $extractedName = SticCertificateUtils::getCertificateHolderName();
+                $isEntitySeal = SticCertificateUtils::isEntitySeal();
+
+                $GLOBALS['log']->debug('ViewSticManageCertificate - EXTRACTED_NIF: ' . ($extractedNif ?? 'NULL'));
+                $GLOBALS['log']->debug('ViewSticManageCertificate - EXTRACTED_NAME: ' . ($extractedName ?? 'NULL'));
+                $GLOBALS['log']->debug('ViewSticManageCertificate - IS_ENTITY_SEAL: ' . ($isEntitySeal ?? 'NULL'));
+            } else {
+                // Certificate is not valid for this instance: do not expose certificate data
+                $metadata = null;
+                $extractedNif = null;
+                $extractedName = null;
+                $isEntitySeal = null;
+                // Build the invalid-reason message including the bound instance and the current instance host
+                $bindingStatus['invalid_msg'] = sprintf($mod_strings['LBL_STIC_CERT_INSTANCE_INVALID'], $bindingStatus['bound_host'], SticCertificateUtils::getInstanceHost());
+                $this->ss->assign('INSTANCE_BINDING', $bindingStatus);
+                $GLOBALS['log']->warn('ViewSticManageCertificate - Certificate not valid for this instance. Certificate data hidden.');
             }
-            
-            // Extract NIF, holder name and certificate type from certificate for display
-            $extractedNif = SticCertificateUtils::getCertificateNif();
-            $extractedName = SticCertificateUtils::getCertificateHolderName();
-            $isEntitySeal = SticCertificateUtils::isEntitySeal();
-            
-            $GLOBALS['log']->debug('ViewSticManageCertificate - EXTRACTED_NIF: ' . ($extractedNif ?? 'NULL'));
-            $GLOBALS['log']->debug('ViewSticManageCertificate - EXTRACTED_NAME: ' . ($extractedName ?? 'NULL'));
-            $GLOBALS['log']->debug('ViewSticManageCertificate - IS_ENTITY_SEAL: ' . ($isEntitySeal ?? 'NULL'));
         }
 
         // Debug: Log extracted values

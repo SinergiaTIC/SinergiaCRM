@@ -243,6 +243,8 @@ class CustomAdministrationController extends AdministrationController
                 'uploaded_by_name' => $current_user->name,
                 'cert_details' => $certDetails,
                 'has_ca_chain' => !empty($caChain),
+                'instance_host' => SticCertificateUtils::getInstanceHost(),
+                'instance_binding_hash' => SticCertificateUtils::getInstanceBindingHash(),
             );
 
             // Save to config table

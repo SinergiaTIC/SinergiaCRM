@@ -500,6 +500,15 @@ class AOS_InvoicesUtils
                 throw new Exception("Certificate not found or could not be decrypted. Please upload a certificate in Administration > Digital Certificate.");
             }
 
+            // Validate certificate is bound to this instance/subdomain
+            $bindingCheck = SticCertificateUtils::validateInstanceBinding();
+            if (!$bindingCheck['valid']) {
+                $bindingMsg = $bindingCheck['reason'] === 'no_binding'
+                    ? $mod_strings['LBL_CERT_NO_INSTANCE_BINDING']
+                    : sprintf($mod_strings['LBL_CERT_NOT_VALID_FOR_INSTANCE'], $bindingCheck['bound_host']);
+                throw new Exception($bindingMsg);
+            }
+
             // Extract NIF and holder name from certificate
             $issuerNif = SticCertificateUtils::getCertificateNif();
             $issuerName = SticCertificateUtils::getCertificateHolderName();
@@ -2098,7 +2107,7 @@ class AOS_InvoicesUtils
      */
     public static function sendCancellationToAeat($invoiceBean)
     {
-        global $sugar_config;
+        global $sugar_config, $mod_strings;
 
         // Check if Verifactu is activated - if not, skip (legacy mode)
         if (!self::isVerifactuActivated()) {
@@ -2134,6 +2143,18 @@ class AOS_InvoicesUtils
             $certComponents = SticCertificateUtils::getCertificateComponents();
             if (!$certComponents) {
                 throw new Exception("Certificate not found or could not be decrypted. Please upload a certificate in Administration > Digital Certificate.");
+            }
+
+            // Validate certificate is bound to this instance/subdomain
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            $bindingCheck = SticCertificateUtils::validateInstanceBinding();
+            if (!$bindingCheck['valid']) {
+                $bindingMsg = $bindingCheck['reason'] === 'no_binding'
+                    ? $mod_strings['LBL_CERT_NO_INSTANCE_BINDING']
+                    : sprintf($mod_strings['LBL_CERT_NOT_VALID_FOR_INSTANCE'], $bindingCheck['bound_host']);
+                throw new Exception($bindingMsg);
             }
 
             // Extract NIF and holder name from certificate
@@ -2475,6 +2496,20 @@ class AOS_InvoicesUtils
                 return [
                     'success' => false,
                     'message' => 'Certificado no encontrado. Por favor, cargue un certificado en Administración > Certificado Digital.',
+                ];
+            }
+
+            $bindingCheck = SticCertificateUtils::validateInstanceBinding();
+            if (!$bindingCheck['valid']) {
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+                $bindingMsg = $bindingCheck['reason'] === 'no_binding'
+                    ? $mod_strings['LBL_CERT_NO_INSTANCE_BINDING']
+                    : sprintf($mod_strings['LBL_CERT_NOT_VALID_FOR_INSTANCE'], $bindingCheck['bound_host']);
+                return [
+                    'success' => false,
+                    'message' => $bindingMsg,
                 ];
             }
 

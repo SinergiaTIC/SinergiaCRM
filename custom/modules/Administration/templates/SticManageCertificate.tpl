@@ -44,12 +44,28 @@
         <div class="stic-cert-box-title">{$MOD.LBL_STIC_CERT_CURRENT_STATUS}</div>
         {if $CERT_EXISTS}
             <span style="color: green; font-weight: bold;">{$MOD.LBL_STIC_CERT_EXISTS}</span>
-            {if $CERT_METADATA}
+
+            {* Instance/subdomain binding status *}
+            <div style="margin-left: 15px; margin-top: 10px;">
+                <div style="padding: 10px; background-color: #fff3e0; border-left: 4px solid #ff9800;">
+                    <strong style="color: #e65100;">{$MOD.LBL_STIC_CERT_INSTANCE}:</strong>
+                    {if $INSTANCE_BINDING.valid}
+                        <span style="color: green; font-weight: bold;">{$CERT_METADATA.instance_host} - {$MOD.LBL_STIC_CERT_INSTANCE_VALID}</span>
+                    {elseif $INSTANCE_BINDING.bound_host}
+                        <span style="color: red; font-weight: bold;">{$INSTANCE_BINDING.invalid_msg}</span>
+                        <br><span style="color: #666;">{$INSTANCE_BINDING.bound_host}</span>
+                    {else}
+                        <span style="color: #ff9800; font-weight: bold;">⚠ {$MOD.LBL_STIC_CERT_INSTANCE_NONE}</span>
+                    {/if}
+                </div>
+            </div>
+
+            {if $BINDING_VALID}
                 <div style="margin-left: 15px; margin-top: 10px;">
                     <strong>{$MOD.LBL_STIC_CERT_FILENAME}:</strong> {$CERT_METADATA.original_filename}<br>
                     <strong>{$MOD.LBL_STIC_CERT_UPLOAD_DATE}:</strong> {$CERT_METADATA.upload_date_formatted}<br>
                     <strong>{$MOD.LBL_STIC_CERT_UPLOADED_BY}:</strong> {$CERT_METADATA.uploaded_by_name}
-                    
+
                     {* Extracted NIF and Holder Name - This is what will be used for Verifactu *}
                     <br><br>
                     <div style="padding: 10px; background-color: #e8f5e9; border-left: 4px solid #4caf50;">
@@ -65,7 +81,7 @@
                             <strong>{$MOD.LBL_STIC_CERT_EXTRACTED_NAME}:</strong> <span style="color: red;">⚠ {$MOD.LBL_STIC_CERT_NOT_FOUND}</span><br>
                         {/if}
                         {if $IS_ENTITY_SEAL !== null}
-                            <strong>{$MOD.LBL_STIC_CERT_EXTRACTED_TYPE}:</strong> 
+                            <strong>{$MOD.LBL_STIC_CERT_EXTRACTED_TYPE}:</strong>
                             {if $IS_ENTITY_SEAL == 1}
                                 <span style="font-size: 1.1em; color: #1976d2; font-weight: bold;">{$MOD.LBL_STIC_CERT_TYPE_ENTITY_SEAL}</span>
                             {elseif $IS_ENTITY_SEAL == 0}
@@ -79,7 +95,7 @@
                             <em>{$MOD.LBL_STIC_CERT_EXTRACTED_INFO}</em>
                         </small>
                     </div>
-                    
+
                     {if $CERT_METADATA.cert_details}
                         <br><br>
                         <strong style="text-decoration: underline;">{$MOD.LBL_STIC_CERT_UPLOAD_INFO}:</strong><br>

@@ -146,6 +146,10 @@ $mod_strings['LBL_STIC_CERT_DELETE_BTN'] = 'Eliminar Certificado';
 $mod_strings['LBL_STIC_CERT_CONFIRM_DELETE'] = '¿Está seguro de que desea eliminar el certificado? Esta acción no se puede deshacer.';
 $mod_strings['LBL_STIC_CERT_DELETE_SUCCESS'] = 'Certificado eliminado correctamente.';
 $mod_strings['LBL_STIC_CERT_ERROR_DELETE'] = 'Error al eliminar el certificado.';
+$mod_strings['LBL_STIC_CERT_INSTANCE'] = 'Instancia/subdominio vinculado';
+$mod_strings['LBL_STIC_CERT_INSTANCE_VALID'] = 'Válido para esta instancia';
+$mod_strings['LBL_STIC_CERT_INSTANCE_INVALID'] = 'Este certificado no es válido en esta instancia porque fue instalado en %s o porque ha cambiado algún dato sensible de la instancia. Para poder utilizarlo en %s debe reinstalarlo nuevamente';
+$mod_strings['LBL_STIC_CERT_INSTANCE_NONE'] = 'Sin vincular. Debe reinstalar el certificado en esta instancia.';
 
 // AOS Administration - Invoice Series
 $mod_strings['LBL_AOS_INVOICE_SERIES_TITLE'] = 'Series de facturación';
