@@ -111,6 +111,7 @@ $app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nova notificació per missatge telef
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_CONVERSATION_LABEL'] = 'Envia un missatge (conversa)';
 
 // Enviament massiu de correus
+$app_strings['LBL_PORTAL_INVITATION_LIMIT_ALERT'] = "S'ha superat el limit d'invitacions.";
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = "L'enviament només s'aplicarà als registres de la pàgina actual. Per als enviaments massius es recomana fer servir el mòdul Campanyes.";
 
 // Camps de filtre en relacions molts a molts

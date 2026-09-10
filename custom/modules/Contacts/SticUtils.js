@@ -1,4 +1,24 @@
-/* HEADER */
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 // Set module name
 var module = "Contacts";
 
@@ -105,6 +125,15 @@ switch (viewType()) {
     };
     createDetailViewButton(buttons.syncIncorpora);
     createDetailViewButton(buttons.pdfEmail);
+
+    // Portal Actions button
+    if (STIC.portalClients && typeof createDetailViewButton === 'function') {
+        createDetailViewButton({
+            id: 'bt_portal_actions',
+            title: SUGAR.language.get(module, 'LBL_STIC_PORTAL_ACTIONS') || 'Portal Actions',
+            onclick: 'openPortalActionsPopup()',
+        });
+    }
     createDetailViewButton(buttons.whatsappConversation);
     break;
 
@@ -128,6 +157,15 @@ switch (viewType()) {
     
         createListViewButton(buttons.syncIncorpora);
         createListViewButton(buttons.massJobApplications);
+
+        // Portal Invitation bulk action
+        var portalInvitationListBtn = {
+            id: "bt_portal_invitation_listview",
+            title: SUGAR.language.get(module, "LBL_STIC_SEND_PORTAL_INVITATION"),
+            text: SUGAR.language.get(module, "LBL_STIC_SEND_PORTAL_INVITATION"),
+            onclick: "onClickPortalInvitationButton()",
+        };
+        createListViewButton(portalInvitationListBtn);
         break;
   default:
     break;
@@ -339,4 +377,29 @@ function setupPrivateAreaFields() {
 
   togglePassword();
   checkbox.addEventListener('change', togglePassword);
+}
+
+/**
+ * Portal bulk list-view invitation. Defined here (not in PortalActions.js) so it
+ * is available on LIST views — PortalActions.js is only loaded on detail views.
+ */
+function onClickPortalInvitationButton() {
+  if (typeof sugarListView === 'undefined') return false;
+  sugarListView.get_checks();
+  const alertMsg = SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED') || 'Please select at least one record.';
+  if (sugarListView.get_checks_count() < 1) {
+    alert(alertMsg);
+    return false;
+  }
+  if (typeof getPortalInvitationLimit === 'function' && sugarListView.get_checks_count() > getPortalInvitationLimit()) {
+    alert(SUGAR.language.get('app_strings', 'LBL_PORTAL_INVITATION_LIMIT_ALERT') || 'The invitation limit has been exceeded.');
+    return false;
+  }
+  var ids = [];
+  document.querySelectorAll('input[name="mass[]"]:checked').forEach(function (cb) { ids.push(cb.value); });
+  if (ids.length === 0) {
+    alert(alertMsg);
+    return false;
+  }
+  location.href = 'index.php?entryPoint=sticPortalInvitation&id=' + ids.join(',') + '&return_module=' + module + '&return_action=index';
 }
