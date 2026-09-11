@@ -26,3 +26,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings['LBL_SENDMESSAGE'] = 'Envia un missatge';
+$mod_strings['LBL_SENDTOSIGN'] = 'Enviar a firma';
+$mod_strings['LBL_SENDTOSIGN_SIGNATURE'] = 'Procés de firma';
+$mod_strings['LBL_SENDTOSIGN_ACTION_TYPE'] = 'Tipus d\'acció';
+$mod_strings['LBL_SENDTOSIGN_ADD_ONLY'] = 'Afegir al procés de firma';
+$mod_strings['LBL_SENDTOSIGN_ADD_AND_EMAIL'] = 'Afegir al procés de firma i enviar email';

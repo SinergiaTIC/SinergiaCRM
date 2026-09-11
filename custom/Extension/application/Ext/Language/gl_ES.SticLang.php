@@ -34,6 +34,9 @@ $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Enviar PDF por correo';
 $app_strings['LBL_WHATSAPP_CONVERSATION_BUTTON'] = 'Ver conversación de WhatsApp';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Engadir ao proceso de sinatura';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccione un proceso de sinatura';
+$app_strings['LBL_SIGNATURE_ACTION'] = 'Acción';
+$app_strings['LBL_SIGNATURE_ACTION_REDIRECT_PORTAL'] = 'Ir ao portal';
+$app_strings['LBL_SIGNATURE_ACTION_SEND_EMAIL'] = 'Enviar correo';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Ver sinaturas relacionadas';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES_TITLE'] = 'Sinaturas relacionadas';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Móstranse as sinaturas relacionadas con este rexistro do módulo';
@@ -4073,6 +4076,21 @@ $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sen cambi
 // TODO:
 // Define: stic_awf_deferred_tickets_status
 // Define: stic_awf_incoming_events_status
+
+// Advanced Web Forms Deferred Tickets: status
+$app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
+$app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pendiente';
+$app_list_strings['stic_awf_deferred_tickets_status']['processing'] = 'Procesando';
+$app_list_strings['stic_awf_deferred_tickets_status']['resolved'] = 'Resuelto';
+$app_list_strings['stic_awf_deferred_tickets_status']['failed'] = 'Fallido';
+$app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancelado';
+
+// Advanced Web Forms Incoming Events: status
+$app_list_strings['stic_awf_incoming_events_status'][''] = '';
+$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pendiente';
+$app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Procesado';
+$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Fallido';
+$app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignorado';
 
 // Advanced Web Forms Deferred Tickets: status
 $app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
