@@ -611,8 +611,8 @@ $sugar_config = array(
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '2.10.1', 
-    'js_custom_version' => 38,
+    'sinergiacrm_version' => '2.11.2', 
+    'js_custom_version' => 41,
     'stic_show_update_alert' => 0,
     // END STIC
 
@@ -674,6 +674,13 @@ $sugar_config = array(
                 'redirectUri' => '',
                 'scopes' => '',
             ),
+    ),
+    // STIC-Custom XJO 20260707 - Update news dashlet URL
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1305
+    'stic_news_dashlet_url' => array(
+        'es_ES' => 'https://www.sinergiatic.org/es/sinergiatic-news/',
+        'ca_ES' => 'https://www.sinergiatic.org/sinergiatic-news/',
+        'en_us' => 'https://www.sinergiatic.org/sinergiatic-news/',
     ),
     // END STIC-Custom
 

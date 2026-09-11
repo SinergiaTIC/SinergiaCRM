@@ -31,6 +31,7 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "La validació d
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Afegeix Organitzacions i Persones a una llista de públic objectiu';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronització amb Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Envia PDF per correu';
+$app_strings['LBL_WHATSAPP_CONVERSATION_BUTTON'] = 'Mostra la conversa de WhatsApp';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Afegeix al procés de firma';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccioneu un procés de firma';
 $app_strings['LBL_SIGNATURE_ACTION'] = 'Acció';
@@ -3674,8 +3675,9 @@ $app_list_strings['stic_skills_evaluation_stages_list']['intermediate'] = 'Inter
 $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 
 // Missatges: Tipus
-$app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
-$app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['sms'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['whatsapp_web'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['whatsapp'] = 'WhatsApp';
 $app_list_strings['stic_messages_type_list']['private_area'] = 'Àrea privada';
 
 // Missatges: Direcció
@@ -3685,7 +3687,9 @@ $app_list_strings['stic_messages_direction_list']['outbound'] = 'Sortida';
 // Missatges: Estats
 $app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviat';
+$app_list_strings['stic_messages_status_list']['received'] = 'Rebut';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
+$app_list_strings['stic_messages_status_list']['redirected'] = 'Redirigit';
 
 // Missatges: Tipus de registres pare
 $app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organitzacions';
@@ -3951,6 +3955,10 @@ $app_list_strings['stic_awf_forms_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_awf_forms_status_list']['public'] = 'Públic';
 $app_list_strings['stic_awf_forms_status_list']['closed'] = 'Tancat';
 
+// Advanced Web Forms: types
+$app_list_strings['stic_awf_forms_types_list']['web'] = 'Formulari web';
+$app_list_strings['stic_awf_forms_types_list']['crm'] = "Formulari del CRM";
+
 // Advanced Web Forms: configuration->data_block->duplicate_detection->on_duplicate
 $app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['enrich'] = 'Amplia';
 $app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['update'] = 'Actualitza';
@@ -4193,6 +4201,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correu ele
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list_no_workflow']['whatsapp'] = 'WhatsApp';
 
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
@@ -4201,6 +4210,20 @@ $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificació';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Correu electrònic';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list']['whatsapp'] = 'WhatsApp';
+
+// Plantilles de Correu electrònic: Tipus de categoria WhatsApp
+$app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Màrqueting';
+$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utilitat';
+$app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Autenticació';
+
+// Plantilles de Correu electrònic: Tipus d'estat d'aprovació WhatsApp
+$app_list_strings['stic_whatsapp_status_list'][''] = '';
+$app_list_strings['stic_whatsapp_status_list']['draft'] = 'Esborrany';
+$app_list_strings['stic_whatsapp_status_list']['pending'] = "Pendent d'aprovació";
+$app_list_strings['stic_whatsapp_status_list']['approved'] = 'Aprovada';
+$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rebutjada';
+$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Creada sense enviar';
 
 // Elements afegits a l'Historial
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tasques';

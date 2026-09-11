@@ -62,7 +62,7 @@
                 <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h3>
                 <div>
                   <template x-for="(rel, index) in $store.dataBlockRelationships.usedDatablockRelationships(item.id)">
-                    <div class="text-muted" x-text="$store.dataBlockRelationships.getRelText(item.id, rel.name);"></div>
+                    <div class="text-muted" x-text="$store.dataBlockRelationships.getRelText(item.id, rel);"></div>
                   </template>
                 </div>
                 <!-- Buttons -->
@@ -288,7 +288,7 @@
                           </td>
                           <!-- Duplicate Action -->
                           <td class="col-3">
-                            <select :id="`duplicateAction${item.id}${index}`" class="form-select" x-model="dupli.on_duplicate">
+                            <select :id="`duplicateAction${item.id}${index}`" class="form-select" x-model="dupli.on_duplicate" x-init="$nextTick(() => $el.value = dupli.on_duplicate)">
                               <template x-for="action in stic_AwfDuplicateDetection.on_duplicateList()" :key="action.id">
                                 <option :value="action.id" x-text="action.text"></option>
                               </template>
@@ -322,8 +322,9 @@
                     <thead>
                       <tr>
                         <th x-text="utils.translate('LBL_RELATIONSHIP')"></th>
-                        <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_ORIG')"></th>
-                        <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_DEST')"></th>
+                        <th x-text="utils.translate('LBL_RELATIONSHIP_INVOLVED_BLOCKS')"></th>
+                        <th x-text="utils.translate('LBL_RELATIONSHIP_TYPE')"></th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -331,10 +332,20 @@
                         <tr>
                           <!-- Relationship -->
                           <td x-text="rel.text"></td>
-                          <!-- DataBlock Orig -->
-                          <td x-text="getDataBlockText(rel.datablock_orig)"></td>
-                          <!-- DataBlock Dest -->
-                          <td x-text="getDataBlockText(rel.datablock_dest)"></td>
+                          <!-- Involved DataBlocks -->
+                          <td x-text="$store.dataBlockRelationships.getInvolvedBlocksText(item.id, rel)"></td>
+                          <!-- Type -->
+                          <td>
+                            <span class="badge rounded-pill bg-secondary" x-text="$store.dataBlockRelationships.getRelationshipTypeLabel(item.id, rel.name, rel.datablock_dest, rel.initiator_id)"></span>
+                          </td>
+                          <!-- Delete button -->
+                          <td>
+                            <button type="button" class="btn"
+                                    @click="$store.dataBlockRelationships.deleteRelationship(rel.datablock_orig, rel.name, rel.datablock_dest);"
+                                    :title="utils.translate('LBL_BUTTON_DELETE')">
+                              <span class="suitepicon suitepicon-action-delete"></span>
+                            </button>
+                          </td>
                         </tr>
                       </template>
                     </tbody>
@@ -524,10 +535,14 @@
                           <!-- Value options configuration Table -->
                           <div class="col-12" x-data="WizardStep2.sortableListxData(field.value_options)">
                             <span class="form-label mt-3" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')" ></span>
+                            <div class="text-muted form-check form-switch small" x-data="{ init() { $data.showInternalValues = false; } }">
+                              <input class="form-check-input" type="checkbox" id="toggleInternalValues" x-model="showInternalValues">
+                              <label class="form-label" for="toggleInternalValues" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW_NAME')"></label>
+                            </div>
                             <table class="table table-bordered table-striped w-auto" id="modalField_ValueOptionsTable">
                               <thead>
                                 <tr>
-                                  <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_NAME')"></th>
+                                  <th x-show="showInternalValues" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_NAME')"></th>
                                   <template x-if="!field.isSelectCustomOptions()">
                                     <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL')"></th>
                                   </template>
@@ -543,11 +558,11 @@
                                   <tr>
                                     <!-- Value -->
                                     <template x-if="!field.isSelectCustomOptions()">
-                                      <td x-text="element.value"></td>
+                                      <td x-show="showInternalValues" x-text="element.value"></td>
                                     </template>
                                     <template x-if="field.isSelectCustomOptions()">
-                                      <td>
-                                        <input class="form-control" type="text" x-model="element.value" :id="`modalField_ValueOptionsValue${index}`"/>
+                                      <td x-show="showInternalValues">
+                                        <input class="form-control" type="text" x-model="element.value" :id="`modalField_ValueOptionsValue${index}`" :placeholder="element.text"/>
                                       </td>
                                     </template>
                                     <!-- Text original -->
@@ -564,7 +579,8 @@
                                     </template>
                                     <!-- Text -->
                                     <td>
-                                      <input class="form-control" type="text" x-model="element.text" :id="`modalField_ValueOptionsText${index}`"/>
+                                      <input class="form-control" type="text" x-model="element.text" :id="`modalField_ValueOptionsText${index}`"
+                                             @change="if (field.isSelectCustomOptions() && (!element.value || element.value.trim() === '')) { element.value = element.text; }" />
                                     </td>
                                     <!-- Buttons -->
                                     <td class="d-flex">
@@ -693,7 +709,7 @@
                           </div>
                         </template>
                         <!-- Description -->
-                        <div class="col-3">
+                        <div class="col-6">
                           <div class="d-flex justify-content-between align-items-end mb-1">
                             <label for="modalField_Description" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_DESCRIPTION')"></label>
                             <!-- Add link to description -->

@@ -47,7 +47,7 @@ class ExampleDeferredAction extends DeferredActionDefinition implements IWebhook
         $this->isActive = true;
 
         // Whether this action is visible and selectable in the Wizard
-        $this->isUserSelectable = true;
+        $this->isUserSelectable = false;
 
         // Categorization for organization in the designer dropdowns (from the list stic_awf_forms_action_definition_category_list)
         $this->category = 'integration';

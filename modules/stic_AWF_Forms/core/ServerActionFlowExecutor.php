@@ -47,8 +47,32 @@ class ServerActionFlowExecutor {
         $lastActionConfig = null;
         try {
             $actions = $flowConfig->actions ?? [];
+
+            // Preprocess formData to fill in missing boolean/checkbox fields
+            // (browsers don't send unchecked checkboxes, so without this the condition would
+            // compare null vs '0' and fail)
+            stic_AWFUtils::fillMissingBooleanFields($this->context->formConfig, $this->context->formData);
+
             foreach ($actions as $actionConfig) {
                 $lastActionConfig = $actionConfig;
+
+                // Check that all requisite_actions have been executed successfully
+                // Backward compatibility: if a requisite action hasn't been executed (null),
+                // log a warning but let the action proceed. This preserves the pre-update
+                // behavior where no topological sort was performed server-side.
+                foreach ($actionConfig->requisite_actions as $reqActionId) {
+                    $reqResult = $this->context->getActionResultById($reqActionId);
+                    if ($reqResult === null) {
+                        $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' (id: {$actionConfig->id}) requires action with id '{$reqActionId}' but it was not executed. Continuing anyway for backward compatibility.");
+                        continue;
+                    }
+                    if ($reqResult->isError()) {
+                        $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' skipped because requisite action '{$reqActionId}' failed.");
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Requisite action failed.");
+                        $this->context->addActionResult($skippedResult);
+                        continue 2;
+                    }
+                }
 
                 // Check the Conditions (if any)
                 if(!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
@@ -62,6 +86,16 @@ class ServerActionFlowExecutor {
 
                 // Find the action executor (throws if not found)
                 $actionExecutor = $this->factory->createAction($actionConfig);
+
+                // Check form type compatibility
+                if (!empty($this->context->formType) && !empty($actionExecutor->supportedFormTypes)) {
+                    if (!in_array($this->context->formType, $actionExecutor->supportedFormTypes)) {
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->text}' because it does not support form type '{$this->context->formType}'.");
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Form type '{$this->context->formType}' not supported.");
+                        $this->context->addActionResult($skippedResult);
+                        continue;
+                    }
+                }
 
                 // Parameter resolution
                 $paramDefinitions  = $actionExecutor->getParameters();

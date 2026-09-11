@@ -171,11 +171,7 @@ class stic_AWFUtils {
                         continue;
                     }
 
-                    $formKey = "{$block->name}.{$fieldDef->name}";
-                    if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
-                        $formKey = "_detached.{$formKey}";
-                    }
-                    $formKey = str_replace('.', '_', $formKey);
+                    $formKey = $fieldDef->getPhpKey();
                     
                     // Value to display
                     $value = $formData[$formKey] ?? '';
@@ -403,11 +399,7 @@ class stic_AWFUtils {
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                     if (empty($fieldDef->label)) continue;
 
-                    $formKey = "{$block->name}.{$fieldDef->name}";
-                    if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
-                        $formKey = "_detached.{$formKey}";
-                    }
-                    $formKey = str_replace('.', '_', $formKey);
+                    $formKey = $fieldDef->getPhpKey();
 
                     // Value to display
                     $value = $formData[$formKey] ?? '';
@@ -878,6 +870,27 @@ class stic_AWFUtils {
     }
 
     /**
+     * Preprocesses form data to fill in missing boolean/checkbox fields with '0'.
+     * Browsers do not send unchecked checkboxes in POST data, so they are absent from formData.
+     * Without this preprocessing, conditions on boolean fields with value 'No' ('0') would fail
+     * because the field would be null instead of '0'.
+     * @param FormConfig $formConfig The form configuration containing field definitions
+     * @param array $formData The submitted form data (passed by reference to be modified)
+     */
+    public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
+        foreach ($formConfig->data_blocks as $dataBlock) {
+            foreach ($dataBlock->fields as $field) {
+                if ($field->type === 'bool' || $field->type === 'checkbox' || in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) {
+                    $phpKey = $field->getPhpKey();
+                    if (!isset($formData[$phpKey])) {
+                        $formData[$phpKey] = '0';
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Evaluates an array of conditions against the provided form data.
      * Assumes an implicit AND between all conditions.
      * @param array|null $conditions Array of condition DTOs (field_name, operator, value)
@@ -1120,6 +1133,19 @@ class stic_AWFUtils {
             $deferredData = DeferredContextData::fromJson($ticket->context_data);
             $contextData = $deferredData->toArray();
             $isSuccess = ($ticketStatus === 'resolved' || $ticketStatus === 'processed');
+
+            if ($isSuccess && $ticketStatus === 'processed' && !$isCli) {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The ticket has already been processed. Ticket ID: {$ticket->id}");
+                
+                $customTitle = $context->deferredContext?->alreadyProcessedTitle;
+                $customMsg = $context->deferredContext?->alreadyProcessedMessage;
+                if (!empty($customTitle) || !empty($customMsg)) {
+                    $title = $customTitle ?: translate('LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT', 'stic_AWF_Forms');
+                    $msg = $customMsg ?: translate('LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT', 'stic_AWF_Forms');
+                    self::renderGenericResponse($context->formConfig, $title, $msg);
+                    return;
+                }
+            }
 
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Executing deferred flow for ticket with status '$ticketStatus'. Ticket ID: {$ticket->id}");
 
