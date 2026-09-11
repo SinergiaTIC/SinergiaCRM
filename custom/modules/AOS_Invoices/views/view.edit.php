@@ -175,6 +175,61 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
         .stic-disabled { opacity: 0.5; cursor: not-allowed !important; pointer-events: none; }
         input.stic-disabled { background-color: #eee; }
 
+        /* STIC-Custom: Read-only auto-calculated totals (PR #870 review)
+           Visually differentiate non-editable total fields from editable ones. */
+        input.stic-readonly-total {
+            background-color: #f2f2f2;
+            border-color: #d0d0d0;
+            color: #666;
+            cursor: default;
+        }
+
+        /* STIC-Custom: Shipping VAT combo (I.V.A. Envío). Percentage dropdown first,
+           calculated amount second, both on the same line and with the same combined
+           width as the rest of the totals fields (PR #870 review). */
+        #EditView .stic-shipping-vat-combo {
+            display: flex;
+            align-items: center;
+            width: 40%;
+            max-width: 40%;
+        }
+        #EditView .stic-shipping-vat-combo #shipping_tax,
+        #EditView .stic-shipping-vat-combo #shipping_tax_amt {
+            flex: 0 0 50%;
+            min-width: 0;
+            max-width: 50%;
+            width: 50%;
+            margin: 0;
+            box-sizing: border-box;
+            
+        }
+
+        #EditView #shipping_tax {
+          padding-right: unset;
+          border-top-right-radius: 0;
+          border-bottom-right-radius: 0;
+        }
+
+         #EditView .stic-shipping-vat-combo #shipping_tax_amt {
+          padding-left: unset;
+          border-left: 1px solid transparent;
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+        }
+
+        /* STIC Custom: Move the totals block (Total, Descuento, Subtotal, Envío,
+           IVA envío, IVA, Total global) to the right column, while keeping the
+           empty left column clear (PR #870 review). */
+        #EditView .edit-view-row-item[data-field="total_amt"],
+        #EditView .edit-view-row-item[data-field="discount_amount"],
+        #EditView .edit-view-row-item[data-field="subtotal_amount"],
+        #EditView .edit-view-row-item[data-field="shipping_amount"],
+        #EditView .edit-view-row-item[data-field="shipping_tax_amt"],
+        #EditView .edit-view-row-item[data-field="tax_amount"],
+        #EditView .edit-view-row-item[data-field="total_amount"] {
+            float: right;
+        }
+
         /* STIC CUSTOM: Stack line item fields vertically on mobile (CorreccionesPendientes #4) */
         @media (max-width: 768px) {
             #lineItems table, #lineItems thead, #lineItems tbody, #lineItems tfoot,

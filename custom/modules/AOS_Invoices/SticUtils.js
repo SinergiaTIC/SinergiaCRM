@@ -480,6 +480,23 @@ $(document).ready(function() {
   }
 });
 
+// STIC-Custom: Totals are auto-calculated from the product lines (PR #870 review).
+// Make them read-only and visually differentiate them from editable fields.
+// NOTE: shipping_amount and shipping_tax (dropdown) must remain editable since
+// they are user inputs, not derived from the product lines. shipping_tax_amt is
+// rendered as a pair of inputs by display_shipping_vat(), so we only target the
+// amount input (#shipping_tax_amt), never the shipping_tax select (#shipping_tax).
+// readonly is used instead of disabled so the values are still submitted on save
+// (there is no server-side recalculation of these totals).
+$(document).ready(function() {
+  ['total_amt', 'discount_amount', 'subtotal_amount', 'shipping_tax_amt', 'tax_amount', 'total_amount'].forEach(function(fieldId) {
+    var $field = $('#' + fieldId);
+    if ($field.length && $field.prop('tagName') === 'INPUT') {
+      $field.prop('readonly', true).addClass('stic-disabled');
+    }
+  });
+});
+
 // Mass send selected invoices to AEAT
 function massSendToAeat() {
   if (typeof verifactuActivated === 'undefined' || verifactuActivated !== true) {

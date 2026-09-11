@@ -2638,3 +2638,35 @@ function sticShowErrorAndRedirect($message, $redirectUrl = 'index.php?module=AOS
     header('Location: ' . $redirectUrl);
     exit;
 }
+
+/**
+ * Custom renderer for the shipping_tax_amt field (I.V.A. Envío) on the invoice EditView.
+ * It replaces the core display_shipping_vat() so that:
+ *  - The percentage dropdown (#shipping_tax) is rendered FIRST.
+ *  - The calculated VAT amount (#shipping_tax_amt) is rendered SECOND.
+ *  - Both keep the same combined width as the rest of the totals fields.
+ * The core function renders input first and select second, which makes the two
+ * controls stack instead of staying on the same line.
+ *
+ * @param SugarBean $focus
+ * @param string $field
+ * @param string $value
+ * @param string $view
+ * @return string
+ */
+function sticDisplayShippingVat($focus, $field, $value, $view)
+{
+    if ($view == 'EditView') {
+        global $app_list_strings;
+        if ($value != '') {
+            $value = format_number($value);
+        }
+        $dropdown = "<select name='shipping_tax' id='shipping_tax' onchange='calculateTotal(\"lineItems\");'>" .
+            get_select_options_with_id($app_list_strings['vat_list'], (isset($focus->shipping_tax) ? $focus->shipping_tax : '')) .
+            '</select>';
+        $amount = "<input id='shipping_tax_amt' type='text' tabindex='0' title='' value='" . $value .
+            "' maxlength='26,6' size='12' name='shipping_tax_amt' onblur='calculateTotal(\"lineItems\");'>";
+        return '<div class="stic-shipping-vat-combo">' . $dropdown . $amount . '</div>';
+    }
+    return format_number($value);
+}

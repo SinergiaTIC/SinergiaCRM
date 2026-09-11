@@ -67,6 +67,16 @@ $dictionary['AOS_Invoices']['fields']['discount_amount']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['subtotal_amount']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['shipping_amount']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['shipping_tax_amt']['inline_edit'] = 0;
+
+// Custom renderer for shipping_tax_amt (I.V.A. Envío): percentage dropdown first,
+// then the calculated VAT amount, keeping the same combined width as the other totals.
+// Replaces the core display_shipping_vat() which renders input before select.
+$dictionary['AOS_Invoices']['fields']['shipping_tax_amt']['function'] = array(
+    'name' => 'sticDisplayShippingVat',
+    'returns' => 'html',
+    'include' => 'custom/modules/AOS_Invoices/SticUtils.php'
+);
+$dictionary['AOS_Invoices']['fields']['shipping_tax_amt']['size'] = '12';
 $dictionary['AOS_Invoices']['fields']['tax_amount']['inline_edit'] = 0;
 $dictionary['AOS_Invoices']['fields']['total_amount']['inline_edit'] = 0;
 
