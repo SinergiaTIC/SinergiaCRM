@@ -119,6 +119,27 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
                 <strong><span class="suitepicon suitepicon-action-warning"></span> ' . $bannerMessage . '</strong>
             </div>';
         }
+
+        // === Customer identification number warning (detail view) ===
+        // Show a warning whenever the invoice is opened if its customer has no DNI/NIF/CIF.
+        $customerMissingNif = false;
+        if (!empty($this->bean->billing_account_id)) {
+            $account = BeanFactory::getBean('Accounts', $this->bean->billing_account_id);
+            $customerMissingNif = !empty($account->id) && empty($account->stic_identification_number_c);
+        } elseif (!empty($this->bean->billing_contact_id)) {
+            $contact = BeanFactory::getBean('Contacts', $this->bean->billing_contact_id);
+            $customerMissingNif = !empty($contact->id) && empty($contact->stic_identification_number_c);
+        }
+        if ($customerMissingNif) {
+            global $mod_strings;
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            echo '<div class="alert alert-danger" style="margin: 10px 0; padding: 12px; border-left: 4px solid #d9534f; background-color: #f2dede;">
+                <strong><span class="suitepicon suitepicon-alert-error"></span> ' . $mod_strings['LBL_CUSTOMER_IDENTIFICATION_NUMBER_MISSING'] . '</strong>
+            </div>';
+        }
+        // === End customer identification number warning ===
     }
 
     public function display()

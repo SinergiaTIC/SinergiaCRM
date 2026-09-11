@@ -168,7 +168,7 @@ $mod_strings['LBL_STIC_SERIES_FORMAT_INFO'] = 'Las facturas de estas series segu
 $mod_strings['LBL_STIC_SERIES_AUTO_CREATED_ADMIN'] = 'Si se desea, un administrador puede modificar estas series desde Administración > Ajustes AOS. Al hacer clic en Aceptar se recargará la página.';
 
 // Customer identification number validation
-$mod_strings['LBL_CUSTOMER_IDENTIFICATION_NUMBER_MISSING'] = 'La Organización o Persona seleccionada no tiene informado el NIF/DNI/CIF. Por favor, edite el cliente y complete este campo antes de guardar la factura.';
+$mod_strings['LBL_CUSTOMER_IDENTIFICATION_NUMBER_MISSING'] = 'La Organización o Persona seleccionada no tiene informado el NIF/DNI/CIF. Por favor, edite el cliente y complete este campo antes de enviar la factura.';
 
 // Verifactu consultation with AEAT
 $mod_strings['LBL_VERIFACTU_QUERY_AEAT'] = 'Consultar facturas en AEAT';
