@@ -552,6 +552,11 @@ class AOS_InvoicesHook
             return;
         }
 
+        // Test invoices (verifactu_test_invoice_c=1) may be deleted at any time without restrictions
+        if (!empty($bean->verifactu_test_invoice_c)) {
+            return;
+        }
+
         if (!empty($bean->verifactu_aeat_status_c) &&
             in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted', 'cancelled'))) {
 

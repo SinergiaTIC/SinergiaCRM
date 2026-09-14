@@ -13,6 +13,7 @@ REPLACE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('AOS_Invoicesverifactu_cancel_id_c', 'AOS_Invoices', 'verifactu_cancel_id_c'),
 ('AOS_Invoicesverifactu_csv_c', 'AOS_Invoices', 'verifactu_csv_c'),
 ('AOS_Invoicesverifactu_submitted_at_c', 'AOS_Invoices', 'verifactu_submitted_at_c'),
+('AOS_Invoicesverifactu_test_invoice_c', 'AOS_Invoices', 'verifactu_test_invoice_c'),
 ('AOS_Invoicesverifactu_invoice_type_c', 'AOS_Invoices', 'verifactu_invoice_type_c'),
 ('AOS_Invoicesverifactu_is_rectified_c', 'AOS_Invoices', 'verifactu_is_rectified_c'),
 ('AOS_Invoicesverifactu_rectified_type_c', 'AOS_Invoices', 'verifactu_rectified_type_c'),

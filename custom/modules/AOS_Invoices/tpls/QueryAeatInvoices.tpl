@@ -72,6 +72,13 @@
               <input type="checkbox" name="nest_rectified" value="1"{if $FORM_NEST_CHECKED} checked{/if} style="margin-right: 4px; vertical-align: text-top;"> {$MOD.LBL_VERIFACTU_QUERY_NEST_RECTIFIED}
             </label>
           </div>
+          <div class="col-xs-12 col-sm-6 col-lg-3" style="margin-bottom: 12px; padding-top: 22px;">
+            <label style="display: block; font-weight: 600; font-size: 11px; text-transform: uppercase; color: #534D64; letter-spacing: 0.5px;">{$MOD.LBL_VERIFACTU_QUERY_ENVIRONMENT}</label>
+            <select name="use_production" style="width: 100%;">
+              <option value="1"{if $FORM_USE_PRODUCTION} selected{/if}>{$MOD.LBL_VERIFACTU_MODE_PRODUCTION}</option>
+              <option value="0"{if !$FORM_USE_PRODUCTION} selected{/if}>{$MOD.LBL_VERIFACTU_MODE_TEST}</option>
+            </select>
+          </div>
         </div>
 
         <div style="text-align: center; padding-top: 16px; margin-top: 8px; border-top: 1px solid #E6E6E6;">

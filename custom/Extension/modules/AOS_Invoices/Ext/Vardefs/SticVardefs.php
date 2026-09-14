@@ -527,6 +527,31 @@ $dictionary['AOS_Invoices']['fields']['verifactu_previous_status_c'] = array(
     'popupHelp' => 'LBL_VERIFACTU_PREVIOUS_STATUS_HELP',
 );
 
+// Indica si la factura es una factura de prueba (no real) - sustituye al modo test global
+$dictionary['AOS_Invoices']['fields']['verifactu_test_invoice_c'] = array(
+    'id' => 'AOS_Invoicesverifactu_test_invoice_c',
+    'name' => 'verifactu_test_invoice_c',
+    'vname' => 'LBL_VERIFACTU_TEST_INVOICE',
+    'custom_module' => 'AOS_Invoices',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'bool',
+    'default' => 1,
+    'required' => 0,
+    'audited' => 1,
+    'unified_search' => 0,
+    'inline_edit' => 0,
+    'importable' => 0,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_VERIFACTU_TEST_INVOICE_HELP',
+);
+
 // Indica si la factura está vigente en Verifactu (1) o ha sido anulada/rectificada (0)
 $dictionary['AOS_Invoices']['fields']['verifactu_valid_invoice_c'] = array(
     'id' => 'AOS_Invoicesverifactu_valid_invoice_c',

@@ -378,8 +378,6 @@ $verifactuInstallationNumber = 'SC-' . substr(md5($sugar_config['unique_key']), 
 
 $tmp = stic_SettingsUtils::getSetting('VERIFACTU_ACTIVATED');
 $verifactuActivated = $tmp === false ? '' : ($tmp == '1' ? 'Sí' : 'No');
-$tmp = stic_SettingsUtils::getSetting('VERIFACTU_TEST');
-$verifactuTestMode = $tmp === false ? '' : ($tmp == '1' ? 'Test' : 'Real');
 $tmp = stic_SettingsUtils::getSetting('VERIFACTU_TAX_TYPE');
 $taxTypes = array('01' => 'IVA', '02' => 'IPSI', '03' => 'IGIC');
 $verifactuTaxType = ($tmp !== false && isset($taxTypes[$tmp])) ? $taxTypes[$tmp] . " ({$tmp})" : ($tmp !== false ? $tmp : '');
@@ -391,7 +389,6 @@ $sugar_smarty->assign('VERIFACTU_SYSTEM_ID', $verifactuSystemId);
 $sugar_smarty->assign('VERIFACTU_SYSTEM_VERSION', $verifactuSystemVersion);
 $sugar_smarty->assign('VERIFACTU_INSTALLATION_NUMBER', $verifactuInstallationNumber);
 $sugar_smarty->assign('VERIFACTU_ACTIVATED', $verifactuActivated);
-$sugar_smarty->assign('VERIFACTU_TEST_MODE', $verifactuTestMode);
 $sugar_smarty->assign('VERIFACTU_TAX_TYPE', $verifactuTaxType);
 // END STIC CUSTOM
 

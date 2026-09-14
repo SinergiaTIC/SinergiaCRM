@@ -58,6 +58,9 @@ $mod_strings['LBL_VERIFACTU_CANCEL_HASH'] = 'Hash de anulación AEAT';
 $mod_strings['LBL_VERIFACTU_CANCEL_HASH_HELP'] = 'Huella digital del registro de anulación enviado a la AEAT. Este campo almacena el hash del CancellationRecord sin modificar el hash original de la factura, manteniendo la integridad de la cadena de hashes.';
 $mod_strings['LBL_VERIFACTU_AUDIT_LOG'] = 'Log de auditoría Verifactu';
 $mod_strings['LBL_VERIFACTU_AUDIT_LOG_HELP'] = 'Registro técnico de operaciones Verifactu (envíos, anulaciones, rectificativas). Este campo se limpia al duplicar la factura y no es editable por el usuario.';
+$mod_strings['LBL_VERIFACTU_TEST_INVOICE'] = 'Factura de prueba';
+$mod_strings['LBL_VERIFACTU_TEST_INVOICE_HELP'] = 'Marque esta casilla si la factura es una prueba y no una factura real. Las facturas de prueba se envían al entorno de preproducción de la AEAT, disponen de una numeración propia, no participan en la cadena de huellas de las facturas reales y pueden eliminarse libremente.';
+$mod_strings['LBL_VERIFACTU_TEST_INVOICE_BANNER'] = 'Esta factura es una factura de PRUEBA. Se envía al entorno de preproducción de la AEAT, no forma parte de la cadena de huellas de las facturas reales y puede eliminarse sin restricciones.';
 $mod_strings['LBL_VERIFACTU_VALID_INVOICE'] = 'Factura vigente';
 $mod_strings['LBL_VERIFACTU_VALID_INVOICE_HELP'] = 'Indica si la factura es fiscalmente válida. Una factura deja de ser válida cuando es anulada o rectificada por otra factura y la comunicación con la AEAT ha sido aceptada. Este campo se actualiza automáticamente.';
 $mod_strings['LBL_VERIFACTU_PREVIOUS_STATUS'] = 'Estado anterior al envío';
@@ -67,6 +70,7 @@ $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_MESSAGE'] = 'No se puede eliminar una f
 $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_ERROR'] = 'No se puede continuar porque la selección incluye facturas que ya han sido enviadas a la AEAT: %s. Debe crear una anulación desde la factura original.';
 $mod_strings['LBL_VERIFACTU_CANNOT_EDIT_SENT'] = 'No se puede editar una factura que ha sido enviada a la AEAT. Se ha redirigido a la vista de detalle.';
 $mod_strings['LBL_VERIFACTU_ACCEPTED_BANNER'] = 'Esta factura ha sido enviada a la AEAT y no puede ser modificada ni eliminada. Para realizar cambios debe crear una factura rectificativa.';
+$mod_strings['LBL_VERIFACTU_ACCEPTED_TEST_BANNER'] = 'Esta factura de PRUEBA ha sido enviada al entorno de preproducción de la AEAT y no puede ser modificada, pero sí eliminada. Para realizar cambios debe crear una factura rectificativa.';
 $mod_strings['LBL_VERIFACTU_CSV'] = 'Codigo seguro de verificación';
 $mod_strings['LBL_VERIFACTU_CSV_HELP'] = 'Código devuelto por AEAT tras el envío de la factura. Este código único permite verificar la autenticidad de la factura en el sistema de la AEAT.';
 $mod_strings['LBL_VERIFACTU_INVOICE_TYPE'] = 'Tipo de factura';
@@ -83,7 +87,7 @@ $mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE'] = 'Tipo de operación';
 $mod_strings['LBL_VERIFACTU_AEAT_OPERATION_TYPE_HELP'] = 'Tipo de operación fiscal asociada a esta factura, según la clasificación establecida por la AEAT. Este campo ayuda a identificar la naturaleza de la transacción para fines tributarios.';
 
 $mod_strings['LBL_SIGNER_SEND_TO_AEAT'] = 'Enviar a AEAT';
-$mod_strings['LBL_SEND_TO_AEAT_CONFIRM_DRAFT'] = 'Esta factura está en estado "Borrador". ¿Confirma que desea marcarla como "Emitida" y enviarla a la AEAT?';
+$mod_strings['LBL_SEND_TO_AEAT_CONFIRM_DRAFT'] = 'Esta factura está en estado "Borrador". ¿Confirma que desea marcarla como "Emitida" y enviarla a la AEAT al entorno de %s?';
 $mod_strings['LBL_AEAT_STATUS_PANEL'] = 'Estado de la factura en la AEAT';
 $mod_strings['LBL_VERIFACTU_REQUIRE_ORG_OR_PERSON'] = 'Debe seleccionar una Organización o una Persona';
 $mod_strings['LBL_VERIFACTU_DRAFT_NUMBER_PREFIX'] = 'BORRADOR-';
@@ -126,7 +130,7 @@ $mod_strings['LBL_RECTIFIED_DATE_BEFORE_ORIGINAL'] = 'No es posible enviar la fa
 
 // Cancellation labels
 $mod_strings['LBL_CANCEL_INVOICE'] = 'Anular factura';
-$mod_strings['LBL_CANCEL_INVOICE_CONFIRM'] = '¿Está seguro de que desea anular esta factura en AEAT?\n\nAl anular esta factura, se enviará un registro de invalidación a la AEAT bajo el sistema Verifactu.\nEsta operación es irreversible y mantiene la trazabilidad del documento original.';
+$mod_strings['LBL_CANCEL_INVOICE_CONFIRM'] = '¿Está seguro de que desea anular esta factura en AEAT (entorno de %s)?\n\nAl anular esta factura, se enviará un registro de invalidación a la AEAT bajo el sistema Verifactu.\nEsta operación es irreversible y mantiene la trazabilidad del documento original.';
 $mod_strings['LBL_INVOICE_CANCELLED_SUCCESS'] = 'Factura anulada correctamente en AEAT';
 $mod_strings['LBL_INVOICE_NOT_ACCEPTED_BY_AEAT'] = 'La factura debe estar aceptada por AEAT para poder anularla.';
 
@@ -222,8 +226,8 @@ $mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR'] = 'No se puede cambiar
 $mod_strings['LBL_VERIFACTU_INLINE_EDIT_RESTRICTED'] = 'Esta factura ya ha sido enviada a AEAT. Solo se permite modificar los campos: Estado, Usuario asignado y Descripción.';
 
 // Verifactu AEAT query error messages
-$mod_strings['LBL_VERIFACTU_MODE_PRODUCTION'] = 'producción';
-$mod_strings['LBL_VERIFACTU_MODE_TEST'] = 'pruebas';
+$mod_strings['LBL_VERIFACTU_MODE_PRODUCTION'] = 'Producción';
+$mod_strings['LBL_VERIFACTU_MODE_TEST'] = 'Pruebas';
 $mod_strings['LBL_VERIFACTU_ENDPOINT_PRODUCTION'] = 'www1.agenciatributaria.gob.es / www10.agenciatributaria.gob.es';
 $mod_strings['LBL_VERIFACTU_ENDPOINT_TEST'] = 'prewww1.aeat.es / prewww10.aeat.es';
 $mod_strings['LBL_VERIFACTU_QUERY_ERROR_CONNECT'] = 'No se pudo conectar con AEAT (%s). Verifique: (a) conexión a Internet, (b) que los endpoints %s sean accesibles desde su red, (c) cortafuegos o proxies que puedan bloquear la conexión. Detalle técnico: %s';
@@ -234,7 +238,7 @@ $mod_strings['LBL_VERIFACTU_QUERY_ERROR_GENERIC'] = 'Error al consultar AEAT (%s
 
 // Mass send to AEAT
 $mod_strings['LBL_MASS_SEND_AEAT'] = 'Enviar facturas a AEAT';
-$mod_strings['LBL_MASS_SEND_AEAT_CONFIRM'] = 'Se van a enviar %d facturas a AEAT. ¿Desea continuar?';
+$mod_strings['LBL_MASS_SEND_AEAT_CONFIRM'] = 'Se van a enviar %d facturas a AEAT (entorno de pruebas o producción según cada factura). ¿Desea continuar?';
 $mod_strings['LBL_MASS_SEND_AEAT_NO_SELECTION'] = 'No se ha seleccionado ninguna factura.';
 $mod_strings['LBL_MASS_SEND_AEAT_NO_DRAFTS'] = 'Ninguna de las facturas seleccionadas está en estado Borrador.';
 $mod_strings['LBL_MASS_SEND_AEAT_SUMMARY_TITLE'] = 'Resultado del envío masivo a AEAT:';

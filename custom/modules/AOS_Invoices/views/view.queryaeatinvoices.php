@@ -43,6 +43,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         $dateTo = $_POST['date_to'] ?? '';
         $counterpartyNif = $_POST['counterparty_nif'] ?? '';
         $counterpartyName = $_POST['counterparty_name'] ?? '';
+        $useProduction = (($_POST['use_production'] ?? '') !== '0');
 
         $this->ss->assign('FORM_YEAR', $selectedYear);
 
@@ -62,6 +63,7 @@ class CustomAOS_InvoicesViewQueryAeatInvoices extends SugarView
         $this->ss->assign('FORM_DATE_TO', htmlspecialchars($dateTo));
         $this->ss->assign('FORM_COUNTERPARTY_NIF', htmlspecialchars($counterpartyNif));
         $this->ss->assign('FORM_COUNTERPARTY_NAME', htmlspecialchars($counterpartyName));
+        $this->ss->assign('FORM_USE_PRODUCTION', $useProduction);
 
         // Panel collapse state persisted in session
         if (!empty($_POST['panel_state'])) {

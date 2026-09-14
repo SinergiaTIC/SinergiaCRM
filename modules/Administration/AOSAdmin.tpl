@@ -496,11 +496,6 @@
                 <input type='text' value='{$VERIFACTU_ACTIVATED}' size='10' readonly style="background:#f5f5f5;border:1px solid #ddd;">
                 <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_ACTIVATED_HELP}</em>
             </td>
-            <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_TEST_MODE}: </td>
-            <td>
-                <input type='text' value='{$VERIFACTU_TEST_MODE}' size='10' readonly style="background:#f5f5f5;border:1px solid #ddd;">
-                <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_TEST_MODE_HELP}</em>
-            </td>
         </tr>
         <tr>
             <td scope="row" width="200">{$MOD.LBL_AOS_ADMIN_VERIFACTU_TAX_TYPE}: </td>
@@ -508,8 +503,6 @@
                 <input type='text' value='{$VERIFACTU_TAX_TYPE}' size='10' readonly style="background:#f5f5f5;border:1px solid #ddd;">
                 <br><em style="font-size:11px;color:#888;">{$MOD.LBL_AOS_ADMIN_VERIFACTU_TAX_TYPE_HELP}</em>
             </td>
-            <td scope="row" width="200"></td>
-            <td></td>
         </tr>
     </table>
 

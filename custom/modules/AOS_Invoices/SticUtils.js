@@ -240,7 +240,7 @@ switch (viewType()) {
         cancelInvoice: {
           id: "bt_cancel_invoice",
           title: SUGAR.language.get("AOS_Invoices", "LBL_CANCEL_INVOICE"),
-          onclick: "if(confirm('" + SUGAR.language.get("AOS_Invoices", "LBL_CANCEL_INVOICE_CONFIRM") + "')) { window.location='index.php?module=AOS_Invoices&action=CancelInvoice&record=" + STIC.record.id + "'; }",
+          onclick: "cancelInvoice()",
         },
       };
 
@@ -267,8 +267,9 @@ switch (viewType()) {
       createDetailViewButton(buttons.createRectifiedInvoice);
       createDetailViewButton(buttons.cancelInvoice);
 
-      // Disable delete button for invoices already sent to AEAT
-      if (STIC.record.verifactu_aeat_status_c === 'accepted' || STIC.record.verifactu_aeat_status_c === 'emitted') {
+      // Disable delete button for non-test invoices already sent to AEAT
+      if ((STIC.record.verifactu_aeat_status_c === 'accepted' || STIC.record.verifactu_aeat_status_c === 'emitted') &&
+          STIC.record.verifactu_test_invoice_c !== '1') {
         disableDeleteButton();
       }
     }
@@ -357,12 +358,26 @@ $(document).ready(function() {
 // Confirmation and redirection for sending invoice to AEAT. 
 // If invoice is in draft status, it will be marked as emitted before sending.
 function sendToAEAT() {
+  var isTest = STIC.record.verifactu_test_invoice_c === '1';
+  var env = isTest ? SUGAR.language.get("AOS_Invoices", "LBL_VERIFACTU_MODE_TEST") : SUGAR.language.get("AOS_Invoices", "LBL_VERIFACTU_MODE_PRODUCTION");
   if (STIC.record.status === 'draft') {
-    if (!confirm(SUGAR.language.get("AOS_Invoices", "LBL_SEND_TO_AEAT_CONFIRM_DRAFT"))) {
+    var msg = SUGAR.language.get("AOS_Invoices", "LBL_SEND_TO_AEAT_CONFIRM_DRAFT").replace('%s', env);
+    if (!confirm(msg)) {
       return;
     }
   }
   window.location = 'index.php?module=AOS_Invoices&action=sendToAEAT&invoiceId=' + STIC.record.id + '&set=emitted';
+}
+
+// Cancel invoice with environment confirmation
+function cancelInvoice() {
+  var isTest = STIC.record.verifactu_test_invoice_c === '1';
+  var env = isTest ? SUGAR.language.get("AOS_Invoices", "LBL_VERIFACTU_MODE_TEST") : SUGAR.language.get("AOS_Invoices", "LBL_VERIFACTU_MODE_PRODUCTION");
+  var msg = SUGAR.language.get("AOS_Invoices", "LBL_CANCEL_INVOICE_CONFIRM").replace('%s', env);
+  if (!confirm(msg)) {
+    return;
+  }
+  window.location = 'index.php?module=AOS_Invoices&action=CancelInvoice&record=' + STIC.record.id;
 }
 
 // Disable delete button in detail view when invoice is already sent to AEAT

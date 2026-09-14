@@ -58,6 +58,11 @@ class AOS_InvoicesUtils
     private static array $processingInvoiceIds = [];
 
     /**
+     * Number prefix used to visually distinguish test invoices from real ones
+     */
+    private const VERIFACTU_TEST_NUMBER_PREFIX = 'TEST-';
+
+    /**
      * Check if Verifactu integration is activated
      * @return bool
      */
@@ -174,7 +179,8 @@ class AOS_InvoicesUtils
         $rectifiedNumber = null,
         $rectifiedDate = null,
         $correctedBaseAmount = null,
-        $correctedTaxAmount = null
+        $correctedTaxAmount = null,
+        $isTestMode = false
     ) {
         $record = new RegistrationRecord();
 
@@ -214,12 +220,12 @@ class AOS_InvoicesUtils
             }
             // For rectified invoices with customer info, still set recipients
             if (!empty($customerNif) && !empty($customerName)) {
-                $recipient = self::createRecipientIdentifier($customerName, $customerNif);
+                $recipient = self::createRecipientIdentifier($customerName, $customerNif, $isTestMode);
                 $record->recipients = [$recipient];
             }
         } elseif (!empty($customerNif) && !empty($customerName)) {
             $record->invoiceType = InvoiceType::Factura; // F1 - Completa
-            $recipient = self::createRecipientIdentifier($customerName, $customerNif);
+            $recipient = self::createRecipientIdentifier($customerName, $customerNif, $isTestMode);
             $record->recipients = [$recipient];
         } else {
             $record->invoiceType = InvoiceType::Simplificada; // F2 - Simplificada
@@ -288,9 +294,8 @@ class AOS_InvoicesUtils
      * Create a recipient identifier, using "No censado" (07) in test mode for personal NIFs only.
      * AEAT only accepts IDType=07 for individuals (personas físicas), not for companies (CIF).
      */
-    private static function createRecipientIdentifier($name, $nif)
+    private static function createRecipientIdentifier($name, $nif, $isTestMode = false)
     {
-        $isTestMode = stic_SettingsUtils::getSetting('VERIFACTU_TEST') == '1';
         $isPersonalNif = preg_match('/^[0-9]/', $nif);
         if ($isTestMode && $isPersonalNif) {
             return new ForeignFiscalIdentifier($name, 'ES', ForeignIdType::Unregistered, $nif);
@@ -470,6 +475,10 @@ class AOS_InvoicesUtils
         }
         self::$processingInvoiceIds[$invoiceId] = true;
 
+        // Test mode is per-invoice (verifactu_test_invoice_c), not a global setting
+        $isTestMode = !empty($invoiceBean->verifactu_test_invoice_c);
+        $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Invoice ' . $invoiceId . ' test mode: ' . ($isTestMode ? 'yes' : 'no'));
+
         // Allow sending if: status is 'emitted' AND (aeat_status is empty/pending/rejected, but NOT 'accepted')
         $aeatStatus = $invoiceBean->verifactu_aeat_status_c ?? '';
         if (
@@ -624,7 +633,7 @@ class AOS_InvoicesUtils
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $invoiceBean->id);
             }
 
-            $useProduction = stic_SettingsUtils::getSetting('VERIFACTU_TEST') == '1' ? false : true;
+            $useProduction = $isTestMode ? false : true;
 
             // Configure computer system
             $system = self::buildComputerSystem($issuerNif, $issuerName);
@@ -733,7 +742,7 @@ class AOS_InvoicesUtils
             // Get previous invoice for chaining
             $previousInvoiceId = null;
             $previousHash = null;
-            $previousInvoice = self::getPreviousInvoice($invoiceBean->id);
+            $previousInvoice = self::getPreviousInvoice($invoiceBean->id, $isTestMode);
 
             // === Step 2.1: Validate chronological order by SERIES ===
             // Get last invoice from the SAME series for date validation
@@ -745,6 +754,8 @@ class AOS_InvoicesUtils
                 AND aos_invoices.deleted = 0 
                 AND aos_invoices.id != " . $db->quoted($invoiceBean->id) . "
                 AND aos_invoices_cstm.verifactu_aeat_status_c = 'accepted'
+                -- Test invoices never interfere with the real series chronology (and vice versa)
+                AND (IFNULL(aos_invoices_cstm.verifactu_test_invoice_c, 0) = " . ($isTestMode ? '1' : '0') . ")
                 AND aos_invoices.invoice_date IS NOT NULL
                 ORDER BY aos_invoices.invoice_date DESC, aos_invoices.number DESC LIMIT 1";
             
@@ -1099,7 +1110,8 @@ class AOS_InvoicesUtils
                 $rectifiedNumber,
                 $rectifiedDate,
                 $correctedBaseAmount,
-                $correctedTaxAmount
+                $correctedTaxAmount,
+                $isTestMode
             );
 
             // --- DEBUG MODE: volcado de datos antes de enviar ---
@@ -1434,7 +1446,7 @@ class AOS_InvoicesUtils
      * @param string $currentInvoiceId Current invoice ID to exclude from search
      * @return stdClass|null Previous invoice object or null if none found
      */
-    private static function getPreviousInvoice($currentInvoiceId)
+    private static function getPreviousInvoice($currentInvoiceId, $isTestMode = false)
     {
         global $db;
 
@@ -1443,6 +1455,9 @@ class AOS_InvoicesUtils
             // and has a verifactu hash stored (custom fields are in aos_invoices_cstm table).
             // Cancelled invoices ARE included because they store the cancellation hash
             // in verifactu_cancel_hash_c, and we use that for proper chain linking.
+            // Test invoices (verifactu_test_invoice_c=1) never chain with real invoices:
+            // each chain only considers invoices with the same test flag, so test
+            // invoices do not participate in the real invoices' hash chain.
             $query = "
                 SELECT
                     i.id,
@@ -1456,6 +1471,7 @@ class AOS_InvoicesUtils
                 INNER JOIN aos_invoices_cstm c ON i.id = c.id_c
                 WHERE i.deleted = 0
                   AND i.id != '" . $db->quote($currentInvoiceId) . "'
+                  AND (IFNULL(c.verifactu_test_invoice_c, 0) = " . ($isTestMode ? '1' : '0') . ")
                   AND c.verifactu_hash_c IS NOT NULL
                   AND c.verifactu_hash_c != ''
                 ORDER BY
@@ -1620,6 +1636,10 @@ class AOS_InvoicesUtils
         $format = $seriesConfig['format'];
         $initialNumber = isset($seriesConfig['initialNumber']) ? (int) $seriesConfig['initialNumber'] : 1;
 
+        // Test invoices (verifactu_test_invoice_c=1) are numbered with a visual prefix
+        // that also keeps their sequence independent from the real invoices' one.
+        $testPrefix = !empty($bean->verifactu_test_invoice_c) ? self::VERIFACTU_TEST_NUMBER_PREFIX : '';
+
         // Get the year from the invoice date or current date
         $invoiceDate = !empty($bean->invoice_date) ? $bean->invoice_date : date('Y-m-d');
         $year = date('Y', strtotime($invoiceDate));
@@ -1642,6 +1662,8 @@ class AOS_InvoicesUtils
 
         // Build a pattern to search for invoices with the same format and year
         $searchPattern = self::buildInvoiceNumber($format, 0, $year, $yearTwoDigits);
+        // Prepend the test prefix so test and real invoices never share a sequence
+        $searchPattern = $testPrefix . $searchPattern;
         // Replace the numeric part with % for SQL LIKE search
         preg_match('/(0+)/', $format, $matches);
         if (!empty($matches)) {
@@ -1682,15 +1704,15 @@ class AOS_InvoicesUtils
         $nextNumber = $initialNumber; // Start with the configured initial number
 
         if (!empty($lastNumber)) {
-            $numericPart = self::extractNumericPart($lastNumber, $format);
+            $numericPart = self::extractNumericPart($lastNumber, $format, $testPrefix);
             $GLOBALS['log']->debug("generateNextInvoiceNumber - Found invoice: {$lastNumber}, numeric part: $numericPart");
             $nextNumber = intval($numericPart) + 1;
         }
 
         $GLOBALS['log']->debug("generateNextInvoiceNumber - Next number: $nextNumber");
 
-        // Build the new invoice number
-        $generatedNumber = self::buildInvoiceNumber($format, $nextNumber, $year, $yearTwoDigits);
+        // Build the new invoice number (test invoices carry the visual prefix)
+        $generatedNumber = $testPrefix . self::buildInvoiceNumber($format, $nextNumber, $year, $yearTwoDigits);
         $GLOBALS['log']->debug("generateNextInvoiceNumber - Generated number: '$generatedNumber'");
 
         // === Step 2.4: Validate uniqueness for formats without year ===
@@ -1725,7 +1747,7 @@ class AOS_InvoicesUtils
                 
                 // Number already exists, increment and try again
                 $nextNumber++;
-                $generatedNumber = self::buildInvoiceNumber($format, $nextNumber, $year, $yearTwoDigits);
+                $generatedNumber = $testPrefix . self::buildInvoiceNumber($format, $nextNumber, $year, $yearTwoDigits);
                 $attempt++;
                 
                 $GLOBALS['log']->debug("generateNextInvoiceNumber - Number '$generatedNumber' exists, trying next: $nextNumber");
@@ -1924,9 +1946,15 @@ class AOS_InvoicesUtils
      * @param string $format The format pattern (e.g., 'YYYY-0000')
      * @return string The numeric part as string
      */
-    private static function extractNumericPart($invoiceNumber, $format)
+    private static function extractNumericPart($invoiceNumber, $format, $testPrefix = '')
     {
         $GLOBALS['log']->debug("extractNumericPart - Invoice: '$invoiceNumber', Format: '$format'");
+
+        // Strip the test prefix (if any) before matching against the format
+        if ($testPrefix !== '' && strpos($invoiceNumber, $testPrefix) === 0) {
+            $invoiceNumber = substr($invoiceNumber, strlen($testPrefix));
+            $GLOBALS['log']->debug("extractNumericPart - Test prefix stripped, remaining: '$invoiceNumber'");
+        }
 
         // Find the position and length of the numeric placeholder (0000, 000, 00, etc.)
         preg_match('/(0+)/', $format, $matches, PREG_OFFSET_CAPTURE);
@@ -2170,9 +2198,9 @@ class AOS_InvoicesUtils
             // Get certificate type (entity seal or representative) from certificate itself
             $certificateType = SticCertificateUtils::isEntitySeal();
 
-            // Get other settings from stic_Settings module
-            require_once 'modules/stic_Settings/Utils.php';
-            $useProduction = (stic_SettingsUtils::getSetting('VERIFACTU_TEST') == 1 ? false : true);
+            // Test mode is per-invoice (verifactu_test_invoice_c), not a global setting
+            $isTestMode = !empty($invoiceBean->verifactu_test_invoice_c);
+            $useProduction = $isTestMode ? false : true;
 
             // --- Create Computer System ---
             $system = self::buildComputerSystem($issuerNif, $issuerName);
@@ -2184,7 +2212,7 @@ class AOS_InvoicesUtils
             // Uses getPreviousInvoice() which searches by submitted_at date.
             // For cancelled invoices, it uses verifactu_cancel_hash_c (not verifactu_hash_c)
             // to maintain proper chain linking.
-            $previousInvoice = self::getPreviousInvoice($invoiceBean->id);
+            $previousInvoice = self::getPreviousInvoice($invoiceBean->id, $isTestMode);
 
             $previousInvoiceId = null;
             $previousHash = null;
@@ -2478,6 +2506,7 @@ class AOS_InvoicesUtils
         ?string $counterpartyNif = null,
         ?string $counterpartyName = null,
         bool $filterBySif = true,
+        bool $useProduction = true,
     ): array {
         global $sugar_config;
 
@@ -2524,9 +2553,6 @@ class AOS_InvoicesUtils
             }
 
             $certificateType = SticCertificateUtils::isEntitySeal();
-
-            require_once 'modules/stic_Settings/Utils.php';
-            $useProduction = (stic_SettingsUtils::getSetting('VERIFACTU_TEST') == '1' ? false : true);
 
             require_once 'custom/modules/AOS_Invoices/SticAeatQueryClient.php';
             $system = self::buildComputerSystem($issuerNif, $issuerName);
@@ -2586,7 +2612,7 @@ class AOS_InvoicesUtils
             }
 
             $msg = $e->getMessage();
-            $isProduction = isset($useProduction) ? $useProduction : true;
+            $isProduction = $useProduction;
             $mode = $mod_strings[$isProduction ? 'LBL_VERIFACTU_MODE_PRODUCTION' : 'LBL_VERIFACTU_MODE_TEST'];
             $endpoint = $mod_strings[$isProduction ? 'LBL_VERIFACTU_ENDPOINT_PRODUCTION' : 'LBL_VERIFACTU_ENDPOINT_TEST'];
 

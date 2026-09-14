@@ -104,8 +104,15 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
         if (!empty($bean->verifactu_aeat_status_c) && 
             in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
 
-            // Hide edit and delete buttons
-            $this->dv->defs['form']['hideButtons'] = true;
+            $isTestInvoice = !empty($bean->verifactu_test_invoice_c);
+
+            // Non-test invoices: hide both edit and delete buttons
+            // Test invoices: hide only edit button, keep delete visible
+            if ($isTestInvoice) {
+                echo '<style>.detail-view-action .edit_button { display: none !important; }</style>';
+            } else {
+                $this->dv->defs['form']['hideButtons'] = true;
+            }
             
             // Add warning banner
             global $mod_strings;
@@ -113,7 +120,9 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
                 $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
             }
             
-            $bannerMessage = $mod_strings['LBL_VERIFACTU_ACCEPTED_BANNER'];
+            $bannerMessage = $isTestInvoice
+                ? $mod_strings['LBL_VERIFACTU_ACCEPTED_TEST_BANNER']
+                : $mod_strings['LBL_VERIFACTU_ACCEPTED_BANNER'];
             
             echo '<div class="alert alert-warning" style="margin: 10px 0; padding: 12px; border-left: 4px solid #f0ad4e; background-color: #fcf8e3;">
                 <strong><span class="suitepicon suitepicon-action-warning"></span> ' . $bannerMessage . '</strong>
@@ -140,6 +149,19 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
             </div>';
         }
         // === End customer identification number warning ===
+
+        // === Test invoice banner (detail view) ===
+        // Show a clear notice whenever the invoice is flagged as a test invoice.
+        if (!empty($this->bean->verifactu_test_invoice_c)) {
+            global $mod_strings;
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            echo '<div class="alert alert-info" style="margin: 10px 0; padding: 12px; border-left: 4px solid #5bc0de; background-color: #d9edf7;">
+                <strong><span class="suitepicon suitepicon-action-info"></span> ' . $mod_strings['LBL_VERIFACTU_TEST_INVOICE_BANNER'] . '</strong>
+            </div>';
+        }
+        // === End test invoice banner ===
     }
 
     public function display()

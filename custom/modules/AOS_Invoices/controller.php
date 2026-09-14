@@ -550,6 +550,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
             $counterpartyNif = $_POST['counterparty_nif'] ?? '';
             $counterpartyName = $_POST['counterparty_name'] ?? '';
             $filterBySif = !empty($_POST['filter_by_sif']);
+            $useProduction = ($_POST['use_production'] ?? '1') === '1';
 
             if (!empty($dateFrom)) {
                 $dateFrom = date('d-m-Y', strtotime($dateFrom));
@@ -589,6 +590,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
                         !empty($counterpartyNif) ? $counterpartyNif : null,
                         !empty($counterpartyName) ? $counterpartyName : null,
                         $filterBySif,
+                        $useProduction,
                     );
 
                     if (!empty($result['success'])) {
@@ -739,7 +741,9 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
                     continue;
                 }
                 $invoice = BeanFactory::getBean('AOS_Invoices', $id);
-                if (!empty($invoice->verifactu_aeat_status_c)
+                // Test invoices (verifactu_test_invoice_c=1) may be deleted at any time without restrictions
+                if (empty($invoice->verifactu_test_invoice_c)
+                    && !empty($invoice->verifactu_aeat_status_c)
                     && in_array($invoice->verifactu_aeat_status_c, ['accepted', 'emitted', 'cancelled'])) {
                     $invoiceLabel = !empty($invoice->number) ? $invoice->number : $id;
                     $blockedInvoices[] = '<a href="index.php?module=AOS_Invoices&action=DetailView&record=' . $id . '">' . $invoiceLabel . '</a>';
