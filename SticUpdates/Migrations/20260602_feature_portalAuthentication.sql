@@ -8,38 +8,38 @@
 -- 1. Custom fields on contacts_cstm and accounts_cstm
 -- ---------------------------------------------------------------------
 ALTER TABLE `contacts_cstm`
-    ADD COLUMN IF NOT EXISTS `stic_portal_hashed_c`              VARCHAR(255) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_remember_token_c`      VARCHAR(255) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_portal_hashed_c`              VARCHAR(60) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_portal_remember_token_c`      VARCHAR(64) NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_locked_until_c`        DATETIME NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_failed_attempts_c`     INT(11) DEFAULT 0,
     ADD COLUMN IF NOT EXISTS `stic_portal_last_login_c`          DATETIME NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_password_changed_c`    DATETIME NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_password_expires_c`    DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_reset_token_c`         VARCHAR(255) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_portal_reset_token_c`         VARCHAR(64) NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_reset_expires_c`       DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_session_id_c`          VARCHAR(255) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_magic_token_c`         VARCHAR(255) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_portal_session_id_c`          VARCHAR(64) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_portal_magic_token_c`         VARCHAR(64) NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_magic_expires_c`       DATETIME NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_enabled_c`             TINYINT(1) DEFAULT 0,
     ADD COLUMN IF NOT EXISTS `stic_portal_force_pw_change_c`     TINYINT(1) DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS `stic_portal_username_c`            VARCHAR(255) NULL;
+    ADD COLUMN IF NOT EXISTS `stic_portal_username_c`            VARCHAR(100) NULL;
 
 ALTER TABLE `accounts_cstm`
-    ADD COLUMN IF NOT EXISTS `stic_portal_hashed_c`              VARCHAR(255) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_remember_token_c`      VARCHAR(255) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_portal_hashed_c`              VARCHAR(60) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_portal_remember_token_c`      VARCHAR(64) NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_locked_until_c`        DATETIME NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_failed_attempts_c`     INT(11) DEFAULT 0,
     ADD COLUMN IF NOT EXISTS `stic_portal_last_login_c`          DATETIME NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_password_changed_c`    DATETIME NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_password_expires_c`    DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_reset_token_c`         VARCHAR(255) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_portal_reset_token_c`         VARCHAR(64) NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_reset_expires_c`       DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_session_id_c`          VARCHAR(255) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_magic_token_c`         VARCHAR(255) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_portal_session_id_c`          VARCHAR(64) NULL,
+    ADD COLUMN IF NOT EXISTS `stic_portal_magic_token_c`         VARCHAR(64) NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_magic_expires_c`       DATETIME NULL,
     ADD COLUMN IF NOT EXISTS `stic_portal_enabled_c`             TINYINT(1) DEFAULT 0,
     ADD COLUMN IF NOT EXISTS `stic_portal_force_pw_change_c`     TINYINT(1) DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS `stic_portal_username_c`            VARCHAR(255) NULL;
+    ADD COLUMN IF NOT EXISTS `stic_portal_username_c`            VARCHAR(100) NULL;
 
 -- Useful indices for the most-queried columns
 ALTER TABLE `contacts_cstm`
@@ -51,7 +51,7 @@ ALTER TABLE `accounts_cstm`
 -- ---------------------------------------------------------------------
 -- 2. fields_meta_data entries (required for SuiteCRM to surface them)
 -- ---------------------------------------------------------------------
-INSERT IGNORE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
+REPLACE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Contactsstic_portal_hashed_c',           'Contacts', 'stic_portal_hashed_c'),
 ('Contactsstic_portal_remember_token_c',   'Contacts', 'stic_portal_remember_token_c'),
 ('Contactsstic_portal_locked_until_c',     'Contacts', 'stic_portal_locked_until_c'),
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `stic_portal_password_history` (
     `id` CHAR(36) NOT NULL,
     `parent_id` CHAR(36) NOT NULL,
     `parent_type` VARCHAR(20) NOT NULL,
-    `password_hash` VARCHAR(255) NOT NULL,
+    `password_hash` VARCHAR(60) NOT NULL,
     `date_entered` DATETIME NOT NULL,
     `date_modified` DATETIME NOT NULL,
     `deleted` TINYINT(1) DEFAULT 0,
@@ -105,11 +105,11 @@ CREATE TABLE IF NOT EXISTS `stic_portal_login_audit` (
     `id` CHAR(36) NOT NULL,
     `parent_id` CHAR(36) NULL,
     `parent_type` VARCHAR(20) NULL,
-    `username` VARCHAR(255) NULL,
+    `username` VARCHAR(100) NULL,
     `ip_address` VARCHAR(45) NOT NULL,
     `user_agent` VARCHAR(500) NULL,
     `success` TINYINT(1) NOT NULL DEFAULT 0,
-    `failure_reason` VARCHAR(100) NULL,
+    `failure_reason` VARCHAR(32) NULL,
     `auth_method` VARCHAR(20) NULL,
     `date_entered` DATETIME NOT NULL,
     `date_modified` DATETIME NOT NULL,
@@ -141,8 +141,8 @@ CREATE TABLE IF NOT EXISTS `stic_portal_login_attempts` (
 -- ---------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `stic_portal_magic_rate_limit` (
     `id` CHAR(36) NOT NULL,
-    `identifier` VARCHAR(255) NOT NULL,  -- username or IP
-    `identifier_type` VARCHAR(20) NOT NULL,
+    `identifier` VARCHAR(100) NOT NULL,  -- username or IP
+    `identifier_type` VARCHAR(10) NOT NULL,
     `window_start` DATETIME NOT NULL,
     `count` INT(11) DEFAULT 1,
     `deleted` TINYINT(1) DEFAULT 0,
@@ -151,9 +151,9 @@ CREATE TABLE IF NOT EXISTS `stic_portal_magic_rate_limit` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ---------------------------------------------------------------------
--- 7. Default settings in config table (only if not already set)
+-- 7. Default settings in config table (REPLACE = seed or refresh to defaults)
 -- ---------------------------------------------------------------------
-INSERT IGNORE INTO `config` (`category`, `name`, `value`) VALUES
+REPLACE INTO `config` (`category`, `name`, `value`) VALUES
 ('portal', 'PORTAL_HOME_URL',                        ''),
 ('portal', 'PORTAL_LOGO',                            ''),
 ('portal', 'PORTAL_LOGO_WIDTH',                      '212'),

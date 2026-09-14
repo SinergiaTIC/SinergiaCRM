@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.

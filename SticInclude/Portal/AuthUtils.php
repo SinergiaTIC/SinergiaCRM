@@ -664,6 +664,10 @@ class SticPortalAuthUtils
         global $db;
         $id = create_guid();
         $now = self::nowDb();
+        // Clamp free-text input to the column widths (usernames come from POST)
+        $username = substr((string)$username, 0, 100);
+        $failureReason = substr((string)$failureReason, 0, 32);
+        $authMethod = substr((string)$authMethod, 0, 20);
         $query = "INSERT INTO stic_portal_login_audit (id, parent_id, parent_type, username, ip_address, user_agent, success, failure_reason, auth_method, date_entered, date_modified, deleted) VALUES (" . $db->quoted($id) . ", " . ($bean ? $db->quoted($bean->id) : 'NULL') . ", " . ($type ? $db->quoted($type) : 'NULL') . ", " . $db->quoted($username) . ", " . $db->quoted($ipAddress) . ", " . $db->quoted(substr($userAgent, 0, 500)) . ", " . ($success ? '1' : '0') . ", " . ($failureReason ? $db->quoted($failureReason) : 'NULL') . ", " . $db->quoted($authMethod) . ", " . $db->quoted($now) . ", " . $db->quoted($now) . ", 0)";
         $db->query($query);
     }
@@ -718,6 +722,9 @@ class SticPortalAuthUtils
         global $db;
         $maxPerMin = 1;
         $maxPerHr = 5;
+        // Clamp to the column widths (usernames come from POST)
+        $identifier = substr((string)$identifier, 0, 100);
+        $identifierType = substr((string)$identifierType, 0, 10);
         $ident = $db->quoted($identifier);
         $idType = $db->quoted($identifierType);
         $result = $db->query("SELECT COUNT(*) c FROM stic_portal_magic_rate_limit WHERE identifier=$ident AND identifier_type=$idType AND window_start > DATE_SUB(NOW(), INTERVAL 60 SECOND) AND deleted=0");
