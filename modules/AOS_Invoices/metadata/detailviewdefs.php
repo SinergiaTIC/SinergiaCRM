@@ -414,7 +414,8 @@ array(
                         'name' => 'status',
                         'label' => 'LBL_STATUS',
                     ),
-                    1 => array(),
+                    1 => array('name' => 'verifactu_test_invoice_c',
+                        'label' => 'LBL_VERIFACTU_TEST_INVOICE'),
                 ),
                 3 => array(
                     0 => array(

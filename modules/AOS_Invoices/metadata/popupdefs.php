@@ -80,6 +80,7 @@ $popupMeta = array(
         'total_amount' => 'aos_invoices.total_amount',
         'due_date' => 'aos_invoices.due_date',
         'status' => 'aos_invoices.status',
+        'verifactu_test_invoice_c' => 'aos_invoices_cstm.verifactu_test_invoice_c',
         'verifactu_aeat_status_c' => 'aos_invoices_cstm.verifactu_aeat_status_c',
         'quote_date' => 'aos_invoices.quote_date',
         'invoice_date' => 'aos_invoices.invoice_date',
@@ -95,10 +96,11 @@ $popupMeta = array(
         9 => 'due_date',
         10 => 'status',
         11 => 'verifactu_aeat_status_c',
-        12 => 'verifactu_invoice_type_c',
-        13 => 'quote_date',
-        14 => 'invoice_date',
-        15 => 'assigned_user_id',
+        12 => 'verifactu_test_invoice_c',
+        13 => 'verifactu_invoice_type_c',
+        14 => 'quote_date',
+        15 => 'invoice_date',
+        16 => 'assigned_user_id',
     ),
     'searchdefs' => array(
         'number' => array(
@@ -133,6 +135,10 @@ $popupMeta = array(
         ),
         'status' => array(
             'name' => 'status',
+            'width' => '10%',
+        ),
+        'verifactu_test_invoice_c' => array(
+            'name' => 'verifactu_test_invoice_c',
             'width' => '10%',
         ),
         'verifactu_aeat_status_c' => array(

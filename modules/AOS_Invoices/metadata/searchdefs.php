@@ -120,6 +120,21 @@ array(
                 'default' => true,
                 'name' => 'status',
             ),
+            'shipping_tax' => array(
+                'type' => 'enum',
+                'studio' => 'visible',
+                'label' => 'LBL_SHIPPING_TAX',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'shipping_tax',
+            ),
+            'VERIFACTU_TEST_INVOICE_C' => array(
+                'type' => 'bool',
+                'label' => 'LBL_VERIFACTU_TEST_INVOICE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'verifactu_test_invoice_c',
+            ),
             'VERIFACTU_AEAT_STATUS_C' => array(
                 'type' => 'text',
                 'label' => 'LBL_VERIFACTU_AEAT_STATUS',
@@ -425,6 +440,13 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'verifactu_previous_hash_c',
+            ),
+            'VERIFACTU_TEST_INVOICE_C' => array(
+                'type' => 'bool',
+                'label' => 'LBL_VERIFACTU_TEST_INVOICE',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'verifactu_test_invoice_c',
             ),
             'VERIFACTU_AEAT_STATUS_C' => array(
                 'type' => 'enum',

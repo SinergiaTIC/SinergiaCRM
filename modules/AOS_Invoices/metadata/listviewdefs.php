@@ -232,6 +232,11 @@ array(
         'link' => true,
         'default' => true,
     ),
+    'VERIFACTU_TEST_INVOICE_C' => array(
+        'width' => '5%',
+        'label' => 'LBL_VERIFACTU_TEST_INVOICE',
+        'default' => true,
+    ),
     'STIC_INVOICE_TYPE_C' => array(
         'width' => '15%',
         'label' => 'LBL_VERIFACTU_INVOICE_TYPE',
