@@ -33,15 +33,15 @@ $mod_strings = array (
   'LBL_MODIFIED_NAME' => 'Modificado por',
   'LBL_MODIFIED_USER' => 'Modificado por',
   'LBL_MODIFIED_ID' => 'Modificado por (ID)',
-  'LBL_SECURITYGROUPS' => 'Grupos de seguridade',
-  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de seguridade',
+  'LBL_SECURITYGROUPS' => 'Grupos de seguridad',
+  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de seguridad',
   'LBL_ID' => 'ID',
-  'LBL_DATE_ENTERED' => 'Data de Creación',
-  'LBL_DATE_MODIFIED' => 'Data de Modificación',
-  'LBL_DESCRIPTION' => 'Descrición',
+  'LBL_DATE_ENTERED' => 'Fecha de Creación',
+  'LBL_DATE_MODIFIED' => 'Fecha de Modificación',
+  'LBL_DESCRIPTION' => 'Descripción',
   'LBL_DELETED' => 'Eliminado',
-  'LBL_NAME' => 'Nome',
-  'LBL_LIST_NAME' => 'Nome',
+  'LBL_NAME' => 'Nombre',
+  'LBL_LIST_NAME' => 'Nombre',
   'LBL_EDIT_BUTTON' => 'Editar',
   'LBL_QUICKEDIT_BUTTON' => '↙ Editar',
   'LBL_REMOVE' => 'Desvincular',
@@ -251,6 +251,7 @@ $mod_strings = array (
   'LBL_ACTION_ACTIONS' => 'Accións',
   'LBL_ACTION_AUTOMATIC' => 'Automática',
   'LBL_ACTION_NO_PARAMS' => 'Sen parámetros',
+
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Seleccionar --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Módulo',
   'LBL_ACTION_PARAM_CRM_RECORD_RECORD' => 'Rexistro',
@@ -440,7 +441,6 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a un enderezo de correo electrónico concreto',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Correo electrónico',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-    
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar correo a un usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envía un correo electrónico ao usuario asignado do formulario ou dun rexistro',
@@ -475,7 +475,7 @@ $mod_strings = array (
   'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_TEXT' => 'Vista del CRM',
   'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_DETAILVIEW_TEXT' => 'Vista de detalle',
   'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_EDITVIEW_TEXT' => 'Vista de edición',
-
+  
   // RedirectSummaryPageAction
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumo de datos',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona o navegador do usuario final a unha páxina na que se mostran os datos facilitados',

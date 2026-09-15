@@ -102,7 +102,7 @@ $mod_strings = array (
   'LBL_WIZARD_DESC_STEP1' => 'Definición de las propiedades generales del formulario.',
   'LBL_WIZARD_TITLE_STEP2' => 'Estructura y campos',
   'LBL_WIZARD_DESC_STEP2' => 'Definición del contenido del formulario. Los bloques de datos pueden vincularse a módulos de SinergiaCRM o funcionar de forma independiente. Además, es posible configurar validaciones de datos, detección de duplicados, etc.',
-  'LBL_WIZARD_TITLE_STEP2_START' => 'Empiece a construir el formulario',
+  'LBL_WIZARD_TITLE_STEP2_START' => 'Empezar a construir el formulario',
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
   'LBL_WIZARD_DESC_STEP3' => 'Definición de las acciones que se ejecutarán cuando se reciba una respuesta: crear o actualizar registros, enviar correos electrónicos, redireccionar a páginas web, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
@@ -440,7 +440,6 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a una dirección de correo electrónico concreta',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Correo electrónico',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-    
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar correo a un usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado del formulario o de un registro',
@@ -475,7 +474,7 @@ $mod_strings = array (
   'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_TEXT' => 'Vista del CRM',
   'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_DETAILVIEW_TEXT' => 'Vista de detalle',
   'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_EDITVIEW_TEXT' => 'Vista de edición',
-
+  
   // RedirectSummaryPageAction
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de datos',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página en la que se muestran los datos facilitados',

@@ -63,7 +63,7 @@ $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3'] = 'No hay más re
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_IN_PROGRESS'] = 'En curso';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_HOURS'] = 'horas';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_MINUTES'] = 'minutos';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Onartu';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Aceptar';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancelar';
 
 // Aviso de actualización de SinergiaCRM
@@ -3681,7 +3681,7 @@ $app_list_strings['stic_messages_type_list']['private_area'] = 'Área Privada';
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Salida';
 
-// Mensajes: Estados
+// Mezuak: Egoerak
 $app_list_strings['stic_messages_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviado';
 $app_list_strings['stic_messages_status_list']['received'] = 'Recibido';

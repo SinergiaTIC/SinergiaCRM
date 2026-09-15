@@ -3681,7 +3681,7 @@ $app_list_strings['stic_messages_type_list']['private_area'] = 'Área Privada';
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Saída';
 
-// Mensajes: Estados
+// Mensaxes: Estados
 $app_list_strings['stic_messages_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviado';
 $app_list_strings['stic_messages_status_list']['received'] = 'Recibido';
@@ -4070,6 +4070,21 @@ $app_list_strings['stic_awf_links_record_action_list']['enriched'] = 'Ampliado';
 $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Ignorado';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Tratado';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sen cambios';
+
+// Advanced Web Forms Deferred Tickets: status
+$app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
+$app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pendiente';
+$app_list_strings['stic_awf_deferred_tickets_status']['processing'] = 'Procesando';
+$app_list_strings['stic_awf_deferred_tickets_status']['resolved'] = 'Resuelto';
+$app_list_strings['stic_awf_deferred_tickets_status']['failed'] = 'Fallido';
+$app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancelado';
+
+// Advanced Web Forms Incoming Events: status
+$app_list_strings['stic_awf_incoming_events_status'][''] = '';
+$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pendiente';
+$app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Procesado';
+$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Fallido';
+$app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignorado';
 
 // Advanced Web Forms Deferred Tickets: status
 $app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
