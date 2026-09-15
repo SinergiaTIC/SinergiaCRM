@@ -87,6 +87,9 @@ class SticWorkCalendarSync
     /** Working events are shown as "Free" so they do not block the user's availability */
     protected const TRANSPARENCY_WORKING = 'transparent';
 
+    /** No popup/email reminders: the calendar is a source of truth, not an alarm generator */
+    protected const REMINDERS_USE_DEFAULT = false;
+
     /**
      * Constructor
      */
@@ -363,6 +366,13 @@ class SticWorkCalendarSync
         $event = new \Google\Service\Calendar\Event();
         $event->setSummary($bean->name);
         $event->setDescription($bean->description);
+
+        // No alarms: useDefault=false + no overrides (create/update of a cancelled
+        // event must not inherit the calendar's default reminders either).
+        $reminders = new \Google\Service\Calendar\EventReminders();
+        $reminders->setUseDefault(self::REMINDERS_USE_DEFAULT);
+        $reminders->setOverrides(array());
+        $event->setReminders($reminders);
 
         $extendedProperties = new \Google\Service\Calendar\EventExtendedProperties();
         $extendedProperties->setPrivate(array(
