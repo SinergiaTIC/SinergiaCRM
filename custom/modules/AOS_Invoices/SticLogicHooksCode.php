@@ -105,6 +105,26 @@ class AOS_InvoicesHook
         }
         // === End block status change ===
 
+        // === Phase C: status matrix within the issued family (Verifactu mode only) ===
+        // Emitida → Emitida / Emitida-Pagada / Emitida-NoPagada;
+        // Emitida-* ↔ Emitida-*. Moves to Borrador are reverted by Step 1.1a,
+        // 'Cancelled' is blocked below. Paid/Unpaid are legacy-only.
+        if (AOS_InvoicesUtils::isVerifactuActivated() && !$isDuplicate && !$isNewRecord) {
+            $issuedFamily = array('emitted', 'emitted_paid', 'emitted_unpaid');
+            $fetchedStatus = $bean->fetched_row['status'] ?? null;
+            if (in_array($fetchedStatus, $issuedFamily, true)
+                && !in_array($bean->status, $issuedFamily, true)) {
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_VERIFACTU_STATUS_ISSUED_MATRIX_ERROR']));
+                $GLOBALS['log']->error(__METHOD__ . ': Phase C - Blocked status change from "' . $fetchedStatus . '" to "' . $bean->status . '" for invoice ' . $bean->id);
+                $bean->status = $fetchedStatus;
+                $bean->in_save = false;
+            }
+        }
+        // === End Phase C matrix ===
+
         // === Step 1.1a: Block non-draft → draft status change ===
         if (AOS_InvoicesUtils::isVerifactuActivated() && !$isNewRecord
             && $bean->status === 'draft' && !empty($bean->fetched_row['status'])

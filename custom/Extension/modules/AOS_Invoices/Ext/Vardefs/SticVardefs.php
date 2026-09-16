@@ -499,33 +499,6 @@ $dictionary['AOS_Invoices']['fields']['verifactu_audit_log_c'] = array(
     'popupHelp' => 'LBL_VERIFACTU_AUDIT_LOG_HELP',
 );
 
-// Estado anterior antes de envío AEAT - para preservar estado de pago
-$dictionary['AOS_Invoices']['fields']['verifactu_previous_status_c'] = array(
-    'id' => 'AOS_Invoicesverifactu_previous_status_c',
-    'name' => 'verifactu_previous_status_c',
-    'vname' => 'LBL_VERIFACTU_PREVIOUS_STATUS',
-    'custom_module' => 'AOS_Invoices',
-    'source' => 'custom_fields',
-    'comments' => '',
-    'help' => '',
-    'type' => 'varchar',
-    'len' => '20',
-    'size' => '20',
-    'required' => 0,
-    'audited' => 0,
-    'unified_search' => 0,
-    'default' => null,
-    'no_default' => 0,
-    'inline_edit' => 0,
-    'importable' => 1,
-    'massupdate' => 0,
-    'reportable' => 1,
-    'duplicate_merge' => 'enabled',
-    'duplicate_merge_dom_value' => 1,
-    'merge_filter' => 'selected',
-    'studio' => 'visible',
-    'popupHelp' => 'LBL_VERIFACTU_PREVIOUS_STATUS_HELP',
-);
 
 // Indica si la factura es una factura de prueba (no real) - sustituye al modo test global
 $dictionary['AOS_Invoices']['fields']['verifactu_test_invoice_c'] = array(

@@ -3214,6 +3214,8 @@ $app_list_strings['aos_invoices_type_dom']['Other'] = 'Otro';
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/870
 $app_list_strings['invoice_status_dom']['draft'] = 'Borrador';
 $app_list_strings['invoice_status_dom']['emitted'] = 'Emitida';
+$app_list_strings['invoice_status_dom']['emitted_paid'] = 'Emitida - Pagada';
+$app_list_strings['invoice_status_dom']['emitted_unpaid'] = 'Emitida - No pagada';
 // END STIC-CUSTOM
 $app_list_strings['invoice_status_dom']['Paid'] = 'Pagado';
 $app_list_strings['invoice_status_dom']['Unpaid'] = 'No Pagado';

@@ -88,6 +88,8 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
         if (!AOS_InvoicesUtils::isVerifactuActivated()) {
             unset($app_list_strings['invoice_status_dom']['draft']);
             unset($app_list_strings['invoice_status_dom']['emitted']);
+            unset($app_list_strings['invoice_status_dom']['emitted_paid']);
+            unset($app_list_strings['invoice_status_dom']['emitted_unpaid']);
             $this->bean->field_defs['status']['default'] = '';
             if (empty($this->bean->id) && $this->bean->status === 'draft') {
                 $this->bean->status = '';

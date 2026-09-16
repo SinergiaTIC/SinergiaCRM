@@ -63,8 +63,6 @@ $mod_strings['LBL_VERIFACTU_TEST_INVOICE_HELP'] = 'Marque esta casilla si la fac
 $mod_strings['LBL_VERIFACTU_TEST_INVOICE_BANNER'] = 'Esta factura es una factura de PRUEBA. Se envía al entorno de preproducción de la AEAT, no forma parte de la cadena de huellas de las facturas reales y puede eliminarse sin restricciones.';
 $mod_strings['LBL_VERIFACTU_VALID_INVOICE'] = 'Factura vigente';
 $mod_strings['LBL_VERIFACTU_VALID_INVOICE_HELP'] = 'Indica si la factura es fiscalmente válida. Una factura deja de ser válida cuando es anulada o rectificada por otra factura y la comunicación con la AEAT ha sido aceptada. Este campo se actualiza automáticamente.';
-$mod_strings['LBL_VERIFACTU_PREVIOUS_STATUS'] = 'Estado anterior al envío';
-$mod_strings['LBL_VERIFACTU_PREVIOUS_STATUS_HELP'] = 'Estado de la factura antes de ser enviada a la AEAT. Se utiliza para preservar el estado original (por ejemplo, "Pagada") después del envío.';
 $mod_strings['LBL_VERIFACTU_BLOCK_EDIT_ERROR'] = 'No se puede modificar una factura ya aceptada por la AEAT. Debe crear una factura rectificativa si necesita corregir datos.';
 $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_MESSAGE'] = 'No se puede eliminar una factura que ha sido enviada a la AEAT.';
 $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_ERROR'] = 'No se puede continuar porque la selección incluye facturas que ya han sido enviadas a la AEAT: %s. Debe crear una anulación desde la factura original.';
@@ -222,6 +220,7 @@ $mod_strings['LBL_VERIFACTU_QUERY_NO_LINK_TOOLTIP'] = 'Factura no registrada en 
 
 // Block draft to non-emitted status change
 $mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR'] = 'No se puede cambiar el estado de Borrador a otro estado que no sea Emitida. Una factura en estado Borrador debe pasar primero al estado Emitida antes de poder cambiar a otros estados.';
+$mod_strings['LBL_VERIFACTU_STATUS_ISSUED_MATRIX_ERROR'] = 'Cambio de estado no permitido: una factura emitida solo puede pasar a "Emitida", "Emitida - Pagada" o "Emitida - No pagada".';
 
 $mod_strings['LBL_VERIFACTU_INLINE_EDIT_RESTRICTED'] = 'Esta factura ya ha sido enviada a AEAT. Solo se permite modificar los campos: Estado, Usuario asignado y Descripción.';
 

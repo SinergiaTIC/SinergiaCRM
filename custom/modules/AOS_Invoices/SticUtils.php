@@ -207,31 +207,44 @@ class AOS_InvoicesUtils
     }
 
     /**
-     * Filter the invoice_status_dom dropdown based on the invoice's current status.
-     * Modifies $app_list_strings in place to only keep allowed options.
-     * 
+     * Filter the invoice_status_dom dropdown based on activation mode and current status.
+     * Phase C matrix:
+     * - Legacy mode: payment statuses only (Paid, Unpaid, Cancelled).
+     * - Verifactu draft: only draft (must be sent to reach emitted).
+     * - Verifactu emitted/emitted_paid/emitted_unpaid: move within the emitted family.
+     * - Verifactu legacy data (Paid/Unpaid): stay within payment statuses.
+     * Modifies $app_list_strings in place.
+     *
      * @param array $app_list_strings Reference to the global app_list_strings
      * @param string $currentStatus The current status value of the invoice
      * @return void
      */
     public static function filterStatusDropdown(&$app_list_strings, $currentStatus)
     {
-        if (!self::isVerifactuActivated()) {
-            return;
-        }
-
         if (!isset($app_list_strings['invoice_status_dom'])) {
             return;
         }
 
+        if (!self::isVerifactuActivated()) {
+            // Legacy mode: payment statuses only
+            unset($app_list_strings['invoice_status_dom']['draft']);
+            unset($app_list_strings['invoice_status_dom']['emitted']);
+            unset($app_list_strings['invoice_status_dom']['emitted_paid']);
+            unset($app_list_strings['invoice_status_dom']['emitted_unpaid']);
+            return;
+        }
+
         if ($currentStatus === 'draft') {
-            // Draft can only stay as draft
+            // Draft can only stay as draft (sending moves it to emitted)
             $allowed = array('draft');
+        } elseif (in_array($currentStatus, array('emitted', 'emitted_paid', 'emitted_unpaid'))) {
+            // Issued family: payment tracking moves within the family
+            $allowed = array('emitted', 'emitted_paid', 'emitted_unpaid');
+        } elseif (in_array($currentStatus, array('Paid', 'Unpaid'))) {
+            // Legacy data: stay within payment statuses, no entry into Verifactu flow
+            $allowed = array('Paid', 'Unpaid');
         } else {
-            // For all other statuses, remove 'draft' and 'Cancelled'.
-            // All other statuses (Paid, Unpaid, and any future ones) remain available.
-            $allowed = array_keys($app_list_strings['invoice_status_dom']);
-            $allowed = array_diff($allowed, array('draft', 'Cancelled', ''));
+            return;
         }
 
         foreach ($app_list_strings['invoice_status_dom'] as $key => $label) {
