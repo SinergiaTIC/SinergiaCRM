@@ -44,6 +44,20 @@
 
 <table class="edit view" style="margin-top:10px;">
 
+	<tbody id="sda-enabled">
+	<tr>
+		<td width="25%" scope="row" valign="middle">
+			{$MOD.LBL_STIC_SINERGIADA_ENABLED_LABEL}
+			<i class="inline-help glyphicon glyphicon-info-sign"></i>
+			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_ENABLED_HELP}</div>
+		</td>
+		<td width="75%" colspan="3" valign="middle">
+			<input type="hidden" name="enabled" value="0"><input type="checkbox" name="enabled" value="1" {if $SDA_CONFIG.enabled}checked{/if}>
+		</td>
+	</tr>
+	</tbody>
+
+	<tbody class="sda-toggleable" id="sda-ui-fields">
 	<tr>
 		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_ACTIONS_SECTION}</h4></th>
 	</tr>
@@ -70,14 +84,6 @@
 	</tr>
 	<tr>
 		<td width="25%" scope="row" valign="middle">
-			{$MOD.LBL_STIC_SINERGIADA_ENABLED_LABEL}
-			<i class="inline-help glyphicon glyphicon-info-sign"></i>
-			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_ENABLED_HELP}</div>
-		</td>
-		<td width="25%" valign="middle">
-			<input type="hidden" name="enabled" value="0"><input type="checkbox" name="enabled" value="1" {if $SDA_CONFIG.enabled}checked{/if}>
-		</td>
-		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_AUTO_REBUILD_LABEL}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
 			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_AUTO_REBUILD_HELP}</div>
@@ -85,8 +91,6 @@
 		<td width="25%" valign="middle">
 			<input type="hidden" name="auto_rebuild_on_studio_events" value="0"><input type="checkbox" name="auto_rebuild_on_studio_events" value="1" {if $SDA_CONFIG.auto_rebuild_on_studio_events|default:true}checked{/if}>
 		</td>
-	</tr>
-	<tr>
 		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_URL_LABEL}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
@@ -95,6 +99,8 @@
 		<td width="25%" valign="middle">
 			<input type="text" name="public_url" value="{$SDA_PUBLIC_URL}" size="30">
 		</td>
+	</tr>
+	<tr>
 		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_MAX_USERS_LABEL}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
@@ -103,6 +109,14 @@
 		<td width="25%" valign="middle">
 			<input type="number" name="max_users_processed" value="{$SDA_CONFIG.max_users_processed}" min="0">
 		</td>
+		<td width="25%" scope="row" valign="middle">
+			{$MOD.LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_LABEL}
+			<i class="inline-help glyphicon glyphicon-info-sign"></i>
+			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_HELP}</div>
+		</td>
+		<td width="25%" valign="middle">
+			<input type="hidden" name="group_permissions_enabled" value="0"><input type="checkbox" name="group_permissions_enabled" value="1" {if $SDA_CONFIG.group_permissions_enabled}checked{/if}>
+		</td>
 	</tr>
 	<tr>
 		<td width="25%" scope="row" valign="middle">
@@ -110,7 +124,7 @@
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
 			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_HELP}</div>
 		</td>
-		<td width="25%" colspan="3" valign="middle">
+		<td width="75%" colspan="3" valign="middle">
 			<select id="publish_as_table" name="publish_as_table[]" multiple placeholder="..." class="form-control">
 				{foreach from=$SDA_MODULES item=mod}
 					<option value="{$mod.name}" {if is_array($SDA_CONFIG.publish_as_table) && in_array($mod.name, $SDA_CONFIG.publish_as_table)}selected{/if}>{$mod.label}</option>
@@ -118,21 +132,10 @@
 			</select>
 		</td>
 	</tr>
-	<tr>
-		<td width="25%" scope="row" valign="middle">
-			{$MOD.LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_LABEL}
-			<i class="inline-help glyphicon glyphicon-info-sign"></i>
-			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_HELP}</div>
-		</td>
-		<td width="25%" colspan="3" valign="middle">
-			<input type="hidden" name="group_permissions_enabled" value="0"><input type="checkbox" name="group_permissions_enabled" value="1" {if $SDA_CONFIG.group_permissions_enabled}checked{/if}>
-		</td>
-	</tr>
 
 	<tr>
 		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_CACHE}</h4></th>
 	</tr>
-	<tbody class="sda-toggleable">
 	<tr>
 		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_CACHE_ENABLED_LABEL}
@@ -143,9 +146,7 @@
 			<input type="hidden" name="cache_enabled" value="0"><input type="checkbox" name="cache_enabled" value="1" {if $SDA_CONFIG.config.cache_enabled}checked{/if}>
 		</td>
 	</tr>
-	</tbody>
-	<tbody class="sda-toggleable" id="sda-cache-fields">
-	<tr>
+	<tr class="sda-cache-field">
 		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_CACHE_UNITS_LABEL}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
@@ -166,7 +167,7 @@
 			<input type="number" name="cache_quantity" id="cache_quantity" value="{$SDA_CONFIG.config.cache_quantity}" min="1" max="30">
 		</td>
 	</tr>
-	<tr>
+	<tr class="sda-cache-field">
 		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_CACHE_HOURS_LABEL}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
@@ -184,7 +185,6 @@
 			<input type="number" name="cache_minutes" value="{$SDA_CONFIG.config.cache_minutes}" min="0" max="59" size="4">
 		</td>
 	</tr>
-	</tbody>
 
 	<tr>
 		<th colspan="4" scope="row"><h4>{$MOD.LBL_STIC_SINERGIADA_CONFIG_EXTRA}</h4></th>
@@ -209,6 +209,7 @@
 			<button type="button" id="sda-add-extra-btn" class="button sda-btn-add">+</button>
 		</td>
 	</tr>
+	</tbody>
 </table>
 
 <div id="rebuild-feedback"></div>
@@ -279,12 +280,12 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 
 	function toggleDependents(checkbox) {
 		if (checkbox.name === 'cache_enabled') {
-			jQuery('#sda-cache-fields').toggle(checkbox.checked);
+			jQuery('.sda-cache-field').toggle(checkbox.checked);
 		}
 		if (checkbox.name === 'enabled') {
 			jQuery('#sda-ui-fields').toggle(checkbox.checked);
 			if (checkbox.checked) {
-				var $ce = jQuery('#sda-cache-table').find('input[type="checkbox"][name="cache_enabled"]');
+				var $ce = jQuery('#sda-ui-fields').find('input[type="checkbox"][name="cache_enabled"]');
 				if ($ce.length) toggleDependents($ce[0]);
 			}
 		}
