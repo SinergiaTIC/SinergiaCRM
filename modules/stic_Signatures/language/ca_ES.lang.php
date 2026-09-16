@@ -223,5 +223,5 @@ $mod_strings = array(
 
     // Allow multiple signers
     'LBL_ALLOW_MULTIPLE_SIGNERS' => 'Permet el mateix firmant diverses vegades',
-    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => "<b>No (valor per defecte):</b> Cada persona només pot tenir un registre de firmant en el procés de firma.<br><b>Sí:</strong> Una mateixa persona pot tenir múltiples registres de firmant, sempre que provinguin de registres origen diferents. Per exemple, si el procés està basat en el mòdul <i>Pagaments</i>, la persona podrà tenir un registre de firmant per cada pagament que tingui assignat.",
+    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => "<b>No (valor per defecte):</b> Cada persona només pot tenir un registre de firmant en el procés de firma.<br><b>Sí:</b> Una mateixa persona pot tenir múltiples registres de firmant, sempre que provinguin de registres origen diferents. Per exemple, si el procés està basat en el mòdul <i>Pagaments</i>, la persona podrà tenir un registre de firmant per cada pagament que tingui assignat.",
 );
