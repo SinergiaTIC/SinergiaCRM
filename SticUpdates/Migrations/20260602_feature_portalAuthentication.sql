@@ -1,52 +1,76 @@
 -- =====================================================================
--- Portal Authentication System — Database Migration
--- Creates custom fields on Contacts/Accounts, new tables for password
--- history, login audit, and IP lockout, and extends oauth2tokens.
+-- Portal Authentication System - Database Migration
+--
+-- Section A: reduce the column length of 20 contacts_cstm
+--            VARCHAR(255) fields. Purpose: these instances have reached
+--            the InnoDB row size limit for `contacts_cstm` ("row size
+--            too large" / BLOB conversion error) and the MySQL server
+--            configuration is not modifiable; shrinking text-input
+--            columns that never approach 255 reclaims row space without
+--            data loss. Field sizes match the updated vardefs:
+--              custom/Extension/modules/Contacts/Ext/Vardefs/SticVardefs.php
+--            IMPORTANT: run the read-only data-length check per instance
+--            BEFORE applying (SticUpdates/Checks/
+--            20260915_checkContactsCstmDataLength.sql); anything over the
+--            new size must be reviewed/truncated first or the ALTER
+--            fails (strict mode) / silently truncates.
+--            This shrink runs FIRST so the portal fields below are
+--            created afterwards by the quick-repair pipeline at their
+--            own (already reduced) sizes.
+--
+-- Section B: portal authentication metadata.
+--            Adds the custom fields on Contacts/Accounts. The portal
+--            infrastructure tables (stic_portal_login_audit,
+--            stic_portal_login_attempts, stic_portal_password_history,
+--            stic_portal_magic_rate_limit) are NOT created here: they
+--            are hidden Basic modules (modules/stic_Portal_*) whose
+--            schema is built and kept in sync by the standard vardefs +
+--            quick-repair pipeline.
 -- =====================================================================
 
--- ---------------------------------------------------------------------
--- 1. Custom fields on contacts_cstm and accounts_cstm
--- ---------------------------------------------------------------------
+-- 3 fields -> VARCHAR(50)
 ALTER TABLE `contacts_cstm`
-    ADD COLUMN IF NOT EXISTS `stic_portal_hashed_c`              VARCHAR(60) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_remember_token_c`      VARCHAR(64) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_locked_until_c`        DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_failed_attempts_c`     INT(11) DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS `stic_portal_last_login_c`          DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_password_changed_c`    DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_password_expires_c`    DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_reset_token_c`         VARCHAR(64) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_reset_expires_c`       DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_session_id_c`          VARCHAR(64) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_magic_token_c`         VARCHAR(64) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_magic_expires_c`       DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_enabled_c`             TINYINT(1) DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS `stic_portal_force_pw_change_c`     TINYINT(1) DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS `stic_portal_username_c`            VARCHAR(100) NULL;
+    MODIFY COLUMN `stic_identification_number_c`        VARCHAR(50) NULL DEFAULT NULL;
 
-ALTER TABLE `accounts_cstm`
-    ADD COLUMN IF NOT EXISTS `stic_portal_hashed_c`              VARCHAR(60) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_remember_token_c`      VARCHAR(64) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_locked_until_c`        DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_failed_attempts_c`     INT(11) DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS `stic_portal_last_login_c`          DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_password_changed_c`    DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_password_expires_c`    DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_reset_token_c`         VARCHAR(64) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_reset_expires_c`       DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_session_id_c`          VARCHAR(64) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_magic_token_c`         VARCHAR(64) NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_magic_expires_c`       DATETIME NULL,
-    ADD COLUMN IF NOT EXISTS `stic_portal_enabled_c`             TINYINT(1) DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS `stic_portal_force_pw_change_c`     TINYINT(1) DEFAULT 0,
-    ADD COLUMN IF NOT EXISTS `stic_portal_username_c`            VARCHAR(100) NULL;
-
--- Useful indices for the most-queried columns
+-- 1 field -> VARCHAR(150)
 ALTER TABLE `contacts_cstm`
-    ADD INDEX IF NOT EXISTS `idx_contacts_portal_username` (`stic_portal_username_c`);
+    MODIFY COLUMN `stic_tax_name_c`                     VARCHAR(150) NULL DEFAULT NULL;
 
-ALTER TABLE `accounts_cstm`
-    ADD INDEX IF NOT EXISTS `idx_accounts_portal_username` (`stic_portal_username_c`);
+-- 16 fields -> VARCHAR(100)
+ALTER TABLE `contacts_cstm`
+    MODIFY COLUMN `stic_professional_sector_other_c`    VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_address_block_c`                 VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_address_district_c`              VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_address_door_c`                  VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_address_floor_c`                 VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_address_num_a_c`                 VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_address_num_b_c`                 VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_address_postal_code_c`           VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_address_street_c`                VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_driving_licenses_c`              VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_employ_office_reg_time_c`        VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_max_commuting_time_c`            VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_state_c`                         VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_municipality_c`                  VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `inc_town_c`                          VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `stic_time_availability_c`            VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `stic_pa_username_c`                  VARCHAR(100) NULL DEFAULT NULL,
+    MODIFY COLUMN `stic_pa_password_c`                  VARCHAR(100) NULL DEFAULT NULL;
+
+-- The new sizes keep matching the vardefs in
+-- custom/Extension/modules/Contacts/Ext/Vardefs/SticVardefs.php, so the
+-- quick-repair pipeline stays aligned afterwards.
+
+
+-- =====================================================================
+-- Portal Authentication System — Database Migration
+-- Creates/updates custom fields on Contacts/Accounts. The portal
+-- infrastructure tables (stic_portal_login_audit, stic_portal_login_attempts,
+-- stic_portal_password_history, stic_portal_magic_rate_limit) are NOT created
+-- here: they are Basic modules (modules/stic_Portal_*) whose schema is built
+-- and kept in sync by the standard vardefs + quick-repair pipeline.
+-- =====================================================================
+
 
 -- ---------------------------------------------------------------------
 -- 2. fields_meta_data entries (required for SuiteCRM to surface them)
@@ -84,74 +108,7 @@ REPLACE INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Accountsstic_portal_username_c',         'Accounts', 'stic_portal_username_c');
 
 -- ---------------------------------------------------------------------
--- 3. Password history (reuse-prevention)
--- ---------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stic_portal_password_history` (
-    `id` CHAR(36) NOT NULL,
-    `parent_id` CHAR(36) NOT NULL,
-    `parent_type` VARCHAR(20) NOT NULL,
-    `password_hash` VARCHAR(60) NOT NULL,
-    `date_entered` DATETIME NOT NULL,
-    `date_modified` DATETIME NOT NULL,
-    `deleted` TINYINT(1) DEFAULT 0,
-    PRIMARY KEY (`id`),
-    INDEX `idx_pwdhist_parent` (`parent_id`, `parent_type`, `date_entered`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ---------------------------------------------------------------------
--- 4. Login audit trail
--- ---------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stic_portal_login_audit` (
-    `id` CHAR(36) NOT NULL,
-    `parent_id` CHAR(36) NULL,
-    `parent_type` VARCHAR(20) NULL,
-    `username` VARCHAR(100) NULL,
-    `ip_address` VARCHAR(45) NOT NULL,
-    `user_agent` VARCHAR(500) NULL,
-    `success` TINYINT(1) NOT NULL DEFAULT 0,
-    `failure_reason` VARCHAR(32) NULL,
-    `auth_method` VARCHAR(20) NULL,
-    `date_entered` DATETIME NOT NULL,
-    `date_modified` DATETIME NOT NULL,
-    `deleted` TINYINT(1) DEFAULT 0,
-    PRIMARY KEY (`id`),
-    INDEX `idx_audit_parent_date` (`parent_id`, `date_entered`),
-    INDEX `idx_audit_username_date` (`username`, `date_entered`),
-    INDEX `idx_audit_ip_date` (`ip_address`, `date_entered`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ---------------------------------------------------------------------
--- 5. IP-based lockout tracking
--- ---------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stic_portal_login_attempts` (
-    `id` CHAR(36) NOT NULL,
-    `ip_address` VARCHAR(45) NOT NULL,
-    `failed_attempts` INT(11) DEFAULT 1,
-    `locked_until` DATETIME NULL,
-    `last_attempt` DATETIME NOT NULL,
-    `date_entered` DATETIME NOT NULL,
-    `date_modified` DATETIME NOT NULL,
-    `deleted` TINYINT(1) DEFAULT 0,
-    PRIMARY KEY (`id`),
-    INDEX `idx_attempts_ip` (`ip_address`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ---------------------------------------------------------------------
--- 6. Magic link rate limit (per IP, per username)
--- ---------------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS `stic_portal_magic_rate_limit` (
-    `id` CHAR(36) NOT NULL,
-    `identifier` VARCHAR(100) NOT NULL,  -- username or IP
-    `identifier_type` VARCHAR(10) NOT NULL,
-    `window_start` DATETIME NOT NULL,
-    `count` INT(11) DEFAULT 1,
-    `deleted` TINYINT(1) DEFAULT 0,
-    PRIMARY KEY (`id`),
-    INDEX `idx_magic_id` (`identifier`, `identifier_type`, `window_start`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- ---------------------------------------------------------------------
--- 7. Default settings in config table (REPLACE = seed or refresh to defaults)
+-- 3. Default settings in config table (REPLACE = seed or refresh to defaults)
 -- ---------------------------------------------------------------------
 REPLACE INTO `config` (`category`, `name`, `value`) VALUES
 ('portal', 'PORTAL_HOME_URL',                        ''),
