@@ -263,9 +263,21 @@ class stic_SignaturesUtils
 
             // Process each signer and add to the unique list
             foreach ($signers as $signer) {
-                // Ensure signer ID is unique in the list
-                if (!isset($signersIdList[$signer->id])) {
-                    $signersIdList[$signer->id] = [
+                // Determine the dedup key based on allow_multiple_signers setting
+                $allowMultipleVal = property_exists($signatureBean, 'allow_multiple_signers') ? $signatureBean->allow_multiple_signers : '0';
+                $allowMultiple = ($allowMultipleVal === '1' || $allowMultipleVal === 1 || $allowMultipleVal === true);
+                
+                if ($allowMultiple) {
+                    // Use composite key for deduplication only (signer_id:source_id)
+                    $dedupKey = $signer->id . ':' . $mainModuleId;
+                } else {
+                    // Default behavior: deduplicate by signer ID only
+                    $dedupKey = $signer->id;
+                }
+                
+                // Ensure signer is unique based on dedup key
+                if (!isset($signersIdList[$dedupKey])) {
+                    $signersIdList[$dedupKey] = [
                         'module' => $signerModule,
                         'sourceModule' => $mainModule,
                         'sourceId' => $mainModuleId,
