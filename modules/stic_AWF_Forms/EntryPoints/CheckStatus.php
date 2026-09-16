@@ -24,6 +24,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+/**
+ * EntryPoint: stic_AWF_checkStatus
+ */
+
 if (ob_get_level()) {
     ob_end_clean();
 }
@@ -104,8 +108,5 @@ if ($status) {
     }
 }
 
-require_once 'include/utils.php';
-$message = !$isActive ? translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE', 'stic_AWF_Forms') : '';
-echo json_encode(['active' => $isActive, 'message' => $message]);
-
+echo json_encode(['active' => $isActive]);
 exit;

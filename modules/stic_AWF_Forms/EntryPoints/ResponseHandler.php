@@ -25,9 +25,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 require_once "modules/stic_AWF_Forms/core/includes.php";
+require_once "modules/stic_AWF_Forms/Utils.php";
 
 /**
- * EntryPoint: ResponseHandler
+ * EntryPoint: stic_AWF_responseHandler
  * Entry point class responsible for handling form responses submitted by users. 
  * It processes the incoming data, performs validations, detects spam, saves the response, and executes the defined action flows based on the form configuration.
  */
@@ -67,39 +68,16 @@ class ResponseHandler
         $rawPostData = $_POST;
         $cleanData = $this->sanitizeInput($rawPostData);
 
-        $isSpam = false;
-        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
         $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
         // Anti-Spam Detection 
-        // 1- Honeypot: Hidden field that bots usually fill in
-        if (!$isSpam) {
-            if (isset($cleanData['awf_honey_pot']) && $cleanData['awf_honey_pot'] !== '') {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Honeypot protection");
-                $isSpam = true;
-                $responseDescription = translate('LBL_RESPONSE_HONEYPOT_SPAM', 'stic_AWF_Responses');
-            }
-        }
-        // 2- TimeTrap: Normally bots submit the form immediately and/or without executing JS
-        if (!$isSpam) {
-            $currentTs = microtime(true);
-            $submissionTs = (float)($_POST['awf_submission_ts'] ?? $currentTs);
-            $duration = round($currentTs - $submissionTs, 2);
-            if ($submissionTs === 0 || $duration < 2.0) {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Timetrap protection. Duration: {$duration}s");
-                $isSpam = true;
-                $responseDescription = translate('LBL_RESPONSE_TIMETRAP_SPAM', 'stic_AWF_Responses'). " ({$duration}s)";
-            } else {
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Form valid submission. Time to complete: {$duration}s");
-            }
-        }
-        // 3- UserAgent: Some bots don't impersonate browsers
-        if (!$isSpam) {
-            if ($this->isBotUserAgent($userAgent)) {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by UserAgent filter");
-                $isSpam = true;
-                $responseDescription = translate('LBL_RESPONSE_USERAGENT_SPAM', 'stic_AWF_Responses');
-            }
+        $antiSpamService = new AntiSpamService();
+        $spamResult = $antiSpamService->checkRequest($cleanData, $_SERVER);
+        $isSpam = $spamResult->isSpam;
+        $responseDescription = $spamResult->userDescription;
+        if ($isSpam) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: " . $responseDescription);
         }
 
         // Form URL
@@ -116,15 +94,20 @@ class ResponseHandler
             $cleanUrl = $scheme . $host . $path;
         }
 
-        // Data sanitization
+        // Data sanitization: Remove system fields so they are not saved as actual form data
         unset($cleanData['module']);
         unset($cleanData['action']);
         unset($cleanData['entryPoint']);
         unset($cleanData['id']);
         unset($cleanData['awf_honey_pot']);
         unset($cleanData['awf_submission_ts']);
+        unset($cleanData['awf_submission_token']);
         unset($cleanData['awf_form_url']);
-
+        foreach ($cleanData as $key => $value) {
+            if (strpos($key, 'awf_website_url_') === 0) {
+                unset($cleanData[$key]);
+            }
+        }
 
         // Initial validations
         if (empty($formId)) {
@@ -163,7 +146,7 @@ class ResponseHandler
         $fingerprintString = $payloadJson . $formId . $remoteIp . $userAgent . $formUrl . $timeSlot;
         $responseHash = md5($fingerprintString);
 
-        if ($this->checkDuplicateSubmission($formId, $responseHash)) {
+        if ($this->checkDuplicateSubmission($responseHash)) {
             if ($isSpam) {
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam duplicated");
                 stic_AWFUtils::renderGenericSpamResponse();
@@ -183,6 +166,15 @@ class ResponseHandler
             $this->terminateRawError("Invalid Form Configuration.");
         }
         $formConfig = FormConfig::fromJsonArray($configData);
+
+        // CRM form type: detect form_type for legacy forms
+        stic_AWF_FormsUtils::detectAndSaveFormType($formBean, $configData);
+        
+        // If CRM form type and there is a real session user, use that user instead of admin
+        if ($formBean->form_type === 'crm' && $realUserId) {
+            $current_user = BeanFactory::getBean('Users', $realUserId);
+        }
+        
 
         // AJAX: Remote validation for js
         if (isset($_REQUEST['ajax_validation_only']) && $_REQUEST['ajax_validation_only'] == '1') {
@@ -231,7 +223,10 @@ class ResponseHandler
         }
 
         // Execution context
-        $defaultAssignedUserId = $realUserId ?? $formBean->assigned_user_id;
+        $defaultAssignedUserId = '';
+        if ($formBean->form_type !== 'crm') {
+            $defaultAssignedUserId = $formBean->assigned_user_id;
+        }
         if (empty($defaultAssignedUserId)) {
             $defaultAssignedUserId = $current_user->id;
         }
@@ -252,7 +247,7 @@ class ResponseHandler
         $responseBean->save();
 
         // Execution Context
-        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean);
+        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean, $formBean->form_type);
         $context->visitorUserId = $realUserId;
 
         // Html Summary
@@ -360,40 +355,26 @@ class ResponseHandler
                 // Generate analytical response details
                 $this->generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData);
 
-                // Update status and generate execution log
+                // Generate execution log
+                stic_AWFUtils::updateResponseExecutionLog($context);
+
+                // Update status
                 $hasErrors = false;
-                $logSummary = "[" . date('Y-m-d H:i:s') . "]\n";
                 foreach ($context->actionResults as $result) {
                     if ($result->isError()) {
                         $hasErrors = true;
-                        $icon = translate('LBL_EXECUTION_ITEM_ERROR', 'stic_AWF_Responses');
-                    } elseif ($result->isSkipped()) {
-                        $icon = translate('LBL_EXECUTION_ITEM_SKIPPED', 'stic_AWF_Responses');
-                    } else {
-                        $icon = translate('LBL_EXECUTION_ITEM_OK', 'stic_AWF_Responses');
+                        break;
                     }
-                    $actionName = $result->actionConfig->text ?? $result->actionConfig->name ?? 'Unknown Action';
-                    $logSummary .= "{$icon} {$actionName}";
-                    if (!empty($result->message)) {
-                        $logSummary .= ": " . $result->message;
-                    }
-                    $logSummary .= "\n";
                 }
-                $responseBean->execution_log = $logSummary;
-
-                // Update status
                 if ($lastResult->isError()) {
                     $responseBean->status = 'error';
+                    $hasErrors = true;
                 } elseif ($lastResult->isWait()) {
                     $responseBean->status = 'awaiting_action'; 
                 } else {
                     $responseBean->status = $hasErrors ? 'error' : 'processed';
                 }
                 $responseBean->save();
-
-                if ($lastResult->isWait()) {
-                    $this->createDeferredTicket($context, $lastResult);
-                }
 
                 // Get last action and check if is Terminal
                 $lastAction = $lastResult->getAction();
@@ -408,58 +389,17 @@ class ResponseHandler
                 // No terminal (or error runing terminal): Show generic message
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found or failed in Main flow in form. ID: $formId");
                 if ($hasErrors) {
-                    $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
-                    $msg = translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
-                    stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
+                    stic_AWFUtils::renderGenericResponseError($formConfig);
                 } else {
-                    $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
-                    $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
-                    stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg); 
+                    stic_AWFUtils::renderGenericResponseSuccess($formConfig); 
                 }
                 
             } else {
                 // If there is no main flow, we show generic message
                 $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Main flow not found in form. ID: $formId");
-                stic_AWFUtils::renderGenericResponse($formConfig, "Error", "Configuration Error: Main flow missing.");
+                stic_AWFUtils::renderGenericResponseError($formConfig);
             }
         }
-    }
-
-    /**
-     * Create a record in the deferred tickets table to resume the flow.
-     * @param ExecutionContext $context Execution context of the flow
-     * @param ActionResult $lastResult Result of the last action
-     */
-    private function createDeferredTicket(ExecutionContext $context, ActionResult $lastResult): void {
-        $ticket = BeanFactory::newBean('stic_AWF_Deferred_Tickets');
-        $ticket->name = "Deferred: " . $context->formId . " - " . date('Y-m-d H:i');
-        $ticket->status = 'pending';
-        $data = $lastResult->getData();
-
-        // Essential data to recover context
-        $ticket->form_id = $context->formId;
-        $ticket->response_id = $context->responseId;
-        
-        // Unique token generation (hash)
-        $token = bin2hex(random_bytes(16));
-        $ticket->token_hash = $token;
-
-        // Store the specific data of the action (ex: strategy_class, order_id)
-        $ticket->context_data = json_encode($data);
-
-        // IEPA!!
-        // TODO: Recuperar External ID de forma agnóstica
-        // // Optional: If the strategy has given us an external ID (ex: Redsys Order ID), we save it
-        // if (isset($data['external_ref_id'])) {
-        //     $ticket->external_ref_id = $data['external_ref_id'];
-        // } elseif (isset($data['redsys_order_id'])) {
-        //     $ticket->external_ref_id = $data['redsys_order_id'];
-        // }
-
-        $ticket->save();
-        
-        // Optional: Update the result with the ticket_id in case the terminal action wants to use it
-        // $data['ticket_id'] = $ticket->id;
     }
 
     /**
@@ -476,22 +416,15 @@ class ResponseHandler
      * Checks if a response with the same hash has been received for the same form. This is used for duplicate detection.
      * For human users, we check if we have received the same response from the same origin within a 5-minute window.
      * For bots (identified as spam), we check if we have received the same response from the same origin at any time.
-     * @param string $formId The ID of the form
      * @param string $hash The hash of the response to check for duplicates
      * @return bool True if a duplicate submission is detected, false otherwise
      */
-    private function checkDuplicateSubmission(string $formId, string $hash): bool {
+    private function checkDuplicateSubmission(string $hash): bool {
         global $db;
-        $safeFormId = $db->quote($formId);
+        $safeHash = $db->quote($hash);
 
         $query = "SELECT count(response.id) as count FROM stic_awf_responses response
-                    INNER JOIN stic_awf_forms_stic_awf_responses_c form_response
-                        ON form_response.stic_awf_forms_stic_awf_responsesresponses_idb = response.id
-                  WHERE
-                    form_response.stic_awf_forms_stic_awf_responsesforms_ida = '{$safeFormId}'
-                    AND form_response.deleted = 0
-                    AND response.response_hash = '{$hash}'
-                    AND response.deleted = 0";
+                  WHERE response.response_hash = '{$safeHash}' AND response.deleted = 0";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
         $result = $db->query($query);
@@ -507,9 +440,9 @@ class ResponseHandler
         $configData = json_decode(html_entity_decode($formBean->configuration), true);
         $formConfig = $configData ? FormConfig::fromJsonArray($configData) : null;
         if ($formConfig) {
-            stic_AWFUtils::renderGenericResponse($formConfig, 
-                                             translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_AWF_Responses'),
-                                             translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_AWF_Responses'));
+            $title = translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_AWF_Responses');
+            $msg = translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_AWF_Responses');
+            stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
         } else {
             $this->terminateRawError("This response has already been submitted.");
         }
@@ -640,6 +573,10 @@ class ResponseHandler
             'errorDescriptions' => [],
         ];
 
+        // Preprocess data to fill in missing boolean/checkbox fields
+        // (browsers don't send unchecked checkboxes)
+        stic_AWFUtils::fillMissingBooleanFields($config, $data);
+
         foreach ($config->data_blocks as $block) {
             // Datablock is detached
             if (empty($block->module)) continue; 
@@ -649,9 +586,8 @@ class ResponseHandler
             if (empty($realVardefs)) continue;
 
             foreach ($block->fields as $formField) {
-                $prefix = ($formField->type_field === DataBlockFieldType::UNLINKED) ? '_detached.' : '';
-                $inputKeyInForm = $prefix . $block->name . '.' . $formField->name;
-                $inputKey = str_replace(".", "_", $inputKeyInForm);
+                $inputKeyInForm = $formField->getKey();
+                $inputKey = $formField->getPhpKey();
                 $value = $data[$inputKey] ?? null;
                 $label = rtrim($formField->label, ":");
                 
@@ -734,7 +670,7 @@ class ResponseHandler
                     case 'boolean':
                     case 'select_checkbox':
                     case 'select_switch':
-                        if (!filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)) {
+                        if (filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === null) {
                             $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
                                                                             translate('LBL_ERROR_BOOL_FIELD', 'stic_AWF_Responses');
                             $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_BOOL_FIELD', 'stic_AWF_Responses');
@@ -820,8 +756,7 @@ class ResponseHandler
                 if ($field->type_field === DataBlockFieldType::FIXED) continue;
 
                 // Input key
-                $prefix = ($field->type_field === DataBlockFieldType::UNLINKED) ? '_detached_' : '';
-                $inputKey = $prefix . $block->name . '_' . $field->name;
+                $inputKey = $field->getPhpKey();
                 
                 $rawValue = $submittedData[$inputKey] ?? null;
                 
@@ -946,47 +881,6 @@ class ResponseHandler
     }
 
 
-    /**
-     * Determines if the User Agent string belongs to a bot or script. This is used for spam detection and to apply different duplicate detection rules.
-     * The function checks if the User Agent is empty (which is suspicious) 
-     *  or if it contains known signatures of programming tools and libraries commonly used for making HTTP requests (like curl, wget, python, java, etc.).
-     * If any of these conditions are met, it returns true, indicating that the User Agent is likely a bot. 
-     * Otherwise, it returns false, indicating that it is likely a human user.
-     * @param string $userAgent The User Agent string from the request headers
-     * @return bool True if the User Agent is identified as a bot, false otherwise
-     */
-    private function isBotUserAgent(string $userAgent): bool 
-    {
-        // If it's empty, it's suspicious (all browsers send something)
-        if (empty($userAgent)) {
-            return true; 
-        }
-
-        // Blacklist of programming tools that are NOT browsers
-        // If the User Agent contains any of these words, it is a script.
-        $botSignatures = [
-            'curl',          // Linux command tool
-            'wget',          // Download tool
-            'python',        // Requests/Ulllib library
-            'java/',         // Java HTTP Client
-            'libwww',        // Perl library
-            'httpclient',    // Generic Apache/Java
-            'php/',          // PHP scripts (file_get_contents)
-            'postman',       // API testing tool
-            'insomnia',      // API testing tool
-            'node-fetch',    // NodeJS
-            'axios',         // JS library (server side)
-            'go-http-client' // Golang
-        ];
-
-        foreach ($botSignatures as $bot) {
-            if (strpos($userAgent, $bot) !== false) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }
 
 // Handler execution

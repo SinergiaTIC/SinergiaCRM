@@ -70,6 +70,8 @@ $mod_strings = array (
   'LBL_PUBLIC_URL' => 'URL',
   'LBL_PROCESSING_MODE' => 'Modo de procesamiento',
   'LBL_PROCESSING_MODE_DESC' => 'Define cómo se gestionan las respuestas recibidas. En modo síncrono las respuestas se almacenan y se procesan al recibirse. En modo asíncrono las respuestas se almacenan al recibirse y se procesan posteriormente mediante un proceso en segundo plano, lo que puede ser de interés para optimizar el rendimiento del sistema en casos de gran afluencia.',
+  'LBL_FORM_TYPE' => 'Tipo de formulario',
+  'LBL_FORM_TYPE_DESC' => 'Define al público destinatario del formulario. Los formularios web son accesibles para cualquier persona mientras que los formularios del CRM sólo pueden ser rellenados por usuarios autenticados.',
   'LBL_CONFIGURATION' => 'Configuración',
   'LBL_ANALYTICS_VIEWS' => 'Visitas totales',
   'LBL_ANALYTICS_BLOCKED' => 'Visitas bloqueadas (no público)',
@@ -100,7 +102,7 @@ $mod_strings = array (
   'LBL_WIZARD_DESC_STEP1' => 'Definición de las propiedades generales del formulario.',
   'LBL_WIZARD_TITLE_STEP2' => 'Estructura y campos',
   'LBL_WIZARD_DESC_STEP2' => 'Definición del contenido del formulario. Los bloques de datos pueden vincularse a módulos de SinergiaCRM o funcionar de forma independiente. Además, es posible configurar validaciones de datos, detección de duplicados, etc.',
-  'LBL_WIZARD_TITLE_STEP2_START' => 'Empiece a construir el formulario',
+  'LBL_WIZARD_TITLE_STEP2_START' => 'Empezar a construir el formulario',
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
   'LBL_WIZARD_DESC_STEP3' => 'Definición de las acciones que se ejecutarán cuando se reciba una respuesta: crear o actualizar registros, enviar correos electrónicos, redireccionar a páginas web, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
@@ -182,6 +184,7 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modificado)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Seleccionar registros',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
+  'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostrar valores internos',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Valor interno',
   'LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL' => 'Texto original',
   'LBL_FIELD_VALUE_OPTION_LABEL' => 'Texto',
@@ -219,8 +222,9 @@ $mod_strings = array (
   'LBL_RELATIONSHIP_NEW' => 'Nueva relación entre bloques de datos',  
   'LBL_RELATIONSHIP_NO_MODULE_RELATED' => 'Sin módulo relacionado',
   'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'Nuevo bloque de datos',
-  'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Bloque de datos origen',
-  'LBL_RELATIONSHIP_DATABLOCK_DEST' => 'Bloque de datos destino',
+  'LBL_RELATIONSHIP_TYPE' => 'Tipo',
+  'LBL_RELATIONSHIP_INVOLVED_BLOCKS' => 'Bloques de datos involucrados',
+  'LBL_AWF_FIELD_SUFFIX' => 'campo',
 
   // Flows
   'LBL_FLOWS' => 'Flujos de acciones',
@@ -228,6 +232,7 @@ $mod_strings = array (
   'LBL_FLOW_RECEIPT' => 'Respuesta automática',
   'LBL_FLOW_MAIN' => 'Principal',
   'LBL_FLOW_ONERROR' => 'Error',
+  'LBL_FLOW_DEFERRED_MAIN' => 'Finalizada',
 
   // Flow -> Action
   'LBL_ACTION' => 'Acción',
@@ -244,8 +249,7 @@ $mod_strings = array (
   'LBL_ACTION_CATEGORY' => 'Categoría',
   'LBL_ACTION_PARAMETERS' => 'Parámetros',
   'LBL_ACTION_ACTIONS' => 'Acciones',
-  'LBL_ACTIONS_SHOW_ALL' => 'Mostrar todas las acciones',
-  'LBL_ACTIONS_SHOW_ALL_DESC' => 'Muestra todas las acciones definidas en el formulario, incluyendo las acciones creadas de forma automática.',
+  'LBL_ACTION_AUTOMATIC' => 'Automática',
   'LBL_ACTION_NO_PARAMS' => 'Sin parámetros',
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Seleccionar --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Módulo',
@@ -268,17 +272,19 @@ $mod_strings = array (
   'LBL_LAYOUT_FORM_DESIGN' => 'Diseño del formulario',
   'LBL_LAYOUT_PREVIEW' => 'Previsualización',
   'LBL_LAYOUT_HEADER' => 'Cabecera',
-  'LBL_LAYOUT_BODY' => 'Formulario',
   'LBL_LAYOUT_FOOTER' => 'Pie',
 
   // Layout -> Theme
+  'LBL_THEME_GENERAL' => 'General',
+  'LBL_THEME_WEB_TITLE_TEXT' => 'Título de la página',
+  'LBL_THEME_WEB_TITLE_VALUE' => 'Formulario Web Avanzado',  
   'LBL_THEME_SUBMIT_BUTTON_TEXT' => 'Texto del botón de envío',
   'LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE' => 'Enviar',
   'LBL_THEME_MAIN_COLORS' => 'Colores',
   'LBL_THEME_PRIMARY_COLOR' => 'Principal',
   'LBL_THEME_PAGE_BG_COLOR' => 'Fondo de página',
   'LBL_THEME_FORM_BG_COLOR' => 'Fondo del formulario',
-  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Tipografía y texto',
+  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Formato del texto',
   'LBL_THEME_FONT_FAMILY' => 'Fuente',
   'LBL_THEME_FONT_SIZE' => 'Tamaño',
   'LBL_THEME_TEXT_COLOR' => 'Color',
@@ -338,6 +344,7 @@ $mod_strings = array (
   'LBL_SECTION_CONFIG' => 'Configuración',
   'LBL_SECTION_CONTENT' => 'Contenido',
   'LBL_SECTION_TITLE' => 'Título',
+  'LBL_SECTION_SUBTITLE' => 'Subtítulo',
   'LBL_SECTION_NO_TITLE' => '< Sin título >',
   'LBL_SECTION_SHOW_TITLE' => 'Mostrar título',
   'LBL_SECTION_CONTAINER' => 'Contenedor visual',
@@ -352,7 +359,6 @@ $mod_strings = array (
   'LBL_CODE_LOADING' => 'Cargando el código...',
   'LBL_CODE_LOADING_ERROR' => 'Error de conexión',
 
-  'LBL_HONEYPOT_LABEL' => 'Mantenga este campo vacío',
   'LBL_REQUIRED_FIELD_MESSAGE' => 'Es necesario informar este campo',
   
   'LBL_PREVIEW_RIBBON' => 'Previsualización',
@@ -402,9 +408,10 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Guardar registro',
   'LBL_SAVE_RECORD_ACTION_DESC' => 'Guarda o actualiza un registro a partir de los datos del formulario',
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidencia por campos',
+  'LBL_SAVE_RECORD_ACTION_RELATION_CONFIGS_TEXT' => 'Campos de relación',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Crear relación',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino de la relación',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloque de datos o registro destino de la relación a guardar',
@@ -412,6 +419,7 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID del registro destino',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relación a actualizar',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nombre interno de la relación que enlaza con el bloque de datos destino',
+  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Campo relacionado',
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Añadir a Lista de Público Objetivo',
@@ -432,8 +440,7 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a una dirección de correo electrónico concreta',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Correo electrónico',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-  
-  
+
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar correo a un usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado del formulario o de un registro',
@@ -460,6 +467,15 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redireccionando...',
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Pulse aquí para continuar',
 
+  // RedirectToRecordAction
+  'LBL_REDIRECT_TO_RECORD_ACTION_TITLE' => 'Ir a un registro',
+  'LBL_REDIRECT_TO_RECORD_ACTION_DESC' => 'Redirecciona el navegador del usuario final a la página de un registro concreto del CRM',
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_TEXT' => 'Bloque de datos del registro',
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_DESC' => 'Indica el bloque de datos que contiene el registro al que redirigir al usuario final.',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_TEXT' => 'Vista del CRM',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_DETAILVIEW_TEXT' => 'Vista de detalle',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_EDITVIEW_TEXT' => 'Vista de edición',
+  
   // RedirectSummaryPageAction
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de datos',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página en la que se muestran los datos facilitados',
@@ -469,23 +485,45 @@ $mod_strings = array (
   // CheckSessionAction
   'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verificar sesión activa y permisos',
   'LBL_CHECK_SESSION_ACTION_DESC' => 'Bloquea el procesamiento del formulario si no hay una sesión de usuario activa o si el usuario no tiene los permisos para crear los registros asociados al formulario',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT' => 'Mensaje por sesión no activa',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT_DEFAULT' => 'Acceso no autorizado. Por favor, inicie sesión para continuar.',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT' => 'Mensaje por falta de permisos',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT_DEFAULT' => 'Acceso no autorizado. No posee los permisos necesarios para continuar.',
   'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verificando acceso y permisos...',
   'LBL_CHECK_SESSION_ACTION_DENIED_TITLE' => '🚫 Acceso denegado',
-  'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Iniciar sesión',
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Sesión activa',
 
-
   // -- DEFERRED ACTIONS --
-  // PaymentRouterAction
-  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago en plataforma externa',
-  'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa el pago correspondiente a un bloque de datos en una plataforma externa.',
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromiso de Pago',
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona el bloque de datos con el Compromiso de Pago para realizar su pago en la plataforma externa.',
+  'LBL_PARAM_EXPIRATION_DAYS' => 'Días para caducidad',
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Número de días después del cual caducará la acción diferida.',
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE' => 'Título para enlace ya utilizado', 
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DESC' => 'Título del aviso que se mostrará cuando se acceda al enlace si ya se ha utilizado.', 
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT' => 'Acción ya realizada', 
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT' => 'Texto para enlace ya utilizado', 
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC' => 'Texto del aviso que se mostrará cuando se acceda al enlace si ya se ha utilizado.', 
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT' => 'Esta acción ya se ha completado anteriormente de forma correcta y no es necesario repetirla.',  
+  'LBL_PARAM_EXPIRED_TITLE' => 'Título para enlace caducado',
+  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Título del aviso que se mostrará al acceder al enlace caducado.',
+  'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Enlace caducado',
+  'LBL_PARAM_EXPIRED_TEXT' => 'Texto del enlace caducado',
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Texto del aviso que se mostrará al acceder al enlace caducado.',
+  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Este enlace ha caducado por motivos de seguridad.',
+  
+  // EmailConfirmationAction
+  'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirmar correo electrónico',
+  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Genera un enlace único y lo envía por correo electrónico para que el usuario pueda confirmar su dirección de correo electrónico.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correo confirmado',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'La plantilla de correo electrónico deberá tener la variable {::confirmation_url::} en el cuerpo del mensaje para que se genere el enlace de confirmación.',
 
+  // PaymentRouterAction
+  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago',
+  'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa el pago correspondiente a un bloque de datos en una plataforma externa.',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => 'Pago confirmado',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromiso de pago',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona el bloque de datos que contiene el compromiso de pago del que debe realizarse el pago en una plataforma externa.',
 
   // -- VALIDATOR ACTIONS --
   // RegexValidatorAction

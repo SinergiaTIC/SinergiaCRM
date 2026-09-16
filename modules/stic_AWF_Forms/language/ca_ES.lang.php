@@ -70,6 +70,8 @@ $mod_strings = array (
   'LBL_PUBLIC_URL' => 'URL',
   'LBL_PROCESSING_MODE' => 'Mode de processament',
   'LBL_PROCESSING_MODE_DESC' => "Defineix com es gestionen les respostes rebudes. En mode síncron les respostes s'emmagatzemen i es processen en rebre's. En mode asíncron les respostes s'emmagatzemen en rebre's i es processen posteriorment mitjançant un procés en segon pla, la qual cosa pot ser d'interès per optimitzar el rendiment del sistema en casos de gran afluència.",
+  'LBL_FORM_TYPE' => 'Tipus de formulari',
+  'LBL_FORM_TYPE_DESC' => "Defineix el públic destinatari del formulari. Els formularis web són accessibles per a qualsevol persona mentre que els formularis del CRM només poden ser emplenats per usuaris autenticats.",
   'LBL_CONFIGURATION' => 'Configuració',
   'LBL_ANALYTICS_VIEWS' => 'Visites totals',
   'LBL_ANALYTICS_BLOCKED' => 'Visites bloquejades (no públic)',
@@ -182,6 +184,7 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modificat)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Selecciona els registres',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valors possibles',
+  'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostra els valors interns',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Valor intern',
   'LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL' => 'Text original',
   'LBL_FIELD_VALUE_OPTION_LABEL' => 'Text',
@@ -219,8 +222,9 @@ $mod_strings = array (
   'LBL_RELATIONSHIP_NEW' => 'Nova relació entre blocs de dades',  
   'LBL_RELATIONSHIP_NO_MODULE_RELATED' => 'Sense mòdul relacionat',
   'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'Nou bloc de dades',
-  'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Bloc de dades origen',
-  'LBL_RELATIONSHIP_DATABLOCK_DEST' => 'Bloc de dades destí',
+  'LBL_RELATIONSHIP_TYPE' => 'Tipus',
+  'LBL_RELATIONSHIP_INVOLVED_BLOCKS' => 'Blocs de dades involucrats',
+  'LBL_AWF_FIELD_SUFFIX' => 'camp',
 
   // Flows
   'LBL_FLOWS' => "Fluxos d'accions",
@@ -228,6 +232,7 @@ $mod_strings = array (
   'LBL_FLOW_RECEIPT' => 'Resposta automàtica',
   'LBL_FLOW_MAIN' => 'Principal',
   'LBL_FLOW_ONERROR' => 'Error',
+  'LBL_FLOW_DEFERRED_MAIN' => 'Finalitzada',
 
   // Flow -> Action
   'LBL_ACTION' => 'Acció',
@@ -244,8 +249,7 @@ $mod_strings = array (
   'LBL_ACTION_CATEGORY' => 'Categoria',
   'LBL_ACTION_PARAMETERS' => 'Paràmetres',
   'LBL_ACTION_ACTIONS' => 'Accions',
-  'LBL_ACTIONS_SHOW_ALL' => 'Mostra totes les accions',
-  'LBL_ACTIONS_SHOW_ALL_DESC' => 'Mostra totes les accions definides al formulari, incloent les accions creades de forma automàtica.',
+  'LBL_ACTION_AUTOMATIC' => 'Automàtica',
   'LBL_ACTION_NO_PARAMS' => 'Sense paràmetres',
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Selecciona --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Mòdul',
@@ -268,17 +272,19 @@ $mod_strings = array (
   'LBL_LAYOUT_FORM_DESIGN' => 'Disseny del formulari',
   'LBL_LAYOUT_PREVIEW' => 'Previsualització',
   'LBL_LAYOUT_HEADER' => 'Capçalera',
-  'LBL_LAYOUT_BODY' => 'Formulari',
   'LBL_LAYOUT_FOOTER' => 'Peu',
 
   // Layout -> Theme
+  'LBL_THEME_GENERAL' => 'General',
+  'LBL_THEME_WEB_TITLE_TEXT' => 'Títol de la pàgina',
+  'LBL_THEME_WEB_TITLE_VALUE' => 'Formulari Web Avançat',
   'LBL_THEME_SUBMIT_BUTTON_TEXT' => "Text del botó d'enviament",
   'LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE' => 'Envia',
   'LBL_THEME_MAIN_COLORS' => 'Colors',
   'LBL_THEME_PRIMARY_COLOR' => 'Principal',
   'LBL_THEME_PAGE_BG_COLOR' => 'Fons de pàgina',
   'LBL_THEME_FORM_BG_COLOR' => 'Fons del formulari',
-  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Tipografia i text',
+  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Format del text',
   'LBL_THEME_FONT_FAMILY' => 'Font',
   'LBL_THEME_FONT_SIZE' => 'Mida',
   'LBL_THEME_TEXT_COLOR' => 'Color',
@@ -338,6 +344,7 @@ $mod_strings = array (
   'LBL_SECTION_CONFIG' => 'Configuració',
   'LBL_SECTION_CONTENT' => 'Contingut',
   'LBL_SECTION_TITLE' => 'Títol',
+  'LBL_SECTION_SUBTITLE' => 'Subtítol',
   'LBL_SECTION_NO_TITLE' => '< Sense títol >',
   'LBL_SECTION_SHOW_TITLE' => 'Mostra el títol',
   'LBL_SECTION_CONTAINER' => 'Contenidor visual',
@@ -352,7 +359,6 @@ $mod_strings = array (
   'LBL_CODE_LOADING' => 'Carregant el codi...',
   'LBL_CODE_LOADING_ERROR' => 'Error de connexió',
 
-  'LBL_HONEYPOT_LABEL' => 'Mantingueu aquest camp buit',
   'LBL_REQUIRED_FIELD_MESSAGE' => 'Cal emplenar aquest camp',
   
   'LBL_PREVIEW_RIBBON' => 'Previsualització',
@@ -402,9 +408,10 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Desa el registre',
   'LBL_SAVE_RECORD_ACTION_DESC' => 'Desa o actualitza un registre a partir de les dades del formulari',
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidència per camps',
+  'LBL_SAVE_RECORD_ACTION_RELATION_CONFIGS_TEXT' => 'Camps de relació',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Desa la relació',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Crea la relació',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relació entre dos registres',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destí de la relació',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloc de dades o registre destí de la relació a desar',
@@ -412,6 +419,7 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID del registre destí',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relació a actualitzar',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nom intern de la relació que enllaça amb el bloc de dades destí',
+  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Camp relacionat',
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Afegeix a una Llista de Públic Objectiu',
@@ -432,7 +440,6 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envia un correu electrònic a una adreça de correu electrònic concreta',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Correu electrònic',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Plantilla de correu electrònic',
-  
   
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Envia un correu a un usuari assignat',
@@ -460,6 +467,15 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redireccionant...',
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Premeu aquí per continuar',
 
+  // RedirectToRecordAction
+  'LBL_REDIRECT_TO_RECORD_ACTION_TITLE' => "Ves a un registre",
+  'LBL_REDIRECT_TO_RECORD_ACTION_DESC' => "Redirecciona el navegador de l'usuari final a la pàgina d'un registre concret del CRM",
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_TEXT' => 'Bloc de dades del registre',
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_DESC' => "Indica el bloc de dades que conté el registre al qual es redirigirà l'usuari final.",
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_TEXT' => 'Vista del CRM',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_DETAILVIEW_TEXT' => 'Vista de detall',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_EDITVIEW_TEXT' => "Vista d'edició",
+
   // RedirectSummaryPageAction
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostra el resum de dades',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => "Redirecciona el navegador de l'usuari final a una pàgina on es mostren les dades facilitades",
@@ -469,23 +485,45 @@ $mod_strings = array (
   // CheckSessionAction
   'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verifica la sessió i els permisos',
   'LBL_CHECK_SESSION_ACTION_DESC' => "Bloqueja el processament del formulari si no hi ha una sessió d'usuari activa o si l'usuari no té els permisos per crear els registres associats al formulari",
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT' => 'Missatge per sessió no activa',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT_DEFAULT' => 'Accés no autoritzat. Inicieu sessió per continuar.',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT' => 'Missatge per falta de permisos',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT_DEFAULT' => 'Accés no autoritzat. No disposeu dels permisos necessaris per continuar.',
   'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verificant accés i permisos...',
   'LBL_CHECK_SESSION_ACTION_DENIED_TITLE' => '🚫 Accés denegat',
-  'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Inicia la sessió',
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Sessió activa',
 
-
   // -- DEFERRED ACTIONS --
-  // PaymentRouterAction
-  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realitza un pagament en una plataforma externa',
-  'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Processa el pagament corresponent a un bloc de dades en una plataforma externa.',
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromís de Pagament',
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona el bloc de dades amb el Compromís de Pagament per realitzar el seu pagament a la plataforma externa.',
+  'LBL_PARAM_EXPIRATION_DAYS' => 'Dies per a la caducitat',
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => "Nombre de dies després del qual caducarà l'acció diferida.",
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE' => 'Títol per a enllaç ja utilitzat',
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DESC' => "Títol de l'avís que es mostrarà quan s'accedeixi a l'enllaç si ja s'ha utilitzat.",
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT' => 'Acció ja realitzada',
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT' => "Text per a enllaç ja utilitzat",
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC' => "Text de l'avís que es mostrarà quan s'accedeixi a l'enllaç si ja s'ha utilitzat.",
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT' => "Aquesta acció ja s'ha completat anteriorment de manera correcta i no és necessari repetir-la.",
+  'LBL_PARAM_EXPIRED_TITLE' => 'Títol per a enllaç caducat',
+  'LBL_PARAM_EXPIRED_TITLE_DESC' => "Títol de l'avís que es mostrarà quan s'accedeixi a l'enllaç caducat.",
+  'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Enllaç caducat',
+  'LBL_PARAM_EXPIRED_TEXT' => "Text per a enllaç caducat",
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => "Text de l'avís que es mostrarà quan s'accedeixi a l'enllaç caducat.",
+  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Aquest enllaç ha caducat per motius de seguretat.',
 
+  // EmailConfirmationAction 
+  'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirma el correu electrònic', 
+  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => "Genera un enllaç únic i l'envia per correu electrònic perquè l'usuari pugui confirmar la seva adreça de correu electrònic.", 
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correu confirmat',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatari', 
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => "Indica el bloc de dades que conté el correu electrònic a verificar i al qual s'enviarà l'enllaç de confirmació.", 
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correu electrònic', 
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => "La plantilla de correu electrònic ha de tenir la variable {::confirmation_url::} al cos del missatge perquè es generi l'enllaç de confirmació.", 
+
+  // PaymentRouterAction
+  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Fes un pagament',
+  'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Processa en una plataforma externa el pagament corresponent a un bloc de dades.',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => 'Pagament confirmat',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromís de pagament',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => "Selecciona el bloc de dades que conté el compromís de pagament del qual s'haurà de fer el pagament en una plataforma externa.",
 
   // -- VALIDATOR ACTIONS --
   // RegexValidatorAction

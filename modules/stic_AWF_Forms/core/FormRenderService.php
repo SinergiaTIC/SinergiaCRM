@@ -63,6 +63,10 @@ class FormRenderService {
             if (!is_array($configData)) {
                 $configData = [];
             }
+
+            // CRM form type: detect form_type for legacy forms
+            require_once "modules/stic_AWF_Forms/Utils.php";
+            stic_AWF_FormsUtils::detectAndSaveFormType($bean, $configData);
         }
 
         // Process ConfigData
@@ -101,8 +105,8 @@ class FormRenderService {
                 
                 if (isset($requestData[$field->name])) {
                     $val = $requestData[$field->name];
-                } elseif (isset($requestData[$block->name . '_' . $field->name])) {
-                    $val = $requestData[$block->name . '_' . $field->name];
+                } elseif (isset($requestData[$field->getPhpKey()])) {
+                    $val = $requestData[$field->getPhpKey()];
                 }
 
                 if ($val !== null) {
