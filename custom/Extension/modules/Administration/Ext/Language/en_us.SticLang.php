@@ -65,7 +65,9 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = 'Errors have occurred while de
 // SinergiaDA
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE'] = 'Rebuild now';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION'] = 'Rebuild and repair the views and other necessary elements for integration with Sinergia Data Analytics. Add new fields if needed.';
+$mod_strings['LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL'] = 'Enable debug mode';
 $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Go to Sinergia Data Analytics';
+$mod_strings['LBL_STIC_GO_TO_SDA_DESCRIPTION'] = 'Opens the SinergiaDA instance in a new tab.';
 $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'Rebuild of Sinergia Data Analytics has been successfully completed.';
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'The following errors have been found in the rebuild of Sinergia Data Analytics. Please contact SinergiaTIC technical support if needed.';
 
@@ -100,6 +102,51 @@ $mod_strings['LBL_TRACKERS_TITLE'] = 'Tracker';
 $mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Logging of user sessions and record actions.';
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Admin actions';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Set the email template that will be sent when the system generates the password of a new user.';
+
+// SinergiaDA configuration
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SECTION'] = 'SinergiaDA settings';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_GENERAL'] = 'General settings';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_CACHE'] = 'SinergiaDA cache';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE'] = 'Save settings';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_HELP'] = 'Apply general and cache settings for SinergiaDA';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_SUCCESS'] = 'Settings saved successfully.';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_ERROR'] = 'Error while saving settings. Check the system log for more details.';
+$mod_strings['LBL_STIC_SINERGIADA_ENABLED_LABEL'] = 'Enable SinergiaDA';
+$mod_strings['LBL_STIC_SINERGIADA_ENABLED_HELP'] = 'Enable or disable SinergiaDA functionality. If disabled, menus and synchronization are not available.';
+$mod_strings['LBL_STIC_SINERGIADA_URL_LABEL'] = 'Instance URL';
+$mod_strings['LBL_STIC_SINERGIADA_URL_HELP'] = 'URL where the SinergiaDA instance is located. Used for links and synchronization calls. If empty, a standard installation in a SinergiaTIC server is assumed.';
+$mod_strings['LBL_STIC_SINERGIADA_SEED_STRING_LABEL'] = 'Encryption seed';
+$mod_strings['LBL_STIC_SINERGIADA_SEED_STRING_HELP'] = 'Random string used by SinergiaDA to encrypt values and secure the synchronization call.';
+$mod_strings['LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_LABEL'] = 'Publish data as tables';
+$mod_strings['LBL_STIC_SINERGIADA_PUBLISH_AS_TABLE_HELP'] = 'Select the modules to be published as tables in SinergiaDA. Modules not selected will be published as MySQL views.';
+$mod_strings['LBL_STIC_SINERGIADA_MAX_USERS_LABEL'] = 'Non-admin users limit';
+$mod_strings['LBL_STIC_SINERGIADA_MAX_USERS_HELP'] = 'Maximum number of non-admin users to process. Empty or 0 = no limit.';
+$mod_strings['LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_LABEL'] = 'Group permissions';
+$mod_strings['LBL_STIC_SINERGIADA_GROUP_PERMISSIONS_HELP'] = 'Sets whether SinergiaDA uses SinergiaCRM security group record access permissions.';
+$mod_strings['LBL_STIC_SINERGIADA_AUTO_REBUILD_LABEL'] = 'Auto rebuild';
+$mod_strings['LBL_STIC_SINERGIADA_AUTO_REBUILD_HELP'] = 'Automatically rebuilds after deleting a field in Studio or uninstalling a module.';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_ENABLED_LABEL'] = 'Enable cache';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_ENABLED_HELP'] = 'Enable or disable SinergiaDA cache.';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_UNITS_LABEL'] = 'Time unit';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_UNITS_DAYS'] = 'Days';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_UNITS_HOURS'] = 'Hours';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_UNITS_HELP'] = 'Time unit for cache regeneration (days or hours).';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_QUANTITY_LABEL'] = 'Quantity';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_QUANTITY_HELP'] = 'Number of days or hours between cache regenerations.';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_HOURS_LABEL'] = 'Regeneration hour';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_HOURS_HELP'] = 'Cache regeneration hour (HH format, e.g. 04).';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_MINUTES_LABEL'] = 'Regeneration minute';
+$mod_strings['LBL_STIC_SINERGIADA_CACHE_MINUTES_HELP'] = 'Cache regeneration minute (MM format, e.g. 30).';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA'] = 'Other settings';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_KEY'] = 'New key';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_VALUE'] = 'Value';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_ADD'] = 'Add setting';
+$mod_strings['LBL_STIC_SINERGIADA_CONFIG_EXTRA_HELP'] = 'Additional settings in key-value format. Use with caution.';
+$mod_strings['LBL_STIC_DA_DEBUG_TITLE'] = 'Debug result';
+$mod_strings['LBL_STIC_DA_DEBUG_HIDE'] = 'Hide';
+$mod_strings['LBL_STIC_DA_DEBUG_SHOW'] = 'Show';
+$mod_strings['LBL_STIC_DA_DEBUG_LOADING'] = 'Rebuilding with debug...';
+$mod_strings['LBL_STIC_SINERGIADA_ACTIONS_SECTION'] = 'Actions';
 
 // OAuth authentication
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth authentication';
