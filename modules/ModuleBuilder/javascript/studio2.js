@@ -59,6 +59,7 @@ Studio2 = {
 		
 		Studio2.maxColumns = parseInt(document.getElementById('maxColumns').value);
 		// STIC-Custom 20260602 EPS - set the starting id for dynamically created elements to be above any existing element ids to avoid conflicts
+		// https://github.com/SinergiaTIC/SinergiaCRM/pull/1195
 		// Studio2.setStartId(parseInt(document.getElementById('idCount').value));
 		// Studio2.setStartId(1000);
 		Studio2.setStartId((parseInt(document.getElementById('idCount').value) || 5000) + 1000); // Set 5000 if no idCount is found to avoid conflicts with existing elements, but allow for a large number of existing elements before conflicts arise with the dynamically generated ids
