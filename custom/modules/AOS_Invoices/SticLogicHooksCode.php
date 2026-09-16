@@ -109,25 +109,27 @@ class AOS_InvoicesHook
         if (AOS_InvoicesUtils::isVerifactuActivated() && !$isNewRecord
             && $bean->status === 'draft' && !empty($bean->fetched_row['status'])
             && $bean->fetched_row['status'] !== 'draft') {
-            $GLOBALS['log']->warn(__METHOD__ . ': Step 1.1a - Blocked non-draft→draft status change for invoice ' . $bean->id);
+            $GLOBALS['log']->error(__METHOD__ . ': Step 1.1a - Blocked non-draft→draft status change for invoice ' . $bean->id);
             $bean->status = $bean->fetched_row['status'];
         }
         // === End Step 1.1a ===
 
         // === Block Cancelled status in Verifactu mode ===
         if (AOS_InvoicesUtils::isVerifactuActivated() && $bean->status === 'Cancelled') {
-            $GLOBALS['log']->warn(__METHOD__ . ': Blocked Cancelled status in Verifactu mode for invoice ' . $bean->id);
+            $GLOBALS['log']->error(__METHOD__ . ': Blocked Cancelled status in Verifactu mode for invoice ' . $bean->id);
             $bean->status = !empty($bean->fetched_row['status']) ? $bean->fetched_row['status'] : 'emitted';
         }
         // === End Block Cancelled ===
 
-        // === Step 1.1c: Field protection for non-draft invoices (inline edit only) ===
-        // Verifactu activated and invoice already has a non-draft status.
+        // === Step 1.1c: Field protection for sent invoices (inline edit only) ===
+        // Golden rule: sent/protected = aeat_status IN ('accepted','cancelled').
         // Inline edit modifies exactly 1 field at a time (via saveField). If only 1 field changed
         // besides system fields, it's an inline edit. System saves (sendToAeat, etc.) change
         // multiple fields and are allowed to proceed unrestricted.
+        $originalBean11c = !empty($bean->fetched_row) ? (object)$bean->fetched_row : null;
         if (AOS_InvoicesUtils::isVerifactuActivated() && !$isNewRecord
-            && !empty($bean->fetched_row['status']) && $bean->fetched_row['status'] !== 'draft') {
+            && !empty($originalBean11c)
+            && AOS_InvoicesUtils::isInvoiceProtected($originalBean11c)) {
 
             $allowedFields = array('status', 'description', 'assigned_user_id');
             $modifiedFields = array();
@@ -142,6 +144,12 @@ class AOS_InvoicesHook
                 $currentNormalized = ($currentValue === null || $currentValue === '') ? null : $currentValue;
 
                 if ($currentNormalized !== $originalNormalized) {
+                    // Skip phantom datetime differences (display round-trip drops seconds)
+                    $fieldType11c = $bean->field_defs[$field]['type'] ?? '';
+                    if (in_array($fieldType11c, array('datetime', 'datetimecombo'), true)
+                        && AOS_InvoicesUtils::protectionDateTimesEqual($currentNormalized, $originalNormalized)) {
+                        continue;
+                    }
                     // Check if this is a phantom change from cleanBean()->purify_html()
                     // cleanBean() applies purify_html() to char/text/enum fields before before_save,
                     // which creates artificial differences vs fetched_row (e.g. accented chars → HTML entities)
@@ -164,7 +172,7 @@ class AOS_InvoicesHook
             // If exactly 1 field changed (inline edit) and it's not allowed, revert it
             if (count($modifiedFields) === 1) {
                 $field = $modifiedFields[0];
-                $GLOBALS['log']->warn(__METHOD__ . ': Step 1.1c - Blocked inline edit of field "' . $field . '" for non-draft invoice ' . $bean->id);
+                $GLOBALS['log']->error(__METHOD__ . ': Step 1.1c - Blocked inline edit of field "' . $field . '" for sent invoice ' . $bean->id);
                 $bean->$field = $bean->fetched_row[$field];
             }
         }
@@ -178,11 +186,14 @@ class AOS_InvoicesHook
         }
         // === End Step 3b ===
 
-        // === Step 1.1: Block edition of invoices accepted by AEAT ===
-        // If the invoice is already accepted by AEAT, only non-tax fields can be edited
+        // === Step 1.1: Block edition of invoices accepted/cancelled by AEAT ===
+        // Golden rule: sent/protected = aeat_status IN ('accepted','cancelled').
+        // Uses the pre-save (fetched) status so a save that also tries to change
+        // aeat_status itself is still caught (aeat_status is a protected field).
+        $originalBean = !empty($bean->fetched_row) ? (object)$bean->fetched_row : null;
         if (AOS_InvoicesUtils::isVerifactuActivated() &&
-            !empty($bean->fetched_row['verifactu_aeat_status_c']) && 
-            $bean->fetched_row['verifactu_aeat_status_c'] === 'accepted') {
+            !empty($originalBean) &&
+            AOS_InvoicesUtils::isInvoiceProtected($originalBean)) {
             
             // Check if it's a duplicate or creating a rectified invoice (both are allowed)
             $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1')
@@ -195,31 +206,9 @@ class AOS_InvoicesHook
                 || (!empty($bean->_is_cancellation) && $bean->_is_cancellation === true);
             
             if (!$isDuplicate) {
-                // List of NON-tax fields that CAN be edited
-                $allowedFields = array(
-                    'description', 
-                    'assigned_user_id', 
-                    'notes'
-                );
-                
-                // List of tax fields that CANNOT be edited
-                $protectedFields = array(
-                    'number', 'verifactu_invoice_type_c', 'invoice_date', 'due_date',
-                    'billing_account_id', 'billing_contact_id',
-                    'billing_address_street', 'billing_address_city', 'billing_address_state', 
-                    'billing_address_postalcode', 'billing_address_country',
-                    'shipping_address_street', 'shipping_address_city', 'shipping_address_state',
-                    'shipping_address_postalcode', 'shipping_address_country',
-                    'subtotal_amount', 'discount_amount', 'tax_amount', 'shipping_amount', 
-                    'total_amount', 'total_amt', 'shipping_tax', 'shipping_tax_amt',
-                    'currency_id', 'name',
-                    // Campos Verifactu
-                    'verifactu_hash_c', 'verifactu_previous_hash_c', 'verifactu_check_url_c',
-                    'verifactu_aeat_status_c', 'verifactu_aeat_response_c', 'verifactu_cancel_id_c',
-                    'verifactu_csv_c', 'verifactu_cancel_hash_c',
-                    'verifactu_audit_log_c', 'verifactu_is_rectified_c', 'verifactu_rectified_type_c',
-                    'verifactu_rectified_base_c', 'verifactu_rectified_date_c'
-                );
+                // Fields that CANNOT be edited on sent invoices (centralized list).
+                // The fields in $VERIFACTU_EDITABLE_FIELDS stay editable.
+                $protectedFields = AOS_InvoicesUtils::$VERIFACTU_PROTECTED_FIELDS;
                 
                 // Detect which fields have been modified
                 $modifiedFields = array();
@@ -234,6 +223,14 @@ class AOS_InvoicesHook
                     $originalNormalized = ($originalValue === null || $originalValue === '') ? null : $originalValue;
                     
                     if ($currentNormalized !== $originalNormalized) {
+                        // Skip phantom datetime differences: SugarBean round-trips datetime
+                        // properties through user display format (dropping seconds), so the
+                        // strict comparison flags unchanged values (e.g. verifactu_submitted_at_c)
+                        $fieldType11 = $bean->field_defs[$field]['type'] ?? '';
+                        if (in_array($fieldType11, array('datetime', 'datetimecombo'), true)
+                            && AOS_InvoicesUtils::protectionDateTimesEqual($currentNormalized, $originalNormalized)) {
+                            continue;
+                        }
                         // Check if this is a phantom change from cleanBean()->purify_html()
                         // cleanBean() applies purify_html() to char/text/enum fields before before_save,
                         // which creates artificial differences vs fetched_row
@@ -250,8 +247,9 @@ class AOS_InvoicesHook
                     }
                 }
                 
-                // If any tax field was modified, block the save
+                // If any protected field was modified, block the save
                 if (!empty($modifiedFields)) {
+                    $GLOBALS['log']->error(__METHOD__ . ': Step 1.1 - Blocked edit of protected fields [' . implode(',', $modifiedFields) . '] for sent invoice ' . $bean->id);
 // Load mod_strings if not already loaded
                     if (empty($mod_strings)) {
                         $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
@@ -361,7 +359,7 @@ class AOS_InvoicesHook
             $GLOBALS['log']->debug(__METHOD__ . ': Step 2.8 - Current series: ' . ($currentSeries ?? 'null') . ', Original series: ' . ($originalSeries ?? 'null') . ', AEAT status: ' . $aeatStatus . ', Submitted: ' . ($hasBeenSent ? 'yes' : 'no'));
             
             if (!empty($originalSeries) && $currentSeries !== $originalSeries) {
-                if ($hasBeenSent || $aeatStatus === 'accepted' || $aeatStatus === 'emitted') {
+                if ($hasBeenSent || $aeatStatus === 'accepted' || $aeatStatus === 'cancelled') {
                     // Invoice has been sent to AEAT - block series change
                     if (empty($mod_strings)) {
                         $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
@@ -558,7 +556,7 @@ class AOS_InvoicesHook
         }
 
         if (!empty($bean->verifactu_aeat_status_c) &&
-            in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted', 'cancelled'))) {
+            in_array($bean->verifactu_aeat_status_c, array('accepted', 'cancelled'))) {
 
             if (empty($mod_strings)) {
                 $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');

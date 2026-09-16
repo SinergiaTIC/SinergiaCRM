@@ -268,7 +268,7 @@ switch (viewType()) {
       createDetailViewButton(buttons.cancelInvoice);
 
       // Disable delete button for non-test invoices already sent to AEAT
-      if ((STIC.record.verifactu_aeat_status_c === 'accepted' || STIC.record.verifactu_aeat_status_c === 'emitted') &&
+      if ((STIC.record.verifactu_aeat_status_c === 'accepted' || STIC.record.verifactu_aeat_status_c === 'cancelled') &&
           STIC.record.verifactu_test_invoice_c !== '1') {
         disableDeleteButton();
       }

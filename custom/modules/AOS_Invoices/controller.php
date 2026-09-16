@@ -98,7 +98,8 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
         $recordId = $_REQUEST['record'] ?? '';
         if (!empty($recordId)) {
             $invoiceBean = BeanFactory::getBean('AOS_Invoices', $recordId);
-            if (!empty($invoiceBean->id) && !empty($invoiceBean->verifactu_submitted_at_c)) {
+            require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+            if (!empty($invoiceBean->id) && AOS_InvoicesUtils::isInvoiceProtected($invoiceBean)) {
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Attempt to edit invoice sent to AEAT: ' . $recordId);
                 SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_VERIFACTU_CANNOT_EDIT_SENT']));
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $recordId);
@@ -744,7 +745,7 @@ class CustomAOS_InvoicesController extends AOS_InvoicesController
                 // Test invoices (verifactu_test_invoice_c=1) may be deleted at any time without restrictions
                 if (empty($invoice->verifactu_test_invoice_c)
                     && !empty($invoice->verifactu_aeat_status_c)
-                    && in_array($invoice->verifactu_aeat_status_c, ['accepted', 'emitted', 'cancelled'])) {
+                    && in_array($invoice->verifactu_aeat_status_c, ['accepted', 'cancelled'])) {
                     $invoiceLabel = !empty($invoice->number) ? $invoice->number : $id;
                     $blockedInvoices[] = '<a href="index.php?module=AOS_Invoices&action=DetailView&record=' . $id . '">' . $invoiceLabel . '</a>';
                 } else {

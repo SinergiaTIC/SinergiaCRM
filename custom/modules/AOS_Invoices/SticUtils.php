@@ -63,6 +63,111 @@ class AOS_InvoicesUtils
     private const VERIFACTU_TEST_NUMBER_PREFIX = 'TEST-';
 
     /**
+     * Fields protected once an invoice is sent to AEAT (accepted/cancelled).
+     * Excludes due_date (expiration date remains editable) and the fields
+     * listed in $VERIFACTU_EDITABLE_FIELDS below, which stay editable.
+     * Includes verifactu_test_invoice_c so a sent invoice cannot be flipped to
+     * test to bypass delete protection.
+     * @var array
+     */
+    public static array $VERIFACTU_PROTECTED_FIELDS = array(
+        'number', 'verifactu_invoice_type_c', 'invoice_date',
+        'billing_account_id', 'billing_contact_id',
+        'billing_address_street', 'billing_address_city', 'billing_address_state',
+        'billing_address_postalcode', 'billing_address_country',
+        'shipping_address_street', 'shipping_address_city', 'shipping_address_state',
+        'shipping_address_postalcode', 'shipping_address_country',
+        'subtotal_amount', 'discount_amount', 'tax_amount', 'shipping_amount',
+        'total_amount', 'total_amt', 'shipping_tax', 'shipping_tax_amt',
+        'currency_id', 'name',
+        // Verifactu fields
+        'verifactu_hash_c', 'verifactu_previous_hash_c', 'verifactu_check_url_c',
+        'verifactu_aeat_status_c', 'verifactu_aeat_response_c', 'verifactu_cancel_id_c',
+        'verifactu_csv_c', 'verifactu_cancel_hash_c',
+        'verifactu_audit_log_c', 'verifactu_is_rectified_c', 'verifactu_rectified_type_c',
+        'verifactu_rectified_base_c', 'verifactu_rectified_date_c',
+        'verifactu_submitted_at_c', 'verifactu_valid_invoice_c',
+        'verifactu_test_invoice_c',
+    );
+
+    /**
+     * Fields that remain editable on sent invoices.
+     * @var array
+     */
+    public static array $VERIFACTU_EDITABLE_FIELDS = array(
+        'status', 'description', 'assigned_user_id', 'notes',
+    );
+
+    /**
+     * Golden rule: sent/protected = aeat_status IN ('accepted','cancelled').
+     * A 'rejected' invoice stays unprotected (editable, can be fixed and resent).
+     * Applies to test and production invoices alike; test invoices are only
+     * exempt from DELETE protection (see before_delete in SticLogicHooksCode).
+     * @param object $bean Invoice bean (or any object with verifactu_aeat_status_c)
+     * @return bool
+     */
+    public static function isInvoiceProtected($bean)
+    {
+        return !empty($bean->verifactu_aeat_status_c)
+            && in_array($bean->verifactu_aeat_status_c, array('accepted', 'cancelled'));
+    }
+
+    /**
+     * Compare two values of a datetime field for the protection checks.
+     * SugarBean converts datetime bean properties to user display format on retrieve
+     * (dropping seconds) and back to DB format on save, so a strict string comparison
+     * produces phantom differences (e.g. '2026-09-16 18:11:20' vs '2026-09-16 18:11:00').
+     * Two datetimes less than 60 seconds apart are considered the same instant.
+     * @param mixed $currentValue Current bean value
+     * @param mixed $originalValue Fetched (DB) value
+     * @return bool
+     */
+    public static function protectionDateTimesEqual($currentValue, $originalValue)
+    {
+        $currentTs = self::parseProtectionDateTime($currentValue);
+        $originalTs = self::parseProtectionDateTime($originalValue);
+        if ($currentTs === null || $originalTs === null) {
+            return false;
+        }
+        return abs($currentTs - $originalTs) < 60;
+    }
+
+    /**
+     * Parse a datetime value (DB format or user display format) to unix timestamp.
+     * @param mixed $value
+     * @return int|null Timestamp, or null when it cannot be parsed
+     */
+    private static function parseProtectionDateTime($value)
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        global $timedate;
+        $value = (string)$value;
+        // DB format first (fetched_row values and already-normalized bean values)
+        if (preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}[ T][0-9]{2}:[0-9]{2}(:[0-9]{2})?$/', $value)) {
+            try {
+                $dt = $timedate->fromDb($value);
+                if (!empty($dt)) {
+                    return (int)$dt->format('U');
+                }
+            } catch (Exception $e) {
+                // fall through to user-format parsing
+            }
+        }
+        // User display format (bean properties after retrieve)
+        try {
+            $dt = $timedate->fromUser($value);
+            if (!empty($dt)) {
+                return (int)$dt->format('U');
+            }
+        } catch (Exception $e) {
+            // not parseable
+        }
+        return null;
+    }
+
+    /**
      * Check if Verifactu integration is activated
      * @return bool
      */

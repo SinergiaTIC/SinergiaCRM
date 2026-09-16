@@ -71,10 +71,11 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
         // === End Legacy mode ===
 
         // === Restrict inline edit for non-draft invoices with Verifactu ===
-        // Only status, assigned_user_id and description can be inline-edited when invoice is non-draft
+        // Only status, assigned user and description can be inline-edited when invoice is non-draft
+        // (detail view renders the assigned user through assigned_user_name, not assigned_user_id)
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
         if (AOS_InvoicesUtils::isVerifactuActivated() && !empty($this->bean->id) && $this->bean->status !== 'draft') {
-            $allowedInlineFields = array('status', 'assigned_user_id', 'description');
+            $allowedInlineFields = array('status', 'assigned_user_id', 'assigned_user_name', 'description');
             foreach ($this->bean->field_defs as $field => &$def) {
                 if (!in_array($field, $allowedInlineFields)) {
                     $def['inline_edit'] = false;
@@ -99,10 +100,10 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
         }
         // === End Verifactu Activation Banner ===
 
-        // Add banner for accepted/emitted invoices
+        // Add banner for sent invoices (golden rule: aeat_status IN accepted/cancelled)
         $bean = $this->bean;
-        if (!empty($bean->verifactu_aeat_status_c) && 
-            in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (AOS_InvoicesUtils::isInvoiceProtected($bean)) {
 
             $isTestInvoice = !empty($bean->verifactu_test_invoice_c);
 

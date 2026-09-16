@@ -49,8 +49,10 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
             || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true')
             || (!empty($_REQUEST['isDuplicate']) && $_REQUEST['isDuplicate'] === 'true');
 
-        if (!$isDuplicate && !empty($bean->verifactu_aeat_status_c) &&
-            in_array($bean->verifactu_aeat_status_c, array('accepted', 'emitted'))) {
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+
+        if (!$isDuplicate && !empty($bean->id) &&
+            AOS_InvoicesUtils::isInvoiceProtected($bean)) {
 
             if (!empty($bean->id)) {
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $bean->id);
