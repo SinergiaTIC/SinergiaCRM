@@ -403,6 +403,7 @@ $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Sin
 $app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Candidaturas';
 $app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertas laborais';
 $app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Conversacións';
+$app_list_strings['parent_type_display_notifications']['stic_Messages'] = 'Mensaxes';
 
 // Categorías para la creación dinamica de Listas de público objetivo
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
@@ -3673,19 +3674,19 @@ $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 // Mensajes: Tipos
 $app_list_strings['stic_messages_type_list']['sms'] = 'SMS';
 $app_list_strings['stic_messages_type_list']['whatsapp_web'] = 'WhatsApp Web';
-$app_list_strings['stic_messages_type_list']['whatsapp'] = 'WhatsApp';
+$app_list_strings['stic_messages_type_list']['whatsapp'] = 'Whatsapp';
 $app_list_strings['stic_messages_type_list']['private_area'] = 'Área Privada';
 
 // Mensajes: Dirección
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Saída';
 
-// Mensaxes: Estados
+// Mensajes: Estados
 $app_list_strings['stic_messages_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviado';
 $app_list_strings['stic_messages_status_list']['received'] = 'Recibido';
 $app_list_strings['stic_messages_status_list']['error'] = 'Erro';
-$app_list_strings['stic_messages_status_list']['redirected'] = 'Redirigido';
+$app_list_strings['stic_messages_status_list']['redirected'] = 'Redirixido';
 
 // Mensajes: Tipos de registros padre
 $app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organizacións';
@@ -3953,7 +3954,7 @@ $app_list_strings['stic_awf_forms_status_list']['closed'] = 'Cerrado';
 
 // Advanced Web Forms: types
 $app_list_strings['stic_awf_forms_types_list']['web'] = 'Formulario web';
-$app_list_strings['stic_awf_forms_types_list']['crm'] = 'Formulario del CRM';
+$app_list_strings['stic_awf_forms_types_list']['crm'] = 'Formulario do CRM';
 
 // Advanced Web Forms: configuration->data_block->duplicate_detection->on_duplicate
 $app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['enrich'] = 'Ampliar';
@@ -4070,23 +4071,19 @@ $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Ignorado';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Tratado';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sen cambios';
 
-// TODO:
-// Define: stic_awf_deferred_tickets_status
-// Define: stic_awf_incoming_events_status
-
 // Advanced Web Forms Deferred Tickets: status
 $app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
-$app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pendiente';
+$app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pendente';
 $app_list_strings['stic_awf_deferred_tickets_status']['processing'] = 'Procesando';
-$app_list_strings['stic_awf_deferred_tickets_status']['resolved'] = 'Resuelto';
-$app_list_strings['stic_awf_deferred_tickets_status']['failed'] = 'Fallido';
+$app_list_strings['stic_awf_deferred_tickets_status']['resolved'] = 'Resolto';
+$app_list_strings['stic_awf_deferred_tickets_status']['failed'] = 'Errado';
 $app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancelado';
 
 // Advanced Web Forms Incoming Events: status
 $app_list_strings['stic_awf_incoming_events_status'][''] = '';
-$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pendiente';
+$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pendente';
 $app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Procesado';
-$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Fallido';
+$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Errado';
 $app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignorado';
 
 // Conversaciones: Tipos
@@ -4201,7 +4198,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correo ele
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
-$app_list_strings['emailTemplates_type_list_no_workflow']['whatsapp'] = 'WhatsApp';
+$app_list_strings['emailTemplates_type_list_no_workflow']['whatsapp'] = 'Whatsapp';
 
 // Plantillas de Correo electrónico: Tipos de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
@@ -4210,20 +4207,20 @@ $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificación';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Email';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Evento';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
-$app_list_strings['emailTemplates_type_list']['whatsapp'] = 'WhatsApp';
+$app_list_strings['emailTemplates_type_list']['whatsapp'] = 'Whatsapp';
 
 // Plantillas de Correo electrónico: Tipos de categorías de Whatsapp
 $app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Marketing';
-$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utilidad';
+$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utilidade';
 $app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Autenticación';
 
 // Plantillas de Correo electrónico: Tipos de estados de Whatsapp
 $app_list_strings['stic_whatsapp_status_list'][''] = '';
 $app_list_strings['stic_whatsapp_status_list']['draft'] = 'Borrador';
-$app_list_strings['stic_whatsapp_status_list']['pending'] = 'Pendiente de aprobación';
+$app_list_strings['stic_whatsapp_status_list']['pending'] = 'Pendente de aprobación';
 $app_list_strings['stic_whatsapp_status_list']['approved'] = 'Aprobada';
-$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rechazada';
-$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Creada sin enviar';
+$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rexeitada';
+$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Creada sen enviar';
 
 // Elementos añadidos al Historial
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tarefas';
