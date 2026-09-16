@@ -140,6 +140,7 @@ class stic_Prescription extends Basic
     // Create medication logs if creation date > start_date
     protected function createMedicationLogs()
     {
+        require_once 'SticInclude/Utils.php';
         // Logs are created only if periodicity is not "punctual" and the record is being created
         if ($this->frequency == 'daily' && $this->fetched_row == false) {
             list($startDate, $stopGeneratingDate) = $this->getStartAndStopDates();
