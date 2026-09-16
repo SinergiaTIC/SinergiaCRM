@@ -223,5 +223,5 @@ $mod_strings = array(
 
     // Allow multiple signers
     'LBL_ALLOW_MULTIPLE_SIGNERS' => 'Allow the same signer multiple times',
-    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => 'When unchecked (default value), each person can have only one signer record in the signing process. When checked, the same person can have multiple signer records, provided they originate from different source records. For example, if the process is based on the <i>Payments</i> module, the person can have a signer record for each assigned payment.',
+    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => '<b>No (default value):</b> Each person can have only one signer record in the signing process.<br><b>Yes:</b> The same person can have multiple signer records, provided they originate from different source records. For example, if the process is based on the <i>Payments</i> module, the person can have a signer record for each assigned payment',
 );
