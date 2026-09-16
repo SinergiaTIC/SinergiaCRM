@@ -223,5 +223,5 @@ $mod_strings = array(
 
     // Allow multiple signers
     'LBL_ALLOW_MULTIPLE_SIGNERS' => 'Permitir el mismo firmante varias veces',
-    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => 'Cuando la casilla está desactivada (valor por defecto), cada persona sólo puede tener un registro de firmante en el proceso de firma. Cuando está activada, una misma persona puede tener múltiples registros de firmante, siempre que provengan de registros origen distintos. Por ejemplo, si el proceso está basado en el módulo <i>Pagos</i>, la persona podrá tener un registro de firmante por cada pago que tenga asignado.',
+    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => '<b>No (valor por defecto):</b> Cada persona sólo puede tener un registro de firmante en el proceso de firma.<br><b>Sí:</strong> Una misma persona puede tener múltiples registros de firmante, siempre que provengan de registros origen diferentes. Por ejemplo, si el proceso está basado en el módulo <i>Pagos</i>, la persona podrá tener un registro de firmante por cada pago que tenga asignado.',
 );
