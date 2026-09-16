@@ -39,7 +39,7 @@ class stic_SignersUtils
      */
     public static function sendToSign($signerId)
     {
-        global $current_user, $mod_strings, $app_strings;
+        global $mod_strings, $app_strings;
 
         // Validate signer ID
         if (empty($signerId)) {
@@ -78,11 +78,19 @@ class stic_SignersUtils
 
         // Prepare mailer
         require_once 'include/SugarPHPMailer.php';
+        require_once 'include/OutboundEmail/OutboundEmail.php';
         $emailObj = new Email();
         $defaults = $emailObj->getSystemDefaultEmail();
+        $outboundEmail = new OutboundEmail();
+        $outboundEmail = $outboundEmail->getSystemMailerSettings();
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
 
+        // Set From and FromName using the system outbound account (same one used to
+        // authenticate the SMTP connection) to avoid SendAsDenied errors when the
+        // current user's email differs from the account that actually sends the email.
+        $mail->From = !empty($outboundEmail->smtp_from_addr) ? $outboundEmail->smtp_from_addr : ($defaults['email'] ?? '');
+        $mail->FromName = !empty($outboundEmail->smtp_from_name) ? $outboundEmail->smtp_from_name : ($defaults['name'] ?? '');
 
         // Add recipient
         if (empty($destAddress)) {
@@ -154,7 +162,6 @@ class stic_SignersUtils
      */
     public static function sendOtpEmailToSigner($signerBean, $otpCode)
     {
-        global $current_user;
         require_once 'SticInclude/Utils.php';
 
         $signerId = $signerBean->id;
@@ -195,12 +202,19 @@ class stic_SignersUtils
 
         // Prepare mailer
         require_once 'include/SugarPHPMailer.php';
+        require_once 'include/OutboundEmail/OutboundEmail.php';
         $emailObj = new Email();
         $defaults = $emailObj->getSystemDefaultEmail();
+        $outboundEmail = new OutboundEmail();
+        $outboundEmail = $outboundEmail->getSystemMailerSettings();
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
 
-
+        // Set From and FromName using the system outbound account (same one used to
+        // authenticate the SMTP connection) to avoid SendAsDenied errors when the
+        // current user's email differs from the account that actually sends the email.
+        $mail->From = !empty($outboundEmail->smtp_from_addr) ? $outboundEmail->smtp_from_addr : ($defaults['email'] ?? '');
+        $mail->FromName = !empty($outboundEmail->smtp_from_name) ? $outboundEmail->smtp_from_name : ($defaults['name'] ?? '');
 
         // Add recipient
         if (empty($destAddress)) {
