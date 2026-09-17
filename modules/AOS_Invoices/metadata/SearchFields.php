@@ -278,5 +278,8 @@ $searchFields['AOS_Invoices'] = array(
         'enable_range_search' => true,
         'is_date_field' => true,
     ),
+    'verifactu_valid_invoice_c' => array(
+        'query_type' => 'default',
+    ),
 );
 // END STIC-Custom
