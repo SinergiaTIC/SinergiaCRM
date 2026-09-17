@@ -765,4 +765,50 @@ class stic_AWF_FormsUtils {
             $formBean->save();
         }
     }
+
+    /**
+     * Populates a SugarBean dynamically from a resolved AWF Data Block.
+     * Compares values and returns an array of structured FieldModification objects.
+     * 
+     * @param SugarBean $bean The target SugarBean to populate.
+     * @param DataBlockResolved $block The resolved AWF Data Block containing form data.
+     * @return array<string, FieldModification> Map of field modifications.
+     */
+    public static function populateBeanFromBlock(SugarBean $bean, DataBlockResolved $block): array
+    {
+        require_once 'modules/stic_AWF_Forms/core/FieldModification.php';
+
+        /** @var FieldModification[] $modifications */
+        $modifications = [];
+
+        foreach ($block->formData as $fieldName => $fieldResolved) {
+            if ($fieldResolved === null) {
+                continue;
+            }
+
+            $newValue = $fieldResolved->value;
+            $fieldDef = $bean->field_defs[$fieldName] ?? null;
+
+            // If it is a related field, the real field that changes in the database is the id_name
+            $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
+            $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
+
+            if (isset($bean->field_defs[$targetField]) && self::isEmailField($bean->field_defs[$targetField], $targetField)) {
+                if ($targetField === 'email') {
+                    $targetField = 'email1';
+                }
+                $oldValue = $bean->$targetField ?? null;
+            } else {
+                $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
+            }
+            
+            if ($oldValue != $newValue) {
+                $bean->$targetField = $newValue;
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::APPLIED, $newValue, $oldValue);
+            } else {
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::UNCHANGED, $newValue, $oldValue);
+            }
+        }
+        return $modifications;
+    }
 }
