@@ -106,11 +106,11 @@ class AOS_InvoicesHook
         // === End block status change ===
 
         // === Phase C: status matrix within the issued family (Verifactu mode only) ===
-        // Emitida → Emitida / Emitida-Pagada / Emitida-NoPagada;
-        // Emitida-* ↔ Emitida-*. Moves to Borrador are reverted by Step 1.1a,
-        // 'Cancelled' is blocked below. Paid/Unpaid are legacy-only.
+        // Dynamic family (see getIssuedFamilyStatuses): entity-added statuses
+        // behave like emitted_paid/emitted_unpaid. Moves to Borrador are reverted
+        // by Step 1.1a, 'Cancelled' is blocked below. Paid/Unpaid are legacy-only.
         if (AOS_InvoicesUtils::isVerifactuActivated() && !$isDuplicate && !$isNewRecord) {
-            $issuedFamily = array('emitted', 'emitted_paid', 'emitted_unpaid');
+            $issuedFamily = AOS_InvoicesUtils::getIssuedFamilyStatuses();
             $fetchedStatus = $bean->fetched_row['status'] ?? null;
             if (in_array($fetchedStatus, $issuedFamily, true)
                 && !in_array($bean->status, $issuedFamily, true)) {

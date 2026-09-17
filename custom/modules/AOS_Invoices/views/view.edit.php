@@ -87,9 +87,9 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
         if (!AOS_InvoicesUtils::isVerifactuActivated()) {
             unset($app_list_strings['invoice_status_dom']['draft']);
-            unset($app_list_strings['invoice_status_dom']['emitted']);
-            unset($app_list_strings['invoice_status_dom']['emitted_paid']);
-            unset($app_list_strings['invoice_status_dom']['emitted_unpaid']);
+            foreach (AOS_InvoicesUtils::getIssuedFamilyStatuses($app_list_strings['invoice_status_dom']) as $issuedStatus) {
+                unset($app_list_strings['invoice_status_dom'][$issuedStatus]);
+            }
             $this->bean->field_defs['status']['default'] = '';
             if (empty($this->bean->id) && $this->bean->status === 'draft') {
                 $this->bean->status = '';

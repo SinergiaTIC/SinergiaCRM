@@ -207,11 +207,37 @@ class AOS_InvoicesUtils
     }
 
     /**
+     * Statuses belonging to the issued family: every invoice_status_dom key
+     * except the legacy/payment ones ('', draft, Paid, Unpaid, Cancelled).
+     * Statuses added by an entity via the dropdown editor automatically join
+     * the family and behave like emitted_paid/emitted_unpaid (selectable after
+     * Emitida, same transitions, no fiscal impact since protection is aeat-based).
+     *
+     * @param array|null $statusDom invoice_status_dom list (defaults to $GLOBALS)
+     * @return array
+     */
+    public static function getIssuedFamilyStatuses($statusDom = null)
+    {
+        if ($statusDom === null) {
+            $statusDom = isset($GLOBALS['app_list_strings']['invoice_status_dom'])
+                ? $GLOBALS['app_list_strings']['invoice_status_dom']
+                : array();
+        }
+        $legacy = array('', 'draft', 'Paid', 'Unpaid', 'Cancelled');
+        $family = array_values(array_diff(array_keys((array)$statusDom), $legacy));
+        if (empty($family)) {
+            // Fail closed: fall back to the shipped trio
+            $family = array('emitted', 'emitted_paid', 'emitted_unpaid');
+        }
+        return $family;
+    }
+
+    /**
      * Filter the invoice_status_dom dropdown based on activation mode and current status.
-     * Phase C matrix:
+     * Phase C matrix (dynamic issued family, see getIssuedFamilyStatuses):
      * - Legacy mode: payment statuses only (Paid, Unpaid, Cancelled).
      * - Verifactu draft: only draft (must be sent to reach emitted).
-     * - Verifactu emitted/emitted_paid/emitted_unpaid: move within the emitted family.
+     * - Verifactu issued family: move within the family.
      * - Verifactu legacy data (Paid/Unpaid): stay within payment statuses.
      * Modifies $app_list_strings in place.
      *
@@ -225,22 +251,24 @@ class AOS_InvoicesUtils
             return;
         }
 
+        $family = self::getIssuedFamilyStatuses($app_list_strings['invoice_status_dom']);
+
         if (!self::isVerifactuActivated()) {
             // Legacy mode: payment statuses only
             unset($app_list_strings['invoice_status_dom']['draft']);
-            unset($app_list_strings['invoice_status_dom']['emitted']);
-            unset($app_list_strings['invoice_status_dom']['emitted_paid']);
-            unset($app_list_strings['invoice_status_dom']['emitted_unpaid']);
+            foreach ($family as $issuedStatus) {
+                unset($app_list_strings['invoice_status_dom'][$issuedStatus]);
+            }
             return;
         }
 
         if ($currentStatus === 'draft') {
             // Draft can only stay as draft (sending moves it to emitted)
             $allowed = array('draft');
-        } elseif (in_array($currentStatus, array('emitted', 'emitted_paid', 'emitted_unpaid'))) {
+        } elseif (in_array($currentStatus, $family, true)) {
             // Issued family: payment tracking moves within the family
-            $allowed = array('emitted', 'emitted_paid', 'emitted_unpaid');
-        } elseif (in_array($currentStatus, array('Paid', 'Unpaid'))) {
+            $allowed = $family;
+        } elseif (in_array($currentStatus, array('Paid', 'Unpaid'), true)) {
             // Legacy data: stay within payment statuses, no entry into Verifactu flow
             $allowed = array('Paid', 'Unpaid');
         } else {
