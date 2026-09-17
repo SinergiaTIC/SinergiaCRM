@@ -893,7 +893,7 @@ class PaymentBO extends WebFormDataBO
             $pcBean = SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
             // Update Subscription Id
             $subscriptionId = $session->subscription ?? null;
-            if ($subscriptionId != null && isset($pcBean)) {
+            if ($subscriptionId != null && !empty($pcBean)) {
                 $pcBean->stripe_subscr_id = $subscriptionId;
                 $pcBean->save();
             }
@@ -986,20 +986,12 @@ class PaymentBO extends WebFormDataBO
         $pcBean = null;
 
         $subscriptionId = $invoice->subscription
-            ?? ($invoice->parent->subscription_details ?? null)->subscription
+            ?? $invoice->parent->subscription_details->subscription
             ?? null;
 
         if ($subscriptionId != null) {
-            // Guard: ensure the Payment Commitment bean can be instantiated
-            $pcBean = Beanfactory::getBean('stic_Payment_Commitments');
-            if ($pcBean == null) {
-                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not instantiate stic_Payment_Commitments for Stripe subscription {$subscriptionId}.");
-                $this->setLastPayment(null);
-                $this->setLastPC(null);
-                return false;
-            }
-
             // Load the Payment Commitment from subscription, then the Payment
+            $pcBean = BeanFactory::getBean('stic_Payment_Commitments');
             $pcBean = $pcBean->retrieve_by_string_fields(array('stripe_subscr_id' => $subscriptionId));
 
             if ($pcBean != null) {
@@ -1112,7 +1104,7 @@ class PaymentBO extends WebFormDataBO
         $paymentBean = $paymentBean->retrieve_by_string_fields(array('transaction_code' => $transactionCode));
         $pcBean = SticUtils::getRelatedBeanObject($paymentBean, 'stic_payments_stic_payment_commitments');
 
-        if (isset($pcBean) && $pcBean->stripe_subscr_id != $subscription->id) {
+        if (!empty($pcBean) && $pcBean->stripe_subscr_id != $subscription->id) {
             $pcBean->stripe_subscr_id = $subscription->id;
             $pcBean->save();
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Persisted Stripe subscription id {$subscription->id} in Payment Commitment {$pcBean->id}.");
