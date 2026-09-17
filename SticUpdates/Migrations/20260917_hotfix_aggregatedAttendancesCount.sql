@@ -1,6 +1,6 @@
 -- Number of attendances aggregated in aggregated services payments
 ALTER TABLE `stic_payments` 
-	ADD COLUMN IF NOT EXISTS `attendances_count` INT(11) DEFAULT 0 NULL;
+	ADD COLUMN `attendances_count` INT(11) DEFAULT 0 NULL;
 
 -- Recalculate attendances count for existing aggregated services payments
 UPDATE `stic_payments` p
