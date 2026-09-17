@@ -84,10 +84,11 @@ while ($row = $db->fetchByAssoc($res)) {
     foreach ($linkedAttendances as $linkedAttendance) {
         $paymentBean->stic_payments_stic_attendances->delete($paymentBean->id, $linkedAttendance->id);
     }
-    // Reset aggregated_services_complete and amount fields
-    if ($paymentBean->aggregated_services_complete != false || $paymentBean->amount != 0) {
+    // Reset aggregated_services_complete, amount and attendances_count fields
+    if ($paymentBean->aggregated_services_complete != false || $paymentBean->amount != 0 || $paymentBean->attendances_count != 0) {
         $paymentBean->aggregated_services_complete = false;
         $paymentBean->amount = 0;
+        $paymentBean->attendances_count = 0;
         // Save the payment
         $paymentBean->save();
     }
@@ -304,8 +305,9 @@ while ($row = $db->fetchByAssoc($res)) {
         $processedAttendanceIds[] = $attendanceId;
     }
 
-    // Set the payment amount
+    // Set the payment amount and attendances count
     $paymentBean->amount = formatDecimalInConfigSettings($row['attendances_amount'], true);
+    $paymentBean->attendances_count = count($attendancesId);
 
     // Build an array of complete payments
     if (!in_array($paymentId, $uncompletePaymentsId)) {
