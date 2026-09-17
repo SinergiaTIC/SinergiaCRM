@@ -80,6 +80,7 @@ $mod_strings = array(
     'LBL_IN_KIND_DESCRIPTION' => 'In-kind description',
     'LBL_GATEWAY_REJECTION_REASON' => 'Gateway rejection reason',
     'LBL_AGGREGATED_SERVICES_COMPLETE' => 'Aggregated payment completed',
+    'LBL_ATTENDANCES_COUNT' => 'Number of aggregated attendances',
     'LBL_GATEWAY_LOG' => 'Gateway log',
     'LBL_GATEWAY_LOG_INFO' => 'Information about the payment sent by payment gateways (POS/TPV Redsys or PayPal).',
     'LBL_STIC_PAYMENTS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Payment Commitmment',
