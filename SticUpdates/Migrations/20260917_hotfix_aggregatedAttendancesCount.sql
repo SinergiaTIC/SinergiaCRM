@@ -1,6 +1,9 @@
 -- Number of attendances aggregated in aggregated services payments
-ALTER TABLE `stic_payments` 
-	ADD COLUMN `attendances_count` INT(25) DEFAULT 0 NULL;
+SET @column_exists = (SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'stic_payments' AND COLUMN_NAME = 'attendances_count');
+SET @sql = IF(@column_exists = 0, 'ALTER TABLE `stic_payments` ADD COLUMN `attendances_count` INT(25) DEFAULT 0 NULL', 'SELECT 1');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- Recalculate attendances count for existing aggregated services payments
 UPDATE `stic_payments` p
