@@ -279,6 +279,7 @@ class sticControls {
     let model = $el.dataset.model ?? "";
     let condition = $el.dataset.condition ?? "true";
     let attribute = $el.dataset.attribute ?? "";
+    let change = $el.dataset.change ?? "";
     let reload = $el.dataset.reload ?? "";
     let reloadButton = reload != "" ? `
     <span class="btn suitepicon suitepicon-action-reload ms-2" x-show="editing" @mousedown.prevent @click="${reload};editing=false;"></span>` 
@@ -287,7 +288,7 @@ class sticControls {
     let html = `
     <div class="d-inline-flex align-items-center" x-data="{editing:false, inputWidth: 0}" x-effect="if(editing){ $nextTick(() => $refs['${id}'].focus()) }">
       <span x-ref="${id}_span" class="me-2" x-show="!editing" x-text="${model}" @dblclick="inputWidth=$refs['${id}_span'].offsetWidth; editing=${condition};" ${attribute}></span>
-      <input id="${id}" x-ref="${id}" type="text" x-show="editing" x-model="${model}" :style="'width:' + inputWidth + 'px; max-width: 100%; min-width: 12ch;'" @blur="editing=false;" @keydown.enter="editing=false;" @keydown.esc="editing=false;"/>
+      <input id="${id}" x-ref="${id}" type="text" x-show="editing" x-model="${model}" :style="'width:' + inputWidth + 'px; max-width: 100%; min-width: 12ch;'" @blur="editing=false;${change}" @keydown.enter="editing=false;${change}" @keydown.esc="editing=false;"/>
       ${reloadButton}
       <template x-if="${condition}">
         <span class="btn suitepicon suitepicon-action-edit" x-show="!editing" @click="inputWidth=$refs['${id}_span'].offsetWidth; editing=true;"></span>

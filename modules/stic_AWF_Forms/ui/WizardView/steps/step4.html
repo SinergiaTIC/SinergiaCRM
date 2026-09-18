@@ -435,7 +435,7 @@
                                                     <div class="card-header pb-1 pe-0">
                                                         <div class="d-flex align-items-center">
                                                             <!-- Section Title -->
-                                                            <h3 class="flex-grow-1 mb-0" :id="`sectionTitleEdit-${section.id}`" data-model="section.title" x-init="sticControls.editableText($el);"></h3>
+                                                            <h3 class="flex-grow-1 mb-0" :id="`sectionTitleEdit-${section.id}`" data-model="section.title" data-change="section.is_custom_title = true" x-init="sticControls.editableText($el);"></h3>
 
                                                             <!-- Buttons -->
                                                             <div class="d-flex align-items-center ms-auto">
@@ -522,7 +522,7 @@
                                                                         <!-- Title -->
                                                                         <div class="col-3">
                                                                             <label :for="`section${section.id}_title`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_TITLE')"></label>
-                                                                            <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title"/>
+                                                                            <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title" @input="section.is_custom_title = true"/>
                                                                         </div>
                                                                         <!-- Subtitle -->
                                                                         <div class="col-9">
@@ -564,145 +564,73 @@
                                                     </div>
 
                                                     <!-- Section Body -->
-                                                    <div class="card-body" x-show="!isCollapsed" x-transition>
-                                                        <div class="accordion">
-                                                            <!-- Configuration -->
-                                                            <div class="accordion-item" x-data="{opened:false}">
-                                                                <div :id="`sectionConfig${section.id}_Header`" class="accordion-header accordion-button" role="button" 
-                                                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
-                                                                    :data-bs-target="`#sectionConfig${section.id}_Content`" :aria-controls="`sectionConfig${section.id}_Content`"
-                                                                    x-text="utils.translate('LBL_SECTION_CONFIG')">
-                                                                </div>
-                                                                <div :id="`sectionConfig${section.id}_Content`" class="accordion-collapse collapse" 
-                                                                    :aria-labelledby="`sectionConfig${section.id}_Header`">
-                                                                    <div :id="`sectionConfig${section.id}_Body`" class="accordion-body"> 
-                                                                        <!-- Configuration -->
-                                                                        <div class="row">
-                                                                            <!-- Title -->
-                                                                            <div class="col-3">
-                                                                                <label :for="`section${section.id}_title`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_TITLE')"></label>
-                                                                                <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title"/>
-                                                                            </div>
-                                                                            <!-- Show Title -->
-                                                                            <div class="col-2 form-check form-switch">
-                                                                                <label :for="`section${section.id}_showTitle`" class="form-label" x-text="utils.translate('LBL_SECTION_SHOW_TITLE')"></label>
-                                                                                <input :id="`section${section.id}_showTitle`" class="form-check-input form-switch" type="checkbox" role="switch" x-model="section.showTitle"
-                                                                                       @change="if(!section.showTitle) { section.isCollapsible = false; section.isCollapsed = false; }"/>
-                                                                            </div>
-                                                                            <!-- Container Type -->
-                                                                            <div class="col-3">
-                                                                                <label :for="`section${section.id}_containerType`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_CONTAINER')"></label>
-                                                                                <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType">
-                                                                                    <template x-for="type in availableContainerTypes" :key="type.id">
-                                                                                        <option :value="type.id" x-text="type.text" :selected="type.id == section.containerType"></option>
-                                                                                    </template>
-                                                                                </select>
-                                                                            </div>
-                                                                            <!-- Collapsible -->
-                                                                            <div class="col-2 form-check form-switch" x-show="section.showTitle" x-transition>
-                                                                                <input :id="`section${section.id}_isCollapsible`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsible"
-                                                                                       @change="if(!section.isCollapsible) { section.isCollapsed = false; }"/>
-                                                                                <label :for="`section${section.id}_isCollapsible`" class="form-label small" 
-                                                                                       x-text="utils.translate('LBL_SECTION_IS_COLLAPSIBLE')"></label>
-                                                                            </div>
-                                                                            <!-- Collaped -->
-                                                                            <div class="col-2 form-check form-switch" x-show="section.showTitle && section.isCollapsible" x-transition>
-                                                                                <input :id="`section${section.id}_isCollapsed`" class="form-check-input" type="checkbox" role="switch" 
-                                                                                       x-model="section.isCollapsed"/>
-                                                                                <label :for="`section${section.id}_isCollapsed`" class="form-label small" 
-                                                                                       x-text="utils.translate('LBL_SECTION_ISCOLLAPSED')"></label>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="row mt-3">
-                                                                            <!-- Subtitle -->
-                                                                            <div class="col-12">
-                                                                                <label :for="`section${section.id}_subtitle`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_SUBTITLE')"></label>
-                                                                                <input :id="`section${section.id}_subtitle`" type="text" class="form-control" autocomplete="off" x-model="section.subtitle"/>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <!-- Content -->
-                                                            <div class="accordion-item" x-data="{opened:false}">
-                                                                <div :id="`sectionContent${section.id}_Header`" class="accordion-header accordion-button" role="button" 
-                                                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
-                                                                    :data-bs-target="`#sectionContent${section.id}_Content`" :aria-controls="`sectionContent${section.id}_Content`"
-                                                                    x-text="utils.translate('LBL_SECTION_CONTENT')">
-                                                                </div>
-                                                                <div :id="`sectionContent${section.id}_Content`" class="accordion-collapse collapse" 
-                                                                    :aria-labelledby="`sectionContent${section.id}_Header`">
-                                                                    <div :id="`sectionContent${section.id}_Body`" class="accordion-body"> 
-                                                                        <!-- Content -->
-                                                                        <template x-for="(element, index) in section.elements" :key="element.id">
-                                                                            <div class="card mb-2 border-secondary"
-                                                                                 :class="{
-                                                                                    'groupdatablock': getDataBlock(element)?.isGroupHead(data_blocks),
-                                                                                    'child-block': getDataBlock(element)?.is_child,
-                                                                                    'datablock-element': isGroupSection(section)
-                                                                                 }">
-                                                                                <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
-                                                                                    <div class="d-flex align-items-center gap-2">
-                                                                                        <!-- Group badge for group heads -->
-                                                                                        <template x-if="getDataBlock(element)?.isGroupHead(data_blocks) && getDataBlock(element)?.group_title">
-                                                                                            <span class="badge bg-transparent text-dark ps-0" style="font-weight: normal;"
-                                                                                                  x-text="'📦 ' + getDataBlock(element).group_title"></span>
-                                                                                        </template>
-                                                                                        <!-- Group badge for child blocks -->
-                                                                                        <template x-if="getDataBlock(element)?.is_child">
-                                                                                            <span class="badge bg-transparent text-muted ps-0" style="font-weight: normal; font-size: 0.85em;"
-                                                                                                  :title="utils.translateForFieldLabel('LBL_DATABLOCK_IN_GROUP_TITLE') + ' ' + getDataBlock(element)?.getGroupTitle(data_blocks)"
-                                                                                                  x-text="'📦 ' + getDataBlock(element)?.getGroupTitle(data_blocks)"></span>
-                                                                                        </template>
-                                                                                        <strong x-text="getElementHeader(element)"></strong>
-                                                                                        <!-- Optional/Repeatable badges for group heads -->
-                                                                                        <template x-if="getDataBlock(element)?.isGroupHead(data_blocks)">
-                                                                                            <span class="d-inline-flex gap-1">
-                                                                                                <span class="badge bg-info" x-show="getDataBlock(element)?.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
-                                                                                                <span class="badge bg-primary" x-show="getDataBlock(element)?.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
-                                                                                            </span>
-                                                                                        </template>
-                                                                                    </div>
-                                                                                    <div class="d-inline-flex gap-2">
-                                                                                        <select class="form-select small text-muted w-auto" @change="moveElementToSection(element, section.id, $event.target.value)"
-                                                                                                style="min-width: 100px;"
-                                                                                                :disabled="isGroupSection(section) || getDataBlock(element)?.is_child || getDataBlock(element)?.isGroupHead(data_blocks)">
-                                                                                            <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
-                                                                                            <template x-for="sec in sections" :key="sec.id">
-                                                                                                <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')" 
-                                                                                                        x-show="sec.id !== section.id && !isGroupSection(sec)"></option>
-                                                                                            </template>
-                                                                                        </select>
-
-                                                                                        <div class="input-group flex-shrink-0" role="group">
-                                                                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                                                                    :disabled="index === 0 || getDataBlock(element)?.is_child" @click="moveElementUp(section, index);">
-                                                                                                <span class="suitepicon suitepicon-action-move-up"></span>
-                                                                                            </button>
-                                                                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                                                                    :disabled="index === section.elements.length - 1 || getDataBlock(element)?.is_child" @click="moveElementDown(section, index)">                                                                                
-                                                                                                <span class="suitepicon suitepicon-action-move-down"></span>
-                                                                                            </button>
-                                                                                        </div> 
-                                                                                    </div>
-                                                                                </div>
-
-                                                                                <div class="card-body">
-                                                                                    <template x-if="element.type=='datablock'">
-                                                                                        <template x-for="field in getFields(element)" :key="field.name">
-                                                                                            <div class="form-check form-check-inline border rounded px-2 py-1 m-0" x-text="field.label"></div>
-                                                                                        </template>
-                                                                                    </template>
-                                                                                </div>
-                                                                            </div>
+                                                    <div class="card-body p-2" x-show="!isCollapsed" x-transition>
+                                                        <!-- Content -->
+                                                        <template x-for="(element, index) in section.elements" :key="element.id">
+                                                            <div class="card mb-2 border-secondary"
+                                                                    :class="{
+                                                                    'groupdatablock': getDataBlock(element)?.isGroupHead(data_blocks),
+                                                                    'child-block': getDataBlock(element)?.is_child,
+                                                                    'datablock-element': isGroupSection(section)
+                                                                    }">
+                                                                <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
+                                                                    <div class="d-flex align-items-center gap-2">
+                                                                        <!-- Group badge for group heads -->
+                                                                        <template x-if="getDataBlock(element)?.isGroupHead(data_blocks) && getDataBlock(element)?.group_title">
+                                                                            <span class="badge bg-transparent text-dark ps-0" style="font-weight: normal;"
+                                                                                    x-text="'📦 ' + getDataBlock(element).group_title"></span>
                                                                         </template>
-                                                                        <template x-if="section.elements.length === 0">
-                                                                            <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
+                                                                        <!-- Group badge for child blocks -->
+                                                                        <template x-if="getDataBlock(element)?.is_child">
+                                                                            <span class="badge bg-transparent text-muted ps-0" style="font-weight: normal; font-size: 0.85em;"
+                                                                                    :title="utils.translateForFieldLabel('LBL_DATABLOCK_IN_GROUP_TITLE') + ' ' + getDataBlock(element)?.getGroupTitle(data_blocks)"
+                                                                                    x-text="'📦 ' + getDataBlock(element)?.getGroupTitle(data_blocks)"></span>
+                                                                        </template>
+                                                                        <strong x-text="getElementHeader(element)"></strong>
+                                                                        <!-- Optional/Repeatable badges for group heads -->
+                                                                        <template x-if="getDataBlock(element)?.isGroupHead(data_blocks)">
+                                                                            <span class="d-inline-flex gap-1">
+                                                                                <span class="badge bg-info" x-show="getDataBlock(element)?.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
+                                                                                <span class="badge bg-primary" x-show="getDataBlock(element)?.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
+                                                                            </span>
                                                                         </template>
                                                                     </div>
+                                                                    <div class="d-inline-flex gap-2">
+                                                                        <select class="form-select small text-muted w-auto" @change="moveElementToSection(element, section.id, $event.target.value)"
+                                                                                style="min-width: 100px;"
+                                                                                :disabled="isGroupSection(section) || getDataBlock(element)?.is_child || getDataBlock(element)?.isGroupHead(data_blocks)">
+                                                                            <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
+                                                                            <template x-for="sec in sections" :key="sec.id">
+                                                                                <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')" 
+                                                                                        x-show="sec.id !== section.id && !isGroupSection(sec)"></option>
+                                                                            </template>
+                                                                        </select>
+
+                                                                        <div class="input-group flex-shrink-0" role="group">
+                                                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                                                    :disabled="index === 0 || getDataBlock(element)?.is_child" @click="moveElementUp(section, index);">
+                                                                                <span class="suitepicon suitepicon-action-move-up"></span>
+                                                                            </button>
+                                                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                                                    :disabled="index === section.elements.length - 1 || getDataBlock(element)?.is_child" @click="moveElementDown(section, index)">                                                                                
+                                                                                <span class="suitepicon suitepicon-action-move-down"></span>
+                                                                            </button>
+                                                                        </div> 
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="card-body">
+                                                                    <template x-if="element.type=='datablock'">
+                                                                        <template x-for="field in getFields(element)" :key="field.name">
+                                                                            <div class="form-check form-check-inline border rounded px-2 py-1 m-0" x-text="field.label"></div>
+                                                                        </template>
+                                                                    </template>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        </template>
+                                                        <template x-if="section.elements.length === 0">
+                                                            <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
+                                                        </template>
                                                     </div>
                                                 </div>
                                             </template>

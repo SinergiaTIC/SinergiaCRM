@@ -32,6 +32,7 @@ class FormLayoutSection extends FormLayoutNode {
     public string $subtitle;
     public string $containerType;    // 'panel', 'card', 'tabs', 'accordion'
     public bool $showTitle;
+    public bool $is_custom_title = false;  // Flag to track manual title overrides (sync no longer auto-renames the section)
     public bool $isCollapsible;
     public bool $isCollapsed;
     public string $toggle_label = '';        // Label for the "include instance data" toggle switch
@@ -51,6 +52,7 @@ class FormLayoutSection extends FormLayoutNode {
         $dto->title = $data['title'] ?? '';
         $dto->subtitle = $data['subtitle'] ?? '';
         $dto->showTitle = $data['showTitle'];
+        $dto->is_custom_title = $data['is_custom_title'] ?? false;
         $dto->isCollapsible = $data['isCollapsible'];
         $dto->isCollapsed = $data['isCollapsed'];
         $dto->containerType = $data['containerType'] ?? 'panel';

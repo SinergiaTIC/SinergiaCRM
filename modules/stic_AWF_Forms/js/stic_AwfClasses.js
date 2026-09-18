@@ -1651,11 +1651,12 @@ class stic_AwfLayout {
       // Group sections: if the section starts with a group head, it belongs to the
       // group — use the group title and keep the section title visible by default
       // (like any other section). This also renames sections that were created
-      // before their block became a group head.
+      // before their block became a group head. A manually customized title
+      // (is_custom_title) is never overwritten by the sync.
       const firstElement = section.elements.find(el => el.type === 'datablock');
       const firstBlock = firstElement ? dataBlocks.find(b => b.id === firstElement.ref_id) : null;
       const firstIsGroupHead = firstBlock && (firstBlock.is_repeatable || firstBlock.is_optional || firstBlock.getChildren(dataBlocks).length > 0);
-      if (firstIsGroupHead) {
+      if (firstIsGroupHead && !section.is_custom_title) {
         section.title = firstBlock.group_title || firstBlock.text;
         section.showTitle = true;
       }
@@ -1931,6 +1932,7 @@ class stic_AwfLayoutSection extends stic_AwfLayoutNode {
       title: "",               // Title to display
       subtitle: "",            // Subtitle to display
       showTitle: true,         // Indicates if the title will be shown
+      is_custom_title: false,  // Flag to track manual title overrides (sync no longer auto-renames the section)
       isCollapsible: false,    // Indicates if the section can be collapsed
       isCollapsed: false,      // Indicates if the section will appear initially collapsed
 
