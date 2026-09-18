@@ -2781,13 +2781,19 @@ class WizardStep4 {
       },
 
       getGroup(section) {
-        const firstElement = section.elements.find(el => el.type === 'datablock');
-        if (!firstElement) return null;
-        
-        const block = this.getDataBlock(firstElement);
-        if (!block) return null;
-
-        return block.isGroupHead(this.data_blocks) ? block : null;
+        // The section's group is determined by its OWNER ROOT: the first datablock element without group_root 
+        // Fallback for sections without an owner root (all members): first group head found.
+        let fallback = null;
+        for (const el of section.elements) {
+          if (el.type !== 'datablock') continue;
+          const block = this.getDataBlock(el);
+          if (!block) continue;
+          if (!block.group_root || block.group_root === '') {
+            return block.isGroupHead(this.data_blocks) ? block : null; // The owner root decides
+          }
+          if (!fallback && block.isGroupHead(this.data_blocks)) fallback = block;
+        }
+        return fallback;
       },
 
       getFields(element) {

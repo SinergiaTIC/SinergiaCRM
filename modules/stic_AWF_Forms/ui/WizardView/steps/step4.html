@@ -575,25 +575,7 @@
                                                                     }">
                                                                 <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
                                                                     <div class="d-flex align-items-center gap-2">
-                                                                        <!-- Group badge for group heads -->
-                                                                        <template x-if="getDataBlock(element)?.isGroupHead(data_blocks) && getDataBlock(element)?.group_title">
-                                                                            <span class="badge bg-transparent text-dark ps-0" style="font-weight: normal;"
-                                                                                    x-text="'📦 ' + getDataBlock(element).group_title"></span>
-                                                                        </template>
-                                                                        <!-- Group badge for child blocks -->
-                                                                        <template x-if="getDataBlock(element)?.is_child">
-                                                                            <span class="badge bg-transparent text-muted ps-0" style="font-weight: normal; font-size: 0.85em;"
-                                                                                    :title="utils.translateForFieldLabel('LBL_DATABLOCK_IN_GROUP_TITLE') + ' ' + getDataBlock(element)?.getGroupTitle(data_blocks)"
-                                                                                    x-text="'📦 ' + getDataBlock(element)?.getGroupTitle(data_blocks)"></span>
-                                                                        </template>
                                                                         <strong x-text="getElementHeader(element)"></strong>
-                                                                        <!-- Optional/Repeatable badges for group heads -->
-                                                                        <template x-if="getDataBlock(element)?.isGroupHead(data_blocks)">
-                                                                            <span class="d-inline-flex gap-1">
-                                                                                <span class="badge bg-info" x-show="getDataBlock(element)?.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
-                                                                                <span class="badge bg-primary" x-show="getDataBlock(element)?.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
-                                                                            </span>
-                                                                        </template>
                                                                     </div>
                                                                     <div class="d-inline-flex gap-2">
                                                                         <select class="form-select small text-muted w-auto" @change="moveElementToSection(element, section.id, $event.target.value)"
