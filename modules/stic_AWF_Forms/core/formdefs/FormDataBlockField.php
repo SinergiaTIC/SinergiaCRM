@@ -107,4 +107,33 @@ class FormDataBlockField {
     public function getPhpKey(): string {
         return str_replace('.', '_', $this->getKey());
     }
+
+    public function getKeyForInstance(?int $index = null): string {
+        $prefix = $this->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+        if ($index === null) {
+            return $this->getKey();
+        }
+        return $prefix . $this->data_block->name . '[' . $index . '][' . $this->name . ']';
+    }
+
+    public function getPhpKeyForInstance(?int $index = null): string {
+        return str_replace('.', '_', $this->getKeyForInstance($index));
+    }
+
+    /**
+     * Returns the DOM-id / validation-error key for a field. For instance-aware
+     * fields it uses the "BlockName_{index}_fieldName" format so that the frontend
+     * showServerError() can match the dynamic input id pattern "f_BlockName_0_fieldName".
+     * For detached blocks the '_detached.' prefix is preserved, keeping consistency
+     * with the existing non-repeatable convention.
+     * @param ?int $index The instance index, or null for scalar (non-repeatable) fields
+     * @return string
+     */
+    public function getKeyForId(?int $index = null): string {
+        $prefix = $this->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+        if ($index === null) {
+            return $prefix . $this->data_block->name . '.' . $this->name;
+        }
+        return $prefix . $this->data_block->name . '_' . $index . '_' . $this->name;
+    }
 }

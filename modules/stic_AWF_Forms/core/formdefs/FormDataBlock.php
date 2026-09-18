@@ -37,7 +37,16 @@ class FormDataBlock {
     /** @var FormDuplicateRule[] */
     public array $duplicate_detections;   // Definition of duplicate detection
 
+    public int $min_instances = 1;           // Minimum required instances (0 = optional)
+    public ?int $max_instances = 1;          // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
+    public string $group_title = '';         // Visual title for the repeat group
+    public bool $is_custom_group_title = false; // Flag to track manual title overrides
+    public string $group_root = '';  // ID of the repeatable root this block belongs to
+
     private ?BeanReference $beanReference = null; // Bean where the data block has been saved
+
+    /** @var array<int, BeanReference> */
+    private array $beanReferences = [];
 
     /**
      * Creates an instance of FormDataBlock from a JSON array.
@@ -53,6 +62,14 @@ class FormDataBlock {
         $dto->name = $data['name'];
         $dto->text = $data['text'];
         $dto->module = $data['module'];
+
+        // Map repeatable data block fields
+        $dto->min_instances = isset($data['min_instances']) ? (int)$data['min_instances'] : 1;
+        $dto->max_instances = isset($data['max_instances']) && $data['max_instances'] !== '' && $data['max_instances'] !== null ? (int)$data['max_instances'] : null;
+        $dto->group_title = $data['group_title'] ?? '';
+        $dto->is_custom_group_title = isset($data['is_custom_group_title']) ? (bool)$data['is_custom_group_title'] : false;
+        
+        $dto->group_root = $data['group_root'] ?? '';
 
         $dto->fields = [];
         if (isset($data['fields'])) {
@@ -72,11 +89,41 @@ class FormDataBlock {
         return $dto;
     }
 
-    public function setBeanReference(string $beanId): void {
-        $this->beanReference = new BeanReference($this->module, $beanId);
+    /**
+     * Check if the block can be repeated 0..N times 
+     */
+    public function isRepeatable(): bool {
+        return $this->max_instances == null || $this->max_instances > 1;
     }
 
-    public function getBeanReference(): ?BeanReference {
-        return $this->beanReference;
+    /**
+     * Check if the block is optional 
+     */
+    public function isOptional(): bool {
+        return $this->min_instances == 0;
+    }
+
+    public function setBeanReference(string $beanId, ?int $index = null): void {
+        if ($index === null) {
+            $this->beanReference = new BeanReference($this->module, $beanId);
+            return;
+        }
+        $this->beanReferences[$index] = new BeanReference($this->module, $beanId);
+    }
+
+    public function getBeanReference(?int $index = null): ?BeanReference {
+        if ($index === null) {
+            return $this->beanReference;
+        }
+        return $this->beanReferences[$index] ?? null;
+    }
+
+    /**
+     * Returns the bean references already registered for repeatable instances
+     * during the current request execution.
+     * @return array<int, BeanReference>
+     */
+    public function getIndexedBeanReferences(): array {
+        return $this->beanReferences;
     }
 }

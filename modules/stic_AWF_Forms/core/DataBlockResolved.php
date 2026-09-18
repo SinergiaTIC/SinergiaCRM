@@ -37,14 +37,26 @@ class DataBlockResolved {
     /** @var array<string, DataBlockFieldResolved> */
     public array $detachedData = [];     // Unmapped data [detached_field_name => DataBlockFieldResolved]
 
-    public function __construct(FormDataBlock $config, array $fullFormData, ExecutionContext $context) {
+    public ?int $instanceIndex = null;
+
+    public function __construct(FormDataBlock $config, array $fullFormData, ExecutionContext $context, ?int $instanceIndex = null) {
         // Warning: PHP POST replaces all '.' with '_'
         // DataBlock names use PascalCase without '_'
         // Form field names:
         //   DataBlockName0_field_name              ->  "field_name" from DataBlockName0 TO CRM
         //   _detached_DataBlockName0_field_name    ->  "field_name" from DataBlockName0 DETACHED
+        //   DataBlockName[index][field_name]       ->  "field_name" from instance index of DataBlockName
+        //   _detached_DataBlockName[index][field_name] ->  "field_name" from instance index of detached DataBlockName
 
         $this->dataBlock = $config;
+        $this->instanceIndex = $instanceIndex;
+
+        // Indexed form data for repeatable blocks
+        $isIndexed = $instanceIndex !== null;
+        if ($isIndexed) {
+            $this->resolveIndexedInstance($config, $fullFormData, $context, $instanceIndex);
+            return;
+        }
 
         // Load default values (fixed/hidden) from the configuration
         // These values can be overridden by form-submitted values
@@ -128,6 +140,106 @@ class DataBlockResolved {
             }
         }
 
+    }
+
+    /**
+     * Resolve a single instance of a repeatable block
+     */
+    private function resolveIndexedInstance(FormDataBlock $config, array $fullFormData, ExecutionContext $context, int $instanceIndex): void {
+        $blockName = $config->name;
+        $linkedKey = $blockName;
+        $detachedKey = '_detached_' . $blockName;
+
+        // Linked fields
+        $linkedArray = is_array($fullFormData[$linkedKey] ?? null) ? $fullFormData[$linkedKey] : [];
+        $detachedArray = is_array($fullFormData[$detachedKey] ?? null) ? $fullFormData[$detachedKey] : [];
+
+        $linkedInstance = $linkedArray[$instanceIndex] ?? [];
+        $detachedInstance = $detachedArray[$instanceIndex] ?? [];
+
+        // Process linked fields
+        foreach ($config->fields as $fieldName => $fieldDef) {
+            if ($fieldDef->type_field === DataBlockFieldType::FIXED) {
+                $castedValue = stic_AWFUtils::castCrmValue($fieldDef->value, $fieldDef->type, $context);
+                $logicalKey = $fieldDef->getKeyForInstance($instanceIndex);
+                $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, $castedValue);
+                $this->formData[$fieldName] = $fieldResolved;
+                continue;
+            }
+            if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) continue;
+
+            $value = $linkedInstance[$fieldName] ?? null;
+            $crmFieldType = $fieldDef->type;
+            $castedValue = stic_AWFUtils::castCrmValue($value, $crmFieldType, $context);
+            $logicalKey = $fieldDef->getKeyForInstance($instanceIndex);
+            $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, $castedValue);
+            $this->formData[$fieldName] = $fieldResolved;
+        }
+
+        // Process detached fields
+        foreach ($config->fields as $fieldName => $fieldDef) {
+            if ($fieldDef->type_field !== DataBlockFieldType::UNLINKED) continue;
+            $value = $detachedInstance[$fieldName] ?? null;
+            $crmFieldType = $fieldDef->type;
+            $castedValue = stic_AWFUtils::castCrmValue($value, $crmFieldType, $context);
+            $logicalKey = $fieldDef->getKeyForInstance($instanceIndex);
+            $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, $castedValue);
+            $this->detachedData[$fieldName] = $fieldResolved;
+        }
+
+        // Fill missing booleans
+        foreach ($config->fields as $fieldName => $fieldDef) {
+            if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+            $isUnlinked = ($fieldDef->type_field === DataBlockFieldType::UNLINKED);
+            $targetArray = $isUnlinked ? $detachedInstance : $linkedInstance;
+            if ($isUnlinked && isset($this->detachedData[$fieldName])) continue;
+            if (!$isUnlinked && isset($this->formData[$fieldName])) continue;
+            if ($fieldDef->type === 'bool' || $fieldDef->type === 'checkbox') {
+                $logicalKey = $fieldDef->getKeyForInstance($instanceIndex);
+                $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, 0);
+                if ($isUnlinked) {
+                    $this->detachedData[$fieldName] = $fieldResolved;
+                } else {
+                    $this->formData[$fieldName] = $fieldResolved;
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns one DataBlockResolved per instance for a repeatable block.
+     * For optional blocks with zero instances, returns an empty array.
+     * @param FormDataBlock $block
+     * @param array $formData
+     * @param ExecutionContext $context
+     * @return DataBlockResolved[]
+     */
+    public static function resolveInstances(FormDataBlock $block, array $formData, ExecutionContext $context): array {
+        $blockName = $block->name;
+        $linkedArray = is_array($formData[$blockName] ?? null) ? $formData[$blockName] : [];
+        $detachedKey = '_detached_' . $blockName;
+        $detachedArray = is_array($formData[$detachedKey] ?? null) ? $formData[$detachedKey] : [];
+
+        $indexes = array_unique(array_merge(
+            array_filter(array_keys($linkedArray), 'is_int'),
+            array_filter(array_keys($detachedArray), 'is_int')
+        ));
+        sort($indexes);
+
+        if (empty($indexes)) {
+            // Optional blocks (repeatable or not) with no submitted instances → no instances.
+            // Mandatory blocks → one empty instance so required-field validation errors are produced.
+            if ($block->isOptional()) {
+                return [];
+            }
+            return [new DataBlockResolved($block, $formData, $context, 0)];
+        }
+
+        $instances = [];
+        foreach ($indexes as $index) {
+            $instances[] = new DataBlockResolved($block, $formData, $context, (int)$index);
+        }
+        return $instances;
     }
 
     /**

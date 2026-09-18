@@ -213,6 +213,31 @@ Esta sección es fundamental cuando el formulario interactúa con más de un mó
 
 * Ejemplo práctico: Imaginemos un formulario de inscripción de una persona a un evento. En esta sección de Relaciones se indicará que ambos bloques (Persona e Inscripción) están unidos. Así, cuando el usuario envíe el formulario, el sistema no solo creará los dos registros por separado, sino que automáticamente generará el vínculo formal entre ambos dentro del CRM.
 
+#### Grupos de bloques de datos (Repetibles) ####
+
+La creación de un "Grupo" permite relacionar y repetir en el formulario uno o más bloques de datos en conjunto. Cuando se define el grupo como repetible, **todo el conjunto de campos de los bloques que lo componen aparece N veces** en un mismo envío, generando tantos registros en el CRM como repeticiones complete el visitante. Es la funcionalidad ideal para simplificar operativas como una inscripción grupal (recoger en una única respuesta los datos de varios participantes).
+
+* **Arquitectura "raíz + hijos"**: Un grupo tiene un bloque "raíz" (el que se convierte en repetible) y, opcionalmente, varios bloques "hijo" que dependen de él y se repiten siempre en bloque. Los bloques de datos que conviven en el formulario fuera de un grupo se comportan de forma independiente (un único bloque de datos por envío).
+
+* **Modelo de repetibilidad único (0..N)**: El sistema gestiona la repetición con dos parámetros por grupo, eliminando la distinción entre "bloque con instancias" y "grup de registros":
+  * **Mínima de instancias** (`min_instances`): 0 u 1.
+  * **Máxima de instancias** (`max_instances`): sin límite o un número concreto.
+  * Un grupo con **mínima 1** es *Obligatorio* (los campos se muestran al menos una vez). Un grupo con **mínima 0** es *Opcional*: se muestra inicialmente vacío y solo se guardan los datos si el visitante añade al menos una instancia; si no añade ninguna, sus acciones de guardado se **omiten** en el procesamiento en lugar de crear registros vacíos.
+
+* **Convertir un bloque en grupo repetible**: Desde la barra de acciones del bloque (Paso 2) hay un botón "+" que transforma cualquier bloque no repetible en la raíz de un grupo. El sistema crea automáticamente el grupo con:
+  * Título por defecto formado por el nombre del bloque raíz + los nombres de los bloques hijo vinculados (p. ej.: *"Menor + Inscripción"*), editable en cualquier momento.
+  * Mínima 1 (obligatorio) y máxima sin límite.
+  * Etiquetas de los botones "Añadir" y "Eliminar" por defecto (también personalizables).
+
+* **Configuración en línea (sin modales)**: La cabecera de cada grupo integra un panel de configuración desplegable, accesible con el botón de opciones. Desde él se ajustan:
+  * El **interruptor obligatorio/opcional** (mínima de instancias = 1 o 0).
+  * El **límite máximo** de instancias (dejarlo vacío = sin límite).
+  * Las **etiquetas personalizadas** de los botones "Añadir" y "Eliminar".
+  * El botón **"Desagrupar"**, que revierte el grupo a bloques independientes (restaurando los valores por defecto: mínima 1, sin máximo y sin título de grupo).
+
+* **Vinculación maestro-alumno**: Al igual que en las relaciones 1-N descritas arriba, los registros creados por el grupo se vinculan automáticamente en el CRM (por ejemplo, cada "Inscripción" creada se referencia con la "Persona" de la misma instancia).
+
+* **Sin anidamiento**: Un bloque solo puede pertenecer a un único grupo raíz (no se permiten grupos repetibles dentro de otros grupos). El formulario puede contener **varios grupos diferentes** siempre que sus bloques sean disjuntos.
 
 ### Paso 3: Lógica y automatismos ###
 En este paso se configurará qué ocurre "por detrás" cuando alguien hace clic en "Enviar" del formulario. La lógica de negocio se articula mediante un sistema visual de flujos compuesto por **Acciones**.
@@ -226,6 +251,8 @@ En este paso se configurará qué ocurre "por detrás" cuando alguien hace clic 
 * **Acciones automáticas (Persistencia garantizada)**: Al añadir bloques de datos en el paso anterior del asistente, el sistema añade **automáticamente** al flujo principal las acciones necesarias para guardar los datos en el CRM ("Guardar registro") y vincularlos entre sí ("Enlazar registros"). Gracias a esto, no es necesario preocuparse por la persistencia de la información; el sistema garantiza que los registros se crearán, actualizarán y relacionarán solos según las reglas definidas. Estas acciones base no se pueden eliminar, pero sí reordenar.
 
   * **Optimización de relaciones 1-N (Guardar registro con relaciones)**: Cuando se define una relación de tipo 1-N (un bloque "padre" y un bloque "hijo" que contiene un campo FK apuntando al padre), el sistema utiliza una acción especial **"Guardar registro con relaciones"** en lugar de la combinación tradicional de "Guardar registro" + "Enlazar registros". Esta acción inyecta el ID del registro padre en el campo FK del registro hijo **antes** del primer guardado, evitando un paso de actualización posterior innecesario. Las relaciones N-M siguen utilizando la acción "Enlazar registros", creando una única acción (no dos) ya que la relación es bidireccional.
+
+  * **Grupos repetibles (una acción por instancia)**: Cuando un bloque forma parte de un grupo repetible, sus acciones automáticas de guardado se generan para **cada instancia** del grupo. En el Paso 3, el asistente identifica las acciones pertenecientes a un mismo grupo con una **insignia del grupo (badge)** en su configurador, mostrando el nombre del grupo en cuestión. Un grupo con mínima de instancias 0 que se envía **vacío** no ejecuta sus acciones de guardado: el sistema las marca como *omitidas (SKIPPED)* en el registro de ejecución, en lugar de crear registros vacíos.
 
 * **Acciones definidas por el usuario**: Más allá de guardar los datos, se pueden enriquecer los flujos añadiendo y encadenando nuevas acciones configurables. Cada acción introducida permite establecer parámetros específicos basándose en los propios datos introducidos en el formulario o en registros del CRM.
 
@@ -285,6 +312,8 @@ Entre las opciones de diseño y maquetación disponibles destacan:
   * **Título**: Se puede definir si la sección muestra un título visible para estructurar el contenido o si queda oculto.
 
   * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables, permitiendo elegir si al cargar la página aparecen expandidas o contraídas por defecto. Esto resulta extremadamente útil en formularios largos para no abrumar al usuario, permitiéndole navegar progresivamente por bloques o revelar información opcional solo si interactúa con ella.
+
+  * **Renderizado de grupos repetibles**: Cada instancia de un grupo repetible se renderiza de forma unificada y **jerárquica**: paneles simétricos (raíz e hijos) anidados dentro de una misma tarjeta de instancia, numerada (p. ej.: *"Grupo #1"*, *"Grupo #2"*), con su cabecera propia (título del grupo, botones de añadir/eliminar instancia) y respetando el límite máximo configurado. Los bloques enlazados se muestran como paneles internos con sus respectivos títulos y rejilla de campos.
 
 * **Configuración general de estilos**: Existen multitud de opciones para adaptar la apariencia del formulario y lograr que se integre a la perfección con la identidad visual corporativa:
 
@@ -383,8 +412,6 @@ El nuevo sistema ofrece un grado de flexibilidad adicional para perfiles técnic
 
 ## Próximamente (Evolución del sistema) ##
 * **Archivos adjuntos**: Existirá la opción de que los usuarios puedan subir y adjuntar archivos o documentos digitales directamente a través del formulario.
-
-* **Grupos de bloques de datos repetibles**: Se incorporará el concepto de "Grupo", un contenedor que agrupa uno o más bloques de datos relacionados entre sí. Su característica principal es que podrá definirse como "repetible", permitiendo que el conjunto de campos que contiene aparezca múltiples veces en un mismo formulario. Esta funcionalidad será ideal para simplificar operativas complejas, como recoger los datos de varios participantes a la vez en una única inscripción grupal.
 
 * **Mayor flexibilidad en diseño y maquetación**: Se ampliarán las opciones visuales para organizar la información de forma más dinámica, permitiendo agrupar campos mediante pestañas, dividir formularios extensos en múltiples páginas y añadir otros elementos interactivos. El modelo de datos ya contempla estos contenedores, pendiente de completar su implementación en la capa de renderizado.
 

@@ -35,6 +35,41 @@ class FormHtmlGeneratorService {
     private $indent = 0;
 
     /**
+     * Helper to check if a block has any renderable field
+     */
+    private static function blockHasRenderableFields(FormDataBlock $block): bool {
+        foreach ($block->fields as $field) {
+            if ($field->type_field === DataBlockFieldType::FIXED) continue;
+            if ($field->type_in_form === 'hidden') continue;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Helper to check if a group has any renderable field
+     */
+    private static function groupHasRenderableFields(array $groupBlocks): bool {
+        foreach ($groupBlocks as $b) {
+            if (self::blockHasRenderableFields($b)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Helper to check if a block or ANY of its descendants (subgroup tree)
+     * has renderable fields. Mirrors the design-side filtering: a group head is
+     * kept if the root OR any descendant has at least one visible field.
+     */
+    private static function groupSubtreeHasRenderableFields(FormDataBlock $block, FormConfig $config): bool {
+        if (self::blockHasRenderableFields($block)) return true;
+        foreach ($config->getGroupChildren($block) as $child) {
+            if (self::groupSubtreeHasRenderableFields($child, $config)) return true;
+        }
+        return false;
+    }
+
+    /**
      * Generates the full HTML document (doctype, head, body).
      * For standalone or iframe views.
      * If you want to generate only the form HTML (for embedding in other pages), use the generateFormHtml method instead, 
@@ -121,20 +156,18 @@ class FormHtmlGeneratorService {
         $btnTextColor = $this->getContrastColor($theme->primary_color);
 
         // Pre-càlcul: Quines icones i funcionalitats s'estan fent servir realment?
+        // Recursive walk of the layout tree (AWF Paso 4): nested sections are traversed.
         $usedSubtypes = [];
         $hasCollapsible = false;
+        $layoutBlocks = [];
 
         foreach ($layout->structure as $section) {
-            if (!empty($section->isCollapsible)) {
-                $hasCollapsible = true;
-            }
-            foreach ($section->elements as $element) {
-                if ($element->type === 'datablock' && isset($config->data_blocks[$element->ref_id])) {
-                    $block = $config->data_blocks[$element->ref_id];
-                    foreach ($block->fields as $field) {
-                        $usedSubtypes[$field->subtype_in_form ?? 'text'] = true;
-                    }
-                }
+            $this->collectLayoutData($section, $config, $layoutBlocks, $hasCollapsible);
+        }
+
+        foreach ($layoutBlocks as $block) {
+            foreach ($block->fields as $field) {
+                $usedSubtypes[$field->subtype_in_form ?? 'text'] = true;
             }
         }
 
@@ -217,7 +250,18 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-submit-btn { width: var(--awf-submit-width); }
 #{$wrapperId} .awf-submit-container { width: 100%; text-align: " . ($submitWidthVal === '100%' ? 'center' : 'right') . "; }
 #{$wrapperId} .was-validated .form-control:valid, #{$wrapperId} .was-validated .form-select:valid, #{$wrapperId} .was-validated .form-check-input:valid { border-color: var(--bs-border-color); background-image: none; box-shadow: none; }
-#{$wrapperId} .was-validated .form-control:invalid, #{$wrapperId} .was-validated .form-select:invalid { background-image: none !important; border-color: #dc3545; }";
+#{$wrapperId} .was-validated .form-control:invalid, #{$wrapperId} .was-validated .form-select:invalid { background-image: none !important; border-color: #dc3545; }
+#{$wrapperId} .awf-group-container { margin-bottom: 1.5rem; }
+#{$wrapperId} .awf-group-title { font-size: 1.25em; margin-bottom: 1rem; font-weight: 600; }
+#{$wrapperId} .awf-instance-card { border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; margin-bottom: 1rem; background-color: rgba(0,0,0,0.02); }
+#{$wrapperId} .awf-instance-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-weight: 600; }
+#{$wrapperId} .awf-child-block-instances { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--bs-border-color); }
+#{$wrapperId} .awf-child-block-title { font-size: 1em; margin-bottom: 0.75rem; font-weight: 600; }
+#{$wrapperId} .awf-add-instance-btn { margin-top: 0.5rem; }
+#{$wrapperId} .awf-group-container { grid-column: 1 / -1; width: 100%; margin-bottom: 1.5rem; }
+#{$wrapperId} .awf-block-panel { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; margin-bottom: 1rem; }
+#{$wrapperId} .awf-block-title { font-size: 1em; font-weight: 600; margin-bottom: 0.75rem; padding-bottom: 0.25rem; border-bottom: 1px solid var(--bs-border-color); }
+";
         if ($inputCssProps !== "")  $html .= "\n".$inputCssProps;
         if ($selectCssProps !== "")  $html .= "\n".$selectCssProps;
         if ($floatingLabelFix !== "") $html .= "\n".$floatingLabelFix;
@@ -350,96 +394,7 @@ class FormHtmlGeneratorService {
                     $html .= "<div class='awf-grid-sections'>" .$this->newLine('+');
                     {
                         foreach ($layout->structure as $section) {
-                            $containerClass = ($section->containerType === 'card') ? 'awf-section-card' : 'awf-section-panel';
-                            $sectionPanelId = "awf_sect_" . md5($section->title ?? uniqid());
-
-                            // Collapsible logic
-                            $isCollapsible = !empty($section->isCollapsible);
-                            $startOpen = empty($section->isCollapsed) ? 'true' : 'false';
-                            $xDataAttr = $isCollapsible ? "x-data=\"{ open: {$startOpen} }\" @invalid.capture=\"open = true\"" : "";
-                            $styleAttr = $isCollapsible ? "style='height: auto !important;'" : "";
-
-                            $html .= "<div class='card {$containerClass}' {$xDataAttr} {$styleAttr}>" .$this->newLine('+');
-                            {
-                                // Header
-                                if ($section->showTitle && (!empty($section->title) || !empty($section->subtitle)))  {
-                                    $toggleBtn = "";
-                                    $cursorStyle = "";
-
-                                    if ($isCollapsible) {
-                                        $cursorStyle = "cursor: pointer;"; 
-                                        $toggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' " .
-                                                              "@click.stop='open = !open' :aria-expanded='open.toString()' aria-controls='{$sectionPanelId}'>" .$this->newLine('+');
-                                        {
-                                            $toggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" .$this->newLine();
-                                        }
-                                        $toggleBtn .= "</button>" .$this->newLine('-');
-                                    }
-
-                                    if ($section->containerType === 'panel') {
-                                        $clickAction = $isCollapsible ? "@click='open = !open'" : "";
-
-                                        $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$clickAction} style='{$cursorStyle}'>" .$this->newLine('+');
-                                        {
-                                            $html .= "<div class='awf-section-title-wrapper'>" .$this->newLine('+');
-                                            {
-                                                if (!empty($section->title)) {
-                                                    $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>".htmlspecialchars($section->title)."</h4>" .$this->newLine();
-                                                }
-                                                if (!empty($section->subtitle)) {
-                                                    $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
-                                                    $marginTop = !empty($section->title) ? "mt-1" : "";
-                                                    $html .= "<div class='awf-section-subtitle text-muted {$marginTop}' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$parsedSubtitle}</div>" .$this->newLine();
-                                                }
-                                            }
-                                            $html .= "</div>" .$this->newLine('-');
-                                            $html .= $toggleBtn .$this->newLine();
-                                        }
-                                        $html .= "</div>" .$this->newLine('-');
-                                        $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" .$this->newLine();
-
-                                    } else if ($section->containerType === 'card') {
-                                        $clickAction = $isCollapsible ? "@click='open = !open'" : "";
-
-                                        $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$clickAction} style='{$cursorStyle}'>" .$this->newLine('+');
-                                        {
-                                            $html .= "<div class='awf-section-title-wrapper'>" .$this->newLine('+');
-                                            {
-                                                if (!empty($section->title)) {
-                                                    $html .= "<span>".htmlspecialchars($section->title)."</span>" .$this->newLine();
-                                                }
-                                                if (!empty($section->subtitle)) {
-                                                    $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
-                                                    $marginTop = !empty($section->title) ? "mt-1" : "";
-                                                    $html .= "<span class='awf-section-subtitle text-muted d-block {$marginTop}' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$parsedSubtitle}</span>" .$this->newLine();
-                                                }
-                                            }
-                                            $html .= "</div>" .$this->newLine('-');
-                                            $html .= $toggleBtn .$this->newLine();
-                                        }
-                                        $html .= "</div>" .$this->newLine('-');
-                                    }
-                                }
-                                
-                                $showAttr = $isCollapsible ? "id='{$sectionPanelId}' x-show='open' x-transition" : "";
-                                $html .= "<div class='card-body' {$showAttr}>" .$this->newLine('+');
-                                {
-                                    $html .= "<div class='awf-grid-fields'>" .$this->newLine('+');
-                                    {
-                                        foreach ($section->elements as $element) {
-                                            if ($element->type == 'datablock') {
-                                                $block = $config->data_blocks[$element->ref_id] ?? null;
-                                                if ($block) {
-                                                    $html .= $this->generateDataBlockHtml($block, $layout->theme);
-                                                }
-                                            }
-                                        }
-                                    }
-                                    $html .= "</div>" .$this->newLine('-');
-                                }
-                                $html .= "</div>" .$this->newLine('-');
-                            }
-                            $html .= "</div>" .$this->newLine('-');
+                            $html .= $this->renderSectionNode($section, $config, $layout->theme);
                         }
                     }
                     $html .= "</div>" .$this->newLine('-');
@@ -472,17 +427,458 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * Dispatches the rendering of a layout node according to its type (Composite pattern).
+     * Sections are rendered recursively; elements are resolved to their data block.
+     *
+     * @param FormLayoutNode $node The layout node to render (section or element)
+     * @param FormConfig $config The full form configuration
+     * @param FormTheme $theme The form theme
+     * @param ?string $instanceIndexVar Alpine index variable for instance-aware rendering, or null for scalar
+     * @param ?FormLayoutSection $parentSection The section that contains the node (labels context for groups)
+     * @return string The generated HTML
+     */
+    private function renderLayoutNode(FormLayoutNode $node, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?FormLayoutSection $parentSection = null): string {
+        if ($node instanceof FormLayoutSection) {
+            return $this->renderSectionNode($node, $config, $theme, $instanceIndexVar);
+        }
+        if ($node instanceof FormLayoutElement) {
+            return $this->renderElementNode($node, $config, $theme, $instanceIndexVar, $parentSection);
+        }
+        return '';
+    }
+
+    /**
+     * Renders a layout section as a visual container (panel or card), with optional
+     * collapsible logic, and renders its children recursively.
+     *
+     * @param FormLayoutSection $section The layout section to render
+     * @param FormConfig $config The full form configuration
+     * @param FormTheme $theme The form theme
+     * @param ?string $instanceIndexVar Alpine index variable for instance-aware rendering, or null for scalar
+     * @return string The generated HTML
+     */
+    private function renderSectionNode(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null): string {
+        // Skip sections that have no renderable block content.
+        // A section is renderable if at least one of its elements (recursively) is a datablock
+        // that will produce visible HTML (standalone block with fields, or a
+        // group head whose root or any descendant has fields).
+        if (!self::sectionHasRenderableContent($section, $config)) return '';
+
+        $containerClass = ($section->containerType === 'card') ? 'awf-section-card' : 'awf-section-panel';
+        $sectionPanelId = "awf_sect_" . md5($section->title ?? uniqid());
+
+        // Collapsible logic
+        $isCollapsible = !empty($section->isCollapsible);
+        $startOpen = empty($section->isCollapsed) ? 'true' : 'false';
+        $xDataAttr = $isCollapsible ? "x-data=\"{ open: {$startOpen} }\" @invalid.capture=\"open = true\"" : "";
+        $styleAttr = $isCollapsible ? "style='height: auto !important;'" : "";
+
+        $html = "<div class='card {$containerClass}' {$xDataAttr} {$styleAttr}>" .$this->newLine('+');
+        {
+            // Header
+            if ($section->showTitle && (!empty($section->title) || !empty($section->subtitle)))  {
+                $toggleBtn = "";
+                $cursorStyle = "";
+
+                if ($isCollapsible) {
+                    $cursorStyle = "cursor: pointer;"; 
+                    $toggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' " .
+                                          "@click.stop='open = !open' :aria-expanded='open.toString()' aria-controls='{$sectionPanelId}'>" .$this->newLine('+');
+                    {
+                        $toggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" .$this->newLine();
+                    }
+                    $toggleBtn .= "</button>" .$this->newLine('-');
+                }
+
+                if ($section->containerType === 'panel') {
+                    $clickAction = $isCollapsible ? "@click='open = !open'" : "";
+
+                    $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$clickAction} style='{$cursorStyle}'>" .$this->newLine('+');
+                    {
+                        $html .= "<div class='awf-section-title-wrapper'>" .$this->newLine('+');
+                        {
+                            if (!empty($section->title)) {
+                                $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>".htmlspecialchars($section->title)."</h4>" .$this->newLine();
+                            }
+                            if (!empty($section->subtitle)) {
+                                $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
+                                $marginTop = !empty($section->title) ? "mt-1" : "";
+                                $html .= "<div class='awf-section-subtitle text-muted {$marginTop}' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$parsedSubtitle}</div>" .$this->newLine();
+                            }
+                        }
+                        $html .= "</div>" .$this->newLine('-');
+                        $html .= $toggleBtn .$this->newLine();
+                    }
+                    $html .= "</div>" .$this->newLine('-');
+                    $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" .$this->newLine();
+
+                } else if ($section->containerType === 'card') {
+                    $clickAction = $isCollapsible ? "@click='open = !open'" : "";
+
+                    $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$clickAction} style='{$cursorStyle}'>" .$this->newLine('+');
+                    {
+                        $html .= "<div class='awf-section-title-wrapper'>" .$this->newLine('+');
+                        {
+                            if (!empty($section->title)) {
+                                $html .= "<span>".htmlspecialchars($section->title)."</span>" .$this->newLine();
+                            }
+                            if (!empty($section->subtitle)) {
+                                $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
+                                $marginTop = !empty($section->title) ? "mt-1" : "";
+                                $html .= "<span class='awf-section-subtitle text-muted d-block {$marginTop}' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$parsedSubtitle}</span>" .$this->newLine();
+                            }
+                        }
+                        $html .= "</div>" .$this->newLine('-');
+                        $html .= $toggleBtn .$this->newLine();
+                    }
+                    $html .= "</div>" .$this->newLine('-');
+                }
+            }
+            
+            $showAttr = $isCollapsible ? "id='{$sectionPanelId}' x-show='open' x-transition" : "";
+            $html .= "<div class='card-body' {$showAttr}>" .$this->newLine('+');
+            {
+                $html .= "<div class='awf-grid-fields'>" .$this->newLine('+');
+                {
+                    foreach ($section->elements as $childNode) {
+                        $html .= $this->renderLayoutNode($childNode, $config, $theme, $instanceIndexVar, $section);
+                    }
+                }
+                $html .= "</div>" .$this->newLine('-');
+            }
+            $html .= "</div>" .$this->newLine('-');
+        }
+        $html .= "</div>" .$this->newLine('-');
+
+        return $html;
+    }
+
+    /**
+     * Renders a layout element resolving its data block. Child blocks of a group
+     * are not rendered standalone: they are rendered inside their root's group loop.
+     *
+     * @param FormLayoutElement $element The layout element to render
+     * @param FormConfig $config The full form configuration
+     * @param FormTheme $theme The form theme
+     * @param ?string $instanceIndexVar Alpine index variable for instance-aware rendering, or null for scalar
+     * @param ?FormLayoutSection $parentSection The section that contains the element (labels context for groups)
+     * @return string The generated HTML
+     */
+    private function renderElementNode(FormLayoutElement $element, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?FormLayoutSection $parentSection = null): string {
+        $block = $config->data_blocks[$element->ref_id] ?? null;
+        if (!$block) return '';
+
+        // Children of repeatable roots are rendered inside the root's loop
+        if ($block->group_root && $block->group_root !== '') {
+            return "<!-- Child block '{$block->name}' is rendered inside its repeatable root -->" . $this->newLine();
+        }
+
+        return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $parentSection);
+    }
+
+    /**
+     * Helper to check if a layout element produces renderable content.
+     * Children of a group root are covered by their root's element and never
+     * render standalone, so they do not count.
+     */
+    private static function elementHasRenderableContent(FormLayoutElement $element, FormConfig $config): bool {
+        if ($element->type !== 'datablock') return true;
+        $block = $config->data_blocks[$element->ref_id] ?? null;
+        if (!$block) return false;
+        // Children are rendered inside their root — only the root decides
+        if (!empty($block->group_root)) return false;
+        // Group head or standalone: check if root or any descendant has fields
+        $blockChildren = $config->getGroupChildren($block);
+        if (!empty($blockChildren)) {
+            $descendants = $config->getGroupDescendants($block);
+            $groupBlocks = array_merge([$block], $descendants);
+            return self::groupHasRenderableFields($groupBlocks);
+        }
+        return self::blockHasRenderableFields($block);
+    }
+
+    /**
+     * Helper to check if a section has any renderable element, recursively
+     * (nested sections are traversed).
+     */
+    private static function sectionHasRenderableContent(FormLayoutSection $section, FormConfig $config): bool {
+        foreach ($section->elements as $childNode) {
+            if ($childNode instanceof FormLayoutSection) {
+                if (self::sectionHasRenderableContent($childNode, $config)) return true;
+            } elseif ($childNode instanceof FormLayoutElement) {
+                if (self::elementHasRenderableContent($childNode, $config)) return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Recursively walks a layout node collecting the referenced data blocks and
+     * detecting collapsible sections (used by the CSS generator).
+     */
+    private function collectLayoutData(FormLayoutNode $node, FormConfig $config, array &$blocks, bool &$hasCollapsible): void {
+        if ($node instanceof FormLayoutSection) {
+            if (!empty($node->isCollapsible)) {
+                $hasCollapsible = true;
+            }
+            foreach ($node->elements as $childNode) {
+                $this->collectLayoutData($childNode, $config, $blocks, $hasCollapsible);
+            }
+        } elseif ($node instanceof FormLayoutElement) {
+            if ($node->type === 'datablock' && isset($config->data_blocks[$node->ref_id])) {
+                $blocks[] = $config->data_blocks[$node->ref_id];
+            }
+        }
+    }
+
+    /**
      * Generates the HTML for a given data block, iterating through its fields and rendering each field according to its type and the form theme.
      * @param FormDataBlock $block The data block containing the fields to be rendered
      * @param FormTheme $theme The form theme containing styling information that may affect how fields are rendered (e.g., floating labels)
+     * @param FormConfig $config The full form configuration
+     * @param ?string $instanceIndexVar Alpine index variable for instance-aware rendering, or null for scalar
+     * @param ?FormLayoutSection $section The layout section that contains the block (source of the group labels and title)
      * @return string The generated HTML for the data block as a string
      */
-    private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme): string {
+    private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme, FormConfig $config, ?string $instanceIndexVar = null, ?FormLayoutSection $section = null): string {
+        // Delegate group heads to the group renderer.
+        // Repeatable and optional groups use the indexed Alpine x-for wrapper (instance-aware).
+        // Simple groups (mandatory, max=1) with children render the root fields directly + children
+        // inline with STATIC field names (no instance index) so non-expandable actions and legacy
+        // behavior keep working until generic unrolling (B-4) lands.
+        $children = $config->getGroupChildren($block);
+        if ($block->isRepeatable() || $block->isOptional()) {
+            return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $section);
+        }
         $html = "";
+        // Root block fields (scalar rendering)
         foreach ($block->fields as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
             $html .= $this->renderField($field, $theme);
         }
+        // Simple group with children: render children inline (static, no instance index)
+        foreach ($children as $childBlock) {
+            // Skip blocks with no renderable fields anywhere in their subtree
+            // (matches the design filtering: empty blocks/groups are not shown)
+            if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
+            $html .= $this->renderBlockPanel($childBlock, $theme);
+        }
+        return $html;
+    }
+
+    /**
+     * Renders a group for a root data block. Handles three group types:
+     * - Repeatable (max > 1): x-for loop with add/remove buttons
+     * - Optional (min = 0, max = 1): master switch + single instance
+     * - Simple with children (min = 1, max = 1): single instance, no switch
+     *
+     * Direct children are rendered recursively (subgroup heads) or as panels (simple/optional children).
+     *
+     * @param FormDataBlock $rootBlock The group root block
+     * @param FormTheme $theme The form theme
+     * @param FormConfig $config The full form configuration
+     * @param ?string $instanceIndexVar Alpine index variable for the x-for loop ('index' by default)
+     * @param ?FormLayoutSection $section The layout section that contains the group (title and micro-copy labels)
+     * @return string The generated HTML for the group
+     */
+    private function generateGroupHtml(FormDataBlock $rootBlock, FormTheme $theme, FormConfig $config, ?string $instanceIndexVar = null, ?FormLayoutSection $section = null): string {
+        // Group presentation context comes from the layout section that contains the block (AWF Paso 4):
+        // a group is displayed as a section, so its title and micro-copy labels belong to the section.
+        $sectionTitle = ($section && $section->title !== '') ? $section->title : ($rootBlock->group_title ?: $rootBlock->text);
+        $groupTitle = htmlspecialchars($sectionTitle);
+        $toggleLabel = htmlspecialchars(($section && $section->toggle_label !== '') ? $section->toggle_label : (translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $sectionTitle));
+        $addLabel = htmlspecialchars(($section && $section->add_button_label !== '') ? $section->add_button_label : translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT', 'stic_AWF_Forms'));
+        $removeLabel = htmlspecialchars(($section && $section->remove_button_label !== '') ? $section->remove_button_label : translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT', 'stic_AWF_Forms'));
+
+        $maxInstances = $rootBlock->max_instances !== null ? (int)$rootBlock->max_instances : 'null';
+        $isRepeatable = $rootBlock->isRepeatable();
+        $isOptional = $rootBlock->isOptional();
+        $instanceVar = $instanceIndexVar ?? 'index';
+
+        // Direct children only (subgroup heads will be rendered recursively)
+        $children = $config->getGroupChildren($rootBlock);
+
+        // Alpine initialization:
+        // - Optional: start inactive with empty instances []
+        // - Mandatory (repeatable or simple): start active with one instance [{id:0}]
+        $initialActive = $isOptional ? 'false' : 'true';
+        $initialInstances = $isOptional ? '[]' : '[{ id: 0 }]';
+
+        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances} }\">" . $this->newLine('+');
+        {
+            // No group header is rendered: the group name is shown by the section
+            // title (visible by default), avoiding duplication with the primary color.
+
+            // 1. Optional activation switch: below the section title/subtitle, styled as a normal field
+            if ($isOptional) {
+                $html .= "<div class='form-check form-switch mb-3'>" . $this->newLine('+');
+                {
+                    $html .= "<input class='form-check-input' type='checkbox' role='switch' id='switch_{$rootBlock->id}' x-model='active' " .
+                            "@change=\"if (!active) { instances = []; } else if (instances.length === 0) { instances.push({ id: nextInstanceId++ }); }\">" . $this->newLine();
+                    $html .= "<label class='form-check-label mb-0' for='switch_{$rootBlock->id}'>{$toggleLabel}</label>" . $this->newLine();
+                }
+                $html .= "</div>" . $this->newLine('-');
+            }
+
+            // 2. Instance Loop (visible if active)
+            $html .= "<div x-show='active' x-transition>" . $this->newLine('+');
+            {
+                $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
+                {
+                    $html .= "<div class='awf-instance-card card border mb-3 shadow-sm'>" . $this->newLine('+');
+                    {
+                        // Instance card header
+                        $html .= "<div class='card-header bg-light d-flex justify-content-between align-items-center py-2'>" . $this->newLine('+');
+                        {
+                            $instanceTitle = $isRepeatable ? "'{$groupTitle} #' + ({$instanceVar} + 1)" : "'{$groupTitle}'";
+                            $html .= "<span class='fw-bold text-secondary' x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
+
+                            // Remove button: ONLY for repeatable groups, and only if index > 0
+                            if ($isRepeatable) {
+                                $html .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance)\">" . $this->newLine('+');
+                                {
+                                    $html .= "<span>{$removeLabel}</span>" . $this->newLine();
+                                }
+                                $html .= "</button>" . $this->newLine('-');
+                            }
+                        }
+                        $html .= "</div>" . $this->newLine('-');
+
+                        // Instance card body: root panel + children
+                        $html .= "<div class='card-body p-3 bg-white'>" . $this->newLine('+');
+                        {
+                            // Panel of the root block
+                            $html .= $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar);
+
+                            // Render direct children (NOT all descendants — subgroup heads are handled recursively)
+                            foreach ($children as $childBlock) {
+                                // Skip blocks with no renderable fields anywhere in their subtree
+                                // (matches the design filtering: empty blocks/groups are not shown)
+                                if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
+
+                                // Check if this child is itself a group head (subgroup)
+                                $childHasChildren = !empty($config->getGroupChildren($childBlock));
+                                $childIsGroupHead = $childBlock->isRepeatable() || $childBlock->isOptional() || $childHasChildren;
+
+                                if ($childIsGroupHead) {
+                                    // Recursive: render the subgroup inside this instance.
+                                    // The subgroup inherits the parent's index (N×M rule: only one repeatable per branch).
+                                    $html .= $this->generateGroupHtml($childBlock, $theme, $config);
+                                } elseif ($childBlock->isOptional()) {
+                                    // Optional child (not a subgroup head): per-instance activation toggle
+                                    $childTitle = htmlspecialchars(translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $childBlock->text);
+
+                                    $html .= "<div class='awf-child-optional-wrapper my-3 p-2 border rounded bg-light' x-data='{ includeChild: false }'>" . $this->newLine('+');
+                                    {
+                                        $html .= "<div class='form-check form-switch mb-0'>" . $this->newLine('+');
+                                        {
+                                            $html .= "<input class='form-check-input' type='checkbox' role='switch' :id=\"'child_switch_{$childBlock->id}_' + {$instanceVar}\" x-model='includeChild'>" . $this->newLine();
+                                            $html .= "<label class='form-check-label fw-bold text-secondary small' :for=\"'child_switch_{$childBlock->id}_' + {$instanceVar}\">{$childTitle}</label>" . $this->newLine();
+                                        }
+                                        $html .= "</div>" . $this->newLine('-');
+
+                                        $html .= "<template x-if='includeChild'>" . $this->newLine('+');
+                                        {
+                                            $html .= "<div class='mt-2'>" . $this->newLine('+');
+                                            {
+                                                $html .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar);
+                                            }
+                                            $html .= "</div>" . $this->newLine('-');
+                                        }
+                                        $html .= "</template>" . $this->newLine('-');
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
+                                } else {
+                                    // Mandatory simple child: displayed directly
+                                    $html .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar);
+                                }
+                            }
+                        }
+                        $html .= "</div>" . $this->newLine('-');
+                    }
+                    $html .= "</div>" . $this->newLine('-');
+                }
+                $html .= "</template>" . $this->newLine('-');
+
+                // 3. Add more instances button (ONLY for repeatable groups)
+                if ($isRepeatable) {
+                    $html .= "<button type='button' class='btn btn-sm btn-outline-primary awf-add-instance-btn mt-1' " .
+                            "@click=\"instances.push({ id: nextInstanceId++ })\" " .
+                            "x-show=\"!{$maxInstances} || instances.length < {$maxInstances}\">" . $this->newLine('+');
+                    {
+                        $html .= "<span>{$addLabel}</span>" . $this->newLine();
+                    }
+                    $html .= "</button>" . $this->newLine('-');
+                }
+            }
+            $html .= "</div>" . $this->newLine('-');
+        }
+        $html .= "</div>" . $this->newLine('-');
+
+        return $html;
+    }
+
+    /**
+     * Renders a structured panel (.awf-block-panel) for a DataBlock with STATIC field names
+     * (no instance index). Used for children of simple (non-repeatable, non-optional) groups.
+     *
+     * @param FormDataBlock $block The data block to render
+     * @param FormTheme $theme The form theme
+     * @return string Generated HTML for the block panel
+     */
+    private function renderBlockPanel(FormDataBlock $block, FormTheme $theme): string {
+        // A block with no renderable fields renders nothing (empty sub-section)
+        if (!self::blockHasRenderableFields($block)) return "";
+        $blockTitle = htmlspecialchars($block->text);
+
+        $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
+        {
+            $html .= "<h5 class='awf-block-title text-dark'>{$blockTitle}</h5>" . $this->newLine();
+            $html .= "<div class='awf-grid-fields'>" . $this->newLine('+');
+            {
+                foreach ($block->fields as $field) {
+                    if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                    $html .= $this->renderField($field, $theme);
+                }
+            }
+            $html .= "</div>" . $this->newLine('-');
+        }
+        $html .= "</div>" . $this->newLine('-');
+
+        return $html;
+    }
+
+    /**
+     * Renders a structured panel (.awf-block-panel) for a DataBlock inside a group instance,
+     * containing the block title and its grid of fields using instance-aware rendering.
+     *
+     * @param FormDataBlock $block The data block to render
+     * @param FormTheme $theme The form theme
+     * @param string $instanceIndexVar Alpine.js index variable name (e.g. 'index')
+     * @return string Generated HTML for the block panel
+     */
+    private function renderBlockInstancePanel(FormDataBlock $block, FormTheme $theme, string $instanceIndexVar): string {
+        // A block with no renderable fields renders nothing (empty sub-section)
+        if (!self::blockHasRenderableFields($block)) return "";
+        $blockTitle = htmlspecialchars($block->text);
+
+        $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
+        {
+            $html .= "<h5 class='awf-block-title text-dark'>{$blockTitle}</h5>" . $this->newLine();
+            $html .= "<div class='awf-grid-fields'>" . $this->newLine('+');
+            {
+                foreach ($block->fields as $field) {
+                    if ($field->type_field === DataBlockFieldType::FIXED) {
+                        continue;
+                    }
+                    // Render fields for the current instance using the instance index variable
+                    $html .= $this->renderFieldForInstance($field, $theme, $instanceIndexVar);
+                }
+            }
+            $html .= "</div>" . $this->newLine('-');
+        }
+        $html .= "</div>" . $this->newLine('-');
+
         return $html;
     }
 
@@ -496,12 +892,51 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML for the field as a string
      */
     private function renderField(FormDataBlockField $field, FormTheme $theme): string {
-        $inputName = $field->getKey();
+        return $this->renderFieldInternal($field, $theme);
+    }
+
+    /**
+     * Renders a field for a specific instance inside a repeatable group.
+     * @param FormDataBlockField $field The field to render
+     * @param FormTheme $theme The form theme
+     * @param string $instanceIndexVar The Alpine variable that holds the instance index (e.g., 'index')
+     * @return string The generated HTML
+     */
+    private function renderFieldForInstance(FormDataBlockField $field, FormTheme $theme, string $instanceIndexVar): string {
+        return $this->renderFieldInternal($field, $theme, $instanceIndexVar);
+    }
+
+    /**
+     * Internal field renderer that supports both scalar and instance-aware rendering.
+     * @param FormDataBlockField $field The field to render
+     * @param FormTheme $theme The form theme
+     * @param ?string $instanceIndexVar The Alpine variable for the instance index, or null for scalar fields
+     * @return string The generated HTML
+     */
+    private function renderFieldInternal(FormDataBlockField $field, FormTheme $theme, ?string $instanceIndexVar = null): string {
+        // Instance-aware field rendering for repeatable groups
+        $isInstance = $instanceIndexVar !== null;
+        $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
+        
+        // Template for dynamic name attribute inside the x-for loop (Alpine expression)
+        $inputNameTemplate = $inputName;
+        if ($isInstance) {
+            $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+            $inputNameTemplate = $namePrefix . $field->data_block->name . "[' + {$instanceIndexVar} + '][" . $field->name . "]";
+        }
+        
+        // The logical key used for the dynamic input ID (matches getKeyForId() validation error keys)
+        $inputKeyForId = $isInstance ? $field->data_block->name . "_' + {$instanceIndexVar} + '_" . $field->name : $field->getKeyForId();
+        if ($isInstance && $field->type_field === DataBlockFieldType::UNLINKED) {
+            $inputKeyForId = '_detached.' . $field->data_block->name . "_' + {$instanceIndexVar} + '_" . $field->name;
+        }
 
         // Render hidden fields differently: only input without label or wrapper
         if ($field->type_in_form === 'hidden') {
             $val = htmlspecialchars($field->value ?? '', ENT_QUOTES, 'UTF-8');
-            return "<input type='hidden' name='{$inputName}' id='f_{$inputName}' value='{$val}'>" . $this->newLine();
+            $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
+            $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+            return "<input type='hidden' {$nameAttr} {$idAttr} value='{$val}'>" . $this->newLine();
         }
 
         $label = htmlspecialchars($field->label);
@@ -526,13 +961,20 @@ class FormHtmlGeneratorService {
             }
         }
 
+        // Dynamic help ID and input IDs for repeatable fields
         $description = "";
         $ariaDescribedBy = "";
         if ($field->description != '') {
             $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
             $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
-            $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
-            $ariaDescribedBy = "aria-describedby='{$helpId}'";
+            if ($isInstance) {
+                $helpIdDynamic = "'help_' + '{$inputKeyForId}'";
+                $description = "<div :id=\"{$helpIdDynamic}\" class='form-text awf-help-text'>{$parsedDesc}</div>";
+                $ariaDescribedBy = ":aria-describedby=\"{$helpIdDynamic}\"";
+            } else {
+                $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
+                $ariaDescribedBy = "aria-describedby='{$helpId}'";
+            }
         }
 
         // --- SPECIAL CASES (Single Checkbox / Switch) with own representation ---
@@ -541,8 +983,11 @@ class FormHtmlGeneratorService {
         if ($field->subtype_in_form === 'select_checkbox') {
             $html = "<div class='form-check awf-field'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
-                $html .= "<label class='form-check-label' for='f_{$inputName}'>" . $this->newLine('+');
+                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
+                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
+                $html .= "<input type='checkbox' {$nameAttr} class='form-check-input' value='1' {$idAttr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
+                $html .= "<label class='form-check-label' {$forAttr}>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -561,8 +1006,11 @@ class FormHtmlGeneratorService {
         if ($field->subtype_in_form === 'select_switch') {
             $html = "<div class='form-check form-switch awf-field'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' role='switch' name='{$inputName}' class='form-check-input' value='1' id='f_{$inputName}' {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
-                $html .= "<label class='form-check-label' for='f_{$inputName}'>" . $this->newLine('+');
+                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
+                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
+                $html .= "<input type='checkbox' role='switch' {$nameAttr} class='form-check-input' value='1' {$idAttr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
+                $html .= "<label class='form-check-label' {$forAttr}>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -606,7 +1054,9 @@ class FormHtmlGeneratorService {
 
             // Text Areas
             if ($field->type_in_form == 'textarea') {
-                $controlHtml .= "<textarea {$validationsAttr} name='{$inputName}' class='form-control' id='f_{$inputName}' ".
+                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
+                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+                $controlHtml .= "<textarea {$validationsAttr} {$nameAttr} class='form-control' {$idAttr} ".
                                 "placeholder='{$placeholder}' style='height: 100px' {$ariaDescribedBy} {$requiredAttr}></textarea>" .$this->newLine();
 
             // Selects & Lists
@@ -616,6 +1066,8 @@ class FormHtmlGeneratorService {
                     $inputType = ($field->subtype_in_form === 'select_radio') ? 'radio' : 'checkbox';
                     $isMulti = ($inputType === 'checkbox');
                     $finalName = $inputName . ($isMulti ? '[]' : ''); // If multiple, name is array (ex: names[])
+                    $finalNameTemplate = $isInstance ? $inputNameTemplate . ($isMulti ? '[]' : '') : $finalName;
+                    $nameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
 
                     $controlHtml .= "<div class='awf-option-group pt-1'>" .$this->newLine('+');
                     {
@@ -624,12 +1076,15 @@ class FormHtmlGeneratorService {
                                 $val = htmlspecialchars($opt->value);
                                 $txt = htmlspecialchars($opt->text);
                                 $optId = "f_{$inputName}_" . preg_replace('/[^a-zA-Z0-9]/', '', $val); 
+                                $optIdTemplate = $isInstance ? "'f_' + '{$inputKeyForId}' + '_" . preg_replace('/[^a-zA-Z0-9]/', '', $val) . "'" : "'{$optId}'";
                                 $req = ($requiredAttr && !$isMulti) ? 'required' : '';  // Note: 'required' in checkboxes groups is complex in pure HTML5. 
 
                                 $controlHtml .= "<div class='form-check'>" .$this->newLine('+');
                                 {
-                                    $controlHtml .= "<input {$validationsAttr} type='{$inputType}' name='{$finalName}' id='{$optId}' value='{$val}' class='form-check-input' {$req}>" .$this->newLine();
-                                    $controlHtml .= "<label class='form-check-label' for='{$optId}'>{$txt}</label>" .$this->newLine();
+                                    $idAttr = $isInstance ? ":id={$optIdTemplate}" : "id='{$optId}'";
+                                    $forAttr = $isInstance ? ":for={$optIdTemplate}" : "for='{$optId}'";
+                                    $controlHtml .= "<input {$validationsAttr} type='{$inputType}' {$nameAttr} {$idAttr} value='{$val}' class='form-check-input' {$req}>" .$this->newLine();
+                                    $controlHtml .= "<label class='form-check-label' {$forAttr}>{$txt}</label>" .$this->newLine();
                                 }
                                 $controlHtml .= "</div>" .$this->newLine('-');
                             }
@@ -642,9 +1097,12 @@ class FormHtmlGeneratorService {
                 else {
                     $isMultipleSelect = ($field->subtype_in_form === 'select_multiple');
                     $finalName = $inputName . ($isMultipleSelect ? '[]' : '');
+                    $finalNameTemplate = $isInstance ? $inputNameTemplate . ($isMultipleSelect ? '[]' : '') : $finalName;
+                    $nameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
                     $multipleAttr = $isMultipleSelect ? 'multiple' : '';
                     
-                    $controlHtml .= "<select {$validationsAttr} name='{$finalName}' class='form-select' id='f_{$inputName}' {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine('+');
+                    $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+                    $controlHtml .= "<select {$validationsAttr} {$nameAttr} class='form-select' {$idAttr} {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine('+');
                     {
                         // Empty option only if not muliple
                         if (!$isMultipleSelect) {
@@ -679,14 +1137,17 @@ class FormHtmlGeneratorService {
                 }
                 $iconClass = $this->getIconClass($field->subtype_in_form);
                 $cssClasses = 'form-control ' . ($iconClass ?? '');
-                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' name='{$inputName}' class='{$cssClasses}' id='f_{$inputName}' ".
+                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
+                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
+                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' {$nameAttr} class='{$cssClasses}' {$idAttr} ".
                                 "placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine();
             }
 
             if ($isFloating) {
                 // Floating order: Input, Label
                 $html .= $controlHtml .$this->newLine();
-                $html .= "<label for='f_{$inputName}'>" . $this->newLine('+'); 
+                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
+                $html .= "<label {$forAttr}>" . $this->newLine('+'); 
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -697,7 +1158,8 @@ class FormHtmlGeneratorService {
         
             } else {
                 // Default order: Label, Input
-                $html .= "<label for='f_{$inputName}' class='form-label'>" . $this->newLine('+');
+                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
+                $html .= "<label {$forAttr} class='form-label'>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {

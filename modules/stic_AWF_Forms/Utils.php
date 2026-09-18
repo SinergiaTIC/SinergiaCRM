@@ -112,7 +112,9 @@ class stic_AWF_FormsUtils {
 
             $result['fields'][$fieldName] = [
                 'name' => $fieldName,
-                'text' => rtrim(trim(translate($arr['vname'] ?? '', $moduleName)), ":"),
+                // Decode HTML entities so the client stores pure text in the JSON config
+                // (see getRecordsTextById for details)
+                'text' => html_entity_decode(rtrim(trim(translate($arr['vname'] ?? '', $moduleName)), ":"), ENT_QUOTES, 'UTF-8'),
                 'type' => $arr['type'],
                 'required' => isset($arr['required']) && $arr['required'],
                 'default' => $arr['default'] ?? null,
@@ -610,6 +612,12 @@ class stic_AWF_FormsUtils {
 
             $displayField = self::detectDisplayField($bean);
             $text = isset($bean->$displayField) ? $bean->$displayField : $bean->id;
+            // The DB layer entity-encodes the value ("&quot;", "&#039;"...). If this text
+            // is stored as is in the form configuration and the configuration is saved
+            // again, from_html() (applied by the DB layer on save) decodes those entities
+            // to raw characters, producing invalid JSON. Decode here so the client always
+            // receives pure text.
+            $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
 
             $results[] = [
                 'id' => $bean->id,
