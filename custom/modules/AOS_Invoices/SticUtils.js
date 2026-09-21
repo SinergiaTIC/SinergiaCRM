@@ -510,6 +510,23 @@ $(document).ready(function() {
       $field.prop('readonly', true).addClass('stic-disabled');
     }
   });
+
+  // Shipping amount (Envío) is an editable currency input: render it as a native
+  // numeric field with 2-decimal precision so non-numeric input is rejected by the
+  // browser itself. The blur fallback clears anything non-finite.
+  var $shippingAmount = $('#shipping_amount');
+  if ($shippingAmount.length) {
+    $shippingAmount.prop('type', 'number')
+      .prop('step', '0.01')
+      .prop('min', '0')
+      .attr('inputmode', 'decimal');
+    $shippingAmount.on('blur', function() {
+      var raw = $shippingAmount.val();
+      if (raw !== '' && !isFinite(Number(raw))) {
+        $shippingAmount.val('');
+      }
+    });
+  }
 });
 
 // Mass send selected invoices to AEAT
