@@ -1097,6 +1097,13 @@ class WizardStep2 {
       get formConfig() { return window.alpineComponent.formConfig; },
       get data_blocks() { return this.formConfig.data_blocks; },
       get orderedDataBlocks() { return this.formConfig.getOrderedDataBlocks(); },
+      // 2-level visual tree (ADR-8): groups are container cards holding their block cards
+      get blockTree() { return this.formConfig.getVisualTree(); },
+      // A group container shows the error style when any of its blocks is invalid
+      groupNodeHasErrors(node) {
+        const blocks = [node.block, ...node.members.flatMap(m => [m.block, ...(m.members || []).map(g => g.block)])];
+        return blocks.some(b => !b.isValid());
+      },
 
       /**
        * Reassigns the group_root of a DataBlock and provides visual feedback.
@@ -2719,45 +2726,49 @@ class WizardStep4 {
       },
 
       canDeleteSection(section) {
-        return section.elements.length==0;
+        // A section (top-level or nested) can be deleted only when it holds no
+        // data block at any depth
+        const hasBlocks = (sec) => sec.elements.some(el => el.type === 'datablock' || (el.type === 'section' && hasBlocks(el)));
+        return !hasBlocks(section);
       },
 
       deleteSection(section) {
         if (!this.canDeleteSection(section)) return;
-
-        this.layout.structure = this.sections.filter(s => s.id != section.id);
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        if (idx >= 0) arr.splice(idx, 1);
       },
 
       canMoveUpSection(section) {
-        const index = this.sections.findIndex(s => s.id == section.id);
-        if (index <= 0) return false;
-
-        return true;
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        return idx > 0 && arr.slice(0, idx).some(el => el.type === 'section');
       },
       
       moveUpSection(section) {
-        if (!this.canMoveUpSection(section)) return;
-
-        const index = this.sections.findIndex(s => s.id == section.id);
-        const sectionToMove = this.sections[index];
-        this.sections.splice(index, 1);
-        this.sections.splice(index - 1, 0, sectionToMove);
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        let j = idx - 1;
+        while (j >= 0 && arr[j].type !== 'section') j--;
+        if (idx <= 0 || j < 0) return;
+        const [item] = arr.splice(idx, 1);
+        arr.splice(j, 0, item);
       },
 
       canMoveDownSection(section) {
-        const index = this.sections.findIndex(s => s.id == section.id);
-        if (index >= this.sections.length - 1) return false;
-
-        return true;
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        return idx >= 0 && arr.slice(idx + 1).some(el => el.type === 'section');
       },
 
       moveDownSection(section) {
-        if (!this.canMoveDownSection(section)) return;
-
-        const index = this.sections.findIndex(s => s.id == section.id);
-        const sectionToMove = this.sections[index];
-        this.sections.splice(index, 1);
-        this.sections.splice(index + 1, 0, sectionToMove);
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        let j = idx + 1;
+        while (j < arr.length && arr[j].type !== 'section') j++;
+        if (idx < 0 || j >= arr.length) return;
+        const [item] = arr.splice(idx, 1);
+        arr.splice(j, 0, item);
       },
 
       getDataBlock(element) {
@@ -2781,19 +2792,60 @@ class WizardStep4 {
       },
 
       getGroup(section) {
-        // The section's group is determined by its OWNER ROOT: the first datablock element without group_root 
-        // Fallback for sections without an owner root (all members): first group head found.
-        let fallback = null;
-        for (const el of section.elements) {
-          if (el.type !== 'datablock') continue;
-          const block = this.getDataBlock(el);
-          if (!block) continue;
-          if (!block.group_root || block.group_root === '') {
-            return block.isGroupHead(this.data_blocks) ? block : null; // The owner root decides
+        // The section's group is determined by its OWNER ROOT: the first block
+        // without group_root, found depth-first (nested sections included).
+        // Fallback for sections without any root block: first group head found.
+        let firstRoot = null;
+        let firstHead = null;
+        const scan = (sec) => {
+          for (const el of sec.elements) {
+            if (el.type === 'section') { scan(el); continue; }
+            if (el.type !== 'datablock') continue;
+            const block = this.getDataBlock(el);
+            if (!block) continue;
+            if ((!block.group_root || block.group_root === '') && !firstRoot) firstRoot = block;
+            if (!firstHead && block.isGroupHead(this.data_blocks)) firstHead = block;
           }
-          if (!fallback && block.isGroupHead(this.data_blocks)) fallback = block;
+        };
+        scan(section);
+        const owner = firstRoot || firstHead;
+        return owner && owner.isGroupHead(this.data_blocks) ? owner : null;
+      },
+
+      // The top-level section that contains a nested section (or null)
+      getParentSectionOf(section) {
+        return this.sections.find(s => s.elements.some(el => el.type === 'section' && el.id === section.id)) || null;
+      },
+
+      isNestedSection(section) {
+        return !!this.getParentSectionOf(section);
+      },
+
+      // Finds a section by ID at any level (top-level sections and nested sections)
+      findSectionById(id) {
+        for (const s of this.sections) {
+          if (s.id == id) return s;
+          const nested = s.elements.find(el => el.type === 'section' && el.id == id);
+          if (nested) return nested;
         }
-        return fallback;
+        return null;
+      },
+
+      // Candidate sections an element can be moved to (same level, same context):
+      //  - a block inside a group's nested section: the OTHER nested sections of that group
+      //  - a block in a top-level section: the other standalone (non-group) top-level sections
+      getMoveTargets(element, fromSection) {
+        if (this.isNestedSection(fromSection)) {
+          const parent = this.getParentSectionOf(fromSection);
+          return parent.elements.filter(el => el.type === 'section' && el.id !== fromSection.id);
+        }
+        return this.sections.filter(s => s.id !== fromSection.id && !this.isGroupSection(s));
+      },
+
+      // Adds a new (empty) nested section to a group section
+      addNestedSection(groupSection) {
+        if (!this.isGroupSection(groupSection)) return;
+        groupSection.elements.push(new stic_AwfLayoutSection({ title: '' }));
       },
 
       getFields(element) {
@@ -2826,27 +2878,14 @@ class WizardStep4 {
       moveElementToSection(element, fromSectionId, toSectionId) {
         if (!toSectionId || fromSectionId === toSectionId) return;
 
-        const fromSection = this.sections.find(s => s.id == fromSectionId);
-        const toSection = this.sections.find(s => s.id == toSectionId);
+        const fromSection = this.findSectionById(fromSectionId);
+        const toSection = this.findSectionById(toSectionId);
         if (!fromSection || !toSection) return;
 
-        // Blocks inside a group section cannot leave it
-        if (this.isGroupSection(fromSection)) return;
-        // No block can move INTO a group section from outside
-        if (this.isGroupSection(toSection)) return;
-
-        // IEPA!! Revisar
-        const block = this.getDataBlock(element);
-        if (block && block.group_root && block.group_root !== '') {
-          // Children of a repeatable root cannot be moved independently
-          alert(utils.translate('LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD'));
-          return;
-        }
-        if (block && block.isGroupHead(this.data_blocks)) {
-          // The group head cannot leave its group section
-          alert(utils.translate('LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD'));
-          return;
-        }
+        // Same-level rule: blocks of a group only move between that group's nested
+        // sections; standalone blocks only move between standalone top-level sections.
+        // The dropdown already shows only valid targets; this is the enforcement.
+        if (!this.getMoveTargets(element, fromSection).some(s => s.id === toSection.id)) return;
 
         // Move the element itself
         fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);

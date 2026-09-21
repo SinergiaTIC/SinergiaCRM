@@ -406,7 +406,12 @@
                                     <div id="LayoutBody_Body" class="accordion-body"> 
                                         <div class="flex-fill border rounded p-2 overflow-auto">
                                             <h4 class="mb-2" x-text="utils.translate('LBL_SECTIONS')"></h3>
-                                            <template x-for="(section, index) in sections" :key="section.id">
+                                            <template x-for="section in sections" :key="section.id">
+                                                <div x-data="{ level: 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
+                                            </template>
+
+                                            <!-- Reusable inert templates (stamped via sticControls.mountTemplate) -->
+                                            <template id="awfTplLayoutSection">
                                                 <div class="card datablock mb-3 shadow-sm transition-all" x-data="{showSettings: false, isCollapsed: false}">
                                                     <!-- Integrated Group header (Rendered ONLY if item is a group head/subgroup) -->
                                                     <template x-if="isGroupSection(section)">
@@ -472,6 +477,13 @@
                                                                         :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
                                                                     <span class="suitepicon suitepicon-action-delete"></span>
                                                                 </button>
+
+                                                                <!-- Add nested section (group sections only) -->
+                                                                <template x-if="isGroupSection(section) && level < 2">
+                                                                    <button type="button" class="btn ms-2" :title="utils.translate('LBL_SECTION_ADD')" @click="addNestedSection(section);">
+                                                                        <span class="suitepicon suitepicon-action-plus"></span>
+                                                                    </button>
+                                                                </template>
 
                                                                 <!-- Chevron -->
                                                                 <button class="btn btn-sm btn-link text-decoration-none" @click="isCollapsed = !isCollapsed">
@@ -565,53 +577,64 @@
 
                                                     <!-- Section Body -->
                                                     <div class="card-body p-2" x-show="!isCollapsed" x-transition>
-                                                        <!-- Content -->
+                                                        <!-- Content: data blocks and (level < 2) nested sections -->
                                                         <template x-for="(element, index) in section.elements" :key="element.id">
-                                                            <div class="card mb-2 border-secondary"
-                                                                    :class="{
-                                                                    'groupdatablock': getDataBlock(element)?.isGroupHead(data_blocks),
-                                                                    'child-block': getDataBlock(element)?.is_child,
-                                                                    'datablock-element': isGroupSection(section)
-                                                                    }">
-                                                                <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
-                                                                    <div class="d-flex align-items-center gap-2">
-                                                                        <strong x-text="getElementHeader(element)"></strong>
-                                                                    </div>
-                                                                    <div class="d-inline-flex gap-2">
-                                                                        <select class="form-select small text-muted w-auto" @change="moveElementToSection(element, section.id, $event.target.value)"
-                                                                                style="min-width: 100px;"
-                                                                                :disabled="isGroupSection(section) || getDataBlock(element)?.is_child || getDataBlock(element)?.isGroupHead(data_blocks)">
-                                                                            <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
-                                                                            <template x-for="sec in sections" :key="sec.id">
-                                                                                <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')" 
-                                                                                        x-show="sec.id !== section.id && !isGroupSection(sec)"></option>
-                                                                            </template>
-                                                                        </select>
-
-                                                                        <div class="input-group flex-shrink-0" role="group">
-                                                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                                                    :disabled="index === 0 || getDataBlock(element)?.is_child" @click="moveElementUp(section, index);">
-                                                                                <span class="suitepicon suitepicon-action-move-up"></span>
-                                                                            </button>
-                                                                            <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                                                    :disabled="index === section.elements.length - 1 || getDataBlock(element)?.is_child" @click="moveElementDown(section, index)">                                                                                
-                                                                                <span class="suitepicon suitepicon-action-move-down"></span>
-                                                                            </button>
-                                                                        </div> 
-                                                                    </div>
-                                                                </div>
-
-                                                                <div class="card-body">
-                                                                    <template x-if="element.type=='datablock'">
-                                                                        <template x-for="field in getFields(element)" :key="field.name">
-                                                                            <div class="form-check form-check-inline border rounded px-2 py-1 m-0" x-text="field.label"></div>
-                                                                        </template>
-                                                                    </template>
-                                                                </div>
+                                                            <div>
+                                                                <template x-if="element.type === 'section' && level < 2">
+                                                                    <div x-data="{ section: element, level: level + 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
+                                                                </template>
+                                                                <template x-if="element.type === 'datablock'">
+                                                                    <div x-data="{ element: element, parentSection: section, index: index, isCollapsed: true }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutElement')"></div>
+                                                                </template>
                                                             </div>
                                                         </template>
                                                         <template x-if="section.elements.length === 0">
                                                             <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
+                                                        </template>
+                                                    </div>
+                                                </div>
+                                            </template>
+
+                                            <template id="awfTplLayoutElement">
+                                                <!-- Layout element card (data block, collapsed by default) -->
+                                                <div class="card mb-2">
+                                                    <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
+                                                        <div class="d-flex align-items-center gap-2">
+                                                            <strong x-text="getElementHeader(element)"></strong>
+                                                        </div>
+                                                        <div class="d-inline-flex gap-2 align-items-center">
+                                                            <select class="form-select small text-muted w-auto" @change="moveElementToSection(element, parentSection.id, $event.target.value); $event.target.value='';"
+                                                                    style="min-width: 100px;"
+                                                                    :disabled="getMoveTargets(element, parentSection).length === 0">
+                                                                <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
+                                                                <template x-for="sec in getMoveTargets(element, parentSection)" :key="sec.id">
+                                                                    <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')"></option>
+                                                                </template>
+                                                            </select>
+
+                                                            <div class="input-group" role="group">
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                                        :disabled="index === 0 || getDataBlock(element)?.is_child" @click="moveElementUp(parentSection, index);">
+                                                                    <span class="suitepicon suitepicon-action-move-up"></span>
+                                                                </button>
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                                        :disabled="index === parentSection.elements.length - 1 || getDataBlock(element)?.is_child" @click="moveElementDown(parentSection, index);">
+                                                                    <span class="suitepicon suitepicon-action-move-down"></span>
+                                                                </button>
+                                                            </div>
+
+                                                            <!-- Chevron: collapse/expand the block preview (collapsed by default) -->
+                                                            <button class="btn btn-sm btn-link text-decoration-none" @click="isCollapsed = !isCollapsed">
+                                                                <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="card-body" x-show="!isCollapsed" x-transition>
+                                                        <template x-if="element.type=='datablock'">
+                                                            <template x-for="field in getFields(element)" :key="field.name">
+                                                                <div class="form-check form-check-inline border rounded px-2 py-1 m-0" x-text="field.label"></div>
+                                                            </template>
                                                         </template>
                                                     </div>
                                                 </div>
@@ -625,8 +648,8 @@
                             <!-- Footer -->
                             <div class="accordion-item" x-data="{opened:false}">
                                 <div id="LayoutFooter_Header" class="accordion-header accordion-button" role="button" 
-                                    :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
-                                    data-bs-target="#LayoutFooter_Content" aria-controls="LayoutFooter_Content">
+                                     :class="{'collapsed': !opened}" @click="opened = !opened" data-bs-toggle="collapse" 
+                                     data-bs-target="#LayoutFooter_Content" aria-controls="LayoutFooter_Content">
                                     <h3 x-text="utils.translate('LBL_LAYOUT_FOOTER')"></h3>
                                 </div>
                                 <div id="LayoutFooter_Content" class="accordion-collapse collapse" aria-labelledby="LayoutFooter_Header">

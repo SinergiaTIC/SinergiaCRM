@@ -213,6 +213,31 @@
   border-color: #80abec; 
 }
 
+/* Group container cards (step 2, 2-level group tree, ADR-8): a group card holds
+   the data block cards of the group (root block included) */
+.card.group-card {
+  border-color: #80abec;
+}
+.card.group-card > .awf-group-header > .card-header {
+  background-color: #e9f2ff;
+}
+.card.group-card .awf-group-body {
+  background-color: #f7fafd;
+}
+.card.group-card.subgroup-card {
+  border-color: #9ec1f0;
+}
+.card.group-card.subgroup-card > .awf-group-header > .card-header {
+  background-color: #f0f6ff;
+}
+.datablock-group-badge {
+  margin-left:-10px; 
+  margin-top:-5px;
+  font-weight: normal !important;
+  text-align: left !important;
+}
+
+
 .card.datablock.child-block {
   margin-left: 2rem;
 }
