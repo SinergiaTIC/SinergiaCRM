@@ -349,7 +349,8 @@ require_once 'modules/SecurityGroups/SecurityGroup.php';
 $userSecurityGroups = SecurityGroup::getUserSecurityGroups($current_user->id);
 $userGroupIds = array_keys($userSecurityGroups);
 
-if (!empty($userGroupIds)) {
+// Filter by SG only if user role restricts access; otherwise show all records
+if (!empty($userGroupIds) && ACLController::requireSecurityGroup('stic_Payments', 'list')) {
     $userGroupIdsStr = "'" . implode("','", array_map(function ($id) use ($db) {
         return $db->quote($id);
     }, $userGroupIds)) . "'";
