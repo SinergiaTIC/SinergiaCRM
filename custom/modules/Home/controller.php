@@ -47,4 +47,30 @@ class CustomHomeController extends HomeController
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "An error occurred while trying to redirect to SinergiaDA. The user [{$current_user->user_name}] does not have access to SinergiaDA");
         }
     }
+
+    /**
+     * Override action_getEditFieldHTML to filter the invoice_status_dom dropdown
+     * based on the invoice's current status when Verifactu is activated.
+     * In legacy mode, draft and emitted statuses are removed from the dropdown.
+     */
+    public function action_getEditFieldHTML()
+    {
+        if (!empty($_REQUEST['current_module']) && $_REQUEST['current_module'] === 'AOS_Invoices'
+            && !empty($_REQUEST['id']) && !empty($_REQUEST['field'])
+            && $_REQUEST['field'] === 'status'
+        ) {
+            require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+            $bean = BeanFactory::getBean('AOS_Invoices', $_REQUEST['id']);
+            if ($bean && $bean->id) {
+                global $app_list_strings;
+                if (AOS_InvoicesUtils::isVerifactuActivated()) {
+                    AOS_InvoicesUtils::filterStatusDropdown($app_list_strings, $bean->status);
+                } else {
+                    unset($app_list_strings['invoice_status_dom']['draft']);
+                    unset($app_list_strings['invoice_status_dom']['emitted']);
+                }
+            }
+        }
+        parent::action_getEditFieldHTML();
+    }
 }

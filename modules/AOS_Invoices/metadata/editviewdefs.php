@@ -356,6 +356,10 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_VERIFACTU_RECTIFIED_PANEL' => array(
+                    'newTab' => false,
+                    'panelDefault' => 'expanded',
+                ),
                 'LBL_INVOICE_TO' => array(
                     'newTab' => false,
                     'panelDefault' => 'expanded',
@@ -382,7 +386,10 @@ array(
                     ),
                 ),
                 1 => array(
-                    0 => '',
+                    0 => array(
+                        'name' => 'verifactu_invoice_type_c',
+                        'label' => 'LBL_VERIFACTU_INVOICE_TYPE',
+                    ),
                     1 => array(
                         'name' => 'status',
                         'label' => 'LBL_STATUS',
@@ -413,6 +420,30 @@ array(
                         'name' => 'description',
                         'label' => 'LBL_DESCRIPTION',
                     ),
+                ),
+            ),
+            'LBL_VERIFACTU_RECTIFIED_PANEL' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'verifactu_is_rectified_c',
+                        'label' => 'LBL_VERIFACTU_IS_RECTIFIED',
+                    ),
+                    1 => array(
+                        'name' => 'verifactu_rectified_type_c',
+                        'label' => 'LBL_VERIFACTU_RECTIFIED_TYPE',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'verifactu_rectified_base_c',
+                        'label' => 'LBL_VERIFACTU_RECTIFIED_BASE',
+                    ),
+                    1 => array(
+                        'name' => 'verifactu_cancel_name_c',
+                        'studio' => 'visible',
+                        'label' => 'LBL_VERIFACTU_CANCEL_NAME',
+                    ),
+                    
                 ),
             ),
             'LBL_INVOICE_TO' => array(

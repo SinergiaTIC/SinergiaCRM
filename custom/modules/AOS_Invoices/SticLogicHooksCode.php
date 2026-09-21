@@ -1,0 +1,587 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+class AOS_InvoicesHook
+{
+    public function before_save($bean, $event, $arguments)
+    {
+        global $sugar_config, $mod_strings;
+
+        // === Step 1.3: Clear number on duplicate to avoid AEAT duplicate error ===
+        // When duplicating, SuiteCRM copies all fields including number
+        // We must reset it so a new number is generated at send time
+        $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') 
+            || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true');
+        
+        if ($isDuplicate && !empty($bean->number)) {
+            $GLOBALS['log']->debug(__METHOD__ . ': Clearing number on duplicate. Original number was: ' . $bean->number);
+            $bean->number = '';
+        }
+        // === End Step 1.3 ===
+
+        // === Legacy mode: Generate invoice number on save if Verifactu is not activated ===
+        // Simple sequential numbering: MAX(number) + 1, without series format
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        $isVerifactuActivated = AOS_InvoicesUtils::isVerifactuActivated();
+        $isNew = empty($bean->fetched_row['id']);
+        
+        if (!$isVerifactuActivated && empty($bean->number) && ($isNew || $isDuplicate)) {
+            $lastNumber = $GLOBALS['db']->getOne("SELECT MAX(CAST(number AS UNSIGNED)) FROM aos_invoices WHERE deleted = 0 AND number IS NOT NULL AND number != ''");
+            $bean->number = ($lastNumber !== null) ? (string) ((int) $lastNumber + 1) : '1';
+            $GLOBALS['log']->debug(__METHOD__ . ': Generated invoice number in legacy mode: ' . $bean->number);
+        }
+        // === End Legacy mode ===
+
+   
+        // Clear address fields if no customer is selected
+        if (empty($bean->billing_account_id) && empty($bean->billing_contact_id)) {
+            $bean->billing_address_street = '';
+            $bean->billing_address_city = '';
+            $bean->billing_address_state = '';
+            $bean->billing_address_postalcode = '';
+            $bean->billing_address_country = '';
+            $bean->shipping_address_street = '';
+            $bean->shipping_address_city = '';
+            $bean->shipping_address_state = '';
+            $bean->shipping_address_postalcode = '';
+            $bean->shipping_address_country = '';
+        }
+        // === End customer identification number validation ===
+
+        // === Block status change from draft to non-emitted (Verifactu mode only) ===
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (AOS_InvoicesUtils::isVerifactuActivated()) {
+            $isNewRecord = empty($bean->fetched_row['id']);
+            $isCurrentlyDraft = !empty($bean->fetched_row['status']) && $bean->fetched_row['status'] === 'draft';
+            if ($bean->status !== 'draft' && $bean->status !== 'emitted' && ($isNewRecord || $isCurrentlyDraft)) {
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_VERIFACTU_STATUS_DRAFT_TO_OTHER_ERROR']));
+                $bean->status = 'draft';
+                $bean->in_save = false;
+                if (!$isNewRecord) {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
+                    die();
+                }
+            }
+        }
+        // === End block status change ===
+
+        // === Phase C: status matrix within the issued family (Verifactu mode only) ===
+        // Dynamic family (see getIssuedFamilyStatuses): entity-added statuses
+        // behave like emitted_paid/emitted_unpaid. Moves to Borrador are reverted
+        // by Step 1.1a, 'Cancelled' is blocked below. Paid/Unpaid are legacy-only.
+        if (AOS_InvoicesUtils::isVerifactuActivated() && !$isDuplicate && !$isNewRecord) {
+            $issuedFamily = AOS_InvoicesUtils::getIssuedFamilyStatuses();
+            $fetchedStatus = $bean->fetched_row['status'] ?? null;
+            if (in_array($fetchedStatus, $issuedFamily, true)
+                && !in_array($bean->status, $issuedFamily, true)) {
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($mod_strings['LBL_VERIFACTU_STATUS_ISSUED_MATRIX_ERROR']));
+                $GLOBALS['log']->error(__METHOD__ . ': Phase C - Blocked status change from "' . $fetchedStatus . '" to "' . $bean->status . '" for invoice ' . $bean->id);
+                $bean->status = $fetchedStatus;
+                $bean->in_save = false;
+            }
+        }
+        // === End Phase C matrix ===
+
+        // === Step 1.1a: Block non-draft → draft status change ===
+        if (AOS_InvoicesUtils::isVerifactuActivated() && !$isNewRecord
+            && $bean->status === 'draft' && !empty($bean->fetched_row['status'])
+            && $bean->fetched_row['status'] !== 'draft') {
+            $GLOBALS['log']->error(__METHOD__ . ': Step 1.1a - Blocked non-draft→draft status change for invoice ' . $bean->id);
+            $bean->status = $bean->fetched_row['status'];
+        }
+        // === End Step 1.1a ===
+
+        // === Block Cancelled status in Verifactu mode ===
+        if (AOS_InvoicesUtils::isVerifactuActivated() && $bean->status === 'Cancelled') {
+            $GLOBALS['log']->error(__METHOD__ . ': Blocked Cancelled status in Verifactu mode for invoice ' . $bean->id);
+            $bean->status = !empty($bean->fetched_row['status']) ? $bean->fetched_row['status'] : 'emitted';
+        }
+        // === End Block Cancelled ===
+
+        // === Step 1.1c: Field protection for sent invoices (inline edit only) ===
+        // Golden rule: sent/protected = aeat_status IN ('accepted','cancelled').
+        // Inline edit modifies exactly 1 field at a time (via saveField). If only 1 field changed
+        // besides system fields, it's an inline edit. System saves (sendToAeat, etc.) change
+        // multiple fields and are allowed to proceed unrestricted.
+        $originalBean11c = !empty($bean->fetched_row) ? (object)$bean->fetched_row : null;
+        if (AOS_InvoicesUtils::isVerifactuActivated() && !$isNewRecord
+            && !empty($originalBean11c)
+            && AOS_InvoicesUtils::isInvoiceProtected($originalBean11c)) {
+
+            $allowedFields = array('status', 'description', 'assigned_user_id');
+            $modifiedFields = array();
+
+            foreach ($bean->fetched_row as $field => $originalValue) {
+                if (in_array($field, $allowedFields)) {
+                    continue;
+                }
+                // Compare current bean value with original fetched value
+                $currentValue = isset($bean->$field) ? $bean->$field : null;
+                $originalNormalized = ($originalValue === null || $originalValue === '') ? null : $originalValue;
+                $currentNormalized = ($currentValue === null || $currentValue === '') ? null : $currentValue;
+
+                if ($currentNormalized !== $originalNormalized) {
+                    // Skip phantom datetime differences (display round-trip drops seconds)
+                    $fieldType11c = $bean->field_defs[$field]['type'] ?? '';
+                    if (in_array($fieldType11c, array('datetime', 'datetimecombo'), true)
+                        && AOS_InvoicesUtils::protectionDateTimesEqual($currentNormalized, $originalNormalized)) {
+                        continue;
+                    }
+                    // Check if this is a phantom change from cleanBean()->purify_html()
+                    // cleanBean() applies purify_html() to char/text/enum fields before before_save,
+                    // which creates artificial differences vs fetched_row (e.g. accented chars → HTML entities)
+                    if (!empty($currentNormalized) && !empty($originalNormalized)) {
+                        $fieldType = $bean->field_defs[$field]['type'] ?? '';
+                        $fieldDbType = $bean->field_defs[$field]['dbType'] ?? '';
+                        $combinedType = $fieldType . $fieldDbType;
+                        if (strpos($combinedType, 'char') !== false || strpos($combinedType, 'text') !== false || $fieldType === 'enum') {
+                            $purifiedOriginal = purify_html($originalNormalized, ['HTML.ForbiddenElements' => ['iframe' => true]]);
+                            if ($purifiedOriginal === $currentNormalized) {
+                                $bean->$field = $bean->fetched_row[$field];
+                                continue;
+                            }
+                        }
+                    }
+                    $modifiedFields[] = $field;
+                }
+            }
+
+            // If exactly 1 field changed (inline edit) and it's not allowed, revert it
+            if (count($modifiedFields) === 1) {
+                $field = $modifiedFields[0];
+                $GLOBALS['log']->error(__METHOD__ . ': Step 1.1c - Blocked inline edit of field "' . $field . '" for sent invoice ' . $bean->id);
+                $bean->$field = $bean->fetched_row[$field];
+            }
+        }
+        // === End Step 1.1c ===
+
+        // === Step 3b: Set default verifactu_valid_invoice_c ===
+        // New invoices default to null (not yet sent to AEAT).
+        // Only becomes 1 (vigente) when sent and accepted by AEAT.
+        if (AOS_InvoicesUtils::isVerifactuActivated() && $isNew) {
+            $bean->verifactu_valid_invoice_c = null;
+        }
+        // === End Step 3b ===
+
+        // === Step 1.1: Block edition of invoices accepted/cancelled by AEAT ===
+        // Golden rule: sent/protected = aeat_status IN ('accepted','cancelled').
+        // Uses the pre-save (fetched) status so a save that also tries to change
+        // aeat_status itself is still caught (aeat_status is a protected field).
+        $originalBean = !empty($bean->fetched_row) ? (object)$bean->fetched_row : null;
+        if (AOS_InvoicesUtils::isVerifactuActivated() &&
+            !empty($originalBean) &&
+            AOS_InvoicesUtils::isInvoiceProtected($originalBean)) {
+            
+            // Check if it's a duplicate or creating a rectified invoice (both are allowed)
+            $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1')
+                || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true')
+                // Allow if this is a new rectified invoice (action=CreateRectifiedInvoice)
+                || ($_REQUEST['action'] === 'CreateRectifiedInvoice')
+                // Allow if this is a cancellation operation
+                || ($_REQUEST['action'] === 'CancelInvoice')
+                // Allow if bean has a flag indicating cancellation in progress
+                || (!empty($bean->_is_cancellation) && $bean->_is_cancellation === true);
+            
+            if (!$isDuplicate) {
+                // Fields that CANNOT be edited on sent invoices (centralized list).
+                // The fields in $VERIFACTU_EDITABLE_FIELDS stay editable.
+                $protectedFields = AOS_InvoicesUtils::$VERIFACTU_PROTECTED_FIELDS;
+                
+                // Detect which fields have been modified
+                $modifiedFields = array();
+                require_once 'include/clean.php';
+                foreach ($protectedFields as $field) {
+                    // Compare current value with original value
+                    $currentValue = isset($bean->$field) ? $bean->$field : null;
+                    $originalValue = isset($bean->fetched_row[$field]) ? $bean->fetched_row[$field] : null;
+                    
+                    // Normalize for comparison
+                    $currentNormalized = ($currentValue === null || $currentValue === '') ? null : $currentValue;
+                    $originalNormalized = ($originalValue === null || $originalValue === '') ? null : $originalValue;
+                    
+                    if ($currentNormalized !== $originalNormalized) {
+                        // Skip phantom datetime differences: SugarBean round-trips datetime
+                        // properties through user display format (dropping seconds), so the
+                        // strict comparison flags unchanged values (e.g. verifactu_submitted_at_c)
+                        $fieldType11 = $bean->field_defs[$field]['type'] ?? '';
+                        if (in_array($fieldType11, array('datetime', 'datetimecombo'), true)
+                            && AOS_InvoicesUtils::protectionDateTimesEqual($currentNormalized, $originalNormalized)) {
+                            continue;
+                        }
+                        // Check if this is a phantom change from cleanBean()->purify_html()
+                        // cleanBean() applies purify_html() to char/text/enum fields before before_save,
+                        // which creates artificial differences vs fetched_row
+                        if (!empty($currentNormalized) && !empty($originalNormalized)) {
+                            $fieldType = $bean->field_defs[$field]['type'] ?? '';
+                            if (strpos((string)$fieldType, 'char') !== false || strpos((string)$fieldType, 'text') !== false || $fieldType === 'enum') {
+                                $purifiedOriginal = purify_html($originalNormalized, ['HTML.ForbiddenElements' => ['iframe' => true]]);
+                                if ($purifiedOriginal === $currentNormalized) {
+                                    continue;
+                                }
+                            }
+                        }
+                        $modifiedFields[] = $field;
+                    }
+                }
+                
+                // If any protected field was modified, block the save
+                if (!empty($modifiedFields)) {
+                    $GLOBALS['log']->error(__METHOD__ . ': Step 1.1 - Blocked edit of protected fields [' . implode(',', $modifiedFields) . '] for sent invoice ' . $bean->id);
+// Load mod_strings if not already loaded
+                    if (empty($mod_strings)) {
+                        $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                    }
+                    
+                    $errorMsg = $mod_strings['LBL_VERIFACTU_BLOCK_EDIT_ERROR'];
+
+                    SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
+                    
+// Redirect to detail view
+                    if (!empty($bean->id)) {
+                        SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $bean->id);
+                    }
+                    die();
+                }
+            }
+        }
+        // === End Step 1.1 ===
+
+        // === Step 2.1: Validate chronological order by series ===
+        // Only validate if Verifactu is active (not pending status) and not a duplicate
+        if (!$isDuplicate && !empty($bean->verifactu_aeat_status_c) && $bean->verifactu_aeat_status_c !== 'pending') {
+            require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+            $validationResult = AOS_InvoicesUtils::validateChronologicalOrder($bean);
+            
+            if ($validationResult !== true) {
+                // Load mod_strings if not already loaded
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+                
+                // Format the error message with actual values
+                $currentDateFormatted = date('d/m/Y', strtotime($bean->invoice_date));
+                $seriesName = $bean->verifactu_invoice_type_c;
+                $lastDateFormatted = ''; // Extract from the result if available
+                
+                // For now, use a simpler message
+                $errorMsg = $mod_strings['LBL_VERIFACTU_DATE_BEFORE_LAST']
+                    ?? "La fecha de expedición ({$currentDateFormatted}) es anterior a la última factura emitida de la serie {$seriesName}.";
+
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
+                
+                // Redirect to detail view
+                if (!empty($bean->id)) {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $bean->id);
+                }
+                die();
+            }
+        }
+        // === End Step 2.1 ===
+
+        // === Step 2.3: Validate series type consistency ===
+        // Only validate if not a duplicate
+        $GLOBALS['log']->debug(__METHOD__ . ': Step 2.3 - isDuplicate=' . ($isDuplicate ? 'true' : 'false') . ', isRectified=' . ($bean->verifactu_is_rectified_c ?? 'null') . ', series=' . ($bean->verifactu_invoice_type_c ?? 'null'));
+        
+        if (!$isDuplicate) {
+            require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+            $seriesValidationResult = AOS_InvoicesUtils::validateSeriesType($bean);
+            
+            if ($seriesValidationResult !== true) {
+                $GLOBALS['log']->error(__METHOD__ . ': Step 2.3 - Validation failed: ' . $seriesValidationResult);
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($seriesValidationResult));
+                
+                // Redirect to detail view
+                if (!empty($bean->id)) {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $bean->id);
+                }
+                die();
+            }
+        }
+        // === End Step 2.3 ===
+
+        // === Step 2.5: Validate max length (60 chars) for invoice number ===
+        if (!empty($bean->number)) {
+            $numberLength = strlen($bean->number);
+            
+            if ($numberLength > 60) {
+                $GLOBALS['log']->error(__METHOD__ . ': Step 2.5 - Number length exceeds 60 characters: ' . $numberLength);
+
+                if (empty($mod_strings)) {
+                    $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                }
+
+                $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_NUMBER_TOO_LONG'];
+
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
+                SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
+                die();
+            }
+        }
+        // === End Step 2.5 ===
+
+        // === Step 2.8: Regenerate number when series changes ===
+        // If the invoice has NOT been sent to AEAT (pending), allow series change and reset number
+        // If the invoice HAS been sent to AEAT (not pending), block series change
+        if (!$isDuplicate && !empty($bean->fetched_row['id'])) {
+            $currentSeries = $bean->verifactu_invoice_type_c;
+            $originalSeries = $bean->fetched_row['verifactu_invoice_type_c'] ?? null;
+            
+            $aeatStatus = $bean->verifactu_aeat_status_c ?? 'pending';
+            $hasBeenSent = !empty($bean->verifactu_submitted_at_c);
+            
+            $GLOBALS['log']->debug(__METHOD__ . ': Step 2.8 - Current series: ' . ($currentSeries ?? 'null') . ', Original series: ' . ($originalSeries ?? 'null') . ', AEAT status: ' . $aeatStatus . ', Submitted: ' . ($hasBeenSent ? 'yes' : 'no'));
+            
+            if (!empty($originalSeries) && $currentSeries !== $originalSeries) {
+                if ($hasBeenSent || $aeatStatus === 'accepted' || $aeatStatus === 'cancelled') {
+                    // Invoice has been sent to AEAT - block series change
+                    if (empty($mod_strings)) {
+                        $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+                    }
+
+                    $errorMsg = $mod_strings['LBL_VERIFACTU_SERIES_CHANGE_BLOCKED'];
+
+                    SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
+                    die();
+                } else {
+                    // Invoice not yet sent - allow series change and reset number
+                    // The number will be regenerated at send time (Step 1.3)
+                    if (!empty($bean->number) && strpos($bean->number, $mod_strings['LBL_VERIFACTU_DRAFT_NUMBER_PREFIX']) !== 0) {
+                        $GLOBALS['log']->info(__METHOD__ . ': Step 2.8 - Series changed from "' . $originalSeries . '" to "' . $currentSeries . '". Resetting number for regeneration at send time.');
+                        $bean->number = '';
+                    }
+                }
+            }
+        }
+        // === End Step 2.8 ===
+
+        // If duplicating a record, set status to 'draft' and clear Verifactu fields
+        if (
+            (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') // for mass duplicate
+            || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true') // for single duplicate
+            ) {
+            $bean->status = 'draft';
+            // Clear all Verifactu-related fields
+            $bean->verifactu_hash_c = null;
+            $bean->verifactu_previous_hash_c = null;
+            $bean->verifactu_check_url_c = null;
+            $bean->verifactu_aeat_status_c = 'pending';
+            $bean->verifactu_aeat_response_c = null;
+            $bean->verifactu_cancel_id_c = null;
+            $bean->verifactu_csv_c = null;
+            $bean->verifactu_submitted_at_c = null;
+            // Also clear rectified invoice fields
+            $bean->verifactu_is_rectified_c = 0;
+            $bean->verifactu_rectified_type_c = null;
+            $bean->verifactu_rectified_base_c = null;
+            $bean->verifactu_cancel_id_c = null;
+            $bean->verifactu_rectified_date_c = null;
+            $bean->verifactu_valid_invoice_c = null;
+        }
+
+        // Validate rectified invoice data
+        if (!empty($bean->verifactu_is_rectified_c)) {
+            global $mod_strings, $app_list_strings;
+            
+            // Set default values for rectified invoice fields
+            $bean->verifactu_rectified_type_c =  'S';
+            $bean->verifactu_rectified_base_c =  'R1';
+
+            // Load module strings if not loaded
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            
+            $errors = [];
+            
+            // Validate required fields for rectified invoices
+            if (empty($bean->verifactu_rectified_type_c)) {
+                $errors[] = $mod_strings['LBL_FIELD_RECTIFIED_TYPE'];
+            }
+            if (empty($bean->verifactu_rectified_base_c)) {
+                $errors[] = $mod_strings['LBL_FIELD_RECTIFIED_BASE'];
+            }
+            if (empty($bean->verifactu_cancel_id_c)) {
+                $errors[] = $mod_strings['LBL_VERIFACTU_CANCEL_NAME'];
+            }
+            if (empty($bean->verifactu_rectified_date_c)) {
+                $errors[] = $mod_strings['LBL_FIELD_RECTIFIED_DATE'];
+            }
+            
+            // If there are validation errors, prevent save and show message
+            if (!empty($errors)) {
+                $errorMsg = $mod_strings['LBL_RECTIFIED_INVOICE_VALIDATION_ERROR'];
+                $errorMsg .= '<br><strong>' . $mod_strings['LBL_MISSING_FIELDS'] . ':</strong> ' . implode(', ', $errors);
+
+                SugarApplication::appendErrorMessage(AOS_InvoicesUtils::getStyledErrorAlert($errorMsg));
+                
+                // Redirect back to edit view
+                if (!empty($bean->id)) {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView&record=' . $bean->id);
+                } else {
+                    SugarApplication::redirect('index.php?module=AOS_Invoices&action=EditView');
+                }
+                die();
+            }
+        }
+
+        // If the invoice type field is empty, set a default value based on whether it's a rectified invoice
+        if (empty($bean->verifactu_invoice_type_c)) {
+            if (!empty($sugar_config['aos']['invoices']['series']) && is_array($sugar_config['aos']['invoices']['series'])) {
+                // === Step 2.6: Validate series uniqueness ===
+                require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+                AOS_InvoicesUtils::validateSeriesUniqueness();
+                // === End Step 2.6 ===
+
+                // Check if this is a rectified invoice
+                $isRectified = !empty($bean->verifactu_is_rectified_c);
+
+                // Find first series matching the invoice type
+                foreach ($sugar_config['aos']['invoices']['series'] as $seriesName => $seriesConfig) {
+                    $seriesIsRectified = !empty($seriesConfig['isRectified']);
+
+                    // If invoice is rectified, find first rectified series
+                    // If invoice is not rectified, find first non-rectified series
+                    if ($isRectified === $seriesIsRectified) {
+                        $bean->verifactu_invoice_type_c = $seriesName;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Auto-generate name if not provided: <Organization/Person name> - <Date/Time>
+        if (empty($bean->name)) {
+            $clientName = '';
+            
+            // Get Organization name
+            if (!empty($bean->billing_account)) {
+                $clientName = $bean->billing_account;
+            }
+            // Or get Person name
+            elseif (!empty($bean->billing_contact)) {
+                $clientName = $bean->billing_contact;
+            }
+            
+            if (!empty($clientName)) {
+                $dateTime = date('Y-m-d H:i');
+                $bean->name = $clientName . ' - ' . $dateTime;
+            }
+        }
+
+        // Generate the next invoice number based on the invoice type (series) - DEPRECATED by Step 1.3
+        // Now numbers are assigned at AEAT send time, not at creation
+        // if (empty($bean->number) && !empty($bean->verifactu_invoice_type_c)) {
+        //     require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        //     $bean->number = AOS_InvoicesUtils::generateNextInvoiceNumber($bean->verifactu_invoice_type_c, $bean);
+        // }
+    }
+
+    
+    public function after_save($bean, $event, $arguments)
+    {
+        // Check if Verifactu is activated - if not, skip all AEAT logic (legacy mode)
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (!AOS_InvoicesUtils::isVerifactuActivated()) {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': Verifactu not activated (legacy mode), skipping AEAT send.');
+            return;
+        }
+
+        // check if status is 'emitted'
+        if ($bean->status !== 'emitted') {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} status is not 'emitted', skipping AEAT send.");
+            return;
+        }
+
+        // check if already sent and accepted (rejected invoices can be retried)
+        if (!empty($bean->verifactu_aeat_status_c) && $bean->verifactu_aeat_status_c === 'accepted') {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} has already been sent to AEAT, skipping resend.");
+            return;
+        }
+
+        // check if status changed to 'emitted' (only send on status change)
+        // Allow resend if previous AEAT status was 'rejected'
+        if (!empty($bean->fetched_row['status']) && $bean->fetched_row['status'] === 'emitted' && $bean->verifactu_aeat_status_c !== 'rejected') {
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Invoice with id {$bean->id} was already in 'emitted' status, skipping send.");
+            return;
+        }
+
+        $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Sending invoice with id {$bean->id} to AEAT via Verifactu...");
+
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        AOS_InvoicesUtils::sendToAeat($bean);
+    }
+
+// === Step 1.1: Block deletion of issued/accepted invoices ===
+    public function before_delete($bean, $event, $arguments)
+    {
+        global $mod_strings;
+
+        // Only block deletion when Verifactu is activated
+        require_once 'custom/modules/AOS_Invoices/SticUtils.php';
+        if (!AOS_InvoicesUtils::isVerifactuActivated()) {
+            return;
+        }
+
+        // Test invoices (verifactu_test_invoice_c=1) may be deleted at any time without restrictions
+        if (!empty($bean->verifactu_test_invoice_c)) {
+            return;
+        }
+
+        if (!empty($bean->verifactu_aeat_status_c) &&
+            in_array($bean->verifactu_aeat_status_c, array('accepted', 'cancelled'))) {
+
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+
+            $invoiceInfo = !empty($bean->number) ? $bean->number : $bean->id;
+            $errorMsg = sprintf(
+                $mod_strings['LBL_VERIFACTU_BLOCK_DELETE_ALL_ERROR'],
+                $invoiceInfo
+            );
+
+            $styledMsg = '<div class="alert alert-danger" style="margin: 10px 0; padding: 12px; border-left: 4px solid #d9534f; background-color: #f2dede;">' . $errorMsg . '</div>';
+
+            if (!empty($_REQUEST['ajax'])) {
+                echo json_encode(['success' => false, 'message' => $errorMsg]);
+                exit;
+            }
+
+            SugarApplication::appendErrorMessage($styledMsg);
+            header('Location: index.php?module=AOS_Invoices&action=index');
+            exit;
+        }
+    }
+    // === End Step 1.1 ===
+}
