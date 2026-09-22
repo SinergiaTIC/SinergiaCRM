@@ -49,7 +49,7 @@ class CustomAccountsViewDetail extends AccountsViewDetail
         // Portal popup must be injected BEFORE SticUtils.js so that
         // STIC.portalClients is defined when the Portal Actions button is created
         require_once 'SticInclude/Portal/PortalPopupUtils.php';
-        PortalPopupUtils::echoDetailViewPopup('Accounts');
+        PortalPopupUtils::echoPortalActionsPopup('Accounts');
 
         echo getVersionedScript("custom/modules/Accounts/SticUtils.js");
 

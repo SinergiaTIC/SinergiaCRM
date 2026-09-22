@@ -26,12 +26,6 @@ array (
         'width' => '12%',
         'default' => true,
     ),
-    'COUNT' => array(
-        'type' => 'int',
-        'label' => 'LBL_COUNT',
-        'width' => '12%',
-        'default' => true,
-    ),
     'DATE_ENTERED' => array(
         'type' => 'datetime',
         'label' => 'LBL_DATE_ENTERED',

@@ -40,8 +40,8 @@ array(
                         'label' => 'LBL_WINDOW_START',
                     ),
                     1 => array(
-                        'name' => 'count',
-                        'label' => 'LBL_COUNT',
+                        'name' => 'name',
+                        'label' => 'LBL_NAME',
                     ),
                 ),
                 2 => array(

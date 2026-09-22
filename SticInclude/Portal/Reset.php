@@ -71,15 +71,17 @@ function sendResetLinkEmail($bean, $rawToken) {
     if (!$tmpl || !$tmpl->id) return;
 
     $subject  = html_entity_decode($tmpl->subject, ENT_QUOTES);
-    $bodyHtml = html_entity_decode($tmpl->body_html, ENT_QUOTES);
+    $bodyHtml = SticPortalAuthUtils::getTemplateBodyHtml($tmpl);
 
-    $replace = [
-        '{$portal_reset_link}' => $link,
-        '{$portal_address}'    => $portalUrl,
-        '{$portal_title}'      => SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal'),
+    // Portal variables are parsed manually; record variables go through the
+    // SinergiaCRM template parser (see SticPortalAuthUtils::parsePortalTemplate()).
+    $portalVars = [
+        '$portal_reset_link' => $link,
+        '$portal_address'    => $portalUrl,
+        '$portal_title'      => SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal'),
     ];
-    $subject  = str_replace(array_keys($replace), array_values($replace), $subject);
-    $bodyHtml = str_replace(array_keys($replace), array_values($replace), $bodyHtml);
+    $subject  = SticPortalAuthUtils::parsePortalTemplate($subject, $bean, $portalVars);
+    $bodyHtml = SticPortalAuthUtils::parsePortalTemplate($bodyHtml, $bean, $portalVars);
     $bodyText = strip_tags(str_replace(['<br>', '</p>'], ["\n", "\n\n"], $bodyHtml));
 
     require_once 'include/SugarPHPMailer.php';

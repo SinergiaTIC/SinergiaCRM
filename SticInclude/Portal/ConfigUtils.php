@@ -30,10 +30,39 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Read / write helpers for the portal configuration settings.
  * Settings are stored in the SuiteCRM `config` table under the
  * category `portal`, using the core Administration bean for CRUD.
+ *
+ * Nothing is pre-seeded in the `config` table: a setting that has no row behaves
+ * exactly like its system default (see DEFAULTS), so the migrations only create
+ * the shipped email templates — the references to them live here. The admin page
+ * shows the same defaults, and the first time the portal configuration is saved
+ * the chosen values are persisted as regular `config` rows.
  */
 class SticPortalConfigUtils
 {
     const CATEGORY = 'portal';
+
+    /**
+     * System defaults for the settings that must resolve to a non-empty value.
+     * Used when the key has no row in the `config` table.
+     * The template UUIDs are the ones created by the shipped language scripts
+     * (SticUpdates/Languages/<lang>/..._EmailTemplates.sql) and are stable across
+     * installations; the notification toggles ship enabled.
+     */
+    const DEFAULTS = array(
+        'PORTAL_TITLE'                   => 'SinergiaCRM Portal',
+        'PORTAL_TMPL_CRED_CONTACTS'      => 'befd67fa-6017-11f1-8186-2299bea897ad',
+        'PORTAL_TMPL_CRED_ACCOUNTS'      => 'befe7460-6017-11f1-8186-2299bea897ad',
+        'PORTAL_TMPL_RESET'              => 'beff7975-6017-11f1-8186-2299bea897ad',
+        'PORTAL_TMPL_MAGIC'              => 'bf00573f-6017-11f1-8186-2299bea897ad',
+        'PORTAL_TMPL_NOTIFY_PWCHG'       => 'bf0102a9-6017-11f1-8186-2299bea897ad',
+        'PORTAL_TMPL_NOTIFY_LOGIN'       => 'bf01ff0f-6017-11f1-8186-2299bea897ad',
+        'PORTAL_TMPL_NOTIFY_LOCK'        => 'bf02dda3-6017-11f1-8186-2299bea897ad',
+        'PORTAL_TMPL_NOTIFY_RESET'       => 'bf03d86f-6017-11f1-8186-2299bea897ad',
+        'PORTAL_NOTIFY_PASSWORD_CHANGED' => '1',
+        'PORTAL_NOTIFY_NEW_LOGIN'        => '1',
+        'PORTAL_NOTIFY_ACCOUNT_LOCKED'   => '1',
+        'PORTAL_NOTIFY_RESET_REQUESTED'  => '1',
+    );
 
     /**
      * Get the Administration bean with settings loaded for the portal category.
@@ -59,14 +88,19 @@ class SticPortalConfigUtils
 
     /**
      * Get a single portal configuration value.
+     * Resolution order: stored `config` row → system default (DEFAULTS) → $default.
      * @param string $name    The setting key (e.g., 'PORTAL_TITLE').
-     * @param mixed  $default Value to return if the key is not set.
-     * @return mixed The stored value or the default.
+     * @param mixed  $default Value to return if the key is neither stored nor has a system default.
+     * @return mixed The stored value, the system default, or the given default.
      */
     public static function get($name, $default = null)
     {
         $admin = self::getAdmin();
-        return $admin->settings[self::CATEGORY . '_' . $name] ?? $default;
+        $key = self::CATEGORY . '_' . $name;
+        if (isset($admin->settings[$key])) {
+            return $admin->settings[$key];
+        }
+        return array_key_exists($name, self::DEFAULTS) ? self::DEFAULTS[$name] : $default;
     }
 
     /**
@@ -83,19 +117,11 @@ class SticPortalConfigUtils
         $admin->settings[self::CATEGORY . '_' . $name] = (string) $value;
     }
 
-    /**
-     * Delete a portal configuration value from the config table.
-     * @param string $name The setting key to remove.
-     */
-    public static function delete($name)
-    {
-        global $db;
-        $db->query("DELETE FROM config WHERE category=" . $db->quoted(self::CATEGORY) . " AND name=" . $db->quoted($name));
-        self::clearAdminCache();
-    }
 
     /**
      * Get all portal configuration settings as an associative array.
+     * Settings with no stored row are included with their system default, so the
+     * admin page renders exactly what the code would use.
      * @return array Associative array of name => value for all portal settings.
      */
     public static function getAll()
@@ -107,6 +133,11 @@ class SticPortalConfigUtils
         foreach ($admin->settings as $k => $v) {
             if (strpos($k, $prefix) === 0) {
                 $out[substr($k, $plen)] = $v;
+            }
+        }
+        foreach (self::DEFAULTS as $name => $value) {
+            if (!array_key_exists($name, $out)) {
+                $out[$name] = $value;
             }
         }
         return $out;

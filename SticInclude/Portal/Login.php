@@ -106,8 +106,10 @@ if (!$loggedIn && $_SERVER['REQUEST_METHOD'] !== 'POST' && !empty($_COOKIE['port
     if ($remembered) {
         SticPortalAuthUtils::recordLoginAudit($remembered['bean'], $remembered['type'], $remembered['bean']->stic_portal_username_c, $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'remember');
         SticPortalAuthUtils::createPortalSession($remembered['bean'], $remembered['type']);
-        $redirect = SticPortalConfigUtils::get('PORTAL_HOME_URL', 'index.php?entryPoint=sticPortalLogin');
-        if ($redirect === 'index.php?entryPoint=sticPortalLogin') $redirect .= '&logged_in=1';
+        $redirect = SticPortalConfigUtils::get('PORTAL_HOME_URL', '');
+        // Empty/absent PORTAL_HOME_URL (or pointing back at the login page)
+        // falls back to the login page with a success flag
+        if ($redirect === '' || $redirect === 'index.php?entryPoint=sticPortalLogin') $redirect = 'index.php?entryPoint=sticPortalLogin&logged_in=1';
         header('Location: ' . $redirect);
         exit;
     }

@@ -75,47 +75,45 @@ foreach ($idList as $id) {
         $redirectUri = $_REQUEST['redirect_uri'] ?? '';
         if (!empty($redirectUri)) $resetLink .= '&redirect_uri=' . urlencode($redirectUri);
 
-    
-
-    if ($module === 'Contacts') {
-        $firstName = $bean->first_name ?? '';
-        $lastName  = $bean->last_name ?? '';
-        $fullName  = $bean->full_name ?? $bean->$usernameField;
-    } else {
-        $firstName = $bean->name ?? '';
-        $lastName  = '';
-        $fullName  = $bean->name ?? '';
-    }
-
     // Get template content (or use defaults)
     $adminStrings = return_module_language($GLOBALS['current_language'], 'Administration');
-    $subject  = str_replace('{$portal_title}', $portalTitle, $adminStrings['LBL_STIC_PORTAL_INVITATION_SUBJECT']);
+    $subject  = str_replace('$portal_title', $portalTitle, $adminStrings['LBL_STIC_PORTAL_INVITATION_SUBJECT']);
     $bodyHtml = $adminStrings['LBL_STIC_PORTAL_INVITATION_BODY'];
 
     if (!empty($templateId)) {
         $tmpl = BeanFactory::getBean('EmailTemplates', $templateId);
         if ($tmpl && $tmpl->id) {
             if (!empty($tmpl->subject)) $subject = html_entity_decode($tmpl->subject, ENT_QUOTES);
-            if (!empty($tmpl->body_html)) $bodyHtml = html_entity_decode($tmpl->body_html, ENT_QUOTES);
+            $tmplBody = SticPortalAuthUtils::getTemplateBodyHtml($tmpl);
+            if ($tmplBody !== '') $bodyHtml = $tmplBody;
         }
     }
 
-    // Replace Smarty-style variables
-    $replace = array(
-        '{$contact_first_name}'               => $firstName,
-        '{$contact_last_name}'                => $lastName,
-        '{$contact_name}'                     => $fullName,
-        '{$contact_description}'              => $bean->description ?? '',
-        '{$contact_stic_portal_username_c}'   => $bean->$usernameField,
-        '{$portal_address}'                   => $appUrl,
-        '{$portal_login_url}'                 => $loginUrl,
-        '{$portal_title}'                     => $portalTitle,
-        '{$portal_reset_link}'                => $resetLink,
-        // Also handle Account-prefixed variables
-        '{$account_stic_portal_username_c}'   => $bean->$usernameField,
+    // ── Email template variable parsing ─────────────
+    // TWO variable groups:
+    //  1) Record variables ($contact_xxx / $account_xxx) go through the core
+    //     SinergiaCRM/SuiteCRM template parser — EmailTemplate::parse_email_template()
+    //     called with the record and its module (see
+    //     SticPortalAuthUtils::parsePortalTemplate()). Because the parser walks the
+    //     record's field definitions, ANY field of this Contact/Account — present now
+    //     or added in the future — can be referenced from the email templates with the
+    //     standard SinergiaCRM template syntax ($contact_first_name,
+    //     $account_stic_identification_number_c, ...), with no portal-specific code
+    //     changes needed.
+    //  2) Portal variables (no record behind them — they do not belong to any module)
+    //     must be parsed manually and documented:
+    //       $portal_title, $portal_address, $portal_login_url, $portal_reset_link
+    //     (see SticPortalAuthUtils::parsePortalTemplate for the full manual list used
+    //     by every portal email; the record name fields are native parser variables:
+    //     $contact_full_name / $account_name).
+    $portalVars = array(
+        '$portal_address'      => $appUrl,
+        '$portal_login_url'    => $loginUrl,
+        '$portal_title'        => $portalTitle,
+        '$portal_reset_link'   => $resetLink,
     );
-    $subject  = str_replace(array_keys($replace), array_values($replace), $subject);
-    $bodyHtml = str_replace(array_keys($replace), array_values($replace), $bodyHtml);
+    $subject  = SticPortalAuthUtils::parsePortalTemplate($subject, $bean, $portalVars);
+    $bodyHtml = SticPortalAuthUtils::parsePortalTemplate($bodyHtml, $bean, $portalVars);
     $bodyText = strip_tags(str_replace(array('<br>', '</p>'), array("\n", "\n\n"), $bodyHtml));
 
     $mailer = new SugarPHPMailer();

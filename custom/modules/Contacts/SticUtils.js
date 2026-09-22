@@ -158,14 +158,15 @@ switch (viewType()) {
         createListViewButton(buttons.syncIncorpora);
         createListViewButton(buttons.massJobApplications);
 
-        // Portal Invitation bulk action
-        var portalInvitationListBtn = {
-            id: "bt_portal_invitation_listview",
-            title: SUGAR.language.get(module, "LBL_STIC_SEND_PORTAL_INVITATION"),
-            text: SUGAR.language.get(module, "LBL_STIC_SEND_PORTAL_INVITATION"),
-            onclick: "onClickPortalInvitationButton()",
+        // Portal Actions bulk action: opens the same popup as the detail view
+        // (invitation / password reset + target app) for the selected records
+        var portalActionsListBtn = {
+            id: "bt_portal_actions_listview",
+            title: SUGAR.language.get(module, "LBL_STIC_PORTAL_ACTIONS") || "Portal Actions",
+            text: SUGAR.language.get(module, "LBL_STIC_PORTAL_ACTIONS") || "Portal Actions",
+            onclick: "openPortalActionsPopup()",
         };
-        createListViewButton(portalInvitationListBtn);
+        createListViewButton(portalActionsListBtn);
         break;
   default:
     break;
@@ -379,27 +380,6 @@ function setupPrivateAreaFields() {
   checkbox.addEventListener('change', togglePassword);
 }
 
-/**
- * Portal bulk list-view invitation. Defined here (not in PortalActions.js) so it
- * is available on LIST views — PortalActions.js is only loaded on detail views.
- */
-function onClickPortalInvitationButton() {
-  if (typeof sugarListView === 'undefined') return false;
-  sugarListView.get_checks();
-  const alertMsg = SUGAR.language.get('app_strings', 'LBL_LISTVIEW_NO_SELECTED') || 'Please select at least one record.';
-  if (sugarListView.get_checks_count() < 1) {
-    alert(alertMsg);
-    return false;
-  }
-  if (typeof getPortalInvitationLimit === 'function' && sugarListView.get_checks_count() > getPortalInvitationLimit()) {
-    alert(SUGAR.language.get('app_strings', 'LBL_PORTAL_INVITATION_LIMIT_ALERT') || 'The invitation limit has been exceeded.');
-    return false;
-  }
-  var ids = [];
-  document.querySelectorAll('input[name="mass[]"]:checked').forEach(function (cb) { ids.push(cb.value); });
-  if (ids.length === 0) {
-    alert(alertMsg);
-    return false;
-  }
-  location.href = 'index.php?entryPoint=sticPortalInvitation&id=' + ids.join(',') + '&return_module=' + module + '&return_action=index';
-}
+// Portal bulk actions (list view) are handled by openPortalActionsPopup() /
+// executePortalAction() in SticInclude/Portal/PortalActions.js, injected in both
+// detail and list views by PortalPopupUtils::echoPortalActionsPopup().

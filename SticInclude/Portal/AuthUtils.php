@@ -419,6 +419,65 @@ class SticPortalAuthUtils
         return null;
     }
 
+    /**
+     * Return the HTML body of a configured EmailTemplate.
+     *
+     * Supports templates that only define the plain-text `body` (body_html empty):
+     * in that case the text is returned as HTML with its newlines converted to <br>.
+     * Returns '' when the template has no usable body at all.
+     *
+     * @param EmailTemplate $tmpl
+     * @return string
+     */
+    public static function getTemplateBodyHtml($tmpl)
+    {
+        $html = html_entity_decode((string)$tmpl->body_html, ENT_QUOTES);
+        if (trim($html) !== '') {
+            return $html;
+        }
+        return nl2br(html_entity_decode((string)$tmpl->body, ENT_QUOTES));
+    }
+
+    /**
+     * Email-template variable parser for portal emails.
+     *
+     * - Record variables ($contact_first_name, $account_name, ...) go through the
+     *   core SinergiaCRM/SuiteCRM parser (EmailTemplate::parse_email_template)
+     *   given the record and its module. This means ANY field of the record —
+     *   present now or added later — can be referenced from the email templates
+     *   with the standard SinergiaCRM template syntax ($contact_<field> /
+     *   $account_<field>, no braces).
+     * - Portal-only variables (they do not exist in any module, so the standard
+     *   parser cannot resolve them) are replaced manually, right after the
+     *   parser runs. They must be listed in the $portalVars map passed by every
+     *   caller:
+     *     $portal_title, $portal_address, $portal_login_url, $portal_reset_link,
+     *     $portal_magic_link, $notification_time, $notification_ip,
+     *     $notification_ua, $notification_event
+     *   Record variables already include the natural name fields resolved by the
+     *   parser itself: $contact_full_name (Contacts) and $account_name (Accounts).
+     *   When a new portal variable is added: add its str_replace pair here,
+     *   document it in the module help text (custom/Extension/modules/
+     *   Administration/Ext/Language) and in the wiki.
+     *
+     * @param string     $string     Raw template (subject/body, may contain both variable groups)
+     * @param SugarBean  $bean       Record the email refers to (Contact or Account)
+     * @param array      $portalVars Internal portal replacements [$token => $value] (values may contain HTML)
+     * @return string Parsed string
+     */
+    public static function parsePortalTemplate($string, $bean, array $portalVars = array())
+    {
+        $string = (string)$string;
+        if (!empty($bean->module_name)) {
+            $emailTemplate = BeanFactory::newBean('EmailTemplates');
+            $macroNv = array();
+            $parsed = $emailTemplate->parse_email_template(array('body' => $string), $bean->module_name, $bean, $macroNv);
+            $string = !empty($parsed['body']) ? $parsed['body'] : '';
+        }
+
+        return str_replace(array_keys($portalVars), array_values($portalVars), $string);
+    }
+
     public static function sendMagicLinkEmail($bean, $rawToken)
     {
         $templateId = SticPortalConfigUtils::get('PORTAL_TMPL_MAGIC', '');
@@ -431,12 +490,18 @@ class SticPortalAuthUtils
         $link = rtrim(SticPortalConfigUtils::get('PORTAL_HOME_URL', ''), '/');
         if (empty($link)) $link = 'http://localhost:8000/sinergiacrm';
         $link .= '/index.php?entryPoint=sticPortalMagicLogin&token=' . urlencode($rawToken) . '&id=' . urlencode($bean->id);
-        $tpl->subject = html_entity_decode($tpl->subject, ENT_QUOTES);
-        $tpl->body = html_entity_decode($tpl->body, ENT_QUOTES);
-        $tpl->body_html = html_entity_decode($tpl->body_html, ENT_QUOTES);
-        $tpl->subject = str_replace(array('{$portal_magic_link}', '{$portal_title}'), array($link, SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal')), $tpl->subject);
-        $tpl->body = str_replace(array('{$portal_magic_link}', '{$portal_title}'), array($link, SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal')), $tpl->body);
-        $tpl->body_html = str_replace(array('{$portal_magic_link}', '{$portal_title}'), array($link, SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal')), $tpl->body_html);
+        // Portal variables are parsed manually; record variables go through the
+        // SinergiaCRM template parser (see parsePortalTemplate()).
+        $portalVars = array(
+            '$portal_magic_link' => $link,
+            '$portal_title'      => SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal'),
+        );
+        $tpl->subject    = html_entity_decode($tpl->subject, ENT_QUOTES);
+        $tpl->body       = html_entity_decode($tpl->body, ENT_QUOTES);
+        $tpl->body_html  = html_entity_decode($tpl->body_html, ENT_QUOTES);
+        $tpl->subject    = self::parsePortalTemplate($tpl->subject, $bean, $portalVars);
+        $tpl->body       = self::parsePortalTemplate($tpl->body, $bean, $portalVars);
+        $tpl->body_html  = self::parsePortalTemplate($tpl->body_html, $bean, $portalVars);
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
         $mail->From = 'noreply@sinergiacrm.org';
@@ -630,20 +695,22 @@ class SticPortalAuthUtils
             $tmpl = BeanFactory::getBean('EmailTemplates', $templateId);
             if ($tmpl && $tmpl->id) {
                 if (!empty($tmpl->subject)) $subject = html_entity_decode($tmpl->subject, ENT_QUOTES);
-                if (!empty($tmpl->body_html)) $bodyHtml = html_entity_decode($tmpl->body_html, ENT_QUOTES);
+                $tmplBody = self::getTemplateBodyHtml($tmpl);
+                if ($tmplBody !== '') $bodyHtml = $tmplBody;
             }
         }
 
-        $replace = array(
-            '{$notification_time}'   => $now,
-            '{$notification_ip}'     => $ip,
-            '{$notification_ua}'     => $ua,
-            '{$notification_event}'  => $eventType,
-            '{$portal_title}'        => $title,
-            '{$contact_name}'        => self::getRecipientName($bean),
+        // Portal variables are parsed manually; record variables go through the
+        // SinergiaCRM template parser (see parsePortalTemplate()).
+        $portalVars = array(
+            '$notification_time'   => $now,
+            '$notification_ip'     => $ip,
+            '$notification_ua'     => $ua,
+            '$notification_event'  => $eventType,
+            '$portal_title'        => $title,
         );
-        $subject  = str_replace(array_keys($replace), array_values($replace), $subject);
-        $bodyHtml = str_replace(array_keys($replace), array_values($replace), $bodyHtml);
+        $subject  = self::parsePortalTemplate($subject, $bean, $portalVars);
+        $bodyHtml = self::parsePortalTemplate($bodyHtml, $bean, $portalVars);
         $bodyText = strip_tags(str_replace(array('<br>', '</p>'), array("\n", "\n\n"), $bodyHtml));
 
         $mail = new SugarPHPMailer();

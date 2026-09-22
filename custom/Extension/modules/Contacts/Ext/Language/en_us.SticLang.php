@@ -217,8 +217,6 @@ $mod_strings['LBL_STIC_PORTAL_PASSWORD_CHANGED'] = 'Password Changed';
 
 $mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRES'] = 'Password Expires';
 
-$mod_strings['LBL_STIC_SEND_PORTAL_INVITATION'] = 'Send Portal Invitation';
-
 $mod_strings["LBL_STIC_PORTAL_ACTIONS"] = "Portal Actions";
 $mod_strings['LBL_STIC_PORTAL_USERNAME_C_HELP'] = 'Email address used for portal login. Must be unique across all Contacts and Accounts.';
 $mod_strings['LBL_STIC_PORTAL_ENABLED_C_HELP'] = 'Enable portal access for this record. When enabled, the user can log in at the portal login page.';

@@ -49,7 +49,6 @@ class stic_Portal_Magic_Rate_Limit extends Basic
     public $identifier;
     public $identifier_type;
     public $window_start;
-    public $count;
 
     public function bean_implements($interface)
     {

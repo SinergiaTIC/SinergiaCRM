@@ -27,17 +27,19 @@ require_once 'SticInclude/Portal/ConfigUtils.php';
 
 /**
  * Portal Actions popup utilities for Contacts and Accounts detail views.
- * Injects OAuth2 client list and popup HTML into the detail view.
+ * Injects OAuth2 client list and popup HTML into the Contacts/Accounts views.
  */
 class PortalPopupUtils
 {
     /**
-     * Echo the Portal Actions popup HTML and inject the OAuth2 client list
-     * for the detail view's Portal Actions button.
+     * Echo the Portal Actions popup HTML and inject the OAuth2 client list for
+     * the Portal Actions button. Used by both detail and list views: the popup
+     * acts on the current record in a detail view and on the selected records
+     * in a list view (see PortalActions.js).
      *
      * @param string $module Module name (Contacts or Accounts).
      */
-    public static function echoDetailViewPopup($module)
+    public static function echoPortalActionsPopup($module)
     {
         global $db, $mod_strings;
 

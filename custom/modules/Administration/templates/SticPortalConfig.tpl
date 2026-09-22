@@ -103,15 +103,19 @@
 </tr>
 <tr>
     <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_PASSWORD_UPPER}</td>
-    <td width="25%" valign="middle"><input type="checkbox" name="PORTAL_PASSWORD_REQUIRE_UPPER" value="1" {if $SETTINGS.PORTAL_PASSWORD_REQUIRE_UPPER eq '1'}checked{/if}></td>
+    <td width="25%" valign="middle"><input type="hidden" name="PORTAL_PASSWORD_REQUIRE_UPPER" value="0">
+               <input type="checkbox" name="PORTAL_PASSWORD_REQUIRE_UPPER" value="1" {if $SETTINGS.PORTAL_PASSWORD_REQUIRE_UPPER eq '1'}checked{/if}></td>
     <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_PASSWORD_LOWER}</td>
-    <td width="25%" valign="middle"><input type="checkbox" name="PORTAL_PASSWORD_REQUIRE_LOWER" value="1" {if $SETTINGS.PORTAL_PASSWORD_REQUIRE_LOWER eq '1'}checked{/if}></td>
+    <td width="25%" valign="middle"><input type="hidden" name="PORTAL_PASSWORD_REQUIRE_LOWER" value="0">
+               <input type="checkbox" name="PORTAL_PASSWORD_REQUIRE_LOWER" value="1" {if $SETTINGS.PORTAL_PASSWORD_REQUIRE_LOWER eq '1'}checked{/if}></td>
 </tr>
 <tr>
     <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_PASSWORD_NUMBER}</td>
-    <td width="25%" valign="middle"><input type="checkbox" name="PORTAL_PASSWORD_REQUIRE_NUMBER" value="1" {if $SETTINGS.PORTAL_PASSWORD_REQUIRE_NUMBER eq '1'}checked{/if}></td>
+    <td width="25%" valign="middle"><input type="hidden" name="PORTAL_PASSWORD_REQUIRE_NUMBER" value="0">
+               <input type="checkbox" name="PORTAL_PASSWORD_REQUIRE_NUMBER" value="1" {if $SETTINGS.PORTAL_PASSWORD_REQUIRE_NUMBER eq '1'}checked{/if}></td>
     <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_PASSWORD_SPECIAL}</td>
-    <td width="25%" valign="middle"><input type="checkbox" name="PORTAL_PASSWORD_REQUIRE_SPECIAL" value="1" {if $SETTINGS.PORTAL_PASSWORD_REQUIRE_SPECIAL eq '1'}checked{/if}></td>
+    <td width="25%" valign="middle"><input type="hidden" name="PORTAL_PASSWORD_REQUIRE_SPECIAL" value="0">
+               <input type="checkbox" name="PORTAL_PASSWORD_REQUIRE_SPECIAL" value="1" {if $SETTINGS.PORTAL_PASSWORD_REQUIRE_SPECIAL eq '1'}checked{/if}></td>
 </tr>
 <tr>
     <td width="25%" scope="row" valign="middle">
@@ -170,7 +174,8 @@
     </td>
     <td width="25%" valign="middle"><input type="number" name="PORTAL_AUDIT_RETENTION_DAYS" value="{$SETTINGS.PORTAL_AUDIT_RETENTION_DAYS|default:'365'}" min="0" max="3650" class="portal-input-narrow"> {$MOD.LBL_STIC_PORTAL_DAYS}</td>
     <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_CONCURRENT_SESSIONS}</td>
-    <td width="25%" valign="middle"><input type="checkbox" name="PORTAL_ALLOW_CONCURRENT_SESSIONS" value="1" {if $SETTINGS.PORTAL_ALLOW_CONCURRENT_SESSIONS eq '1'}checked{/if}></td>
+    <td width="25%" valign="middle"><input type="hidden" name="PORTAL_ALLOW_CONCURRENT_SESSIONS" value="0">
+               <input type="checkbox" name="PORTAL_ALLOW_CONCURRENT_SESSIONS" value="1" {if $SETTINGS.PORTAL_ALLOW_CONCURRENT_SESSIONS eq '1'}checked{/if}></td>
 </tr>
 <tr>
     <td width="25%" scope="row" valign="middle">
@@ -195,7 +200,8 @@
 <script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
         <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_MAGIC_ENABLED_HELP}</div>
     </td>
-    <td width="25%" valign="middle"><input type="checkbox" name="PORTAL_MAGIC_LINK_ENABLED" value="1" {if $SETTINGS.PORTAL_MAGIC_LINK_ENABLED eq '1'}checked{/if}></td>
+    <td width="25%" valign="middle"><input type="hidden" name="PORTAL_MAGIC_LINK_ENABLED" value="0">
+               <input type="checkbox" name="PORTAL_MAGIC_LINK_ENABLED" value="1" {if $SETTINGS.PORTAL_MAGIC_LINK_ENABLED eq '1'}checked{/if}></td>
     <td width="25%" scope="row" valign="middle">
         {$MOD.LBL_STIC_PORTAL_MAGIC_EXPIRATION}
         <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="13" aria-describedby="qtip-13"></i>
@@ -272,7 +278,8 @@
         {$MOD.LBL_STIC_PORTAL_NOTIFY_PASSWORD_CHANGED}
         <i class="inline-help glyphicon glyphicon-info-sign"></i>
         <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_NOTIFY_PASSWORD_CHANGED_HELP}</div>
-        <input type="checkbox" name="PORTAL_NOTIFY_PASSWORD_CHANGED" value="1" {if $SETTINGS.PORTAL_NOTIFY_PASSWORD_CHANGED eq '1'}checked{/if}
+        <input type="hidden" name="PORTAL_NOTIFY_PASSWORD_CHANGED" value="0">
+               <input type="checkbox" name="PORTAL_NOTIFY_PASSWORD_CHANGED" value="1" {if $SETTINGS.PORTAL_NOTIFY_PASSWORD_CHANGED eq '1'}checked{/if}
                onchange="toggleNotifyTemplate(this, 'PORTAL_TMPL_NOTIFY_PWCHG')">
     </td>
     <td width="10%" valign="middle">&nbsp;</td>
@@ -280,7 +287,8 @@
         {$MOD.LBL_STIC_PORTAL_NOTIFY_NEW_LOGIN}
         <i class="inline-help glyphicon glyphicon-info-sign"></i>
         <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_NOTIFY_NEW_LOGIN_HELP}</div>
-        <input type="checkbox" name="PORTAL_NOTIFY_NEW_LOGIN" value="1" {if $SETTINGS.PORTAL_NOTIFY_NEW_LOGIN eq '1'}checked{/if}
+        <input type="hidden" name="PORTAL_NOTIFY_NEW_LOGIN" value="0">
+               <input type="checkbox" name="PORTAL_NOTIFY_NEW_LOGIN" value="1" {if $SETTINGS.PORTAL_NOTIFY_NEW_LOGIN eq '1'}checked{/if}
                onchange="toggleNotifyTemplate(this, 'PORTAL_TMPL_NOTIFY_LOGIN')">
     </td>
     <td width="10%" valign="middle">&nbsp;</td>
@@ -304,7 +312,8 @@
         {$MOD.LBL_STIC_PORTAL_NOTIFY_ACCOUNT_LOCKED}
         <i class="inline-help glyphicon glyphicon-info-sign"></i>
         <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_NOTIFY_ACCOUNT_LOCKED_HELP}</div>
-        <input type="checkbox" name="PORTAL_NOTIFY_ACCOUNT_LOCKED" value="1" {if $SETTINGS.PORTAL_NOTIFY_ACCOUNT_LOCKED eq '1'}checked{/if}
+        <input type="hidden" name="PORTAL_NOTIFY_ACCOUNT_LOCKED" value="0">
+               <input type="checkbox" name="PORTAL_NOTIFY_ACCOUNT_LOCKED" value="1" {if $SETTINGS.PORTAL_NOTIFY_ACCOUNT_LOCKED eq '1'}checked{/if}
                onchange="toggleNotifyTemplate(this, 'PORTAL_TMPL_NOTIFY_LOCK')">
     </td>
     <td width="10%" valign="middle">&nbsp;</td>
@@ -312,7 +321,8 @@
         {$MOD.LBL_STIC_PORTAL_NOTIFY_RESET_REQUESTED}
         <i class="inline-help glyphicon glyphicon-info-sign"></i>
         <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_NOTIFY_RESET_REQUESTED_HELP}</div>
-        <input type="checkbox" name="PORTAL_NOTIFY_RESET_REQUESTED" value="1" {if $SETTINGS.PORTAL_NOTIFY_RESET_REQUESTED eq '1'}checked{/if}
+        <input type="hidden" name="PORTAL_NOTIFY_RESET_REQUESTED" value="0">
+               <input type="checkbox" name="PORTAL_NOTIFY_RESET_REQUESTED" value="1" {if $SETTINGS.PORTAL_NOTIFY_RESET_REQUESTED eq '1'}checked{/if}
                onchange="toggleNotifyTemplate(this, 'PORTAL_TMPL_NOTIFY_RESET')">
     </td>
     <td width="10%" valign="middle">&nbsp;</td>
