@@ -441,7 +441,6 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a un enderezo de correo electrónico concreto',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Correo electrónico',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar correo a un usuario asignado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envía un correo electrónico ao usuario asignado do formulario ou dun rexistro',

@@ -29,6 +29,14 @@
 class stic_SignaturesUtils
 {
     /**
+     * Plain-text token used as a safe placeholder for the signature marker.
+     * It replaces the raw <img> marker before the HTML cleaning pipeline so that
+     * it survives the tag-stripping regexes, and is later replaced by the real
+     * signature image after the template is parsed.
+     */
+    const SIGNATURE_TOKEN = '@@SIGNATURE_IMAGE@@';
+
+    /**
      * Retrieves the relationships and fields for a given SuiteCRM module.
      * This function fetches a module's own reportable fields and also
      * identifies and lists reportable fields from related modules.
@@ -263,9 +271,21 @@ class stic_SignaturesUtils
 
             // Process each signer and add to the unique list
             foreach ($signers as $signer) {
-                // Ensure signer ID is unique in the list
-                if (!isset($signersIdList[$signer->id])) {
-                    $signersIdList[$signer->id] = [
+                // Determine the dedup key based on allow_multiple_signers setting
+                $allowMultipleVal = property_exists($signatureBean, 'allow_multiple_signers') ? $signatureBean->allow_multiple_signers : '0';
+                $allowMultiple = ($allowMultipleVal === '1' || $allowMultipleVal === 1 || $allowMultipleVal === true);
+                
+                if ($allowMultiple) {
+                    // Use composite key for deduplication only (signer_id:source_id)
+                    $dedupKey = $signer->id . ':' . $mainModuleId;
+                } else {
+                    // Default behavior: deduplicate by signer ID only
+                    $dedupKey = $signer->id;
+                }
+                
+                // Ensure signer is unique based on dedup key
+                if (!isset($signersIdList[$dedupKey])) {
+                    $signersIdList[$dedupKey] = [
                         'module' => $signerModule,
                         'sourceModule' => $mainModule,
                         'sourceId' => $mainModuleId,
@@ -372,6 +392,19 @@ class stic_SignaturesUtils
             "'",
             'chr(%1)',
         ];
+
+        // Normalize every possible representation of the signature marker to a
+        // plain-text token BEFORE the HTML cleaning pipeline. This way the marker
+        // survives the tag-stripping regexes even when it is placed inside a table,
+        // and can be replaced by the real signature image after the template is parsed.
+        $signatureToken = self::SIGNATURE_TOKEN;
+        $signatureMarkers = [
+            '&lt;img class=&quot;signature&quot; src=&quot;themes/SuiteP/images/SignaturePlaceholder.png&quot; alt=&quot;&quot; width=&quot;200&quot; /&gt;',
+            '<img class="signature" src="themes/SuiteP/images/SignaturePlaceholder.png" alt="" width="200" />',
+        ];
+        $templateBean->pdfheader = str_replace($signatureMarkers, $signatureToken, (string) $templateBean->pdfheader);
+        $templateBean->pdffooter = str_replace($signatureMarkers, $signatureToken, (string) $templateBean->pdffooter);
+        $templateBean->description = str_replace($signatureMarkers, $signatureToken, (string) $templateBean->description);
 
         // Clean the template content (header, footer, description)
         $header = preg_replace($search, $replace, $templateBean->pdfheader);
