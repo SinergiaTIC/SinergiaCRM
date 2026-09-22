@@ -155,7 +155,7 @@ class FormHtmlGeneratorService {
         $primaryRgb = stic_AWFUtils::hex2rgb($theme->primary_color);
         $btnTextColor = $this->getContrastColor($theme->primary_color);
 
-        // Pre-càlcul: Quines icones i funcionalitats s'estan fent servir realment?
+        // Pre-calculation: Which icons and functionalities are actually being used?
         // Recursive walk of the layout tree (AWF Paso 4): nested sections are traversed.
         $usedSubtypes = [];
         $hasCollapsible = false;
@@ -171,7 +171,7 @@ class FormHtmlGeneratorService {
             }
         }
 
-        // Grid i Variables Base
+        // Grid and Base Variables
         $secCols   = intval($theme->sections_per_row ?? 1);
         $fieldCols = intval($theme->fields_per_row ?? 1);
         $secMinPx   = '200px'; 
@@ -235,6 +235,8 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-overlay-content { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border: 1px solid var(--bs-border-color); max-width: 80%; }
 #{$wrapperId} .awf-relative-wrapper { min-height: 300px;}
 #{$wrapperId} .awf-field { margin-bottom: var(--awf-field-spacing); }
+#{$wrapperId} .awf-field-break-row { grid-column-start: 1; }
+#{$wrapperId} .awf-field-full-width { grid-column: 1 / -1; }
 #{$wrapperId} .awf-help-text { font-size: 0.85em; color: #6c757d; font-style: italic; margin-top: 0.25rem; }
 #{$wrapperId} .awf-section-card { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: calc(var(--awf-card-radius) - 2px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); height: var(--awf-section-height); }
 #{$wrapperId} .awf-section-card .card-header { background-color: rgba(0, 0, 0, 0.03); color: var(--bs-body-color); font-weight: bold; border-bottom: 1px solid var(--bs-border-color); }
@@ -576,6 +578,16 @@ class FormHtmlGeneratorService {
         }
 
         if ($element->type === 'field') {
+            // Unbundled field elements are only meaningful for scalar blocks:
+            // repeatable/optional/group blocks are atomic (their instance loop and
+            // state cannot be split across containers) — render the whole block
+            $isScalar = !$block->isRepeatable() && !$block->isOptional()
+                && empty($config->getGroupChildren($block))
+                && ($block->group_root === '' || $block->group_root === null);
+            if (!$isScalar) {
+                return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $parentSection);
+            }
+
             if (!isset($block->fields[$element->field_name])) {
                 return "<!-- Field '{$element->field_name}' not found in block '{$block->name}' -->" . $this->newLine();
             }
@@ -597,11 +609,23 @@ class FormHtmlGeneratorService {
      * render standalone, so they do not count.
      */
     private static function elementHasRenderableContent(FormLayoutElement $element, FormConfig $config): bool {
+        if ($element->type === 'field') {
+            // Unbundled field element: renderable only when the field exists and is
+            // actually rendered (fixed/hidden fields produce no visible HTML)
+            $block = $config->data_blocks[$element->ref_id] ?? null;
+            if (!$block) return false;
+            $field = $block->fields[$element->field_name] ?? null;
+            if (!$field) return false;
+            return $field->type_field !== DataBlockFieldType::FIXED && $field->type_in_form !== 'hidden';
+        }
         if ($element->type !== 'datablock') return true;
         $block = $config->data_blocks[$element->ref_id] ?? null;
+
         if (!$block) return false;
+
         // Children are rendered inside their root — only the root decides
         if (!empty($block->group_root)) return false;
+
         // Group head or standalone: check if root or any descendant has fields
         $blockChildren = $config->getGroupChildren($block);
         if (!empty($blockChildren)) {
@@ -609,6 +633,7 @@ class FormHtmlGeneratorService {
             $groupBlocks = array_merge([$block], $descendants);
             return self::groupHasRenderableFields($groupBlocks);
         }
+
         return self::blockHasRenderableFields($block);
     }
 
@@ -640,7 +665,9 @@ class FormHtmlGeneratorService {
                 $this->collectLayoutData($childNode, $config, $blocks, $hasCollapsible);
             }
         } elseif ($node instanceof FormLayoutElement) {
-            if ($node->type === 'datablock' && isset($config->data_blocks[$node->ref_id])) {
+            // Both block elements and unbundled field elements reference a data
+            // block (ref_id); collect it so the CSS includes the needed subtypes
+            if (isset($config->data_blocks[$node->ref_id])) {
                 $blocks[] = $config->data_blocks[$node->ref_id];
             }
         }
@@ -887,7 +914,7 @@ class FormHtmlGeneratorService {
                         continue;
                     }
                     // Render fields for the current instance using the instance index variable
-                    $html .= $this->renderFieldForInstance($field, $theme, $instanceIndexVar);
+                    $html .= $this->renderField($field, $theme, $instanceIndexVar);
                 }
             }
             $html .= "</div>" . $this->newLine('-');
@@ -898,27 +925,19 @@ class FormHtmlGeneratorService {
     }
 
     /**
-     * Renders a single field based on its type, subtype, and the form theme. 
-     * It handles special cases such as hidden fields, single checkboxes, switches, and rating fields, as well as common cases for text inputs, textareas, and selects. 
-     * It also incorporates validation attributes and help text when provided.
-     * 
-     * @param FormDataBlockField $field The field to be rendered, containing all necessary information about its type, label, validations, etc.
-     * @param FormTheme $theme The form theme that may affect the rendering of the field (e.g., whether floating labels are used)
-     * @return string The generated HTML for the field as a string
+     * Helper to get CSS Grid layout classes based on the field configuration.
+     * @param FormDataBlockField $field The field to check for layout classes
+     * @return string A string of CSS classes to apply to the field's container
      */
-    private function renderField(FormDataBlockField $field, FormTheme $theme): string {
-        return $this->renderFieldInternal($field, $theme);
-    }
-
-    /**
-     * Renders a field for a specific instance inside a repeatable group.
-     * @param FormDataBlockField $field The field to render
-     * @param FormTheme $theme The form theme
-     * @param string $instanceIndexVar The Alpine variable that holds the instance index (e.g., 'index')
-     * @return string The generated HTML
-     */
-    private function renderFieldForInstance(FormDataBlockField $field, FormTheme $theme, string $instanceIndexVar): string {
-        return $this->renderFieldInternal($field, $theme, $instanceIndexVar);
+    private function getFieldLayoutClasses(FormDataBlockField $field): string {
+        $classes = '';
+        if (!empty($field->start_new_row)) {
+            $classes .= ' awf-field-break-row';
+        }
+        if (!empty($field->full_width)) {
+            $classes .= ' awf-field-full-width';
+        }
+        return $classes;
     }
 
     /**
@@ -928,7 +947,7 @@ class FormHtmlGeneratorService {
      * @param ?string $instanceIndexVar The Alpine variable for the instance index, or null for scalar fields
      * @return string The generated HTML
      */
-    private function renderFieldInternal(FormDataBlockField $field, FormTheme $theme, ?string $instanceIndexVar = null): string {
+    private function renderField(FormDataBlockField $field, FormTheme $theme, ?string $instanceIndexVar = null): string {
         // Instance-aware field rendering for repeatable groups
         $isInstance = $instanceIndexVar !== null;
         $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
@@ -992,11 +1011,14 @@ class FormHtmlGeneratorService {
             }
         }
 
+        // Get layout classes for the field container (row breaks, full width, etc.)
+        $layoutClasses = $this->getFieldLayoutClasses($field);
+
         // --- SPECIAL CASES (Single Checkbox / Switch) with own representation ---
 
         // Single Checkbox 
         if ($field->subtype_in_form === 'select_checkbox') {
-            $html = "<div class='form-check awf-field'>" .$this->newLine('+');
+            $html = "<div class='form-check awf-field {$layoutClasses}'>" .$this->newLine('+');
             {
                 $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
                 $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
@@ -1019,7 +1041,7 @@ class FormHtmlGeneratorService {
         }
         // Single Switch
         if ($field->subtype_in_form === 'select_switch') {
-            $html = "<div class='form-check form-switch awf-field'>" .$this->newLine('+');
+            $html = "<div class='form-check form-switch awf-field {$layoutClasses}'>" .$this->newLine('+');
             {
                 $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
                 $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
@@ -1063,7 +1085,7 @@ class FormHtmlGeneratorService {
         }
 
         $wrapperClass = $isFloating ? 'form-floating awf-field' : 'awf-field';
-        $html = "<div class='{$wrapperClass}'>" .$this->newLine('+');
+        $html = "<div class='{$wrapperClass} {$layoutClasses}'>" .$this->newLine('+');
         {
             $controlHtml = "";
 
@@ -1221,9 +1243,12 @@ class FormHtmlGeneratorService {
         
         $isLight = ($subtype === 'rating_lights');
         $isLightStr = $isLight ? 'true' : 'false';
+
+        // Get layout classes for the field container (row breaks, full width, etc.)
+        $layoutClasses = $this->getFieldLayoutClasses($field);
         
         $html = "";
-        $html = "<div class='awf-field mb-3' x-data=\"awfRating('{$subtype}', {$isLightStr})\">" . $this->newLine('+');
+        $html = "<div class='awf-field mb-3 {$layoutClasses}' x-data=\"awfRating('{$subtype}', {$isLightStr})\">" . $this->newLine('+');
         {
             // Label
             if ($label) {
