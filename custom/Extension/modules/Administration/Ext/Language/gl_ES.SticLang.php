@@ -105,3 +105,28 @@ $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especifique o modelo de corr
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Aa activar esta opción os usuarios poderán autenticarse mediante OAuth 2.0, ademais de facelo con usuario e contraseña. Despois de activala deberase configurar polo menos un dos proveedores externos. Para máis información, consulte a <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentación</a>.';
+
+// Portal Login Audit Log - etiquetas de visualización
+$mod_strings['LBL_STIC_PORTAL_BACK_CONFIG'] = 'Volver á configuración do portal';
+$mod_strings['LBL_STIC_PORTAL_LOGIN_AUDIT'] = 'Rexistro de auditoría de inicio de sesión';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_DATE'] = 'Data';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_USERNAME'] = 'Usuario';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE'] = 'Tipo';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_IP'] = 'Enderezo IP';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RESULT'] = 'Resultado';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_METHOD'] = 'Motivo / Método';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_USER_AGENT'] = 'Axente de usuario';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_NO_RECORDS'] = 'Non se atoparon rexistros';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RESULT_SUCCESS'] = 'Éxito';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RESULT_FAILURE'] = 'Erro';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE_CONTACT'] = 'Contacto';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE_ACCOUNT'] = 'Conta';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE_RESET_SENT'] = 'Restablecemento do contrasinal';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_INVALID_CREDENTIALS'] = 'Credenciais non válidas';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_NOT_FOUND'] = 'Usuario non atopado';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_LOCKED_OUT'] = 'Conta bloqueada';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_REASON_IP_LOCKED'] = 'IP bloqueada';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_PASSWORD'] = 'Contrasinal';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_INVITATION'] = 'Invitación';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_MAGIC_LINK'] = 'Ligazón máxica';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_ADMIN_RESET'] = 'Restablecemento por administrador';

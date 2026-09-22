@@ -111,6 +111,7 @@ $app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'New notification by message';
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_CONVERSATION_LABEL'] = 'Compose message (conversation)';
 
 // Mass emailing
+$app_strings['LBL_PORTAL_INVITATION_LIMIT_ALERT'] = 'The invitation limit has been exceeded.';
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';
 
 // Many to Many filter fields

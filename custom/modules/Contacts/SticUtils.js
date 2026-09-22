@@ -1,4 +1,24 @@
-/* HEADER */
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 // Set module name
 var module = "Contacts";
 
@@ -105,6 +125,15 @@ switch (viewType()) {
     };
     createDetailViewButton(buttons.syncIncorpora);
     createDetailViewButton(buttons.pdfEmail);
+
+    // Portal Actions button
+    if (STIC.portalClients && typeof createDetailViewButton === 'function') {
+        createDetailViewButton({
+            id: 'bt_portal_actions',
+            title: SUGAR.language.get(module, 'LBL_STIC_PORTAL_ACTIONS') || 'Portal Actions',
+            onclick: 'openPortalActionsPopup()',
+        });
+    }
     createDetailViewButton(buttons.whatsappConversation);
     break;
 
@@ -128,6 +157,16 @@ switch (viewType()) {
     
         createListViewButton(buttons.syncIncorpora);
         createListViewButton(buttons.massJobApplications);
+
+        // Portal Actions bulk action: opens the same popup as the detail view
+        // (invitation / password reset + target app) for the selected records
+        var portalActionsListBtn = {
+            id: "bt_portal_actions_listview",
+            title: SUGAR.language.get(module, "LBL_STIC_PORTAL_ACTIONS") || "Portal Actions",
+            text: SUGAR.language.get(module, "LBL_STIC_PORTAL_ACTIONS") || "Portal Actions",
+            onclick: "openPortalActionsPopup()",
+        };
+        createListViewButton(portalActionsListBtn);
         break;
   default:
     break;
@@ -340,3 +379,7 @@ function setupPrivateAreaFields() {
   togglePassword();
   checkbox.addEventListener('change', togglePassword);
 }
+
+// Portal bulk actions (list view) are handled by openPortalActionsPopup() /
+// executePortalAction() in SticInclude/Portal/PortalActions.js, injected in both
+// detail and list views by PortalPopupUtils::echoPortalActionsPopup().
