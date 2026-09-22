@@ -27,5 +27,5 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 abstract class FormLayoutNode {
     public string $id;
-    public string $type;                // 'datablock', 'section', etc.
+    public string $type;                // 'datablock', 'field', etc.
 }

@@ -881,6 +881,8 @@ class stic_AwfField {
       value_text: '',          // The text to display for the field value
       related_module: '',      // Related module (if applicable)
       validations: [],         // Field validations
+      start_new_row: false,    // Indicates if the field should start a new row in the form
+      full_width: false,       // Indicates if the field should take full width in the form
     });
 
     // 2. Overwrite with provided data
@@ -1986,8 +1988,9 @@ class stic_AwfLayoutElement extends stic_AwfLayoutNode {
     Object.assign(this, {
       id: utils.newId('el'),  // ID of the element
 
-      type: 'datablock',      // Element type: 'datablock' (possible extensions: 'line', etc)
-      ref_id: '',             // Reference ID (the ID of the stic_AwfDataBlock)
+      type: 'datablock',      // Element type: 'datablock', 'field'
+      ref_id: '',             // Reference Data block ID (the ID of the stic_AwfDataBlock)
+      field_name: '',         // Name of the field (for field elements)
     });
 
     Object.assign(this, data);

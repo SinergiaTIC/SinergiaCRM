@@ -566,12 +566,27 @@ class FormHtmlGeneratorService {
      */
     private function renderElementNode(FormLayoutElement $element, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?FormLayoutSection $parentSection = null): string {
         $block = $config->data_blocks[$element->ref_id] ?? null;
-        if (!$block) return '';
+        if (!$block) {
+            return "<!-- DataBlock '{$element->ref_id}' not found -->" . $this->newLine();
+        }
 
         // Children of repeatable roots are rendered inside the root's loop
         if ($block->group_root && $block->group_root !== '') {
             return "<!-- Child block '{$block->name}' is rendered inside its repeatable root -->" . $this->newLine();
         }
+
+        if ($element->type === 'field') {
+            if (!isset($block->fields[$element->field_name])) {
+                return "<!-- Field '{$element->field_name}' not found in block '{$block->name}' -->" . $this->newLine();
+            }
+            $field = $block->fields[$element->field_name];
+
+            if ($field->type_field === DataBlockFieldType::FIXED) {
+                return "<!-- Field '{$element->field_name}' is a fixed field and is not rendered -->" . $this->newLine();
+            }
+
+            return $this->renderField($field, $theme);
+        }   
 
         return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $parentSection);
     }

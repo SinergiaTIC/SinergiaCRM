@@ -29,6 +29,7 @@ class FormLayoutElement extends FormLayoutNode{
     public FormLayoutSection $section;  // The section it belongs to
 
     public string $ref_id;              // ID of the data block
+    public string $field_name;          // Name of the field (for field elements)
 
     public static function fromJsonArray(FormLayoutSection $section, array $data): self {
         $dto = new self();
@@ -38,6 +39,7 @@ class FormLayoutElement extends FormLayoutNode{
         $dto->id = $data['id'] ?? uniqid('el');
         $dto->type = $data['type'] ?? 'datablock';
         $dto->ref_id = $data['ref_id'] ?? '';
+        $dto->field_name = $data['field_name'] ?? '';
 
         return $dto;
     }

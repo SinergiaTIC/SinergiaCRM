@@ -58,6 +58,8 @@ class FormDataBlockField {
     public array $value_options = [];            // Field options
     /** @var FormFieldValidation[] */
     public array $validations = [];              // Field validations
+    public bool $start_new_row = false;          // Indicates if the field should start a new row in the form
+    public bool $full_width = false;             // Indicates if the field should take full width
 
     /**
      * Creates an instance of FormDataBlockField from a JSON array.
@@ -95,6 +97,9 @@ class FormDataBlockField {
                 $dto->validations[] = FormFieldValidation::fromJsonArray($dto, $valData);
             }
         }
+        
+        $dto->start_new_row = $data['start_new_row'] ?? false;
+        $dto->full_width = $data['full_width'] ?? false;
         
         return $dto;
     }
