@@ -583,7 +583,8 @@
                                                                 <template x-if="element.type === 'section' && level < 2">
                                                                     <div x-data="{ section: element, level: level + 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
                                                                 </template>
-                                                                <template x-if="element.type === 'datablock'">
+                                                                <!-- Both block elements ('datablock') and unbundled field elements ('field') -->
+                                                                <template x-if="element.type !== 'section'">
                                                                     <div x-data="{ element: element, parentSection: section, index: index, isCollapsed: true }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutElement')"></div>
                                                                 </template>
                                                             </div>
@@ -623,6 +624,22 @@
                                                                 </button>
                                                             </div>
 
+                                                            <!-- Unbundle: the block card is replaced by one card per field -->
+                                                            <template x-if="canUnbundleElement(element)">
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                                        :title="utils.translate('LBL_DATABLOCK_UNBUNDLE')"
+                                                                        x-text="utils.translate('LBL_DATABLOCK_UNBUNDLE')"
+                                                                        @click="unbundleElement(element, parentSection, index);"></button>
+                                                            </template>
+
+                                                            <!-- Re-group the unbundled fields back into a single block card -->
+                                                            <template x-if="element.type === 'field'">
+                                                                <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                                        :title="utils.translate('LBL_DATABLOCK_BUNDLE')"
+                                                                        x-text="utils.translate('LBL_DATABLOCK_BUNDLE')"
+                                                                        @click="bundleFields(element);"></button>
+                                                            </template>
+
                                                             <!-- Chevron: collapse/expand the block preview (collapsed by default) -->
                                                             <button class="btn btn-sm btn-link text-decoration-none" @click="isCollapsed = !isCollapsed">
                                                                 <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
@@ -631,7 +648,7 @@
                                                     </div>
 
                                                     <div class="card-body" x-show="!isCollapsed" x-transition>
-                                                        <template x-if="element.type=='datablock'">
+                                                        <template x-if="element.type !== 'section'">
                                                             <template x-for="field in getFields(element)" :key="field.name">
                                                                 <div class="form-check form-check-inline border rounded px-2 py-1 m-0" x-text="field.label"></div>
                                                             </template>

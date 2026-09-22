@@ -2727,9 +2727,11 @@ class WizardStep4 {
 
       canDeleteSection(section) {
         // A section (top-level or nested) can be deleted only when it holds no
-        // data block at any depth
-        const hasBlocks = (sec) => sec.elements.some(el => el.type === 'datablock' || (el.type === 'section' && hasBlocks(el)));
-        return !hasBlocks(section);
+        // layout element with content (data blocks or unbundled field fragments)
+        // at any depth
+        const hasContent = (sec) => sec.elements.some(el =>
+          (el.type === 'datablock' || el.type === 'field') || (el.type === 'section' && hasContent(el)));
+        return !hasContent(section);
       },
 
       deleteSection(section) {
@@ -2772,7 +2774,8 @@ class WizardStep4 {
       },
 
       getDataBlock(element) {
-        if (element.type == 'datablock') {
+        // Both block and field elements reference the data block through ref_id
+        if (element.type == 'datablock' || element.type == 'field') {
           return this.data_blocks.find(d => d.id == element.ref_id);
         }
         return null;
@@ -2849,16 +2852,83 @@ class WizardStep4 {
       },
 
       getFields(element) {
-        return this.getDataBlock(element)?.fields.filter(f => f.type_field != 'fixed');
+        const block = this.getDataBlock(element);
+        if (!block) return [];
+        // Field elements (unbundled fields) preview only their own field
+        if (element.type === 'field') {
+          const field = block.fields.find(f => f.name === element.field_name);
+          return field ? [field] : [];
+        }
+        return block.fields.filter(f => f.type_field != 'fixed');
       },
 
       getElementHeader(element) {
-        let header = element.type;
-        if (element.type == 'datablock') {
-          const dataBlock  = this.getDataBlock(element);
-          header = `${utils.translate('LBL_DATABLOCK')}: ${dataBlock.text}`;
+        const dataBlock = this.getDataBlock(element);
+        if (element.type === 'field') {
+          // "[Block name] Field name"
+          const field = dataBlock?.fields.find(f => f.name === element.field_name);
+          const fieldText = field ? (field.label || field.text_original || field.name) : element.field_name;
+          return dataBlock ? `[${dataBlock.text}] ${fieldText}` : element.field_name;
         }
-        return header;
+        return dataBlock ? `${utils.translate('LBL_DATABLOCK')}: ${dataBlock.text}` : element.type;
+      },
+
+      // A block can be unbundled only when it is scalar: repeatable/optional/group
+      // blocks are atomic (their instance loop cannot be split across containers)
+      isScalarBlock(block) {
+        if (!block) return false;
+        return !block.is_repeatable && !block.is_optional
+          && !block.is_child
+          && block.getChildren(this.data_blocks).length === 0;
+      },
+
+      canUnbundleElement(element) {
+        if (!element || element.type !== 'datablock') return false;
+        const block = this.getDataBlock(element);
+        return this.isScalarBlock(block) && block.fields.some(f => f.type_field !== 'fixed');
+      },
+
+      // Replaces a (scalar) block element by one field element per rendered field,
+      // preserving its position inside the section
+      unbundleElement(element, section, index) {
+        if (!this.canUnbundleElement(element)) return;
+        const block = this.getDataBlock(element);
+        const fields = block.fields.filter(f => f.type_field !== 'fixed');
+        const fieldElements = fields.map(f => new stic_AwfLayoutElement({
+          type: 'field',
+          ref_id: block.id,
+          field_name: f.name,
+        }));
+        section.elements.splice(index, 1, ...fieldElements);
+      },
+
+      // Re-groups every field element of a block (wherever it is placed) back into
+      // a single block element, at the position of its first fragment
+      bundleFields(element) {
+        if (!element || element.type !== 'field') return;
+        const block = this.getDataBlock(element);
+        if (!block) return;
+
+        const fragments = [];
+        const collect = (sec) => {
+          sec.elements.forEach(el => {
+            if (el.type === 'section') { collect(el); return; }
+            if (el.type === 'field' && el.ref_id === block.id) fragments.push({ sec, el });
+          });
+        };
+        this.sections.forEach(collect);
+        if (fragments.length === 0) return;
+
+        const firstSection = fragments[0].sec;
+        const firstIndex = firstSection.elements.indexOf(fragments[0].el);
+
+        // Remove every fragment, then insert the block element at the first position
+        fragments.forEach(({ sec, el }) => {
+          const i = sec.elements.indexOf(el);
+          if (i >= 0) sec.elements.splice(i, 1);
+        });
+        const blockElement = new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id });
+        firstSection.elements.splice(Math.min(firstIndex, firstSection.elements.length), 0, blockElement);
       },
 
       moveElementUp(section, index) {

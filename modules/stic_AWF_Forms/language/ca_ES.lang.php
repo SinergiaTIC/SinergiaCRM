@@ -374,6 +374,8 @@ $mod_strings = array (
   'LBL_SECTION_IS_COLLAPSIBLE' => 'Col·lapsable',
   'LBL_SECTION_ISCOLLAPSED' => 'Col·lapsat inicialment',
   'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Mou a...',
+  'LBL_DATABLOCK_UNBUNDLE' => 'Desglossa en camps',
+  'LBL_DATABLOCK_BUNDLE' => 'Reagrupa els camps',
   'LBL_SECTION_EMPTY_DESC' => "Aquesta secció està buida. Mogueu blocs aquí des d'altres seccions.",
 
   // Form generation

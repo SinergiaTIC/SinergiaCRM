@@ -1629,7 +1629,10 @@ class stic_AwfLayout {
    * @param {stic_AwfDataBlock[]} dataBlocks Current list of data blocks
    */
   syncWithDataBlocks(dataBlocks) {
-    const placedBlockIds = new Set();
+    const placedBlockIds = new Set();      // Blocks represented in the layout (whole or unbundled)
+    const wholeBlockPlaced = new Set();    // Blocks represented by a whole block element
+    const fragmentKeys = new Set();        // blockId::fieldName — each field renders once
+    const fragmentsByBlock = new Map();    // blockId -> [{ section, el }]
 
     const hasRenderableFields = (blk) => blk.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
     const isRenderable = (block) => hasRenderableFields(block) || block.getDescendants(dataBlocks).some(hasRenderableFields);
@@ -1643,21 +1646,73 @@ class stic_AwfLayout {
       return parent ? topRootIdOf(parent, seen) : block.id;
     };
 
-    // ---- 1. Recursive cleanup: drop deleted/duplicate/non-renderable block elements.
-    //         Sections (including nested ones) are user structure: always kept.
+    // ---- 1. Recursive cleanup: drop deleted/duplicate/non-renderable elements
+    //         (whole blocks AND unbundled field fragments). Sections (including
+    //         nested ones) are user structure: always kept.
     const cleanElements = (section) => {
       section.elements = section.elements.filter(el => {
         if (el.type === 'section') { cleanElements(el); return true; }
+        if (el.type === 'field') {
+          // Unbundled field fragment (ref_id points to the data block)
+          const block = dataBlocks.find(b => b.id === el.ref_id);
+          if (!block) return false;                                  // The block no longer exists
+          const field = block.fields.find(f => f.name === el.field_name);
+          if (!field || field.type_field === 'fixed') return false;  // Nothing to render
+          const key = block.id + '::' + el.field_name;
+          if (fragmentKeys.has(key)) return false;                   // Duplicate fragment
+          fragmentKeys.add(key);
+          if (!fragmentsByBlock.has(block.id)) fragmentsByBlock.set(block.id, []);
+          fragmentsByBlock.get(block.id).push({ section, el });
+          // The block is represented by its fragments: the orphan pass must not
+          // re-create it as a whole block element
+          placedBlockIds.add(block.id);
+          return true;
+        }
         if (el.type !== 'datablock') return true;
         const block = dataBlocks.find(b => b.id === el.ref_id);
         if (!block) return false;                    // The block no longer exists
         if (placedBlockIds.has(el.ref_id)) return false; // It's a duplicate
         if (!isRenderable(block)) return false;      // Nothing visible to render
         placedBlockIds.add(el.ref_id);
+        wholeBlockPlaced.add(el.ref_id);
         return true;
       });
     };
     this.structure.forEach(cleanElements);
+
+    // ---- 2. Normalization of unbundled blocks (field fragments) ----
+    // A block may stay unbundled only when it is SCALAR and FULLY unbundled (every
+    // rendered field has exactly one fragment). Otherwise the fragments are
+    // re-grouped into a single block element: no field is lost and the renderer
+    // (which only supports fragments of scalar blocks) stays coherent.
+    fragmentsByBlock.forEach((fragments, blockId) => {
+      const block = dataBlocks.find(b => b.id === blockId);
+      if (!block) return;
+      const renderedFields = block.fields.filter(f => f.type_field !== 'fixed');
+      const fullyUnbundled = renderedFields.length > 0
+        && renderedFields.every(f => fragmentKeys.has(blockId + '::' + f.name));
+      const scalar = !block.is_repeatable && !block.is_optional
+        && !block.is_child && block.getChildren(dataBlocks).length === 0;
+      if (scalar && fullyUnbundled) return; // Keep the fragments
+
+      const first = fragments[0];
+      const firstSection = first.section;
+      const firstIndex = firstSection.elements.indexOf(first.el);
+      // Remove every fragment of the block
+      fragments.forEach(({ section, el }) => {
+        const i = section.elements.indexOf(el);
+        if (i >= 0) section.elements.splice(i, 1);
+      });
+      // Insert a whole block element at the position of the first fragment
+      // (unless the block already has a whole block element elsewhere)
+      if (!wholeBlockPlaced.has(blockId)) {
+        firstSection.elements.splice(
+          Math.min(firstIndex, firstSection.elements.length), 0,
+          new stic_AwfLayoutElement({ type: 'datablock', ref_id: blockId })
+        );
+        wholeBlockPlaced.add(blockId);
+      }
+    });
 
     // ---- Helpers over (possibly nested) section content ----
     const firstBlockOf = (section) => {
@@ -1722,7 +1777,7 @@ class stic_AwfLayout {
       return nested;
     };
 
-    // ---- 2. Extraction: a block whose top-level root is not the section's owner is
+    // ---- 3. Extraction: a block whose top-level root is not the section's owner is
     //         moved to its root's home (covers ungrouped blocks and re-grouping).
     //         Blocks already inside the right group section keep their nested position.
     //         A block only stays when this top-level section IS the canonical home of
@@ -1763,7 +1818,7 @@ class stic_AwfLayout {
       processTopSection(section, ownerRootId);
     });
 
-    // ---- 3. Group-section normalization: direct datablock elements are wrapped into
+    // ---- 4. Group-section normalization: direct datablock elements are wrapped into
     //         a nested section (migration of flat group sections) ----
     this.structure.forEach(section => {
       if (!sectionIsGroupSection(section)) return;
@@ -1774,7 +1829,7 @@ class stic_AwfLayout {
       host.elements.push(...directBlocks);
     });
 
-    // ---- 4. Orphans: renderable blocks not yet present in the layout ----
+    // ---- 5. Orphans: renderable blocks not yet present in the layout ----
     dataBlocks.forEach(block => {
       if (placedBlockIds.has(block.id)) return;
       if (!isRenderable(block)) return;
@@ -1810,7 +1865,7 @@ class stic_AwfLayout {
       }
     });
 
-    // ---- 5. Insert the new top-level sections created during extraction/orphans:
+    // ---- 6. Insert the new top-level sections created during extraction/orphans:
     //         right after their source section, or appended at the end ----
     const insertionsBySource = new Map();
     const appendedSections = [];
@@ -1828,7 +1883,7 @@ class stic_AwfLayout {
     });
     appendedSections.forEach(s => this.structure.push(s));
 
-    // ---- 6. Group sections take the group title (unless manually customized) ----
+    // ---- 7. Group sections take the group title (unless manually customized) ----
     this.structure.forEach(section => {
       if (!sectionIsGroupSection(section)) return;
       const first = firstBlockOf(section);

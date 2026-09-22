@@ -375,6 +375,8 @@ $mod_strings = array (
   'LBL_SECTION_IS_COLLAPSIBLE' => 'Collapsible',
   'LBL_SECTION_ISCOLLAPSED' => 'Initially collapsed',
   'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Move to...',
+  'LBL_DATABLOCK_UNBUNDLE' => 'Unbundle into fields',
+  'LBL_DATABLOCK_BUNDLE' => 'Regroup fields',
   'LBL_SECTION_EMPTY_DESC' => 'This section is empty. Move blocks here from other sections.',
 
   // Form generation
