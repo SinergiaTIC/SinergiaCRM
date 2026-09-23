@@ -87,7 +87,7 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
      * This is where the 'exit', 'header' or HTML is rendered, losing control of execution.
      * 
      * @param ExecutionContext $context Execution context of the action
-     * @param ActionResult Result of the execution of the action (last ActionResult)
+     * @param ActionResult $executionResult Result of the execution of the action (last ActionResult)
      */
     public function performTerminal(ExecutionContext $context, ActionResult $executionResult): void {
         // Recover parameters from $executionResult
