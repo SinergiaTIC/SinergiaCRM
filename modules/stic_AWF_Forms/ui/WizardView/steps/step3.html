@@ -440,11 +440,11 @@
                                                                        x-model="param.value_text" readonly style="background-color: #fff; cursor: default;"
                                                                        :required="paramDef.required"/>
                                                                 <input type="hidden" :id="'ModalAction-param-'+paramDef.name+'_id'" x-model="rawId" />
-                                                                <button class="btn btn-outline-secondary" type="button" :disabled="!selectedModule"
+                                                                <button class="btn" type="button" :disabled="!selectedModule"
                                                                         @click="openPopUp('ModalAction-param-' + paramDef.name, selectedModule)"> 
                                                                     <span class="suitepicon suitepicon-action-select"></span>
                                                                 </button>
-                                                                <button class="btn btn-outline-secondary" type="button" @click="rawId=''; param.value_text='';">
+                                                                <button class="btn" type="button" @click="rawId=''; param.value_text='';">
                                                                     <span class="suitepicon suitepicon-action-clear"></span>
                                                                 </button>
                                                             </div>
@@ -531,11 +531,11 @@
                                                                                    x-model="param.value_text" readonly style="background-color: #fff; cursor: default;"
                                                                                    :required="paramDef.required"/>
                                                                             <input type="hidden" :id="'ModalAction-param-'+paramDef.name+'_'+activeOpt.name+'_id'" x-model="rawId" />
-                                                                            <button class="btn btn-outline-secondary" type="button" :disabled="!selectedModule"
+                                                                            <button class="btn" type="button" :disabled="!selectedModule"
                                                                                     @click="openPopUp('ModalAction-param-'+paramDef.name+'_'+activeOpt.name, selectedModule)"> 
                                                                                 <span class="suitepicon suitepicon-action-select"></span>
                                                                             </button>
-                                                                            <button class="btn btn-outline-secondary" type="button" @click="rawId=''; param.value_text='';">
+                                                                            <button class="btn" type="button" @click="rawId=''; param.value_text='';">
                                                                                 <span class="suitepicon suitepicon-action-clear"></span>
                                                                             </button>
                                                                         </div>

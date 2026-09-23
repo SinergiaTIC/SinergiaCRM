@@ -140,6 +140,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_MODULE' => 'Mòdul',
   'LBL_DATABLOCK_NAME' => 'Nom',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Nom intern',
+  'LBL_DATABLOCK_DELETE_CONFIRM' => "Segur que vols eliminar aquest bloc de dades i tots els seus camps? Aquesta acció no es pot desfer.",
 
   // DataBlock Groups
   'LBL_DATABLOCK_GROUP' => 'Grup de blocs de dades',
@@ -364,8 +365,7 @@ $mod_strings = array (
   'LBL_SECTIONS' => 'Seccions',
   'LBL_SECTION_ADD' => 'Afegeix una secció',
   'LBL_SECTION_NEW' => 'Nova secció',
-  'LBL_SECTION_CONFIG' => 'Configuració',
-  'LBL_SECTION_CONTENT' => 'Contingut',
+  'LBL_SECTION_CONFIG' => 'Configuració de la secció',
   'LBL_SECTION_TITLE' => 'Títol',
   'LBL_SECTION_SUBTITLE' => 'Subtítol',
   'LBL_SECTION_NO_TITLE' => '< Sense títol >',
@@ -376,6 +376,9 @@ $mod_strings = array (
   'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Mou a...',
   'LBL_DATABLOCK_UNBUNDLE' => 'Desglossa en camps',
   'LBL_DATABLOCK_BUNDLE' => 'Reagrupa els camps',
+  'LBL_FIELD_CONFIG' => 'Configuració del camp',
+  'LBL_FIELD_START_NEW_ROW' => 'Comença en una línia nova',
+  'LBL_FIELD_FULL_WIDTH' => "Ocupa tota l'amplada",
   'LBL_SECTION_EMPTY_DESC' => "Aquesta secció està buida. Mogueu blocs aquí des d'altres seccions.",
 
   // Form generation

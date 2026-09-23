@@ -1160,6 +1160,8 @@ class WizardStep2 {
 
       deleteDataBlock(dataBlock) {
         if (!dataBlock) return;
+        // Confirmation before permanently removing the data block
+        if (!confirm(utils.translate('LBL_DATABLOCK_DELETE_CONFIRM'))) return;
         this.formConfig.deleteDataBlock(dataBlock);
         Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
       },
@@ -2862,15 +2864,23 @@ class WizardStep4 {
         return block.fields.filter(f => f.type_field != 'fixed');
       },
 
+      // The field rendered by a field element (null for block elements)
+      getField(element) {
+        const block = this.getDataBlock(element);
+        if (!block || element.type !== 'field') return null;
+        return block.fields.find(f => f.name === element.field_name) || null;
+      },
+
       getElementHeader(element) {
         const dataBlock = this.getDataBlock(element);
         if (element.type === 'field') {
-          // "[Block name] Field name"
+          // "Block name.Field name"
           const field = dataBlock?.fields.find(f => f.name === element.field_name);
-          const fieldText = field ? (field.label || field.text_original || field.name) : element.field_name;
-          return dataBlock ? `[${dataBlock.text}] ${fieldText}` : element.field_name;
+          let fieldText = field ? (field.label || field.text_original || field.name) : element.field_name;
+          fieldText = utils.fromFieldLabelText(fieldText);
+          return dataBlock ? `${dataBlock.text}.${fieldText}` : utils.fromFieldLabelText(element.field_name);
         }
-        return dataBlock ? `${utils.translate('LBL_DATABLOCK')}: ${dataBlock.text}` : element.type;
+        return dataBlock ? utils.fromFieldLabelText(dataBlock.text) : element.type;
       },
 
       // A block can be unbundled only when it is scalar: repeatable/optional/group

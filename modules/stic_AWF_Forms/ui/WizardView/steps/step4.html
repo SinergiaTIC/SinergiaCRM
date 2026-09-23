@@ -445,19 +445,9 @@
                                                             <!-- Buttons -->
                                                             <div class="d-flex align-items-center ms-auto">
                                                                 <!-- Toggle Config Panel -->
-                                                                <button type="button" class="btn btn-sm btn-outline-primary ms-2" @click="showSettings = !showSettings"
+                                                                <button class="btn btn-sm" @click="showSettings = !showSettings"
                                                                         :class="{'active': showSettings}" :title="utils.translate('LBL_SECTION_CONFIG')">
-                                                                    <template x-if="!showSettings">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
-                                                                            <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
-                                                                            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
-                                                                        </svg>
-                                                                    </template>
-                                                                    <template x-if="showSettings">
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
-                                                                            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
-                                                                        </svg>
-                                                                    </template>
+                                                                    <span class="awf-icon-gear" :class="showSettings ? 'awf-icon-gear-fill' : ''"></span>
                                                                 </button>
 
                                                                 <!-- Move Up/Down -->
@@ -493,7 +483,7 @@
                                                         </div>
 
                                                         <!-- Config Drawer -->
-                                                        <div x-show="showSettings" x-transition class="m-2 border rounded shadow-lg">
+                                                        <div x-show="showSettings" x-transition class="mt-2 me-2 border rounded shadow-lg">
                                                             <!-- Section Configuration -->
                                                             <div :id="`sectionConfig${section.id}`" class="row p-3 align-items-center">
                                                                 <div class="row">
@@ -530,7 +520,7 @@
                                                                 </div>
                                                                 <!-- Title & Subtitle -->
                                                                 <template x-if="section.showTitle">
-                                                                    <div class="row">
+                                                                    <div class="row mt-2">
                                                                         <!-- Title -->
                                                                         <div class="col-3">
                                                                             <label :for="`section${section.id}_title`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_TITLE')"></label>
@@ -585,7 +575,7 @@
                                                                 </template>
                                                                 <!-- Both block elements ('datablock') and unbundled field elements ('field') -->
                                                                 <template x-if="element.type !== 'section'">
-                                                                    <div x-data="{ element: element, parentSection: section, index: index, isCollapsed: true }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutElement')"></div>
+                                                                    <div x-data="{ element: element, parentSection: section, index: index, isCollapsed: true, showFieldSettings: false }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutElement')"></div>
                                                                 </template>
                                                             </div>
                                                         </template>
@@ -599,21 +589,53 @@
                                             <template id="awfTplLayoutElement">
                                                 <!-- Layout element card (data block, collapsed by default) -->
                                                 <div class="card mb-2">
-                                                    <div class="card-header bg-light p-2 d-flex justify-content-between align-items-center">
+                                                    <div class="card-header bg-light p-2">
+                                                    <div class="d-flex justify-content-between align-items-center">
                                                         <div class="d-flex align-items-center gap-2">
-                                                            <strong x-text="getElementHeader(element)"></strong>
+                                                            <template x-if="element.type === 'datablock'">
+                                                                <strong x-text="utils.translateForFieldLabel('LBL_DATABLOCK')"></strong>
+                                                            </template>
+                                                            <template x-if="element.type === 'field'">
+                                                                <strong x-text="utils.translateForFieldLabel('LBL_FIELD')"></strong>
+                                                            </template>
+                                                            <span x-text="getElementHeader(element)"></span>
                                                         </div>
                                                         <div class="d-inline-flex gap-2 align-items-center">
+                                                            <!-- Field layout settings (field elements only): gear toggle -->
+                                                            <template x-if="element.type === 'field'">
+                                                                <button class="btn btn-sm" @click="showFieldSettings = !showFieldSettings"
+                                                                        :class="{'active': showFieldSettings}" :title="utils.translate('LBL_FIELD_CONFIG')">
+                                                                    <span class="awf-icon-gear" :class="showFieldSettings ? 'awf-icon-gear-fill' : ''"></span>
+                                                                </button>
+                                                            </template>
+
+                                                            <!-- Section move -->
                                                             <select class="form-select small text-muted w-auto" @change="moveElementToSection(element, parentSection.id, $event.target.value); $event.target.value='';"
-                                                                    style="min-width: 100px;"
-                                                                    :disabled="getMoveTargets(element, parentSection).length === 0">
+                                                                    style="min-width: 100px;" :disabled="getMoveTargets(element, parentSection).length === 0">
                                                                 <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
                                                                 <template x-for="sec in getMoveTargets(element, parentSection)" :key="sec.id">
                                                                     <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')"></option>
                                                                 </template>
                                                             </select>
 
-                                                            <div class="input-group" role="group">
+                                                            <!-- Unbundle: the block card is replaced by one card per field -->
+                                                            <template x-if="canUnbundleElement(element)">
+                                                                <button type="button" class="btn btn-sm" :title="utils.translate('LBL_DATABLOCK_UNBUNDLE')"
+                                                                        @click="unbundleElement(element, parentSection, index);">
+                                                                    <span class="suitepicon suitepicon-module-listview"></span>
+                                                                </button>
+                                                            </template>
+
+                                                            <!-- Re-group the unbundled fields back into a single block card -->
+                                                            <template x-if="element.type === 'field'">
+                                                                <button type="button" class="btn btn-sm" :title="utils.translate('LBL_DATABLOCK_BUNDLE')"
+                                                                        @click="bundleFields(element);">
+                                                                    <span class="suitepicon suitepicon-module-existing-package"></span>
+                                                                </button>
+                                                            </template>
+
+                                                            <!-- Move up/down buttons -->
+                                                            <div class="input-group w-auto" role="group">
                                                                 <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
                                                                         :disabled="index === 0 || getDataBlock(element)?.is_child" @click="moveElementUp(parentSection, index);">
                                                                     <span class="suitepicon suitepicon-action-move-up"></span>
@@ -623,37 +645,63 @@
                                                                     <span class="suitepicon suitepicon-action-move-down"></span>
                                                                 </button>
                                                             </div>
-
-                                                            <!-- Unbundle: the block card is replaced by one card per field -->
-                                                            <template x-if="canUnbundleElement(element)">
-                                                                <button type="button" class="btn btn-sm btn-outline-secondary"
-                                                                        :title="utils.translate('LBL_DATABLOCK_UNBUNDLE')"
-                                                                        x-text="utils.translate('LBL_DATABLOCK_UNBUNDLE')"
-                                                                        @click="unbundleElement(element, parentSection, index);"></button>
-                                                            </template>
-
-                                                            <!-- Re-group the unbundled fields back into a single block card -->
-                                                            <template x-if="element.type === 'field'">
-                                                                <button type="button" class="btn btn-sm btn-outline-secondary"
-                                                                        :title="utils.translate('LBL_DATABLOCK_BUNDLE')"
-                                                                        x-text="utils.translate('LBL_DATABLOCK_BUNDLE')"
-                                                                        @click="bundleFields(element);"></button>
-                                                            </template>
-
-                                                            <!-- Chevron: collapse/expand the block preview (collapsed by default) -->
-                                                            <button class="btn btn-sm btn-link text-decoration-none" @click="isCollapsed = !isCollapsed">
-                                                                <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
-                                                            </button>
                                                         </div>
                                                     </div>
 
-                                                    <div class="card-body" x-show="!isCollapsed" x-transition>
-                                                        <template x-if="element.type !== 'section'">
-                                                            <template x-for="field in getFields(element)" :key="field.name">
-                                                                <div class="form-check form-check-inline border rounded px-2 py-1 m-0" x-text="field.label"></div>
-                                                            </template>
-                                                        </template>
+                                                    <!-- Field layout settings panel (field elements only) -->
+                                                    <template x-if="element.type === 'field' && getField(element)">
+                                                        <div x-show="showFieldSettings" x-transition class="row m-2 border rounded shadow-lg p-3">
+                                                            <div class="d-flex gap-4 align-items-center">
+                                                                <div class="form-check form-switch d-flex align-items-center mb-0">
+                                                                    <label class="form-check-label small me-2" :for="`fieldStartNewRow_${element.id}`"
+                                                                        x-text="utils.translate('LBL_FIELD_START_NEW_ROW')"></label>
+                                                                    <input class="form-check-input" type="checkbox" role="switch" :id="`fieldStartNewRow_${element.id}`"
+                                                                        :checked="getField(element).start_new_row" @change="getField(element).start_new_row = $event.target.checked"/>
+                                                                </div>
+                                                                <div class="form-check form-switch d-flex align-items-center mb-0">
+                                                                    <label class="form-check-label small me-2" :for="`fieldFullWidth_${element.id}`"
+                                                                        x-text="utils.translate('LBL_FIELD_FULL_WIDTH')"></label>
+                                                                    <input class="form-check-input" type="checkbox" role="switch" :id="`fieldFullWidth_${element.id}`"
+                                                                        :checked="getField(element).full_width" @change="getField(element).full_width = $event.target.checked"/>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </template>
                                                     </div>
+
+                                                    <template x-if="element.type === 'datablock'">
+                                                        <div class="card-body p-0">
+                                                            <template x-if="element.type !== 'section'">
+                                                                <template x-for="field in getFields(element)" :key="field.name">
+                                                                    <!-- Each field box holds its own layout config: it grows
+                                                                         in place and the rest of the boxes reflow around it -->
+                                                                    <div class="border rounded px-2 py-1 m-2 d-inline-flex align-items-center gap-1" x-data="{ open: false }">
+                                                                        <span x-text="utils.fromFieldLabelText(field.label)"></span>
+                                                                        <button class="btn btn-sm" :class="open ? 'active' : ''"
+                                                                                :title="utils.translate('LBL_FIELD_CONFIG')" @click="open = !open;">
+                                                                            <span class="awf-icon-gear" :class="open ? 'awf-icon-gear-fill' : ''"></span>
+                                                                        </button>
+                                                                        <div x-show="open" x-transition class="ms-1 ps-2 border-start">
+                                                                            <div class="d-flex flex-column gap-1">
+                                                                                <div class="form-check form-switch d-flex align-items-center mb-0">
+                                                                                    <input class="form-check-input" type="checkbox" role="switch" :id="`fStartNewRow_${element.id}_${field.name}`"
+                                                                                           x-model="field.start_new_row"/>
+                                                                                    <label class="form-check-label small ms-2" :for="`fStartNewRow_${element.id}_${field.name}`"
+                                                                                           x-text="utils.translate('LBL_FIELD_START_NEW_ROW')"></label>
+                                                                                </div>
+                                                                                <div class="form-check form-switch d-flex align-items-center mb-0">
+                                                                                    <input class="form-check-input" type="checkbox" role="switch" :id="`fFullWidth_${element.id}_${field.name}`"
+                                                                                           x-model="field.full_width"/>
+                                                                                    <label class="form-check-label small ms-2" :for="`fFullWidth_${element.id}_${field.name}`"
+                                                                                           x-text="utils.translate('LBL_FIELD_FULL_WIDTH')"></label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+                                                            </template>
+                                                        </div>
+                                                    </template>
                                                 </div>
                                             </template>
                                             <button type="button" class="btn w-auto" x-text="utils.translate('LBL_SECTION_ADD')" @click="createSection"></button>

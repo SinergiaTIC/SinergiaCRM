@@ -140,6 +140,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_MODULE' => 'Módulo',
   'LBL_DATABLOCK_NAME' => 'Nombre',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Nombre interno',
+  'LBL_DATABLOCK_DELETE_CONFIRM' => "¿Seguro que quieres eliminar este bloque de datos y todos sus campos? Esta acción no se puede deshacer.",
 
   // DataBlock Groups
   'LBL_DATABLOCK_GROUP' => 'Grupo de bloques de datos',
@@ -364,8 +365,7 @@ $mod_strings = array (
   'LBL_SECTIONS' => 'Secciones',
   'LBL_SECTION_ADD' => 'Añadir sección',
   'LBL_SECTION_NEW' => 'Nueva sección',
-  'LBL_SECTION_CONFIG' => 'Configuración',
-  'LBL_SECTION_CONTENT' => 'Contenido',
+  'LBL_SECTION_CONFIG' => 'Configuración de la sección',
   'LBL_SECTION_TITLE' => 'Título',
   'LBL_SECTION_SUBTITLE' => 'Subtítulo',
   'LBL_SECTION_NO_TITLE' => '< Sin título >',
@@ -376,6 +376,9 @@ $mod_strings = array (
   'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Mover a...',
   'LBL_DATABLOCK_UNBUNDLE' => 'Desglosar en campos',
   'LBL_DATABLOCK_BUNDLE' => 'Reagrupar los campos',
+  'LBL_FIELD_CONFIG' => 'Configuración del campo',
+  'LBL_FIELD_START_NEW_ROW' => 'Comenzar en una línea nueva',
+  'LBL_FIELD_FULL_WIDTH' => 'Ocupar toda la línea',
   'LBL_SECTION_EMPTY_DESC' => 'Esta sección está vacía. Mueva bloques aquí desde otras secciones.',
 
   // Form generation

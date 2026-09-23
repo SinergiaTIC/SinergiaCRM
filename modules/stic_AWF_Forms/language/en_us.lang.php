@@ -140,6 +140,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_MODULE' => 'Module',
   'LBL_DATABLOCK_NAME' => 'Name',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Internal name',
+  'LBL_DATABLOCK_DELETE_CONFIRM' => "Are you sure you want to delete this data block and all its fields? This action cannot be undone.",
 
   // DataBlock Groups
   'LBL_DATABLOCK_GROUP' => 'Data block group',
@@ -365,8 +366,7 @@ $mod_strings = array (
   'LBL_SECTIONS' => 'Sections',
   'LBL_SECTION_ADD' => 'Add section',
   'LBL_SECTION_NEW' => 'New section',
-  'LBL_SECTION_CONFIG' => 'Configuration',
-  'LBL_SECTION_CONTENT' => 'Content',
+  'LBL_SECTION_CONFIG' => 'Section settings',
   'LBL_SECTION_TITLE' => 'Title',
   'LBL_SECTION_SUBTITLE' => 'Subtitle',
   'LBL_SECTION_NO_TITLE' => '< No title >',
@@ -377,6 +377,9 @@ $mod_strings = array (
   'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Move to...',
   'LBL_DATABLOCK_UNBUNDLE' => 'Unbundle into fields',
   'LBL_DATABLOCK_BUNDLE' => 'Regroup fields',
+  'LBL_FIELD_CONFIG' => 'Field settings',
+  'LBL_FIELD_START_NEW_ROW' => 'Start on a new line',
+  'LBL_FIELD_FULL_WIDTH' => 'Take full width',
   'LBL_SECTION_EMPTY_DESC' => 'This section is empty. Move blocks here from other sections.',
 
   // Form generation
