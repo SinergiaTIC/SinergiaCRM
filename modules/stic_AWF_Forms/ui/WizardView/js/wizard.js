@@ -2828,6 +2828,24 @@ class WizardStep4 {
         return !!this.getParentSectionOf(section);
       },
 
+      // A nested section can move out of its parent only when the parent is NOT a
+      // group section (sections can never leave their group)
+      canMoveSectionOut(section) {
+        const parent = this.getParentSectionOf(section);
+        if (!parent) return false;              // Already a top-level section
+        return !this.isGroupSection(parent);
+      },
+
+      // Takes a nested section out of its (non-group) parent section and places it
+      // as a top-level section, right after its former parent
+      moveSectionOut(section) {
+        if (!this.canMoveSectionOut(section)) return;
+        const parent = this.getParentSectionOf(section);
+        parent.elements = parent.elements.filter(el => el.id !== section.id);
+        const idx = this.sections.indexOf(parent);
+        this.sections.splice(idx + 1, 0, section);
+      },
+
       // Finds a section by ID at any level (top-level sections and nested sections)
       findSectionById(id) {
         for (const s of this.sections) {

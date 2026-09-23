@@ -230,6 +230,12 @@
 .card.group-card.subgroup-card > .awf-group-header > .card-header {
   background-color: #f0f6ff;
 }
+.card.awf-wizard-section-card {
+  border-color: #80abec;
+}
+.card.awf-wizard-section-card > .card-header {
+  background-color: #e9f2ff;
+}
 .datablock-group-badge {
   margin-left:-10px; 
   margin-top:-5px;

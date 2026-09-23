@@ -150,7 +150,6 @@ $mod_strings = array (
   'LBL_DATABLOCK_INCLUDE_LABEL' => 'Inclusion label',
   'LBL_DATABLOCK_INCLUDE_LABEL_DESC' => 'Text that will appear on the toggle switch to indicate that the data for this group of data blocks should be included.',
   'LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT' => 'Include',
-  'LBL_DATABLOCK_ADD_LABEL_DESC_DEFAULT' => 'Add another',
   'LBL_DATABLOCK_MAX_REPETITIONS' => 'Maximum',
   'LBL_DATABLOCK_MAX_REPETITIONS_DESC' => 'Maximum number of entries for this group of data blocks that can be added to a form response. Leave empty for unlimited entries.',
   'LBL_DATABLOCK_ADD_LABEL' => 'Add button text',
@@ -382,6 +381,7 @@ $mod_strings = array (
   'LBL_FIELD_START_NEW_ROW' => 'Start on a new line',
   'LBL_FIELD_FULL_WIDTH' => 'Take full width',
   'LBL_SECTION_EMPTY_DESC' => 'This section is empty. Move blocks here from other sections.',
+  'LBL_SECTION_MOVE_OUT' => 'Move section out of its parent section',
 
   // Form generation
   'LBL_CODE_GENERATING' => 'Generating code...',
@@ -637,4 +637,4 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'URL validator',
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid URL',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The URL is invalid',
- );
+);

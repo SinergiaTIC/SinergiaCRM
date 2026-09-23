@@ -412,7 +412,7 @@
 
                                             <!-- Reusable inert templates (stamped via sticControls.mountTemplate) -->
                                             <template id="awfTplLayoutSection">
-                                                <div class="card datablock mb-3 shadow-sm transition-all" x-data="{showSettings: false, isCollapsed: false}">
+                                                <div class="card datablock mb-3 shadow-sm transition-all awf-wizard-section-card" x-data="{showSettings: false, isCollapsed: false}">
                                                     <!-- Integrated Group header (Rendered ONLY if item is a group head/subgroup) -->
                                                     <template x-if="isGroupSection(section)">
                                                         <!-- Group Header -->
@@ -467,6 +467,13 @@
                                                                         :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
                                                                     <span class="suitepicon suitepicon-action-delete"></span>
                                                                 </button>
+
+                                                                <!-- Move out of the parent section (not allowed to leave a group section) -->
+                                                                <template x-if="canMoveSectionOut(section)">
+                                                                    <button type="button" class="btn ms-2" :title="utils.translate('LBL_SECTION_MOVE_OUT')" @click="moveSectionOut(section);">
+                                                                        <span class="suitepicon suitepicon-action-move-left"></span>
+                                                                    </button>
+                                                                </template>
 
                                                                 <!-- Add nested section (group sections only) -->
                                                                 <template x-if="isGroupSection(section) && level < 2">

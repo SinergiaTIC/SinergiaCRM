@@ -54,7 +54,7 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'Os Meus Formularios Web Avanzados',
   'LNK_NEW_RECORD' => 'Crear un Formulario Web Avanzado',
   'LNK_LIST' => 'Ver Formularios Web Avanzados',
-  'LNK_IMPORT_stic_AWF_Forms' => 'Importar Formularios Web Avanzados',
+  'LNK_IMPORT_stic_AWF_Forms' => 'Importa Formularis Web Avançats',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Formularios Web Avanzados',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
@@ -161,6 +161,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_ADD_TO_GROUP' => 'Añadir un bloque de datos al grupo',
   'LBL_DATABLOCK_ADD_TO_GROUP_TITLE' => 'Añadir al grupo',
   'LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE' => 'Quitar del grupo de bloques de datos',
+  'LBL_DATABLOCK_IN_GROUP_TITLE' => 'Pertenece al grupo',
   'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Los hijos de un bloque repetible no pueden moverse de forma independiente.',
 
   // DataBlock -> Fields
@@ -273,9 +274,7 @@ $mod_strings = array (
   'LBL_ACTION_ACTIONS' => 'Accións',
   'LBL_ACTION_AUTOMATIC' => 'Automática',
   'LBL_ACTION_AUTOMATIC_TITLE' => 'Acción automática',
-  'LBL_DATABLOCK_IN_GROUP_TITLE' => 'Pertenece al grupo',
   'LBL_ACTION_NO_PARAMS' => 'Sen parámetros',
-
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Seleccionar --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Módulo',
   'LBL_ACTION_PARAM_CRM_RECORD_RECORD' => 'Rexistro',
@@ -382,6 +381,7 @@ $mod_strings = array (
   'LBL_FIELD_START_NEW_ROW' => 'Comenzar en una línea nueva',
   'LBL_FIELD_FULL_WIDTH' => 'Ocupar toda la línea',
   'LBL_SECTION_EMPTY_DESC' => 'Esta sección está baleira. Mova bloques aquí desde outras seccións.',
+  'LBL_SECTION_MOVE_OUT' => 'Sacar la sección de la sección padre',
 
   // Form generation
   'LBL_CODE_GENERATING' => 'Xerando o código...',
@@ -536,6 +536,8 @@ $mod_strings = array (
   'LBL_PARAM_EXPIRED_TEXT' => 'Texto del enlace caducado',
   'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Texto del aviso que se mostrará al acceder al enlace caducado.',
   'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Este enlace ha caducado por motivos de seguridad.',  // EmailConfirmationAction
+
+  // EmailConfirmationAction
   'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirmar correo electrónico',
   'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Genera un enlace único y lo envía por correo electrónico para que el usuario pueda confirmar su dirección de correo electrónico.',
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correo confirmado',

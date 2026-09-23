@@ -54,7 +54,7 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'Mis Formularios Web Avanzados',
   'LNK_NEW_RECORD' => 'Crear un Formulario Web Avanzado',
   'LNK_LIST' => 'Ver Formularios Web Avanzados',
-  'LNK_IMPORT_stic_AWF_Forms' => 'Importar Formularios Web Avanzados',
+  'LNK_IMPORT_stic_AWF_Forms' => 'Importa Formularis Web Avançats',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Formularios Web Avanzados',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
@@ -381,6 +381,7 @@ $mod_strings = array (
   'LBL_FIELD_START_NEW_ROW' => 'Comenzar en una línea nueva',
   'LBL_FIELD_FULL_WIDTH' => 'Ocupar toda la línea',
   'LBL_SECTION_EMPTY_DESC' => 'Esta sección está vacía. Mueva bloques aquí desde otras secciones.',
+  'LBL_SECTION_MOVE_OUT' => 'Sacar la sección de la sección padre',
 
   // Form generation
   'LBL_CODE_GENERATING' => 'Generando el código...',
