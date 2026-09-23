@@ -2442,9 +2442,11 @@ class WizardStep3 {
        * @param {stic_AwfAction} action The action to remove 
        * @return {void} 
        */
-      removeAction(action) {
-        this.formConfig.removeAction(this.flow.id, action.id)
-      },
+       removeAction(action) {
+         // Confirmation before permanently removing the action
+         if (!confirm(utils.translate('LBL_ACTION_DELETE_CONFIRM'))) return;
+         this.formConfig.removeAction(this.flow.id, action.id)
+       },
 
       /**
        * Indicates if an action can be moved up

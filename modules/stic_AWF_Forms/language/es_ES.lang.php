@@ -283,6 +283,7 @@ $mod_strings = array (
   'LBL_ACTION_CONDITION_TEXT' => 'Esta acción solo se ejecutará si se cumple la condición.',
   'LBL_ACTION_CONTINUE_ON_ERROR' => 'Continuar en caso de error',
   'LBL_ACTION_CONTINUE_ON_ERROR_DESC' => 'Si se activa, el flujo continuará incluso si la acción falla.',
+  'LBL_ACTION_DELETE_CONFIRM' => "¿Seguro que quieres eliminar esta acción?",
 
   // Conditions (Datablock field validations & Actions)
   'LBL_CONDITION' => 'Condición para la ejecución',
