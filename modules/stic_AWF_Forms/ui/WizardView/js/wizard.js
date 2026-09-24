@@ -2786,9 +2786,10 @@ class WizardStep4 {
       },
 
       isGroupSection(section) {
-        const group = this.getGroup(section);
-        if (!group) return false;
-        return true;
+        // Only the TOP-LEVEL section represents the group: nested sections are
+        // content containers (sections, blocks or fields) and never show group info
+        if (this.isNestedSection(section)) return false;
+        return !!this.getGroup(section);
       },
 
       groupName(section) {
@@ -2819,9 +2820,20 @@ class WizardStep4 {
         return owner && owner.isGroupHead(this.data_blocks) ? owner : null;
       },
 
-      // The top-level section that contains a nested section (or null)
+      // The section (at any depth) that directly contains a nested section (or null)
       getParentSectionOf(section) {
-        return this.sections.find(s => s.elements.some(el => el.type === 'section' && el.id === section.id)) || null;
+        const findParent = (sections) => {
+          for (const s of sections) {
+            for (const el of s.elements) {
+              if (el.type !== 'section') continue;
+              if (el.id === section.id) return s;
+              const found = findParent([el]);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+        return findParent(this.sections);
       },
 
       isNestedSection(section) {
@@ -2829,7 +2841,7 @@ class WizardStep4 {
       },
 
       // A nested section can move out of its parent only when the parent is NOT a
-      // group section (sections can never leave their group)
+      // group section (sections can never leave their group section)
       canMoveSectionOut(section) {
         const parent = this.getParentSectionOf(section);
         if (!parent) return false;              // Already a top-level section
@@ -2837,23 +2849,71 @@ class WizardStep4 {
       },
 
       // Takes a nested section out of its (non-group) parent section and places it
-      // as a top-level section, right after its former parent
+      // at its parent's level (top level, or inside the grandparent section),
+      // right after its former parent
       moveSectionOut(section) {
         if (!this.canMoveSectionOut(section)) return;
         const parent = this.getParentSectionOf(section);
+        const grandparent = this.getParentSectionOf(parent);
         parent.elements = parent.elements.filter(el => el.id !== section.id);
-        const idx = this.sections.indexOf(parent);
-        this.sections.splice(idx + 1, 0, section);
+        const arr = grandparent ? grandparent.elements : this.sections;
+        const idx = arr.indexOf(parent);
+        arr.splice(idx + 1, 0, section);
+      },
+
+      // Candidate sections a SECTION can be moved into (same level/group rules):
+      //  - group sections are FIXED: they represent their group and never move;
+      //  - a section inside a group section cannot leave it;
+      //  - any other section can move into another standalone top-level section
+      //    (becoming a nested section of it).
+      getSectionMoveTargets(section) {
+        if (this.isGroupSection(section)) return [];                    // Group sections are fixed
+        if (this.isNestedSection(section)) {
+          const parent = this.getParentSectionOf(section);
+          if (this.isGroupSection(parent)) return [];                   // Cannot leave the group
+          return this.sections.filter(s => s.id !== parent.id && !this.isGroupSection(s));
+        }
+        // Top-level standalone section: can nest into another standalone section
+        return this.sections.filter(s => s.id !== section.id && !this.isGroupSection(s));
+      },
+
+      // Hierarchical section label: "Parent - Child - ..." (walks up the parents)
+      getSectionLabel(section) {
+        const own = section.title || utils.translate('LBL_SECTION_NO_TITLE');
+        const parent = this.getParentSectionOf(section);
+        return parent ? `${this.getSectionLabel(parent)} - ${own}` : own;
+      },
+
+      // Moves a section into another section (same level/group rules)
+      moveSectionToSection(section, toSectionId) {
+        if (!toSectionId) return;
+        const target = this.findSectionById(toSectionId);
+        if (!target || target.id === section.id) return;
+        if (!this.getSectionMoveTargets(section).some(s => s.id === target.id)) return;
+
+        const parent = this.getParentSectionOf(section);
+        const arr = parent ? parent.elements : this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        if (idx >= 0) arr.splice(idx, 1);
+        target.elements.push(section);
       },
 
       // Finds a section by ID at any level (top-level sections and nested sections)
+      // Finds a section by ID at any depth (top-level and nested sections)
       findSectionById(id) {
-        for (const s of this.sections) {
-          if (s.id == id) return s;
-          const nested = s.elements.find(el => el.type === 'section' && el.id == id);
-          if (nested) return nested;
-        }
-        return null;
+        const find = (sections) => {
+          for (const s of sections) {
+            if (s.id == id) return s;
+            for (const el of s.elements) {
+              if (el.type !== 'section') continue;
+              if (el.id == id) return el;
+              const found = find([el]);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+        return find(this.sections);
       },
 
       // Candidate sections an element can be moved to (same level, same context):
@@ -2867,12 +2927,11 @@ class WizardStep4 {
         return this.sections.filter(s => s.id !== fromSection.id && !this.isGroupSection(s));
       },
 
-      // Adds a new (empty) nested section to a group section, titled "Nova secció"
+      // Adds a new (empty) nested section to ANY section, titled "Nova secció"
       // like the top-level add-section button, and focuses its title editor
-      addNestedSection(groupSection) {
-        if (!this.isGroupSection(groupSection)) return;
+      addNestedSection(section) {
         const nested = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NEW') });
-        groupSection.elements.push(nested);
+        section.elements.push(nested);
 
         // Once rendered: scroll to the new section card and start editing its title
         Alpine.nextTick(() => {
@@ -2920,19 +2979,10 @@ class WizardStep4 {
         return dataBlock ? utils.fromFieldLabelText(dataBlock.text) : element.type;
       },
 
-      // A block can be unbundled only when it is scalar: repeatable/optional/group
-      // blocks are atomic (their instance loop cannot be split across containers)
-      isScalarBlock(block) {
-        if (!block) return false;
-        return !block.is_repeatable && !block.is_optional
-          && !block.is_child
-          && block.getChildren(this.data_blocks).length === 0;
-      },
-
       canUnbundleElement(element) {
         if (!element || element.type !== 'datablock') return false;
         const block = this.getDataBlock(element);
-        return this.isScalarBlock(block) && block.fields.some(f => f.type_field !== 'fixed');
+        return !!block && block.fields.some(f => f.type_field !== 'fixed');
       },
 
       // Replaces a (scalar) block element by one field element per rendered field,

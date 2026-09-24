@@ -444,15 +444,44 @@
                                                         <h3 class="flex-grow-1 mb-0" :id="`sectionTitleEdit-${section.id}`" data-model="section.title" data-change="section.is_custom_title = true" x-init="sticControls.editableText($el);"></h3>
 
                                                         <!-- Buttons -->
-                                                        <div class="d-flex align-items-center ms-auto">
+                                                        <div class="d-flex align-items-center gap-2">
                                                             <!-- Toggle Config Panel -->
                                                             <button class="btn btn-sm" @click="showSettings = !showSettings"
                                                                     :class="{'active': showSettings}" :title="utils.translate('LBL_SECTION_CONFIG')">
                                                                 <span class="awf-icon-gear" :class="showSettings ? 'awf-icon-gear-fill' : ''"></span>
                                                             </button>
 
-                                                            <!-- Move Up/Down -->
-                                                            <div class="d-inline-flex input-group" role="group" style="min-width: 64px;">
+                                                            <!-- Section move: the section can be moved into another section -->
+                                                            <select class="form-select small text-muted w-auto" @change="moveSectionToSection(section, $event.target.value); $event.target.value='';"
+                                                                    style="min-width: 100px;" :disabled="getSectionMoveTargets(section).length === 0">
+                                                                <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
+                                                                <template x-for="sec in getSectionMoveTargets(section)" :key="sec.id">
+                                                                    <option :value="sec.id" x-text="getSectionLabel(sec)"></option>
+                                                                </template>
+                                                            </select>
+
+                                                            <!-- Add/Delete-->
+                                                            <div class="input-group w-auto" role="group" style="min-width: 64px;">
+                                                                <!-- Add nested section (any section, any depth) -->
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_SECTION_ADD')" @click="addNestedSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-plus"></span>
+                                                                </button>
+
+                                                                <!-- Delete -->
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_DELETE')"
+                                                                        :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-delete"></span>
+                                                                </button>
+                                                            </div>
+
+                                                            <!-- Move Out/Up/Down -->
+                                                            <div class="input-group w-auto" role="group" style="min-width: 64px;">
+                                                                <!-- Move out of the parent section (not allowed to leave a group section) -->
+                                                                <template x-if="canMoveSectionOut(section)">
+                                                                    <button type="button" class="btn" :title="utils.translate('LBL_SECTION_MOVE_OUT')" @click="moveSectionOut(section);">
+                                                                        <span class="suitepicon suitepicon-action-move-left"></span>
+                                                                    </button>
+                                                                </template>
                                                                 <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
                                                                         :disabled="!canMoveUpSection(section);" @click="moveUpSection(section);">
                                                                     <span class="suitepicon suitepicon-action-move-up"></span>
@@ -462,26 +491,6 @@
                                                                     <span class="suitepicon suitepicon-action-move-down"></span>
                                                                 </button>
                                                             </div>
-
-                                                            <!-- Delete -->
-                                                            <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
-                                                                    :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
-                                                                <span class="suitepicon suitepicon-action-delete"></span>
-                                                            </button>
-
-                                                            <!-- Move out of the parent section (not allowed to leave a group section) -->
-                                                            <template x-if="canMoveSectionOut(section)">
-                                                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_SECTION_MOVE_OUT')" @click="moveSectionOut(section);">
-                                                                    <span class="suitepicon suitepicon-action-move-left"></span>
-                                                                </button>
-                                                            </template>
-
-                                                            <!-- Add nested section (group sections only) -->
-                                                            <template x-if="isGroupSection(section) && level < 2">
-                                                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_SECTION_ADD')" @click="addNestedSection(section);">
-                                                                    <span class="suitepicon suitepicon-action-plus"></span>
-                                                                </button>
-                                                            </template>
 
                                                             <!-- Chevron -->
                                                             <button class="btn btn-sm btn-link text-decoration-none" @click="isCollapsed = !isCollapsed">
@@ -542,33 +551,43 @@
                                                                 </div>
                                                             </template>
 
-                                                            <!-- Text: Toggle Switch Custom Label -->
-                                                            <!-- <div class="col-md-3" x-show="item.is_optional" x-init="utils.setInlineHelpQtip()">
-                                                            <label :for="`groupToggleLabel_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_INCLUDE_LABEL')"></label>
-                                                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
-                                                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DESC')"></div>
-                                                            <input type="text" :id="`groupToggleLabel_${item.id}`" class="form-control form-control-sm" x-model="item.toggle_label" 
-                                                                    :placeholder="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT') + ' ' + (item.group_title || item.text)">
-                                                            </div> -->
+                                                            <!-- Optional/Repeatable Group Sections -->
+                                                            <template x-if="getGroup(section)?.is_optional || getGroup(section)?.is_repeatable">
+                                                                <div class="row mt-2">
+                                                                    <!-- Inclusion switch label (optional) -->
+                                                                    <template x-if="getGroup(section)?.is_optional">
+                                                                        <div class="col-6" x-init="utils.setInlineHelpQtip()">
+                                                                            <label :for="`sectionToggleLabel_${section.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_INCLUDE_LABEL')"></label>
+                                                                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DESC')"></div>
+                                                                            <input type="text" :id="`sectionToggleLabel_${section.id}`" class="form-control form-control-sm" x-model="section.toggle_label"
+                                                                                   :placeholder="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT') + ' ' + (getGroup(section).group_title || getGroup(section).text)">
+                                                                        </div>
+                                                                    </template>
 
-                                                            <!-- Text: Add Button Custom Label -->
-                                                            <!-- <div class="col-md-3" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
-                                                            <label :for="`groupAddButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_ADD_LABEL')"></label>
-                                                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
-                                                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL_DESC')"></div>
-                                                            <input type="text" :id="`groupAddButton_${item.id}`" class="form-control form-control-sm" x-model="item.add_button_label" 
-                                                                    :placeholder="utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT')">
-                                                            </div> -->
+                                                                    <!-- Add button label (repeatable) -->
+                                                                    <template x-if="getGroup(section)?.is_repeatable">
+                                                                        <div class="col-3" x-init="utils.setInlineHelpQtip()">
+                                                                            <label :for="`sectionAddButtonLabel_${section.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_ADD_LABEL')"></label>
+                                                                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL_DESC')"></div>
+                                                                            <input type="text" :id="`sectionAddButtonLabel_${section.id}`" class="form-control form-control-sm" x-model="section.add_button_label"
+                                                                                   :placeholder="utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT')">
+                                                                        </div>
+                                                                    </template>
 
-                                                            <!-- Text: Remove Button Custom Label -->
-                                                            <!-- <div class="col-md-2" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
-                                                            <label :for="`groupRemoveButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_REMOVE_LABEL')"></label>
-                                                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
-                                                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DESC')"></div>
-                                                            <input type="text" :id="`groupRemoveButton_${item.id}`" class="form-control form-control-sm" x-model="item.remove_button_label" 
-                                                                    :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT')">
-                                                            </div> -->
-
+                                                                    <!-- Remove button label (repeatable) -->
+                                                                    <template x-if="getGroup(section)?.is_repeatable">
+                                                                        <div class="col-3" x-init="utils.setInlineHelpQtip()">
+                                                                            <label :for="`sectionRemoveButtonLabel_${section.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_REMOVE_LABEL')"></label>
+                                                                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DESC')"></div>
+                                                                            <input type="text" :id="`sectionRemoveButtonLabel_${section.id}`" class="form-control form-control-sm" x-model="section.remove_button_label"
+                                                                                   :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT')">
+                                                                        </div>
+                                                                    </template>
+                                                                </div>
+                                                            </template>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -578,7 +597,7 @@
                                                     <!-- Content: data blocks and (level < 2) nested sections -->
                                                     <template x-for="(element, index) in section.elements" :key="element.id">
                                                         <div>
-                                                            <template x-if="element.type === 'section' && level < 2">
+                                                            <template x-if="element.type === 'section'">
                                                                 <div x-data="{ section: element, level: level + 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
                                                             </template>
                                                             <!-- Both block elements ('datablock') and unbundled field elements ('field') -->
@@ -623,7 +642,7 @@
                                                                     style="min-width: 100px;" :disabled="getMoveTargets(element, parentSection).length === 0">
                                                                 <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
                                                                 <template x-for="sec in getMoveTargets(element, parentSection)" :key="sec.id">
-                                                                    <option :value="sec.id" x-text="sec.title || utils.translate('LBL_SECTION_NO_TITLE')"></option>
+                                                                    <option :value="sec.id" x-text="getSectionLabel(sec)"></option>
                                                                 </template>
                                                             </select>
 
@@ -644,7 +663,7 @@
                                                             </template>
 
                                                             <!-- Move up/down buttons -->
-                                                            <div class="input-group w-auto" role="group">
+                                                            <div class="input-group w-auto" role="group" style="min-width: 64px;">
                                                                 <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
                                                                         :disabled="elementIndexIn(parentSection, element) <= 0 || getDataBlock(element)?.is_child" @click="moveElementUp(parentSection, element);">
                                                                     <span class="suitepicon suitepicon-action-move-up"></span>

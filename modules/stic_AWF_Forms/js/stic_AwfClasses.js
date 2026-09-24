@@ -1681,19 +1681,17 @@ class stic_AwfLayout {
     this.structure.forEach(cleanElements);
 
     // ---- 2. Normalization of unbundled blocks (field fragments) ----
-    // A block may stay unbundled only when it is SCALAR and FULLY unbundled (every
-    // rendered field has exactly one fragment). Otherwise the fragments are
-    // re-grouped into a single block element: no field is lost and the renderer
-    // (which only supports fragments of scalar blocks) stays coherent.
+    // A block stays unbundled only when it is FULLY unbundled (every rendered
+    // field has exactly one fragment — any block can be unbundled in step 4,
+    // the "group head" concept does not apply there). Otherwise the fragments
+    // are re-grouped into a single block element: no field is lost.
     fragmentsByBlock.forEach((fragments, blockId) => {
       const block = dataBlocks.find(b => b.id === blockId);
       if (!block) return;
       const renderedFields = block.fields.filter(f => f.type_field !== 'fixed');
       const fullyUnbundled = renderedFields.length > 0
         && renderedFields.every(f => fragmentKeys.has(blockId + '::' + f.name));
-      const scalar = !block.is_repeatable && !block.is_optional
-        && !block.is_child && block.getChildren(dataBlocks).length === 0;
-      if (scalar && fullyUnbundled) return; // Keep the fragments
+      if (fullyUnbundled) return; // Keep the fragments
 
       const first = fragments[0];
       const firstSection = first.section;
@@ -1862,6 +1860,17 @@ class stic_AwfLayout {
           section.elements.splice(section.elements.indexOf(el), 1);
         }
       });
+
+      // d) the group root's nested section always comes first
+      const rootFirst = firstBlockOf(section);
+      const ownerBlock = rootFirst ? dataBlocks.find(b => b.id === topRootIdOf(rootFirst)) : null;
+      if (ownerBlock) {
+        const rootNested = section.elements.find(el => el.type === 'section'
+          && el.elements.some(e => e.type === 'datablock' && e.ref_id === ownerBlock.id));
+        if (rootNested && section.elements[0] !== rootNested) {
+          section.elements = [rootNested, ...section.elements.filter(e => e !== rootNested)];
+        }
+      }
     });
 
     // ---- 5. Orphans: renderable blocks not yet present in the layout ----
@@ -1898,6 +1907,17 @@ class stic_AwfLayout {
         blockHostSection(home, block).elements.push(new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id }));
         placedBlockIds.add(block.id);
       }
+    });
+
+    // ---- 5b. Remove EMPTY top-level auto-sections: untitled ones or ones titled
+    //          with the text of a data block whose block is no longer inside
+    //          (e.g. the block joined a group). Group sections and user-renamed
+    //          sections always stay.
+    const allBlockTexts = new Set(dataBlocks.map(b => b.text));
+    this.structure = this.structure.filter(s => {
+      if (s.elements.length > 0) return true;
+      if (sectionIsGroupSection(s)) return true;
+      return !(allBlockTexts.has(s.title) && !s.is_custom_title);
     });
 
     // ---- 6. Insert the new top-level sections created during extraction/orphans:
