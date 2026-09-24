@@ -745,7 +745,7 @@ class FormHtmlGeneratorService {
                     $extsParam = $val->params['extensions'] ?? $val->params->extensions ?? '';
                     if (!empty($extsParam)) {
                         $exts = explode(',', $extsParam);
-                        // Convertim 'pdf, jpg' en '.pdf,.jpg' per al format estàndard accept
+                        // Convert 'pdf, jpg' to '.pdf,.jpg' for the standard 'accept' format
                         $acceptFields = array_map(function($e) { return '.' . trim(strtolower($e)); }, $exts);
                         $acceptAttr = " accept='" . implode(',', $acceptFields) . "'";
                         break;
