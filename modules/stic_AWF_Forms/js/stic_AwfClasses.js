@@ -1755,25 +1755,23 @@ class stic_AwfLayout {
         title: groupHead ? (rootBlock.group_title || rootBlock.text) : rootBlock.text,
       });
       if (groupHead) {
-        // Group sections hold their blocks inside nested sections. The default
-        // nested section is untitled (it renders as a bare container — the group
-        // section header already shows the group title)
-        home.elements.push(new stic_AwfLayoutSection({ title: '' }));
+        // The group section holds the group name but does NOT display its title:
+        // its content is organized in one nested section per data block
+        home.showTitle = false;
       }
       rootHomeSection.set(rootBlock.id, home);
       newSectionsForRoots.push({ section: home, afterSection });
       return home;
     };
 
-    // The nested section hosting group members inside a group section
-    const groupMemberHost = (groupSection) => {
-      let nested = groupSection.elements.find(el => el.type === 'section');
-      if (!nested) {
-        // Untitled by default (renders as a bare container; the group section
-        // header already shows the group title)
-        nested = new stic_AwfLayoutSection({ title: '' });
-        groupSection.elements.push(nested);
+    // The nested section of a group section that hosts a block: the one already
+    // containing it, or a new one titled with the block text (one section per block)
+    const blockHostSection = (groupSection, block) => {
+      for (const el of groupSection.elements) {
+        if (el.type === 'section' && el.elements.some(e => e.type === 'datablock' && e.ref_id === block.id)) return el;
       }
+      const nested = new stic_AwfLayoutSection({ title: block.text });
+      groupSection.elements.push(nested);
       return nested;
     };
 
@@ -1802,9 +1800,10 @@ class stic_AwfLayout {
           // Standalone blocks in a standalone (non-group) section stay: shared manual sections
           if (!sectionIsGroup && r === block.id && !isGroupHead(block)) { survivors.push(el); return; }
 
-          // Move the element to its top root's home (group section nested host, or standalone section)
+          // Move the element to its top root's home (its own nested section when
+          // the home is a group section, or the standalone section itself)
           const home = ensureRootHome(rootBlock, topSection);
-          const host = isGroupHead(rootBlock) ? groupMemberHost(home) : home;
+          const host = isGroupHead(rootBlock) ? blockHostSection(home, block) : home;
           host.elements.push(el);
         });
         section.elements = survivors;
@@ -1818,15 +1817,51 @@ class stic_AwfLayout {
       processTopSection(section, ownerRootId);
     });
 
-    // ---- 4. Group-section normalization: direct datablock elements are wrapped into
-    //         a nested section (migration of flat group sections) ----
+    // ---- 4. Group-section normalization ----
+    //   a) block elements directly inside the group section move to their own nested
+    //      section (one section per data block, titled with the block text);
+    //   b) UNTITLED nested sections are auto-generated containers of previous
+    //      versions: their blocks are distributed to their own sections and the
+    //      (now empty) untitled section is removed. Titled nested sections are
+    //      user structure: always preserved.
     this.structure.forEach(section => {
       if (!sectionIsGroupSection(section)) return;
+
+      // a) direct block elements -> their own nested section
       const directBlocks = section.elements.filter(el => el.type === 'datablock');
-      if (directBlocks.length === 0) return;
-      const host = groupMemberHost(section);
-      section.elements = section.elements.filter(el => el.type !== 'datablock');
-      host.elements.push(...directBlocks);
+      if (directBlocks.length > 0) {
+        section.elements = section.elements.filter(el => el.type !== 'datablock');
+        directBlocks.forEach(el => {
+          const block = dataBlocks.find(b => b.id === el.ref_id);
+          if (block) blockHostSection(section, block).elements.push(el);
+          else section.elements.push(el);
+        });
+      }
+
+      // b) untitled nested sections -> split into one section per block
+      [...section.elements].forEach(el => {
+        if (el.type !== 'section' || el.title) return;
+        const innerBlocks = el.elements.filter(e => e.type === 'datablock');
+        el.elements = el.elements.filter(e => e.type !== 'datablock');
+        innerBlocks.forEach(blockEl => {
+          const block = dataBlocks.find(b => b.id === blockEl.ref_id);
+          if (block) blockHostSection(section, block).elements.push(blockEl);
+          else el.elements.push(blockEl);
+        });
+        if (el.elements.length === 0) section.elements.splice(section.elements.indexOf(el), 1);
+      });
+
+      // c) remove EMPTY auto-generated nested sections: untitled ones, or ones
+      //    titled with the text of any data block (their block moved away, was
+      //    ungrouped or unbundled elsewhere). User-created sections ("Nova
+      //      secció" / renamed) are always preserved.
+      const blockTexts = new Set(dataBlocks.map(b => b.text));
+      [...section.elements].forEach(el => {
+        if (el.type !== 'section' || el.elements.length > 0) return;
+        if (!el.title || blockTexts.has(el.title)) {
+          section.elements.splice(section.elements.indexOf(el), 1);
+        }
+      });
     });
 
     // ---- 5. Orphans: renderable blocks not yet present in the layout ----
@@ -1840,27 +1875,27 @@ class stic_AwfLayout {
       if (r === block.id) {
         // Root block: gets its own top-level section
         const home = ensureRootHome(rootBlock);
-        const host = isGroupHead(rootBlock) ? groupMemberHost(home) : home;
+        const host = isGroupHead(rootBlock) ? blockHostSection(home, block) : home;
         host.elements.push(new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id }));
         placedBlockIds.add(block.id);
-        // Group heads bring their descendants into the same nested section
+        // Group heads: each descendant gets its own nested section as well
         if (isGroupHead(block)) {
           block.getDescendants(dataBlocks).forEach(child => {
             if (placedBlockIds.has(child.id) || !isRenderable(child)) return;
-            host.elements.push(new stic_AwfLayoutElement({ type: 'datablock', ref_id: child.id }));
+            blockHostSection(home, child).elements.push(new stic_AwfLayoutElement({ type: 'datablock', ref_id: child.id }));
             placedBlockIds.add(child.id);
           });
         }
       } else {
-        // Child block: placed inside its top root's group section (nested host)
+        // Child block: its own nested section inside the group section; the group
+        // root (if not placed yet) goes first, into its own nested section
         const home = ensureRootHome(rootBlock);
-        const host = groupMemberHost(home);
-        if (!placedBlockIds.has(rootBlock.id)) {
-          // The group root must always be the first element of its host section
-          host.elements.unshift(new stic_AwfLayoutElement({ type: 'datablock', ref_id: rootBlock.id }));
+        const rootHost = blockHostSection(home, rootBlock);
+        if (!placedBlockIds.has(rootBlock.id) && !rootHost.elements.some(e => e.type === 'datablock' && e.ref_id === rootBlock.id)) {
+          rootHost.elements.unshift(new stic_AwfLayoutElement({ type: 'datablock', ref_id: rootBlock.id }));
           placedBlockIds.add(rootBlock.id);
         }
-        host.elements.push(new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id }));
+        blockHostSection(home, block).elements.push(new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id }));
         placedBlockIds.add(block.id);
       }
     });
@@ -1883,14 +1918,15 @@ class stic_AwfLayout {
     });
     appendedSections.forEach(s => this.structure.push(s));
 
-    // ---- 7. Group sections take the group title (unless manually customized) ----
+    // ---- 7. Group sections take the group name but do NOT display their title
+    //         (unless manually customized) ----
     this.structure.forEach(section => {
       if (!sectionIsGroupSection(section)) return;
       const first = firstBlockOf(section);
       const owner = first ? dataBlocks.find(b => b.id === topRootIdOf(first)) : null;
       if (owner && !section.is_custom_title) {
         section.title = owner.group_title || owner.text;
-        section.showTitle = true;
+        section.showTitle = false;
       }
     });
   }

@@ -130,13 +130,13 @@
                     </div>
                     <!-- floating_labels -->
                     <div class="mb-3">
-                        <div class="form-check form-switch">
+                        <div class="form-check form-switch" x-init="utils.setInlineHelpQtip()">
                             <input class="form-check-input" type="checkbox" id="theme-floating_labels" x-model="layout.theme.floating_labels">
-                            <label class="form-check-label fw-bold small" for="theme-floating_labels" x-text="utils.translate('LBL_THEME_FLOATING_LABELS')"></label>
-                        </div>
-                        <div class="form-text text-muted extra-small fst-italic">
-                            <i class="suitepicon suitepicon-action-info me-1"></i>
-                            <span x-text="utils.translate('LBL_THEME_FLOATING_LABELS_DESC')"></span>
+                            <label class="form-check-label fw-bold small" for="theme-floating_labels" >
+                                <span x-text="utils.translate('LBL_THEME_FLOATING_LABELS')"></span>
+                                <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_THEME_FLOATING_LABELS_DESC')"></div>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -207,7 +207,11 @@
                     <!-- sections_per_row -->
                     <div class="mb-3">
                         <label for="theme-sections_per_row" class="form-label small d-flex justify-content-between mb-1">
-                            <span x-text="utils.translateForFieldLabel('LBL_THEME_SECTIONS_PER_ROW')"></span>
+                            <div x-init="utils.setInlineHelpQtip()">
+                                <span x-text="utils.translateForFieldLabel('LBL_THEME_SECTIONS_PER_ROW')"> </span>
+                                <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_THEME_PER_ROW_DESC')"></div>
+                            </div>
                             <span class="badge bg-light text-dark border" x-text="layout.theme.sections_per_row"></span>
                         </label>
                         <input id="theme-sections_per_row" type="range" class="form-range" min="1" max="3" step="1" 
@@ -219,7 +223,11 @@
                     <!-- fields_per_row -->
                     <div class="mb-3">
                         <label for="theme-fields_per_row" class="form-label small d-flex justify-content-between mb-1">
-                            <span x-text="utils.translateForFieldLabel('LBL_THEME_FIELDS_PER_ROW')"></span>
+                            <div x-init="utils.setInlineHelpQtip()">
+                                <span x-text="utils.translateForFieldLabel('LBL_THEME_FIELDS_PER_ROW')"> </span>
+                                <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_THEME_PER_ROW_DESC')"></div>
+                            </div>
                             <span class="badge bg-light text-dark border" x-text="layout.theme.fields_per_row"></span>
                         </label>
                         <input id="theme-fields_per_row" type="range" class="form-range" min="1" max="4" step="1" 
@@ -228,13 +236,6 @@
                             <span>1</span><span>2</span><span>3</span><span>4</span>
                         </div>
                     </div>
-                    <!-- Per row description -->
-                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
-                        <i class="suitepicon suitepicon-action-info me-1"></i>
-                        <span x-text="utils.translate('LBL_THEME_PER_ROW_DESC')"></span>
-                    </div>
-                    <!-- Separator -->
-                    <hr class="text-muted">
                     <!-- field_spacing -->
                     <div class="mb-3">
                         <label for="theme-field_spacing" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FIELD_SPACING')"></label>
@@ -255,8 +256,12 @@
             </details>
 
             <!-- Closed form -->
-            <details class="mb-3">
-                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_CLOSED_FORM')"></summary>
+            <details class="mb-3" x-init="utils.setInlineHelpQtip()">
+                <summary class="cursor-pointer user-select-none">
+                    <span x-text="utils.translate('LBL_THEME_CLOSED_FORM')"></span>
+                    <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                    <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_THEME_CLOSED_FORM_DESC')"></div>
+                </summary>
                 <div class="ps-4 g-2 mt-2">
                     <!-- closed_form_title -->
                     <div class="mb-3">
@@ -268,17 +273,16 @@
                        <label for="theme-closed_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CLOSED_FORM_TEXT')"></label>
                         <textarea id="theme-closed_form_text" class="form-control font-monospace small" rows="3" x-model="layout.closed_form_text"></textarea>
                     </div>
-
-                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
-                        <i class="suitepicon suitepicon-action-info me-1"></i>
-                        <span x-text="utils.translate('LBL_THEME_CLOSED_FORM_DESC')"></span>
-                    </div>
                 </div>
             </details>
 
             <!-- Processed form -->
             <details class="mb-3">
-                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_PROCESSED_FORM')"></summary>
+                <summary class="cursor-pointer user-select-none">
+                    <span x-text="utils.translate('LBL_THEME_PROCESSED_FORM')"></span>
+                    <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                    <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_THEME_PROCESSED_FORM_DESC')"></div>
+                </summary>
                 <div class="ps-4 g-2 mt-2">
                     <!-- processed_form_title -->
                     <div class="mb-3">
@@ -290,17 +294,16 @@
                        <label for="theme-processed_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_PROCESSED_FORM_TEXT')"></label>
                         <textarea id="theme-processed_form_text" class="form-control font-monospace small" rows="3" x-model="layout.processed_form_text"></textarea>
                     </div>
-
-                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
-                        <i class="suitepicon suitepicon-action-info me-1"></i>
-                        <span x-text="utils.translate('LBL_THEME_PROCESSED_FORM_DESC')"></span>
-                    </div>
                 </div>
             </details>
 
             <!-- Receipt form -->
             <details class="mb-3">
-                <summary class="cursor-pointer user-select-none" x-text="utils.translate('LBL_THEME_RECEIPT_FORM')"></summary>
+                <summary class="cursor-pointer user-select-none">
+                    <span x-text="utils.translate('LBL_THEME_RECEIPT_FORM')"></span>
+                    <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                    <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_THEME_RECEIPT_FORM_DESC')"></div>
+                </summary>
                 <div class="ps-4 g-2 mt-2">
                     <!-- receipt_form_title -->
                     <div class="mb-3">
@@ -312,11 +315,6 @@
                        <label for="theme-receipt_form_text" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_RECEIPT_FORM_TEXT')"></label>
                         <textarea id="theme-receipt_form_text" class="form-control font-monospace small" rows="3" x-model="layout.receipt_form_text"></textarea>
                     </div>
-
-                    <div class="form-text text-muted extra-small fst-italic mt-3 border-top pt-2">
-                        <i class="suitepicon suitepicon-action-info me-1"></i>
-                        <span x-text="utils.translate('LBL_THEME_RECEIPT_FORM_DESC')"></span>
-                    </div>
                 </div>
             </details>
             <!-- Advanced -->
@@ -325,23 +323,23 @@
                 <div class="ps-4 g-2 mt-2" x-show="STIC.isAdmin">
                     <!-- custom_css -->
                     <div class="mb-3">
-                        <label for="theme-custom_css" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_CSS')"></label>
+                        <label for="theme-custom_css" class="form-label small" x-init="utils.setInlineHelpQtip()">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_CSS')"></span>
+                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_THEME_CUSTOM_CSS_DESC')"></div>
+                        </label>
                         <textarea id="theme-custom_css" class="form-control font-monospace small" rows="4" x-model="layout.custom_css" 
                                   placeholder=".btn { background: red !important; }"></textarea>
-                        <div class="form-text text-muted extra-small fst-italic">
-                            <i class="suitepicon suitepicon-action-info me-1"></i>
-                            <span x-text="utils.translate('LBL_THEME_CUSTOM_CSS_DESC')"></span>
-                        </div>
                     </div>
                     <!-- custom_js -->
                     <div class="mb-3">
-                       <label for="theme-custom_js" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_JS')"></label>
+                        <label for="theme-custom_js" class="form-label small" x-init="utils.setInlineHelpQtip()">
+                            <span x-text="utils.translateForFieldLabel('LBL_THEME_CUSTOM_JS')"></span>
+                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_THEME_CUSTOM_JS_DESC')"></div>
+                        </label>
                         <textarea id="theme-custom_js" class="form-control font-monospace small" rows="4" x-model="layout.custom_js" 
                                   placeholder="console.log('Form loaded');"></textarea>
-                        <div class="form-text text-muted extra-small fst-italic">
-                            <i class="suitepicon suitepicon-action-info me-1"></i>
-                            <span x-text="utils.translate('LBL_THEME_CUSTOM_JS_DESC')"></span>
-                        </div>
                     </div>
                 </div>
                 <div class="mb-3 p-3 bg-light border rounded small text-muted fst-italic" x-show="!STIC.isAdmin">
@@ -365,7 +363,11 @@
                 </div>
                 <div class="stic-tab">
                     <input class="form-check-input" type="radio" id="LayoutPreview_Tab" x-model="layoutTabSelected" value="preview"/>
-                    <label class="form-label" for="LayoutPreview_Tab" x-text="utils.translate('LBL_LAYOUT_PREVIEW')"></label>
+                    <label class="form-label" for="LayoutPreview_Tab" x-init="utils.setInlineHelpQtip()">
+                        <span x-text="utils.translate('LBL_LAYOUT_PREVIEW')"></span>
+                        <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                        <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_PREVIEW_DESC')"></div>
+                    </label>
                 </div>
             </div>
 
@@ -404,199 +406,199 @@
                             <div class="accordion-item">
                                 <div id="LayoutBody_Content" class="accordion-collapse show" aria-labelledby="LayoutBody_Header">
                                     <div id="LayoutBody_Body" class="accordion-body"> 
-                                        <div class="flex-fill border rounded p-2 overflow-auto">
-                                            <h4 class="mb-2" x-text="utils.translate('LBL_SECTIONS')"></h3>
-                                            <template x-for="section in sections" :key="section.id">
-                                                <div x-data="{ level: 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
-                                            </template>
+                                        <h3 class="mb-2" x-text="utils.translate('LBL_SECTIONS')"></h3>
+                                        <template x-for="section in sections" :key="section.id">
+                                            <div x-data="{ level: 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
+                                        </template>
 
-                                            <!-- Reusable inert templates (stamped via sticControls.mountTemplate) -->
+                                        <!-- Reusable Template: SECTION -->
                                             <template id="awfTplLayoutSection">
-                                                <div class="card datablock mb-3 shadow-sm transition-all awf-wizard-section-card" x-data="{showSettings: false, isCollapsed: false}">
-                                                    <!-- Integrated Group header (Rendered ONLY if item is a group head/subgroup) -->
-                                                    <template x-if="isGroupSection(section)">
-                                                        <!-- Group Header -->
-                                                        <div class="card-header border-bottom p-2">
-                                                            <!-- Group Info -->
-                                                            <div class="d-flex align-items-center justify-content-between">
-                                                                <!-- Group Title -->
-                                                                <div class="d-flex flex-column ">
-                                                                    <!-- Group Badge -->
-                                                                    <span class="badge bg-transparent text-dark" style="margin-left:-10px; margin-top:-5px;font-weight: normal;" 
-                                                                          x-text="'📦 ' + groupName(section)" :title="utils.translate('LBL_DATABLOCK_GROUP')"></span>
-                                                                    <!-- Optional and Repeatable Badges -->
-                                                                    <div class="d-flex justify-content-start">
-                                                                        <!-- Optional Badge -->
-                                                                        <span class="badge bg-info me-2" x-show="getGroup(section).is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
-                                                                        <!-- Repeatable Badge -->
-                                                                        <span class="badge bg-primary" x-show="getGroup(section).is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
-                                                                    </div>
+                                                <div :id="'sectionCard_' + section.id" class="card datablock mb-3 shadow-sm transition-all awf-wizard-section-card" x-data="{showSettings: false, isCollapsed: false}">
+                                                <!-- Integrated Group header (Rendered ONLY if item is a group head/subgroup) -->
+                                                <template x-if="isGroupSection(section)">
+                                                    <!-- Group Header -->
+                                                    <div class="card-header border-bottom p-2">
+                                                        <!-- Group Info -->
+                                                        <div class="d-flex align-items-center justify-content-between">
+                                                            <!-- Group Title -->
+                                                            <div class="d-flex flex-column ">
+                                                                <!-- Group Badge -->
+                                                                <span class="badge bg-transparent text-dark" style="margin-left:-10px; margin-top:-5px;font-weight: normal;" 
+                                                                      x-text="'📦 ' + groupName(section)" :title="utils.translate('LBL_DATABLOCK_GROUP')"></span>
+                                                                <!-- Optional and Repeatable Badges -->
+                                                                <div class="d-flex justify-content-start">
+                                                                    <!-- Optional Badge -->
+                                                                    <span class="badge bg-info me-2" x-show="getGroup(section).is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
+                                                                    <!-- Repeatable Badge -->
+                                                                    <span class="badge bg-primary" x-show="getGroup(section).is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
                                                                 </div>
-                                                            </div>
-                                                        </div>
-                                                    </template>
-
-                                                    <!-- Standard Section header -->
-                                                    <div class="card-header pb-1 pe-0">
-                                                        <div class="d-flex align-items-center">
-                                                            <!-- Section Title -->
-                                                            <h3 class="flex-grow-1 mb-0" :id="`sectionTitleEdit-${section.id}`" data-model="section.title" data-change="section.is_custom_title = true" x-init="sticControls.editableText($el);"></h3>
-
-                                                            <!-- Buttons -->
-                                                            <div class="d-flex align-items-center ms-auto">
-                                                                <!-- Toggle Config Panel -->
-                                                                <button class="btn btn-sm" @click="showSettings = !showSettings"
-                                                                        :class="{'active': showSettings}" :title="utils.translate('LBL_SECTION_CONFIG')">
-                                                                    <span class="awf-icon-gear" :class="showSettings ? 'awf-icon-gear-fill' : ''"></span>
-                                                                </button>
-
-                                                                <!-- Move Up/Down -->
-                                                                <div class="d-inline-flex input-group" role="group" style="min-width: 64px;">
-                                                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                                            :disabled="!canMoveUpSection(section);" @click="moveUpSection(section);">
-                                                                        <span class="suitepicon suitepicon-action-move-up"></span>
-                                                                    </button>
-                                                                    <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                                            :disabled="!canMoveDownSection(section);" @click="moveDownSection(section);">
-                                                                        <span class="suitepicon suitepicon-action-move-down"></span>
-                                                                    </button>
-                                                                </div>
-
-                                                                <!-- Delete -->
-                                                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
-                                                                        :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
-                                                                    <span class="suitepicon suitepicon-action-delete"></span>
-                                                                </button>
-
-                                                                <!-- Move out of the parent section (not allowed to leave a group section) -->
-                                                                <template x-if="canMoveSectionOut(section)">
-                                                                    <button type="button" class="btn ms-2" :title="utils.translate('LBL_SECTION_MOVE_OUT')" @click="moveSectionOut(section);">
-                                                                        <span class="suitepicon suitepicon-action-move-left"></span>
-                                                                    </button>
-                                                                </template>
-
-                                                                <!-- Add nested section (group sections only) -->
-                                                                <template x-if="isGroupSection(section) && level < 2">
-                                                                    <button type="button" class="btn ms-2" :title="utils.translate('LBL_SECTION_ADD')" @click="addNestedSection(section);">
-                                                                        <span class="suitepicon suitepicon-action-plus"></span>
-                                                                    </button>
-                                                                </template>
-
-                                                                <!-- Chevron -->
-                                                                <button class="btn btn-sm btn-link text-decoration-none" @click="isCollapsed = !isCollapsed">
-                                                                    <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-
-                                                        <!-- Config Drawer -->
-                                                        <div x-show="showSettings" x-transition class="mt-2 me-2 border rounded shadow-lg">
-                                                            <!-- Section Configuration -->
-                                                            <div :id="`sectionConfig${section.id}`" class="row p-3 align-items-center">
-                                                                <div class="row">
-                                                                    <!-- Container Type -->
-                                                                    <div class="col-3">
-                                                                        <label :for="`section${section.id}_containerType`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_CONTAINER')"></label>
-                                                                        <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType">
-                                                                            <template x-for="type in availableContainerTypes" :key="type.id">
-                                                                                <option :value="type.id" x-text="type.text" :selected="type.id == section.containerType"></option>
-                                                                            </template>
-                                                                        </select>
-                                                                    </div>
-                                                                    <!-- Show Title -->
-                                                                    <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
-                                                                        <label :for="`section${section.id}_showTitle`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_SHOW_TITLE')"></label>
-                                                                        <input :id="`section${section.id}_showTitle`" class="form-check-input" type="checkbox" role="switch" x-model="section.showTitle"
-                                                                                @change="if(!section.showTitle) { section.isCollapsible = false; section.isCollapsed = false; }"/>
-                                                                    </div>
-                                                                    <!-- Collapsible -->
-                                                                    <template x-if="section.showTitle">
-                                                                        <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
-                                                                            <label :for="`section${section.id}_isCollapsible`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_IS_COLLAPSIBLE')"></label>
-                                                                            <input :id="`section${section.id}_isCollapsible`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsible"
-                                                                                    @change="if(!section.isCollapsible) { section.isCollapsed = false; }"/>
-                                                                        </div>
-                                                                    </template>
-                                                                    <!-- Collaped -->
-                                                                    <template x-if="section.showTitle && section.isCollapsible">
-                                                                        <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
-                                                                            <label :for="`section${section.id}_isCollapsed`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_ISCOLLAPSED')"></label>
-                                                                            <input :id="`section${section.id}_isCollapsed`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsed"/>
-                                                                        </div>
-                                                                    </template>
-                                                                </div>
-                                                                <!-- Title & Subtitle -->
-                                                                <template x-if="section.showTitle">
-                                                                    <div class="row mt-2">
-                                                                        <!-- Title -->
-                                                                        <div class="col-3">
-                                                                            <label :for="`section${section.id}_title`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_TITLE')"></label>
-                                                                            <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title" @input="section.is_custom_title = true"/>
-                                                                        </div>
-                                                                        <!-- Subtitle -->
-                                                                        <div class="col-9">
-                                                                            <label :for="`section${section.id}_subtitle`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_SUBTITLE')"></label>
-                                                                            <input :id="`section${section.id}_subtitle`" type="text" class="form-control" autocomplete="off" x-model="section.subtitle"/>
-                                                                        </div>
-                                                                    </div>
-                                                                </template>
-
-                                                                <!-- Text: Toggle Switch Custom Label -->
-                                                                <!-- <div class="col-md-3" x-show="item.is_optional" x-init="utils.setInlineHelpQtip()">
-                                                                <label :for="`groupToggleLabel_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_INCLUDE_LABEL')"></label>
-                                                                <i class="inline-help glyphicon glyphicon-info-sign"></i>
-                                                                <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DESC')"></div>
-                                                                <input type="text" :id="`groupToggleLabel_${item.id}`" class="form-control form-control-sm" x-model="item.toggle_label" 
-                                                                        :placeholder="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT') + ' ' + (item.group_title || item.text)">
-                                                                </div> -->
-
-                                                                <!-- Text: Add Button Custom Label -->
-                                                                <!-- <div class="col-md-3" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
-                                                                <label :for="`groupAddButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_ADD_LABEL')"></label>
-                                                                <i class="inline-help glyphicon glyphicon-info-sign"></i>
-                                                                <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL_DESC')"></div>
-                                                                <input type="text" :id="`groupAddButton_${item.id}`" class="form-control form-control-sm" x-model="item.add_button_label" 
-                                                                        :placeholder="utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT')">
-                                                                </div> -->
-
-                                                                <!-- Text: Remove Button Custom Label -->
-                                                                <!-- <div class="col-md-2" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
-                                                                <label :for="`groupRemoveButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_REMOVE_LABEL')"></label>
-                                                                <i class="inline-help glyphicon glyphicon-info-sign"></i>
-                                                                <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DESC')"></div>
-                                                                <input type="text" :id="`groupRemoveButton_${item.id}`" class="form-control form-control-sm" x-model="item.remove_button_label" 
-                                                                        :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT')">
-                                                                </div> -->
-
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </template>
 
-                                                    <!-- Section Body -->
-                                                    <div class="card-body p-2" x-show="!isCollapsed" x-transition>
-                                                        <!-- Content: data blocks and (level < 2) nested sections -->
-                                                        <template x-for="(element, index) in section.elements" :key="element.id">
-                                                            <div>
-                                                                <template x-if="element.type === 'section' && level < 2">
-                                                                    <div x-data="{ section: element, level: level + 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
+                                                <!-- Standard Section header -->
+                                                <div class="card-header pb-1 pe-0">
+                                                    <div class="d-flex align-items-center">
+                                                        <!-- Section Title -->
+                                                        <h3 class="flex-grow-1 mb-0" :id="`sectionTitleEdit-${section.id}`" data-model="section.title" data-change="section.is_custom_title = true" x-init="sticControls.editableText($el);"></h3>
+
+                                                        <!-- Buttons -->
+                                                        <div class="d-flex align-items-center ms-auto">
+                                                            <!-- Toggle Config Panel -->
+                                                            <button class="btn btn-sm" @click="showSettings = !showSettings"
+                                                                    :class="{'active': showSettings}" :title="utils.translate('LBL_SECTION_CONFIG')">
+                                                                <span class="awf-icon-gear" :class="showSettings ? 'awf-icon-gear-fill' : ''"></span>
+                                                            </button>
+
+                                                            <!-- Move Up/Down -->
+                                                            <div class="d-inline-flex input-group" role="group" style="min-width: 64px;">
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
+                                                                        :disabled="!canMoveUpSection(section);" @click="moveUpSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-move-up"></span>
+                                                                </button>
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
+                                                                        :disabled="!canMoveDownSection(section);" @click="moveDownSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-move-down"></span>
+                                                                </button>
+                                                            </div>
+
+                                                            <!-- Delete -->
+                                                            <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_DELETE')"
+                                                                    :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
+                                                                <span class="suitepicon suitepicon-action-delete"></span>
+                                                            </button>
+
+                                                            <!-- Move out of the parent section (not allowed to leave a group section) -->
+                                                            <template x-if="canMoveSectionOut(section)">
+                                                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_SECTION_MOVE_OUT')" @click="moveSectionOut(section);">
+                                                                    <span class="suitepicon suitepicon-action-move-left"></span>
+                                                                </button>
+                                                            </template>
+
+                                                            <!-- Add nested section (group sections only) -->
+                                                            <template x-if="isGroupSection(section) && level < 2">
+                                                                <button type="button" class="btn ms-2" :title="utils.translate('LBL_SECTION_ADD')" @click="addNestedSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-plus"></span>
+                                                                </button>
+                                                            </template>
+
+                                                            <!-- Chevron -->
+                                                            <button class="btn btn-sm btn-link text-decoration-none" @click="isCollapsed = !isCollapsed">
+                                                                <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Config Drawer -->
+                                                    <div x-show="showSettings" x-transition class="mt-2 me-2 border rounded shadow-lg">
+                                                        <!-- Section Configuration -->
+                                                        <div :id="`sectionConfig${section.id}`" class="row p-3 align-items-center">
+                                                            <div class="row">
+                                                                <!-- Container Type -->
+                                                                <div class="col-3">
+                                                                    <label :for="`section${section.id}_containerType`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_CONTAINER')"></label>
+                                                                    <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType">
+                                                                        <template x-for="type in availableContainerTypes" :key="type.id">
+                                                                            <option :value="type.id" x-text="type.text" :selected="type.id == section.containerType"></option>
+                                                                        </template>
+                                                                    </select>
+                                                                </div>
+                                                                <!-- Show Title -->
+                                                                <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
+                                                                    <label :for="`section${section.id}_showTitle`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_SHOW_TITLE')"></label>
+                                                                    <input :id="`section${section.id}_showTitle`" class="form-check-input" type="checkbox" role="switch" x-model="section.showTitle"
+                                                                            @change="if(!section.showTitle) { section.isCollapsible = false; section.isCollapsed = false; }"/>
+                                                                </div>
+                                                                <!-- Collapsible -->
+                                                                <template x-if="section.showTitle">
+                                                                    <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
+                                                                        <label :for="`section${section.id}_isCollapsible`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_IS_COLLAPSIBLE')"></label>
+                                                                        <input :id="`section${section.id}_isCollapsible`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsible"
+                                                                                @change="if(!section.isCollapsible) { section.isCollapsed = false; }"/>
+                                                                    </div>
                                                                 </template>
-                                                                <!-- Both block elements ('datablock') and unbundled field elements ('field') -->
-                                                                <template x-if="element.type !== 'section'">
-                                                                    <div x-data="{ element: element, parentSection: section, index: index, isCollapsed: true, showFieldSettings: false }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutElement')"></div>
+                                                                <!-- Collaped -->
+                                                                <template x-if="section.showTitle && section.isCollapsible">
+                                                                    <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
+                                                                        <label :for="`section${section.id}_isCollapsed`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_ISCOLLAPSED')"></label>
+                                                                        <input :id="`section${section.id}_isCollapsed`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsed"/>
+                                                                    </div>
                                                                 </template>
                                                             </div>
-                                                        </template>
-                                                        <template x-if="section.elements.length === 0">
-                                                            <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
-                                                        </template>
+                                                            <!-- Title & Subtitle -->
+                                                            <template x-if="section.showTitle">
+                                                                <div class="row mt-2">
+                                                                    <!-- Title -->
+                                                                    <div class="col-3">
+                                                                        <label :for="`section${section.id}_title`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_TITLE')"></label>
+                                                                        <input :id="`section${section.id}_title`" type="text" class="form-control" autocomplete="off" x-model="section.title" @input="section.is_custom_title = true"/>
+                                                                    </div>
+                                                                    <!-- Subtitle -->
+                                                                    <div class="col-9">
+                                                                        <label :for="`section${section.id}_subtitle`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_SUBTITLE')"></label>
+                                                                        <input :id="`section${section.id}_subtitle`" type="text" class="form-control" autocomplete="off" x-model="section.subtitle"/>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+
+                                                            <!-- Text: Toggle Switch Custom Label -->
+                                                            <!-- <div class="col-md-3" x-show="item.is_optional" x-init="utils.setInlineHelpQtip()">
+                                                            <label :for="`groupToggleLabel_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_INCLUDE_LABEL')"></label>
+                                                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DESC')"></div>
+                                                            <input type="text" :id="`groupToggleLabel_${item.id}`" class="form-control form-control-sm" x-model="item.toggle_label" 
+                                                                    :placeholder="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT') + ' ' + (item.group_title || item.text)">
+                                                            </div> -->
+
+                                                            <!-- Text: Add Button Custom Label -->
+                                                            <!-- <div class="col-md-3" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                                                            <label :for="`groupAddButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_ADD_LABEL')"></label>
+                                                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL_DESC')"></div>
+                                                            <input type="text" :id="`groupAddButton_${item.id}`" class="form-control form-control-sm" x-model="item.add_button_label" 
+                                                                    :placeholder="utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT')">
+                                                            </div> -->
+
+                                                            <!-- Text: Remove Button Custom Label -->
+                                                            <!-- <div class="col-md-2" x-show="item.is_repeatable" x-init="utils.setInlineHelpQtip()">
+                                                            <label :for="`groupRemoveButton_${item.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_REMOVE_LABEL')"></label>
+                                                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DESC')"></div>
+                                                            <input type="text" :id="`groupRemoveButton_${item.id}`" class="form-control form-control-sm" x-model="item.remove_button_label" 
+                                                                    :placeholder="utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT')">
+                                                            </div> -->
+
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </template>
 
-                                            <template id="awfTplLayoutElement">
-                                                <!-- Layout element card (data block, collapsed by default) -->
-                                                <div class="card mb-2">
-                                                    <div class="card-header bg-light p-2">
+                                                <!-- Section Body -->
+                                                <div class="card-body p-2" x-show="!isCollapsed" x-transition>
+                                                    <!-- Content: data blocks and (level < 2) nested sections -->
+                                                    <template x-for="(element, index) in section.elements" :key="element.id">
+                                                        <div>
+                                                            <template x-if="element.type === 'section' && level < 2">
+                                                                <div x-data="{ section: element, level: level + 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
+                                                            </template>
+                                                            <!-- Both block elements ('datablock') and unbundled field elements ('field') -->
+                                                            <template x-if="element.type !== 'section'">
+                                                                <div x-data="{ element: element, parentSection: section, index: index, isCollapsed: false, showFieldSettings: false }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutElement')"></div>
+                                                            </template>
+                                                        </div>
+                                                    </template>
+                                                    <template x-if="section.elements.length === 0">
+                                                        <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </template>
+
+                                        <!-- Reusable Template: LAYOUT ELEMENT -->
+                                        <template id="awfTplLayoutElement">
+                                            <!-- Layout element card (data block: expanded by default, collapsible via chevron) -->
+                                            <div class="card mb-2">
+                                                <div class="card-header bg-light p-2 pe-0">
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <div class="d-flex align-items-center gap-2">
                                                             <template x-if="element.type === 'datablock'">
@@ -628,7 +630,7 @@
                                                             <!-- Unbundle: the block card is replaced by one card per field -->
                                                             <template x-if="canUnbundleElement(element)">
                                                                 <button type="button" class="btn btn-sm" :title="utils.translate('LBL_DATABLOCK_UNBUNDLE')"
-                                                                        @click="unbundleElement(element, parentSection, index);">
+                                                                        @click="unbundleElement(element, parentSection);">
                                                                     <span class="suitepicon suitepicon-module-listview"></span>
                                                                 </button>
                                                             </template>
@@ -644,14 +646,24 @@
                                                             <!-- Move up/down buttons -->
                                                             <div class="input-group w-auto" role="group">
                                                                 <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                                        :disabled="index === 0 || getDataBlock(element)?.is_child" @click="moveElementUp(parentSection, index);">
+                                                                        :disabled="elementIndexIn(parentSection, element) <= 0 || getDataBlock(element)?.is_child" @click="moveElementUp(parentSection, element);">
                                                                     <span class="suitepicon suitepicon-action-move-up"></span>
                                                                 </button>
                                                                 <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                                        :disabled="index === parentSection.elements.length - 1 || getDataBlock(element)?.is_child" @click="moveElementDown(parentSection, index);">
+                                                                        :disabled="elementIndexIn(parentSection, element) >= parentSection.elements.length - 1 || getDataBlock(element)?.is_child" @click="moveElementDown(parentSection, element);">
                                                                     <span class="suitepicon suitepicon-action-move-down"></span>
                                                                 </button>
                                                             </div>
+
+                                                            <!-- Chevron: collapse/expand the block content (block elements only, expanded by default) -->
+                                                            <template x-if="element.type === 'datablock'">
+                                                                <button class="btn btn-sm btn-link text-decoration-none" @click="isCollapsed = !isCollapsed">
+                                                                    <span class="awf-icon-toggle" :class="!isCollapsed ? 'open' : ''"></span>
+                                                                </button>
+                                                            </template>
+                                                            <template x-if="element.type !== 'datablock'">
+                                                                <button class="btn btn-sm btn-link text-decoration-none" disabled></button>
+                                                            </template>
                                                         </div>
                                                     </div>
 
@@ -661,58 +673,58 @@
                                                             <div class="d-flex gap-4 align-items-center">
                                                                 <div class="form-check form-switch d-flex align-items-center mb-0">
                                                                     <label class="form-check-label small me-2" :for="`fieldStartNewRow_${element.id}`"
-                                                                        x-text="utils.translate('LBL_FIELD_START_NEW_ROW')"></label>
+                                                                           x-text="utils.translate('LBL_FIELD_START_NEW_ROW')"></label>
                                                                     <input class="form-check-input" type="checkbox" role="switch" :id="`fieldStartNewRow_${element.id}`"
-                                                                        :checked="getField(element).start_new_row" @change="getField(element).start_new_row = $event.target.checked"/>
+                                                                           :checked="getField(element).start_new_row" @change="getField(element).start_new_row = $event.target.checked"/>
                                                                 </div>
                                                                 <div class="form-check form-switch d-flex align-items-center mb-0">
                                                                     <label class="form-check-label small me-2" :for="`fieldFullWidth_${element.id}`"
-                                                                        x-text="utils.translate('LBL_FIELD_FULL_WIDTH')"></label>
+                                                                           x-text="utils.translate('LBL_FIELD_FULL_WIDTH')"></label>
                                                                     <input class="form-check-input" type="checkbox" role="switch" :id="`fieldFullWidth_${element.id}`"
-                                                                        :checked="getField(element).full_width" @change="getField(element).full_width = $event.target.checked"/>
+                                                                           :checked="getField(element).full_width" @change="getField(element).full_width = $event.target.checked"/>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </template>
-                                                    </div>
+                                                </div>
 
-                                                    <template x-if="element.type === 'datablock'">
-                                                        <div class="card-body p-0">
-                                                            <template x-if="element.type !== 'section'">
-                                                                <template x-for="field in getFields(element)" :key="field.name">
-                                                                    <!-- Each field box holds its own layout config: it grows
-                                                                         in place and the rest of the boxes reflow around it -->
-                                                                    <div class="border rounded px-2 py-1 m-2 d-inline-flex align-items-center gap-1" x-data="{ open: false }">
-                                                                        <span x-text="utils.fromFieldLabelText(field.label)"></span>
-                                                                        <button class="btn btn-sm" :class="open ? 'active' : ''"
-                                                                                :title="utils.translate('LBL_FIELD_CONFIG')" @click="open = !open;">
-                                                                            <span class="awf-icon-gear" :class="open ? 'awf-icon-gear-fill' : ''"></span>
-                                                                        </button>
-                                                                        <div x-show="open" x-transition class="ms-1 ps-2 border-start">
-                                                                            <div class="d-flex flex-column gap-1">
-                                                                                <div class="form-check form-switch d-flex align-items-center mb-0">
-                                                                                    <input class="form-check-input" type="checkbox" role="switch" :id="`fStartNewRow_${element.id}_${field.name}`"
-                                                                                           x-model="field.start_new_row"/>
-                                                                                    <label class="form-check-label small ms-2" :for="`fStartNewRow_${element.id}_${field.name}`"
-                                                                                           x-text="utils.translate('LBL_FIELD_START_NEW_ROW')"></label>
-                                                                                </div>
-                                                                                <div class="form-check form-switch d-flex align-items-center mb-0">
-                                                                                    <input class="form-check-input" type="checkbox" role="switch" :id="`fFullWidth_${element.id}_${field.name}`"
-                                                                                           x-model="field.full_width"/>
-                                                                                    <label class="form-check-label small ms-2" :for="`fFullWidth_${element.id}_${field.name}`"
-                                                                                           x-text="utils.translate('LBL_FIELD_FULL_WIDTH')"></label>
-                                                                                </div>
+                                                <template x-if="element.type === 'datablock'">
+                                                    <div class="card-body p-0" x-show="!isCollapsed" x-transition>
+                                                        <template x-if="element.type !== 'section'">
+                                                            <template x-for="field in getFields(element)" :key="field.name">
+                                                                <!-- Each field box holds its own layout config: it grows
+                                                                        in place and the rest of the boxes reflow around it -->
+                                                                <div class="border rounded px-2 py-1 m-2 d-inline-flex align-items-center gap-1" x-data="{ open: false }">
+                                                                    <span x-text="utils.fromFieldLabelText(field.label)"></span>
+                                                                    <button class="btn btn-sm" :class="open ? 'active' : ''"
+                                                                            :title="utils.translate('LBL_FIELD_CONFIG')" @click="open = !open;">
+                                                                        <span class="awf-icon-gear" :class="open ? 'awf-icon-gear-fill' : ''"></span>
+                                                                    </button>
+                                                                    <div x-show="open" x-transition class="ms-1 ps-2 border-start">
+                                                                        <div class="d-flex flex-column gap-1">
+                                                                            <div class="form-check form-switch d-flex align-items-center mb-0">
+                                                                                <input class="form-check-input" type="checkbox" role="switch" :id="`fStartNewRow_${element.id}_${field.name}`"
+                                                                                       x-model="field.start_new_row"/>
+                                                                                <label class="form-check-label small ms-2" :for="`fStartNewRow_${element.id}_${field.name}`"
+                                                                                       x-text="utils.translate('LBL_FIELD_START_NEW_ROW')"></label>
+                                                                            </div>
+                                                                            <div class="form-check form-switch d-flex align-items-center mb-0">
+                                                                                <input class="form-check-input" type="checkbox" role="switch" :id="`fFullWidth_${element.id}_${field.name}`"
+                                                                                       x-model="field.full_width"/>
+                                                                                <label class="form-check-label small ms-2" :for="`fFullWidth_${element.id}_${field.name}`"
+                                                                                       x-text="utils.translate('LBL_FIELD_FULL_WIDTH')"></label>
                                                                             </div>
                                                                         </div>
                                                                     </div>
-                                                                </template>
+                                                                </div>
                                                             </template>
-                                                        </div>
-                                                    </template>
-                                                </div>
-                                            </template>
-                                            <button type="button" class="btn w-auto" x-text="utils.translate('LBL_SECTION_ADD')" @click="createSection"></button>
-                                        </div>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </template>
+
+                                        <button type="button" class="btn w-auto" x-text="utils.translate('LBL_SECTION_ADD')" @click="createSection"></button>
                                     </div>
                                 </div>
                             </div>
@@ -746,7 +758,7 @@
 
                 <!-- Preview -->
                 <template x-if="layoutTabSelected=='preview'">
-                    <div class="h-100 d-flex flex-column relative bg-light border rounded overflow-hidden">
+                    <div class="h-100 bg-light border rounded overflow-hidden">
                         
                         <!-- Spinner -->
                         <template x-if="isLoadingPreview">
@@ -757,16 +769,11 @@
                             </div>
                         </template>
 
-                        <!-- Information Bar -->
-                        <div class="bg-white border-bottom p-2 d-flex justify-content-between align-items-center">
-                             <div class="small text-muted ms-2">
-                                <i class="suitepicon suitepicon-action-info"></i>
-                                <span x-text="utils.translate('LBL_PREVIEW_DESC')"></span>
-                             </div>
-                             <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_RELOAD')" @click="refreshPreview();">
-                                <span class="suitepicon suitepicon-action-reload"></span>
-                            </button>
-                        </div>
+                        <!-- Reload Button -->
+                        <button type="button" class="btn ms-2" :title="utils.translate('LBL_BUTTON_RELOAD')" @click="refreshPreview();"
+                                style="position:sticky; top:10px; right:10px; float:right;">
+                            <span class="suitepicon suitepicon-action-reload"></span>
+                        </button>
 
                         <!-- Preview -->
                         <iframe x-ref="previewFrame" class="w-100 border-0"></iframe>

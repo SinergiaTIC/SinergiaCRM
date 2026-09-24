@@ -2867,10 +2867,27 @@ class WizardStep4 {
         return this.sections.filter(s => s.id !== fromSection.id && !this.isGroupSection(s));
       },
 
-      // Adds a new (empty) nested section to a group section
+      // Adds a new (empty) nested section to a group section, titled "Nova secció"
+      // like the top-level add-section button, and focuses its title editor
       addNestedSection(groupSection) {
         if (!this.isGroupSection(groupSection)) return;
-        groupSection.elements.push(new stic_AwfLayoutSection({ title: '' }));
+        const nested = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NEW') });
+        groupSection.elements.push(nested);
+
+        // Once rendered: scroll to the new section card and start editing its title
+        Alpine.nextTick(() => {
+          const card = document.getElementById('sectionCard_' + nested.id);
+          if (!card) return;
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          const titleEl = card.querySelector('h3[id^="sectionTitleEdit-"]');
+          if (titleEl) {
+            // Trigger the inline editor's dblclick on its display span, then focus the input
+            const displaySpan = titleEl.querySelector('span');
+            displaySpan?.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            const input = card.querySelector(`input[id="sectionTitleEdit-${nested.id}_ctrl"]`);
+            input?.focus();
+          }
+        });
       },
 
       getFields(element) {
@@ -2919,17 +2936,22 @@ class WizardStep4 {
       },
 
       // Replaces a (scalar) block element by one field element per rendered field,
-      // preserving its position inside the section
-      unbundleElement(element, section, index) {
+      // preserving its position inside the section.
+      // NOTE: never trust the captured `index` (frozen when the card was created) —
+      // resolve the CURRENT position by identity, or the splice would hit the wrong
+      // element after the array changed.
+      unbundleElement(element, section) {
         if (!this.canUnbundleElement(element)) return;
         const block = this.getDataBlock(element);
+        const currentIndex = section.elements.findIndex(el => el.id === element.id);
+        if (currentIndex < 0) return; // Stale element: nothing to unbundle
         const fields = block.fields.filter(f => f.type_field !== 'fixed');
         const fieldElements = fields.map(f => new stic_AwfLayoutElement({
           type: 'field',
           ref_id: block.id,
           field_name: f.name,
         }));
-        section.elements.splice(index, 1, ...fieldElements);
+        section.elements.splice(currentIndex, 1, ...fieldElements);
       },
 
       // Re-groups every field element of a block (wherever it is placed) back into
@@ -2957,22 +2979,39 @@ class WizardStep4 {
           const i = sec.elements.indexOf(el);
           if (i >= 0) sec.elements.splice(i, 1);
         });
-        const blockElement = new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id });
-        firstSection.elements.splice(Math.min(firstIndex, firstSection.elements.length), 0, blockElement);
+        // Only insert a whole block element if the block does not already have one
+        // anywhere in the layout (otherwise there would be duplicates)
+        if (!this.layoutHasBlockElement(block.id)) {
+          firstSection.elements.splice(Math.min(firstIndex, firstSection.elements.length), 0, new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id }));
+        }
       },
 
-      moveElementUp(section, index) {
-        if (index <= 0) return;
-        const item = section.elements[index];
-        section.elements.splice(index, 1);
-        section.elements.splice(index - 1, 0, item);
-      },      
+      // True when the layout already holds a whole block element for the block
+      layoutHasBlockElement(blockId) {
+        const check = (sec) => sec.elements.some(el =>
+          (el.type === 'datablock' && el.ref_id === blockId) || (el.type === 'section' && check(el)));
+        return this.sections.some(check);
+      },
 
-      moveElementDown(section, index) {
-        if (index >= section.elements.length - 1) return;
-        const item = section.elements[index];
-        section.elements.splice(index, 1);
-        section.elements.splice(index + 1, 0, item);
+      // Current position of an element inside a section (by identity)
+      elementIndexIn(section, element) {
+        return section.elements.findIndex(el => el.id === element.id);
+      },
+
+      // Move up/down by element identity (the captured index in the card's x-data
+      // may be stale after the section's elements changed)
+      moveElementUp(section, element) {
+        const i = this.elementIndexIn(section, element);
+        if (i <= 0) return;
+        section.elements.splice(i, 1);
+        section.elements.splice(i - 1, 0, element);
+      },
+
+      moveElementDown(section, element) {
+        const i = this.elementIndexIn(section, element);
+        if (i < 0 || i >= section.elements.length - 1) return;
+        section.elements.splice(i, 1);
+        section.elements.splice(i + 1, 0, element);
       },
 
       moveElementToSection(element, fromSectionId, toSectionId) {
