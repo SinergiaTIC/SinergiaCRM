@@ -2919,6 +2919,7 @@ class WizardStep4 {
       //  - a block inside a group's nested section: the OTHER nested sections of that group
       //  - a block in a top-level section: the other standalone (non-group) top-level sections
       getMoveTargets(element, fromSection) {
+        if (this.isGroupSection(fromSection)) return [];
         if (this.isNestedSection(fromSection)) {
           const parent = this.getParentSectionOf(fromSection);
           return parent.elements.filter(el => el.type === 'section' && el.id !== fromSection.id);

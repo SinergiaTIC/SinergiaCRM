@@ -625,7 +625,8 @@ class FormHtmlGeneratorService {
                 return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $labelSection);
             }
             if ($instanceIndexVar !== null && self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) {
-                return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $parentSection);
+                $groupSectionContext = $parentSection instanceof FormLayoutGroupSection ? null : $parentSection;
+                return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $groupSectionContext);
             }
             return "<!-- Group root '{$block->name}' is rendered by its group section loop -->" . $this->newLine();
         }
