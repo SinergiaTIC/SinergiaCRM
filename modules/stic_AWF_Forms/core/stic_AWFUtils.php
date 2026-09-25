@@ -216,7 +216,41 @@ class stic_AWFUtils {
 
                     // Value to display
                     $value = $formData[$formKey] ?? '';
-                    $isHtmlValue = false; // Flag to indicate if the value contains HTML (for proper escaping)
+
+                    // For file fields, get the filename from the uploaded files data
+                    if ($fieldDef->type_in_form === 'file' && isset($context->uploadedFiles[$formKey]['name'])) {
+                        $value = $context->uploadedFiles[$formKey]['name'];
+                    }
+
+                    $html .= self::renderSummaryFieldRow($fieldDef, $value, $borderColor, $textColor, $hasFields);
+                }
+            }
+
+            if (!$hasFields) {
+                // If the section had no visible fields, we close the table and continue (CSS will make it invisible or minimal)
+            }
+            $html .= "</table>";
+            $html .= "</div>";
+        }
+        
+        $html .= "</div>";
+        $html .= "</div>";
+        
+        return $html;
+    }
+
+    /**
+     * Renders a single summary table row for a field with the given value.
+     * @param FormDataBlockField $fieldDef Field definition
+     * @param mixed $value Raw form value
+     * @param string $borderColor Table border color
+     * @param string $textColor Table text color
+     * @param bool $hasFields Set to true when a row is rendered
+     * @return string The generated <tr> HTML
+     */
+    private static function renderSummaryFieldRow(FormDataBlockField $fieldDef, mixed $value, string $borderColor, string $textColor, bool &$hasFields): string {
+        $isHtmlValue = false; // Flag to indicate if the value contains HTML (for proper escaping)
+        $html = '';
 
         // Render rating fields with icons
         if ($fieldDef->type_in_form === 'rating') { 
@@ -1301,4 +1335,5 @@ class stic_AWFUtils {
             $context->responseBean->save();
         }
     }
+        
 }
