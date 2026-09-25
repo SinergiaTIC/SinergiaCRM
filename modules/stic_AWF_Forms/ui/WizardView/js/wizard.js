@@ -213,6 +213,15 @@ function wizardForm() {
       let jsonString = "{}";
       if (this.bean?.configuration) {
         jsonString = this.bean.configuration;
+        // Decode HTML entities (&quot; -> ", &#039; -> ') until stable, to handle
+        // values that arrive single or double encoded from the server
+        if (typeof jsonString === 'string' && jsonString.includes('&')) {
+          for (let i = 0; i < 3; i++) {
+            const decoded = new DOMParser().parseFromString(jsonString, 'text/html').documentElement.textContent;
+            if (decoded === jsonString) break;
+            jsonString = decoded;
+          }
+        }
       }
       try {
         this.formConfig = stic_AwfConfiguration.fromJSON(jsonString);
@@ -485,6 +494,7 @@ class WizardStep2 {
         if (!Alpine.store('dataBlockRelationships')) {
           Alpine.store('dataBlockRelationships', {
             get formConfig() { return window.alpineComponent.formConfig; },
+            get data_blocks() { return this.formConfig.data_blocks; },
 
             get dataBlockRelationships() { 
               return this.formConfig.getAllDataBlockRelationships(); 
@@ -497,7 +507,7 @@ class WizardStep2 {
             },
             unusedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return [];
               let moduleInfo = utils.getModuleInformation(block.module);
               let seen = new Set();
@@ -539,9 +549,9 @@ class WizardStep2 {
               this.resetDataBlockRelationships();
             },
             getRelationshipTypeLabel(datablockId, relName, otherDatablockId, origDatablockId) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return 'N\u2009\u27f7\u2009M';
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherDatablockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherDatablockId);
               let moduleInfo = utils.getModuleInformation(block.module);
               let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
               let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
@@ -568,7 +578,7 @@ class WizardStep2 {
               return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
             },
             _relArrow(datablockId, relName, otherBlock, initiatorId) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return '⟷';
               let moduleInfo = utils.getModuleInformation(block.module);
               let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
@@ -589,10 +599,10 @@ class WizardStep2 {
               return '⟷';
             },
             getRelText(datablockId, rel) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block || !rel) return rel?.text || '';
               let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherBlockId);
               if (!otherBlock) return rel.text;
 
               let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
@@ -600,8 +610,8 @@ class WizardStep2 {
             },
             getInvolvedBlocksText(datablockId, rel) {
               let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherBlockId);
               if (!block || !otherBlock) return rel.text;
 
               let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
@@ -873,9 +883,15 @@ class WizardStep2 {
             onValidatorChange() {
               // Only reset parameters if the user makes a REAL CHANGE of validator
               if (this.validation && this.validation.validator !== this._originalValidator) {
-                  this.validation.params = {};
-                  this.validation.message = '';
-                  this._originalValidator = this.validation.validator; 
+                const def = utils.getDefinedActions().find(a => a.name === this.validation.validator);
+                const defaultParams = {};
+                if (def && def.parameters) {
+                  def.parameters.forEach(p => { defaultParams[p.name] = p.defaultValue || ''; });
+                }
+
+                this.validation.params = defaultParams;
+                this.validation.message = '';
+                this._originalValidator = this.validation.validator; 
               }
             },
 
@@ -1000,7 +1016,6 @@ class WizardStep2 {
           });
         }
         
-
         // Store for the Relationship Creator management
         if (!Alpine.store('relCreator')) {
           Alpine.store('relCreator', {
@@ -1083,27 +1098,116 @@ class WizardStep2 {
     };
   }
 
-  static generalDatablocksxData(initial_formConfig) {
+  static generalDatablocksxData() {
     return {
-      formConfig: initial_formConfig,
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get orderedDataBlocks() { return this.formConfig.getOrderedDataBlocks(); },
+      // 2-level visual tree: groups are container cards holding their block cards
+      get blockTree() { return this.formConfig.getVisualTree(); },
+      // A group container shows the error style when any of its blocks is invalid
+      groupNodeHasErrors(node) {
+        const blocks = [node.block, ...node.members.flatMap(m => [m.block, ...(m.members || []).map(g => g.block)])];
+        return blocks.some(b => !b.isValid());
+      },
+
+      /**
+       * Reassigns the group_root of a DataBlock and provides visual feedback.
+       */
+      changeGroupRoot(block, newRootId) {
+        if (!block) return;
+
+        const oldRoot = block.getGroupHeadBlock(this.data_blocks);
+        block.group_root = newRootId || '';
+
+        if (block.is_child && !block.canBeOptional(this.data_blocks)) {
+          block.min_instances = 1;
+        }
+
+        block.sanitizeRepeatableLimits();
+
+        // Refresh group titles for old and new roots
+        if (oldRoot) oldRoot.refreshGroupTitle(this.data_blocks);
+        const newRoot = block.getGroupHeadBlock(this.data_blocks);
+        if (newRoot) newRoot.refreshGroupTitle(this.data_blocks);
+
+        this.formConfig.prepareForSave();
+        this.highlightCard(block.id);
+      },
+
+      reloadGroupTitle(block) {
+        if (!block) return;
+        
+        block.is_custom_group_title=false;
+        block.refreshGroupTitle(this.data_blocks);
+      },
+
+      /**
+       * Toggles the optional status (min_instances = 0 vs 1) of a DataBlock.
+       */
+      toggleOptional(block, isOptional, highlight = true) {
+        if (!block) return;
+        this.formConfig.setBlockOptional(block, isOptional);
+        if (highlight) {
+          this.highlightCard(block.id);
+        } 
+      },
+
+      /**
+       * Toggles the repeatable status (is_repeatable) of a DataBlock.
+       */
+      toggleRepeatable(block, isRepeatable, highlight = true) {
+        if (!block) return;
+        this.formConfig.setBlockRepeatable(block, isRepeatable);
+        if (highlight) {
+          this.highlightCard(block.id);
+        }
+      },
 
       deleteDataBlock(dataBlock) {
+        if (!dataBlock) return;
+        // Confirmation before permanently removing the data block
+        if (!confirm(utils.translate('LBL_DATABLOCK_DELETE_CONFIRM'))) return;
         this.formConfig.deleteDataBlock(dataBlock);
         Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
       },
 
       getDataBlockText(dataBlockId) {
-        let dataBlock = this.formConfig.data_blocks.find(d => d.id == dataBlockId);
+        let dataBlock = this.data_blocks.find(d => d.id == dataBlockId);
         if (!dataBlock) return '';
         return `${dataBlock.text} (${dataBlock.getModuleText()})`;
+      },
+
+      /**
+       * Scrolls to the card and triggers the flash glow animation.
+       */
+      highlightCard(blockId) {
+        this.$nextTick(() => {
+          const element = document.getElementById('dataBlock_' + blockId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            element.classList.remove('awf-card-highlight');
+            // Force DOM reflow to restart animation if triggered consecutively
+            void element.offsetWidth;
+            element.classList.add('awf-card-highlight');
+            setTimeout(() => {
+              element.classList.remove('awf-card-highlight');
+            }, 1200);
+          }
+        });
       }
     };
   }
 
-  static datablockxData(initial_formConfig, dataBlock) {
+  static datablockxData(dataBlock) {
     return {
-      formConfig: initial_formConfig,
       dataBlock: dataBlock,
+      isCollapsed: false,
+      get formConfig() { return window.alpineComponent.formConfig; },
+
+      toggleCollapse() {
+        this.isCollapsed = !this.isCollapsed;
+      },
 
       init() {
         this.$watch('dataBlock.text', (newText, oldText) => {
@@ -1137,15 +1241,16 @@ class WizardStep2 {
     };
   }
 
-  static addDataBlockModulexData(initial_formConfig) {
+  static addDataBlockModulexData() {
     return {
-      formConfig: initial_formConfig,
-
       creatingDataBlock: false,          // Modal CRM
       creatingUnlinkedDataBlock: false,  // Modal Unlinked
 
       newDataBlock: {module:'', text:''},
       newUnlinkedDataBlock: {text:''},
+
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
 
       get availableModulesForSelect() {
         if (typeof STIC === 'undefined' || !STIC.enabledModules) return [];
@@ -1191,21 +1296,32 @@ class WizardStep2 {
           }
         });
       },
+      handleAddDocumentDatablock() {
+        const text = this.formConfig.suggestDataBlockText('Documents');
+        const dataBlock = this.formConfig.addDataBlockModule('Documents', true, text);
+        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
+        this.$nextTick(() => {
+          const element = document.getElementById('dataBlock_' + dataBlock.id); 
+          if(element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      },
     };
   }
  
-  static editionFieldxData(fieldStore, config) {
+  static editionFieldxData(fieldStore) {
     return {
-      formConfig: config,
       store: fieldStore,
 
+      get formConfig() { return window.alpineComponent.formConfig; },
       get dataBlock() { return this.store?.dataBlock; },
       get field() { return this.store?.field; },
       get isEdit() { return this.store?.isEdit; },
 
       configValueOptions: false,
-
       showAllFields: false,
+
       get availableFields() {
         if (this.isEdit) {
           return [this.dataBlock?.getModuleInformation()?.fields[this.field.name]];
@@ -1231,7 +1347,11 @@ class WizardStep2 {
           }
         };
         if (this.optionValuesRelated != ''){
-          listName = `${utils.getModuleInformation(this.relatedModule)?.text} (${this.optionValuesRelated.split('|').length})`;
+          let relatedModuleText = utils.getModuleInformation(this.relatedModule)?.text;
+          if(!relatedModuleText && this.selectedFieldInfo?.module) {
+            relatedModuleText = SUGAR.language.languages.app_list_strings.moduleList[this.selectedFieldInfo.module] ?? this.selectedFieldInfo.module;
+          }
+          listName = `${relatedModuleText} (${this.optionValuesRelated.split('|').length})`;
         }
         if (listName == '' && this.field && this.field.value_options.length > 0) {
           listName = this.field.value_options.filter(v => v.is_visible).map(v => v.text).join(', ');
@@ -1241,7 +1361,8 @@ class WizardStep2 {
 
       get relatedModule() {
         if (this.field && this.field.type == 'relate') {
-          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options);
+          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options)
+                 || this.selectedFieldInfo?.module || '';
         }
         return '';
       },
@@ -1304,7 +1425,7 @@ class WizardStep2 {
         });
         this.$watch('field.text_original', (newText, oldText) => {
           if (!this.field) return;
-          if (this.field.type_field == 'unlinked') {
+          if (this.field.type_field == 'unlinked' && this.field.type_in_form !== 'file') {
             let newName = stic_AwfConfiguration.cleanName(newText);
             if (newName != this.field.name) {
               this.field.name = this.dataBlock.suggestFieldName(newName);
@@ -1378,6 +1499,8 @@ class WizardStep2 {
               this.field.type = 'date';
             } else if (newType == 'number') {
               this.field.type = 'float';
+            } else if (newType == 'file_upload') {
+              this.field.type = 'file';
             } else {
               this.field.type = 'varchar';
             }
@@ -1490,10 +1613,11 @@ class WizardStep2 {
     };
   }
 
-  static editionValidationFieldxData(validationStore, config) {
+  static editionValidationFieldxData(validationStore) {
     return {
-      formConfig: config,
       store: validationStore,
+
+      get formConfig() { return window.alpineComponent.formConfig; },
 
       applyCondition: false,
       _activeDef: null,
@@ -1532,12 +1656,14 @@ class WizardStep2 {
     };
   }
 
-  static fieldsSummaryxData(dataBlock, config) {
+  static fieldsSummaryxData(dataBlock) {
     return {
-      formConfig: config,
       dataBlock: dataBlock,
 
       fieldTabSelected: 'form',
+
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
 
       get firstFieldInFormIndex() {
         return this.dataBlock.fields.filter(f => !f.isFieldInForm()).length;
@@ -1606,7 +1732,7 @@ class WizardStep2 {
       getfieldValueText(field) {
         if (!field) return '';
         if (field.value_type == 'dataBlock') {
-          return this.formConfig.data_blocks.find(d => d.id == field.value)?.text;
+          return this.data_blocks.find(d => d.id == field.value)?.text;
         }
         return field.value_text;
       },
@@ -1653,12 +1779,28 @@ class WizardStep2 {
 class WizardStep3 {
   static mainStep3xData() {
     return {
-      get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get flows() { return this.formConfig.flows; },
 
       flowTabSelected: 0,
-      get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
+      get flow() { return this.flows.find(f => f.id == this.flowTabSelected); },
       get actions() { return this.flow?.actions ?? []; },
+
+      /**
+       * Returns the group metadata for an action, or null if the action does not
+       * target a block that belongs to a group (repeatable OR optional OR simple with children).
+       * Always computed LIVE from the current data-block structure so it reflects
+       * the latest group configuration. Inspects ALL parameters and conditions — not just
+       * `data_block_id` — so custom actions are correctly detected.
+       * @param {stic_AwfAction} action
+       * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+       */
+      getActionRepeatGroup(action) {
+        if (!action || !this.formConfig) return null;
+        return this.formConfig.getActionGroupBinding(action);
+      },
 
       selectedCategory: '', 
       selectedActionDefName: '', 
@@ -1674,7 +1816,7 @@ class WizardStep3 {
 
         // If it is a deferred sub-flow (ex: 'awfa123_ok'), check the parent context (deferred action)
         if (flow.id !== '0' && flow.id !== '-1' && flow.id !== '1') {
-          for (const f of this.formConfig.flows) {
+          for (const f of this.flows) {
             const parentAction = f.actions.find(a => a.flow_success_id == flow.id || a.flow_error_id == flow.id);
             if (parentAction) {
               // Check reumptionContext from the deferred action
@@ -1723,6 +1865,7 @@ class WizardStep3 {
             _activeConditionFieldDef: null,
 
             get formConfig() { return window.alpineComponent.formConfig; },
+            get data_blocks() { return this.formConfig.data_blocks; },
 
             get availableFieldsInForm() { return this.formConfig?.getAllFieldsInForm() ?? []; },
             get availableFieldsInFormForSelect() { return this.availableFieldsInForm.map(field => ({ id: field.name, label: field.text })); },
@@ -1873,8 +2016,11 @@ class WizardStep3 {
 
               this.currentStep = 1;
 
-              // For creation, we start without action or definition: A definition must be selected
-              this.action = null;
+              // For creation, we start without a definition: A definition must be selected.
+              // NOTE: action is NOT nulled here — keeping the previous action avoids Alpine
+              // "Cannot read properties of null" errors when x-if step-2 expressions (data-model
+              // via editableText) are re-evaluated reactively before the x-if removes the DOM.
+              // Step 2 won't show because `definition` is null (x-if guard is false).
               this.definition = null;
               this.isTerminalFilter = isTerminal;
               this.selectedActionDefName = '';
@@ -2041,17 +2187,55 @@ class WizardStep3 {
               }
             },
 
+            /**
+             * AWF Paso 3 §2.1 — Motor Group of the action being edited.
+             * Delegates to formConfig.getActionMotorGroup(action).
+             * @param {stic_AwfAction} action
+             * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+             */
+            getActionMotorGroup(action) {
+              return this.formConfig.getActionMotorGroup(action);
+            },
+
+            /**
+             * AWF Paso 3 §2.3 — Disjoint-groups filter for parameter block selectors.
+             * Returns true if `block` is allowed given the action's current Motor Group:
+             *  - Terminal/global actions: only scalar blocks (no repeatable group).
+             *  - If the action already has a Motor Group X: allow blocks of Grup X (root + children/subgroups)
+             *    AND scalar blocks (no motor group). Block from a disjoint repeatable group → false.
+             *  - If the action has no Motor Group yet: all blocks allowed.
+             * @param {stic_AwfDataBlock} block
+             * @param {stic_AwfAction} action
+             * @returns {boolean}
+             */
+            isBlockAllowedForAction(block, action) {
+              if (!block || !action) return true;
+              // Terminal/global actions cannot bind to any repeatable group (§3.2)
+              if (action.is_terminal) {
+                const motor = this.formConfig.getBlockMotorGroup(block);
+                return !motor;
+              }
+              const motorGroup = this.formConfig.getActionMotorGroup(action);
+              if (!motorGroup) return true; // No motor group yet: everything allowed
+              // Action already bound to a motor group → only same group (incl. subgroups) + scalars
+              const blockMotor = this.formConfig.getBlockMotorGroup(block);
+              if (!blockMotor) return true; // scalar: allowed as constant (§2.2)
+              return blockMotor.id === motorGroup.rootBlockId;
+            },
+
             /** 
              * Returns the list of Data Blocks available to assign in the parameters 
              * @param {Array} supportedModules List of Data Block modules to display 
+             * @param {stic_AwfAction} [action] Current action (for disjoint-groups filtering, §2.3)
              * @returns {Array} List of {id, text, module} data blocks 
              */
-            getSupportedDataBlocksList(supportedModules = []) {
+            getSupportedDataBlocksList(supportedModules = [], action = null) {
               let blocks = [];
               if (!supportedModules) supportedModules = [];
 
-              this.formConfig.data_blocks.forEach(b => {
-                if (supportedModules.length == 0 || supportedModules.includes(b.module)) {
+              this.data_blocks.forEach(b => {
+                if ((supportedModules.length == 0 || supportedModules.includes(b.module)) &&
+                    this.isBlockAllowedForAction(b, action)) {
                   blocks.push({
                     id: b.id, 
                     text: `${b.text} (${b.getModuleText()})`,
@@ -2065,14 +2249,16 @@ class WizardStep3 {
             /** 
              * Returns the list of fields available in the form 
              * @param {Array} supportedDataTypes List of the data types of the fields to display 
+             * @param {stic_AwfAction} [action] Current action (for disjoint-groups filtering, §2.3)
              * @returns List of {id, text, typeInActions} fields 
              */
-            getSupportedFieldsList(supportedDataTypes = []) {
+            getSupportedFieldsList(supportedDataTypes = [], action = null) {
               // Format value: "BlockName.FieldName" / "_detached.BlockName.FieldName"
               let fields = [];
               if (!supportedDataTypes) supportedDataTypes = [];
 
-              this.formConfig.data_blocks.forEach(block => {
+              this.data_blocks.forEach(block => {
+                  if (!this.isBlockAllowedForAction(block, action)) return;
                   block.fields.forEach(field => {
                       const typeInActions = field.getTypeInActions();
                       if (supportedDataTypes.length == 0 || supportedDataTypes.includes(typeInActions)) {
@@ -2086,6 +2272,40 @@ class WizardStep3 {
                   });
               });
               return fields;
+            },
+
+            /**
+             * AWF Paso 3 §3.1 / §3.2 — Fields available for the action's execution condition.
+             * - If the action has NO motor group yet (no repeatable block referenced): ALL fields
+             *   are shown (scalars + repeatable), so the user can pick any field freely.
+             * - If the action already has a Motor Group X: only fields of Grup X + scalar fields
+             *   (disjoint repeatable groups are excluded, §2.3).
+             * - Terminal/global actions: only scalar fields (§3.2).
+             * @param {stic_AwfAction} [action]
+             * @returns {Array} List of {id, label} fields for the condition <stic-select>
+             */
+            availableFieldsInFormForCondition(action = null) {
+              const fields = [];
+              const isTerminal = action && action.is_terminal;
+              const motorGroup = (!isTerminal && action) ? this.formConfig.getActionMotorGroup(action) : null;
+              this.data_blocks.forEach(block => {
+                const blockMotor = this.formConfig.getBlockMotorGroup(block);
+                // Terminal actions: only scalar fields (§3.2)
+                if (isTerminal && blockMotor) return;
+                // Non-terminal with a motor group: exclude disjoint repeatable groups (§2.3)
+                if (motorGroup && blockMotor && blockMotor.id !== motorGroup.rootBlockId) return;
+                // No motor group yet: all fields allowed (scalars + repeatable)
+                block.fields.forEach(field => {
+                  if (field.type_field === 'fixed') return;
+                  const fullName = block.getFieldInputName(field);
+                  const label = field.label || field.text_original;
+                  fields.push({ id: fullName, label: `${block.text} » ${utils.fromFieldLabelText(label)}` });
+                });
+              });
+              return fields;
+            },
+            get availableFieldsInFormForConditionForSelect() {
+              return this.availableFieldsInFormForCondition(this.action);
             },
 
             getParameterValueInputType(paramDataType) {
@@ -2167,7 +2387,7 @@ class WizardStep3 {
                                          (paramDef.selectorOptions || []).find(o => o.name == newParam.selectedOption)?.resolvedType === 'dataBlock';
 
                 if (paramIsDataBlock && newParam.value) {
-                  const requiredBlock = this.formConfig.data_blocks.find(b => b.id == newParam.value);
+                  const requiredBlock = this.data_blocks.find(b => b.id == newParam.value);
                   if (requiredBlock && requiredBlock.save_action_id) {
                     requisiteActions.add(requiredBlock.save_action_id);
                   }
@@ -2246,9 +2466,11 @@ class WizardStep3 {
        * @param {stic_AwfAction} action The action to remove 
        * @return {void} 
        */
-      removeAction(action) {
-        this.formConfig.removeAction(this.flow.id, action.id)
-      },
+       removeAction(action) {
+         // Confirmation before permanently removing the action
+         if (!confirm(utils.translate('LBL_ACTION_DELETE_CONFIRM'))) return;
+         this.formConfig.removeAction(this.flow.id, action.id)
+       },
 
       /**
        * Indicates if an action can be moved up
@@ -2437,9 +2659,11 @@ class WizardStep4 {
       generatedHtml: '',
       previewTimeout: null,
 
-      get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
-      get sections() { return this.formConfig.layout.structure; },
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get layout() { return this.formConfig.layout; },
+      get sections() { return this.layout.structure; },
 
       get availableContainerTypes() {
         const validCategories = ['panel', 'card'];
@@ -2530,104 +2754,444 @@ class WizardStep4 {
       },
 
       canDeleteSection(section) {
-        return section.elements.length==0;
+        // A section (top-level or nested) can be deleted only when it holds no
+        // layout element with content (data blocks or unbundled field fragments)
+        // at any depth
+        const hasContent = (sec) => sec.elements.some(el =>
+          (el.type === 'datablock' || el.type === 'field') || (el.type === 'section' && hasContent(el)));
+        return !hasContent(section);
       },
 
       deleteSection(section) {
         if (!this.canDeleteSection(section)) return;
-
-        this.formConfig.layout.structure = this.formConfig.layout.structure.filter(s => s.id != section.id);
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        if (idx >= 0) arr.splice(idx, 1);
       },
 
       canMoveUpSection(section) {
-        const index = this.sections.findIndex(s => s.id == section.id);
-        if (index <= 0) return false;
-
-        return true;
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        return idx > 0 && arr.slice(0, idx).some(el => el.type === 'section');
       },
       
       moveUpSection(section) {
-        if (!this.canMoveUpSection(section)) return;
-
-        const index = this.sections.findIndex(s => s.id == section.id);
-        const sectionToMove = this.sections[index];
-        this.sections.splice(index, 1);
-        this.sections.splice(index - 1, 0, sectionToMove);
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        let j = idx - 1;
+        while (j >= 0 && arr[j].type !== 'section') j--;
+        if (idx <= 0 || j < 0) return;
+        const [item] = arr.splice(idx, 1);
+        arr.splice(j, 0, item);
       },
 
       canMoveDownSection(section) {
-        const index = this.sections.findIndex(s => s.id == section.id);
-        if (index >= this.sections.length - 1) return false;
-
-        return true;
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        return idx >= 0 && arr.slice(idx + 1).some(el => el.type === 'section');
       },
 
       moveDownSection(section) {
-        if (!this.canMoveDownSection(section)) return;
-
-        const index = this.sections.findIndex(s => s.id == section.id);
-        const sectionToMove = this.sections[index];
-        this.sections.splice(index, 1);
-        this.sections.splice(index + 1, 0, sectionToMove);
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        let j = idx + 1;
+        while (j < arr.length && arr[j].type !== 'section') j++;
+        if (idx < 0 || j >= arr.length) return;
+        const [item] = arr.splice(idx, 1);
+        arr.splice(j, 0, item);
       },
 
       getDataBlock(element) {
-        if (element.type == 'datablock') {
-          return this.formConfig.data_blocks.find(d => d.id == element.ref_id);
+        // Both block and field elements reference the data block through ref_id
+        if (element.type == 'datablock' || element.type == 'field') {
+          return this.data_blocks.find(d => d.id == element.ref_id);
         }
         return null;
       },
 
+      isGroupSection(section) {
+        // Sections are DESIGNATED as group sections (kind 'group' + the
+        // reference to their group root block) — no content-based heuristics
+        return !!section && this.sections.includes(section) && section.isGroupSection;
+      },
+
+      isWithinGroupSection(section) {
+        let current = section;
+        while (current) {
+          const parent = this.getParentSectionOf(current);
+          if (!parent) return this.isGroupSection(current);
+          current = parent;
+        }
+        return false;
+      },
+
+      groupName(section) {
+        const group = this.getGroup(section) || this.getSubgroupHead(section);
+        if (!group) return null;
+        
+        return group.group_title;
+      },
+
+      getGroup(section) {
+        // The group's root block comes from the section's explicit
+        // reference (robust to content changes: unbundled fields, moved elements)
+        if (!this.isGroupSection(section)) return null;
+        const block = section.getGroupBlock(this.data_blocks);
+        if (!block || !block.is_root || !block.isGroupHead(this.data_blocks)) return null;
+        return block;
+      },
+
+      // Nested section hosting a depth-2 subgroup head: the subgroup identity
+      // lives in the block's group_root chain, the section stays a plain
+      // content container (ADR-9 contract), but the wizard displays it as a
+      // group. Only meaningful inside a designated group section.
+      getSubgroupHead(section) {
+        if (!section || this.isGroupSection(section) || !this.isWithinGroupSection(section)) return null;
+        for (const el of section.elements) {
+          if (el.type !== 'datablock') continue;
+          const block = this.getDataBlock(el);
+          if (block && block.group_root && block.isGroupHead(this.data_blocks)) return block;
+        }
+        return null;
+      },
+
+      isNestedGroupSection(section) {
+        return !!this.getSubgroupHead(section);
+      },
+
+      // Unified accessor for the group header template: designated top-level
+      // group sections and nested subgroup host sections.
+      getSectionGroup(section) {
+        return this.getGroup(section) || this.getSubgroupHead(section);
+      },
+
+      // The section (at any depth) that directly contains a nested section (or null)
+      getParentSectionOf(section) {
+        const findParent = (sections) => {
+          for (const s of sections) {
+            for (const el of s.elements) {
+              if (el.type !== 'section') continue;
+              if (el.id === section.id) return s;
+              const found = findParent([el]);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+        return findParent(this.sections);
+      },
+
+      isNestedSection(section) {
+        return !!this.getParentSectionOf(section);
+      },
+
+      // A nested section can move out of its parent only when the parent is NOT a
+      // group section (sections can never leave their group section)
+      canMoveSectionOut(section) {
+        const parent = this.getParentSectionOf(section);
+        if (!parent) return false;              // Already a top-level section
+        return !this.isWithinGroupSection(section);
+      },
+
+      // Takes a nested section out of its (non-group) parent section and places it
+      // at its parent's level (top level, or inside the grandparent section),
+      // right after its former parent
+      moveSectionOut(section) {
+        if (!this.canMoveSectionOut(section)) return;
+        const parent = this.getParentSectionOf(section);
+        const grandparent = this.getParentSectionOf(parent);
+        parent.elements = parent.elements.filter(el => el.id !== section.id);
+        const arr = grandparent ? grandparent.elements : this.sections;
+        const idx = arr.indexOf(parent);
+        arr.splice(idx + 1, 0, section);
+      },
+
+      // Reserved target representing the top level of the form (outside all sections).
+      // Only offered to standalone nested SECTIONS: blocks and fields must always
+      // remain inside a section.
+      getFormMoveTarget() {
+        return { id: '__form__', isFormTarget: true };
+      },
+
+      // All sections contained (at any depth) within the given section (excluding it)
+      getSectionsWithin(section) {
+        const result = [];
+        const walk = (s) => {
+          for (const el of s.elements) {
+            if (el.type !== 'section') continue;
+            result.push(el);
+            walk(el);
+          }
+        };
+        walk(section);
+        return result;
+      },
+
+      // Top-level designated group section scoping the given section (or null when
+      // the section is standalone, i.e. not inside any designated group section)
+      getGroupScopeRoot(section) {
+        let current = section;
+        let scope = null;
+        while (current) {
+          if (this.isGroupSection(current)) scope = current;
+          const parent = this.getParentSectionOf(current);
+          if (!parent) break;
+          current = parent;
+        }
+        return scope;
+      },
+
+      // All standalone sections of the form (never inside a designated group),
+      // at any depth
+      getStandaloneSections() {
+        return this.sections
+          .filter(s => !this.isGroupSection(s))
+          .flatMap(s => [s, ...this.getSectionsWithin(s)]);
+      },
+
+      // Candidate sections a SECTION can be moved into (group-scope rules):
+      //  - group sections are FIXED: they represent their group and never move;
+      //  - a section inside a group can only move within that group (any of its
+      //    sections/subsections, including the group's top level);
+      //  - a standalone section can move into any other standalone section at any
+      //    depth; a nested standalone section can also move to the form's top level
+      //    (the "outside all sections" option).
+      getSectionMoveTargets(section) {
+        if (this.isGroupSection(section)) return [];                    // Group sections are fixed
+        const excluded = new Set([section.id, ...this.getSectionsWithin(section).map(s => s.id)]);
+        const parent = this.getParentSectionOf(section);
+        const groupRoot = this.getGroupScopeRoot(section);
+        const candidates = groupRoot
+          ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
+          : this.getStandaloneSections();
+        const targets = candidates.filter(s => !excluded.has(s.id) && (!parent || s.id !== parent.id));
+        return this.canMoveSectionOut(section) ? [...targets, this.getFormMoveTarget()] : targets;
+      },
+
+      // Hierarchical section label: "Parent - Child - ..." (walks up the parents)
+      getSectionLabel(section) {
+        const own = section.title || utils.translate('LBL_SECTION_NO_TITLE');
+        const parent = this.getParentSectionOf(section);
+        return parent ? `${this.getSectionLabel(parent)} - ${own}` : own;
+      },
+
+      // Moves a section into another section (group-scope rules), or to the
+      // form's top level via the "outside all sections" target
+      moveSectionToSection(section, toSectionId) {
+        if (!toSectionId) return;
+        if (toSectionId === this.getFormMoveTarget().id) {
+          this.moveSectionOut(section);
+          return;
+        }
+        const target = this.findSectionById(toSectionId);
+        if (!target || target.id === section.id) return;
+        if (!this.getSectionMoveTargets(section).some(s => s.id === target.id)) return;
+
+        const parent = this.getParentSectionOf(section);
+        const arr = parent ? parent.elements : this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        if (idx >= 0) arr.splice(idx, 1);
+        target.elements.push(section);
+      },
+
+      // Finds a section by ID at any level (top-level sections and nested sections)
+      // Finds a section by ID at any depth (top-level and nested sections)
+      findSectionById(id) {
+        const find = (sections) => {
+          for (const s of sections) {
+            if (s.id == id) return s;
+            for (const el of s.elements) {
+              if (el.type !== 'section') continue;
+              if (el.id == id) return el;
+              const found = find([el]);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+        return find(this.sections);
+      },
+
+      // Candidate sections an element can be moved to (group-scope rules).
+      // Elements must always remain inside a section, so there is no
+      // "outside all sections" target:
+      //  - content of a group (directly or in any of its subsections): the
+      //    sections and subsections of that same group;
+      //  - standalone content: any standalone section of the form, at any depth.
+      getMoveTargets(element, fromSection) {
+        if (!fromSection) return [];
+        const groupRoot = this.getGroupScopeRoot(fromSection);
+        const candidates = groupRoot
+          ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
+          : this.getStandaloneSections();
+        return candidates.filter(s => s.id !== fromSection.id);
+      },
+
+      // Adds a new (empty) nested section to ANY section, titled "Nova secció"
+      // like the top-level add-section button, and focuses its title editor
+      addNestedSection(section) {
+        const nested = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NEW') });
+        section.elements.push(nested);
+
+        // Once rendered: scroll to the new section card and start editing its title
+        Alpine.nextTick(() => {
+          const card = document.getElementById('sectionCard_' + nested.id);
+          if (!card) return;
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          const titleEl = card.querySelector('h3[id^="sectionTitleEdit-"]');
+          if (titleEl) {
+            // Trigger the inline editor's dblclick on its display span, then focus the input
+            const displaySpan = titleEl.querySelector('span');
+            displaySpan?.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            const input = card.querySelector(`input[id="sectionTitleEdit-${nested.id}_ctrl"]`);
+            input?.focus();
+          }
+        });
+      },
+
       getFields(element) {
-        return this.getDataBlock(element)?.fields.filter(f => f.type_field != 'fixed');
+        const block = this.getDataBlock(element);
+        if (!block) return [];
+        // Field elements (unbundled fields) preview only their own field
+        if (element.type === 'field') {
+          const field = block.fields.find(f => f.name === element.field_name);
+          return field ? [field] : [];
+        }
+        return block.fields.filter(f => f.type_field != 'fixed');
+      },
+
+      // The field rendered by a field element (null for block elements)
+      getField(element) {
+        const block = this.getDataBlock(element);
+        if (!block || element.type !== 'field') return null;
+        return block.fields.find(f => f.name === element.field_name) || null;
       },
 
       getElementHeader(element) {
-        let header = element.type;
-        if (element.type == 'datablock') {
-          const dataBlock  = this.getDataBlock(element);
-          header = `${utils.translate('LBL_DATABLOCK')}: ${dataBlock.text}`;
+        const dataBlock = this.getDataBlock(element);
+        if (element.type === 'field') {
+          // "Block name.Field name"
+          const field = dataBlock?.fields.find(f => f.name === element.field_name);
+          let fieldText = field ? (field.label || field.text_original || field.name) : element.field_name;
+          fieldText = utils.fromFieldLabelText(fieldText);
+          return dataBlock ? `${dataBlock.text}.${fieldText}` : utils.fromFieldLabelText(element.field_name);
         }
-        return header;
+        return dataBlock ? utils.fromFieldLabelText(dataBlock.text) : element.type;
       },
 
-      moveElementUp(section, index) {
-        if (index <= 0) return;
-        const item = section.elements[index];
-        section.elements.splice(index, 1);
-        section.elements.splice(index - 1, 0, item);
-      },      
+      canUnbundleElement(element) {
+        if (!element || element.type !== 'datablock') return false;
+        const block = this.getDataBlock(element);
+        return !!block && block.fields.some(f => f.type_field !== 'fixed');
+      },
 
-      moveElementDown(section, index) {
-        if (index >= section.elements.length - 1) return;
-        const item = section.elements[index];
-        section.elements.splice(index, 1);
-        section.elements.splice(index + 1, 0, item);
+      // Replaces a (scalar) block element by one field element per rendered field,
+      // preserving its position inside the section.
+      // NOTE: never trust the captured `index` (frozen when the card was created) —
+      // resolve the CURRENT position by identity, or the splice would hit the wrong
+      // element after the array changed.
+      unbundleElement(element, section) {
+        if (!this.canUnbundleElement(element)) return;
+        const block = this.getDataBlock(element);
+        const currentIndex = section.elements.findIndex(el => el.id === element.id);
+        if (currentIndex < 0) return; // Stale element: nothing to unbundle
+        const fields = block.fields.filter(f => f.type_field !== 'fixed');
+        const fieldElements = fields.map(f => new stic_AwfLayoutElement({
+          type: 'field',
+          ref_id: block.id,
+          field_name: f.name,
+        }));
+        section.elements.splice(currentIndex, 1, ...fieldElements);
+      },
+
+      // Re-groups every field element of a block (wherever it is placed) back into
+      // a single block element, at the position of its first fragment
+      bundleFields(element) {
+        if (!element || element.type !== 'field') return;
+        const block = this.getDataBlock(element);
+        if (!block) return;
+
+        const fragments = [];
+        const collect = (sec) => {
+          sec.elements.forEach(el => {
+            if (el.type === 'section') { collect(el); return; }
+            if (el.type === 'field' && el.ref_id === block.id) fragments.push({ sec, el });
+          });
+        };
+        this.sections.forEach(collect);
+        if (fragments.length === 0) return;
+
+        const firstSection = fragments[0].sec;
+        const firstIndex = firstSection.elements.indexOf(fragments[0].el);
+
+        // Remove every fragment, then insert the block element at the first position
+        fragments.forEach(({ sec, el }) => {
+          const i = sec.elements.indexOf(el);
+          if (i >= 0) sec.elements.splice(i, 1);
+        });
+        // Only insert a whole block element if the block does not already have one
+        // anywhere in the layout (otherwise there would be duplicates)
+        if (!this.layoutHasBlockElement(block.id)) {
+          firstSection.elements.splice(Math.min(firstIndex, firstSection.elements.length), 0, new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id }));
+        }
+      },
+
+      // True when the layout already holds a whole block element for the block
+      layoutHasBlockElement(blockId) {
+        const check = (sec) => sec.elements.some(el =>
+          (el.type === 'datablock' && el.ref_id === blockId) || (el.type === 'section' && check(el)));
+        return this.sections.some(check);
+      },
+
+      // Current position of an element inside a section (by identity)
+      elementIndexIn(section, element) {
+        return section.elements.findIndex(el => el.id === element.id);
+      },
+
+      // Move up/down by element identity (the captured index in the card's x-data
+      // may be stale after the section's elements changed)
+      moveElementUp(section, element) {
+        const i = this.elementIndexIn(section, element);
+        if (i <= 0) return;
+        section.elements.splice(i, 1);
+        section.elements.splice(i - 1, 0, element);
+      },
+
+      moveElementDown(section, element) {
+        const i = this.elementIndexIn(section, element);
+        if (i < 0 || i >= section.elements.length - 1) return;
+        section.elements.splice(i, 1);
+        section.elements.splice(i + 1, 0, element);
       },
 
       moveElementToSection(element, fromSectionId, toSectionId) {
         if (!toSectionId || fromSectionId === toSectionId) return;
 
-        const fromSection = this.formConfig.layout.structure.find(s => s.id == fromSectionId);
-        const toSection = this.formConfig.layout.structure.find(s => s.id == toSectionId);
+        const fromSection = this.findSectionById(fromSectionId);
+        const toSection = this.findSectionById(toSectionId);
+        if (!fromSection || !toSection) return;
 
-        if (fromSection && toSection) {
-          fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
-          toSection.elements.push(element);
-        }
+        // Same-level rule: blocks of a group only move between that group's nested
+        // sections; standalone blocks only move between standalone top-level sections.
+        // The dropdown already shows only valid targets; this is the enforcement.
+        if (!this.getMoveTargets(element, fromSection).some(s => s.id === toSection.id)) return;
+
+        // Move the element itself
+        fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
+        toSection.elements.push(element);
       },
 
       resetTheme() {
-        this.formConfig.layout.theme = new stic_AwfTheme();
-        this.formConfig.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
-        this.formConfig.layout.closed_form_title = utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE');
-        this.formConfig.layout.closed_form_text = utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE');
-        this.formConfig.layout.processed_form_title = utils.translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE');
-        this.formConfig.layout.processed_form_text = utils.translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE');
-        this.formConfig.layout.receipt_form_title = utils.translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE');
-        this.formConfig.layout.receipt_form_text = utils.translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE');
-        this.formConfig.layout.custom_css = '';
-        this.formConfig.layout.custom_js = '';
+        this.layout.theme = new stic_AwfTheme();
+        this.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
+        this.layout.closed_form_title = utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE');
+        this.layout.closed_form_text = utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE');
+        this.layout.processed_form_title = utils.translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE');
+        this.layout.processed_form_text = utils.translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE');
+        this.layout.receipt_form_title = utils.translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE');
+        this.layout.receipt_form_text = utils.translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE');
+        this.layout.custom_css = '';
+        this.layout.custom_js = '';
       }
     }
   }

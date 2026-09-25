@@ -54,7 +54,7 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'Mis Formularios Web Avanzados',
   'LNK_NEW_RECORD' => 'Crear un Formulario Web Avanzado',
   'LNK_LIST' => 'Ver Formularios Web Avanzados',
-  'LNK_IMPORT_stic_AWF_Forms' => 'Importar Formularios Web Avanzados',
+  'LNK_IMPORT_stic_AWF_Forms' => 'Importa Formularis Web Avançats',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar Formularios Web Avanzados',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
   'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
@@ -135,11 +135,36 @@ $mod_strings = array (
   'LBL_DATABLOCK_ADD_TITLE' => 'Configurar un bloque de datos relacionado con un módulo del sistema',
   'LBL_DATABLOCK_ADD_UNLINKED' => 'Añadir un bloque de datos no enlazado',
   'LBL_DATABLOCK_ADD_UNLINKED_TITLE' => 'Configurar un bloque de datos sin relacionarlo con ningún módulo del sistema',
+  'LBL_DATABLOCK_ADD_DOCUMENTS' => 'Añadir un bloque de datos de documentos',
+  'LBL_DATABLOCK_ADD_DOCUMENTS_TITLE' => 'Añadir un bloque de datos de documentos para subir ficheros',
   'LBL_DATABLOCK_NEW' => 'Nuevo bloque de datos',
   'LBL_DATABLOCK_NEW_UNLINKED' => 'Nuevo bloque de datos no enlazado',
   'LBL_DATABLOCK_MODULE' => 'Módulo',
   'LBL_DATABLOCK_NAME' => 'Nombre',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Nombre interno',
+  'LBL_DATABLOCK_DELETE_CONFIRM' => "¿Seguro que quieres eliminar este bloque de datos y todos sus campos? Esta acción no se puede deshacer.",
+
+  // DataBlock Groups
+  'LBL_DATABLOCK_GROUP' => 'Grupo de bloques de datos',
+  'LBL_DATABLOCK_GROUP_REPEATABLE' => 'Repetible',
+  'LBL_DATABLOCK_GROUP_OPTIONAL' => 'Opcional',
+  'LBL_DATABLOCK_GROUP_CONFIGURE' => 'Configura el grupo de bloques de datos',
+  'LBL_DATABLOCK_INCLUDE_LABEL' => 'Etiqueta de inclusión',
+  'LBL_DATABLOCK_INCLUDE_LABEL_DESC' => 'Texto que aparecerá en el interruptor del formulario para indicar que se deben incluir los datos de este grupo de bloques de datos.',
+  'LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT' => 'Incluir',
+  'LBL_DATABLOCK_MAX_REPETITIONS' => 'Máximo',
+  'LBL_DATABLOCK_MAX_REPETITIONS_DESC' => 'Número máximo de entradas de este grupo de bloques de datos que se pueden añadir a una respuesta del formulario. Déjalo vacío para un número ilimitado de entradas.',
+  'LBL_DATABLOCK_ADD_LABEL' => 'Texto del botón de añadir', 
+  'LBL_DATABLOCK_ADD_LABEL_DESC' => 'Texto que se mostrará en el botón del formulario para añadir otra entrada de este grupo de bloques de datos.', 
+  'LBL_DATABLOCK_ADD_LABEL_DEFAULT' => 'Añadir otra', 
+  'LBL_DATABLOCK_REMOVE_LABEL' => 'Texto del botón de eliminar', 
+  'LBL_DATABLOCK_REMOVE_LABEL_DESC' => 'Texto que se mostrará en el botón del formulario para eliminar una entrada de este grupo de bloques de datos.', 
+  'LBL_DATABLOCK_REMOVE_LABEL_DEFAULT' => 'Eliminar',
+  'LBL_DATABLOCK_ADD_TO_GROUP' => 'Añadir un bloque de datos al grupo',
+  'LBL_DATABLOCK_ADD_TO_GROUP_TITLE' => 'Añadir al grupo',
+  'LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE' => 'Quitar del grupo de bloques de datos',
+  'LBL_DATABLOCK_IN_GROUP_TITLE' => 'Pertenece al grupo',
+  'LBL_DATABLOCK_REPEATABLE_INDIVISIBLE_CHILD' => 'Los hijos de un bloque repetible no pueden moverse de forma independiente.',
 
   // DataBlock -> Fields
   'LBL_FIELDS' => 'Campos',
@@ -161,6 +186,7 @@ $mod_strings = array (
   'LBL_FIELD_DEFINITION' => 'Definición',
   'LBL_FIELD_DEFINITION_FORM' => 'Representación en el formulario',
   'LBL_FIELD_DEFINITION_VALIDATIONS' => 'Validación de datos',
+  'LBL_FIELD_UPLOAD' => 'Subir fichero',
 
   'LBL_FIELD' => 'Campo',
   'LBL_FIELD_NAME' => 'Nombre',
@@ -250,6 +276,7 @@ $mod_strings = array (
   'LBL_ACTION_PARAMETERS' => 'Parámetros',
   'LBL_ACTION_ACTIONS' => 'Acciones',
   'LBL_ACTION_AUTOMATIC' => 'Automática',
+  'LBL_ACTION_AUTOMATIC_TITLE' => 'Acción automática',
   'LBL_ACTION_NO_PARAMS' => 'Sin parámetros',
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Seleccionar --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Módulo',
@@ -259,6 +286,7 @@ $mod_strings = array (
   'LBL_ACTION_CONDITION_TEXT' => 'Esta acción solo se ejecutará si se cumple la condición.',
   'LBL_ACTION_CONTINUE_ON_ERROR' => 'Continuar en caso de error',
   'LBL_ACTION_CONTINUE_ON_ERROR_DESC' => 'Si se activa, el flujo continuará incluso si la acción falla.',
+  'LBL_ACTION_DELETE_CONFIRM' => "¿Seguro que quieres eliminar esta acción?",
 
   // Conditions (Datablock field validations & Actions)
   'LBL_CONDITION' => 'Condición para la ejecución',
@@ -341,8 +369,7 @@ $mod_strings = array (
   'LBL_SECTIONS' => 'Secciones',
   'LBL_SECTION_ADD' => 'Añadir sección',
   'LBL_SECTION_NEW' => 'Nueva sección',
-  'LBL_SECTION_CONFIG' => 'Configuración',
-  'LBL_SECTION_CONTENT' => 'Contenido',
+  'LBL_SECTION_CONFIG' => 'Configuración de la sección',
   'LBL_SECTION_TITLE' => 'Título',
   'LBL_SECTION_SUBTITLE' => 'Subtítulo',
   'LBL_SECTION_NO_TITLE' => '< Sin título >',
@@ -351,7 +378,13 @@ $mod_strings = array (
   'LBL_SECTION_IS_COLLAPSIBLE' => 'Colapsable',
   'LBL_SECTION_ISCOLLAPSED' => 'Colapsado inicialmente',
   'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Mover a...',
+  'LBL_DATABLOCK_UNBUNDLE' => 'Desglosar en campos',
+  'LBL_DATABLOCK_BUNDLE' => 'Reagrupar los campos',
+  'LBL_FIELD_CONFIG' => 'Configuración del campo',
+  'LBL_FIELD_START_NEW_ROW' => 'Comenzar en una línea nueva',
+  'LBL_FIELD_FULL_WIDTH' => 'Ocupar toda la línea',
   'LBL_SECTION_EMPTY_DESC' => 'Esta sección está vacía. Mueva bloques aquí desde otras secciones.',
+  'LBL_SECTION_MOVE_FORM' => 'Fuera de todas las secciones',
 
   // Form generation
   'LBL_CODE_GENERATING' => 'Generando el código...',
@@ -384,17 +417,17 @@ $mod_strings = array (
   'LBL_RATE_ARIA' => 'Valore con un %s',
 
   // Errors
-  'LBL_ERROR_DATABLOCK_IS_INVALID' => 'El bloque de datos tiene errores',
-  'LBL_ERROR_DATABLOCK_NAME' => 'El nombre interno del bloque de datos está vacío',
-  'LBL_ERROR_DATABLOCK_TITLE' => 'El bloque de datos debe tener un nombre público',
-  'LBL_ERROR_NO_DATABLOCKS' => 'Debe definirse al menos un bloque de datos para continuar',
-  'LBL_ERROR_FIELD_IS_INVALID' => 'El campo tiene errores',
-  'LBL_ERROR_FIELD_NAME' => 'El nombre interno del campo está vacío',
-  'LBL_ERROR_FIELD_LABEL' => 'No existe etiqueta para el campo',
-  'LBL_ERROR_FIELD_TYPE' => 'No se ha definido el tipo de campo o de editor en el formulario',
-  'LBL_ERROR_FIELD_OPTIONS' => 'Desplegable sin opciones definidas',
-  'LBL_ERROR_FIELD_FIXED_EMPTY' => 'Campo fijo sin valor asignado',
-  'LBL_OK_FIELD_IS_VALID' => 'El campo es correcto',
+  'LBL_ERROR_DATABLOCK_IS_INVALID' => 'El bloque de datos tiene errores.',
+  'LBL_ERROR_DATABLOCK_NAME' => 'El nombre interno del bloque de datos está vacío.',
+  'LBL_ERROR_DATABLOCK_TITLE' => 'El bloque de datos debe tener un nombre público.',
+  'LBL_ERROR_NO_DATABLOCKS' => 'Debe definirse al menos un bloque de datos para continuar.',
+  'LBL_ERROR_FIELD_IS_INVALID' => 'El campo tiene errores.',
+  'LBL_ERROR_FIELD_NAME' => 'El nombre interno del campo está vacío.',
+  'LBL_ERROR_FIELD_LABEL' => 'No existe etiqueta para el campo.',
+  'LBL_ERROR_FIELD_TYPE' => 'No se ha definido el tipo de campo o de editor en el formulario.',
+  'LBL_ERROR_FIELD_OPTIONS' => 'El desplegable no tiene opciones definidas.',
+  'LBL_ERROR_FIELD_FIXED_EMPTY' => 'Campo fijo sin valor asignado.',
+  'LBL_OK_FIELD_IS_VALID' => 'El campo es correcto.',
 
   // -- SUBPANELS --
   'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE' => 'Respuestas a formularios',
@@ -402,50 +435,56 @@ $mod_strings = array (
   // -- HOOK ACTIONS --
   // Generic 
   'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_TEXT' => 'Bloque de datos',
-  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DESC' => 'Seleccione el bloque de datos que será utilizado como parámetro en la acción',
+  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DESC' => 'Seleccione el bloque de datos que será utilizado como parámetro en la acción.',
 
   // SaveRecordAction
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Guardar registro',
-  'LBL_SAVE_RECORD_ACTION_DESC' => 'Guarda o actualiza un registro a partir de los datos del formulario',
+  'LBL_SAVE_RECORD_ACTION_DESC' => 'Guarda o actualiza un registro a partir de los datos del formulario.',
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidencia por campos',
   'LBL_SAVE_RECORD_ACTION_RELATION_CONFIGS_TEXT' => 'Campos de relación',
 
   // RelateRecordsAction
   'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Crear relación',
-  'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros',
+  'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros.',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino de la relación',
-  'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloque de datos o registro destino de la relación a guardar',
+  'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloque de datos o registro destino de la relación a guardar.',
+  'LBL_RELATE_RECORDS_ACTION_SOURCE_OBJECT_TEXT' => 'Origen de la relación',
   'LBL_RELATE_RECORDS_ACTION_OPTION_BLOCK_TEXT' => 'Bloque de datos destino',
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID del registro destino',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relación a actualizar',
-  'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nombre interno de la relación que enlaza con el bloque de datos destino',
+  'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'El nombre interno de la relación que enlaza con el bloque de datos destino.',
   'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Campo relacionado',
 
+  // SaveDocumentBlockAction
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Guardar documento',
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => 'Crear un registro de documento a partir de un bloque de datos de documento y vincularlo a la respuesta.',
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_FILENAME_TEXT' => 'Nombre del fichero',
+  
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Añadir a Lista de Público Objetivo',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Añade el registro procesado (persona, interesado, usuario u organización) a una Lista de Público Objetivo existente',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Añade el registro procesado (persona, interesado, usuario u organización) a una Lista de Público Objetivo existente.',
   'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_TEXT' => 'Destinatario',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'Indica el bloque de datos que contiene el destinatario que se va a añadir a la Lista de Público Objetivo',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'Indica el bloque de datos que contiene el destinatario que se va a añadir a la Lista de Público Objetivo.',
   'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_TEXT' => 'Lista de Público Objetivo (LPO)',
   
   // SendEmailToDataBlockAction
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TITLE' => 'Enviar correo al remitente del formulario',
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Envía un correo electrónico al registro procesado (persona, interesado, usuario u organización) contenido en un bloque de datos',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Envía un correo electrónico al registro procesado (persona, interesado, usuario u organización) contenido en un bloque de datos.',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el destinatario del correo electrónico',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el destinatario del correo electrónico.',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
 
   // SendEmailToAddressAction
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TITLE' => 'Enviar correo a una dirección',
-  'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a una dirección de correo electrónico concreta',
+  'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a una dirección de correo electrónico concreta.',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Correo electrónico',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
     
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar correo a un usuario asignado',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envia un correo electrónico al usuario asignado del formulario o de un registro',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envía un correo electrónico al usuario asignado del formulario o de un registro.',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_TEXT' => 'Origen del usuario asignado',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => 'Indica el registro del cual se obtendrá el usuario asignado',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => 'Indica el registro del cual se obtendrá el usuario asignado.',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_OWNER_TEXT' => 'Formulario',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RESPONSE_TEXT' => 'Respuesta del formulario',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
@@ -455,7 +494,7 @@ $mod_strings = array (
   
   // RedirectAction
   'LBL_REDIRECT_ACTION_TITLE' => 'Ir a una página web',
-  'LBL_REDIRECT_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página web concreta',
+  'LBL_REDIRECT_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página web concreta.',
   'LBL_REDIRECT_ACTION_URL_TEXT' => 'URL de redirección',
   'LBL_REDIRECT_ACTION_URL_DESC' => 'Indica la dirección de la página web a la que redirigir al usuario final. Debe incluir el protocolo (http:// o https://).',
   'LBL_REDIRECT_ACTION_METHOD_TEXT' => 'Método de envío',
@@ -469,7 +508,7 @@ $mod_strings = array (
 
   // RedirectToRecordAction
   'LBL_REDIRECT_TO_RECORD_ACTION_TITLE' => 'Ir a un registro',
-  'LBL_REDIRECT_TO_RECORD_ACTION_DESC' => 'Redirecciona el navegador del usuario final a la página de un registro concreto del CRM',
+  'LBL_REDIRECT_TO_RECORD_ACTION_DESC' => 'Redirecciona el navegador del usuario final a la página de un registro concreto del CRM.',
   'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_TEXT' => 'Bloque de datos del registro',
   'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_DESC' => 'Indica el bloque de datos que contiene el registro al que redirigir al usuario final.',
   'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_TEXT' => 'Vista del CRM',
@@ -478,13 +517,13 @@ $mod_strings = array (
 
   // RedirectSummaryPageAction
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumen de datos',
-  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página en la que se muestran los datos facilitados',
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona el navegador del usuario final a una página en la que se muestran los datos facilitados.',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_TEXT' => 'Título de la página',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_DEFAULT' => 'Resumen de los datos facilitados',
 
   // CheckSessionAction
   'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verificar sesión activa y permisos',
-  'LBL_CHECK_SESSION_ACTION_DESC' => 'Bloquea el procesamiento del formulario si no hay una sesión de usuario activa o si el usuario no tiene los permisos para crear los registros asociados al formulario',
+  'LBL_CHECK_SESSION_ACTION_DESC' => 'Bloquea el procesamiento del formulario si no hay una sesión de usuario activa o si el usuario no tiene los permisos para crear los registros asociados al formulario.',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT' => 'Mensaje por falta de permisos',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT_DEFAULT' => 'Acceso no autorizado. No posee los permisos necesarios para continuar.',
   'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verificando acceso y permisos...',
@@ -528,83 +567,95 @@ $mod_strings = array (
   // -- VALIDATOR ACTIONS --
   // RegexValidatorAction
   'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Validador Regex',
-  'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Valida un campo según una expresión regular',
+  'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Valida un campo según una expresión regular.',
   'LBL_REGEX_VALIDATOR_ACTION_PATTERN_TEXT' => 'Expresión regular',
-  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El formato del campo no es válido',
+  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El formato del campo no es válido.',
 
   // EmailValidatorAction
   'LBL_EMAIL_VALIDATOR_ACTION_TITLE' => 'Validador de correo electrónico',
-  'LBL_EMAIL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un correo electrónico válido',
-  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La dirección de correo electrónico no es válida',
+  'LBL_EMAIL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un correo electrónico válido.',
+  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La dirección de correo electrónico no es válida.',
 
   // DniValidatorAction
   'LBL_DNI_VALIDATOR_ACTION_TITLE' => 'Validador de DNI/NIF',
-  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un DNI/NIF español válido',
-  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El DNI/NIF no es válido',
+  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un DNI/NIF español válido.',
+  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El DNI/NIF no es válido.',
 
   // CifValidatorAction
   'LBL_CIF_VALIDATOR_ACTION_TITLE' => 'Validador de NIF de persona jurídica',
-  'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un NIF español de persona jurídica válido',
-  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIF no es válido',
+  'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un NIF español de persona jurídica válido.',
+  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIF no es válido.',
 
   // NieValidatorAction
   'LBL_NIE_VALIDATOR_ACTION_TITLE' => 'Validador de NIE',
-  'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un NIE español válido',
-  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIE no es válido',
+  'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un NIE español válido.',
+  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El NIE no es válido.',
 
   // CatSalutCipValidatorAction
   'LBL_CATSALUT_CIP_VALIDATOR_ACTION_TITLE' => 'Validador de CIP (CatSalut)',
-  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un Código de Identificación Personal (CIP) de CatSalut válido',
-  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El CIP no es válido',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un Código de Identificación Personal (CIP) de CatSalut válido.',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El CIP no es válido.',
 
   // NafValidatorAction
   'LBL_NAF_VALIDATOR_ACTION_TITLE' => 'Validador de NUSS',
-  'LBL_NAF_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un número de afiliación a la Seguridad Social (NUSS) válido',
-  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El número de afiliación a la Seguridad Social no es válido',
+  'LBL_NAF_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un número de afiliación a la Seguridad Social (NUSS) válido.',
+  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El número de afiliación a la Seguridad Social no es válido.',
 
   // NumericValidatorAction
   'LBL_NUMERIC_VALIDATOR_ACTION_TITLE' => 'Validador numérico',
-  'LBL_NUMERIC_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un valor numérico y que, opcionalmente, se encuentre dentro de un rango',
+  'LBL_NUMERIC_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un valor numérico y que, opcionalmente, se encuentre dentro de un rango.',
   'LBL_NUMERIC_VALIDATOR_ACTION_MIN_TEXT' => 'Valor mínimo (opcional)',
   'LBL_NUMERIC_VALIDATOR_ACTION_MAX_TEXT' => 'Valor máximo (opcional)',
-  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El valor debe ser numérico y estar entre los valores permitidos',
+  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El valor debe ser numérico y estar entre los valores permitidos.',
 
   // TextLengthValidatorAction
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_TITLE' => 'Validador de longitud de texto',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un texto con una longitud dentro de un rango',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un texto con una longitud dentro de un rango.',
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MIN_LENGTH_TEXT' => 'Longitud mínima (opcional)',
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MAX_LENGTH_TEXT' => 'Longitud máxima (opcional)',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El texto debe tener una longitud entre los valores permitidos',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El texto debe tener una longitud entre los valores permitidos.',
 
   // IbanValidatorAction
   'LBL_IBAN_VALIDATOR_ACTION_TITLE' => 'Validador de IBAN',
-  'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un IBAN válido',
-  'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El IBAN no es válido',
+  'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un IBAN válido.',
+  'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El IBAN no es válido.',
 
   // PhoneValidatorAction
   'LBL_PHONE_VALIDATOR_ACTION_TITLE' => 'Validador de teléfono',
-  'LBL_PHONE_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un número de teléfono español válido (al menos 9 dígitos numéricos)',
-  'LBL_PHONE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El teléfono no es válido',
+  'LBL_PHONE_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un número de teléfono español válido (al menos 9 dígitos numéricos).',
+  'LBL_PHONE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El teléfono no es válido.',
 
   // SpanishZipValidatorAction
   'LBL_SPANISH_ZIP_VALIDATOR_ACTION_TITLE' => 'Validador de código postal',
-  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un código postal español válido (5 dígitos numéricos)',
-  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El código postal no es válido',
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga un código postal español válido (5 dígitos numéricos).',
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El código postal no es válido.',
 
   // TrueValidatorAction
   'LBL_TRUE_VALIDATOR_ACTION_TITLE' => 'Selección obligada',
-  'LBL_TRUE_VALIDATOR_ACTION_DESC' => 'Asegura que una casilla esté marcada (por ejemplo, la aceptación de condiciones)',
-  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Es necesario aceptar este campo para continuar',
+  'LBL_TRUE_VALIDATOR_ACTION_DESC' => 'Asegura que una casilla esté marcada (por ejemplo, la aceptación de condiciones).',
+  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Es necesario aceptar este campo para continuar.',
 
   // AgeValidatorAction
   'LBL_AGE_VALIDATOR_ACTION_TITLE' => 'Validador de edad',
-  'LBL_AGE_VALIDATOR_ACTION_DESC' => 'Calcula la edad a partir de la fecha de nacimiento y verifica que esté entre la mínima y la máxima permitidas',
+  'LBL_AGE_VALIDATOR_ACTION_DESC' => 'Calcula la edad a partir de la fecha de nacimiento y verifica que esté entre la mínima y la máxima permitidas.',
   'LBL_AGE_VALIDATOR_ACTION_MIN_YEARS_TEXT' => 'Edad mínima (opcional)',
   'LBL_AGE_VALIDATOR_ACTION_MAX_YEARS_TEXT' => 'Edad máxima (opcional)',
-  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La edad no está en el rango permitido',
+  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La edad no está en el rango permitido.',
 
   // UrlValidatorAction
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'Validador de URL',
-  'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga una URL válida',
-  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La URL no es válida',
+  'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo contenga una URL válida.',
+  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La URL no es válida.',
+
+  // MaxDocumentSizeValidatorAction
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_TITLE' => 'Tamaño máximo de fichero',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Valida que el fichero subido no supere el tamaño máximo permitido.',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_MAX_SIZE_MB_TEXT' => 'Tamaño máximo (MB)',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'El fichero supera el tamaño máximo permitido.',
+
+  // AllowedExtensionsValidatorAction
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_TITLE' => 'Extensiones permitidas',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_DESC' => 'Valida que el fichero subido tenga una extensión permitida.',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_EXTENSIONS_TEXT' => 'Extensiones permitidas (separadas por comas)',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La extensión del fichero no está permitida.',
 );

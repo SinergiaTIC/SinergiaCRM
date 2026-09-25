@@ -75,6 +75,60 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
         // Duplicate detection logic
         $duplicateRules = $block->dataBlock->duplicate_detections ?? [];
+
+        // When a repeatable block submits several instances in the same request, a later
+        // instance may be a duplicate of one created earlier in this same request. Detect it
+        // against the block's indexed reference map (beans registered by previous instances)
+        // and apply the configured duplicate strategy.
+        if ($block->instanceIndex !== null && !empty($duplicateRules)) {
+            $indexedRefs = $block->dataBlock->getIndexedBeanReferences();
+            foreach ($indexedRefs as $otherIndex => $ref) {
+                if ($otherIndex === $block->instanceIndex) continue;
+
+                $otherBean = BeanFactory::getBean($module, $ref->beanId);
+                if (!$otherBean) continue;
+
+                $matchedRule = null;
+                foreach ($duplicateRules as $rule) {
+                    $match = true;
+                    foreach ($rule->fields as $fieldName) {
+                        $fieldValue = $block->getFieldValue($fieldName)?->value;
+                        if ($fieldValue === null || $fieldValue === '') {
+                            $match = false;
+                            break;
+                        }
+                        if (($otherBean->$fieldName ?? null) != $fieldValue) {
+                            $match = false;
+                            break;
+                        }
+                    }
+                    if ($match) {
+                        $matchedRule = $rule;
+                        break;
+                    }
+                }
+
+                if ($matchedRule !== null) {
+                    $bean = $otherBean;
+                    $onDuplicateAction = $matchedRule->on_duplicate;
+
+                    $fieldLabels = [];
+                    foreach ($matchedRule->fields as $fName) {
+                        $fieldDef = $block->dataBlock->fields[$fName] ?? null;
+                        if ($fieldDef) {
+                            $label = !empty($fieldDef->label) ? $fieldDef->label : (!empty($fieldDef->text_original) ? $fieldDef->text_original : $fName);
+                            $fieldLabels[] = rtrim($label, ': ');
+                        } else {
+                            $fieldLabels[] = $fName;
+                        }
+                    }
+                    $matchedRuleFields = implode(', ', $fieldLabels);
+                    break;
+                }
+            }
+        }
+
+        if ($bean === null) {
         foreach ($duplicateRules as $rule) {
             $scalarFields = [];
             $emailValues = [];
@@ -196,6 +250,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 break; // Stop searching, we found one
             }
         }
+        } // skip standard DB duplicate detection when intra-POST match was found
 
         // Action Logic (Create or Handle Duplicate) and performed modifications
         $modificationType = null;
@@ -214,7 +269,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 $bean->assigned_user_id = $context->defaultAssignedUserId;
             }
             // Fill all bean fields
-            $modifications = $this->populateBean($bean, $block);
+            $modifications = stic_AWF_FormsUtils::populateBeanFromBlock($bean, $block);
             if (property_exists($bean, 'fromAWF')) {
                 $bean->fromAWF = true;
             }
@@ -235,7 +290,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
                 case OnDuplicateAction::UPDATE:
                     // Overwrite all fields of the existing bean
-                    $modifications = $this->populateBean($bean, $block);
+                    $modifications = stic_AWF_FormsUtils::populateBeanFromBlock($bean, $block);
                     $modificationType = BeanModificationType::UPDATED;
                     
                     if (property_exists($bean, 'fromAWF')) {
@@ -316,7 +371,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                         $idName = $cfg['id_name'] ?? '';
                         $targetBlockId = $cfg['target_block_id'] ?? '';
                         $targetBlock = $context->formConfig->data_blocks[$targetBlockId] ?? null;
-                        $targetBeanRef = $targetBlock?->getBeanReference();
+                        $targetBeanRef = $targetBlock?->getBeanReference($context->getCurrentInstanceIndex());
                         $targetId = $targetBeanRef?->beanId ?? '';
                         $metadata[] = ['key' => 'injected_fk', 'label' => $idName, 'value' => "{$relName} → {$targetId}"];
                     }
@@ -328,46 +383,6 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         }
 
         return $actionResult;
-    }
-
-    /**
-     * Fills a bean with all form data (overwrites).
-     * @param SugarBean $bean The bean to update
-     * @param DataBlockResolved $block The resolved data block
-     * @return array<string, FieldModification> List of modifications indexed by field name
-     */
-    private function populateBean(SugarBean $bean, DataBlockResolved $block): array
-    {
-        /** @var FieldModification[] */
-        $modifications = [];
-
-        foreach ($block->formData as $fieldName => $fieldResolved) {
-            if ($fieldResolved === null) continue;
-
-            $newValue = $fieldResolved->value;
-            $fieldDef = $bean->field_defs[$fieldName] ?? null;
-
-            // If it is a related field, the real field that changes in the database is the id_name
-            $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
-            $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
-
-            if (isset($bean->field_defs[$targetField]) && stic_AWF_FormsUtils::isEmailField($bean->field_defs[$targetField], $targetField)) {
-                if ($targetField === 'email') {
-                    $targetField = 'email1';
-                }
-                $oldValue = $bean->$targetField ?? null;
-            } else {
-                $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
-            }
-            
-            if ($oldValue != $newValue) {
-                $bean->$targetField = $newValue;
-                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::APPLIED, $newValue, $oldValue);
-            } else {
-                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::UNCHANGED, $newValue, $oldValue);
-            }
-        }
-        return $modifications;
     }
 
     /**
@@ -480,7 +495,12 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 continue;
             }
 
-            $targetBeanRef = $targetBlock->getBeanReference();
+            // If the target block belongs to a repeatable group, read its per-instance
+            // bean reference using the current instance index. Otherwise use the scalar reference.
+            $instanceIndex = $context->getCurrentInstanceIndex();
+            $isTargetRepeatable = $targetBlock->isRepeatable() || !empty($targetBlock->group_root);
+            $targetBeanRef = $isTargetRepeatable ? $targetBlock->getBeanReference($instanceIndex) : $targetBlock->getBeanReference();
+
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
                 $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlock->name}' has no bean ID. Check action order.");
                 continue;

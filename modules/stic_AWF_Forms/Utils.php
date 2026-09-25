@@ -112,7 +112,9 @@ class stic_AWF_FormsUtils {
 
             $result['fields'][$fieldName] = [
                 'name' => $fieldName,
-                'text' => rtrim(trim(translate($arr['vname'] ?? '', $moduleName)), ":"),
+                // Decode HTML entities so the client stores pure text in the JSON config
+                // (see getRecordsTextById for details)
+                'text' => html_entity_decode(rtrim(trim(translate($arr['vname'] ?? '', $moduleName)), ":"), ENT_QUOTES, 'UTF-8'),
                 'type' => $arr['type'],
                 'required' => isset($arr['required']) && $arr['required'],
                 'default' => $arr['default'] ?? null,
@@ -610,6 +612,12 @@ class stic_AWF_FormsUtils {
 
             $displayField = self::detectDisplayField($bean);
             $text = isset($bean->$displayField) ? $bean->$displayField : $bean->id;
+            // The DB layer entity-encodes the value ("&quot;", "&#039;"...). If this text
+            // is stored as is in the form configuration and the configuration is saved
+            // again, from_html() (applied by the DB layer on save) decodes those entities
+            // to raw characters, producing invalid JSON. Decode here so the client always
+            // receives pure text.
+            $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
 
             $results[] = [
                 'id' => $bean->id,
@@ -764,5 +772,51 @@ class stic_AWF_FormsUtils {
             $formBean->form_type = $hasCheckSession ? 'crm' : 'web';
             $formBean->save();
         }
+    }
+
+    /**
+     * Populates a SugarBean dynamically from a resolved AWF Data Block.
+     * Compares values and returns an array of structured FieldModification objects.
+     * 
+     * @param SugarBean $bean The target SugarBean to populate.
+     * @param DataBlockResolved $block The resolved AWF Data Block containing form data.
+     * @return array<string, FieldModification> Map of field modifications.
+     */
+    public static function populateBeanFromBlock(SugarBean $bean, DataBlockResolved $block): array
+    {
+        require_once 'modules/stic_AWF_Forms/core/FieldModification.php';
+
+        /** @var FieldModification[] $modifications */
+        $modifications = [];
+
+        foreach ($block->formData as $fieldName => $fieldResolved) {
+            if ($fieldResolved === null) {
+                continue;
+            }
+
+            $newValue = $fieldResolved->value;
+            $fieldDef = $bean->field_defs[$fieldName] ?? null;
+
+            // If it is a related field, the real field that changes in the database is the id_name
+            $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
+            $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
+
+            if (isset($bean->field_defs[$targetField]) && self::isEmailField($bean->field_defs[$targetField], $targetField)) {
+                if ($targetField === 'email') {
+                    $targetField = 'email1';
+                }
+                $oldValue = $bean->$targetField ?? null;
+            } else {
+                $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
+            }
+            
+            if ($oldValue != $newValue) {
+                $bean->$targetField = $newValue;
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::APPLIED, $newValue, $oldValue);
+            } else {
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::UNCHANGED, $newValue, $oldValue);
+            }
+        }
+        return $modifications;
     }
 }

@@ -25,22 +25,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-class FormLayoutElement extends FormLayoutNode{
-    public FormLayoutSection $section;  // The section it belongs to
-
-    public string $ref_id;              // ID of the data block
-    public string $field_name;          // Name of the field (for field elements)
-
-    public static function fromJsonArray(FormLayoutSection $section, array $data): self {
-        $dto = new self();
-
-        $dto->section = $section;
-
-        $dto->id = $data['id'] ?? uniqid('el');
-        $dto->type = $data['type'] ?? 'datablock';
-        $dto->ref_id = $data['ref_id'] ?? '';
-        $dto->field_name = $data['field_name'] ?? '';
-
-        return $dto;
-    }
+/**
+ * Section that REPRESENTS a data-block group: fixed at the top level of
+ * the layout, it holds the group's content (nested sections, blocks or fields)
+ * and renders the group's instance loop. The explicit reference to its group
+ * root block (groupRootBlockId) makes it robust to content changes: the group
+ * section exists and is identified even when all its content is unbundled field
+ * elements placed elsewhere.
+ */
+class FormLayoutGroupSection extends FormLayoutSection {
+    public string $kind = 'group';
+    public string $groupRootBlockId = '';
 }

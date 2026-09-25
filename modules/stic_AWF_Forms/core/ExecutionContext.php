@@ -44,8 +44,13 @@ class ExecutionContext {
     public string $defaultAssignedUserId;
     public ?string $visitorUserId = null;
 
-    /** @var ?DeferredContextData Objecte de context per a processos diferits */
+    /** @var array<string, array> Uploaded files from $_FILES, indexed by PHP key */
+    public array $uploadedFiles = [];
+    
+    /** @var ?DeferredContextData Context object for deferred processes */
     public ?DeferredContextData $deferredContext = null;
+
+    public ?int $currentInstanceIndex = null; // Current instance index of the repeatable block being executed, or null for scalar flows
     
     /**
      * Constructor for ExecutionContext.
@@ -57,8 +62,9 @@ class ExecutionContext {
      * @param string $defaultAssignedUserId Default assigned user ID (optional)
      * @param ?SugarBean $responseBean The response Bean (optional)
      * @param string $formType The form type (e.g., 'web', 'crm')
+     * @param array $uploadedFiles Uploaded files data from $_FILES (optional)
      */
-    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null, string $defaultAssignedUserId = '', ?SugarBean $responseBean = null, string $formType = '') {
+    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null, string $defaultAssignedUserId = '', ?SugarBean $responseBean = null, string $formType = '', array $uploadedFiles = []) {
         $this->formId = $formId;
         $this->responseId = $responseId;
         $this->formData = $formData;
@@ -68,6 +74,7 @@ class ExecutionContext {
         $this->defaultAssignedUserId = $defaultAssignedUserId;
         $this->responseBean = $responseBean;
         $this->formType = $formType;
+        $this->uploadedFiles = $uploadedFiles;
     }
 
     /**
@@ -135,6 +142,24 @@ class ExecutionContext {
             }
         }
         return null;
+    }
+
+    /**
+     * Sets the current instance index of the repeatable block being executed.
+     * Must be set before resolving parameters/actions of an instance so that
+     * instance-aware keys can be resolved.
+     * @param ?int $index The instance index, or null for scalar flows
+     */
+    public function setCurrentInstanceIndex(?int $index): void {
+        $this->currentInstanceIndex = $index;
+    }
+
+    /**
+     * Gets the current instance index of the repeatable block being executed.
+     * @return ?int The instance index, or null for scalar flows
+     */
+    public function getCurrentInstanceIndex(): ?int {
+        return $this->currentInstanceIndex;
     }
 }
 
