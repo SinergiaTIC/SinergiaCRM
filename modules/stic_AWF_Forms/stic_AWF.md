@@ -237,7 +237,7 @@ La creación de un "Grupo" permite relacionar y repetir en el formulario uno o m
 
 * **Vinculación maestro-alumno**: Al igual que en las relaciones 1-N descritas arriba, los registros creados por el grupo se vinculan automáticamente en el CRM (por ejemplo, cada "Inscripción" creada se referencia con la "Persona" de la misma instancia).
 
-* **Sin anidamiento**: Un bloque solo puede pertenecer a un único grupo raíz (no se permiten grupos repetibles dentro de otros grupos). El formulario puede contener **varios grupos diferentes** siempre que sus bloques sean disjuntos.
+* **Anidamiento visual y cardinalidad**: Un grupo puede contener subgrupos y el modelo admite hasta dos niveles de grupos repetibles. La jerarquía se conserva visualmente: cada subgrupo tiene sus propios bloques, títulos e índices de instancia, y el contenido no puede salir del grupo al mover secciones. La persistencia completa de matrices multidimensionales de nivel 2 queda pendiente de la implementación backend de ADR-8. El formulario puede contener varios grupos disjuntos.
 
 ### Paso 3: Lógica y automatismos ###
 En este paso se configurará qué ocurre "por detrás" cuando alguien hace clic en "Enviar" del formulario. La lógica de negocio se articula mediante un sistema visual de flujos compuesto por **Acciones**.
@@ -313,7 +313,7 @@ Entre las opciones de diseño y maquetación disponibles destacan:
 
   * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables, permitiendo elegir si al cargar la página aparecen expandidas o contraídas por defecto. Esto resulta extremadamente útil en formularios largos para no abrumar al usuario, permitiéndole navegar progresivamente por bloques o revelar información opcional solo si interactúa con ella.
 
-  * **Renderizado de grupos repetibles**: Cada instancia de un grupo repetible se renderiza de forma unificada y **jerárquica**: paneles simétricos (raíz e hijos) anidados dentro de una misma tarjeta de instancia, numerada (p. ej.: *"Grupo #1"*, *"Grupo #2"*), con su cabecera propia (título del grupo, botones de añadir/eliminar instancia) y respetando el límite máximo configurado. Los bloques enlazados se muestran como paneles internos con sus respectivos títulos y rejilla de campos. La sección del grupo conserva su asociación aunque sus campos se reorganicen entre subsecciones.
+  * **Renderizado de grupos repetibles**: Cada instancia de un grupo repetible se renderiza de forma unificada y **jerárquica**: paneles simétricos (raíz e hijos) anidados dentro de una misma tarjeta de instancia, numerada (p. ej.: *"Grupo #1"*, *"Grupo #2"*), con su cabecera propia (título del grupo, botones de añadir/eliminar instancia) y respetando el límite máximo configurado. Los bloques enlazados se muestran como paneles internos con sus respectivos títulos y rejilla de campos. La sección del grupo conserva su asociación aunque sus campos se reorganicen entre subsecciones; los subgrupos anidados mantienen sus propios índices de instancia.
 
 * **Configuración general de estilos**: Existen multitud de opciones para adaptar la apariencia del formulario y lograr que se integre a la perfección con la identidad visual corporativa:
 
