@@ -384,7 +384,7 @@ $mod_strings = array (
   'LBL_FIELD_START_NEW_ROW' => 'Start on a new line',
   'LBL_FIELD_FULL_WIDTH' => 'Take full width',
   'LBL_SECTION_EMPTY_DESC' => 'This section is empty. Move blocks here from other sections.',
-  'LBL_SECTION_MOVE_OUT' => 'Move section out of its parent section',
+  'LBL_SECTION_MOVE_FORM' => 'Outside all sections',
 
   // Form generation
   'LBL_CODE_GENERATING' => 'Generating code...',

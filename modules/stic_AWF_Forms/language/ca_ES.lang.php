@@ -384,7 +384,7 @@ $mod_strings = array (
   'LBL_FIELD_START_NEW_ROW' => 'Comença en una línia nova',
   'LBL_FIELD_FULL_WIDTH' => "Ocupa tota l'amplada",
   'LBL_SECTION_EMPTY_DESC' => "Aquesta secció està buida. Mogueu blocs aquí des d'altres seccions.",
-  'LBL_SECTION_MOVE_OUT' => 'Mou la secció fora de la secció pare',
+  'LBL_SECTION_MOVE_FORM' => 'Fora de totes les seccions',
 
   // Form generation
   'LBL_CODE_GENERATING' => 'Generant el codi...',

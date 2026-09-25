@@ -2821,7 +2821,7 @@ class WizardStep4 {
       },
 
       groupName(section) {
-        const group = this.getGroup(section);
+        const group = this.getGroup(section) || this.getSubgroupHead(section);
         if (!group) return null;
         
         return group.group_title;
@@ -2834,6 +2834,30 @@ class WizardStep4 {
         const block = section.getGroupBlock(this.data_blocks);
         if (!block || !block.is_root || !block.isGroupHead(this.data_blocks)) return null;
         return block;
+      },
+
+      // Nested section hosting a depth-2 subgroup head: the subgroup identity
+      // lives in the block's group_root chain, the section stays a plain
+      // content container (ADR-9 contract), but the wizard displays it as a
+      // group. Only meaningful inside a designated group section.
+      getSubgroupHead(section) {
+        if (!section || this.isGroupSection(section) || !this.isWithinGroupSection(section)) return null;
+        for (const el of section.elements) {
+          if (el.type !== 'datablock') continue;
+          const block = this.getDataBlock(el);
+          if (block && block.group_root && block.isGroupHead(this.data_blocks)) return block;
+        }
+        return null;
+      },
+
+      isNestedGroupSection(section) {
+        return !!this.getSubgroupHead(section);
+      },
+
+      // Unified accessor for the group header template: designated top-level
+      // group sections and nested subgroup host sections.
+      getSectionGroup(section) {
+        return this.getGroup(section) || this.getSubgroupHead(section);
       },
 
       // The section (at any depth) that directly contains a nested section (or null)
@@ -2877,22 +2901,66 @@ class WizardStep4 {
         arr.splice(idx + 1, 0, section);
       },
 
-      // Candidate sections a SECTION can be moved into (same level/group rules):
+      // Reserved target representing the top level of the form (outside all sections).
+      // Only offered to standalone nested SECTIONS: blocks and fields must always
+      // remain inside a section.
+      getFormMoveTarget() {
+        return { id: '__form__', isFormTarget: true };
+      },
+
+      // All sections contained (at any depth) within the given section (excluding it)
+      getSectionsWithin(section) {
+        const result = [];
+        const walk = (s) => {
+          for (const el of s.elements) {
+            if (el.type !== 'section') continue;
+            result.push(el);
+            walk(el);
+          }
+        };
+        walk(section);
+        return result;
+      },
+
+      // Top-level designated group section scoping the given section (or null when
+      // the section is standalone, i.e. not inside any designated group section)
+      getGroupScopeRoot(section) {
+        let current = section;
+        let scope = null;
+        while (current) {
+          if (this.isGroupSection(current)) scope = current;
+          const parent = this.getParentSectionOf(current);
+          if (!parent) break;
+          current = parent;
+        }
+        return scope;
+      },
+
+      // All standalone sections of the form (never inside a designated group),
+      // at any depth
+      getStandaloneSections() {
+        return this.sections
+          .filter(s => !this.isGroupSection(s))
+          .flatMap(s => [s, ...this.getSectionsWithin(s)]);
+      },
+
+      // Candidate sections a SECTION can be moved into (group-scope rules):
       //  - group sections are FIXED: they represent their group and never move;
-      //  - a section inside a group section cannot leave it;
-      //  - any other section can move into another standalone top-level section
-      //    (becoming a nested section of it).
+      //  - a section inside a group can only move within that group (any of its
+      //    sections/subsections, including the group's top level);
+      //  - a standalone section can move into any other standalone section at any
+      //    depth; a nested standalone section can also move to the form's top level
+      //    (the "outside all sections" option).
       getSectionMoveTargets(section) {
         if (this.isGroupSection(section)) return [];                    // Group sections are fixed
-        if (this.isNestedSection(section)) {
-          const parent = this.getParentSectionOf(section);
-          if (this.isWithinGroupSection(section)) {
-            return parent.elements.filter(el => el.type === 'section' && el.id !== section.id);
-          }
-          return this.sections.filter(s => s.id !== parent.id && !this.isGroupSection(s));
-        }
-        // Top-level standalone section: can nest into another standalone section
-        return this.sections.filter(s => s.id !== section.id && !this.isGroupSection(s));
+        const excluded = new Set([section.id, ...this.getSectionsWithin(section).map(s => s.id)]);
+        const parent = this.getParentSectionOf(section);
+        const groupRoot = this.getGroupScopeRoot(section);
+        const candidates = groupRoot
+          ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
+          : this.getStandaloneSections();
+        const targets = candidates.filter(s => !excluded.has(s.id) && (!parent || s.id !== parent.id));
+        return this.canMoveSectionOut(section) ? [...targets, this.getFormMoveTarget()] : targets;
       },
 
       // Hierarchical section label: "Parent - Child - ..." (walks up the parents)
@@ -2902,9 +2970,14 @@ class WizardStep4 {
         return parent ? `${this.getSectionLabel(parent)} - ${own}` : own;
       },
 
-      // Moves a section into another section (same level/group rules)
+      // Moves a section into another section (group-scope rules), or to the
+      // form's top level via the "outside all sections" target
       moveSectionToSection(section, toSectionId) {
         if (!toSectionId) return;
+        if (toSectionId === this.getFormMoveTarget().id) {
+          this.moveSectionOut(section);
+          return;
+        }
         const target = this.findSectionById(toSectionId);
         if (!target || target.id === section.id) return;
         if (!this.getSectionMoveTargets(section).some(s => s.id === target.id)) return;
@@ -2934,16 +3007,19 @@ class WizardStep4 {
         return find(this.sections);
       },
 
-      // Candidate sections an element can be moved to (same level, same context):
-      //  - a block inside a group's nested section: the OTHER nested sections of that group
-      //  - a block in a top-level section: the other standalone (non-group) top-level sections
+      // Candidate sections an element can be moved to (group-scope rules).
+      // Elements must always remain inside a section, so there is no
+      // "outside all sections" target:
+      //  - content of a group (directly or in any of its subsections): the
+      //    sections and subsections of that same group;
+      //  - standalone content: any standalone section of the form, at any depth.
       getMoveTargets(element, fromSection) {
-        if (this.isGroupSection(fromSection)) return [];
-        if (this.isNestedSection(fromSection)) {
-          const parent = this.getParentSectionOf(fromSection);
-          return parent.elements.filter(el => el.type === 'section' && el.id !== fromSection.id);
-        }
-        return this.sections.filter(s => s.id !== fromSection.id && !this.isGroupSection(s));
+        if (!fromSection) return [];
+        const groupRoot = this.getGroupScopeRoot(fromSection);
+        const candidates = groupRoot
+          ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
+          : this.getStandaloneSections();
+        return candidates.filter(s => s.id !== fromSection.id);
       },
 
       // Adds a new (empty) nested section to ANY section, titled "Nova secció"

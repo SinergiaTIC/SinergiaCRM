@@ -415,7 +415,7 @@
                                             <template id="awfTplLayoutSection">
                                                 <div :id="'sectionCard_' + section.id" class="card datablock mb-3 shadow-sm transition-all awf-wizard-section-card" x-data="{showSettings: false, isCollapsed: false}">
                                                 <!-- Integrated Group header (Rendered ONLY if item is a group head/subgroup) -->
-                                                <template x-if="isGroupSection(section)">
+                                                <template x-if="isGroupSection(section) || isNestedGroupSection(section)">
                                                     <!-- Group Header -->
                                                     <div class="card-header border-bottom p-2">
                                                         <!-- Group Info -->
@@ -428,9 +428,9 @@
                                                                 <!-- Optional and Repeatable Badges -->
                                                                 <div class="d-flex justify-content-start">
                                                                     <!-- Optional Badge -->
-                                                                    <span class="badge bg-info me-2" x-show="getGroup(section).is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
+                                                                    <span class="badge bg-info me-2" x-show="getSectionGroup(section).is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
                                                                     <!-- Repeatable Badge -->
-                                                                    <span class="badge bg-primary" x-show="getGroup(section).is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
+                                                                    <span class="badge bg-primary" x-show="getSectionGroup(section).is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -451,12 +451,12 @@
                                                                 <span class="awf-icon-gear" :class="showSettings ? 'awf-icon-gear-fill' : ''"></span>
                                                             </button>
 
-                                                            <!-- Section move: the section can be moved into another section -->
+                                                            <!-- Section move: the section can be moved into another section or to the top level -->
                                                             <select class="form-select small text-muted w-auto" @change="moveSectionToSection(section, $event.target.value); $event.target.value='';"
                                                                     style="min-width: 100px;" :disabled="getSectionMoveTargets(section).length === 0">
                                                                 <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
                                                                 <template x-for="sec in getSectionMoveTargets(section)" :key="sec.id">
-                                                                    <option :value="sec.id" x-text="getSectionLabel(sec)"></option>
+                                                                    <option :value="sec.id" x-text="sec.isFormTarget ? utils.translate('LBL_SECTION_MOVE_FORM') : getSectionLabel(sec)"></option>
                                                                 </template>
                                                             </select>
 
@@ -474,14 +474,9 @@
                                                                 </button>
                                                             </div>
 
-                                                            <!-- Move Out/Up/Down -->
+                                                            <!-- Move Up/Down (moving out of the parent is available
+                                                                 in the "Move to..." dropdown as the top-level option) -->
                                                             <div class="input-group w-auto" role="group" style="min-width: 64px;">
-                                                                <!-- Move out of the parent section (not allowed to leave a group section) -->
-                                                                <template x-if="canMoveSectionOut(section)">
-                                                                    <button type="button" class="btn" :title="utils.translate('LBL_SECTION_MOVE_OUT')" @click="moveSectionOut(section);">
-                                                                        <span class="suitepicon suitepicon-action-move-left"></span>
-                                                                    </button>
-                                                                </template>
                                                                 <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
                                                                         :disabled="!canMoveUpSection(section);" @click="moveUpSection(section);">
                                                                     <span class="suitepicon suitepicon-action-move-up"></span>
