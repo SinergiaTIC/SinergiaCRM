@@ -25,22 +25,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-include_once __DIR__."/FormConfig.php";
-
-include_once __DIR__."/FormDataBlock.php";
-include_once __DIR__."/FormValueOption.php";
-include_once __DIR__."/FormDataBlockField.php";
-include_once __DIR__."/FormCondition.php";
-include_once __DIR__."/FormFieldValidation.php";
-include_once __DIR__."/FormDuplicateRule.php";
-
-include_once __DIR__."/FormFlow.php";
-include_once __DIR__."/FormAction.php";
-include_once __DIR__."/FormActionParameter.php";
-
-include_once __DIR__."/FormLayout.php";
-include_once __DIR__."/FormTheme.php";
-include_once __DIR__."/FormLayoutNode.php";
-include_once __DIR__."/FormLayoutSection.php";
-include_once __DIR__."/FormLayoutGroupSection.php";
-include_once __DIR__."/FormLayoutElement.php";
+/**
+ * Section that REPRESENTS a data-block group: fixed at the top level of
+ * the layout, it holds the group's content (nested sections, blocks or fields)
+ * and renders the group's instance loop. The explicit reference to its group
+ * root block (groupRootBlockId) makes it robust to content changes: the group
+ * section exists and is identified even when all its content is unbundled field
+ * elements placed elsewhere.
+ */
+class FormLayoutGroupSection extends FormLayoutSection {
+    public string $kind = 'group';
+    public string $groupRootBlockId = '';
+}

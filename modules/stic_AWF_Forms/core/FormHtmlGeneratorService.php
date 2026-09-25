@@ -461,17 +461,27 @@ class FormHtmlGeneratorService {
      * @return string The generated HTML
      */
     private function renderSectionNode(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?string $currentGroupRootId = null): string {
-        // Skip sections that have no renderable block content.
-        // A section is renderable if at least one of its elements (recursively) is a datablock
-        // that will produce visible HTML (standalone block with fields, or a
-        // group head whose root or any descendant has fields).
-        if (!self::sectionHasRenderableContent($section, $config, $currentGroupRootId)) return '';
+        $groupRootBlock = null;
+        $isTopLevelGroupSection = $section instanceof FormLayoutGroupSection && $currentGroupRootId === null;
+        if ($isTopLevelGroupSection) {
+            $groupRootBlock = self::resolveGroupRootBlock($config, $section->groupRootBlockId);
+            if (!$groupRootBlock) {
+                return "<!-- Group section has an invalid or missing group root reference -->" . $this->newLine();
+            }
+        } else if ($currentGroupRootId !== null) {
+            // Inside a group's loop: a nested section holding a subgroup head (a
+            // group head of depth 2, different from the current loop's root)
+            // renders that subgroup's own loop
+            $groupRootBlock = $this->findGroupRootInSection($config, $section, $currentGroupRootId);
+        }
 
-        // GROUP SECTION: a section whose content holds a group head that is not the
-        // group root of the loop we are already inside represents THAT group — the
-        // whole section (nested sections, blocks and fields included) is rendered
-        // inside the group's instance loop.
-        $groupRootBlock = $this->findGroupRootInSection($config, $section, $currentGroupRootId);
+        if ($groupRootBlock) {
+            $groupBlocks = array_merge([$groupRootBlock], $config->getGroupDescendants($groupRootBlock));
+            if (!self::groupHasRenderableFields($groupBlocks)) return '';
+        } elseif (!self::sectionHasRenderableContent($section, $config, $currentGroupRootId)) {
+            return '';
+        }
+
         if ($groupRootBlock) {
             return $this->generateGroupHtml($groupRootBlock, $theme, $config, $instanceIndexVar, $section);
         }
@@ -510,7 +520,7 @@ class FormHtmlGeneratorService {
                         $html .= "<div class='awf-section-title-wrapper'>" .$this->newLine('+');
                         {
                             if (!empty($section->title)) {
-                                $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>".htmlspecialchars($section->title)."</h4>" .$this->newLine();
+                                $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>".htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8')."</h4>" .$this->newLine();
                             }
                             if (!empty($section->subtitle)) {
                                 $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
@@ -532,7 +542,7 @@ class FormHtmlGeneratorService {
                         $html .= "<div class='awf-section-title-wrapper'>" .$this->newLine('+');
                         {
                             if (!empty($section->title)) {
-                                $html .= "<span>".htmlspecialchars($section->title)."</span>" .$this->newLine();
+                                $html .= "<span>".htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8')."</span>" .$this->newLine();
                             }
                             if (!empty($section->subtitle)) {
                                 $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
@@ -590,6 +600,9 @@ class FormHtmlGeneratorService {
                 return "<!-- Field '{$element->field_name}' not found in block '{$block->name}' -->" . $this->newLine();
             }
             $field = $block->fields[$element->field_name];
+            if ($currentGroupRootId !== null && !self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) {
+                return "<!-- Field element is outside the current group instance -->" . $this->newLine();
+            }
 
             if ($field->type_field === DataBlockFieldType::FIXED) {
                 return "<!-- Field '{$element->field_name}' is a fixed field and is not rendered -->" . $this->newLine();
@@ -600,21 +613,10 @@ class FormHtmlGeneratorService {
 
         $isGroupHead = $block->isRepeatable() || $block->isOptional() || !empty($config->getGroupChildren($block));
 
-        // Child block of a group: rendered as an instance panel when we are inside
-        // its group's loop; otherwise it is rendered inside its root's loop, which
-        // is elsewhere in the layout (or missing) — nothing to render here.
-        if (!empty($block->group_root)) {
-            if ($currentGroupRootId !== null && $currentGroupRootId === $config->getGroupRootBlock($block)->id && $instanceIndexVar !== null) {
-                return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar);
-            }
-            return "<!-- Child block '{$block->name}' is rendered inside its group root's loop -->" . $this->newLine();
-        }
-
-        // Group head block (root of a group): the group loop is rendered by its
-        // group section (renderSectionNode). If we are inside that loop already,
-        // render the root's instance panel; if the element appears elsewhere
-        // (legacy flat layouts), fall back to rendering the whole group loop.
         if ($isGroupHead) {
+            if (!empty($block->group_root) && $currentGroupRootId === null) {
+                return "<!-- Child group root '{$block->name}' is rendered inside its parent group's loop -->" . $this->newLine();
+            }
             if ($currentGroupRootId === $block->id && $instanceIndexVar !== null) {
                 return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar);
             }
@@ -622,7 +624,17 @@ class FormHtmlGeneratorService {
                 $labelSection = $parentSection ? $this->topLevelAncestorSection($config, $parentSection) : $parentSection;
                 return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $labelSection);
             }
+            if ($instanceIndexVar !== null && self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) {
+                return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $parentSection);
+            }
             return "<!-- Group root '{$block->name}' is rendered by its group section loop -->" . $this->newLine();
+        }
+
+        if (!empty($block->group_root)) {
+            if ($currentGroupRootId !== null && self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId) && $instanceIndexVar !== null) {
+                return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar);
+            }
+            return "<!-- Child block '{$block->name}' is rendered inside its group root's loop -->" . $this->newLine();
         }
 
         // Standalone scalar block
@@ -651,6 +663,14 @@ class FormHtmlGeneratorService {
         return false;
     }
 
+    private static function sectionContainsElementForBlock(FormLayoutSection $section, string $blockId): bool {
+        foreach ($section->elements as $element) {
+            if ($element instanceof FormLayoutElement && $element->ref_id === $blockId) return true;
+            if ($element instanceof FormLayoutSection && self::sectionContainsElementForBlock($element, $blockId)) return true;
+        }
+        return false;
+    }
+
     /**
      * Helper to check if a layout element produces renderable content.
      * Children of a group root are covered by their root's element and never
@@ -662,6 +682,7 @@ class FormHtmlGeneratorService {
             // actually rendered (fixed/hidden fields produce no visible HTML)
             $block = $config->data_blocks[$element->ref_id] ?? null;
             if (!$block) return false;
+            if ($currentGroupRootId !== null && !self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) return false;
             $field = $block->fields[$element->field_name] ?? null;
             if (!$field) return false;
             return $field->type_field !== DataBlockFieldType::FIXED && $field->type_in_form !== 'hidden';
@@ -670,11 +691,12 @@ class FormHtmlGeneratorService {
         $block = $config->data_blocks[$element->ref_id] ?? null;
 
         if (!$block) return false;
+        if ($currentGroupRootId !== null && !self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) return false;
 
         // Inside its group's loop, a member block renders as an instance panel;
         // outside that loop it is covered by its root's element
         if (!empty($block->group_root)) {
-            return $currentGroupRootId !== null && $currentGroupRootId === $config->getGroupRootBlock($block)->id;
+            return $currentGroupRootId !== null && self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId);
         }
 
         // Group head or standalone: check if root or any descendant has fields
@@ -688,11 +710,34 @@ class FormHtmlGeneratorService {
         return self::blockHasRenderableFields($block);
     }
 
+    private static function resolveGroupRootBlock(FormConfig $config, string $blockId): ?FormDataBlock {
+        if ($blockId === '') return null;
+        $block = $config->data_blocks[$blockId] ?? null;
+        if (!$block || $block->group_root !== '') return null;
+        $isGroupHead = $block->isRepeatable()
+            || $block->isOptional()
+            || !empty($config->getGroupChildren($block));
+        return $isGroupHead ? $block : null;
+    }
+
+    private static function blockBelongsToGroupInstance(FormDataBlock $block, FormConfig $config, string $groupRootId): bool {
+        if ($block->id === $groupRootId) return true;
+        $ownerId = $block->group_root !== '' ? $block->group_root : $block->id;
+        $owner = $config->data_blocks[$ownerId] ?? null;
+        return $owner !== null && $owner->id === $groupRootId;
+    }
+
     /**
      * Helper to check if a section has any renderable element, recursively
      * (nested sections are traversed).
      */
     private static function sectionHasRenderableContent(FormLayoutSection $section, FormConfig $config, ?string $currentGroupRootId = null): bool {
+        if ($section instanceof FormLayoutGroupSection && $currentGroupRootId === null) {
+            $rootBlock = self::resolveGroupRootBlock($config, $section->groupRootBlockId);
+            if (!$rootBlock) return false;
+            $groupBlocks = array_merge([$rootBlock], $config->getGroupDescendants($rootBlock));
+            return self::groupHasRenderableFields($groupBlocks);
+        }
         foreach ($section->elements as $childNode) {
             if ($childNode instanceof FormLayoutSection) {
                 if (self::sectionHasRenderableContent($childNode, $config, $currentGroupRootId)) return true;
@@ -714,7 +759,10 @@ class FormHtmlGeneratorService {
                 $block = $config->data_blocks[$el->ref_id] ?? null;
                 if (!$block) continue;
                 $isHead = $block->isRepeatable() || $block->isOptional() || !empty($config->getGroupChildren($block));
-                if ($isHead && $block->id !== $currentGroupRootId) return $block;
+                if ($isHead && $block->id !== $currentGroupRootId
+                    && ($currentGroupRootId === null || self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId))) {
+                    return $block;
+                }
             } elseif ($el instanceof FormLayoutSection) {
                 $found = $this->findGroupRootInSection($config, $el, $currentGroupRootId);
                 if ($found) return $found;
@@ -798,17 +846,19 @@ class FormHtmlGeneratorService {
         // Group presentation context comes from the layout section that contains the block (AWF Paso 4):
         // a group is displayed as a section, so its title and micro-copy labels belong to the section.
         $sectionTitle = ($section && $section->title !== '') ? $section->title : ($rootBlock->group_title ?: $rootBlock->text);
-        $groupTitle = htmlspecialchars($sectionTitle);
-        $toggleLabel = htmlspecialchars(($section && $section->toggle_label !== '') ? $section->toggle_label : (translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $sectionTitle));
-        $addLabel = htmlspecialchars(($section && $section->add_button_label !== '') ? $section->add_button_label : translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT', 'stic_AWF_Forms'));
-        $removeLabel = htmlspecialchars(($section && $section->remove_button_label !== '') ? $section->remove_button_label : translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT', 'stic_AWF_Forms'));
+        $groupTitleExpression = json_encode($sectionTitle, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        if ($groupTitleExpression === false) $groupTitleExpression = '""';
+        $groupTitleExpression = htmlspecialchars($groupTitleExpression, ENT_QUOTES, 'UTF-8');
+        $toggleLabel = htmlspecialchars(($section && $section->toggle_label !== '') ? $section->toggle_label : (translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $sectionTitle), ENT_QUOTES, 'UTF-8');
+        $addLabel = htmlspecialchars(($section && $section->add_button_label !== '') ? $section->add_button_label : translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT', 'stic_AWF_Forms'), ENT_QUOTES, 'UTF-8');
+        $removeLabel = htmlspecialchars(($section && $section->remove_button_label !== '') ? $section->remove_button_label : translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT', 'stic_AWF_Forms'), ENT_QUOTES, 'UTF-8');
 
         $maxInstances = $rootBlock->max_instances !== null ? (int)$rootBlock->max_instances : 'null';
         $isRepeatable = $rootBlock->isRepeatable();
         $isOptional = $rootBlock->isOptional();
         // Per-level loop variables (idx_l1, idx_l2) keep the Alpine scopes of
         // nested groups from shadowing each other
-        $instanceVar = $instanceIndexVar === null ? 'idx_l1' : ($instanceIndexVar === 'idx_l1' ? 'idx_l2' : 'idx_l3');
+        $instanceVar = ($instanceIndexVar === null || $instanceIndexVar === 'index') ? 'idx_l1' : ($instanceIndexVar === 'idx_l1' ? 'idx_l2' : 'idx_l3');
 
         // Direct children only (subgroup heads will be rendered recursively)
         $children = $config->getGroupChildren($rootBlock);
@@ -840,12 +890,12 @@ class FormHtmlGeneratorService {
             {
                 $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                 {
-                    $html .= "<div class='awf-instance-card card border mb-3 shadow-sm'>" . $this->newLine('+');
+                    $html .= "<div class='awf-instance-card card border mb-3 shadow-sm' x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
                     {
                         // Instance card header
                         $html .= "<div class='card-header bg-light d-flex justify-content-between align-items-center py-2'>" . $this->newLine('+');
                         {
-                            $instanceTitle = $isRepeatable ? "'{$groupTitle} #' + ({$instanceVar} + 1)" : "'{$groupTitle}'";
+                            $instanceTitle = $isRepeatable ? "{$groupTitleExpression} + ' #' + ({$instanceVar} + 1)" : $groupTitleExpression;
                             $html .= "<span class='fw-bold text-secondary' x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
 
                             // Remove button: ONLY for repeatable groups, and only if index > 0
@@ -865,6 +915,7 @@ class FormHtmlGeneratorService {
                         $html .= "<div class='card-body p-3 bg-white'>" . $this->newLine('+');
                         {
                             $inner = '';
+                            $hasRootRepresentation = $section !== null && self::sectionContainsElementForBlock($section, $rootBlock->id);
                             if ($section) {
                                 foreach ($section->elements as $el) {
                                     if ($el instanceof FormLayoutSection) {
@@ -873,6 +924,10 @@ class FormHtmlGeneratorService {
                                         $inner .= $this->renderElementNode($el, $config, $theme, $instanceVar, $section, $rootBlock->id);
                                     }
                                 }
+                            }
+                            if ($section !== null && !$hasRootRepresentation) {
+                                $rootPanel = $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar);
+                                if ($rootPanel !== '') $inner = $rootPanel . $inner;
                             }
                             if (trim($inner) !== '') {
                                 $html .= $inner;
@@ -885,9 +940,9 @@ class FormHtmlGeneratorService {
                                     $childHasChildren = !empty($config->getGroupChildren($childBlock));
                                     $childIsGroupHead = $childBlock->isRepeatable() || $childBlock->isOptional() || $childHasChildren;
                                     if ($childIsGroupHead) {
-                                        $html .= $this->generateGroupHtml($childBlock, $theme, $config);
+                                        $html .= $this->generateGroupHtml($childBlock, $theme, $config, $instanceVar);
                                     } elseif ($childBlock->isOptional()) {
-                                        $childTitle = htmlspecialchars(translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $childBlock->text);
+                                        $childTitle = htmlspecialchars(translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $childBlock->text, ENT_QUOTES, 'UTF-8');
                                         $html .= "<div class='awf-child-optional-wrapper my-3 p-2 border rounded bg-light' x-data='{ includeChild: false }'>" . $this->newLine('+');
                                         {
                                             $html .= "<div class='form-check form-switch mb-0'>" . $this->newLine('+');
@@ -948,7 +1003,7 @@ class FormHtmlGeneratorService {
     private function renderBlockPanel(FormDataBlock $block, FormTheme $theme): string {
         // A block with no renderable fields renders nothing (empty sub-section)
         if (!self::blockHasRenderableFields($block)) return "";
-        $blockTitle = htmlspecialchars($block->text);
+        $blockTitle = htmlspecialchars($block->text, ENT_QUOTES, 'UTF-8');
 
         $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
         {
@@ -979,7 +1034,7 @@ class FormHtmlGeneratorService {
     private function renderBlockInstancePanel(FormDataBlock $block, FormTheme $theme, string $instanceIndexVar): string {
         // A block with no renderable fields renders nothing (empty sub-section)
         if (!self::blockHasRenderableFields($block)) return "";
-        $blockTitle = htmlspecialchars($block->text);
+        $blockTitle = htmlspecialchars($block->text, ENT_QUOTES, 'UTF-8');
 
         $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
         {

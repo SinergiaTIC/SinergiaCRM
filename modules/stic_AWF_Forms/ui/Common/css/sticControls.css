@@ -213,7 +213,7 @@
   border-color: #80abec; 
 }
 
-/* Group container cards (step 2, 2-level group tree, ADR-8): a group card holds
+/* Group container cards (step 2, 2-level group tree): a group card holds
    the data block cards of the group (root block included) */
 .card.group-card {
   border-color: #80abec;

@@ -1097,7 +1097,7 @@ class WizardStep2 {
       get formConfig() { return window.alpineComponent.formConfig; },
       get data_blocks() { return this.formConfig.data_blocks; },
       get orderedDataBlocks() { return this.formConfig.getOrderedDataBlocks(); },
-      // 2-level visual tree (ADR-8): groups are container cards holding their block cards
+      // 2-level visual tree: groups are container cards holding their block cards
       get blockTree() { return this.formConfig.getVisualTree(); },
       // A group container shows the error style when any of its blocks is invalid
       groupNodeHasErrors(node) {
@@ -2786,10 +2786,19 @@ class WizardStep4 {
       },
 
       isGroupSection(section) {
-        // Only the TOP-LEVEL section represents the group: nested sections are
-        // content containers (sections, blocks or fields) and never show group info
-        if (this.isNestedSection(section)) return false;
-        return !!this.getGroup(section);
+        // Sections are DESIGNATED as group sections (kind 'group' + the
+        // reference to their group root block) — no content-based heuristics
+        return !!section && this.sections.includes(section) && section.isGroupSection;
+      },
+
+      isWithinGroupSection(section) {
+        let current = section;
+        while (current) {
+          const parent = this.getParentSectionOf(current);
+          if (!parent) return this.isGroupSection(current);
+          current = parent;
+        }
+        return false;
       },
 
       groupName(section) {
@@ -2800,24 +2809,12 @@ class WizardStep4 {
       },
 
       getGroup(section) {
-        // The section's group is determined by its OWNER ROOT: the first block
-        // without group_root, found depth-first (nested sections included).
-        // Fallback for sections without any root block: first group head found.
-        let firstRoot = null;
-        let firstHead = null;
-        const scan = (sec) => {
-          for (const el of sec.elements) {
-            if (el.type === 'section') { scan(el); continue; }
-            if (el.type !== 'datablock') continue;
-            const block = this.getDataBlock(el);
-            if (!block) continue;
-            if ((!block.group_root || block.group_root === '') && !firstRoot) firstRoot = block;
-            if (!firstHead && block.isGroupHead(this.data_blocks)) firstHead = block;
-          }
-        };
-        scan(section);
-        const owner = firstRoot || firstHead;
-        return owner && owner.isGroupHead(this.data_blocks) ? owner : null;
+        // The group's root block comes from the section's explicit
+        // reference (robust to content changes: unbundled fields, moved elements)
+        if (!this.isGroupSection(section)) return null;
+        const block = section.getGroupBlock(this.data_blocks);
+        if (!block || !block.is_root || !block.isGroupHead(this.data_blocks)) return null;
+        return block;
       },
 
       // The section (at any depth) that directly contains a nested section (or null)
@@ -2845,7 +2842,7 @@ class WizardStep4 {
       canMoveSectionOut(section) {
         const parent = this.getParentSectionOf(section);
         if (!parent) return false;              // Already a top-level section
-        return !this.isGroupSection(parent);
+        return !this.isWithinGroupSection(section);
       },
 
       // Takes a nested section out of its (non-group) parent section and places it
@@ -2870,7 +2867,9 @@ class WizardStep4 {
         if (this.isGroupSection(section)) return [];                    // Group sections are fixed
         if (this.isNestedSection(section)) {
           const parent = this.getParentSectionOf(section);
-          if (this.isGroupSection(parent)) return [];                   // Cannot leave the group
+          if (this.isWithinGroupSection(section)) {
+            return parent.elements.filter(el => el.type === 'section' && el.id !== section.id);
+          }
           return this.sections.filter(s => s.id !== parent.id && !this.isGroupSection(s));
         }
         // Top-level standalone section: can nest into another standalone section

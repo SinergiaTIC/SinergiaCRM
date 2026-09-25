@@ -313,7 +313,7 @@ Entre las opciones de diseño y maquetación disponibles destacan:
 
   * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables, permitiendo elegir si al cargar la página aparecen expandidas o contraídas por defecto. Esto resulta extremadamente útil en formularios largos para no abrumar al usuario, permitiéndole navegar progresivamente por bloques o revelar información opcional solo si interactúa con ella.
 
-  * **Renderizado de grupos repetibles**: Cada instancia de un grupo repetible se renderiza de forma unificada y **jerárquica**: paneles simétricos (raíz e hijos) anidados dentro de una misma tarjeta de instancia, numerada (p. ej.: *"Grupo #1"*, *"Grupo #2"*), con su cabecera propia (título del grupo, botones de añadir/eliminar instancia) y respetando el límite máximo configurado. Los bloques enlazados se muestran como paneles internos con sus respectivos títulos y rejilla de campos.
+  * **Renderizado de grupos repetibles**: Cada instancia de un grupo repetible se renderiza de forma unificada y **jerárquica**: paneles simétricos (raíz e hijos) anidados dentro de una misma tarjeta de instancia, numerada (p. ej.: *"Grupo #1"*, *"Grupo #2"*), con su cabecera propia (título del grupo, botones de añadir/eliminar instancia) y respetando el límite máximo configurado. Los bloques enlazados se muestran como paneles internos con sus respectivos títulos y rejilla de campos. La sección del grupo conserva su asociación aunque sus campos se reorganicen entre subsecciones.
 
 * **Configuración general de estilos**: Existen multitud de opciones para adaptar la apariencia del formulario y lograr que se integre a la perfección con la identidad visual corporativa:
 

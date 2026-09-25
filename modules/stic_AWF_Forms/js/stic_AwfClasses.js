@@ -349,7 +349,7 @@ class stic_AwfDataBlock {
   }
 
   /**
-   * Checks if this block can be set as repeatable. ADR-8: nested repeatable groups
+   * Checks if this block can be set as repeatable. Nested repeatable groups
    * are allowed up to depth 2 — the branch may hold at most TWO repeatable blocks
    * (e.g. Adult (1) → Minor (N) → Registration (M)). This block becoming repeatable
    * must keep the total of repeatable ancestors + descendants in the branch ≤ 2.
@@ -388,7 +388,7 @@ class stic_AwfDataBlock {
       if (inSameGroup && d.is_repeatable) repeatableCount++;
     }
 
-    // Depth-2 rule (ADR-8): adding this block as repeatable must keep the branch ≤ 2
+    // Depth-2 rule: adding this block as repeatable must keep the branch ≤ 2
     return repeatableCount + 1 <= 2;
   }
 
@@ -459,7 +459,7 @@ class stic_AwfDataBlock {
       //    nor have repeatable ancestors (prevents N x M beyond the depth-2 rule)
       if (this.is_repeatable && !this.canBeRepeatableInParent(candidate, allDataBlocks)) return false;
 
-      // 4. Depth guard (ADR-8): group nesting is limited to 2 levels. The resulting
+      // 4. Depth guard: group nesting is limited to 2 levels. The resulting
       //    depth of this block (candidate depth + 1) plus its own subtree height
       //    (1 if it already has children) must not exceed 2.
       const subtreeHeight = this.getChildren(allDataBlocks).length > 0 ? 1 : 0;
@@ -1600,7 +1600,7 @@ class stic_AwfLayout {
 
     // 3. Map sub-objects
     this.theme = new stic_AwfTheme(data.theme ?? {});
-    this.structure = (data.structure || this.structure).map(s => new stic_AwfLayoutSection(s));
+    this.structure = (data.structure || this.structure).map(s => stic_AwfLayoutSection.fromData(s, true));
 
     // Decode: If it comes from the DB (JSON), it will come in Base64. If it is new, it will be empty.
     this.header_html = utils.fromBase64(this.header_html);
@@ -1610,7 +1610,7 @@ class stic_AwfLayout {
   }
 
   /**
-   * Synchronizes the visual structure with the actual data blocks (AWF Paso 4, ADR-8).
+   * Synchronizes the visual structure with the actual data blocks.
    *
    * Layout model: `structure` holds top-level sections. A section is either:
    *  - a STANDALONE section: holds standalone blocks (shared manual sections allowed);
@@ -1639,11 +1639,11 @@ class stic_AwfLayout {
     const isGroupHead = (block) => block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
     // Top-level root of a block, walking the whole group_root chain (order-independent)
     const topRootIdOf = (block, seen = new Set()) => {
-      if (!block.group_root || block.group_root === '') return block.id;
-      if (seen.has(block.id)) return block.id; // Cycle guard
+      if (!block || !block.group_root || block.group_root === '') return block?.id ?? null;
+      if (seen.has(block.id)) return null;
       seen.add(block.id);
       const parent = dataBlocks.find(b => b.id === block.group_root);
-      return parent ? topRootIdOf(parent, seen) : block.id;
+      return parent ? topRootIdOf(parent, seen) : null;
     };
 
     // ---- 1. Recursive cleanup: drop deleted/duplicate/non-renderable elements
@@ -1658,6 +1658,7 @@ class stic_AwfLayout {
           if (!block) return false;                                  // The block no longer exists
           const field = block.fields.find(f => f.name === el.field_name);
           if (!field || field.type_field === 'fixed') return false;  // Nothing to render
+          if (wholeBlockPlaced.has(block.id)) return false;            // A whole element already represents the block
           const key = block.id + '::' + el.field_name;
           if (fragmentKeys.has(key)) return false;                   // Duplicate fragment
           fragmentKeys.add(key);
@@ -1725,22 +1726,141 @@ class stic_AwfLayout {
       }
       return null;
     };
-    // A top-level section is a GROUP section when the top-level root of its first
-    // block is a group head
-    const sectionIsGroupSection = (section) => {
-      const first = firstBlockOf(section);
-      if (!first) return false;
-      const owner = dataBlocks.find(b => b.id === topRootIdOf(first));
-      return !!owner && isGroupHead(owner);
+    const sectionContainsSection = (outer, inner) => {
+      if (outer === inner) return true;
+      return outer.elements.some(el => el.type === 'section' && sectionContainsSection(el, inner));
     };
+
+    // The nested section of a group section that hosts a block: the one already
+    // containing it, or a new one titled with the block text (one section per block)
+    const findBlockHostSection = (groupSection, block) => {
+      for (const el of groupSection.elements) {
+        if (el.type !== 'section') continue;
+        if (el.elements.some(e => e.ref_id === block.id)) return el;
+        const nestedHost = findBlockHostSection(el, block);
+        if (nestedHost) return nestedHost;
+      }
+      return null;
+    };
+    const blockHostSection = (groupSection, block, seen = new Set()) => {
+      if (seen.has(block.id)) return null;
+      seen.add(block.id);
+      const host = findBlockHostSection(groupSection, block);
+      if (host) return host;
+      let container = groupSection;
+      if (block.group_root && block.group_root !== groupSection.groupRootBlockId) {
+        const parent = dataBlocks.find(b => b.id === block.group_root);
+        if (parent) {
+          const parentHost = blockHostSection(groupSection, parent, seen);
+          if (parentHost) container = parentHost;
+        }
+      }
+      const nested = new stic_AwfLayoutSection({ title: block.text });
+      container.elements.push(nested);
+      return nested;
+    };
+
+    const clearNestedGroupDesignation = (section) => {
+      section.elements.forEach(el => {
+        if (el.type !== 'section') return;
+        if (el.kind === 'group') {
+          el.kind = '';
+          el.groupRootBlockId = '';
+        }
+        clearNestedGroupDesignation(el);
+      });
+    };
+    this.structure.forEach(clearNestedGroupDesignation);
+
+    // ---- 2b. Group section designation: every group (a TOP-LEVEL root
+    //          block that is a group head) has exactly ONE top-level group section
+    //          that represents it (kind: 'group' + groupRootBlockId). The
+    //          designation does NOT depend on the section content (blocks may be
+    //          whole elements or unbundled field fragments anywhere).
+    // Sections whose group no longer exists go back to plain (content preserved).
+    this.structure.forEach(s => {
+      if (s.kind !== 'group') return;
+      const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
+      if (!gBlock || !isGroupHead(gBlock) || !gBlock.is_root) {
+        s.kind = '';
+        s.groupRootBlockId = '';
+      }
+    });
+    // De-duplicate: only the FIRST designated section per group root stays
+    const seenGroupRoots = new Set();
+    this.structure.forEach(s => {
+      if (s.kind !== 'group') return;
+      if (seenGroupRoots.has(s.groupRootBlockId)) { s.kind = ''; s.groupRootBlockId = ''; return; }
+      seenGroupRoots.add(s.groupRootBlockId);
+    });
+    // Designate (legacy heuristic) or create
+    const firstReferencedBlockOf = (section) => {
+      for (const el of section.elements) {
+        if (el.type === 'section') {
+          const nested = firstReferencedBlockOf(el);
+          if (nested) return nested;
+        } else if (el.ref_id) {
+          const block = dataBlocks.find(b => b.id === el.ref_id);
+          if (block) return block;
+        }
+      }
+      return null;
+    };
+    dataBlocks.forEach(block => {
+      if (!block.is_root || !isGroupHead(block)) return;
+      if (this.structure.some(s => s.kind === 'group' && s.groupRootBlockId === block.id)) return;
+      const candidate = this.structure.find(s => {
+        if (s.kind === 'group') return false;
+        const first = firstReferencedBlockOf(s);
+        return first && topRootIdOf(first) === block.id;
+      });
+      if (candidate) {
+        // Convert IN PLACE: the object identity is kept (Alpine bindings keep working)
+        Object.setPrototypeOf(candidate, stic_AwfLayoutGroupSection.prototype);
+        candidate.kind = 'group';
+        candidate.groupRootBlockId = block.id;
+        if (!candidate.is_custom_title) candidate.title = block.group_title || block.text;
+        candidate.showTitle = false;
+      } else {
+        // Create the group section (its content will be filled by the passes below)
+        const home = new stic_AwfLayoutGroupSection({ title: block.group_title || block.text, groupRootBlockId: block.id });
+        home.showTitle = false;
+        this.structure.push(home);
+      }
+    });
+    // Adopt the unbundled fragments of the group's members: they must render
+    // inside the group's loop, so they cannot stay in outside sections
+    fragmentsByBlock.forEach((fragments, blockId) => {
+      const block = dataBlocks.find(b => b.id === blockId);
+      if (!block) return;
+      const rootId = topRootIdOf(block);
+      if (!rootId) return;
+      const root = dataBlocks.find(b => b.id === rootId);
+      if (!root || !isGroupHead(root)) return;
+      const home = this.structure.find(s => s.kind === 'group' && s.groupRootBlockId === root.id);
+      if (!home) return;
+      const host = blockHostSection(home, block);
+      fragments.forEach(({ section, el }) => {
+        const i = section.elements.indexOf(el);
+        if (i >= 0 && !sectionContainsSection(home, section)) {
+          section.elements.splice(i, 1);
+          host.elements.push(el);
+        }
+      });
+    });
 
     // The home (top-level section) of every top-level root present in the layout
     const rootHomeSection = new Map();
     this.structure.forEach(section => {
+      // Designated group sections are the canonical home of their group root,
+      // even when they hold no elements (e.g. all its content is unbundled field fragments elsewhere)
+      if (section.kind === 'group' && section.groupRootBlockId && !rootHomeSection.has(section.groupRootBlockId)) {
+        rootHomeSection.set(section.groupRootBlockId, section);
+      }
       const first = firstBlockOf(section);
       if (!first) return;
       const ownerRootId = topRootIdOf(first);
-      if (!rootHomeSection.has(ownerRootId)) rootHomeSection.set(ownerRootId, section);
+      if (ownerRootId && !rootHomeSection.has(ownerRootId)) rootHomeSection.set(ownerRootId, section);
     });
 
     // Creates (once) the home top-level section of a root block
@@ -1749,28 +1869,20 @@ class stic_AwfLayout {
       let home = rootHomeSection.get(rootBlock.id);
       if (home) return home;
       const groupHead = isGroupHead(rootBlock);
-      home = new stic_AwfLayoutSection({
-        title: groupHead ? (rootBlock.group_title || rootBlock.text) : rootBlock.text,
-      });
       if (groupHead) {
-        // The group section holds the group name but does NOT display its title:
-        // its content is organized in one nested section per data block
+        // Group sections are designated: kind 'group' + the reference to
+        // their root block; they hold the group name but do NOT display the title
+        home = new stic_AwfLayoutGroupSection({
+          title: rootBlock.group_title || rootBlock.text,
+          groupRootBlockId: rootBlock.id,
+        });
         home.showTitle = false;
+      } else {
+        home = new stic_AwfLayoutSection({ title: rootBlock.text });
       }
       rootHomeSection.set(rootBlock.id, home);
       newSectionsForRoots.push({ section: home, afterSection });
       return home;
-    };
-
-    // The nested section of a group section that hosts a block: the one already
-    // containing it, or a new one titled with the block text (one section per block)
-    const blockHostSection = (groupSection, block) => {
-      for (const el of groupSection.elements) {
-        if (el.type === 'section' && el.elements.some(e => e.type === 'datablock' && e.ref_id === block.id)) return el;
-      }
-      const nested = new stic_AwfLayoutSection({ title: block.text });
-      groupSection.elements.push(nested);
-      return nested;
     };
 
     // ---- 3. Extraction: a block whose top-level root is not the section's owner is
@@ -1823,7 +1935,7 @@ class stic_AwfLayout {
     //      (now empty) untitled section is removed. Titled nested sections are
     //      user structure: always preserved.
     this.structure.forEach(section => {
-      if (!sectionIsGroupSection(section)) return;
+      if (!section.isGroupSection) return;
 
       // a) direct block elements -> their own nested section
       const directBlocks = section.elements.filter(el => el.type === 'datablock');
@@ -1862,11 +1974,10 @@ class stic_AwfLayout {
       });
 
       // d) the group root's nested section always comes first
-      const rootFirst = firstBlockOf(section);
-      const ownerBlock = rootFirst ? dataBlocks.find(b => b.id === topRootIdOf(rootFirst)) : null;
-      if (ownerBlock) {
+      const rootBlock = dataBlocks.find(b => b.id === section.groupRootBlockId);
+      if (rootBlock) {
         const rootNested = section.elements.find(el => el.type === 'section'
-          && el.elements.some(e => e.type === 'datablock' && e.ref_id === ownerBlock.id));
+          && el.elements.some(e => e.ref_id === rootBlock.id));
         if (rootNested && section.elements[0] !== rootNested) {
           section.elements = [rootNested, ...section.elements.filter(e => e !== rootNested)];
         }
@@ -1916,7 +2027,7 @@ class stic_AwfLayout {
     const allBlockTexts = new Set(dataBlocks.map(b => b.text));
     this.structure = this.structure.filter(s => {
       if (s.elements.length > 0) return true;
-      if (sectionIsGroupSection(s)) return true;
+      if (s.isGroupSection) return true;
       return !(allBlockTexts.has(s.title) && !s.is_custom_title);
     });
 
@@ -1941,9 +2052,8 @@ class stic_AwfLayout {
     // ---- 7. Group sections take the group name but do NOT display their title
     //         (unless manually customized) ----
     this.structure.forEach(section => {
-      if (!sectionIsGroupSection(section)) return;
-      const first = firstBlockOf(section);
-      const owner = first ? dataBlocks.find(b => b.id === topRootIdOf(first)) : null;
+      if (!section.isGroupSection) return;
+      const owner = dataBlocks.find(b => b.id === section.groupRootBlockId);
       if (owner && !section.is_custom_title) {
         section.title = owner.group_title || owner.text;
         section.showTitle = false;
@@ -2070,23 +2180,55 @@ class stic_AwfLayoutSection extends stic_AwfLayoutNode {
       
       containerType: 'panel',  // Type of visual container: 'panel' (simple), 'card' (with border), 'tabs', 'accordion'
       elements: [],            // Can contain instances of stic_AwfLayoutElement or stic_AwfLayoutSection
+
+      kind: '',                // Section kind: '' (plain) or 'group' (represents a data-block group)
+      groupRootBlockId: '',    // For group sections: the ID of the group's root data block
     });
 
     Object.assign(this, data);
 
-    this.elements = (data.elements || []).map(e => {
-      if (e.type === 'section' || Array.isArray(e.elements)) {
-        return new stic_AwfLayoutSection(e);
-      }
-      return new stic_AwfLayoutElement(e);
-    });
+    this.elements = (data.elements || []).map(e => stic_AwfLayoutSection.fromData(e, false));
+  }
+
+  // Polymorphic node factory: group sections are instantiated as
+  // stic_AwfLayoutGroupSection; plain sections and block/field elements as before
+  static fromData(e, topLevel = true) {
+    if (e.type === 'section' || Array.isArray(e.elements) || (topLevel && e.kind === 'group')) {
+      if (topLevel && e.kind === 'group') return new stic_AwfLayoutGroupSection(e);
+      const sectionData = topLevel ? e : Object.assign({}, e, { kind: '', groupRootBlockId: '' });
+      return new stic_AwfLayoutSection(sectionData);
+    }
+    return new stic_AwfLayoutElement(e);
+  }
+
+  // Whether this section represents a data-block group
+  get isGroupSection() { return this.kind === 'group'; }
+
+  // For group sections: the group's root data block (or null)
+  getGroupBlock(dataBlocks) {
+    if (this.kind !== 'group') return null;
+    return dataBlocks.find(b => b.id === this.groupRootBlockId) || null;
   }
 
   static containerType_in_formList(asString = false){
     return utils.getList("stic_awf_forms_layout_structure_container_type_list", asString);
   }
   get containerType_in_formText(){
-    return stic_AwfLayoutSection.containerType_in_formList().find(i => i.id == this.containerType)?.text;  
+    return stic_AwfLayoutSection.containerType_in_formList().find(i => i.id == this.containerType)?.text;
+  }
+}
+
+/**
+ * Section that REPRESENTS a data-block group: fixed at the top level of
+ * the layout, it holds the group's content (nested sections, blocks or fields)
+ * and renders the group's instance loop. The reference to its group root block
+ * makes it robust to content changes (unbundled fields, moved elements).
+ */
+class stic_AwfLayoutGroupSection extends stic_AwfLayoutSection {
+  constructor(data = {}) {
+    super(data);
+    this.kind = 'group';
+    this.groupRootBlockId = data.groupRootBlockId || '';
   }
 }
 
@@ -3407,7 +3549,7 @@ class stic_AwfConfiguration {
    * @returns {stic_AwfDataBlock[]} Ordered array of data blocks
    */
   /**
-   * Builds the 2-level visual tree for Step 2 (ADR-8): groups are container cards
+   * Builds the 2-level visual tree for Step 2: groups are container cards
    * that hold their data block cards — the group's root block is a normal card
    * inside the group container. Level-3+ descendants (legacy data) are flattened
    * into the level-2 members so no block ever disappears from the UI.
