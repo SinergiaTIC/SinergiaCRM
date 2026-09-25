@@ -36,6 +36,7 @@ class FormDataBlock {
     public array $fields;                 // Fields of the data block
     /** @var FormDuplicateRule[] */
     public array $duplicate_detections;   // Definition of duplicate detection
+    public bool $is_document_block = false; // Whether this is a Document upload block
 
     public int $min_instances = 1;           // Minimum required instances (0 = optional)
     public ?int $max_instances = 1;          // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
@@ -62,6 +63,7 @@ class FormDataBlock {
         $dto->name = $data['name'];
         $dto->text = $data['text'];
         $dto->module = $data['module'];
+        $dto->is_document_block = $data['is_document_block'] ?? false;
 
         // Map repeatable data block fields
         $dto->min_instances = isset($data['min_instances']) ? (int)$data['min_instances'] : 1;
