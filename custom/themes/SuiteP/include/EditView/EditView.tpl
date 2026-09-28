@@ -276,8 +276,27 @@ $(document).ready(function() {ldelim}
     };
 
     var selectTabOnErrorInputHandle = function(inputHandle) {
-        var tab = $(inputHandle).closest('.tab-pane-NOBOOTSTRAPTOGGLER').attr('id').match(/^tab-content-(.*)$/)[1];
-        selectTabOnError(tab);
+        // STIC-Custom 20260727 EPS - Mark tab when error is in panel
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1353
+        // var tab = $(inputHandle).closest('.tab-pane-NOBOOTSTRAPTOGGLER').attr('id').match(/^tab-content-(.*)$/)[1];
+        // selectTabOnError(tab);
+        var $tabPane = $(inputHandle).closest('.tab-pane-NOBOOTSTRAPTOGGLER');
+        var tab;
+        if ($tabPane.length) {
+            tab = $tabPane.attr('id').match(/^tab-content-(.*)$/)[1];
+        } else {
+            var $tabPanel = $(inputHandle).closest("[class*='tab-panel-']");
+            if ($tabPanel.length) {
+                var tabMatch = $tabPanel.attr('class').match(/tab-panel-(\d+)/);
+                if (tabMatch) {
+                    tab = tabMatch[1];
+                }
+            }
+        }
+        if (typeof tab !== 'undefined') {
+            selectTabOnError(tab);
+        }
+        // END STIC-Custom 20260727 EPS
     };
 
 
