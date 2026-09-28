@@ -116,6 +116,16 @@ class stic_SignaturePortalUtils
         require_once 'modules/stic_Signatures/Utils.php';
         $parsedText = stic_SignaturesUtils::getParsedTemplate($this->signerId);
         $html = "{$parsedText['header']}{$parsedText['converted']}{$parsedText['footer']}";
+        // The signature marker was normalized to a plain-text token inside
+        // stic_SignaturesUtils::getParsedTemplate() so it survives the HTML
+        // cleaning pipeline. In the portal preview (before signing) we replace
+        // that token with the placeholder image so the signer sees where the
+        // signature will be placed.
+        $html = str_replace(
+            stic_SignaturesUtils::SIGNATURE_TOKEN,
+            '<img class="signature" src="themes/SuiteP/images/SignaturePlaceholder.png" alt="" width="200" />',
+            (string) $html
+        );
         if (!empty($html)) {
             return $html;
         } else {
