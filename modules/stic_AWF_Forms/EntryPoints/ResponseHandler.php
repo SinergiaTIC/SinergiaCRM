@@ -95,6 +95,33 @@ class ResponseHandler
             }
         }
 
+        // Process uploaded files from $_FILES
+        $uploadedFiles = [];
+        foreach ($_FILES as $key => $fileInfo) {
+            if (is_array($fileInfo['error'])) {
+                // Handle multi-file uploads (not supported yet, but keep structure safe)
+                foreach ($fileInfo['error'] as $i => $error) {
+                    if ($error === UPLOAD_ERR_OK && isset($fileInfo['tmp_name'][$i])) {
+                        $uploadedFiles[$key . '_' . $i] = [
+                            'name' => $fileInfo['name'][$i],
+                            'type' => $fileInfo['type'][$i],
+                            'tmp_name' => $fileInfo['tmp_name'][$i],
+                            'error' => $error,
+                            'size' => $fileInfo['size'][$i],
+                        ];
+                    }
+                }
+            } elseif ($fileInfo['error'] === UPLOAD_ERR_OK) {
+                $uploadedFiles[$key] = [
+                    'name' => $fileInfo['name'],
+                    'type' => $fileInfo['type'],
+                    'tmp_name' => $fileInfo['tmp_name'],
+                    'error' => $fileInfo['error'],
+                    'size' => $fileInfo['size'],
+                ];
+            }
+        }
+
         $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
@@ -940,6 +967,32 @@ class ResponseHandler
 
                 // Skip fixed fields
                 if ($field->type_field === DataBlockFieldType::FIXED) continue;
+
+                // Skip file upload fields — binary data is not stored as response details
+                if ($field->type_in_form === 'file') {
+                    // Store document reference if this is a document block
+                    if ($block->is_document_block) {
+                        $currentOrder = $orderCounter++;
+                        $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
+                        $detailBean->stic_awf_responses_id_c = $responseBean->id;
+                        $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
+                        $detailBean->assigned_user_id = $responseBean->assigned_user_id;
+                        $detailBean->question_key = $block->name . '.' . $field->name;
+                        $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+                        $detailBean->question_label = rtrim($detailBean->question_label, ' :');
+                        $detailBean->question_section = $block->text;
+                        $detailBean->question_sort_order = $currentOrder;
+
+                        $phpKey = $field->getPhpKey();
+                        $fileName = $uploadedFiles[$phpKey]['name'] ?? '';
+                        $detailBean->answer_value = $fileName;
+                        $detailBean->answer_text = $fileName;
+                        $detailBean->answer_type = 'file';
+                        $detailBean->answer_integer = 0;
+                        $detailBean->save();
+                    }
+                    continue;
+                }
 
                 // Skip file upload fields — binary data is not stored as response details
                 if ($field->type_in_form === 'file') {

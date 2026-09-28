@@ -312,6 +312,11 @@ class stic_AWFUtils {
         $isHtmlValue = false; // Flag to indicate if the value contains HTML (for proper escaping)
         $html = '';
 
+        // For file fields, get the filename from the uploaded files data
+        if ($fieldDef->type_in_form === 'file' && isset($context->uploadedFiles[$formKey]['name'])) {
+            $value = $context->uploadedFiles[$formKey]['name'];
+        }
+
         // Render rating fields with icons
         if ($fieldDef->type_in_form === 'rating') { 
             $rawNum = (int)$value;

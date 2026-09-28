@@ -194,7 +194,7 @@ $dictionary['stic_Medication_Log'] = array(
     'link' => true,
     'dbType' => 'varchar',
     'len' => '255',
-    'unified_search' => false,
+    'unified_search' => true,
     'full_text_search' => 
     array (
       'boost' => 3,

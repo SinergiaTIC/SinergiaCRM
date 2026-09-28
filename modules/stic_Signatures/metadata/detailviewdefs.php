@@ -122,6 +122,14 @@ array(
                 ),
                 5 => array(
                     0 => array(
+                        'name' => 'allow_multiple_signers',
+                        'studio' => 'visible',
+                        'label' => 'LBL_ALLOW_MULTIPLE_SIGNERS',
+                    ),
+                    1 =>'',
+                ),
+                6 => array(
+                    0 => array(
                         'name' => 'email_template',
                         'studio' => 'visible',
                         'label' => 'LBL_EMAIL_TEMPLATE',
@@ -132,7 +140,7 @@ array(
                         'label' => 'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => array(
                         'name' => 'email_template_otp',
                         'studio' => 'visible',
@@ -144,7 +152,7 @@ array(
                         'label' => 'LBL_EMAIL_TEMPLATE_OTP_SMS',
                     ),
                 ),
-                7 => array(
+                8 => array(
                     0 => array(
                         'name' => 'description',
 

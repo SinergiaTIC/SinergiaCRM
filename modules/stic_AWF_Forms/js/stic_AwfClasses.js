@@ -4223,6 +4223,121 @@ class stic_AwfConfiguration {
   }
 
   /**
+   * Sorts the actions of a flow topologically using Kahn's algorithm based on requisite_actions.
+   * Detects cycles and marks the closing edge as deferred (removes it from requisites) so the
+   * topological sort can complete. Deferred edges are returned so the caller knows which
+   * RelateRecordsAction dependencies were broken.
+   * @param {stic_AwfFlow} flow The flow to sort
+   * @returns {Array} List of deferred edges: { from: actionId, to: actionId }
+   */
+  sortFlowTopologically(flow) {
+    if (!flow || !flow.actions || flow.actions.length === 0) return [];
+
+    // Build action map for name resolution
+    let actionMap = new Map();
+    flow.actions.forEach(a => actionMap.set(a.id, a));
+
+    // Build adjacency list and in-degree count from requisite_actions
+    // Edge: requisite -> action (action depends on requisite)
+    let inDegree = new Map();
+    let dependents = new Map(); // actionId -> [actionIds that depend on it]
+    flow.actions.forEach(a => {
+      inDegree.set(a.id, 0);
+      dependents.set(a.id, []);
+    });
+
+    flow.actions.forEach(a => {
+      (a.requisite_actions || []).forEach(reqId => {
+        if (actionMap.has(reqId)) {
+          dependents.get(reqId).push(a.id);
+          inDegree.set(a.id, inDegree.get(a.id) + 1);
+        }
+      });
+    });
+
+    // Kahn's algorithm (BFS)
+    let sorted = [];
+    let queue = [];
+    inDegree.forEach((deg, id) => { if (deg === 0) queue.push(id); });
+
+    while (queue.length > 0) {
+      let currentId = queue.shift();
+      sorted.push(currentId);
+      dependents.get(currentId).forEach(depId => {
+        inDegree.set(depId, inDegree.get(depId) - 1);
+        if (inDegree.get(depId) === 0) queue.push(depId);
+      });
+    }
+
+    // Cycle detection: if sorted < total, there is a cycle
+    let deferred = [];
+    if (sorted.length < flow.actions.length) {
+      // Find actions in the cycle (those not yet sorted)
+      let remaining = new Set(flow.actions.filter(a => !sorted.includes(a.id)).map(a => a.id));
+
+      // For each remaining action, find a requisite that is also remaining (the cycle edge)
+      remaining.forEach(actionId => {
+        let action = actionMap.get(actionId);
+        let cycleReq = (action.requisite_actions || []).find(r => remaining.has(r));
+        if (cycleReq) {
+          deferred.push({ from: cycleReq, to: actionId });
+          // Remove the deferred edge so the sort can proceed
+          action.requisite_actions = action.requisite_actions.filter(r => r !== cycleReq);
+          inDegree.set(actionId, inDegree.get(actionId) - 1);
+          if (inDegree.get(actionId) === 0) queue.push(actionId);
+        }
+      });
+
+      // Continue BFS after breaking cycles
+      while (queue.length > 0) {
+        let currentId = queue.shift();
+        sorted.push(currentId);
+        dependents.get(currentId).forEach(depId => {
+          inDegree.set(depId, inDegree.get(depId) - 1);
+          if (inDegree.get(depId) === 0) queue.push(depId);
+        });
+      }
+
+      // If there are still unsorted actions, force them at the end (resilience against multi-edge cycles)
+      let forced = [];
+      flow.actions.forEach(a => {
+        if (!sorted.includes(a.id)) {
+          sorted.push(a.id);
+          forced.push(a.id);
+        }
+      });
+    }
+
+    // Reorder flow.actions according to topological order
+    let sortedMap = new Map();
+    sorted.forEach((id, index) => sortedMap.set(id, index));
+    flow.actions.sort((a, b) => (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0));
+
+    // Group actions: pre-auto (order < -1) → auto (is_automatic) → manual → terminal.
+    // Preserves topological order within each group but prevents actions
+    // from being interleaved across groups.
+    const preAutoActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order < -1);
+    const autoActions = flow.actions.filter(a => a.is_automatic);
+    const manualActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order >= -1);
+    const terminalActions = flow.actions.filter(a => a.is_terminal);
+    flow.actions = [...preAutoActions, ...autoActions, ...manualActions, ...terminalActions];
+
+    // Reassign order property.
+    // Pre-auto actions keep their original negative order (fixed, before saves).
+    // Automatic actions keep order -1 (before default manual actions).
+    // Manual actions stay at order 0 so is_fixed_order remains false (reorderable).
+    // Terminal actions keep their order (999).
+    flow.actions.forEach((a) => {
+      if (a.is_automatic) a.order = -1;
+      else if (a.is_terminal) { /* keep 999 */ }
+      else if (a.order < -1) { /* keep pre-auto negative order */ }
+      else a.order = 0;
+    });
+
+    return deferred;
+  }
+
+  /**
    * Add new action to flow
    *
    * @param {object} actionDef The Action definition (from ActionDefinitionDTO)
