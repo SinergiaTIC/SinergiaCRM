@@ -61,7 +61,9 @@ class ServerActionFlowExecutor {
                 // log a warning but let the action proceed. This preserves the pre-update
                 // behavior where no topological sort was performed server-side.
                 foreach ($actionConfig->requisite_actions as $reqActionId) {
-                    $reqResult = $this->context->getActionResultById($reqActionId);
+                    // B-6: instance-aware lookup with fallback (unrolled requisite
+                    // actions keep the plain key for instance 0)
+                    $reqResult = $this->context->getResultForAction($reqActionId);
                     if ($reqResult === null) {
                         $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' (id: {$actionConfig->id}) requires action with id '{$reqActionId}' but it was not executed. Continuing anyway for backward compatibility.");
                         continue;
@@ -100,9 +102,11 @@ class ServerActionFlowExecutor {
                 $paramDefinitions  = $actionExecutor->getParameters();
                 $paramConfigurations = $actionConfig->parameters;
 
-                // Detect whether the action operates on a block that belongs to a repeatable group
-                // (either the repeatable root itself or a child of it).
-                $targetBlockId = null;
+                // B-4 (generic unrolling): detect the MOTOR block among the action's
+                // DATA_BLOCK parameters — the deepest block (highest loop depth) that
+                // belongs to a repeatable/optional group. Its instance matrix drives
+                // the per-instance unrolling of ANY action (not only Save/Relate).
+                $motorBlock = null;
                 if (!empty($paramDefinitions)) {
                     $paramConfigMap = [];
                     foreach ($paramConfigurations as $paramConfig) {
@@ -112,51 +116,76 @@ class ServerActionFlowExecutor {
                         if ($paramDef->type !== ActionParameterType::DATA_BLOCK) continue;
                         $paramConfig = $paramConfigMap[$paramDef->name] ?? null;
                         $targetBlockId = $paramConfig->value ?? $paramDef->defaultValue;
-                        break;
-                    }
-                }
-
-                $repeatRoot = null;
-                if ($targetBlockId !== null) {
-                    $targetBlock = $this->context->formConfig->data_blocks[$targetBlockId] ?? null;
-                    if ($targetBlock !== null) {
-                        //  Repeatable and optional groups trigger instance-based execution.
-                        // Simple groups (mandatory, max=1) keep the scalar path (no instance index)
-                        // to preserve backward compatibility with non-expandable actions until B-4.
-                        if ($targetBlock->isRepeatable() || $targetBlock->isOptional()) {
-                            $repeatRoot = $targetBlock;
-                        } elseif (!empty($targetBlock->group_root)) {
-                            // Child of a repeatable/optional group → resolve the top-level root
-                            $rootBlock = $this->context->formConfig->getGroupRootBlock($targetBlock);
-                            if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
-                                $repeatRoot = $rootBlock;
-                            }
+                        if ($targetBlockId === null || $targetBlockId === '') continue;
+                        $targetBlock = $this->context->formConfig->data_blocks[$targetBlockId] ?? null;
+                        if ($targetBlock === null) continue;
+                        if ($targetBlock->getLoopDepth() === 0) continue;
+                        if ($motorBlock === null || $targetBlock->getLoopDepth() > $motorBlock->getLoopDepth()) {
+                            $motorBlock = $targetBlock;
                         }
                     }
                 }
 
-                // Only record-saving and relationship-creation actions are expanded once per instance.
-                // Other actions keep the legacy behavior: executed exactly once without an instance index.
-                $actionClassName = get_class($actionExecutor);
-                $isExpandableAction = ($actionClassName === 'SaveRecordAction') || ($actionClassName === 'RelateRecordsAction');
+                // Terminal actions are never unrolled: they act on the whole
+                // submission. DEFERRED actions are never unrolled either (MVP
+                // restriction: they are global and execute later, outside the
+                // per-instance request scope). Both guards are backend safety
+                // nets: the wizard UI already prevents these bindings.
+                $isTerminal = $actionExecutor instanceof ITerminalAction;
+                $isDeferred = $actionExecutor instanceof IDeferredAction;
 
-                $instanceIndexes = [null];
-                if ($repeatRoot !== null && $isExpandableAction) {
-                    $instances = DataBlockResolved::resolveInstances($repeatRoot, $this->context->formData, $this->context);
-                    if (empty($instances)) {
-                        // Optional repeatable group with zero instances: skip the action.
-                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Repeatable group '{$repeatRoot->name}' has no instances.");
+                // Instance descriptors to execute: null = no motor block (single
+                // scalar execution, legacy behavior); empty = repeatable/optional
+                // group with zero instances (skip the action once).
+                $instanceDescriptors = null;
+                if ($motorBlock !== null && !$isTerminal && !$isDeferred) {
+                    $instanceDescriptors = $this->computeInstanceDescriptors($motorBlock);
+                    if (empty($instanceDescriptors)) {
+                        // Repeatable group with zero instances: skip the action.
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Repeatable group '{$motorBlock->name}' has no instances.");
                         $this->context->addActionResult($skippedResult);
                         $lastResult = $skippedResult;
                         continue;
                     }
-                    $instanceIndexes = array_map(fn($instance) => $instance->instanceIndex, $instances);
                 }
 
-                foreach ($instanceIndexes as $instanceIndex) {
-                    // The context instance index MUST be set before any
+                // B-5: conditions are split by scope. Scalar-field conditions gate
+                // the whole action before unrolling; instance-bound conditions are
+                // evaluated per instance inside the loop (SKIPPED per instance).
+                if ($instanceDescriptors !== null) {
+                    if (!stic_AWFUtils::evaluateScalarConditions($actionConfig->conditions, $this->context->formConfig, $this->context->formData)) {
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->text}' because condition failed.");
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
+                        $this->context->addActionResult($skippedResult);
+                        continue;
+                    }
+                } elseif (!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
+                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->text}' because condition failed.");
+                    // Record the action as skipped
+                    $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
+                    $this->context->addActionResult($skippedResult);
+                    continue;
+                }
+
+                if ($instanceDescriptors === null) {
+                    $instanceDescriptors = [['parent' => null, 'current' => null]];
+                }
+
+                foreach ($instanceDescriptors as $descriptor) {
+                    // The context instance indexes MUST be set before any
                     // parameter resolution so that per-instance form fields and bean references are read.
-                    $this->context->setCurrentInstanceIndex($instanceIndex);
+                    $this->context->setCurrentInstanceIndex($descriptor['current']);
+                    $this->context->setParentInstanceIndex($descriptor['parent']);
+
+                    // B-5: per-instance condition evaluation (conditions referencing
+                    // repeatable-group fields are resolved against the instance matrix)
+                    if (!stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, $descriptor['current'], $descriptor['parent'])) {
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping instance of action '{$actionConfig->text}' (instance {$descriptor['parent']}:{$descriptor['current']}) because condition failed.");
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met for instance " . ($descriptor['parent'] !== null ? "{$descriptor['parent']}:{$descriptor['current']}" : (string)$descriptor['current']) . ".");
+                        $this->context->addActionResult($skippedResult);
+                        $lastResult = $skippedResult;
+                        continue;
+                    }
 
                     // Parameter resolution
                     $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
@@ -165,7 +194,7 @@ class ServerActionFlowExecutor {
                     // Execute the action
                     $lastResult = $actionExecutor->execute($this->context, $actionConfig);
                     $lastResult->setAction($actionExecutor);
-                    
+
                     // Context update
                     $this->context->addActionResult($lastResult);
 
@@ -175,11 +204,11 @@ class ServerActionFlowExecutor {
                             $this->context->responseBean->status = 'awaiting_action';
                             $this->context->responseBean->save();
                         }
-                        
+
                         $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $lastResult->message);
 
                         // Return $lastResult to finish: the engine will be put on hold
-                        return $lastResult; 
+                        return $lastResult;
                     }
 
                     // Error detection
@@ -189,7 +218,7 @@ class ServerActionFlowExecutor {
                             $lastResult->status = ResultStatus::SKIPPED;
                             $lastResult->message = "Ignored Error: " . $lastResult->message;
                             $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
-                            continue 2; 
+                            continue 2;
                         }
 
                         // If there's an error flow: immediately switch to the error flow
@@ -197,12 +226,13 @@ class ServerActionFlowExecutor {
                             return $this->executeFlow($errorFlowConfig);
                         }
                         // If there is no error flow, finish
-                        return $lastResult; 
+                        return $lastResult;
                     }
                 }
 
-                // Reset the instance index after the action execution
+                // Reset the instance indexes after the action execution
                 $this->context->setCurrentInstanceIndex(null);
+                $this->context->setParentInstanceIndex(null);
             }
         } catch (\Throwable $t) {
             // Catch any Exception or PHP Fatal Error and convert it into a context error
@@ -224,6 +254,47 @@ class ServerActionFlowExecutor {
         }
         
         return $lastResult;
+    }
+
+    /**
+     * Computes the instance descriptors the action must run for (B-4/B-7):
+     *  - depth-1 motor block: one descriptor per root-group instance (i).
+     *  - depth-2 motor block (ADR-8): one descriptor per [outer, inner] pair
+     *    — for every root-group instance i, every submitted inner instance j
+     *    of the motor block (formData[Block][i] int keys).
+     * Returns an empty array when the repeatable group has zero instances
+     * (the action is skipped), and the caller runs a single scalar execution
+     * when there is no motor block at all.
+     *
+     * @param FormDataBlock $motorBlock The deepest repeatable-group block among the action's parameters
+     * @return array List of ['parent' => ?int, 'current' => ?int]
+     */
+    private function computeInstanceDescriptors(FormDataBlock $motorBlock): array {
+        $descriptors = [];
+        $rootBlock = $this->context->formConfig->getGroupRootBlock($motorBlock);
+        if ($rootBlock === null) return [];
+
+        $rootInstances = DataBlockResolved::resolveInstances($rootBlock, $this->context->formData, $this->context);
+        if (empty($rootInstances)) return [];
+
+        if ($motorBlock->getLoopDepth() === 1) {
+            // One execution per instance of the repeatable group (the root's loop)
+            foreach ($rootInstances as $instance) {
+                $descriptors[] = ['parent' => null, 'current' => $instance->instanceIndex];
+            }
+            return $descriptors;
+        }
+
+        // Depth-2 motor: root instances (i) × inner instances (j)
+        foreach ($rootInstances as $rootInstance) {
+            $outerIndex = $rootInstance->instanceIndex;
+            if ($outerIndex === null) continue;
+            $innerInstances = DataBlockResolved::resolveInstancesForParent($motorBlock, $this->context->formData, $this->context, $outerIndex);
+            foreach ($innerInstances as $innerInstance) {
+                $descriptors[] = ['parent' => $outerIndex, 'current' => $innerInstance->instanceIndex];
+            }
+        }
+        return $descriptors;
     }
 
     /**

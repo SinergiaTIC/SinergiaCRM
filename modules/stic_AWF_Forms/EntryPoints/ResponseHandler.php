@@ -490,11 +490,14 @@ class ResponseHandler
 
         global $app_list_strings;
 
-        // Consolidate links: A single link for each affected bean
-        $consolidatedBeans = []; 
+        // Consolidate links: a single link for each affected bean AND instance
+        // (B-7): repeatable groups create the same bean module ids per instance,
+        // so the instance addressing ("i" or "i:j") is part of the key, giving
+        // one independent stic_AWF_Links record per (beanId, instance).
+        $consolidatedBeans = [];
         foreach ($context->actionResults as $result) {
             foreach ($result->modifiedBeans as $modBean) {
-                $key = $modBean->moduleName . ':' . $modBean->beanId;
+                $key = $modBean->moduleName . ':' . $modBean->beanId . ':' . ($modBean->instanceIndex ?? '');
 
                 if (!isset($consolidatedBeans[$key])) {
                     // First time we touch it
@@ -644,11 +647,35 @@ class ResponseHandler
                 foreach ($instances as $resolvedBlock) {
                     $blocksToValidate = array_merge([$block], $children);
                     foreach ($blocksToValidate as $blockToValidate) {
+                        if ($blockToValidate->name === $block->name) {
+                            $this->validateBlockFields($blockToValidate, $resolvedBlock, $data, $errors);
+                            continue;
+                        }
+                        // ADR-8 depth-2 descendants: validate every inner instance j
+                        // of the outer instance i, with per-level min/max checks.
+                        if ($blockToValidate->getLoopDepth() === 2) {
+                            $innerInstances = DataBlockResolved::resolveInstancesForParent($blockToValidate, $data, $context, $resolvedBlock->instanceIndex);
+                            $innerMax = $blockToValidate->max_instances;
+                            if ($innerMax !== null && count($innerInstances) > $innerMax) {
+                                $errorKey = $blockToValidate->name . '_' . $resolvedBlock->instanceIndex;
+                                $errors['errorDescriptions'][$errorKey] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$blockToValidate->text}': ".
+                                                                               translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
+                                $errors['errors'][$errorKey] = translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
+                            }
+                            if (count($innerInstances) < $blockToValidate->min_instances) {
+                                $errorKey = $blockToValidate->name . '_' . $resolvedBlock->instanceIndex;
+                                $errors['errorDescriptions'][$errorKey] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$blockToValidate->text}': ".
+                                                                               translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
+                                $errors['errors'][$errorKey] = translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
+                            }
+                            foreach ($innerInstances as $innerResolved) {
+                                $this->validateBlockFields($blockToValidate, $innerResolved, $data, $errors);
+                            }
+                            continue;
+                        }
                         // Child block fields are resolved with the same instance index,
                         // reading their own indexed data (ChildBlock[index][field])
-                        $resolvedBlockForBlock = ($blockToValidate->name === $block->name)
-                            ? $resolvedBlock
-                            : new DataBlockResolved($blockToValidate, $data, $context, $resolvedBlock->instanceIndex);
+                        $resolvedBlockForBlock = new DataBlockResolved($blockToValidate, $data, $context, $resolvedBlock->instanceIndex);
                         $this->validateBlockFields($blockToValidate, $resolvedBlockForBlock, $data, $errors);
                     }
                 }
@@ -676,9 +703,18 @@ class ResponseHandler
 
         $instanceIndex = $resolvedBlock->instanceIndex;
 
+        // Multi-index addressing (ADR-8 depth-2): [outer, inner] when the
+        // resolved block carries both loop indexes.
+        $instanceIndexes = null;
+        if ($instanceIndex !== null) {
+            $instanceIndexes = $resolvedBlock->parentInstanceIndex !== null
+                ? [$resolvedBlock->parentInstanceIndex, $instanceIndex]
+                : [$instanceIndex];
+        }
+
         foreach ($block->fields as $formField) {
-            $inputKeyInForm = $formField->getKeyForId($instanceIndex);
-            $inputKey = $instanceIndex !== null ? $formField->getPhpKeyForInstance($instanceIndex) : $formField->getPhpKey();
+            $inputKeyInForm = $instanceIndexes !== null ? $formField->getKeyForIdForIndexes($instanceIndexes) : $formField->getKeyForId($instanceIndex);
+            $inputKey = $instanceIndexes !== null ? $formField->getPhpKeyForIndexes($instanceIndexes) : ($instanceIndex !== null ? $formField->getPhpKeyForInstance($instanceIndex) : $formField->getPhpKey());
             $value = $resolvedBlock->getFieldValue($formField->name);
             $label = rtrim($formField->label, ":");
 
@@ -858,6 +894,14 @@ class ResponseHandler
                 foreach ($instances as $instance) {
                     $blocksToProcess = array_merge([$block], $children);
                     foreach ($blocksToProcess as $blockToProcess) {
+                        // ADR-8 depth-2 descendants: one detail block per [outer, inner] instance
+                        if ($blockToProcess->getLoopDepth() === 2) {
+                            $innerInstances = DataBlockResolved::resolveInstancesForParent($blockToProcess, $submittedData, $context, $instance->instanceIndex);
+                            foreach ($innerInstances as $innerInstance) {
+                                $this->generateBlockDetailsForIndexes($blockToProcess, $responseBean, $formBean, $submittedData, [$instance->instanceIndex, $innerInstance->instanceIndex], $orderCounter);
+                            }
+                            continue;
+                        }
                         $this->generateBlockDetails($blockToProcess, $responseBean, $formBean, $submittedData, $instance->instanceIndex, $orderCounter);
                     }
                 }
@@ -878,6 +922,16 @@ class ResponseHandler
      * @param int $orderCounter Global order counter (passed by reference)
      */
     private function generateBlockDetails(FormDataBlock $block, SugarBean $responseBean, SugarBean $formBean, array $submittedData, ?int $instanceIndex, int &$orderCounter): void {
+        $instanceIndexes = $instanceIndex !== null ? [$instanceIndex] : [];
+        $this->generateBlockDetailsForIndexes($block, $responseBean, $formBean, $submittedData, $instanceIndexes, $orderCounter);
+    }
+
+    /**
+     * Multi-index variant (ADR-8 depth-2): $instanceIndexes holds one index per
+     * repeatable loop level, outer to inner ([] for scalar blocks, [i] for
+     * depth-1, [i, j] for depth-2).
+     */
+    private function generateBlockDetailsForIndexes(FormDataBlock $block, SugarBean $responseBean, SugarBean $formBean, array $submittedData, array $instanceIndexes, int &$orderCounter): void {
         global $app_strings;
 
         foreach ($block->fields as $field) {
@@ -914,11 +968,15 @@ class ResponseHandler
                 }
 
             // Read the raw value from the submitted structure
-            // (scalar blocks use the flat PHP key, repeatable instances use the indexed array)
-            if ($instanceIndex !== null) {
+            // (scalar blocks use the flat PHP key, repeatable instances use the
+            // indexed array — depth-2 blocks navigate [outer][inner])
+            if (!empty($instanceIndexes)) {
                 $isUnlinked = $field->type_field === DataBlockFieldType::UNLINKED;
-                $sourceArray = $submittedData[($isUnlinked ? '_detached_' : '') . $block->name][$instanceIndex] ?? [];
-                $rawValue = $sourceArray[$field->name] ?? null;
+                $sourceArray = $submittedData[($isUnlinked ? '_detached_' : '') . $block->name] ?? [];
+                foreach ($instanceIndexes as $index) {
+                    $sourceArray = is_array($sourceArray) ? ($sourceArray[$index] ?? []) : [];
+                }
+                $rawValue = is_array($sourceArray) ? ($sourceArray[$field->name] ?? null) : null;
             } else {
                 $inputKey = $field->getPhpKey();
                 $rawValue = $submittedData[$inputKey] ?? null;
@@ -966,7 +1024,7 @@ class ResponseHandler
             $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
             $detailBean->assigned_user_id = $responseBean->assigned_user_id;
 
-            $detailBean->question_key = $instanceIndex !== null ? $field->getKeyForInstance($instanceIndex) : $block->name . '.' . $field->name;
+            $detailBean->question_key = !empty($instanceIndexes) ? $field->getKeyForIndexes($instanceIndexes) : $block->name . '.' . $field->name;
             $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
             $detailBean->question_label = rtrim($detailBean->question_label, ' :');
             if (!empty($field->description)) {

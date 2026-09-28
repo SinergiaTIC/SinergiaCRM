@@ -442,12 +442,12 @@ class FormHtmlGeneratorService {
      * @param ?FormLayoutSection $parentSection The section that contains the node (labels context for groups)
      * @return string The generated HTML
      */
-    private function renderLayoutNode(FormLayoutNode $node, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?FormLayoutSection $parentSection = null, ?string $currentGroupRootId = null): string {
+    private function renderLayoutNode(FormLayoutNode $node, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?FormLayoutSection $parentSection = null, ?string $currentGroupRootId = null, array $outerIndexVars = []): string {
         if ($node instanceof FormLayoutSection) {
-            return $this->renderSectionNode($node, $config, $theme, $instanceIndexVar, $currentGroupRootId);
+            return $this->renderSectionNode($node, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
         }
         if ($node instanceof FormLayoutElement) {
-            return $this->renderElementNode($node, $config, $theme, $instanceIndexVar, $parentSection, $currentGroupRootId);
+            return $this->renderElementNode($node, $config, $theme, $instanceIndexVar, $parentSection, $currentGroupRootId, $outerIndexVars);
         }
         return '';
     }
@@ -461,9 +461,10 @@ class FormHtmlGeneratorService {
      * @param FormTheme $theme The form theme
      * @param ?string $instanceIndexVar Alpine index variable for instance-aware rendering, or null for scalar
      * @param ?string $currentGroupRootId ID of the group root whose loop we are already inside (null outside any loop)
+     * @param array $outerIndexVars Alpine variables of the ENCLOSING repeatable loops, outer to inner
      * @return string The generated HTML
      */
-    private function renderSectionNode(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?string $currentGroupRootId = null): string {
+    private function renderSectionNode(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?string $currentGroupRootId = null, array $outerIndexVars = []): string {
         $groupRootBlock = null;
         $isTopLevelGroupSection = $section instanceof FormLayoutGroupSection && $currentGroupRootId === null;
         if ($isTopLevelGroupSection) {
@@ -486,7 +487,7 @@ class FormHtmlGeneratorService {
         }
 
         if ($groupRootBlock) {
-            return $this->generateGroupHtml($groupRootBlock, $theme, $config, $instanceIndexVar, $section);
+            return $this->generateGroupHtml($groupRootBlock, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
         }
 
         $containerClass = ($section->containerType === 'card') ? 'awf-section-card' : 'awf-section-panel';
@@ -566,7 +567,7 @@ class FormHtmlGeneratorService {
                 $html .= "<div class='awf-grid-fields'>" .$this->newLine('+');
                 {
                 foreach ($section->elements as $childNode) {
-                    $html .= $this->renderLayoutNode($childNode, $config, $theme, $instanceIndexVar, $section, $currentGroupRootId);
+                    $html .= $this->renderLayoutNode($childNode, $config, $theme, $instanceIndexVar, $section, $currentGroupRootId, $outerIndexVars);
                 }
                 }
                 $html .= "</div>" .$this->newLine('-');
@@ -587,9 +588,10 @@ class FormHtmlGeneratorService {
      * @param FormTheme $theme The form theme
      * @param ?string $instanceIndexVar Alpine index variable for instance-aware rendering, or null for scalar
      * @param ?FormLayoutSection $parentSection The section that contains the element (labels context for groups)
+     * @param array $outerIndexVars Alpine variables of the ENCLOSING repeatable loops, outer to inner
      * @return string The generated HTML
      */
-    private function renderElementNode(FormLayoutElement $element, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?FormLayoutSection $parentSection = null, ?string $currentGroupRootId = null): string {
+    private function renderElementNode(FormLayoutElement $element, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?FormLayoutSection $parentSection = null, ?string $currentGroupRootId = null, array $outerIndexVars = []): string {
         $block = $config->data_blocks[$element->ref_id] ?? null;
         if (!$block) {
             return "<!-- DataBlock '{$element->ref_id}' not found -->" . $this->newLine();
@@ -611,7 +613,7 @@ class FormHtmlGeneratorService {
                 return "<!-- Field '{$element->field_name}' is a fixed field and is not rendered -->" . $this->newLine();
             }
 
-            return $this->renderField($field, $theme, $currentGroupRootId !== null ? $instanceIndexVar : null);
+            return $this->renderField($field, $theme, $currentGroupRootId !== null ? $instanceIndexVar : null, $outerIndexVars);
         }
 
         $isGroupHead = $block->isRepeatable() || $block->isOptional() || !empty($config->getGroupChildren($block));
@@ -621,28 +623,32 @@ class FormHtmlGeneratorService {
                 return "<!-- Child group root '{$block->name}' is rendered inside its parent group's loop -->" . $this->newLine();
             }
             if ($currentGroupRootId === $block->id && $instanceIndexVar !== null) {
-                return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar);
+                // The head block element inside its own group loop: the head's
+                // OWN fields are addressed by its own loop index (plus the
+                // enclosing ones) — the head is one instance per loop iteration
+                // (ADR-8: a repeatable subgroup head repeats per [i][j]).
+                return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar, $outerIndexVars);
             }
             if ($currentGroupRootId === null) {
                 $labelSection = $parentSection ? $this->topLevelAncestorSection($config, $parentSection) : $parentSection;
-                return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $labelSection);
+                return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $labelSection, $outerIndexVars);
             }
             if ($instanceIndexVar !== null && self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) {
                 $groupSectionContext = $parentSection instanceof FormLayoutGroupSection ? null : $parentSection;
-                return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $groupSectionContext);
+                return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $groupSectionContext, $outerIndexVars);
             }
             return "<!-- Group root '{$block->name}' is rendered by its group section loop -->" . $this->newLine();
         }
 
         if (!empty($block->group_root)) {
             if ($currentGroupRootId !== null && self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId) && $instanceIndexVar !== null) {
-                return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar);
+                return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar, $outerIndexVars);
             }
             return "<!-- Child block '{$block->name}' is rendered inside its group root's loop -->" . $this->newLine();
         }
 
         // Standalone scalar block
-        return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $parentSection);
+        return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $parentSection, $outerIndexVars);
     }
 
     /**
@@ -803,17 +809,17 @@ class FormHtmlGeneratorService {
      * @param FormConfig $config The full form configuration
      * @param ?string $instanceIndexVar Alpine index variable for instance-aware rendering, or null for scalar
      * @param ?FormLayoutSection $section The layout section that contains the block (source of the group labels and title)
+     * @param array $outerIndexVars Alpine variables of the ENCLOSING repeatable loops, outer to inner
      * @return string The generated HTML for the data block as a string
      */
-    private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme, FormConfig $config, ?string $instanceIndexVar = null, ?FormLayoutSection $section = null): string {
+    private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme, FormConfig $config, ?string $instanceIndexVar = null, ?FormLayoutSection $section = null, array $outerIndexVars = []): string {
         // Delegate group heads to the group renderer.
         // Repeatable and optional groups use the indexed Alpine x-for wrapper (instance-aware).
         // Simple groups (mandatory, max=1) with children render the root fields directly + children
-        // inline with STATIC field names (no instance index) so non-expandable actions and legacy
-        // behavior keep working until generic unrolling (B-4) lands.
+        // inline with STATIC field names (no instance index).
         $children = $config->getGroupChildren($block);
         if ($block->isRepeatable() || $block->isOptional()) {
-            return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $section);
+            return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
         }
         $html = "";
         // Root block fields (scalar rendering)
@@ -844,9 +850,10 @@ class FormHtmlGeneratorService {
      * @param FormConfig $config The full form configuration
      * @param ?string $instanceIndexVar Alpine index variable for the x-for loop ('index' by default)
      * @param ?FormLayoutSection $section The layout section that contains the group (title and micro-copy labels)
+     * @param array $outerIndexVars Alpine variables of the ENCLOSING repeatable loops, outer to inner
      * @return string The generated HTML for the group
      */
-    private function generateGroupHtml(FormDataBlock $rootBlock, FormTheme $theme, FormConfig $config, ?string $instanceIndexVar = null, ?FormLayoutSection $section = null): string {
+    private function generateGroupHtml(FormDataBlock $rootBlock, FormTheme $theme, FormConfig $config, ?string $instanceIndexVar = null, ?FormLayoutSection $section = null, array $outerIndexVars = []): string {
         // Group presentation context comes from the layout section that contains the block (AWF Paso 4):
         // a group is displayed as a section, so its title and micro-copy labels belong to the section.
         $sectionTitle = ($section && $section->title !== '') ? $section->title : ($rootBlock->group_title ?: $rootBlock->text);
@@ -863,6 +870,12 @@ class FormHtmlGeneratorService {
         // Per-level loop variables (idx_l1, idx_l2) keep the Alpine scopes of
         // nested groups from shadowing each other
         $instanceVar = ($instanceIndexVar === null || $instanceIndexVar === 'index') ? 'idx_l1' : ($instanceIndexVar === 'idx_l1' ? 'idx_l2' : 'idx_l3');
+        // Full index stack of this group's subtree: enclosing loops first, own loop last.
+        // Depth-2 fields build POST names Block[outer][inner][field] from it.
+        $indexStack = array_merge($outerIndexVars, [$instanceVar]);
+        // The group's content lives INSIDE its own loop: the enclosing vars for
+        // the content include the loop the group itself is inside (if any).
+        $contentOuterVars = $instanceIndexVar !== null ? array_merge($outerIndexVars, [$instanceIndexVar]) : $outerIndexVars;
 
         // Direct children only (subgroup heads will be rendered recursively)
         $children = $config->getGroupChildren($rootBlock);
@@ -923,14 +936,14 @@ class FormHtmlGeneratorService {
                             if ($section) {
                                 foreach ($section->elements as $el) {
                                     if ($el instanceof FormLayoutSection) {
-                                        $inner .= $this->renderSectionNode($el, $config, $theme, $instanceVar, $rootBlock->id);
+                                        $inner .= $this->renderSectionNode($el, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars);
                                     } elseif ($el instanceof FormLayoutElement) {
-                                        $inner .= $this->renderElementNode($el, $config, $theme, $instanceVar, $section, $rootBlock->id);
+                                        $inner .= $this->renderElementNode($el, $config, $theme, $instanceVar, $section, $rootBlock->id, $contentOuterVars);
                                     }
                                 }
                             }
                             if ($section !== null && !$hasRootRepresentation) {
-                                $rootPanel = $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar);
+                                $rootPanel = $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar, $outerIndexVars);
                                 if ($rootPanel !== '') $inner = $rootPanel . $inner;
                             }
                             if (trim($inner) !== '') {
@@ -938,13 +951,13 @@ class FormHtmlGeneratorService {
                             } else {
                                 // Fallback: flat rendering (root panel + children) for
                                 // structures without nested sections
-                                $html .= $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar);
+                                $html .= $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar, $outerIndexVars);
                                 foreach ($children as $childBlock) {
                                     if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
                                     $childHasChildren = !empty($config->getGroupChildren($childBlock));
                                     $childIsGroupHead = $childBlock->isRepeatable() || $childBlock->isOptional() || $childHasChildren;
                                     if ($childIsGroupHead) {
-                                        $html .= $this->generateGroupHtml($childBlock, $theme, $config, $instanceVar);
+                                        $html .= $this->generateGroupHtml($childBlock, $theme, $config, $instanceVar, null, $outerIndexVars);
                                     } elseif ($childBlock->isOptional()) {
                                         $childTitle = htmlspecialchars(translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $childBlock->text, ENT_QUOTES, 'UTF-8');
                                         $html .= "<div class='awf-child-optional-wrapper my-3 p-2 border rounded bg-light' x-data='{ includeChild: false }'>" . $this->newLine('+');
@@ -959,7 +972,7 @@ class FormHtmlGeneratorService {
                                             {
                                                 $html .= "<div class='mt-2'>" . $this->newLine('+');
                                                 {
-                                                    $html .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar);
+                                                    $html .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar, $outerIndexVars);
                                                 }
                                                 $html .= "</div>" . $this->newLine('-');
                                             }
@@ -967,7 +980,7 @@ class FormHtmlGeneratorService {
                                         }
                                         $html .= "</div>" . $this->newLine('-');
                                     } else {
-                                        $html .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar);
+                                        $html .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar, $outerIndexVars);
                                     }
                                 }
                             }
@@ -1035,7 +1048,7 @@ class FormHtmlGeneratorService {
      * @param string $instanceIndexVar Alpine.js index variable name (e.g. 'index')
      * @return string Generated HTML for the block panel
      */
-    private function renderBlockInstancePanel(FormDataBlock $block, FormTheme $theme, string $instanceIndexVar): string {
+    private function renderBlockInstancePanel(FormDataBlock $block, FormTheme $theme, string $instanceIndexVar, array $outerIndexVars = []): string {
         // A block with no renderable fields renders nothing (empty sub-section)
         if (!self::blockHasRenderableFields($block)) return "";
         $blockTitle = htmlspecialchars($block->text, ENT_QUOTES, 'UTF-8');
@@ -1050,7 +1063,7 @@ class FormHtmlGeneratorService {
                         continue;
                     }
                     // Render fields for the current instance using the instance index variable
-                    $html .= $this->renderField($field, $theme, $instanceIndexVar);
+                    $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
                 }
             }
             $html .= "</div>" . $this->newLine('-');
@@ -1078,27 +1091,36 @@ class FormHtmlGeneratorService {
 
     /**
      * Internal field renderer that supports both scalar and instance-aware rendering.
+     * Depth-2 fields (ADR-8) receive the enclosing loop variables in $outerIndexVars
+     * and build two-level POST names: Block[outer][inner][field].
      * @param FormDataBlockField $field The field to render
      * @param FormTheme $theme The form theme
-     * @param ?string $instanceIndexVar The Alpine variable for the instance index, or null for scalar fields
+     * @param ?string $instanceIndexVar The Alpine variable for the innermost instance index, or null for scalar fields
+     * @param array $outerIndexVars Alpine variables of the enclosing repeatable loops, outer to inner
      * @return string The generated HTML
      */
-    private function renderField(FormDataBlockField $field, FormTheme $theme, ?string $instanceIndexVar = null): string {
+    private function renderField(FormDataBlockField $field, FormTheme $theme, ?string $instanceIndexVar = null, array $outerIndexVars = []): string {
         // Instance-aware field rendering for repeatable groups
         $isInstance = $instanceIndexVar !== null;
         $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
         
         // Template for dynamic name attribute inside the x-for loop (Alpine expression)
         $inputNameTemplate = $inputName;
+        $inputKeyForId = $isInstance ? $field->data_block->name : $field->getKeyForId();
         if ($isInstance) {
             $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
-            $inputNameTemplate = $namePrefix . $field->data_block->name . "[' + {$instanceIndexVar} + '][" . $field->name . "]";
-        }
-        
-        // The logical key used for the dynamic input ID (matches getKeyForId() validation error keys)
-        $inputKeyForId = $isInstance ? $field->data_block->name . "_' + {$instanceIndexVar} + '_" . $field->name : $field->getKeyForId();
-        if ($isInstance && $field->type_field === DataBlockFieldType::UNLINKED) {
-            $inputKeyForId = '_detached.' . $field->data_block->name . "_' + {$instanceIndexVar} + '_" . $field->name;
+            // Full index stack: enclosing loops first, own loop last
+            $allVars = array_merge($outerIndexVars, [$instanceIndexVar]);
+            $indexPart = '';
+            $idIndexPart = '';
+            foreach ($allVars as $varIndex => $var) {
+                $indexPart .= "[' + {$var} + ']";
+                // Single-underscore join: Block_i_j_field
+                $idIndexPart .= ($varIndex === 0 ? "_' + {$var} + '_" : "' + {$var} + '_");
+            }
+            $inputNameTemplate = $namePrefix . $field->data_block->name . $indexPart . "[" . $field->name . "]";
+            // The logical key used for the dynamic input ID (matches getKeyForIdForIndexes() validation error keys)
+            $inputKeyForId = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $field->data_block->name . $idIndexPart . $field->name;
         }
 
         // Render hidden fields differently: only input without label or wrapper

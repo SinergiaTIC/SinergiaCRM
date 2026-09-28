@@ -141,4 +141,33 @@ class FormDataBlockField {
         }
         return $prefix . $this->data_block->name . '_' . $index . '_' . $this->name;
     }
+
+    /**
+     * Multi-dimensional variants (ADR-8 depth-2). Accept one index per
+     * repeatable loop level, outer to inner (e.g. [i, j] for a block inside a
+     * subgroup of a repeatable root). With a single index they are identical
+     * to getKeyForInstance/getPhpKeyForInstance/getKeyForId.
+     * @param array $indexes Loop indexes, outer to inner
+     */
+    public function getKeyForIndexes(array $indexes): string {
+        $prefix = $this->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+        $indexed = $this->data_block->name;
+        foreach ($indexes as $index) {
+            $indexed .= '[' . $index . ']';
+        }
+        return $prefix . $indexed . '[' . $this->name . ']';
+    }
+
+    public function getPhpKeyForIndexes(array $indexes): string {
+        return str_replace('.', '_', $this->getKeyForIndexes($indexes));
+    }
+
+    public function getKeyForIdForIndexes(array $indexes): string {
+        $prefix = $this->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+        $key = $prefix . $this->data_block->name;
+        foreach ($indexes as $index) {
+            $key .= '_' . $index;
+        }
+        return $key . '_' . $this->name;
+    }
 }

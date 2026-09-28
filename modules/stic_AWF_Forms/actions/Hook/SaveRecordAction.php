@@ -371,7 +371,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                         $idName = $cfg['id_name'] ?? '';
                         $targetBlockId = $cfg['target_block_id'] ?? '';
                         $targetBlock = $context->formConfig->data_blocks[$targetBlockId] ?? null;
-                        $targetBeanRef = $targetBlock?->getBeanReference($context->getCurrentInstanceIndex());
+                        $targetBeanRef = $targetBlock?->getReferenceForContext($context);
                         $targetId = $targetBeanRef?->beanId ?? '';
                         $metadata[] = ['key' => 'injected_fk', 'label' => $idName, 'value' => "{$relName} → {$targetId}"];
                     }
@@ -495,11 +495,10 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 continue;
             }
 
-            // If the target block belongs to a repeatable group, read its per-instance
-            // bean reference using the current instance index. Otherwise use the scalar reference.
-            $instanceIndex = $context->getCurrentInstanceIndex();
-            $isTargetRepeatable = $targetBlock->isRepeatable() || !empty($targetBlock->group_root);
-            $targetBeanRef = $isTargetRepeatable ? $targetBlock->getBeanReference($instanceIndex) : $targetBlock->getBeanReference();
+            // Loop-depth-aware bean reference (B-4/ADR-8): a depth-1 target read
+            // from a depth-2 action uses the parent index; a depth-2 target uses
+            // the composite "i:j" key.
+            $targetBeanRef = $targetBlock->getReferenceForContext($context);
 
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
                 $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlock->name}' has no bean ID. Check action order.");

@@ -105,15 +105,49 @@ class FormDataBlock {
         return $this->min_instances == 0;
     }
 
-    public function setBeanReference(string $beanId, ?int $index = null): void {
+    /**
+     * Number of repeatable loop variables needed to address this block's
+     * instances in the POST matrix:
+     *  - 0: scalar block (static field names).
+     *  - 1: block living inside one repeatable loop (the top-level group root
+     *       or any direct child of it).
+     *  - 2: block living inside two nested repeatable loops (ADR-8 depth-2:
+     *       a descendant of a subgroup head, e.g. Adult[i] -> Menor[i][j]).
+     * The count walks the group_root chain: every repeatable/optional ancestor
+     * adds a loop variable; a repeatable/optional ROOT block adds its own.
+     */
+    public function getLoopDepth(): int {
+        // The loop depth counts every loop-generating (repeatable/optional)
+        // block in the chain from THIS block up to its root, INCLUDING this
+        // block: a repeatable subgroup head's own loop addresses its own
+        // instances (and those of its whole subtree). ADR-8 example:
+        // Adult[i] (repeatable root, depth 1) -> Menor[i][j] (repeatable
+        // subgroup head, depth 2) -> Inscripcio[i][j] (child, depth 2).
+        $depth = 0;
+        $current = $this;
+        $visited = [$current->id => true];
+        while (true) {
+            if ($current->isRepeatable() || $current->isOptional()) $depth++;
+            if (empty($current->group_root)) break;
+            $parent = $this->form_config->data_blocks[$current->group_root] ?? null;
+            if ($parent === null || isset($visited[$parent->id])) break; // Missing parent or cycle guard
+            $visited[$parent->id] = true;
+            $current = $parent;
+        }
+        return min($depth, 2); // ADR-8: repeatable nesting is capped at depth 2
+    }
+
+    public function setBeanReference(string $beanId, int|string|null $index = null): void {
         if ($index === null) {
             $this->beanReference = new BeanReference($this->module, $beanId);
             return;
         }
+        // Depth-1 instances use int indexes; depth-2 instances use the
+        // composite string key "outer:inner" so both levels are addressed.
         $this->beanReferences[$index] = new BeanReference($this->module, $beanId);
     }
 
-    public function getBeanReference(?int $index = null): ?BeanReference {
+    public function getBeanReference(int|string|null $index = null): ?BeanReference {
         if ($index === null) {
             return $this->beanReference;
         }
@@ -121,9 +155,36 @@ class FormDataBlock {
     }
 
     /**
+     * Loop-depth-aware bean reference lookup for the ACTIVE execution context
+     * (B-4 / ADR-8 depth-2): picks the correct reference key from the
+     * context's instance indexes according to THIS block's loop depth.
+     *  - depth 0 (scalar): the scalar reference.
+     *  - depth 1: the outermost active loop index (the parent index when the
+     *    action is bound to a deeper block).
+     *  - depth 2: the composite "outer:inner" key.
+     */
+    public function getReferenceForContext(ExecutionContext $context): ?BeanReference {
+        $depth = $this->getLoopDepth();
+        if ($depth === 0) {
+            return $this->getBeanReference();
+        }
+        $currentIndex = $context->getCurrentInstanceIndex();
+        $parentIndex = $context->getParentInstanceIndex();
+        if ($depth === 1) {
+            $index = $parentIndex ?? $currentIndex;
+            return $index === null ? $this->getBeanReference() : $this->getBeanReference($index);
+        }
+        if ($parentIndex === null || $currentIndex === null) {
+            return null;
+        }
+        return $this->getBeanReference($parentIndex . ':' . $currentIndex);
+    }
+
+    /**
      * Returns the bean references already registered for repeatable instances
-     * during the current request execution.
-     * @return array<int, BeanReference>
+     * during the current request execution. Keys are int indexes (depth-1) or
+     * composite "outer:inner" strings (depth-2).
+     * @return array<int|string, BeanReference>
      */
     public function getIndexedBeanReferences(): array {
         return $this->beanReferences;

@@ -154,11 +154,27 @@ class stic_AWFUtils {
             $html .= "<table style=\"width: 100%;border-collapse: collapse;margin-bottom: 0px;\">";
             $hasFields = false;
 
-            // Elements of the section (data blocks)
-            foreach ($section->elements as $element) {
-                if ($element->type !== 'datablock') continue;
+            // Elements of the section (data blocks): collect them RECURSIVELY,
+            // since the layout nests the blocks inside host sections (Paso 4
+            // composite model). Field elements (unbundled blocks) also count as
+            // block references; blocks are de-duplicated per section walk.
+            $collectBlockElements = function ($containerSection) use (&$collectBlockElements) {
+                $found = [];
+                foreach ($containerSection->elements as $element) {
+                    if ($element->type === 'datablock' || $element->type === 'field') {
+                        $found[$element->ref_id] = true;
+                    } elseif ($element->type === 'section') {
+                        foreach ($collectBlockElements($element) as $refId => $v) {
+                            $found[$refId] = true;
+                        }
+                    }
+                }
+                return $found;
+            };
+            $sectionBlockIds = $collectBlockElements($section);
 
-                $block = $context->getDataBlockById($element->ref_id);
+            foreach (array_keys($sectionBlockIds) as $blockId) {
+                $block = $context->getDataBlockById($blockId);
                 if (!$block) continue;
 
                 // Child blocks are rendered together with their root when the root is repeatable/optional.
@@ -185,6 +201,50 @@ class stic_AWFUtils {
                         $instanceNumber++;
 
                         foreach ($groupBlocks as $groupBlock) {
+                            // Skip blocks with no visible (non-fixed, labelled) fields:
+                            // they would render empty instance sub-rows
+                            $hasVisibleFields = false;
+                            foreach ($groupBlock->fields as $visibleCheck) {
+                                if ($visibleCheck->type_field !== DataBlockFieldType::FIXED && !empty($visibleCheck->label)) {
+                                    $hasVisibleFields = true;
+                                    break;
+                                }
+                            }
+                            if (!$hasVisibleFields) continue;
+
+                            $groupBlockLoopDepth = $groupBlock->getLoopDepth();
+                            // Depth-2 blocks (ADR-8): one sub-row per inner instance j of the outer instance i.
+                            // A block can mix linked and detached fields, so rows are enumerated from
+                            // the union of both matrices and each field reads its OWN matrix.
+                            if ($groupBlockLoopDepth === 2) {
+                                $linkedRows2D = is_array($formData[$groupBlock->name][$instance->instanceIndex] ?? null) ? $formData[$groupBlock->name][$instance->instanceIndex] : [];
+                                $detachedRows2D = is_array($formData['_detached_' . $groupBlock->name][$instance->instanceIndex] ?? null) ? $formData['_detached_' . $groupBlock->name][$instance->instanceIndex] : [];
+                                $innerIndexes = array_unique(array_merge(
+                                    array_filter(array_keys($linkedRows2D), 'is_int'),
+                                    array_filter(array_keys($detachedRows2D), 'is_int')
+                                ));
+                                sort($innerIndexes);
+                                $innerNumber = 1;
+                                foreach ($innerIndexes as $innerIndex) {
+                                    $innerLabel = rtrim($groupBlock->text, ' :') . " #" . $innerNumber;
+                                    $html .= "<tr><td colspan=\"2\" style=\"padding: 6px 12px 6px 28px;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.03);border-bottom: 1px solid {$borderColor};\">" . htmlspecialchars($innerLabel) . "</td></tr>";
+                                    $hasFields = true;
+                                    $innerNumber++;
+                                    foreach ($groupBlock->fields as $fieldDef) {
+                                        // Only show visible fields in the form
+                                        if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+                                        // If it has no label, it is not displayed
+                                        if (empty($fieldDef->label)) continue;
+
+                                        $rows = ($fieldDef->type_field === DataBlockFieldType::UNLINKED ? $detachedRows2D : $linkedRows2D);
+                                        $innerInstance = is_array($rows) && is_array($rows[$innerIndex] ?? null) ? $rows[$innerIndex] : [];
+                                        $value = $innerInstance[$fieldDef->name] ?? '';
+                                        $html .= self::renderSummaryFieldRow($fieldDef, $value, $borderColor, $textColor, $hasFields);
+                                    }
+                                }
+                                continue;
+                            }
+
                             foreach ($groupBlock->fields as $fieldDef) {
                                 // Only show visible fields in the form
                                 if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
@@ -452,11 +512,79 @@ class stic_AWFUtils {
                 $text .= "--------------------\n";
             }
 
-            foreach ($section->elements as $element) {
-                if ($element->type !== 'datablock') continue;
-
-                $block = $context->getDataBlockById($element->ref_id);
+            foreach (array_keys(self::collectSummaryBlockIds($section)) as $blockId) {
+                $block = $context->getDataBlockById($blockId);
                 if (!$block) continue;
+
+                // Child blocks are rendered together with their root when the root
+                // is repeatable/optional. Children of SIMPLE groups fall through to
+                // scalar summary rendering.
+                if (!empty($block->group_root)) {
+                    $rootBlock = $context->formConfig->data_blocks[$block->group_root] ?? null;
+                    if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                        continue;
+                    }
+                }
+
+                // Repeatable and optional groups render as per-instance rows.
+                if ($block->isRepeatable() || $block->isOptional()) {
+                    $formConfig = $context->formConfig;
+                    $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
+                    $instances = DataBlockResolved::resolveInstances($block, $formData, new ExecutionContext('', '', $formData, $formConfig, null, '', null, ''));
+                    $instanceNumber = 1;
+                    foreach ($instances as $instance) {
+                        $text .= rtrim($block->text, ' :') . " #" . $instanceNumber . "\n";
+                        $instanceNumber++;
+
+                        foreach ($groupBlocks as $groupBlock) {
+                            // Skip blocks with no visible (non-fixed, labelled) fields
+                            $hasVisibleFields = false;
+                            foreach ($groupBlock->fields as $visibleCheck) {
+                                if ($visibleCheck->type_field !== DataBlockFieldType::FIXED && !empty($visibleCheck->label)) {
+                                    $hasVisibleFields = true;
+                                    break;
+                                }
+                            }
+                            if (!$hasVisibleFields) continue;
+
+                            $groupBlockLoopDepth = $groupBlock->getLoopDepth();
+                            if ($groupBlockLoopDepth === 2) {
+                                // Depth-2: one sub-block row per inner instance j (linked + detached union)
+                                $linkedRows2D = is_array($formData[$groupBlock->name][$instance->instanceIndex] ?? null) ? $formData[$groupBlock->name][$instance->instanceIndex] : [];
+                                $detachedRows2D = is_array($formData['_detached_' . $groupBlock->name][$instance->instanceIndex] ?? null) ? $formData['_detached_' . $groupBlock->name][$instance->instanceIndex] : [];
+                                $innerIndexes = array_unique(array_merge(
+                                    array_filter(array_keys($linkedRows2D), 'is_int'),
+                                    array_filter(array_keys($detachedRows2D), 'is_int')
+                                ));
+                                sort($innerIndexes);
+                                $innerNumber = 1;
+                                foreach ($innerIndexes as $innerIndex) {
+                                    $text .= "  " . rtrim($groupBlock->text, ' :') . " #" . $innerNumber . "\n";
+                                    $innerNumber++;
+                                    foreach ($groupBlock->fields as $fieldDef) {
+                                        if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+                                        if (empty($fieldDef->label)) continue;
+                                        $rows = ($fieldDef->type_field === DataBlockFieldType::UNLINKED ? $detachedRows2D : $linkedRows2D);
+                                        $innerInstance = is_array($rows) && is_array($rows[$innerIndex] ?? null) ? $rows[$innerIndex] : [];
+                                        $value = $innerInstance[$fieldDef->name] ?? '';
+                                        $text .= "  " . self::formatSummaryTextValue($fieldDef, $value) . "\n";
+                                    }
+                                }
+                            } else {
+                                // Depth-1: fields from the instance matrix (Block[i][field])
+                                foreach ($groupBlock->fields as $fieldDef) {
+                                    if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+                                    if (empty($fieldDef->label)) continue;
+                                    $isUnlinked = $fieldDef->type_field === DataBlockFieldType::UNLINKED;
+                                    $blockArrayKey = ($isUnlinked ? '_detached_' : '') . $groupBlock->name;
+                                    $value = $formData[$blockArrayKey][$instance->instanceIndex][$fieldDef->name] ?? '';
+                                    $text .= "  " . self::formatSummaryTextValue($fieldDef, $value) . "\n";
+                                }
+                            }
+                        }
+                    }
+                    continue;
+                }
 
                 foreach ($block->fields as $fieldDef) {
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
@@ -466,36 +594,60 @@ class stic_AWFUtils {
 
                     // Value to display
                     $value = $formData[$formKey] ?? '';
-
-                    if (!empty($fieldDef->value_options)) {
-                         $findLabel = function($val) use ($fieldDef) {
-                            foreach ($fieldDef->value_options as $opt) {
-                                if ($opt->value == $val) return $opt->text;
-                            }
-                            return $val; 
-                        };
-    
-                        if (is_array($value)) {
-                            $labels = array_map($findLabel, $value);
-                            $displayValue = implode(', ', $labels);
-                        } else {
-                            $displayValue = $findLabel($value);
-                        }
-                    } else {
-                        if (is_array($value)) {
-                            $value = implode(', ', $value);
-                        }
-                        $displayValue = $value;
-                    }
-                    
-                    // Format: "Label: Value"
-                    $text .= "{$fieldDef->label} {$displayValue}\n";
+                    $text .= self::formatSummaryTextValue($fieldDef, $value) . "\n";
                 }
             }
             $text .= "\n";
         }
-        
+
         return $text;
+    }
+
+    /**
+     * Recursively collects the data-block IDs referenced by a section's
+     * elements (datablock AND unbundled field elements), walking nested
+     * sections, de-duplicated per section walk.
+     * @return array<string, true>
+     */
+    private static function collectSummaryBlockIds($containerSection): array {
+        $found = [];
+        foreach ($containerSection->elements as $element) {
+            if ($element->type === 'datablock' || $element->type === 'field') {
+                $found[$element->ref_id] = true;
+            } elseif ($element->type === 'section') {
+                foreach (self::collectSummaryBlockIds($element) as $refId => $v) {
+                    $found[$refId] = true;
+                }
+            }
+        }
+        return $found;
+    }
+
+    /**
+     * Formats one "Label: Value" line for the plain-text summary, resolving
+     * value-option labels and flattening arrays.
+     */
+    private static function formatSummaryTextValue(FormDataBlockField $fieldDef, $value): string {
+        if (!empty($fieldDef->value_options)) {
+            $findLabel = function ($val) use ($fieldDef) {
+                foreach ($fieldDef->value_options as $opt) {
+                    if ($opt->value == $val) return $opt->text;
+                }
+                return $val;
+            };
+            if (is_array($value)) {
+                $labels = array_map($findLabel, $value);
+                $displayValue = implode(', ', $labels);
+            } else {
+                $displayValue = $findLabel($value);
+            }
+        } else {
+            if (is_array($value)) {
+                $value = implode(', ', $value);
+            }
+            $displayValue = $value;
+        }
+        return rtrim($fieldDef->label, ' :') . ': ' . $displayValue;
     }
 
     /**
@@ -959,17 +1111,17 @@ class stic_AWFUtils {
                     foreach ($blocksInGroup as $blockInGroup) {
                         $blockKey = $prefix . $blockInGroup->name;
                         if (!is_array($formData[$blockKey] ?? null)) continue;
+                        // Depth-2 blocks (ADR-8): the boolean matrix is [outer][inner][field]
+                        $isDepth2 = $blockInGroup->getLoopDepth() === 2;
                         foreach (array_keys($formData[$blockKey]) as $index) {
                             if (!is_int($index)) continue;
-                            foreach ($blockInGroup->fields as $field) {
-                                if ($field->type_field === DataBlockFieldType::FIXED) continue;
-                                if ($field->type !== 'bool' && $field->type !== 'checkbox' && !in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) continue;
-                                $isUnlinked = $field->type_field === DataBlockFieldType::UNLINKED;
-                                if ($prefix === '_detached_' && !$isUnlinked) continue;
-                                if ($prefix === '' && $isUnlinked) continue;
-                                if (!isset($formData[$blockKey][$index][$field->name])) {
-                                    $formData[$blockKey][$index][$field->name] = '0';
+                            if ($isDepth2) {
+                                foreach (array_keys($formData[$blockKey][$index]) as $innerIndex) {
+                                    if (!is_int($innerIndex)) continue;
+                                    self::fillMissingBooleansForInstance($blockInGroup, $formData, $blockKey, [$index, $innerIndex]);
                                 }
+                            } else {
+                                self::fillMissingBooleansForInstance($blockInGroup, $formData, $blockKey, [$index]);
                             }
                         }
                     }
@@ -984,6 +1136,30 @@ class stic_AWFUtils {
                         $formData[$phpKey] = '0';
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Fills missing boolean/checkbox values ('0') for one instance of a block
+     * inside a repeatable group, navigating the POST matrix by $indexes
+     * (depth-1: [i]; depth-2: [i, j]).
+     */
+    private static function fillMissingBooleansForInstance(FormDataBlock $blockInGroup, array &$formData, string $blockKey, array $indexes): void {
+        foreach ($blockInGroup->fields as $field) {
+            if ($field->type_field === DataBlockFieldType::FIXED) continue;
+            if ($field->type !== 'bool' && $field->type !== 'checkbox' && !in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) continue;
+            $isUnlinked = $field->type_field === DataBlockFieldType::UNLINKED;
+            if (str_starts_with($blockKey, '_detached_') !== $isUnlinked) continue;
+
+            $node = &$formData[$blockKey];
+            foreach ($indexes as $idx) {
+                if (!is_array($node)) return;
+                $node = &$node[$idx];
+            }
+            if (!is_array($node)) return;
+            if (!isset($node[$field->name])) {
+                $node[$field->name] = '0';
             }
         }
     }
@@ -1010,25 +1186,146 @@ class stic_AWFUtils {
             $expectedValue = $cond->value;
             $submittedValue = $formData[$phpKey] ?? null;
 
-            $isMatch = is_array($submittedValue) 
-                ? in_array($expectedValue, $submittedValue)
-                : ($submittedValue == $expectedValue);
-
-            // Evaluate based on the operator
-            switch ($cond->operator) {
-                case 'Equal_To':
-                    if (!$isMatch) return false;
-                    break;
-                case 'Not_Equal_To':
-                    if ($isMatch) return false;
-                    break;
-                // Future operators (>, <, IN, etc.) go here
-                default:
-                    return false; // Unknown operator fails safely
+            if (!self::compareConditionValue($cond, $submittedValue)) {
+                return false;
             }
         }
 
         return true; // All conditions passed
+    }
+
+    /**
+     * Evaluates a condition against a submitted value using the condition's operator.
+     * Unknown operators fail safely (false).
+     */
+    private static function compareConditionValue($cond, $submittedValue): bool {
+        $expectedValue = $cond->value;
+        $isMatch = is_array($submittedValue)
+            ? in_array($expectedValue, $submittedValue)
+            : ($submittedValue == $expectedValue);
+
+        switch ($cond->operator) {
+            case 'Equal_To':
+                return $isMatch;
+            case 'Not_Equal_To':
+                return !$isMatch;
+            // Future operators (>, <, IN, etc.) go here
+            default:
+                return false; // Unknown operator fails safely
+        }
+    }
+
+    /**
+     * True when any condition references a field of a repeatable/optional group
+     * (loop-depth >= 1). Those conditions cannot be evaluated once with scalar
+     * keys: they must be evaluated per instance inside the unrolling loop (B-5).
+     */
+    public static function hasInstanceBoundConditions(?array $conditions, FormConfig $formConfig): bool {
+        if (empty($conditions)) {
+            return false;
+        }
+        foreach ($conditions as $cond) {
+            if (empty($cond->field_name)) continue;
+            $block = self::resolveConditionBlock($cond->field_name, $formConfig);
+            if ($block !== null && $block->getLoopDepth() >= 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Evaluates the SCALAR part of the conditions (fields outside any
+     * repeatable/optional group). Used before the unrolling loop when the
+     * action mixes scalar and instance-bound conditions: the scalar part gates
+     * the whole action, the instance part is evaluated per instance (B-5).
+     */
+    public static function evaluateScalarConditions(?array $conditions, FormConfig $formConfig, array $formData): bool {
+        if (empty($conditions)) {
+            return true;
+        }
+        foreach ($conditions as $cond) {
+            if (empty($cond->field_name)) continue;
+            $block = self::resolveConditionBlock($cond->field_name, $formConfig);
+            if ($block !== null && $block->getLoopDepth() >= 1) continue; // Instance-bound: evaluated per instance
+            $phpKey = str_replace('.', '_', $cond->field_name);
+            if (!self::compareConditionValue($cond, $formData[$phpKey] ?? null)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Evaluates the INSTANCE-BOUND part of the conditions for a specific
+     * instance (B-5). Fields of repeatable/optional blocks are read from the
+     * indexed POST matrix using the active loop indexes:
+     *  - depth-1 field: Block[i][field]
+     *  - depth-2 field: Block[i][j][field]
+     * Scalar conditions are re-evaluated too (cheap and keeps semantics:
+     * the action only runs when ALL its conditions hold for this instance).
+     */
+    public static function evaluateConditionsForInstance(?array $conditions, FormConfig $formConfig, array $formData, ?int $instanceIndex, ?int $parentInstanceIndex): bool {
+        if (empty($conditions)) {
+            return true;
+        }
+        foreach ($conditions as $cond) {
+            if (empty($cond->field_name)) continue;
+            $submittedValue = self::resolveConditionFieldValue($cond, $formConfig, $formData, $instanceIndex, $parentInstanceIndex);
+            if (!self::compareConditionValue($cond, $submittedValue)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Resolves the block referenced by a condition field name ("Block.field").
+     * Returns null when the name is malformed or the block does not exist.
+     */
+    private static function resolveConditionBlock(string $fieldName, FormConfig $formConfig): ?FormDataBlock {
+        $dotPos = strpos($fieldName, '.');
+        if ($dotPos === false) return null;
+        $blockName = substr($fieldName, 0, $dotPos);
+        foreach ($formConfig->data_blocks as $block) {
+            if ($block->name === $blockName) return $block;
+        }
+        return null;
+    }
+
+    /**
+     * Reads the submitted value of a condition field, resolving instance-aware
+     * POST paths for fields inside repeatable/optional groups.
+     */
+    private static function resolveConditionFieldValue($cond, FormConfig $formConfig, array $formData, ?int $instanceIndex, ?int $parentInstanceIndex) {
+        $block = self::resolveConditionBlock($cond->field_name, $formConfig);
+        $phpKey = str_replace('.', '_', $cond->field_name);
+        if ($block === null || $block->getLoopDepth() === 0) {
+            return $formData[$phpKey] ?? null;
+        }
+
+        // Instance-aware path: [blockKey, ...loopIndexes, fieldName]
+        $depth = $block->getLoopDepth();
+        $indexes = [];
+        if ($depth === 1) {
+            $index = $parentInstanceIndex ?? $instanceIndex;
+            if ($index === null) return $formData[$phpKey] ?? null;
+            $indexes = [$index];
+        } else {
+            if ($parentInstanceIndex === null || $instanceIndex === null) return $formData[$phpKey] ?? null;
+            $indexes = [$parentInstanceIndex, $instanceIndex];
+        }
+
+        $fieldDef = $block->fields[substr($cond->field_name, strpos($cond->field_name, '.') + 1)] ?? null;
+        $blockKey = ($fieldDef !== null && $fieldDef->type_field === DataBlockFieldType::UNLINKED ? '_detached_' : '') . $block->name;
+
+        $node = $formData[$blockKey] ?? null;
+        foreach ($indexes as $index) {
+            if (!is_array($node)) return null;
+            $node = $node[$index] ?? null;
+        }
+        if (!is_array($node)) return null;
+        return $node[substr($cond->field_name, strpos($cond->field_name, '.') + 1)] ?? null;
     }
 
     /**
