@@ -124,7 +124,7 @@ if ($grantType === 'authorization_code') {
             $rr = $db->query(
                 "SELECT sr.id, sr.name, sr.relationship_type, sr.start_date, sr.end_date, sr.role,"
                 . " p.name AS project_name, p.estimated_start_date, p.estimated_end_date,"
-                . " sr.stic_portal_decidim_excluded_c"
+                . " sr.decidim_excluded"
                 . " FROM stic_contacts_relationships sr"
                 . " JOIN stic_contacts_relationships_contacts_c lnk ON lnk.stic_contacts_relationships_contactscontacts_ida = sr.id"
                 . " LEFT JOIN stic_contacts_relationships_project_c prj ON prj.stic_conta0d5aonships_idb = sr.id AND prj.deleted = 0"
