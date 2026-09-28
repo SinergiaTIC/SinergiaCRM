@@ -66,6 +66,9 @@ foreach ($moduleList as $module) {
     LanguageManager::clearLanguageCache($module);
     return_module_language($current_language, $module);
 }
+//Clearing special modules
+LanguageManager::clearLanguageCache('Administration');
+return_module_language($current_language, 'Administration');
 
 
 // Cleanup application resources
