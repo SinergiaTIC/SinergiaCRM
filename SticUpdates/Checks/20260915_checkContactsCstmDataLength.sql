@@ -1,12 +1,13 @@
 -- =====================================================================
--- Pre-check for SticUpdates/Migrations/20260915_hotfix_shrinkContactsCstmColumns.sql
+-- Pre-check for SticUpdates/Migrations/20260928_postInstall_shrinkContactsCstmTextFields.sql
 --
 -- Purpose: verify, on any SinergiaCRM database, whether the 20
 -- contacts_cstm columns being shrunk still hold data that would NOT fit
 -- the new target length. Review manually before the migration, otherwise
 -- the ALTER fails in strict mode / silently truncates data.
 --
--- HOW TO USE (read-only; run it in each instance's database):
+-- HOW TO USE (read-only; run it in each instance's database BEFORE SticUpdate,
+-- because the vardef repair pass may apply these same target lengths):
 --   mysql -u <user> -p <sinergiadb> < SticUpdates/Checks/20260915_checkContactsCstmDataLength.sql
 --
 -- HOW TO READ THE OUTPUT:
