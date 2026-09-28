@@ -223,6 +223,10 @@ function make_sugar_config(&$sugar_config)
         ) : $upload_badext,
         'valid_image_ext' => [
             'gif',
+			// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+			// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+            'webp',
+			// END STIC-Custom
             'png',
             'jpg',
             'jpeg',
@@ -232,6 +236,10 @@ function make_sugar_config(&$sugar_config)
         'upload_maxsize' => empty($upload_maxsize) ? 30000000 : $upload_maxsize,
         'allowed_preview' => [
             'gif',
+			// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+			// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+            'webp',
+			// END STIC-Custom
             'png',
             'jpeg',
             'jpg'
@@ -495,6 +503,10 @@ function get_sugar_config_defaults(): array
         ],
         'valid_image_ext' => [
             'gif',
+			// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+			// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+            'webp',
+			// END STIC-Custom
             'png',
             'jpg',
             'jpeg',
@@ -503,6 +515,10 @@ function get_sugar_config_defaults(): array
         ],
         'allowed_preview' => [
             'gif',
+			// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+			// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+            'webp',
+			// END STIC-Custom
             'png',
             'jpeg',
             'jpg'
@@ -5473,6 +5489,25 @@ function verify_image_file($path, $jpeg = false)
             if (file_put_contents($path, $image)) {
                 return true;
             }
+        // STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+		// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+        } elseif ($filetype == 'image/gif') {
+            // else if the filetype is gif, create gif
+            ob_start();
+            imagegif($img);
+            $image = ob_get_clean();
+            if (file_put_contents($path, $image)) {
+                return true;
+            }
+        } elseif ($filetype == 'image/webp') {
+            // else if the filetype is webp, create webp
+            ob_start();
+            imagewebp($img);
+            $image = ob_get_clean();
+            if (file_put_contents($path, $image)) {
+                return true;
+            }
+        // END STIC-Custom
         } else {
             return false;
         }
@@ -5494,7 +5529,11 @@ function verify_image_file($path, $jpeg = false)
 function verify_uploaded_image($path, $jpeg_only = false)
 {
     global $sugar_config;
-    $supportedExtensions = $sugar_config['image_ext'] ?? ['image/jpeg', 'image/png', 'image/gif' , 'tmp' => 'tmp'];
+	// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+	// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+	// $supportedExtensions = $sugar_config['image_ext'] ?? ['image/jpeg', 'image/png', 'image/gif', 'tmp' => 'tmp'];
+	$supportedExtensions = $sugar_config['image_ext'] ?? ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'tmp' => 'tmp'];
+	// END STIC-Custom
 
     if (!$jpeg_only) {
         $supportedExtensions['png'] = 'image/png';
@@ -6052,6 +6091,10 @@ function has_valid_image_extension($fieldName, $name)
 
     $validExtensions = [
         'gif',
+		// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+		// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+        'webp',
+		// END STIC-Custom
         'png',
         'jpg',
         'jpeg',
@@ -6080,6 +6123,10 @@ function has_valid_image_mime_type(string $mimeType): bool
 
     $validExtensions = [
         'gif',
+		// STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+		// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+        'webp',
+		// END STIC-Custom
         'png',
         'jpg',
         'jpeg',
