@@ -502,28 +502,31 @@
                                                                 <!-- Container Type -->
                                                                 <div class="col-3">
                                                                     <label :for="`section${section.id}_containerType`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_CONTAINER')"></label>
-                                                                    <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType">
-                                                                        <template x-for="type in availableContainerTypes" :key="type.id">
+                                                                    <select :id="`section${section.id}_containerType`" class="form-select" x-model="section.containerType"
+                                                                            @change="handleContainerTypeChange(section, $event.target.value)">
+                                                                        <template x-for="type in getAvailableContainerTypes(section)" :key="type.id">
                                                                             <option :value="type.id" x-text="type.text" :selected="type.id == section.containerType"></option>
                                                                         </template>
                                                                     </select>
                                                                 </div>
-                                                                <!-- Show Title -->
-                                                                <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
+                                                                <!-- Show Title (hidden for tabs containers — the tab bar replaces the title;
+                                                                     disabled for 'tab_item' panes — the tab label IS the title) -->
+                                                                <div class="col-3 form-check form-switch d-flex align-items-center mb-0" x-show="!isTabsContainer(section)">
                                                                     <label :for="`section${section.id}_showTitle`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_SHOW_TITLE')"></label>
                                                                     <input :id="`section${section.id}_showTitle`" class="form-check-input" type="checkbox" role="switch" x-model="section.showTitle"
+                                                                            :disabled="section.containerType === 'tab_item'"
                                                                             @change="if(!section.showTitle) { section.isCollapsible = false; section.isCollapsed = false; }"/>
                                                                 </div>
-                                                                <!-- Collapsible -->
-                                                                <template x-if="section.showTitle">
+                                                                <!-- Collapsible (not for 'tab_item' panes) -->
+                                                                <template x-if="section.showTitle && section.containerType !== 'tab'">
                                                                     <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
                                                                         <label :for="`section${section.id}_isCollapsible`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_IS_COLLAPSIBLE')"></label>
                                                                         <input :id="`section${section.id}_isCollapsible`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsible"
                                                                                 @change="if(!section.isCollapsible) { section.isCollapsed = false; }"/>
                                                                     </div>
                                                                 </template>
-                                                                <!-- Collaped -->
-                                                                <template x-if="section.showTitle && section.isCollapsible">
+                                                                <!-- Collaped (not for 'tab' panes) -->
+                                                                <template x-if="section.showTitle && section.isCollapsible && section.containerType !== 'tab_item'">
                                                                     <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
                                                                         <label :for="`section${section.id}_isCollapsed`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_ISCOLLAPSED')"></label>
                                                                         <input :id="`section${section.id}_isCollapsed`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsed"/>

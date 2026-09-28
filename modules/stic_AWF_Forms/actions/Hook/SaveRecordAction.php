@@ -64,6 +64,13 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     {
         global $db, $beanList;
 
+        // Optional blocks that were not activated are skipped —
+        // no ghost records from FIXED/server-only data.
+        if (!$block->isActivated()) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Advanced Web Forms: DataBlock '{$block->dataBlock->name}' skipped because it is optional and was not activated.");
+            return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "DataBlock '{$block->dataBlock->name}' was skipped because it is optional and was not activated.");
+        }
+
         $module = $block->dataBlock->module;
         if (!isset($beanList[$module])) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "The configured module '{$module}' is not available on the system.");
@@ -495,9 +502,9 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 continue;
             }
 
-            // Loop-depth-aware bean reference (B-4/ADR-8): a depth-1 target read
-            // from a depth-2 action uses the parent index; a depth-2 target uses
-            // the composite "i:j" key.
+            // Loop-depth-aware bean reference: 
+            // a depth-1 target uses the parent index
+            // a depth-2 target uses the composite "i:j" key.
             $targetBeanRef = $targetBlock->getReferenceForContext($context);
 
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {

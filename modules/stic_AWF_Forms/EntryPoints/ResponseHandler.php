@@ -651,10 +651,9 @@ class ResponseHandler
                             $this->validateBlockFields($blockToValidate, $resolvedBlock, $data, $errors);
                             continue;
                         }
-                        // ADR-8 depth-2 descendants: validate every inner instance j
-                        // of the outer instance i, with per-level min/max checks.
-                        if ($blockToValidate->getLoopDepth() === 2) {
-                            $innerInstances = DataBlockResolved::resolveInstancesForParent($blockToValidate, $data, $context, $resolvedBlock->instanceIndex);
+                        // Validate every inner instance j of the outer instance i, with per-level min/max checks.
+                        if ($blockToValidate->getLoopDepth() >= 2) {
+                            $innerInstances = DataBlockResolved::resolveInstances($blockToValidate, $data, $context, [$resolvedBlock->instanceIndex]);
                             $innerMax = $blockToValidate->max_instances;
                             if ($innerMax !== null && count($innerInstances) > $innerMax) {
                                 $errorKey = $blockToValidate->name . '_' . $resolvedBlock->instanceIndex;
@@ -703,18 +702,13 @@ class ResponseHandler
 
         $instanceIndex = $resolvedBlock->instanceIndex;
 
-        // Multi-index addressing (ADR-8 depth-2): [outer, inner] when the
-        // resolved block carries both loop indexes.
-        $instanceIndexes = null;
-        if ($instanceIndex !== null) {
-            $instanceIndexes = $resolvedBlock->parentInstanceIndex !== null
-                ? [$resolvedBlock->parentInstanceIndex, $instanceIndex]
-                : [$instanceIndex];
-        }
+        // Multi-index addressing (n-dimensional matrix): the block's full
+        // loop-index vector (outer to inner).
+        $instanceIndexes = $resolvedBlock->getLoopIndexes();
 
         foreach ($block->fields as $formField) {
-            $inputKeyInForm = $instanceIndexes !== null ? $formField->getKeyForIdForIndexes($instanceIndexes) : $formField->getKeyForId($instanceIndex);
-            $inputKey = $instanceIndexes !== null ? $formField->getPhpKeyForIndexes($instanceIndexes) : ($instanceIndex !== null ? $formField->getPhpKeyForInstance($instanceIndex) : $formField->getPhpKey());
+            $inputKeyInForm = $instanceIndexes !== [] ? $formField->getKeyForIdForIndexes($instanceIndexes) : $formField->getKeyForId($instanceIndex);
+            $inputKey = $instanceIndexes !== [] ? $formField->getPhpKeyForIndexes($instanceIndexes) : ($instanceIndex !== null ? $formField->getPhpKeyForInstance($instanceIndex) : $formField->getPhpKey());
             $value = $resolvedBlock->getFieldValue($formField->name);
             $label = rtrim($formField->label, ":");
 
@@ -894,9 +888,9 @@ class ResponseHandler
                 foreach ($instances as $instance) {
                     $blocksToProcess = array_merge([$block], $children);
                     foreach ($blocksToProcess as $blockToProcess) {
-                        // ADR-8 depth-2 descendants: one detail block per [outer, inner] instance
-                        if ($blockToProcess->getLoopDepth() === 2) {
-                            $innerInstances = DataBlockResolved::resolveInstancesForParent($blockToProcess, $submittedData, $context, $instance->instanceIndex);
+                        // depth-2 descendants: one detail block per [outer, inner] instance
+                        if ($blockToProcess->getLoopDepth() >= 2) {
+                            $innerInstances = DataBlockResolved::resolveInstances($blockToProcess, $submittedData, $context, [$instance->instanceIndex]);
                             foreach ($innerInstances as $innerInstance) {
                                 $this->generateBlockDetailsForIndexes($blockToProcess, $responseBean, $formBean, $submittedData, [$instance->instanceIndex, $innerInstance->instanceIndex], $orderCounter, $uploadedFiles);
                             }
@@ -927,7 +921,7 @@ class ResponseHandler
     }
 
     /**
-     * Multi-index variant (ADR-8 depth-2): $instanceIndexes holds one index per
+     * Multi-index variant: $instanceIndexes holds one index per
      * repeatable loop level, outer to inner ([] for scalar blocks, [i] for
      * depth-1, [i, j] for depth-2).
      */

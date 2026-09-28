@@ -111,30 +111,40 @@ class FormDataBlock {
      *  - 0: scalar block (static field names).
      *  - 1: block living inside one repeatable loop (the top-level group root
      *       or any direct child of it).
-     *  - 2: block living inside two nested repeatable loops (ADR-8 depth-2:
-     *       a descendant of a subgroup head, e.g. Adult[i] -> Menor[i][j]).
+     *  - 2: block living inside two nested repeatable loops (a descendant of
+     *       a subgroup head, e.g. Adult[i] -> Menor[i][j]).
      * The count walks the group_root chain: every repeatable/optional ancestor
      * adds a loop variable; a repeatable/optional ROOT block adds its own.
      */
     public function getLoopDepth(): int {
-        // The loop depth counts every loop-generating (repeatable/optional)
-        // block in the chain from THIS block up to its root, INCLUDING this
-        // block: a repeatable subgroup head's own loop addresses its own
-        // instances (and those of its whole subtree). ADR-8 example:
-        // Adult[i] (repeatable root, depth 1) -> Menor[i][j] (repeatable
-        // subgroup head, depth 2) -> Inscripcio[i][j] (child, depth 2).
+        // The loop depth counts every GROUP HEAD in the chain from THIS block
+        // up to its root, INCLUDING this block: repeatable, optional AND
+        // simple (max=1 with children) heads all render an x-for loop and add
+        // one loop level. Repeatable levels are capped at 2 by the model
+        // (canBeRepeatable); optional levels are UNLIMITED (N optional levels).
+        // Examples: scalar block -> 0; repeatable root or its simple child -> 1;
+        // subgroup head or its descendants -> 2; third optional level -> 3...
         $depth = 0;
         $current = $this;
         $visited = [$current->id => true];
         while (true) {
-            if ($current->isRepeatable() || $current->isOptional()) $depth++;
+            if ($current->isGroupHead()) $depth++;
             if (empty($current->group_root)) break;
             $parent = $this->form_config->data_blocks[$current->group_root] ?? null;
             if ($parent === null || isset($visited[$parent->id])) break; // Missing parent or cycle guard
             $visited[$parent->id] = true;
             $current = $parent;
         }
-        return min($depth, 2); // ADR-8: repeatable nesting is capped at depth 2
+        return $depth;
+    }
+
+    /**
+     * True when this block renders its own x-for loop (a group head):
+     * repeatable, optional, or a simple block with children.
+     */
+    public function isGroupHead(): bool {
+        return $this->isRepeatable() || $this->isOptional()
+            || count($this->form_config->getGroupChildren($this)) > 0;
     }
 
     public function setBeanReference(string $beanId, int|string|null $index = null): void {
@@ -156,28 +166,23 @@ class FormDataBlock {
 
     /**
      * Loop-depth-aware bean reference lookup for the ACTIVE execution context
-     * (B-4 / ADR-8 depth-2): picks the correct reference key from the
-     * context's instance indexes according to THIS block's loop depth.
-     *  - depth 0 (scalar): the scalar reference.
-     *  - depth 1: the outermost active loop index (the parent index when the
-     *    action is bound to a deeper block).
-     *  - depth 2: the composite "outer:inner" key.
+     * (B-4 / n-dimensional POST matrix): the reference key is the first
+     * d indexes of the context's active index stack (d = this block's loop
+     * depth) — a shallower target read through a deeper action uses the outer
+     * indexes. Returns null when the active stack is shallower than this
+     * block's depth (the deeper instance is not addressed by this execution).
      */
     public function getReferenceForContext(ExecutionContext $context): ?BeanReference {
         $depth = $this->getLoopDepth();
         if ($depth === 0) {
             return $this->getBeanReference();
         }
-        $currentIndex = $context->getCurrentInstanceIndex();
-        $parentIndex = $context->getParentInstanceIndex();
-        if ($depth === 1) {
-            $index = $parentIndex ?? $currentIndex;
-            return $index === null ? $this->getBeanReference() : $this->getBeanReference($index);
-        }
-        if ($parentIndex === null || $currentIndex === null) {
+        $stack = $context->getInstanceIndexes();
+        if (count($stack) < $depth) {
             return null;
         }
-        return $this->getBeanReference($parentIndex . ':' . $currentIndex);
+        $index = implode(':', array_slice($stack, 0, $depth));
+        return $this->getBeanReference($index);
     }
 
     /**

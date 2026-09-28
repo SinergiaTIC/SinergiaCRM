@@ -1788,12 +1788,17 @@ class stic_AwfLayout {
     //          designation does NOT depend on the section content (blocks may be
     //          whole elements or unbundled field fragments anywhere).
     // Sections whose group no longer exists go back to plain (content preserved).
+    // Group-only micro-copy labels (toggle/add/remove) make no sense on a plain
+    // section: cleared so they cannot resurface if the group is re-created.
     this.structure.forEach(s => {
       if (s.kind !== 'group') return;
       const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
       if (!gBlock || !isGroupHead(gBlock) || !gBlock.is_root) {
         s.kind = '';
         s.groupRootBlockId = '';
+        s.toggle_label = '';
+        s.add_button_label = '';
+        s.remove_button_label = '';
       }
     });
     // De-duplicate: only the FIRST designated section per group root stays
@@ -1837,6 +1842,20 @@ class stic_AwfLayout {
         home.showTitle = false;
         this.structure.push(home);
       }
+    });
+    // Legacy label migration (Task 7.17): group labels used to live on the
+    // block; move them to the designated section (the renderer's source of
+    // truth) and drop the legacy block properties from the saved JSON.
+    this.structure.forEach(s => {
+      if (s.kind !== 'group') return;
+      const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
+      if (!gBlock) return;
+      ['toggle_label', 'add_button_label', 'remove_button_label'].forEach(key => {
+        if (typeof gBlock[key] === 'string' && gBlock[key] !== '') {
+          if (!s[key]) s[key] = gBlock[key];
+          delete gBlock[key];
+        }
+      });
     });
     // Adopt the unbundled fragments of the group's members: they must render
     // inside the group's loop, so they cannot stay in outside sections
@@ -2069,6 +2088,23 @@ class stic_AwfLayout {
         section.showTitle = false;
       }
     });
+
+    // ---- 8. Tabs containers hold ONLY sections: group any direct non-section
+    //         elements into a new child pane ('Nova secció'), recursively ----
+    const normalizeTabsContainer = (section) => {
+      if ((section.containerType === 'tabs_card' || section.containerType === 'tabs_panel') && section.elements.some(el => el.type !== 'section')) {
+        const pane = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NEW') });
+        pane.containerType = 'tab_item';
+        pane.showTitle = true;
+        pane.elements = section.elements.filter(el => el.type !== 'section');
+        section.elements = section.elements.filter(el => el.type === 'section');
+        section.elements.push(pane);
+      }
+      section.elements.forEach(el => {
+        if (el.type === 'section') normalizeTabsContainer(el);
+      });
+    };
+    this.structure.forEach(normalizeTabsContainer);
   }
 
   _addSectionWithBlock(block) {
@@ -3194,9 +3230,6 @@ class stic_AwfConfiguration {
 
     if (!isStillGroup) {
       block.group_title = '';
-      block.toggle_label = '';
-      block.add_button_label = '';
-      block.remove_button_label = '';
     }
   }
 
@@ -3283,9 +3316,6 @@ class stic_AwfConfiguration {
     parentBlock.max_instances = 1;
     parentBlock.group_title = '';
     parentBlock.is_custom_group_title = false;
-    parentBlock.toggle_label = '';
-    parentBlock.add_button_label = '';
-    parentBlock.remove_button_label = '';
   }
 
   /**
@@ -3310,8 +3340,6 @@ class stic_AwfConfiguration {
         const blockNames = [block.text, ...children.map(c => c.text)];
         block.group_title = blockNames.join(' + ');
       }
-      block.add_button_label = block.add_button_label || utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT');
-      block.remove_button_label = block.remove_button_label || utils.translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT');
     } else {
       block.max_instances = 1;
 
@@ -3349,8 +3377,6 @@ class stic_AwfConfiguration {
         const blockNames = [block.text, ...children.map(c => c.text)];
         block.group_title = blockNames.join(' + ');
       }
-      
-      block.toggle_label = block.toggle_label || `${utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT')} ${block.group_title}`;
     } else {
       block.min_instances = 1;
 

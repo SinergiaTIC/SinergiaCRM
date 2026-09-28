@@ -2666,9 +2666,83 @@ class WizardStep4 {
       get sections() { return this.layout.structure; },
 
       get availableContainerTypes() {
-        const validCategories = ['panel', 'card'];
+        // Kept for backward compatibility of callers without a section context:
+        // base container types (no 'tab' — it only applies to direct children
+        // of a tabs container)
+        const validCategories = ['panel', 'card', 'tabs'];
         return stic_AwfLayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
       },
+
+      // True when the section is a DIRECT child of a 'tabs' container section:
+      // then its only container type is 'tab' (a pane of the parent tabs).
+      // True when the section is a tabs CONTAINER (either flavor)
+      isTabsContainer(section) {
+        return !!section && (section.containerType === 'tabs_card' || section.containerType === 'tabs_panel');
+      },
+
+      // True when the section is a DIRECT child of a tabs container section:
+      // then its only container type is 'tab_item' (a pane of the parent tabs).
+      isDirectChildOfTabs(section) {
+        const parent = this.getParentSectionOf(section);
+        return this.isTabsContainer(parent);
+      },
+
+      // Container options for a section: a direct child of tabs can only be
+      // a 'tab_item' pane; otherwise panel/card/tabs_card/tabs_panel.
+      getAvailableContainerTypes(section) {
+        if (this.isDirectChildOfTabs(section)) {
+          const tabOption = stic_AwfLayoutSection.containerType_in_formList().find(c => c.id === 'tab_item')
+            ?? { id: 'tab_item', text: utils.translate('LBL_SECTION_CONTAINER_TAB') };
+          return [tabOption];
+        }
+        const validCategories = ['panel', 'card', 'tabs_card', 'tabs_panel'];
+        return stic_AwfLayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
+      },
+
+      // Side effects of changing a section's container type:
+      //  - a tabs container (either flavor) hides its own title, turns its DIRECT
+      //    section children into 'tab_item' panes (title forced on, collapse off)
+      //    and groups any direct NON-section elements into a new child pane
+      //    ('Nova secció');
+      //  - leaving tabs reverts the 'tab_item' children to plain panels.
+      handleContainerTypeChange(section, newType) {
+        if (!section) return;
+        if (this.isTabsContainer({ containerType: newType })) {
+          section.showTitle = false;
+          section.isCollapsible = false;
+          section.isCollapsed = false;
+          // Non-section elements cannot live in a tabs container: group them
+          // into a new child pane ('Nova secció')
+          const nonSectionElements = section.elements.filter(el => el.type !== 'section');
+          if (nonSectionElements.length > 0) {
+            const pane = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NEW') });
+            pane.containerType = 'tab_item';
+            pane.showTitle = true;
+            pane.isCollapsible = false;
+            pane.isCollapsed = false;
+            pane.elements = nonSectionElements;
+            section.elements = section.elements.filter(el => el.type === 'section');
+            section.elements.push(pane);
+          }
+          section.elements.forEach(el => {
+            if (el.type === 'section' && el.containerType !== 'tab_item') {
+              el.containerType = 'tab_item';
+              el.showTitle = true;
+            }
+            if (el.type === 'section') {
+              el.isCollapsible = false;
+              el.isCollapsed = false;
+            }
+          });
+        } else {
+          section.elements.forEach(el => {
+            if (el.type === 'section' && el.containerType === 'tab_item') {
+              el.containerType = 'panel';
+            }
+          });
+        }
+      },
+
 
       init() {
         this.formConfig.syncLayoutWithDataBlocks();
@@ -2843,8 +2917,8 @@ class WizardStep4 {
 
       // Nested section hosting a depth-2 subgroup head: the subgroup identity
       // lives in the block's group_root chain, the section stays a plain
-      // content container (ADR-9 contract), but the wizard displays it as a
-      // group. Only meaningful inside a designated group section.
+      // content container, but the wizard displays it as a group. 
+      // Only meaningful inside a designated group section.
       getSubgroupHead(section) {
         if (!section || this.isGroupSection(section) || !this.isWithinGroupSection(section)) return null;
         for (const el of section.elements) {
@@ -2992,6 +3066,18 @@ class WizardStep4 {
         const idx = arr.findIndex(el => el.id === section.id);
         if (idx >= 0) arr.splice(idx, 1);
         target.elements.push(section);
+
+        // Container-type coherence: a section moved INTO a tabs container
+        // becomes a 'tab_item' pane (title on, collapse off); a pane moved out
+        // of it reverts to a plain panel.
+        if (this.isTabsContainer(target)) {
+          section.containerType = 'tab_item';
+          section.showTitle = true;
+          section.isCollapsible = false;
+          section.isCollapsed = false;
+        } else if (section.containerType === 'tab_item') {
+          section.containerType = 'panel';
+        }
       },
 
       // Finds a section by ID at any level (top-level sections and nested sections)
@@ -3014,7 +3100,8 @@ class WizardStep4 {
 
       // Candidate sections an element can be moved to (group-scope rules).
       // Elements must always remain inside a section, so there is no
-      // "outside all sections" target:
+      // "outside all sections" target, and 'tabs' CONTAINER sections are never
+      // targets (they hold only panes): their 'tab_item' children are the targets.
       //  - content of a group (directly or in any of its subsections): the
       //    sections and subsections of that same group;
       //  - standalone content: any standalone section of the form, at any depth.
@@ -3024,7 +3111,7 @@ class WizardStep4 {
         const candidates = groupRoot
           ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
           : this.getStandaloneSections();
-        return candidates.filter(s => s.id !== fromSection.id);
+        return candidates.filter(s => s.id !== fromSection.id && !this.isTabsContainer(s));
       },
 
       // Adds a new (empty) nested section to ANY section, titled "Nova secció"

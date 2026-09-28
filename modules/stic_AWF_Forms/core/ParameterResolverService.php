@@ -177,8 +177,8 @@ class ParameterResolverService {
             return null;
         }
 
-        // Loop-depth-aware instance resolution (B-4 / ADR-8 depth-2): picks the
-        // correct instance indexes from the context for the block's own depth.
+        // Loop-depth-aware instance resolution: picks the correct instance indexes 
+        // from the context for the block's own depth.
         return DataBlockResolved::resolveForBlock($dataBlockConfig, $context->formData, $context);
     }
 
@@ -244,24 +244,19 @@ class ParameterResolverService {
         $crmFieldType = $fieldDefinition?->type ?? 'text';
         $finalValue = null;
 
-        // If an instance is being executed and the field belongs to a repeatable group,
-        // read the value from the indexed form structure:
-        //  - depth-1: formData['Block'][index]['field']
-        //  - depth-2: formData['Block'][outer][inner]['field'] (ADR-8)
-        $instanceIndex = $context->getCurrentInstanceIndex();
-        if ($instanceIndex !== null && $foundBlock !== null && $foundBlock->getLoopDepth() >= 1) {
+        // If an instance is being executed and the field belongs to a group, read
+        // the value from the indexed form structure: a field at loop depth d is
+        // addressed by the FIRST d indexes of the active stack:
+        // formData['Block'][i1]...[id]['field']
+        if ($context->getInstanceIndexes() !== [] && $foundBlock !== null && $foundBlock->getLoopDepth() >= 1) {
             $blockArrayKey = $isDetached ? '_detached_' . $foundBlock->name : $foundBlock->name;
-            $matrix = is_array($context->formData[$blockArrayKey] ?? null) ? $context->formData[$blockArrayKey] : [];
-            if ($foundBlock->getLoopDepth() === 2) {
-                $outerIndex = $context->getParentInstanceIndex();
-                $row = is_array($matrix[$outerIndex] ?? null) ? $matrix[$outerIndex] : [];
-                $row = is_array($row[$instanceIndex] ?? null) ? $row[$instanceIndex] : [];
-            } else {
-                // A depth-1 block is addressed by the outermost active loop index
-                // (the parent index when the action is bound to a deeper block)
-                $depth1Index = $context->getParentInstanceIndex() ?? $instanceIndex;
-                $row = is_array($matrix[$depth1Index] ?? null) ? $matrix[$depth1Index] : [];
+            $node = is_array($context->formData[$blockArrayKey] ?? null) ? $context->formData[$blockArrayKey] : [];
+            $indexes = array_slice($context->getInstanceIndexes(), 0, $foundBlock->getLoopDepth());
+            while (count($indexes) < $foundBlock->getLoopDepth()) { $indexes[] = 0; }
+            foreach ($indexes as $levelIndex) {
+                $node = is_array($node) ? ($node[$levelIndex] ?? null) : null;
             }
+            $row = is_array($node) ? $node : [];
             if (array_key_exists($fieldName, $row)) {
                 $finalValue = stic_AWFUtils::castCrmValue($row[$fieldName], $crmFieldType, $context);
             } elseif ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {

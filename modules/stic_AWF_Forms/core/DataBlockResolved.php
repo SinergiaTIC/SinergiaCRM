@@ -39,10 +39,18 @@ class DataBlockResolved {
 
     public ?int $instanceIndex = null;
 
-    /** @var ?int Outer loop index for depth-2 blocks (ADR-8): Parent[i] -> Subgroup[j] */
-    public ?int $parentInstanceIndex = null;
+    /**
+     * Full loop-index stack (outer to inner) addressing this instance in the
+     * n-dimensional POST matrix (one index per group-head loop in the block's
+     * chain: repeatable, optional and simple heads alike).
+     * Example (A -> B -> C, three group heads): C's instance = [i1, i2, i3].
+     */
+    public array $loopIndexes = [];
 
-    public function __construct(FormDataBlock $config, array $fullFormData, ExecutionContext $context, ?int $instanceIndex = null, ?int $parentInstanceIndex = null) {
+    private array $fullFormData;                 // RAW form data (for the _toggle_ activation signal)
+    private ExecutionContext $executionContext;  // Request context (for the uploaded files fallback)
+
+    public function __construct(FormDataBlock $config, array $fullFormData, ExecutionContext $context, array $loopIndexes = []) {
         // Warning: PHP POST replaces all '.' with '_'
         // DataBlock names use PascalCase without '_'
         // Form field names:
@@ -50,16 +58,17 @@ class DataBlockResolved {
         //   _detached_DataBlockName0_field_name    ->  "field_name" from DataBlockName0 DETACHED
         //   DataBlockName[index][field_name]       ->  "field_name" from instance index of DataBlockName
         //   _detached_DataBlockName[index][field_name] ->  "field_name" from instance index of detached DataBlockName
-        //   DataBlockName[outer][inner][field_name]     ->  depth-2 (block inside a subgroup of a repeatable root)
+        //   DataBlockName[i1]...[in][field_name]   ->  n loop levels (one per group head in the chain)
 
         $this->dataBlock = $config;
-        $this->instanceIndex = $instanceIndex;
-        $this->parentInstanceIndex = $parentInstanceIndex;
+        $this->loopIndexes = array_map('intval', $loopIndexes);
+        $this->instanceIndex = $this->loopIndexes === [] ? null : (int)end($this->loopIndexes);
+        $this->fullFormData = $fullFormData;
+        $this->executionContext = $context;
 
-        // Indexed form data for repeatable blocks
-        $isIndexed = $instanceIndex !== null;
-        if ($isIndexed) {
-            $this->resolveIndexedInstance($config, $fullFormData, $context, $instanceIndex, $parentInstanceIndex);
+        // Indexed form data for blocks inside group loops
+        if ($this->instanceIndex !== null) {
+            $this->resolveIndexedInstance($config, $fullFormData, $context);
             return;
         }
 
@@ -148,33 +157,30 @@ class DataBlockResolved {
     }
 
     /**
-     * Resolve a single instance of a repeatable block.
-     * Depth-1 (parentInstanceIndex === null): reads formData[Block][index][field].
-     * Depth-2 (parentInstanceIndex set): reads formData[Block][outer][index][field],
-     * where outer is the enclosing repeatable root's instance index.
+     * Resolve a single instance of a block inside group loops. The matrix is
+     * navigated by ALL the loop indexes except the last (the last one
+     * addresses the row itself): formData[Block][i1]...[i_{n-1}][i_n][field].
      */
-    private function resolveIndexedInstance(FormDataBlock $config, array $fullFormData, ExecutionContext $context, int $instanceIndex, ?int $parentInstanceIndex = null): void {
+    private function resolveIndexedInstance(FormDataBlock $config, array $fullFormData, ExecutionContext $context): void {
         $blockName = $config->name;
         $linkedKey = $blockName;
         $detachedKey = '_detached_' . $blockName;
 
-        // Linked fields
         $linkedArray = is_array($fullFormData[$linkedKey] ?? null) ? $fullFormData[$linkedKey] : [];
         $detachedArray = is_array($fullFormData[$detachedKey] ?? null) ? $fullFormData[$detachedKey] : [];
 
-        if ($parentInstanceIndex !== null) {
-            // Depth-2: the block's matrix is indexed [outer][inner]
-            $linkedArray = is_array($linkedArray[$parentInstanceIndex] ?? null) ? $linkedArray[$parentInstanceIndex] : [];
-            $detachedArray = is_array($detachedArray[$parentInstanceIndex] ?? null) ? $detachedArray[$parentInstanceIndex] : [];
+        $rowIndexes = $this->loopIndexes;
+        $innerIndex = array_pop($rowIndexes);
+        foreach ($rowIndexes as $levelIndex) {
+            $linkedArray = is_array($linkedArray[$levelIndex] ?? null) ? $linkedArray[$levelIndex] : [];
+            $detachedArray = is_array($detachedArray[$levelIndex] ?? null) ? $detachedArray[$levelIndex] : [];
         }
 
-        $linkedInstance = $linkedArray[$instanceIndex] ?? [];
-        $detachedInstance = $detachedArray[$instanceIndex] ?? [];
+        $linkedInstance = is_array($linkedArray[$innerIndex] ?? null) ? $linkedArray[$innerIndex] : [];
+        $detachedInstance = is_array($detachedArray[$innerIndex] ?? null) ? $detachedArray[$innerIndex] : [];
 
-        // Logical-key builders: depth-2 keys include both indexes (Block[i][j][field])
-        $keyIndexes = $parentInstanceIndex !== null
-            ? [$parentInstanceIndex, $instanceIndex]
-            : [$instanceIndex];
+        // Logical-key builders: the keys include every loop index (Block[i1]...[in][field])
+        $keyIndexes = $this->loopIndexes;
 
         // Process linked fields
         foreach ($config->fields as $fieldName => $fieldDef) {
@@ -228,53 +234,77 @@ class DataBlockResolved {
     /**
      * Returns one DataBlockResolved per instance for a repeatable block.
      * For optional blocks with zero instances, returns an empty array.
+     * GENERIC n-dimensional enumeration (one loop level per group head in the
+     * block's chain): with no $prefix it enumerates ALL the instances of the
+     * block (walking every level recursively); with $prefix (a partial index
+     * stack of the ANCESTOR levels already fixed) it enumerates only the
+     * instances below that prefix.
      * @param FormDataBlock $block
      * @param array $formData
      * @param ExecutionContext $context
+     * @param array $prefix Already-fixed ancestor loop indexes (outer to inner)
      * @return DataBlockResolved[]
      */
-    public static function resolveInstances(FormDataBlock $block, array $formData, ExecutionContext $context): array {
-        if ($block->getLoopDepth() >= 2) {
-            // Depth-2 blocks are resolved per outer index via resolveInstancesForParent
-            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": DataBlockResolved: Block '{$block->name}' is a depth-2 block; use resolveInstancesForParent().");
-            return [];
-        }
+    public static function resolveInstances(FormDataBlock $block, array $formData, ExecutionContext $context, array $prefix = []): array {
+        $depth = $block->getLoopDepth();
         $blockName = $block->name;
-        $linkedArray = is_array($formData[$blockName] ?? null) ? $formData[$blockName] : [];
-        $detachedKey = '_detached_' . $blockName;
-        $detachedArray = is_array($formData[$detachedKey] ?? null) ? $formData[$detachedKey] : [];
+        $linkedNode = is_array($formData[$blockName] ?? null) ? $formData[$blockName] : [];
+        $detachedNode = is_array($formData['_detached_' . $blockName] ?? null) ? $formData['_detached_' . $blockName] : [];
+
+        // Navigate the matrix through the already-fixed ancestor indexes
+        foreach ($prefix as $levelIndex) {
+            $linkedNode = is_array($linkedNode[$levelIndex] ?? null) ? $linkedNode[$levelIndex] : [];
+            $detachedNode = is_array($detachedNode[$levelIndex] ?? null) ? $detachedNode[$levelIndex] : [];
+        }
 
         $indexes = array_unique(array_merge(
-            array_filter(array_keys($linkedArray), 'is_int'),
-            array_filter(array_keys($detachedArray), 'is_int')
+            array_filter(array_keys($linkedNode), 'is_int'),
+            array_filter(array_keys($detachedNode), 'is_int')
         ));
         sort($indexes);
 
+        // Levels below this one (nested group heads inside this block's subtree)
+        $remainingLevels = $depth - count($prefix) - 1;
+
         if (empty($indexes)) {
-            // Optional blocks (repeatable or not) with no submitted instances → no instances.
-            // Mandatory blocks → one empty instance so required-field validation errors are produced.
+            // Optional heads with no submitted instances → no instances at this
+            // level. Mandatory heads → one empty instance so required-field
+            // validation errors are produced.
             if ($block->isOptional()) {
                 return [];
             }
-            return [new DataBlockResolved($block, $formData, $context, 0)];
+            $indexes = [0];
+            $remainingLevels = max($remainingLevels, 0);
         }
 
         $instances = [];
         foreach ($indexes as $index) {
-            $instances[] = new DataBlockResolved($block, $formData, $context, (int)$index);
+            $newPrefix = array_merge($prefix, [(int)$index]);
+            if ($remainingLevels > 0) {
+                $instances = array_merge($instances, self::resolveInstances($block, $formData, $context, $newPrefix));
+            } else {
+                $instances[] = new DataBlockResolved($block, $formData, $context, $newPrefix);
+            }
         }
         return $instances;
     }
 
     /**
+     * Full loop-index vector (outer to inner) of this instance: [] for scalar,
+     * [i] for depth-1, [i1, i2] for depth-2, ...
+     */
+    public function getLoopIndexes(): array {
+        return $this->loopIndexes;
+    }
+
+    /**
      * Composite key addressing this instance in bean-reference maps and
-     * per-instance result keys: null (scalar), "i" (depth-1) or "i:j" (depth-2).
+     * per-instance result keys: null (scalar) or the colon-joined index
+     * vector ("i", "i:j", "i:j:k"...).
      */
     public function getInstanceIndexKey(): ?string {
         if ($this->instanceIndex === null) return null;
-        return $this->parentInstanceIndex !== null
-            ? $this->parentInstanceIndex . ':' . $this->instanceIndex
-            : (string)$this->instanceIndex;
+        return implode(':', $this->loopIndexes);
     }
 
     /**
@@ -289,56 +319,22 @@ class DataBlockResolved {
     }
 
     /**
-     * Loop-depth-aware resolution: picks the instance indexes from the context
-     * according to the block's own loop depth (B-4 / ADR-8 depth-2).
-     *  - depth 0: scalar resolution (no indexes).
-     *  - depth 1: addressed by the outermost active loop index (the parent
-     *    index when the action is bound to a deeper block).
-     *  - depth 2: addressed by the [outer, inner] index pair.
+     * Loop-depth-aware resolution: takes the FIRST d indexes of the context's
+     * active index stack (d = the block's loop depth) — a shallower target
+     * read through a deeper motor uses the outer indexes. When the stack is
+     * shorter than the block's depth, the missing levels default to 0
+     * (deterministic; same-group deeper targets are resolved by their own
+     * unrolling).
      */
     public static function resolveForBlock(FormDataBlock $blockConfig, array $formData, ExecutionContext $context): ?DataBlockResolved {
         $depth = $blockConfig->getLoopDepth();
-        $current = $context->getCurrentInstanceIndex();
-        $parent = $context->getParentInstanceIndex();
         if ($depth === 0) {
             return new DataBlockResolved($blockConfig, $formData, $context);
         }
-        if ($depth === 1) {
-            return new DataBlockResolved($blockConfig, $formData, $context, $parent ?? $current);
-        }
-        return new DataBlockResolved($blockConfig, $formData, $context, $current, $parent);
-    }
-
-    /**
-     * Returns one DataBlockResolved per inner (depth-2) instance of the block
-     * for the given outer loop index: reads the int keys of
-     * formData[Block][outerIndex]. Blocks with no submitted inner instances
-     * return an empty array when optional, or one empty instance otherwise.
-     * @return DataBlockResolved[]
-     */
-    public static function resolveInstancesForParent(FormDataBlock $block, array $formData, ExecutionContext $context, int $parentInstanceIndex): array {
-        $linkedArray = is_array($formData[$block->name] ?? null) ? $formData[$block->name] : [];
-        $detachedArray = is_array($formData['_detached_' . $block->name] ?? null) ? $formData['_detached_' . $block->name] : [];
-
-        $linkedRow = is_array($linkedArray[$parentInstanceIndex] ?? null) ? $linkedArray[$parentInstanceIndex] : [];
-        $detachedRow = is_array($detachedArray[$parentInstanceIndex] ?? null) ? $detachedArray[$parentInstanceIndex] : [];
-
-        $indexes = array_unique(array_merge(
-            array_filter(array_keys($linkedRow), 'is_int'),
-            array_filter(array_keys($detachedRow), 'is_int')
-        ));
-        sort($indexes);
-
-        if (empty($indexes)) {
-            if ($block->isOptional()) return [];
-            return [new DataBlockResolved($block, $formData, $context, 0, $parentInstanceIndex)];
-        }
-
-        $instances = [];
-        foreach ($indexes as $index) {
-            $instances[] = new DataBlockResolved($block, $formData, $context, (int)$index, $parentInstanceIndex);
-        }
-        return $instances;
+        $stack = $context->getInstanceIndexes();
+        $indexes = array_slice($stack, 0, $depth);
+        while (count($indexes) < $depth) { $indexes[] = 0; }
+        return new DataBlockResolved($blockConfig, $formData, $context, $indexes);
     }
 
     /**
@@ -357,6 +353,59 @@ class DataBlockResolved {
      */
     public function getDetachedFieldValue($fieldName): ?DataBlockFieldResolved {
         return $this->detachedData[$fieldName] ?? null;
+    }
+
+    /**
+     * Three-layer activation check: whether this block instance should be persisted.
+     *  (1) Mandatory blocks (min_instances > 0) are ALWAYS active.
+     *  (2) Optional blocks (always group heads) check the explicit
+     *      `_toggle_{BlockName}` signal posted by the activation switch: the
+     *      switch renders OUTSIDE the block's own loop, so the signal is
+     *      indexed by the first (depth - 1) loop indexes — scalar for a
+     *      top-level optional group, `[i1]` / `[i1][i2]`... for deeper ones.
+     *  (3) Fallback: any non-FIXED resolved field with a non-empty value
+     *      (linked or detached), or an uploaded file for the block's file
+     *      fields. FIXED/server values NEVER count as user input (ghost
+     *      records protection).
+     */
+    public function isActivated(): bool {
+        // (1) Mandatory blocks are always active
+        if (!$this->dataBlock->isOptional()) return true;
+
+        // (2) Explicit activation signal, indexed by the enclosing loops
+        $signalKey = '_toggle_' . $this->dataBlock->name;
+        $signal = $this->fullFormData[$signalKey] ?? null;
+        $signalIndexes = array_slice($this->loopIndexes, 0, max(count($this->loopIndexes) - 1, 0));
+        foreach ($signalIndexes as $levelIndex) {
+            $signal = is_array($signal) ? ($signal[$levelIndex] ?? null) : null;
+        }
+        if ($signal !== null && in_array($signal, ['1', 1, true, 'on'], true)) {
+            return true;
+        }
+
+        // (3) Fallback over the RESOLVED fields (FIXED/server values never count)
+        foreach ([$this->formData, $this->detachedData] as $fieldMap) {
+            foreach ($fieldMap as $fieldResolved) {
+                $def = $fieldResolved->dataBlockField;
+                if ($def !== null && $def->type_field === DataBlockFieldType::FIXED) continue;
+                $value = $fieldResolved->value;
+                if (is_array($value)) {
+                    if (!empty($value)) return true;
+                } elseif ($value !== null && $value !== '') {
+                    return true;
+                }
+            }
+        }
+
+        // Fallback: uploaded files for the block's file fields
+        foreach ($this->dataBlock->fields as $fieldDef) {
+            if ($fieldDef->type_in_form !== 'file') continue;
+            $phpKey = $fieldDef->getPhpKey();
+            if (!empty($this->executionContext->uploadedFiles[$phpKey]['name'])) return true;
+            if ($this->instanceIndex !== null && !empty($this->executionContext->uploadedFiles[$phpKey . '_' . $this->instanceIndex]['name'])) return true;
+        }
+
+        return false;
     }
 
 }

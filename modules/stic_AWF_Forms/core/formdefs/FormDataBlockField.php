@@ -143,10 +143,9 @@ class FormDataBlockField {
     }
 
     /**
-     * Multi-dimensional variants (ADR-8 depth-2). Accept one index per
-     * repeatable loop level, outer to inner (e.g. [i, j] for a block inside a
-     * subgroup of a repeatable root). With a single index they are identical
-     * to getKeyForInstance/getPhpKeyForInstance/getKeyForId.
+     * Multi-dimensional variants. Accept one index per repeatable loop level,
+     * outer to inner (e.g. [i, j] for a block inside a subgroup of a repeatable root).
+     * With a single index they are identical to getKeyForInstance/getPhpKeyForInstance/getKeyForId.
      * @param array $indexes Loop indexes, outer to inner
      */
     public function getKeyForIndexes(array $indexes): string {

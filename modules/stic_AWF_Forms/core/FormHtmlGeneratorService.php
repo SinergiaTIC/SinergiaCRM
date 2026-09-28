@@ -464,7 +464,7 @@ class FormHtmlGeneratorService {
      * @param array $outerIndexVars Alpine variables of the ENCLOSING repeatable loops, outer to inner
      * @return string The generated HTML
      */
-    private function renderSectionNode(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?string $currentGroupRootId = null, array $outerIndexVars = []): string {
+    private function renderSectionNode(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?string $currentGroupRootId = null, array $outerIndexVars = [], bool $withChrome = true): string {
         $groupRootBlock = null;
         $isTopLevelGroupSection = $section instanceof FormLayoutGroupSection && $currentGroupRootId === null;
         if ($isTopLevelGroupSection) {
@@ -487,7 +487,25 @@ class FormHtmlGeneratorService {
         }
 
         if ($groupRootBlock) {
+            // Groups always render with their own chrome (the loop provides it)
             return $this->generateGroupHtml($groupRootBlock, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
+        }
+
+        // Tab PANE sections ('tab_item', a direct child of a 'tabs' container) render
+        // chrome-less from anywhere: the tab chrome belongs to the parent container
+        if ($section->containerType === 'tab_item') {
+            return $this->renderSectionChildren($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
+        }
+
+        // Tabs CONTAINERS (tabs_card/tabs_panel): their nested sections become
+        // tab panes (only at chrome level; a pane renders its children flat)
+        if ($withChrome && in_array($section->containerType, ['tabs_card', 'tabs_panel'], true)) {
+            return $this->renderContainerSections($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, $section->containerType === 'tabs_card');
+        }
+
+        // Pane content (no chrome): the section's children without its own card/header
+        if (!$withChrome) {
+            return $this->renderSectionChildren($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
         }
 
         $containerClass = ($section->containerType === 'card') ? 'awf-section-card' : 'awf-section-panel';
@@ -564,18 +582,143 @@ class FormHtmlGeneratorService {
             $showAttr = $isCollapsible ? "id='{$sectionPanelId}' x-show='open' x-transition" : "";
             $html .= "<div class='card-body' {$showAttr}>" .$this->newLine('+');
             {
-                $html .= "<div class='awf-grid-fields'>" .$this->newLine('+');
-                {
-                foreach ($section->elements as $childNode) {
-                    $html .= $this->renderLayoutNode($childNode, $config, $theme, $instanceIndexVar, $section, $currentGroupRootId, $outerIndexVars);
-                }
-                }
-                $html .= "</div>" .$this->newLine('-');
+                $html .= $this->renderSectionChildren($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
             }
             $html .= "</div>" .$this->newLine('-');
         }
         $html .= "</div>" .$this->newLine('-');
 
+        return $html;
+    }
+
+    /**
+     * Renders a section whose containerType is 'tabs_card' or 'tabs_panel':
+     * its RENDERABLE nested sections become tab panes. Alpine drives the
+     * switching (no Bootstrap JS needed). $bordered (tabs_card) wraps the tab
+     * area in a card (border); tabs_panel keeps it plain. A tabs container
+     * holds ONLY sections: any direct block/field element is grouped into a
+     * synthetic trailing pane ('Nova secció'). Tab labels use the nested
+     * section's title (or the translated fallback); hidden tab panes activate
+     * automatically when a field inside them fails validation (@invalid.capture).
+     */
+    private function renderContainerSections(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar, ?string $currentGroupRootId, array $outerIndexVars, bool $bordered): string {
+        $paneTitle = function ($pane) {
+            return $pane->title !== '' ? $pane->title : translate('LBL_SECTION_NO_TITLE', 'stic_AWF_Forms');
+        };
+
+        // Collect renderable nested sections (panes) + direct elements
+        $panes = [];
+        $directElements = [];
+        foreach ($section->elements as $el) {
+            if ($el instanceof FormLayoutSection) {
+                if ($el instanceof FormLayoutGroupSection || self::sectionHasRenderableContent($el, $config, $currentGroupRootId)) {
+                    $panes[] = $el;
+                }
+            } else {
+                $directElements[] = $el;
+            }
+        }
+        // A tabs container holds only sections: group direct elements into a
+        // synthetic trailing pane ('Nova secció'), matching the wizard behavior
+        if (!empty($directElements)) {
+            $syntheticPane = new FormLayoutSection();
+            $syntheticPane->id = 'synthetic_' . uniqid();
+            $syntheticPane->title = translate('LBL_SECTION_NEW', 'stic_AWF_Forms');
+            $syntheticPane->containerType = 'tab_item';
+            $syntheticPane->showTitle = true;
+            $syntheticPane->elements = $directElements;
+            $panes[] = $syntheticPane;
+        }
+        if (empty($panes)) return '';
+        $firstPaneId = $panes[0]->id;
+        $html = '';
+
+        // Build the tab bar + panes (shared by both flavors)
+        $tabsHtml = '';
+        // On validation error: activate the pane that contains the invalid field.
+        // The container spans the FULL grid width (like group containers), since
+        // it may sit inside a fields grid: the panes must not be squeezed into
+        // a single field column.
+        $tabsHtml .= "<div class='awf-tabs-container mt-2' style='grid-column: 1 / -1;' x-data=\"{ activeTab: '{$firstPaneId}' }\" @invalid.capture=\"const paneEl = \$event.target.closest('[data-awf-pane]'); if (paneEl) activeTab = paneEl.dataset.awfPane\">" . $this->newLine('+');
+        {
+            $tabsHtml .= "<div class='nav nav-tabs'>" . $this->newLine('+');
+            foreach ($panes as $pane) {
+                $activeClass = $pane->id === $firstPaneId ? ' active' : '';
+                $tabsHtml .= "<button type='button' class='nav-link{$activeClass}' :class=\"activeTab === '{$pane->id}' ? 'active' : ''\" @click=\"activeTab = '{$pane->id}'\">" . htmlspecialchars($paneTitle($pane), ENT_QUOTES, 'UTF-8') . "</button>" . $this->newLine();
+            }
+            $tabsHtml .= "</div>" . $this->newLine('-');
+            $tabsHtml .= "<div class='tab-content'>" . $this->newLine('+');
+            foreach ($panes as $pane) {
+                $isActive = $pane->id === $firstPaneId;
+                // No 'fade' class: Bootstrap's .fade:not(.show) forces opacity:0 on
+                // panes without .show — visibility here is driven by Alpine x-show
+                $tabsHtml .= "<div class='tab-pane' data-awf-pane='{$pane->id}' x-show=\"activeTab === '{$pane->id}'\"" . ($isActive ? " style='display: block;'" : " style='display: none;'") . ">" . $this->newLine('+');
+                {
+                    $tabsHtml .= $this->renderSectionNode($pane, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, false);
+                }
+                $tabsHtml .= "</div>" . $this->newLine('-');
+            }
+            $tabsHtml .= "</div>" . $this->newLine('-');
+        }
+        $tabsHtml .= "</div>" . $this->newLine('-');
+
+        if ($bordered) {
+            // 'tabs_card': the tab area wrapped in a card (border)
+            $html .= "<div class='card mt-2'>" . $this->newLine('+');
+            {
+                $html .= "<div class='card-header p-2'>" . $this->newLine('+');
+                {
+                    $html .= $tabsHtml;
+                }
+                $html .= "</div>" . $this->newLine('-');
+            }
+            $html .= "</div>" . $this->newLine('-');
+        } else {
+            $html .= $tabsHtml;
+        }
+        return $html;
+    }
+
+    /**
+     * Renders a section's children with layout coherence between nested
+     * sections: DIRECT section children are laid out in a nested
+     * `.awf-grid-sections` grid (the SAME column distribution as the outer
+     * sections), while block/field elements use the `.awf-grid-fields` grid.
+     * Children are emitted in their original order, switching containers when
+     * the element kind changes.
+     */
+    private function renderSectionChildren(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar, ?string $currentGroupRootId, array $outerIndexVars): string {
+        $html = '';
+        $openContainer = '';
+        $buffer = '';
+
+        $flush = function () use (&$html, &$buffer, &$openContainer) {
+            if ($openContainer === '') return;
+            $html .= "<div class='{$openContainer}'>" . $this->newLine('+');
+            {
+                $html .= $buffer;
+            }
+            $html .= "</div>" . $this->newLine('-');
+            $buffer = '';
+            $openContainer = '';
+        };
+
+        foreach ($section->elements as $childNode) {
+            if ($childNode instanceof FormLayoutSection) {
+                if ($openContainer !== 'awf-grid-sections') {
+                    $flush();
+                    $openContainer = 'awf-grid-sections';
+                }
+                $buffer .= $this->renderLayoutNode($childNode, $config, $theme, $instanceIndexVar, $section, $currentGroupRootId, $outerIndexVars);
+            } else {
+                if ($openContainer !== 'awf-grid-fields') {
+                    $flush();
+                    $openContainer = 'awf-grid-fields';
+                }
+                $buffer .= $this->renderLayoutNode($childNode, $config, $theme, $instanceIndexVar, $section, $currentGroupRootId, $outerIndexVars);
+            }
+        }
+        $flush();
         return $html;
     }
 
@@ -626,7 +769,7 @@ class FormHtmlGeneratorService {
                 // The head block element inside its own group loop: the head's
                 // OWN fields are addressed by its own loop index (plus the
                 // enclosing ones) — the head is one instance per loop iteration
-                // (ADR-8: a repeatable subgroup head repeats per [i][j]).
+                // (a repeatable subgroup head repeats per [i][j]).
                 return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar, $outerIndexVars);
             }
             if ($currentGroupRootId === null) {
@@ -869,7 +1012,12 @@ class FormHtmlGeneratorService {
         $isOptional = $rootBlock->isOptional();
         // Per-level loop variables (idx_l1, idx_l2) keep the Alpine scopes of
         // nested groups from shadowing each other
-        $instanceVar = ($instanceIndexVar === null || $instanceIndexVar === 'index') ? 'idx_l1' : ($instanceIndexVar === 'idx_l1' ? 'idx_l2' : 'idx_l3');
+        // Generic per-level loop variables (idx_l1, idx_l2, ... idx_lN) keep the
+        // Alpine scopes of nested groups from shadowing each other, for ANY
+        // nesting depth (N optional levels; at most 2 repeatable levels). The
+        // level counts the enclosing loops: those in $outerIndexVars plus the
+        // loop the group itself renders inside ($instanceIndexVar, if any).
+        $instanceVar = 'idx_l' . (count($outerIndexVars) + ($instanceIndexVar !== null ? 1 : 0) + 1);
         // Full index stack of this group's subtree: enclosing loops first, own loop last.
         // Depth-2 fields build POST names Block[outer][inner][field] from it.
         $indexStack = array_merge($outerIndexVars, [$instanceVar]);
@@ -891,11 +1039,27 @@ class FormHtmlGeneratorService {
             // No group header is rendered: the group name is shown by the section
             // title (visible by default), avoiding duplication with the primary color.
 
-            // 1. Optional activation switch: below the section title/subtitle, styled as a normal field
+            // 1. Optional activation switch: below the section title/subtitle, styled as a normal field.
+            // The switch posts a REAL activation signal `_toggle_{BlockName}`:
+            // scalar for a top-level optional group, indexed by the enclosing loop
+            // variables for optional subgroups rendered inside a repeatable loop.
             if ($isOptional) {
+                $toggleSignalName = '_toggle_' . $rootBlock->name;
+                // The switch renders inside the ENCLOSING repeatable loops (for a
+                // depth-2 subgroup: inside the parent group's loop), so the signal
+                // is indexed by the enclosing loop variables ($contentOuterVars).
+                if (!empty($contentOuterVars)) {
+                    $indexedSignalName = $toggleSignalName;
+                    foreach ($contentOuterVars as $outerVar) {
+                        $indexedSignalName .= "[' + {$outerVar} + ']";
+                    }
+                    $switchNameAttr = ":name=\"'{$indexedSignalName}'\"";
+                } else {
+                    $switchNameAttr = "name='{$toggleSignalName}'";
+                }
                 $html .= "<div class='form-check form-switch mb-3'>" . $this->newLine('+');
                 {
-                    $html .= "<input class='form-check-input' type='checkbox' role='switch' id='switch_{$rootBlock->id}' x-model='active' " .
+                    $html .= "<input class='form-check-input' type='checkbox' role='switch' id='switch_{$rootBlock->id}' {$switchNameAttr} value='1' x-model='active' " .
                             "@change=\"if (!active) { instances = []; } else if (instances.length === 0) { instances.push({ id: nextInstanceId++ }); }\">" . $this->newLine();
                     $html .= "<label class='form-check-label mb-0' for='switch_{$rootBlock->id}'>{$toggleLabel}</label>" . $this->newLine();
                 }
@@ -964,7 +1128,8 @@ class FormHtmlGeneratorService {
                                         {
                                             $html .= "<div class='form-check form-switch mb-0'>" . $this->newLine('+');
                                             {
-                                                $html .= "<input class='form-check-input' type='checkbox' role='switch' :id=\"'child_switch_{$childBlock->id}_' + {$instanceVar}\" x-model='includeChild'>" . $this->newLine();
+                                                // Per-instance activation signal `_toggle_{Child}[index]`
+                                                $html .= "<input class='form-check-input' type='checkbox' role='switch' :id=\"'child_switch_{$childBlock->id}_' + {$instanceVar}\" :name=\"'_toggle_{$childBlock->name}[' + {$instanceVar} + ']'\" value='1' x-model='includeChild'>" . $this->newLine();
                                                 $html .= "<label class='form-check-label fw-bold text-secondary small' :for=\"'child_switch_{$childBlock->id}_' + {$instanceVar}\">{$childTitle}</label>" . $this->newLine();
                                             }
                                             $html .= "</div>" . $this->newLine('-');
@@ -1091,7 +1256,7 @@ class FormHtmlGeneratorService {
 
     /**
      * Internal field renderer that supports both scalar and instance-aware rendering.
-     * Depth-2 fields (ADR-8) receive the enclosing loop variables in $outerIndexVars
+     * Depth-2 fields receive the enclosing loop variables in $outerIndexVars
      * and build two-level POST names: Block[outer][inner][field].
      * @param FormDataBlockField $field The field to render
      * @param FormTheme $theme The form theme

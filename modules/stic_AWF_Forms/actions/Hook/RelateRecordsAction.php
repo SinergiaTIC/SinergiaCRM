@@ -154,6 +154,12 @@ class RelateRecordsAction extends HookBeanActionDefinition {
             // bean reference is read loop-depth-aware.
             $targetBeanRef = $targetDataBlock->getInstanceBeanReference();
             if ($targetBeanRef === null || empty($targetBeanRef->beanId)) {
+                // An optional target that was not activated has no bean —
+                // the relationship is skipped (not an error).
+                if (!$targetDataBlock->isActivated()) {
+                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Advanced Web Forms: Relationship target DataBlock '{$targetDataBlock->dataBlock->name}' skipped because it is optional and was not activated.");
+                    return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "DataBlock '{$targetDataBlock->dataBlock->name}' was skipped because it is optional and was not activated.");
+                }
                 return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetDataBlock->dataBlock->name}' has no ID. Check Action Order.");
             }
             $targetBeanId = $targetBeanRef->beanId;

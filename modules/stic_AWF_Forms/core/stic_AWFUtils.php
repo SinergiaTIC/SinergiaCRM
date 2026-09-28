@@ -191,8 +191,9 @@ class stic_AWFUtils {
                     // Use transitive descendants (multi-level branches);
                     // config comes from the context ($formConfig was never defined in this scope).
                     $formConfig = $context->formConfig;
+                    $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '');
                     $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
-                    $instances = DataBlockResolved::resolveInstances($block, $formData, new ExecutionContext('', '', $formData, $formConfig, null, '', null, ''));
+                    $instances = DataBlockResolved::resolveInstances($block, $formData, $summaryContext);
                     $instanceNumber = 1;
                     foreach ($instances as $instance) {
                         $instanceLabel = rtrim($block->text, ' :') . " #" . $instanceNumber;
@@ -213,19 +214,14 @@ class stic_AWFUtils {
                             if (!$hasVisibleFields) continue;
 
                             $groupBlockLoopDepth = $groupBlock->getLoopDepth();
-                            // Depth-2 blocks (ADR-8): one sub-row per inner instance j of the outer instance i.
-                            // A block can mix linked and detached fields, so rows are enumerated from
-                            // the union of both matrices and each field reads its OWN matrix.
-                            if ($groupBlockLoopDepth === 2) {
-                                $linkedRows2D = is_array($formData[$groupBlock->name][$instance->instanceIndex] ?? null) ? $formData[$groupBlock->name][$instance->instanceIndex] : [];
-                                $detachedRows2D = is_array($formData['_detached_' . $groupBlock->name][$instance->instanceIndex] ?? null) ? $formData['_detached_' . $groupBlock->name][$instance->instanceIndex] : [];
-                                $innerIndexes = array_unique(array_merge(
-                                    array_filter(array_keys($linkedRows2D), 'is_int'),
-                                    array_filter(array_keys($detachedRows2D), 'is_int')
-                                ));
-                                sort($innerIndexes);
+                            // Blocks inside nested group loops (depth >= 2, N optional
+                            // levels): one sub-row per inner instance, values read from
+                            // their RESOLVED instances (each field reads its own matrix —
+                            // linked or detached)
+                            if ($groupBlockLoopDepth >= 2) {
+                                $subInstances = DataBlockResolved::resolveInstances($groupBlock, $formData, $summaryContext, [$instance->instanceIndex]);
                                 $innerNumber = 1;
-                                foreach ($innerIndexes as $innerIndex) {
+                                foreach ($subInstances as $subInstance) {
                                     $innerLabel = rtrim($groupBlock->text, ' :') . " #" . $innerNumber;
                                     $html .= "<tr><td colspan=\"2\" style=\"padding: 6px 12px 6px 28px;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.03);border-bottom: 1px solid {$borderColor};\">" . htmlspecialchars($innerLabel) . "</td></tr>";
                                     $hasFields = true;
@@ -236,9 +232,9 @@ class stic_AWFUtils {
                                         // If it has no label, it is not displayed
                                         if (empty($fieldDef->label)) continue;
 
-                                        $rows = ($fieldDef->type_field === DataBlockFieldType::UNLINKED ? $detachedRows2D : $linkedRows2D);
-                                        $innerInstance = is_array($rows) && is_array($rows[$innerIndex] ?? null) ? $rows[$innerIndex] : [];
-                                        $value = $innerInstance[$fieldDef->name] ?? '';
+                                        $value = $subInstance->getFieldValue($fieldDef->name)?->value
+                                              ?? $subInstance->getDetachedFieldValue($fieldDef->name)?->value
+                                              ?? '';
                                         $html .= self::renderSummaryFieldRow($fieldDef, $value, $borderColor, $textColor, $hasFields);
                                     }
                                 }
@@ -530,7 +526,8 @@ class stic_AWFUtils {
                 if ($block->isRepeatable() || $block->isOptional()) {
                     $formConfig = $context->formConfig;
                     $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
-                    $instances = DataBlockResolved::resolveInstances($block, $formData, new ExecutionContext('', '', $formData, $formConfig, null, '', null, ''));
+                    $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '');
+                    $instances = DataBlockResolved::resolveInstances($block, $formData, $summaryContext);
                     $instanceNumber = 1;
                     foreach ($instances as $instance) {
                         $text .= rtrim($block->text, ' :') . " #" . $instanceNumber . "\n";
@@ -548,25 +545,21 @@ class stic_AWFUtils {
                             if (!$hasVisibleFields) continue;
 
                             $groupBlockLoopDepth = $groupBlock->getLoopDepth();
-                            if ($groupBlockLoopDepth === 2) {
-                                // Depth-2: one sub-block row per inner instance j (linked + detached union)
-                                $linkedRows2D = is_array($formData[$groupBlock->name][$instance->instanceIndex] ?? null) ? $formData[$groupBlock->name][$instance->instanceIndex] : [];
-                                $detachedRows2D = is_array($formData['_detached_' . $groupBlock->name][$instance->instanceIndex] ?? null) ? $formData['_detached_' . $groupBlock->name][$instance->instanceIndex] : [];
-                                $innerIndexes = array_unique(array_merge(
-                                    array_filter(array_keys($linkedRows2D), 'is_int'),
-                                    array_filter(array_keys($detachedRows2D), 'is_int')
-                                ));
-                                sort($innerIndexes);
+                            if ($groupBlockLoopDepth >= 2) {
+                                // Nested group loops (depth >= 2, N optional levels): one
+                                // sub-block row per inner instance, values from the RESOLVED
+                                // instances (each field reads its own matrix)
+                                $subInstances = DataBlockResolved::resolveInstances($groupBlock, $formData, $summaryContext, [$instance->instanceIndex]);
                                 $innerNumber = 1;
-                                foreach ($innerIndexes as $innerIndex) {
+                                foreach ($subInstances as $subInstance) {
                                     $text .= "  " . rtrim($groupBlock->text, ' :') . " #" . $innerNumber . "\n";
                                     $innerNumber++;
                                     foreach ($groupBlock->fields as $fieldDef) {
                                         if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                                         if (empty($fieldDef->label)) continue;
-                                        $rows = ($fieldDef->type_field === DataBlockFieldType::UNLINKED ? $detachedRows2D : $linkedRows2D);
-                                        $innerInstance = is_array($rows) && is_array($rows[$innerIndex] ?? null) ? $rows[$innerIndex] : [];
-                                        $value = $innerInstance[$fieldDef->name] ?? '';
+                                        $value = $subInstance->getFieldValue($fieldDef->name)?->value
+                                              ?? $subInstance->getDetachedFieldValue($fieldDef->name)?->value
+                                              ?? '';
                                         $text .= "  " . self::formatSummaryTextValue($fieldDef, $value) . "\n";
                                     }
                                 }
@@ -1094,36 +1087,25 @@ class stic_AWFUtils {
      */
     public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
         foreach ($formConfig->data_blocks as $dataBlock) {
-            // Child blocks are filled together with their root when the root is repeatable/optional.
-            // Children of SIMPLE groups fall through to scalar boolean filling.
+            // Child blocks are filled together with their root when the root
+            // renders a loop (repeatable, optional OR simple with children).
             if (!empty($dataBlock->group_root)) {
                 $rootBlock = $formConfig->data_blocks[$dataBlock->group_root] ?? null;
-                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                if ($rootBlock && $rootBlock->getLoopDepth() >= 1) {
                     continue;
                 }
             }
 
-            // Repeatable and optional groups process boolean fields for all instances.
-            if ($dataBlock->isRepeatable() || $dataBlock->isOptional()) {
+            // Group blocks process boolean fields for ALL their instances
+            // (n-dimensional matrices: one level per group head in the chain).
+            if ($dataBlock->getLoopDepth() >= 1) {
                 // Use transitive descendants (multi-level branches)
                 $blocksInGroup = array_merge([$dataBlock], $formConfig->getGroupDescendants($dataBlock));
                 foreach (['', '_detached_'] as $prefix) {
                     foreach ($blocksInGroup as $blockInGroup) {
                         $blockKey = $prefix . $blockInGroup->name;
                         if (!is_array($formData[$blockKey] ?? null)) continue;
-                        // Depth-2 blocks (ADR-8): the boolean matrix is [outer][inner][field]
-                        $isDepth2 = $blockInGroup->getLoopDepth() === 2;
-                        foreach (array_keys($formData[$blockKey]) as $index) {
-                            if (!is_int($index)) continue;
-                            if ($isDepth2) {
-                                foreach (array_keys($formData[$blockKey][$index]) as $innerIndex) {
-                                    if (!is_int($innerIndex)) continue;
-                                    self::fillMissingBooleansForInstance($blockInGroup, $formData, $blockKey, [$index, $innerIndex]);
-                                }
-                            } else {
-                                self::fillMissingBooleansForInstance($blockInGroup, $formData, $blockKey, [$index]);
-                            }
-                        }
+                        self::fillMissingBooleansRecursive($blockInGroup, $formData, $blockKey, []);
                     }
                 }
                 continue;
@@ -1141,23 +1123,34 @@ class stic_AWFUtils {
     }
 
     /**
-     * Fills missing boolean/checkbox values ('0') for one instance of a block
-     * inside a repeatable group, navigating the POST matrix by $indexes
-     * (depth-1: [i]; depth-2: [i, j]).
+     * Walks the block's n-dimensional instance matrix recursively and fills
+     * missing boolean/checkbox values ('0') at every leaf row ($indexes =
+     * the loop indexes accumulated so far, outer to inner).
      */
-    private static function fillMissingBooleansForInstance(FormDataBlock $blockInGroup, array &$formData, string $blockKey, array $indexes): void {
+    private static function fillMissingBooleansRecursive(FormDataBlock $blockInGroup, array &$formData, string $blockKey, array $indexes): void {
+        $node = &$formData[$blockKey];
+        foreach ($indexes as $idx) {
+            if (!is_array($node)) return;
+            $node = &$node[$idx];
+        }
+        if (!is_array($node)) return;
+
+        $blockDepth = $blockInGroup->getLoopDepth();
+        $isLeafLevel = count($indexes) >= $blockDepth;
+        if (!$isLeafLevel) {
+            // Intermediate level: recurse into each int-keyed sub-row
+            foreach (array_keys($node) as $idx) {
+                if (!is_int($idx)) continue;
+                self::fillMissingBooleansRecursive($blockInGroup, $formData, $blockKey, array_merge($indexes, [$idx]));
+            }
+            return;
+        }
+
         foreach ($blockInGroup->fields as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
             if ($field->type !== 'bool' && $field->type !== 'checkbox' && !in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) continue;
             $isUnlinked = $field->type_field === DataBlockFieldType::UNLINKED;
             if (str_starts_with($blockKey, '_detached_') !== $isUnlinked) continue;
-
-            $node = &$formData[$blockKey];
-            foreach ($indexes as $idx) {
-                if (!is_array($node)) return;
-                $node = &$node[$idx];
-            }
-            if (!is_array($node)) return;
             if (!isset($node[$field->name])) {
                 $node[$field->name] = '0';
             }
@@ -1258,20 +1251,19 @@ class stic_AWFUtils {
 
     /**
      * Evaluates the INSTANCE-BOUND part of the conditions for a specific
-     * instance (B-5). Fields of repeatable/optional blocks are read from the
-     * indexed POST matrix using the active loop indexes:
-     *  - depth-1 field: Block[i][field]
-     *  - depth-2 field: Block[i][j][field]
-     * Scalar conditions are re-evaluated too (cheap and keeps semantics:
-     * the action only runs when ALL its conditions hold for this instance).
+     * instance (B-5). Fields of group blocks are read from the indexed POST
+     * matrix using the active loop-index stack: a field at loop depth d reads
+     * Block[i1]...[id][field] (the first d indexes of the stack). Scalar
+     * conditions are re-evaluated too (cheap and keeps semantics: the action
+     * only runs when ALL its conditions hold for this instance).
      */
-    public static function evaluateConditionsForInstance(?array $conditions, FormConfig $formConfig, array $formData, ?int $instanceIndex, ?int $parentInstanceIndex): bool {
+    public static function evaluateConditionsForInstance(?array $conditions, FormConfig $formConfig, array $formData, array $instanceIndexes = []): bool {
         if (empty($conditions)) {
             return true;
         }
         foreach ($conditions as $cond) {
             if (empty($cond->field_name)) continue;
-            $submittedValue = self::resolveConditionFieldValue($cond, $formConfig, $formData, $instanceIndex, $parentInstanceIndex);
+            $submittedValue = self::resolveConditionFieldValue($cond, $formConfig, $formData, $instanceIndexes);
             if (!self::compareConditionValue($cond, $submittedValue)) {
                 return false;
             }
@@ -1295,26 +1287,21 @@ class stic_AWFUtils {
 
     /**
      * Reads the submitted value of a condition field, resolving instance-aware
-     * POST paths for fields inside repeatable/optional groups.
+     * POST paths for fields inside groups: the first d indexes of the active
+     * stack (d = the block's loop depth) navigate the matrix.
      */
-    private static function resolveConditionFieldValue($cond, FormConfig $formConfig, array $formData, ?int $instanceIndex, ?int $parentInstanceIndex) {
+    private static function resolveConditionFieldValue($cond, FormConfig $formConfig, array $formData, array $instanceIndexes = []) {
         $block = self::resolveConditionBlock($cond->field_name, $formConfig);
         $phpKey = str_replace('.', '_', $cond->field_name);
         if ($block === null || $block->getLoopDepth() === 0) {
             return $formData[$phpKey] ?? null;
         }
 
-        // Instance-aware path: [blockKey, ...loopIndexes, fieldName]
         $depth = $block->getLoopDepth();
-        $indexes = [];
-        if ($depth === 1) {
-            $index = $parentInstanceIndex ?? $instanceIndex;
-            if ($index === null) return $formData[$phpKey] ?? null;
-            $indexes = [$index];
-        } else {
-            if ($parentInstanceIndex === null || $instanceIndex === null) return $formData[$phpKey] ?? null;
-            $indexes = [$parentInstanceIndex, $instanceIndex];
+        if (count($instanceIndexes) < $depth) {
+            return $formData[$phpKey] ?? null; // The execution stack does not address this depth
         }
+        $indexes = array_slice($instanceIndexes, 0, $depth);
 
         $fieldDef = $block->fields[substr($cond->field_name, strpos($cond->field_name, '.') + 1)] ?? null;
         $blockKey = ($fieldDef !== null && $fieldDef->type_field === DataBlockFieldType::UNLINKED ? '_detached_' : '') . $block->name;

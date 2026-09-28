@@ -50,10 +50,12 @@ class ExecutionContext {
     /** @var ?DeferredContextData Context object for deferred processes */
     public ?DeferredContextData $deferredContext = null;
 
-    public ?int $currentInstanceIndex = null; // Current instance index of the repeatable block being executed, or null for scalar flows
-
-    /** @var ?int Outer loop index when executing inside TWO nested repeatable loops (ADR-8 depth-2) */
-    public ?int $parentInstanceIndex = null;
+    /**
+     * Active loop-index stack (outer to inner) of the group heads being
+     * unrolled: [] for scalar flows, [i] for one loop level, [i1, i2] for two
+     * nested levels, ... (repeatable levels ≤ 2, optional levels unlimited).
+     */
+    public array $instanceIndexes = [];
     
     /**
      * Constructor for ExecutionContext.
@@ -152,14 +154,11 @@ class ExecutionContext {
     }
 
     /**
-     * Composite key of the active instance indexes: null (scalar), "i"
-     * (depth-1) or "i:j" (depth-2).
+     * Composite key of the active loop indexes: null (scalar) or the
+     * colon-joined vector ("i", "i:j", "i:j:k"...).
      */
     public function getInstanceIndexKey(): ?string {
-        if ($this->currentInstanceIndex === null) return null;
-        return $this->parentInstanceIndex !== null
-            ? $this->parentInstanceIndex . ':' . $this->currentInstanceIndex
-            : (string)$this->currentInstanceIndex;
+        return $this->instanceIndexes === [] ? null : implode(':', $this->instanceIndexes);
     }
 
     /**
@@ -186,39 +185,37 @@ class ExecutionContext {
     }
 
     /**
-     * Sets the current instance index of the repeatable block being executed.
-     * Must be set before resolving parameters/actions of an instance so that
-     * instance-aware keys can be resolved.
+     * Sets the active loop-index stack (outer to inner) for the instance being
+     * executed. Must be set before any parameter resolution so that
+     * instance-aware keys and bean references are read.
+     */
+    public function setInstanceIndexes(array $indexes): void {
+        $this->instanceIndexes = array_map('intval', array_values($indexes));
+    }
+
+    /**
+     * Gets the active loop-index stack (outer to inner).
+     * @return array
+     */
+    public function getInstanceIndexes(): array {
+        return $this->instanceIndexes;
+    }
+
+    /**
+     * Backward-compatible single-level setter: replaces the stack with one
+     * index (or empties it for null).
      * @param ?int $index The instance index, or null for scalar flows
      */
     public function setCurrentInstanceIndex(?int $index): void {
-        $this->currentInstanceIndex = $index;
+        $this->instanceIndexes = $index === null ? [] : [$index];
     }
 
     /**
-     * Gets the current instance index of the repeatable block being executed.
-     * @return ?int The instance index, or null for scalar flows
+     * Innermost (current) loop index of the active stack, or null for scalar flows.
+     * @return ?int
      */
     public function getCurrentInstanceIndex(): ?int {
-        return $this->currentInstanceIndex;
-    }
-
-    /**
-     * Sets the outer loop index when executing inside two nested repeatable
-     * loops (depth-2). Must be set together with the current instance index
-     * before resolving parameters/actions of a depth-2 instance.
-     * @param ?int $index The outer instance index, or null
-     */
-    public function setParentInstanceIndex(?int $index): void {
-        $this->parentInstanceIndex = $index;
-    }
-
-    /**
-     * Gets the outer loop index of a depth-2 execution.
-     * @return ?int The outer instance index, or null
-     */
-    public function getParentInstanceIndex(): ?int {
-        return $this->parentInstanceIndex;
+        return $this->instanceIndexes === [] ? null : (int)end($this->instanceIndexes);
     }
 }
 

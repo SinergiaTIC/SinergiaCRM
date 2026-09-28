@@ -136,10 +136,11 @@ class ServerActionFlowExecutor {
 
                 // Instance descriptors to execute: null = no motor block (single
                 // scalar execution, legacy behavior); empty = repeatable/optional
-                // group with zero instances (skip the action once).
+                // group with zero instances (skip the action once). Each
+                // descriptor is the FULL loop-index vector of one instance.
                 $instanceDescriptors = null;
                 if ($motorBlock !== null && !$isTerminal && !$isDeferred) {
-                    $instanceDescriptors = $this->computeInstanceDescriptors($motorBlock);
+                    $instanceDescriptors = DataBlockResolved::resolveInstances($motorBlock, $this->context->formData, $this->context);
                     if (empty($instanceDescriptors)) {
                         // Repeatable group with zero instances: skip the action.
                         $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Repeatable group '{$motorBlock->name}' has no instances.");
@@ -168,20 +169,21 @@ class ServerActionFlowExecutor {
                 }
 
                 if ($instanceDescriptors === null) {
-                    $instanceDescriptors = [['parent' => null, 'current' => null]];
+                    $instanceDescriptors = [[]];
                 }
 
                 foreach ($instanceDescriptors as $descriptor) {
                     // The context instance indexes MUST be set before any
-                    // parameter resolution so that per-instance form fields and bean references are read.
-                    $this->context->setCurrentInstanceIndex($descriptor['current']);
-                    $this->context->setParentInstanceIndex($descriptor['parent']);
+                    // parameter resolution so that per-instance form fields and
+                    // bean references are read. $descriptor is the FULL
+                    // loop-index vector of this instance ([i1, i2, ...]).
+                    $this->context->setInstanceIndexes($descriptor);
 
                     // B-5: per-instance condition evaluation (conditions referencing
-                    // repeatable-group fields are resolved against the instance matrix)
-                    if (!stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, $descriptor['current'], $descriptor['parent'])) {
-                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping instance of action '{$actionConfig->text}' (instance {$descriptor['parent']}:{$descriptor['current']}) because condition failed.");
-                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met for instance " . ($descriptor['parent'] !== null ? "{$descriptor['parent']}:{$descriptor['current']}" : (string)$descriptor['current']) . ".");
+                    // group fields are resolved against the instance matrix)
+                    if (!stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, $this->context->getInstanceIndexes())) {
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping instance of action '{$actionConfig->text}' (instance " . implode(':', $descriptor) . ") because condition failed.");
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met for instance " . implode(':', $descriptor) . ".");
                         $this->context->addActionResult($skippedResult);
                         $lastResult = $skippedResult;
                         continue;
@@ -231,8 +233,7 @@ class ServerActionFlowExecutor {
                 }
 
                 // Reset the instance indexes after the action execution
-                $this->context->setCurrentInstanceIndex(null);
-                $this->context->setParentInstanceIndex(null);
+                $this->context->setInstanceIndexes([]);
             }
         } catch (\Throwable $t) {
             // Catch any Exception or PHP Fatal Error and convert it into a context error
@@ -254,47 +255,6 @@ class ServerActionFlowExecutor {
         }
         
         return $lastResult;
-    }
-
-    /**
-     * Computes the instance descriptors the action must run for (B-4/B-7):
-     *  - depth-1 motor block: one descriptor per root-group instance (i).
-     *  - depth-2 motor block (ADR-8): one descriptor per [outer, inner] pair
-     *    — for every root-group instance i, every submitted inner instance j
-     *    of the motor block (formData[Block][i] int keys).
-     * Returns an empty array when the repeatable group has zero instances
-     * (the action is skipped), and the caller runs a single scalar execution
-     * when there is no motor block at all.
-     *
-     * @param FormDataBlock $motorBlock The deepest repeatable-group block among the action's parameters
-     * @return array List of ['parent' => ?int, 'current' => ?int]
-     */
-    private function computeInstanceDescriptors(FormDataBlock $motorBlock): array {
-        $descriptors = [];
-        $rootBlock = $this->context->formConfig->getGroupRootBlock($motorBlock);
-        if ($rootBlock === null) return [];
-
-        $rootInstances = DataBlockResolved::resolveInstances($rootBlock, $this->context->formData, $this->context);
-        if (empty($rootInstances)) return [];
-
-        if ($motorBlock->getLoopDepth() === 1) {
-            // One execution per instance of the repeatable group (the root's loop)
-            foreach ($rootInstances as $instance) {
-                $descriptors[] = ['parent' => null, 'current' => $instance->instanceIndex];
-            }
-            return $descriptors;
-        }
-
-        // Depth-2 motor: root instances (i) × inner instances (j)
-        foreach ($rootInstances as $rootInstance) {
-            $outerIndex = $rootInstance->instanceIndex;
-            if ($outerIndex === null) continue;
-            $innerInstances = DataBlockResolved::resolveInstancesForParent($motorBlock, $this->context->formData, $this->context, $outerIndex);
-            foreach ($innerInstances as $innerInstance) {
-                $descriptors[] = ['parent' => $outerIndex, 'current' => $innerInstance->instanceIndex];
-            }
-        }
-        return $descriptors;
     }
 
     /**
