@@ -25,6 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'SticInclude/Portal/AuthUtils.php';
 require_once 'SticInclude/Portal/ConfigUtils.php';
 require_once 'include/SugarPHPMailer.php';
+require_once 'include/OutboundEmail/OutboundEmail.php';
 
 global $db, $sugar_config;
 
@@ -121,10 +122,18 @@ foreach ($idList as $id) {
     $bodyHtml = SticPortalAuthUtils::parsePortalTemplate($bodyHtml, $bean, $portalVars);
     $bodyText = strip_tags(str_replace(array('<br>', '</p>'), array("\n", "\n\n"), $bodyHtml));
 
+    $emailObj = new Email();
+    $defaults = $emailObj->getSystemDefaultEmail();
+    $outboundEmail = new OutboundEmail();
+    $outboundEmail = $outboundEmail->getSystemMailerSettings();
     $mailer = new SugarPHPMailer();
     $mailer->setMailerForSystem();
-    $mailer->From     = $sugar_config['notify_fromaddress'] ?? 'no-reply@crm.local';
-    $mailer->FromName = $portalTitle;
+
+    // Match the sender identity to the configured system SMTP account. This
+    // avoids SendAsDenied when the CRM notification address differs from the
+    // authenticated outbound mailbox.
+    $mailer->From = !empty($outboundEmail->smtp_from_addr) ? $outboundEmail->smtp_from_addr : ($defaults['email'] ?? '');
+    $mailer->FromName = !empty($outboundEmail->smtp_from_name) ? $outboundEmail->smtp_from_name : ($defaults['name'] ?? '');
     $mailer->Subject  = $subject;
     $mailer->Body     = $bodyHtml;
     $mailer->AltBody  = $bodyText;
