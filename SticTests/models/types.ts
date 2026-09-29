@@ -1,0 +1,52 @@
+export type ModuleKey =
+  | "Accounts"
+  | "stic_Accounts_Relationships"
+  | "stic_Assessments"
+  | "stic_Attendances"
+  | "stic_Bookings"
+  | "stic_Bookings_Calendar"
+  | "Calendar"
+  | "Calls"
+  | "Campaigns"
+  | "Contacts"
+  | "stic_Contacts_Relationships"
+  | "Documents"
+  | "Emails"
+  | "stic_Events"
+  | "stic_FollowUps"
+  | "stic_Goals"
+  | "AOS_Invoices"
+  | "stic_Job_Applications"
+  | "stic_Job_Offers"
+  | "KReports"
+  | "Leads"
+  | "FP_Event_Locations"
+  | "DHA_PlantillasDocumentos"
+  | "Meetings"
+  | "Notes"
+  | "Opportunities"
+  | "AOS_PDF_Templates"
+  | "stic_Payment_Commitments"
+  | "stic_Payments"
+  | "stic_Personal_Environment"
+  | "AOS_Products"
+  | "AOS_Product_Categories"
+  | "Project"
+  | "stic_Registrations"
+  | "stic_Remittances"
+  | "stic_Resources"
+  | "stic_Sepe_Actions"
+  | "stic_Sepe_Incidents"
+  | "stic_Sepe_Files"
+  | "stic_Sessions"
+  | "Surveys"
+  | "ProspectLists"
+  | "Tasks"
+  | "AOW_WorkFlow";
+
+export type ModuleType = "listView" | "calendar" | "empty";
+
+export interface ModuleEntry {
+  key: ModuleKey;
+  type: ModuleType;
+}
