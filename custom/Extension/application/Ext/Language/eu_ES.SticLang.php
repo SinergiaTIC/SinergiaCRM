@@ -4013,6 +4013,7 @@ $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card']
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel_tabs'] = 'Panel con pestañas';
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card_tabs'] = 'Tarjeta con pestañas';
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tab_item'] = 'Pestaña';
+
 // Advanced Web Forms: configuration->layout->theme->shadow_intensity
 $app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['none'] = 'Sin sombreado (plano)';
 $app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['sm'] = 'Sutil';
