@@ -1644,6 +1644,23 @@ class stic_AwfLayout {
     const fragmentKeys = new Set();        // blockId::fieldName — each field renders once
     const fragmentsByBlock = new Map();    // blockId -> [{ section, el }]
 
+    // ---- 0. Cycle repair: drop any section element that references one of its
+    //         own ancestors (self/nested reference). A corrupted structure with
+    //         a section cycle would otherwise overflow the stack in every
+    //         recursive walk below (findBlockHostSection, cleanElements, ...)
+    //         and render infinitely many sections in the wizard.
+    const repairCycles = (section, ancestorIds) => {
+      section.elements = section.elements.filter(el => {
+        if (el.type !== 'section') return true;
+        if (ancestorIds.has(el.id)) return false; // Cycle edge: remove it
+        return true;
+      });
+      const childIds = new Set(ancestorIds);
+      childIds.add(section.id);
+      section.elements.forEach(el => { if (el.type === 'section') repairCycles(el, childIds); });
+    };
+    this.structure.forEach(s => repairCycles(s, new Set()));
+
     const hasRenderableFields = (blk) => blk.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
     const isRenderable = (block) => hasRenderableFields(block) || block.getDescendants(dataBlocks).some(hasRenderableFields);
     const isGroupHead = (block) => block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
@@ -1736,28 +1753,70 @@ class stic_AwfLayout {
       }
       return null;
     };
-    const sectionContainsSection = (outer, inner) => {
-      if (outer === inner) return true;
-      return outer.elements.some(el => el.type === 'section' && sectionContainsSection(el, inner));
+    // Whether `inner` is `outer` itself or lives anywhere inside it. Sections
+    // are tracked by id: under Alpine reactive proxies reference identity is
+    // unreliable, and a corrupted structure with a cycle would recurse forever.
+    const sectionContainsSection = (outer, inner, seen = new Set()) => {
+      if (outer.id === inner.id) return true;
+      if (seen.has(outer.id)) return false;
+      seen.add(outer.id);
+      return outer.elements.some(el => el.type === 'section' && sectionContainsSection(el, inner, seen));
     };
 
     // The nested section of a group section that hosts a block: the one already
-    // containing it, or a new one titled with the block text (one section per block)
-    const findBlockHostSection = (groupSection, block) => {
-      for (const el of groupSection.elements) {
-        if (el.type !== 'section') continue;
+    // containing it, or a new one titled with the block text. With the 2-level
+    // template model (spec): ALL the hosts live inside the group's TEMPLATE
+    // child (tab_item) — the group section itself only holds the template.
+    // Sections are tracked by id (not by reference): under Alpine reactive
+    // proxies reference identity is unreliable and a corrupted structure with
+    // a section cycle would otherwise cause infinite recursion (stack overflow).
+    const findBlockHostSection = (hostRoot, block, seen = new Set()) => {
+      if (seen.has(hostRoot.id)) return null;
+      seen.add(hostRoot.id);
+      for (const el of hostRoot.elements) {
+        if (el.type !== 'section' || seen.has(el.id)) continue;
         if (el.elements.some(e => e.ref_id === block.id)) return el;
-        const nestedHost = findBlockHostSection(el, block);
+        const nestedHost = findBlockHostSection(el, block, seen);
         if (nestedHost) return nestedHost;
       }
       return null;
     };
+    // The group's TEMPLATE child: identified by the persistent groupTemplate
+    // marker (legacy configs are recognized by their tab_item container type
+    // and upgraded in place). The container type follows the group's flavor
+    // (tabs parent -> tab_item pane; panel/card parent -> plain panel), so the
+    // marker — not the container type — is the structural identity.
+    const findGroupTemplate = (groupSection) => {
+      let template = groupSection.elements.find(el => el.type === 'section' && el.groupTemplate === true);
+      if (!template) {
+        template = groupSection.elements.find(el => el.type === 'section' && el.containerType === 'tab_item');
+        if (template) template.groupTemplate = true;
+      }
+      return template || null;
+    };
+    // Default template title: the group's name + " (element)" (translated),
+    // so the template is clearly the element blueprint of the group
+    const groupTemplateTitle = (rootBlock) => {
+      const groupTitle = rootBlock ? (rootBlock.group_title || rootBlock.text) : '';
+      return (groupTitle ? groupTitle + ' ' : '') + '(' + utils.translate('LBL_SECTION_TEMPLATE_SUFFIX') + ')';
+    };
+    // Default group section title: the group's name + " (group)" (translated),
+    // clearly distinguishing the section that REPRESENTS the group from its
+    // element template child ("... (element)")
+    const groupSectionTitle = (block) => {
+      const groupTitle = block ? (block.group_title || block.text) : '';
+      return (groupTitle ? groupTitle + ' ' : '') + '(' + utils.translate('LBL_SECTION_GROUP_SUFFIX') + ')';
+    };
     const blockHostSection = (groupSection, block, seen = new Set()) => {
       if (seen.has(block.id)) return null;
       seen.add(block.id);
-      const host = findBlockHostSection(groupSection, block);
+      // 2-level template model: the group's content lives inside its TEMPLATE
+      // child. The block's host is searched/created inside it.
+      const template = findGroupTemplate(groupSection);
+      if (!template) return groupSection; // Defensive (the template pass creates it)
+      const host = findBlockHostSection(template, block);
       if (host) return host;
-      let container = groupSection;
+      let container = template;
       if (block.group_root && block.group_root !== groupSection.groupRootBlockId) {
         const parent = dataBlocks.find(b => b.id === block.group_root);
         if (parent) {
@@ -1769,29 +1828,40 @@ class stic_AwfLayout {
       container.elements.push(nested);
       return nested;
     };
-
-    const clearNestedGroupDesignation = (section) => {
-      section.elements.forEach(el => {
-        if (el.type !== 'section') return;
-        if (el.kind === 'group') {
-          el.kind = '';
-          el.groupRootBlockId = '';
-        }
-        clearNestedGroupDesignation(el);
-      });
+    // Returns the group's TEMPLATE child, creating it (as the first child,
+    // holding the whole instance content) when missing.
+    const ensureGroupTemplate = (groupSection, rootBlock) => {
+      let template = findGroupTemplate(groupSection);
+      if (!template) {
+        template = new stic_AwfLayoutSection({
+          title: rootBlock ? groupTemplateTitle(rootBlock) : utils.translate('LBL_SECTION_NEW'),
+          containerType: 'tab_item',
+        });
+        template.groupTemplate = true;
+        template.showTitle = true; // The element template shows its title by default
+        groupSection.elements.unshift(template);
+      }
+      return template;
     };
-    this.structure.forEach(clearNestedGroupDesignation);
 
-    // ---- 2b. Group section designation: every group (a TOP-LEVEL root
-    //          block that is a group head) has exactly ONE top-level group section
-    //          that represents it (kind: 'group' + groupRootBlockId). The
-    //          designation does NOT depend on the section content (blocks may be
-    //          whole elements or unbundled field fragments anywhere).
+    // ---- 2b. Group section designation: every group (a root block that is a
+    //          group head) has exactly ONE designated group section representing
+    //          it (kind: 'group' + groupRootBlockId), at the TOP LEVEL or NESTED
+    //          inside another section (a group section moved into one of them in
+    //          the wizard). The designation does NOT depend on the section content
+    //          (blocks may be whole elements or unbundled field fragments anywhere).
     // Sections whose group no longer exists go back to plain (content preserved).
     // Group-only micro-copy labels (toggle/add/remove) make no sense on a plain
     // section: cleared so they cannot resurface if the group is re-created.
-    this.structure.forEach(s => {
-      if (s.kind !== 'group') return;
+    // Walks EVERY designated group section (top-level and nested) in tree order
+    const eachDesignated = (fn) => {
+      const walk = (section) => {
+        if (section.isGroupSection) fn(section);
+        section.elements.forEach(el => { if (el.type === 'section') walk(el); });
+      };
+      this.structure.forEach(walk);
+    };
+    eachDesignated(s => {
       const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
       if (!gBlock || !isGroupHead(gBlock) || !gBlock.is_root) {
         s.kind = '';
@@ -1802,9 +1872,9 @@ class stic_AwfLayout {
       }
     });
     // De-duplicate: only the FIRST designated section per group root stays
+    // (tree order, so a nested designation survives only while it is the first)
     const seenGroupRoots = new Set();
-    this.structure.forEach(s => {
-      if (s.kind !== 'group') return;
+    eachDesignated(s => {
       if (seenGroupRoots.has(s.groupRootBlockId)) { s.kind = ''; s.groupRootBlockId = ''; return; }
       seenGroupRoots.add(s.groupRootBlockId);
     });
@@ -1823,7 +1893,7 @@ class stic_AwfLayout {
     };
     dataBlocks.forEach(block => {
       if (!block.is_root || !isGroupHead(block)) return;
-      if (this.structure.some(s => s.kind === 'group' && s.groupRootBlockId === block.id)) return;
+      if (seenGroupRoots.has(block.id)) return; // Already designated (top-level or nested)
       const candidate = this.structure.find(s => {
         if (s.kind === 'group') return false;
         const first = firstReferencedBlockOf(s);
@@ -1834,20 +1904,26 @@ class stic_AwfLayout {
         Object.setPrototypeOf(candidate, stic_AwfLayoutGroupSection.prototype);
         candidate.kind = 'group';
         candidate.groupRootBlockId = block.id;
-        if (!candidate.is_custom_title) candidate.title = block.group_title || block.text;
-        candidate.showTitle = false;
+        if (!candidate.is_custom_title) candidate.title = groupSectionTitle(block);
+        candidate.showTitle = true; // Group sections show their title by default
       } else {
         // Create the group section (its content will be filled by the passes below)
-        const home = new stic_AwfLayoutGroupSection({ title: block.group_title || block.text, groupRootBlockId: block.id });
-        home.showTitle = false;
+        const home = new stic_AwfLayoutGroupSection({ title: groupSectionTitle(block), groupRootBlockId: block.id });
+        home.showTitle = true; // Group sections show their title by default
         this.structure.push(home);
       }
     });
+    // Finds the (single) designated group section of a group root, wherever it
+    // lives (top level or nested inside another section)
+    const findDesignated = (rootId) => {
+      let found = null;
+      eachDesignated(s => { if (!found && s.groupRootBlockId === rootId) found = s; });
+      return found;
+    };
     // Legacy label migration (Task 7.17): group labels used to live on the
     // block; move them to the designated section (the renderer's source of
     // truth) and drop the legacy block properties from the saved JSON.
-    this.structure.forEach(s => {
-      if (s.kind !== 'group') return;
+    eachDesignated(s => {
       const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
       if (!gBlock) return;
       ['toggle_label', 'add_button_label', 'remove_button_label'].forEach(key => {
@@ -1866,7 +1942,7 @@ class stic_AwfLayout {
       if (!rootId) return;
       const root = dataBlocks.find(b => b.id === rootId);
       if (!root || !isGroupHead(root)) return;
-      const home = this.structure.find(s => s.kind === 'group' && s.groupRootBlockId === root.id);
+      const home = findDesignated(root.id);
       if (!home) return;
       const host = blockHostSection(home, block);
       fragments.forEach(({ section, el }) => {
@@ -1902,10 +1978,10 @@ class stic_AwfLayout {
         // Group sections are designated: kind 'group' + the reference to
         // their root block; they hold the group name but do NOT display the title
         home = new stic_AwfLayoutGroupSection({
-          title: rootBlock.group_title || rootBlock.text,
+          title: groupSectionTitle(rootBlock),
           groupRootBlockId: rootBlock.id,
         });
-        home.showTitle = false;
+        home.showTitle = true; // Group sections show their title by default
       } else {
         home = new stic_AwfLayoutSection({ title: rootBlock.text });
       }
@@ -1956,29 +2032,60 @@ class stic_AwfLayout {
       processTopSection(section, ownerRootId);
     });
 
-    // ---- 4. Group-section normalization ----
-    //   a) block elements directly inside the group section move to their own nested
-    //      section (one section per data block, titled with the block text);
-    //   b) UNTITLED nested sections are auto-generated containers of previous
-    //      versions: their blocks are distributed to their own sections and the
-    //      (now empty) untitled section is removed. Titled nested sections are
-    //      user structure: always preserved.
+    // ---- 4. Group-section normalization (2-level template model: the whole
+    //         group's content lives inside its tab_item TEMPLATE child) ----
     this.structure.forEach(section => {
       if (!section.isGroupSection) return;
+      const rootBlock = dataBlocks.find(b => b.id === section.groupRootBlockId);
 
-      // a) direct block elements -> their own nested section
-      const directBlocks = section.elements.filter(el => el.type === 'datablock');
+      // e) FIRST: the 2-level template structure — wrap ALL the group's content
+      //    (per-block hosts, direct elements) inside ONE template child = the
+      //    INSTANCE TEMPLATE. Its title is the source of the instance labels
+      //    ("Template #N" / "Template").
+      //    Elements are compared by id (never by reference): under Alpine
+      //    reactive proxies reference identity is unreliable and comparing by
+      //    reference could push the template inside itself, corrupting the
+      //    structure with a cycle (infinite recursion / infinite sections).
+      const template = ensureGroupTemplate(section, rootBlock);
+      // The template's container type FOLLOWS the group's flavor: a tabs
+      // parent renders its instances as dynamic tabs (template = tab_item
+      // pane); a panel/card parent renders stacked instance cards (template =
+      // plain panel, user-changeable to card in the wizard)
+      const groupIsTabs = section.containerType === 'panel_tabs' || section.containerType === 'card_tabs';
+      if (groupIsTabs) {
+        template.containerType = 'tab_item';
+      } else if (template.containerType === 'tab_item') {
+        template.containerType = 'panel';
+      }
+      // The template's default title mirrors the group's name + " (element)":
+      // refreshed on group renames unless the user customized it. The template
+      // shows its title by default (per instance in the render, and as the
+      // element's name in the wizard tree).
+      if (!template.is_custom_title) template.title = groupTemplateTitle(rootBlock);
+      template.showTitle = true;
+      const outsideElements = section.elements.filter(el => el.id !== template.id);
+      if (outsideElements.length > 0) {
+        section.elements = [template];
+        template.elements = [...template.elements.filter(t => t.id !== template.id), ...outsideElements];
+      }
+
+      // a) direct block elements (inside the template) -> their own nested
+      //    host section (titled with the block text)
+      const directBlocks = template.elements.filter(el => el.type === 'datablock');
       if (directBlocks.length > 0) {
-        section.elements = section.elements.filter(el => el.type !== 'datablock');
+        template.elements = template.elements.filter(el => el.type !== 'datablock');
         directBlocks.forEach(el => {
           const block = dataBlocks.find(b => b.id === el.ref_id);
           if (block) blockHostSection(section, block).elements.push(el);
-          else section.elements.push(el);
+          else template.elements.push(el);
         });
       }
 
-      // b) untitled nested sections -> split into one section per block
-      [...section.elements].forEach(el => {
+      // b) UNTITLED nested sections (inside the template) are auto-generated
+      //    containers of previous versions: their blocks are distributed to
+      //    their own sections and the (now empty) untitled section is removed.
+      //    Titled nested sections are user structure: always preserved.
+      [...template.elements].forEach(el => {
         if (el.type !== 'section' || el.title) return;
         const innerBlocks = el.elements.filter(e => e.type === 'datablock');
         el.elements = el.elements.filter(e => e.type !== 'datablock');
@@ -1987,28 +2094,26 @@ class stic_AwfLayout {
           if (block) blockHostSection(section, block).elements.push(blockEl);
           else el.elements.push(blockEl);
         });
-        if (el.elements.length === 0) section.elements.splice(section.elements.indexOf(el), 1);
+        if (el.elements.length === 0) template.elements.splice(template.elements.indexOf(el), 1);
       });
 
-      // c) remove EMPTY auto-generated nested sections: untitled ones, or ones
-      //    titled with the text of any data block (their block moved away, was
-      //    ungrouped or unbundled elsewhere). User-created sections ("Nova
-      //      secció" / renamed) are always preserved.
+      // c) remove EMPTY auto-generated host sections (inside the template):
+      //    untitled ones, or ones titled with the text of any data block.
+      //    User-created sections ("Nova secció" / renamed) are always preserved.
       const blockTexts = new Set(dataBlocks.map(b => b.text));
-      [...section.elements].forEach(el => {
+      [...template.elements].forEach(el => {
         if (el.type !== 'section' || el.elements.length > 0) return;
         if (!el.title || blockTexts.has(el.title)) {
-          section.elements.splice(section.elements.indexOf(el), 1);
+          template.elements.splice(template.elements.indexOf(el), 1);
         }
       });
 
-      // d) the group root's nested section always comes first
-      const rootBlock = dataBlocks.find(b => b.id === section.groupRootBlockId);
+      // d) the group root's host section always comes first (inside the template)
       if (rootBlock) {
-        const rootNested = section.elements.find(el => el.type === 'section'
+        const rootNested = template.elements.find(el => el.type === 'section'
           && el.elements.some(e => e.ref_id === rootBlock.id));
-        if (rootNested && section.elements[0] !== rootNested) {
-          section.elements = [rootNested, ...section.elements.filter(e => e !== rootNested)];
+        if (rootNested && template.elements[0] !== rootNested) {
+          template.elements = [rootNested, ...template.elements.filter(e => e !== rootNested)];
         }
       }
     });
@@ -2084,8 +2189,8 @@ class stic_AwfLayout {
       if (!section.isGroupSection) return;
       const owner = dataBlocks.find(b => b.id === section.groupRootBlockId);
       if (owner && !section.is_custom_title) {
-        section.title = owner.group_title || owner.text;
-        section.showTitle = false;
+        section.title = groupSectionTitle(owner);
+        section.showTitle = true; // Group sections show their title by default
       }
     });
 
@@ -2240,7 +2345,9 @@ class stic_AwfLayoutSection extends stic_AwfLayoutNode {
   // stic_AwfLayoutGroupSection; plain sections and block/field elements as before
   static fromData(e, topLevel = true) {
     if (e.type === 'section' || Array.isArray(e.elements) || (topLevel && e.kind === 'group')) {
-      if (topLevel && e.kind === 'group') return new stic_AwfLayoutGroupSection(e);
+      // Group designations are valid at ANY depth (a group section moved into
+      // another section, e.g. inside a tabs container): never stripped on load
+      if (e.kind === 'group') return new stic_AwfLayoutGroupSection(e);
       const sectionData = topLevel ? e : Object.assign({}, e, { kind: '', groupRootBlockId: '' });
       return new stic_AwfLayoutSection(sectionData);
     }

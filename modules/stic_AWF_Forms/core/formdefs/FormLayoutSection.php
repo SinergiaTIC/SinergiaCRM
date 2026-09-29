@@ -33,6 +33,7 @@ class FormLayoutSection extends FormLayoutNode {
     public string $containerType;            // 'panel', 'card', 'tabs', 'accordion'
     public bool $showTitle;
     public bool $is_custom_title = false;    // Flag to track manual title overrides (sync no longer auto-renames the section)
+    public bool $groupTemplate = false;      // Marks the group section's TEMPLATE child (instance blueprint, 2-level model)
     public bool $isCollapsible;
     public bool $isCollapsed;
     public string $toggle_label = '';        // Label for the "include instance data" toggle switch
@@ -47,9 +48,13 @@ class FormLayoutSection extends FormLayoutNode {
         $rawGroupRootBlockId = $data['groupRootBlockId'] ?? '';
         $groupRootBlockId = is_scalar($rawGroupRootBlockId) ? (string)$rawGroupRootBlockId : '';
         if ($kind === null && $topLevel && is_array($data['elements'] ?? null)) {
-            $groupRootBlockId = self::findLegacyGroupRootBlockId($layout, $data['elements']);
+            // The legacy heuristic never applies to a section that CONTAINS an
+            // explicitly designated group section (e.g. a tabs container holding
+            // a moved-in group section): the container itself is not the group
+            $groupRootBlockId = self::containsDesignatedGroup($data['elements'])
+                ? '' : self::findLegacyGroupRootBlockId($layout, $data['elements']);
         }
-        $isGroupSection = $topLevel && ($kind === 'group' || ($kind === null && $groupRootBlockId !== ''));
+        $isGroupSection = ($kind === 'group') || ($topLevel && $kind === null && $groupRootBlockId !== '');
         $dto = $isGroupSection ? new FormLayoutGroupSection() : new self();
 
         $dto->layout = $layout;
@@ -60,6 +65,7 @@ class FormLayoutSection extends FormLayoutNode {
         $dto->subtitle = $data['subtitle'] ?? '';
         $dto->showTitle = (bool)($data['showTitle'] ?? false);
         $dto->is_custom_title = (bool)($data['is_custom_title'] ?? false);
+        $dto->groupTemplate = (bool)($data['groupTemplate'] ?? false);
         $dto->isCollapsible = (bool)($data['isCollapsible'] ?? false);
         $dto->isCollapsed = (bool)($data['isCollapsed'] ?? false);
         $dto->containerType = $data['containerType'] ?? 'panel';
@@ -83,6 +89,17 @@ class FormLayoutSection extends FormLayoutNode {
         }
 
         return $dto;
+    }
+
+    // Whether any nested element (at any depth) carries an explicit group
+    // designation (kind 'group')
+    private static function containsDesignatedGroup(array $elements): bool {
+        foreach ($elements as $el) {
+            if (!is_array($el)) continue;
+            if (($el['kind'] ?? null) === 'group') return true;
+            if (isset($el['elements']) && is_array($el['elements']) && self::containsDesignatedGroup($el['elements'])) return true;
+        }
+        return false;
     }
 
     private static function findLegacyGroupRootBlockId(FormLayout $layout, array $elements): string {

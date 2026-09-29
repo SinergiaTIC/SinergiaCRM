@@ -413,7 +413,8 @@
 
                                         <!-- Reusable Template: SECTION -->
                                             <template id="awfTplLayoutSection">
-                                                <div :id="'sectionCard_' + section.id" class="card datablock mb-3 shadow-sm transition-all awf-wizard-section-card" x-data="{showSettings: false, isCollapsed: false}">
+                                                <div :id="'sectionCard_' + section.id" class="card datablock mb-3 shadow-sm transition-all awf-wizard-section-card"
+                                                     :style="isGroupTemplateChild(section) ? 'border: none;' : ''" x-data="{showSettings: false, isCollapsed: false}">
                                                 <!-- Integrated Group header (Rendered ONLY if item is a group head/subgroup) -->
                                                 <template x-if="isGroupSection(section) || isNestedGroupSection(section)">
                                                     <!-- Group Header -->
@@ -440,8 +441,11 @@
                                                 <!-- Standard Section header -->
                                                 <div class="card-header pb-1 pe-0">
                                                     <div class="d-flex align-items-center">
-                                                        <!-- Section Title -->
-                                                        <h3 class="flex-grow-1 mb-0" :id="`sectionTitleEdit-${section.id}`" data-model="section.title" data-change="section.is_custom_title = true" x-init="sticControls.editableText($el);"></h3>
+                                                        <!-- Section Title (+ subtitle shown when set) -->
+                                                        <div class="flex-grow-1 d-flex flex-column justify-content-center">
+                                                            <h3 class="mb-0" :id="`sectionTitleEdit-${section.id}`" data-model="section.title" data-change="section.is_custom_title = true" x-init="sticControls.editableText($el);"></h3>
+                                                            <span class="text-muted" style="font-size: 0.85em;" x-show="section.subtitle" x-text="section.subtitle"></span>
+                                                        </div>
 
                                                         <!-- Buttons -->
                                                         <div class="d-flex align-items-center gap-2">
@@ -451,8 +455,9 @@
                                                                 <span class="awf-icon-gear" :class="showSettings ? 'awf-icon-gear-fill' : ''"></span>
                                                             </button>
 
-                                                            <!-- Section move: the section can be moved into another section or to the top level -->
-                                                            <select class="form-select small text-muted w-auto" @change="moveSectionToSection(section, $event.target.value); $event.target.value='';"
+                                                            <!-- Section move: the section can be moved into another section or to the top level.
+                                                                 HIDDEN for the group's element template: it is fixed inside its group -->
+                                                            <select x-show="!isGroupTemplateChild(section)" class="form-select small text-muted w-auto" @change="moveSectionToSection(section, $event.target.value); $event.target.value='';"
                                                                     style="min-width: 100px;" :disabled="getSectionMoveTargets(section).length === 0">
                                                                 <option value="" disabled selected x-text="utils.translate('LBL_SECTION_MOVE_ELEMENT_NO_OPTION')"></option>
                                                                 <template x-for="sec in getSectionMoveTargets(section)" :key="sec.id">
@@ -460,23 +465,17 @@
                                                                 </template>
                                                             </select>
 
-                                                            <!-- Add/Delete-->
-                                                            <div class="input-group w-auto" role="group" style="min-width: 64px;">
-                                                                <!-- Add nested section (any section, any depth) -->
-                                                                <button type="button" class="btn" :title="utils.translate('LBL_SECTION_ADD')" @click="addNestedSection(section);">
-                                                                    <span class="suitepicon suitepicon-action-plus"></span>
-                                                                </button>
-
-                                                                <!-- Delete -->
-                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_DELETE')"
-                                                                        :disabled="!canDeleteSection(section);" @click="deleteSection(section);">
-                                                                    <span class="suitepicon suitepicon-action-delete"></span>
-                                                                </button>
-                                                            </div>
+                                                            <!-- Add nested section (any section, any depth).
+                                                                 HIDDEN for group sections: their content is the element
+                                                                 template; extra sections belong inside the template -->
+                                                            <button type="button" class="btn" :title="utils.translate('LBL_SECTION_ADD')" @click="addNestedSection(section);" x-show="!isGroupSection(section)">
+                                                                <span class="suitepicon suitepicon-action-plus"></span>
+                                                            </button>
 
                                                             <!-- Move Up/Down (moving out of the parent is available
-                                                                 in the "Move to..." dropdown as the top-level option) -->
-                                                            <div class="input-group w-auto" role="group" style="min-width: 64px;">
+                                                                 in the "Move to..." dropdown as the top-level option).
+                                                                 HIDDEN for the group's element template: it is fixed -->
+                                                            <div class="input-group w-auto" role="group" style="min-width: 64px;" x-show="!isGroupTemplateChild(section)">
                                                                 <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
                                                                         :disabled="!canMoveUpSection(section);" @click="moveUpSection(section);">
                                                                     <span class="suitepicon suitepicon-action-move-up"></span>
@@ -486,6 +485,14 @@
                                                                     <span class="suitepicon suitepicon-action-move-down"></span>
                                                                 </button>
                                                             </div>
+
+                                                            <!-- Delete -->
+                                                            <template x-if="canDeleteSection(section)">
+                                                                <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_DELETE')"
+                                                                        @click="deleteSection(section);">
+                                                                    <span class="suitepicon suitepicon-action-delete"></span>
+                                                                </button>
+                                                            </template>
 
                                                             <!-- Chevron -->
                                                             <button class="btn btn-sm btn-link text-decoration-none" @click="isCollapsed = !isCollapsed">
@@ -511,10 +518,14 @@
                                                                 </div>
                                                                 <!-- Show Title (INVISIBLE for tabs containers AND 'tab_item' panes:
                                                                      tabs have no title (the tab bar replaces it) and a pane's title
-                                                                     is its tab label — the switch makes no sense there) -->
+                                                                     is its tab label — the switch makes no sense there).
+                                                                     The group's element template ALWAYS shows its title when it is
+                                                                     a panel/card (its title is the per-instance header): the switch
+                                                                     is DISABLED (always checked) -->
                                                                 <div class="col-3 form-check form-switch d-flex align-items-center mb-0" x-show="!isTabsContainer(section) && section.containerType !== 'tab_item'">
                                                                     <label :for="`section${section.id}_showTitle`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_SHOW_TITLE')"></label>
                                                                     <input :id="`section${section.id}_showTitle`" class="form-check-input" type="checkbox" role="switch" x-model="section.showTitle"
+                                                                            :disabled="isGroupTemplateChild(section)"
                                                                             @change="if(!section.showTitle) { section.isCollapsible = false; section.isCollapsed = false; }"/>
                                                                 </div>
                                                                 <!-- Collapsible (not for 'tab_item' panes) -->
@@ -590,8 +601,9 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Section Body -->
-                                                <div class="card-body p-2" x-show="!isCollapsed" x-transition>
+                                                <!-- Section Body (group sections: p-0 so the element template
+                                                     child sits flush/attached to the group card) -->
+                                                <div class="card-body" :class="isGroupSection(section) ? 'p-0' : 'p-2'" x-show="!isCollapsed" x-transition>
                                                     <!-- Content: data blocks and (level < 2) nested sections -->
                                                     <template x-for="(element, index) in section.elements" :key="element.id">
                                                         <div>

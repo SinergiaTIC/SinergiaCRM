@@ -2687,13 +2687,31 @@ class WizardStep4 {
         return this.isTabsContainer(parent);
       },
 
-      // Container options for a section: a direct child of tabs can only be
-      // a 'tab_item' pane; otherwise panel/card/tabs_card/tabs_panel.
+      // A group section's template child (2-level model) is identified by the
+      // persistent groupTemplate marker (legacy: its tab_item container type).
+      isGroupTemplateChild(section) {
+        if (section?.groupTemplate !== true && section?.containerType !== 'tab_item') return false;
+        const parent = this.getParentSectionOf(section);
+        return !!parent && parent.isGroupSection === true;
+      },
+
+      // Container options for a section: a direct child of tabs can only be a
+      // 'tab_item' pane; a group's template child offers panel/card when its
+      // parent group is not a tabs container (with a tabs parent the template
+      // IS a tab_item pane: locked); otherwise panel/card/tabs.
       getAvailableContainerTypes(section) {
         if (this.isDirectChildOfTabs(section)) {
           const tabOption = stic_AwfLayoutSection.containerType_in_formList().find(c => c.id === 'tab_item')
             ?? { id: 'tab_item', text: utils.translate('LBL_SECTION_CONTAINER_TAB') };
           return [tabOption];
+        }
+        if (this.isGroupTemplateChild(section)) {
+          const parent = this.getParentSectionOf(section);
+          const parentIsTabs = this.isTabsContainer(parent);
+          const validIds = parentIsTabs ? ['tab_item'] : ['panel', 'card'];
+          const list = stic_AwfLayoutSection.containerType_in_formList();
+          if (parentIsTabs && !list.some(c => c.id === 'tab_item')) list.push({ id: 'tab_item', text: utils.translate('LBL_SECTION_CONTAINER_TAB') });
+          return list.filter(c => validIds.includes(c.id));
         }
         const validCategories = ['panel', 'card', 'card_tabs', 'panel_tabs'];
         return stic_AwfLayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
@@ -2709,10 +2727,11 @@ class WizardStep4 {
         if (!section) return;
         if (this.isTabsContainer({ containerType: newType })) {
           // The tabs chrome PAINTS the parent title (flat h4 or card header):
-          // showTitle forced ON (the switch is hidden for tabs parents)
+          // showTitle forced ON (the switch is hidden for tabs parents).
+          // Collapsible flags are NOT reset: they lie dormant while the tabs
+          // chrome is active and apply again if the parent goes back to
+          // panel/card.
           section.showTitle = true;
-          section.isCollapsible = false;
-          section.isCollapsed = false;
           // Non-section elements cannot live in a tabs container: group them
           // into a new child pane ('Nova secció')
           const nonSectionElements = section.elements.filter(el => el.type !== 'section');
@@ -2730,10 +2749,6 @@ class WizardStep4 {
             if (el.type === 'section' && el.containerType !== 'tab_item') {
               el.containerType = 'tab_item';
               el.showTitle = true;
-            }
-            if (el.type === 'section') {
-              el.isCollapsible = false;
-              el.isCollapsed = false;
             }
           });
         } else {
@@ -2842,6 +2857,13 @@ class WizardStep4 {
       },
 
       canDeleteSection(section) {
+        // 2-level template model (spec §4): the group's TEMPLATE child can
+        // NEVER be deleted in isolation — the group is removed as a whole
+        // (parent section), so the template is protected here (identified by
+        // its groupTemplate marker; legacy configs: the tab_item container)
+        if (section && (section.groupTemplate === true || section.containerType === 'tab_item') && this.isGroupSection(this.getParentSectionOf(section))) {
+          return false;
+        }
         // A section (top-level or nested) can be deleted only when it holds no
         // layout element with content (data blocks or unbundled field fragments)
         // at any depth
@@ -3045,7 +3067,15 @@ class WizardStep4 {
       //    depth; a nested standalone section can also move to the form's top level
       //    (the "outside all sections" option).
       getSectionMoveTargets(section) {
-        if (this.isGroupSection(section)) return [];                    // Group sections are fixed
+        if (this.isGroupSection(section)) {
+          // The whole group section can be moved into any section OUTSIDE it
+          // (e.g. inside a tabs container to present the group as a tab). It
+          // can never target itself or its own descendants. The "outside all
+          // sections" target is offered only when the group is nested.
+          const excluded = new Set([section.id, ...this.getSectionsWithin(section).map(s => s.id)]);
+          const targets = this.getStandaloneSections().filter(s => !excluded.has(s.id));
+          return this.canMoveSectionOut(section) ? [...targets, this.getFormMoveTarget()] : targets;
+        }
         const excluded = new Set([section.id, ...this.getSectionsWithin(section).map(s => s.id)]);
         const parent = this.getParentSectionOf(section);
         const groupRoot = this.getGroupScopeRoot(section);

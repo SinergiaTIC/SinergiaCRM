@@ -257,10 +257,6 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .was-validated .form-control:invalid, #{$wrapperId} .was-validated .form-select:invalid { background-image: none !important; border-color: #dc3545; }
 #{$wrapperId} .awf-group-container { margin-bottom: 1.5rem; }
 #{$wrapperId} .awf-group-title { font-size: 1.25em; margin-bottom: 1rem; font-weight: 600; }
-#{$wrapperId} .awf-instance-card { border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; margin-bottom: 1rem; background-color: rgba(0,0,0,0.02); }
-#{$wrapperId} .awf-instance-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-weight: 600; }
-#{$wrapperId} .awf-child-block-instances { margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--bs-border-color); }
-#{$wrapperId} .awf-child-block-title { font-size: 1em; margin-bottom: 0.75rem; font-weight: 600; }
 #{$wrapperId} .awf-add-instance-btn { margin-top: 0.5rem; }
 #{$wrapperId} .awf-group-container { grid-column: 1 / -1; width: 100%; margin-bottom: 1.5rem; }
 #{$wrapperId} .awf-block-panel { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; margin-bottom: 1rem; }
@@ -491,6 +487,14 @@ class FormHtmlGeneratorService {
             return $this->generateGroupHtml($groupRootBlock, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
         }
 
+        // The group's element TEMPLATE renders chrome-less from inside the
+        // group's loop: its own card IS the per-instance chrome (the loop
+        // builds it with the instance title, the remove button and the
+        // template's collapsible behavior)
+        if (!empty($section->groupTemplate)) {
+            return $this->renderSectionChildren($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
+        }
+
         // Tab PANE sections ('tab_item', a direct child of a 'tabs' container) render
         // chrome-less from anywhere: the tab chrome belongs to the parent container
         if ($section->containerType === 'tab_item') {
@@ -515,7 +519,11 @@ class FormHtmlGeneratorService {
         $isCollapsible = !empty($section->isCollapsible);
         $startOpen = empty($section->isCollapsed) ? 'true' : 'false';
         $xDataAttr = $isCollapsible ? "x-data=\"{ open: {$startOpen} }\" @invalid.capture=\"open = true\"" : "";
-        $styleAttr = $isCollapsible ? "style='height: auto !important;'" : "";
+        // The element template's card renders borderless: it is the structural
+        // container of the instance content (the nested host cards carry
+        // their own frames)
+        $borderlessStyle = !empty($section->groupTemplate) ? 'border: none;' : '';
+        $styleAttr = $isCollapsible ? "style='height: auto !important; {$borderlessStyle}'" : ($borderlessStyle !== '' ? "style='{$borderlessStyle}'" : "");
 
         $html = "<div class='card {$containerClass}' {$xDataAttr} {$styleAttr}>" .$this->newLine('+');
         {
@@ -653,9 +661,12 @@ class FormHtmlGeneratorService {
                 $tabsHtml .= "<div class='tab-pane' data-awf-pane='{$pane->id}' style='display: none;' :style=\"'display: ' + (activeTab === '{$pane->id}' ? 'block' : 'none')\">" . $this->newLine('+');
                 {
                     // Unified visual for EVERY tab body (spec §2.1): the content
-                    // always boxed inside a bordered white card
+                    // always boxed inside a bordered white card. The pane's
+                    // SUBTITLE (when set) shows as the pane's header (gray)
                     $tabsHtml .= "<div class='card awf-section-card border-top-0 rounded-top-0 p-3'>" . $this->newLine('+');
                     {
+                        $paneSubtitle = htmlspecialchars($pane->subtitle ?? '', ENT_QUOTES, 'UTF-8');
+                        if ($paneSubtitle !== '') $tabsHtml .= "<div class='awf-section-subtitle text-muted mb-2' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$paneSubtitle}</div>" . $this->newLine();
                         $tabsHtml .= $this->renderSectionNode($pane, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, false);
                     }
                     $tabsHtml .= "</div>" . $this->newLine('-');
@@ -827,6 +838,12 @@ class FormHtmlGeneratorService {
                 // OWN fields are addressed by its own loop index (plus the
                 // enclosing ones) — the head is one instance per loop iteration
                 // (a repeatable subgroup head repeats per [i][j]).
+                // Inside its DEDICATED host section the host's chrome (title +
+                // frame) already represents the block: render the fields without
+                // a nested panel (no duplicated title)
+                if ($parentSection !== null && self::sectionIsDedicatedBlockHost($parentSection, $block->id)) {
+                    return $this->renderBlockInstanceFields($block, $theme, $instanceIndexVar, $outerIndexVars);
+                }
                 return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar, $outerIndexVars);
             }
             if ($currentGroupRootId === null) {
@@ -842,6 +859,10 @@ class FormHtmlGeneratorService {
 
         if (!empty($block->group_root)) {
             if ($currentGroupRootId !== null && self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId) && $instanceIndexVar !== null) {
+                // Inside its dedicated host section: fields only (no duplicated title)
+                if ($parentSection !== null && self::sectionIsDedicatedBlockHost($parentSection, $block->id)) {
+                    return $this->renderBlockInstanceFields($block, $theme, $instanceIndexVar, $outerIndexVars);
+                }
                 return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar, $outerIndexVars);
             }
             return "<!-- Child block '{$block->name}' is rendered inside its group root's loop -->" . $this->newLine();
@@ -1057,9 +1078,24 @@ class FormHtmlGeneratorService {
         // Group presentation context comes from the layout section that contains the block (AWF Paso 4):
         // a group is displayed as a section, so its title and micro-copy labels belong to the section.
         $sectionTitle = ($section && $section->title !== '') ? $section->title : ($rootBlock->group_title ?: $rootBlock->text);
-        $groupTitleExpression = json_encode($sectionTitle, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        $groupTitleExpression = json_encode($sectionTitle, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
         if ($groupTitleExpression === false) $groupTitleExpression = '""';
         $groupTitleExpression = htmlspecialchars($groupTitleExpression, ENT_QUOTES, 'UTF-8');
+
+        // The group's TEMPLATE child (2-level model, spec §3.B): identified by
+        // the persistent groupTemplate marker (legacy: the tab_item container).
+        // Its title names the INSTANCES ("Template #N" / "Template"); fallback
+        // to the group title for legacy layouts without the template child.
+        $templateSection = null;
+        if ($section !== null) {
+            foreach ($section->elements as $el) {
+                if ($el instanceof FormLayoutSection && (!empty($el->groupTemplate) || $el->containerType === 'tab_item')) { $templateSection = $el; break; }
+            }
+        }
+        $instanceBaseTitle = ($templateSection !== null && $templateSection->title !== '') ? $templateSection->title : $sectionTitle;
+        $instanceTitleExpression = json_encode($instanceBaseTitle, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
+        if ($instanceTitleExpression === false) $instanceTitleExpression = '""';
+        $instanceTitleExpression = htmlspecialchars($instanceTitleExpression, ENT_QUOTES, 'UTF-8');
         $toggleLabel = htmlspecialchars(($section && $section->toggle_label !== '') ? $section->toggle_label : (translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $sectionTitle), ENT_QUOTES, 'UTF-8');
         $addLabel = htmlspecialchars(($section && $section->add_button_label !== '') ? $section->add_button_label : translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT', 'stic_AWF_Forms'), ENT_QUOTES, 'UTF-8');
         $removeLabel = htmlspecialchars(($section && $section->remove_button_label !== '') ? $section->remove_button_label : translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT', 'stic_AWF_Forms'), ENT_QUOTES, 'UTF-8');
@@ -1096,10 +1132,11 @@ class FormHtmlGeneratorService {
         $initialActive = $isOptional ? 'false' : 'true';
         $initialInstances = $isOptional ? '[]' : '[{ id: 0 }]';
 
-        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances} }\">" . $this->newLine('+');
+        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0 }\">" . $this->newLine('+');
         {
-            // No group header is rendered: the group name is shown by the section
-            // title (visible by default), avoiding duplication with the primary color.
+            // The group section's header (title/subtitle) is rendered by the
+            // loop paths below (stacked cards) or by the tabs chrome — both
+            // honor the section's showTitle flag (true by default).
 
             // 1. Optional activation switch: below the section title/subtitle, styled as a normal field.
             // The switch posts a REAL activation signal `_toggle_{BlockName}`:
@@ -1133,18 +1170,24 @@ class FormHtmlGeneratorService {
             {
                 // --- DYNAMIC INSTANCE TABS: one tab + one pane per instance ---
                 if ($isTabsGroup) {
-                    $instanceTitle = $isRepeatable ? "{$groupTitleExpression} + ' #' + (index + 1)" : $groupTitleExpression;
+                    $instanceTitle = $isRepeatable ? "{$instanceTitleExpression} + ' #' + (index + 1)" : $instanceTitleExpression;
+                    // The element template's subtitle shows in gray inside each tab
+                    $tabsSubtitle = ($templateSection !== null && $templateSection->subtitle !== '') ? htmlspecialchars($templateSection->subtitle, ENT_QUOTES, 'UTF-8') : '';
                     $tabsHtml = '';
                     // Tab bar: one tab per instance (dynamic) + the add button (repeatable)
                     $tabsHtml .= "<div class='nav nav-tabs' style='border-bottom: none;'>" . $this->newLine('+');
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
+                            // Tab label: the instance title ONLY (the subtitle is
+                            // shown OUTSIDE the tab, as the selected pane's header)
                             $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === index ? 'active' : ''\" @click=\"activeTab = index\" x-text=\"{$instanceTitle}\"></button>" . $this->newLine();
                         }
                         $tabsHtml .= "</template>" . $this->newLine('-');
                         if ($isRepeatable) {
-                            $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === instances.length - 1 ? 'active' : ''\" @click=\"instances.push({ id: nextInstanceId++ }); activeTab = instances.length - 1\" x-show=\"!{$maxInstances} || instances.length < {$maxInstances}\">" . $this->newLine('+');
+                            // The "add another" button looks like a BUTTON (not a tab):
+                            // outline style, vertically centered at the end of the bar
+                            $tabsHtml .= "<button type='button' class='btn btn-sm btn-outline-primary align-self-center ms-1' @click=\"instances.push({ id: nextInstanceId++ }); activeTab = instances.length - 1\" x-show=\"!{$maxInstances} || instances.length < {$maxInstances}\">" . $this->newLine('+');
                             {
                                 $tabsHtml .= "<span>{$addLabel}</span>" . $this->newLine();
                             }
@@ -1172,9 +1215,12 @@ class FormHtmlGeneratorService {
                                     }
                                     $tabsHtml .= "</div>" . $this->newLine('-');
                                 }
-                                // Unified boxed body for every tab (spec §2.1)
+                                // Unified boxed body for every tab (spec §2.1):
+                                // the element's SUBTITLE shows as the selected
+                                // pane's header (gray, above the content)
                                 $tabsHtml .= "<div class='card awf-section-card border-top-0 rounded-top-0 p-3'>" . $this->newLine('+');
                                 {
+                                    if ($tabsSubtitle !== '') $tabsHtml .= "<div class='awf-section-subtitle text-muted mb-2' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$tabsSubtitle}</div>" . $this->newLine();
                                     $tabsHtml .= $this->renderGroupInstanceContent($rootBlock, $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
                                 }
                                 $tabsHtml .= "</div>" . $this->newLine('-');
@@ -1189,16 +1235,18 @@ class FormHtmlGeneratorService {
                     if ($tabsBordered) {
                         $html .= "<div class='card mt-2'>" . $this->newLine('+');
                         {
-                            $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center'>" . $this->newLine('+');
-                            {
-                                $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                            if ($section->showTitle && ($section->title !== '' || $section->subtitle !== '')) {
+                                $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center'>" . $this->newLine('+');
                                 {
-                                    if ($section->title !== '') $html .= "<span>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
-                                    if ($section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                    $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                    {
+                                        if ($section->title !== '') $html .= "<span>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                        if ($section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
                                 }
                                 $html .= "</div>" . $this->newLine('-');
                             }
-                            $html .= "</div>" . $this->newLine('-');
                             $html .= "<div class='card-body'>" . $this->newLine('+');
                             {
                                 $html .= $tabsHtml;
@@ -1223,36 +1271,178 @@ class FormHtmlGeneratorService {
                         $html .= $tabsHtml;
                     }
                 } else {
-                // --- STACKED INSTANCE CARDS (panel/card parents) ---
+                // --- STACKED INSTANCE CARDS (panel/card parents): the section's
+                //     flavor (panel = flat header + hr; card = .card frame with
+                //     header) and its collapsible flag are honored, mirroring the
+                //     plain section chrome ---
+                $isCardGroup = $section !== null && $section->containerType === 'card';
+                $isCollapsibleGroup = $section !== null && !empty($section->isCollapsible);
+                $groupStartOpen = ($section !== null && empty($section->isCollapsed)) ? 'true' : 'false';
+                $groupBodyId = 'awf_sect_' . md5(($section !== null ? $section->title : '') . '_' . $rootBlock->id);
+                $groupXData = $isCollapsibleGroup ? "x-data=\"{ open: {$groupStartOpen} }\" @invalid.capture=\"open = true\" style='height: auto !important;'" : "";
+                $groupContainerClass = $isCardGroup ? 'awf-section-card' : 'awf-section-panel';
+                $html .= "<div class='card {$groupContainerClass}' {$groupXData}>" . $this->newLine('+');
+                {
+                    $hasGroupTitle = $section !== null && $section->showTitle && ($section->title !== '' || $section->subtitle !== '');
+                    if ($hasGroupTitle) {
+                        $groupToggleBtn = '';
+                        $groupCursor = '';
+                        $groupClick = '';
+                        if ($isCollapsibleGroup) {
+                            $groupCursor = "cursor: pointer;";
+                            $groupClick = "@click='open = !open'";
+                            $groupToggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' @click.stop='open = !open' :aria-expanded='open.toString()' aria-controls='{$groupBodyId}'>" . $this->newLine('+');
+                            {
+                                $groupToggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" . $this->newLine();
+                            }
+                            $groupToggleBtn .= "</button>" . $this->newLine('-');
+                        }
+                        if ($isCardGroup) {
+                            $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$groupClick} style='{$groupCursor}'>" . $this->newLine('+');
+                            {
+                                $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                {
+                                    if ($section->title !== '') $html .= "<span>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                    if ($section->subtitle !== '') {
+                                        $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
+                                        $marginTop = ($section->title !== '') ? 'mt-1' : '';
+                                        $html .= "<span class='awf-section-subtitle text-muted d-block {$marginTop}' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$parsedSubtitle}</span>" . $this->newLine();
+                                    }
+                                }
+                                $html .= "</div>" . $this->newLine('-');
+                                $html .= $groupToggleBtn . $this->newLine();
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                        } else {
+                            $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$groupClick} style='{$groupCursor}'>" . $this->newLine('+');
+                            {
+                                $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                {
+                                    if ($section->title !== '') $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</h4>" . $this->newLine();
+                                    if ($section->subtitle !== '') {
+                                        $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
+                                        $marginTop = ($section->title !== '') ? 'mt-1' : '';
+                                        $html .= "<div class='awf-section-subtitle text-muted {$marginTop}' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$parsedSubtitle}</div>" . $this->newLine();
+                                    }
+                                }
+                                $html .= "</div>" . $this->newLine('-');
+                                $html .= $groupToggleBtn . $this->newLine();
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                            $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
+                        }
+                    }
+                    $groupShowAttr = $isCollapsibleGroup ? "id='{$groupBodyId}' x-show='open' x-transition" : "";
+                    $html .= "<div class='card-body' {$groupShowAttr}>" . $this->newLine('+');
+                    {
+                    // Per-instance chrome: the element TEMPLATE's own card IS the
+                    // instance card — the header shows the instance title
+                    // ("Template #N"), and the template's flavor (panel/card) and
+                    // collapsible properties apply like a normal collapsible card.
+                    // Fallback (legacy layouts without a template child): the plain
+                    // instance card with the title in a simple card-header.
+                    $tIsCard = $templateSection !== null && $templateSection->containerType === 'card';
+                    $tCollapsible = $templateSection !== null && !empty($templateSection->isCollapsible);
+                    $tStartOpen = ($templateSection !== null && empty($templateSection->isCollapsed)) ? 'true' : 'false';
+                    $tSubtitle = ($templateSection !== null && $templateSection->subtitle !== '') ? htmlspecialchars($templateSection->subtitle, ENT_QUOTES, 'UTF-8') : '';
+                    $instanceXData = $tCollapsible
+                        ? "x-data=\"{ {$instanceVar}: index, open: {$tStartOpen} }\" @invalid.capture=\"open = true\""
+                        : "x-data=\"{ {$instanceVar}: index }\"";
+                    // The instance card shows the template's normal card frame
+                    // (no extra border/tint from the old instance CSS)
+                    $instanceStyle = $tCollapsible ? 'height: auto !important;' : '';
+                    $instanceStyleAttr = $instanceStyle !== '' ? " style='{$instanceStyle}'" : '';
+                    $instanceTitle = $isRepeatable ? "{$instanceTitleExpression} + ' #' + ({$instanceVar} + 1)" : $instanceTitleExpression;
                 $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                 {
-                    $html .= "<div class='awf-instance-card card border mb-3 shadow-sm' x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                    $html .= "<div class='card " . ($tIsCard ? 'awf-section-card' : 'awf-section-panel') . " mb-3' {$instanceXData}{$instanceStyleAttr}>" . $this->newLine('+');
                     {
-                        // Instance card header
-                        $html .= "<div class='card-header bg-light d-flex justify-content-between align-items-center py-2'>" . $this->newLine('+');
-                        {
-                            $instanceTitle = $isRepeatable ? "{$groupTitleExpression} + ' #' + ({$instanceVar} + 1)" : $groupTitleExpression;
-                            $html .= "<span class='fw-bold text-secondary' x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
-
-                            // Remove button: ONLY for repeatable groups, and only if index > 0
-                            if ($isRepeatable) {
-                                $html .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance)\">" . $this->newLine('+');
+                        if ($templateSection !== null) {
+                            // Template chrome as the instance chrome
+                            $instToggleBtn = '';
+                            $instCursor = '';
+                            $instClick = '';
+                            if ($tCollapsible) {
+                                $instCursor = "cursor: pointer;";
+                                $instClick = "@click='open = !open'";
+                                $instToggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' @click.stop='open = !open' :aria-expanded='open.toString()'>" . $this->newLine('+');
                                 {
-                                    $html .= "<span>{$removeLabel}</span>" . $this->newLine();
+                                    $instToggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" . $this->newLine();
                                 }
-                                $html .= "</button>" . $this->newLine('-');
+                                $instToggleBtn .= "</button>" . $this->newLine('-');
                             }
+                            // Remove button: ONLY for repeatable groups, and only if index > 0
+                            $instRemoveBtn = '';
+                            if ($isRepeatable) {
+                                $instRemoveBtn = "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance)\">" . $this->newLine('+');
+                                {
+                                    $instRemoveBtn .= "<span>{$removeLabel}</span>" . $this->newLine();
+                                }
+                                $instRemoveBtn .= "</button>" . $this->newLine('-');
+                            }
+                            if ($tIsCard) {
+                                $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$instClick} style='{$instCursor}'>" . $this->newLine('+');
+                                {
+                                    $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                    {
+                                        $html .= "<span x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
+                                        if ($tSubtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$tSubtitle}</span>" . $this->newLine();
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
+                                    $html .= "<div class='d-flex align-items-center gap-2'>" . $this->newLine('+');
+                                    {
+                                        $html .= $instRemoveBtn . $this->newLine();
+                                        $html .= $instToggleBtn . $this->newLine();
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
+                                }
+                                $html .= "</div>" . $this->newLine('-');
+                            } else {
+                                $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$instClick} style='{$instCursor}'>" . $this->newLine('+');
+                                {
+                                    $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                    {
+                                        $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0' x-text=\"{$instanceTitle}\"></h4>" . $this->newLine();
+                                        if ($tSubtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$tSubtitle}</div>" . $this->newLine();
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
+                                    $html .= "<div class='d-flex align-items-center gap-2'>" . $this->newLine('+');
+                                    {
+                                        $html .= $instRemoveBtn . $this->newLine();
+                                        $html .= $instToggleBtn . $this->newLine();
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
+                                }
+                                $html .= "</div>" . $this->newLine('-');
+                                $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
+                            }
+                            $instShowAttr = $tCollapsible ? "x-show='open' x-transition" : "";
+                            $html .= "<div class='card-body' {$instShowAttr}>" . $this->newLine('+');
+                            {
+                                $html .= $this->renderGroupInstanceContent($rootBlock, $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                        } else {
+                            // Legacy fallback: plain instance card (also borderless,
+                            // without a tinted background)
+                            $html .= "<div class='card-header d-flex justify-content-between align-items-center py-2'>" . $this->newLine('+');
+                            {
+                                $html .= "<span class='fw-bold text-secondary' x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
+                                if ($isRepeatable) {
+                                    $html .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance)\">" . $this->newLine('+');
+                                    {
+                                        $html .= "<span>{$removeLabel}</span>" . $this->newLine();
+                                    }
+                                    $html .= "</button>" . $this->newLine('-');
+                                }
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                            $html .= "<div class='card-body'>" . $this->newLine('+');
+                            {
+                                $html .= $this->renderGroupInstanceContent($rootBlock, $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
+                            }
+                            $html .= "</div>" . $this->newLine('-');
                         }
-                        $html .= "</div>" . $this->newLine('-');
-
-                        // Instance card body: the GROUP SECTION's content (nested
-                        // sections, blocks and fields) rendered instance-aware, so the
-                        // per-block sections show inside every group instance
-                        $html .= "<div class='card-body p-3 bg-white'>" . $this->newLine('+');
-                        {
-                            $html .= $this->renderGroupInstanceContent($rootBlock, $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
-                        }
-                        $html .= "</div>" . $this->newLine('-');
                     }
                     $html .= "</div>" . $this->newLine('-');
                 }
@@ -1268,6 +1458,10 @@ class FormHtmlGeneratorService {
                     }
                     $html .= "</button>" . $this->newLine('-');
                 }
+                    }
+                    $html .= "</div>" . $this->newLine('-');
+                }
+                $html .= "</div>" . $this->newLine('-');
                 } // end stacked-cards path (panel/card parents)
             }
             $html .= "</div>" . $this->newLine('-');
@@ -1387,21 +1581,49 @@ class FormHtmlGeneratorService {
         $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
         {
             $html .= "<h5 class='awf-block-title text-dark'>{$blockTitle}</h5>" . $this->newLine();
-            $html .= "<div class='awf-grid-fields'>" . $this->newLine('+');
-            {
-                foreach ($block->fields as $field) {
-                    if ($field->type_field === DataBlockFieldType::FIXED) {
-                        continue;
-                    }
-                    // Render fields for the current instance using the instance index variable
-                    $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
-                }
-            }
-            $html .= "</div>" . $this->newLine('-');
+            $html .= $this->renderBlockInstanceFields($block, $theme, $instanceIndexVar, $outerIndexVars);
         }
         $html .= "</div>" . $this->newLine('-');
 
         return $html;
+    }
+
+    /**
+     * Renders a block instance's fields WITHOUT the panel wrapper (no title,
+     * no frame): used when the block already lives in its own dedicated host
+     * section — the host's chrome (title + frame) is the block's representation
+     * and a nested panel would duplicate it.
+     */
+    private function renderBlockInstanceFields(FormDataBlock $block, FormTheme $theme, string $instanceIndexVar, array $outerIndexVars = []): string {
+        if (!self::blockHasRenderableFields($block)) return "";
+        $html = "<div class='awf-grid-fields'>" . $this->newLine('+');
+        {
+            foreach ($block->fields as $field) {
+                if ($field->type_field === DataBlockFieldType::FIXED) {
+                    continue;
+                }
+                // Render fields for the current instance using the instance index variable
+                $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
+            }
+        }
+        $html .= "</div>" . $this->newLine('-');
+
+        return $html;
+    }
+
+    /**
+     * Whether the section's whole subtree hosts ONLY elements of the given
+     * block (a dedicated per-block host section).
+     */
+    private static function sectionIsDedicatedBlockHost(FormLayoutSection $section, string $blockId): bool {
+        foreach ($section->elements as $el) {
+            if ($el instanceof FormLayoutSection) {
+                if (!self::sectionIsDedicatedBlockHost($el, $blockId)) return false;
+            } elseif ($el instanceof FormLayoutElement) {
+                if ($el->ref_id !== $blockId) return false;
+            }
+        }
+        return true;
     }
 
     /**
