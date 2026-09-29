@@ -1386,21 +1386,42 @@ class stic_AWFUtils {
         $deferredContext = DeferredContextData::fromJson($ticket->context_data);
         $context->deferredContext = $deferredContext;
 
-        // Datablock references to beans
-        // Restriction: deferred actions operate on non-repeatable blocks only.
-        // Repeatable blocks (or children of a repeatable root) are never restored here
-        // because indexed references are not supported for deferred flows.
-        foreach ($deferredContext->blockReferences as $blockId => $beanId) {
-            if (isset($formConfig->data_blocks[$blockId])) {
-                $block = $formConfig->data_blocks[$blockId];
-                if ($block->isRepeatable() || !empty($block->group_root)) {
-                    continue;
-                }
-                $block->setBeanReference($beanId);
-            }
-        }
+        // Datablock references to beans (see applyDeferredBlockReferences)
+        self::applyDeferredBlockReferences($context, $deferredContext);
 
         return $context;
+    }
+
+    /**
+     * Restores the data block bean references captured in a deferred ticket's
+     * context snapshot. Standalone blocks use the plain block id key; group
+     * members (optional/repeatable) use "blockId@index" keys (one per resolved
+     * instance) so per-instance deferred flows can address the exact record of
+     * each instance. The ticket's own loop-index stack scopes the resumed flow
+     * to the instance the ticket belongs to.
+     */
+    public static function applyDeferredBlockReferences(ExecutionContext $context, DeferredContextData $deferredContext): void
+    {
+        foreach ($deferredContext->blockReferences as $refKey => $beanId) {
+            $index = null;
+            $blockId = $refKey;
+            if (strpos($refKey, '@') !== false) {
+                [$blockId, $index] = explode('@', $refKey, 2);
+            }
+            $block = $context->formConfig->data_blocks[$blockId] ?? null;
+            if ($block === null) {
+                continue;
+            }
+            if ($index === null && ($block->isRepeatable() || !empty($block->group_root))) {
+                // Legacy snapshot: repeatable members without an index key cannot
+                // be restored (the instance they belong to is unknown)
+                continue;
+            }
+            $block->setBeanReference($beanId, $index);
+        }
+        if (!empty($deferredContext->instanceIndexes)) {
+            $context->setInstanceIndexes($deferredContext->instanceIndexes);
+        }
     }
 
     /**

@@ -261,6 +261,13 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-group-container { grid-column: 1 / -1; width: 100%; margin-bottom: 1.5rem; }
 #{$wrapperId} .awf-block-panel { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; margin-bottom: 1rem; }
 #{$wrapperId} .awf-block-title { font-size: 1em; font-weight: 600; margin-bottom: 0.75rem; padding-bottom: 0.25rem; border-bottom: 1px solid var(--bs-border-color); }
+#{$wrapperId} .awf-tabs-container .nav-tabs { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; white-space: nowrap !important; border-bottom: 1px solid var(--bs-border-color); scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
+#{$wrapperId} .awf-tabs-container .nav-tabs::-webkit-scrollbar { display: none; }
+#{$wrapperId} .awf-tabs-container .nav-tabs .nav-item, #{$wrapperId} .awf-tabs-container .nav-tabs .nav-link { flex: 0 0 auto !important; }
+#{$wrapperId} .nav-tabs { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; white-space: nowrap !important; border-bottom: 1px solid var(--bs-border-color); padding-bottom: 1px; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
+#{$wrapperId} .nav-tabs::-webkit-scrollbar { display: none; }
+#{$wrapperId} .nav-tabs .nav-item, #{$wrapperId} .nav-tabs .nav-link { flex: 0 0 auto !important; margin-bottom: -1px !important; }
+#{$wrapperId} .nav-tabs .nav-link.active { background-color: var(--bs-body-bg, #ffffff) !important; border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg, #ffffff) !important; border-bottom-color: var(--bs-body-bg, #ffffff) !important; position: relative; z-index: 2; }
 ";
         if ($inputCssProps !== "")  $html .= "\n".$inputCssProps;
         if ($selectCssProps !== "")  $html .= "\n".$selectCssProps;
@@ -644,10 +651,8 @@ class FormHtmlGeneratorService {
         {
             $tabsHtml .= "<div class='nav nav-tabs'>" . $this->newLine('+');
             foreach ($panes as $pane) {
-                // NO static 'active' class: the :class binding owns the active
-                // state (a static class would keep the first tab highlighted)
                 $paneLabel = htmlspecialchars($pane->title !== '' ? $pane->title : translate('LBL_SECTION_NO_TITLE', 'stic_AWF_Forms'), ENT_QUOTES, 'UTF-8');
-                $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === '{$pane->id}' ? 'active' : ''\" @click=\"activeTab = '{$pane->id}'\">" . $paneLabel . "</button>" . $this->newLine();
+                $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === '{$pane->id}' ? 'active' : ''\" @click=\"activeTab = '{$pane->id}'; \$el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })\">" . $paneLabel . "</button>" . $this->newLine();
             }
             $tabsHtml .= "</div>" . $this->newLine('-');
             $tabsHtml .= "<div class='tab-content'>" . $this->newLine('+');
@@ -1175,13 +1180,11 @@ class FormHtmlGeneratorService {
                     $tabsSubtitle = ($templateSection !== null && $templateSection->subtitle !== '') ? htmlspecialchars($templateSection->subtitle, ENT_QUOTES, 'UTF-8') : '';
                     $tabsHtml = '';
                     // Tab bar: one tab per instance (dynamic) + the add button (repeatable)
-                    $tabsHtml .= "<div class='nav nav-tabs' style='border-bottom: none;'>" . $this->newLine('+');
+                    $tabsHtml .= "<div class='nav nav-tabs'>" . $this->newLine('+');
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            // Tab label: the instance title ONLY (the subtitle is
-                            // shown OUTSIDE the tab, as the selected pane's header)
-                            $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === index ? 'active' : ''\" @click=\"activeTab = index\" x-text=\"{$instanceTitle}\"></button>" . $this->newLine();
+                            $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === index ? 'active' : ''\" @click=\"activeTab = index; \$el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })\" x-text=\"{$instanceTitle}\"></button>" . $this->newLine();
                         }
                         $tabsHtml .= "</template>" . $this->newLine('-');
                         if ($isRepeatable) {
@@ -1195,35 +1198,39 @@ class FormHtmlGeneratorService {
                         }
                     }
                     $tabsHtml .= "</div>" . $this->newLine('-');
-                    // Panes: one per instance (the remove button for repeatable
-                    // groups lives at the pane's top-right; the active tab clamps
-                    // when the active instance is removed)
+                    // Panes: one per instance
                     $tabsHtml .= "<div class='tab-content'>" . $this->newLine('+');
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
                             $tabsHtml .= "<div class='tab-pane' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
                             {
-                                if ($isRepeatable) {
-                                    $tabsHtml .= "<div class='d-flex justify-content-end mb-2'>" . $this->newLine('+');
+                                if ($isRepeatable || $tabsSubtitle !== '') {
+                                    $tabsHtml .= "<div class='d-flex justify-content-between align-items-center mb-2'>" . $this->newLine('+');
                                     {
-                                        $tabsHtml .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance); if (activeTab >= instances.length) activeTab = Math.max(0, instances.length - 1)\">" . $this->newLine('+');
-                                        {
-                                            $tabsHtml .= "<span>{$removeLabel}</span>" . $this->newLine();
+                                        if ($tabsSubtitle !== '') {
+                                            $tabsHtml .= "<div class='awf-section-subtitle text-muted' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$tabsSubtitle}</div>" . $this->newLine();
+                                        } else {
+                                            $tabsHtml .= "<div></div>" . $this->newLine();
                                         }
-                                        $tabsHtml .= "</button>" . $this->newLine('-');
+                                        if ($isRepeatable) {
+                                            $tabsHtml .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance); if (activeTab >= instances.length) activeTab = Math.max(0, instances.length - 1)\">" . $this->newLine('+');
+                                            {
+                                                $tabsHtml .= "<span>{$removeLabel}</span>" . $this->newLine();
+                                            }
+                                            $tabsHtml .= "</button>" . $this->newLine('-');
+                                        }
                                     }
                                     $tabsHtml .= "</div>" . $this->newLine('-');
                                 }
-                                // Unified boxed body for every tab (spec §2.1):
-                                // the element's SUBTITLE shows as the selected
-                                // pane's header (gray, above the content)
-                                $tabsHtml .= "<div class='card awf-section-card border-top-0 rounded-top-0 p-3'>" . $this->newLine('+');
-                                {
-                                    if ($tabsSubtitle !== '') $tabsHtml .= "<div class='awf-section-subtitle text-muted mb-2' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$tabsSubtitle}</div>" . $this->newLine();
-                                    $tabsHtml .= $this->renderGroupInstanceContent($rootBlock, $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
-                                }
-                                $tabsHtml .= "</div>" . $this->newLine('-');
+                                // Instance body: the tab bar (title) + this row
+                                // (subtitle, remove) are the instance chrome, so
+                                // the content is rendered WITHOUT any extra card
+                                // wrapper. The element TEMPLATE owns the layout of
+                                // the content (its host sections), so it is what we
+                                // pass; without it the fallback renders the root
+                                // block panel + its direct children.
+                                $tabsHtml .= $this->renderGroupInstanceContent($rootBlock, $templateSection, $children, $config, $theme, $instanceVar, $contentOuterVars) . $this->newLine();
                             }
                             $tabsHtml .= "</div>" . $this->newLine('-');
                         }

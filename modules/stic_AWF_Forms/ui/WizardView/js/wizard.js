@@ -1999,7 +1999,21 @@ class WizardStep3 {
 
             get isValid() {
               if (!this.action) return false;
-              return this.action.isValid();
+              if (!this.action.isValid()) return false;
+              // Architectural rule (deferred flows): a TERMINAL action (exactly
+              // one HTTP redirect per submission) can NEVER be bound to a
+              // repeatable/optional loop block — it must act on the whole
+              // submission (parent level / main flow). Non-terminal deferred
+              // actions (async emails, tickets) MAY run per instance.
+              if (this.definition?.isTerminal) {
+                for (const param of this.action.parameters) {
+                  const paramDef = (this.definition.parameters || []).find(p => p.name == param.name);
+                  if (paramDef?.type !== 'dataBlock') continue;
+                  const block = this.formConfig.data_blocks.find(b => b.id === param.value);
+                  if (block && block.isGroupHead(this.formConfig.data_blocks)) return false;
+                }
+              }
+              return true;
             },
 
             /** 

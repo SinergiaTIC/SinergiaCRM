@@ -127,27 +127,34 @@ class ServerActionFlowExecutor {
                 }
 
                 // Terminal actions are never unrolled: they act on the whole
-                // submission. DEFERRED actions are never unrolled either (MVP
-                // restriction: they are global and execute later, outside the
-                // per-instance request scope). Both guards are backend safety
-                // nets: the wizard UI already prevents these bindings.
+                // submission (one HTTP redirect per submission). TERMINAL
+                // deferred actions (e.g. the payment gateway redirect) are
+                // always global too: exactly one ticket and one redirect per
+                // submission, so they must be configured at the parent level or
+                // in the main flow (the wizard prevents binding them to a
+                // repeatable loop). NON-TERMINAL deferred actions (async:
+                // confirmation emails, ticket generation) DO unroll per
+                // instance: N independent tickets, one per created record.
                 $isTerminal = $actionExecutor instanceof ITerminalAction;
-                $isDeferred = $actionExecutor instanceof IDeferredAction;
 
                 // Instance descriptors to execute: null = no motor block (single
                 // scalar execution, legacy behavior); empty = repeatable/optional
                 // group with zero instances (skip the action once). Each
                 // descriptor is the FULL loop-index vector of one instance.
                 $instanceDescriptors = null;
-                if ($motorBlock !== null && !$isTerminal && !$isDeferred) {
-                    $instanceDescriptors = DataBlockResolved::resolveInstances($motorBlock, $this->context->formData, $this->context);
-                    if (empty($instanceDescriptors)) {
+                if ($motorBlock !== null && !$isTerminal) {
+                    $resolvedInstances = DataBlockResolved::resolveInstances($motorBlock, $this->context->formData, $this->context);
+                    if (empty($resolvedInstances)) {
                         // Repeatable group with zero instances: skip the action.
                         $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Repeatable group '{$motorBlock->name}' has no instances.");
                         $this->context->addActionResult($skippedResult);
                         $lastResult = $skippedResult;
                         continue;
                     }
+                    // Convert the resolved instances to their loop-index vectors
+                    // (one per instance: [i1], [i1, i2], ...) — the vectors drive
+                    // the per-instance unrolling below
+                    $instanceDescriptors = array_map(fn ($instance) => $instance->loopIndexes, $resolvedInstances);
                 }
 
                 // B-5: conditions are split by scope. Scalar-field conditions gate
