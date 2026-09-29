@@ -101,6 +101,12 @@ $mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configure how subpanels are gro
 $mod_strings['LBL_TRACKERS_TITLE'] = 'Tracker';
 $mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Logging of user sessions and record actions.';
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Admin actions';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_SENT_ONE'] = 'portal invitation sent successfully';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_SENT_MANY'] = 'portal invitations sent successfully';
+$mod_strings['LBL_STIC_PORTAL_RESET_SENT_ONE'] = 'password reset email sent successfully';
+$mod_strings['LBL_STIC_PORTAL_RESET_SENT_MANY'] = 'password reset emails sent successfully';
+$mod_strings['LBL_STIC_PORTAL_ACTION_ERROR_ONE'] = 'record could not be processed:';
+$mod_strings['LBL_STIC_PORTAL_ACTION_ERROR_MANY'] = 'records could not be processed:';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Set the email template that will be sent when the system generates the password of a new user.';
 
 // SinergiaDA configuration

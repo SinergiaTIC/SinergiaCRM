@@ -32,9 +32,14 @@ $idRaw        = $_REQUEST['id'] ?? '';
 $module       = $_REQUEST['return_module'] ?? 'Contacts';
 $returnAction = $_REQUEST['return_action'] ?? 'DetailView';
 
-if (empty($idRaw)) { die('Missing id parameter.'); }
-
 $idList = array_filter(array_map('trim', explode(',', $idRaw)));
+
+if (empty($idList)) {
+    $message = translate('LBL_STIC_PORTAL_ACTION_ERROR_ONE', 'Administration');
+    SugarApplication::appendErrorMessage("<p class='msg-error'><strong>1</strong> "
+        . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . ' No records were selected.</p>');
+    SugarApplication::redirect('index.php?module=' . urlencode($module) . '&action=' . urlencode($returnAction));
+}
 
 $allConfig = SticPortalConfigUtils::getAll();
 $portalTitle = !empty($allConfig['PORTAL_TITLE']) ? $allConfig['PORTAL_TITLE'] : 'SinergiaCRM Portal';
@@ -140,10 +145,19 @@ $redirectUrl = 'index.php?module=' . urlencode($module) . '&action=' . urlencode
 if (count($idList) === 1 && $returnAction === 'DetailView') {
     $redirectUrl .= '&record=' . urlencode($idList[0]);
 }
-$params = array();
-$msgParts = array();
-if ($sentCount > 0) $msgParts[] = "$sentCount invitation(s) sent";
-if (!empty($errors)) $msgParts[] = 'Errors: ' . implode('; ', $errors);
-if ($msgParts) $params[] = 'msg=' . urlencode(implode('. ', $msgParts));
-if ($params) $redirectUrl .= '&' . implode('&', $params);
+if ($sentCount > 0) {
+    $sentKey = $sentCount === 1 ? 'LBL_STIC_PORTAL_INVITATION_SENT_ONE' : 'LBL_STIC_PORTAL_INVITATION_SENT_MANY';
+    $sentLabel = translate($sentKey, 'Administration');
+    SugarApplication::appendSuccessMessage("<p class='label label-success'><strong>" . (int) $sentCount . '</strong> '
+        . htmlspecialchars($sentLabel, ENT_QUOTES, 'UTF-8') . '.</p>');
+    $GLOBALS['log']->debug('Portal invitation: ' . $sentCount . ' email(s) sent successfully.');
+}
+if (!empty($errors)) {
+    $errorKey = count($errors) === 1 ? 'LBL_STIC_PORTAL_ACTION_ERROR_ONE' : 'LBL_STIC_PORTAL_ACTION_ERROR_MANY';
+    $errorLabel = translate($errorKey, 'Administration');
+    SugarApplication::appendErrorMessage("<p class='msg-error'><strong>" . count($errors) . '</strong> '
+        . htmlspecialchars($errorLabel, ENT_QUOTES, 'UTF-8') . ' '
+        . htmlspecialchars(implode('; ', $errors), ENT_QUOTES, 'UTF-8') . '</p>');
+    $GLOBALS['log']->debug('Portal invitation: ' . count($errors) . ' record(s) failed.');
+}
 SugarApplication::redirect($redirectUrl);
