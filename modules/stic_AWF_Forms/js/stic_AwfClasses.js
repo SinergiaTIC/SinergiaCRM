@@ -2092,7 +2092,7 @@ class stic_AwfLayout {
     // ---- 8. Tabs containers hold ONLY sections: group any direct non-section
     //         elements into a new child pane ('Nova secció'), recursively ----
     const normalizeTabsContainer = (section) => {
-      if ((section.containerType === 'tabs_card' || section.containerType === 'tabs_panel') && section.elements.some(el => el.type !== 'section')) {
+      if ((section.containerType === 'card_tabs' || section.containerType === 'panel_tabs') && section.elements.some(el => el.type !== 'section')) {
         const pane = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NEW') });
         pane.containerType = 'tab_item';
         pane.showTitle = true;

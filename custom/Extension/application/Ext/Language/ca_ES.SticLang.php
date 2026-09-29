@@ -4011,8 +4011,8 @@ $app_list_strings['stic_awf_forms_field_value_type_list']['dataBlock'] = 'Bloc d
 // Advanced Web Forms: configuration->layout->structure->containerType
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel'] = 'Panell (simple)';
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card'] = 'Targeta (amb vora)';
-$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tabs_panel'] = 'Pestanyes (simples)';
-$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tabs_card'] = 'Pestanyes (amb vora)';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel_tabs'] = 'Panell amb pestanyes';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card_tabs'] = 'Targeta amb pestanyes';
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tab_item'] = 'Pestanya';
 
 // Advanced Web Forms: configuration->layout->theme->shadow_intensity

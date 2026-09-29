@@ -499,8 +499,8 @@ class FormHtmlGeneratorService {
 
         // Tabs CONTAINERS (tabs_card/tabs_panel): their nested sections become
         // tab panes (only at chrome level; a pane renders its children flat)
-        if ($withChrome && in_array($section->containerType, ['tabs_card', 'tabs_panel'], true)) {
-            return $this->renderContainerSections($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, $section->containerType === 'tabs_card');
+        if ($withChrome && in_array($section->containerType, ['card_tabs', 'panel_tabs'], true)) {
+            return $this->renderContainerSections($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, $section->containerType === 'card_tabs');
         }
 
         // Pane content (no chrome): the section's children without its own card/header
@@ -602,9 +602,8 @@ class FormHtmlGeneratorService {
      * automatically when a field inside them fails validation (@invalid.capture).
      */
     private function renderContainerSections(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar, ?string $currentGroupRootId, array $outerIndexVars, bool $bordered): string {
-        $paneTitle = function ($pane) {
-            return $pane->title !== '' ? $pane->title : translate('LBL_SECTION_NO_TITLE', 'stic_AWF_Forms');
-        };
+        $sectionTitle = htmlspecialchars($section->title ?? '', ENT_QUOTES, 'UTF-8');
+        $sectionSubtitle = htmlspecialchars($section->subtitle ?? '', ENT_QUOTES, 'UTF-8');
 
         // Collect renderable nested sections (panes) + direct elements
         $panes = [];
@@ -631,30 +630,35 @@ class FormHtmlGeneratorService {
         }
         if (empty($panes)) return '';
         $firstPaneId = $panes[0]->id;
-        $html = '';
 
-        // Build the tab bar + panes (shared by both flavors)
-        $tabsHtml = '';
-        // On validation error: activate the pane that contains the invalid field.
-        // The container spans the FULL grid width (like group containers), since
-        // it may sit inside a fields grid: the panes must not be squeezed into
-        // a single field column.
-        $tabsHtml .= "<div class='awf-tabs-container mt-2' style='grid-column: 1 / -1;' x-data=\"{ activeTab: '{$firstPaneId}' }\" @invalid.capture=\"const paneEl = \$event.target.closest('[data-awf-pane]'); if (paneEl) activeTab = paneEl.dataset.awfPane\">" . $this->newLine('+');
+        // The tab bar + panes area (shared by both flavors)
+        $tabsHtml = "<div class='awf-tabs-container' style='grid-column: 1 / -1;' x-data=\"{ activeTab: '{$firstPaneId}' }\" @invalid.capture=\"const paneEl = \$event.target.closest('[data-awf-pane]'); if (paneEl) activeTab = paneEl.dataset.awfPane\" @awf-show-pane=\"activeTab = \$event.detail\">" . $this->newLine('+');
         {
             $tabsHtml .= "<div class='nav nav-tabs'>" . $this->newLine('+');
             foreach ($panes as $pane) {
-                $activeClass = $pane->id === $firstPaneId ? ' active' : '';
-                $tabsHtml .= "<button type='button' class='nav-link{$activeClass}' :class=\"activeTab === '{$pane->id}' ? 'active' : ''\" @click=\"activeTab = '{$pane->id}'\">" . htmlspecialchars($paneTitle($pane), ENT_QUOTES, 'UTF-8') . "</button>" . $this->newLine();
+                // NO static 'active' class: the :class binding owns the active
+                // state (a static class would keep the first tab highlighted)
+                $paneLabel = htmlspecialchars($pane->title !== '' ? $pane->title : translate('LBL_SECTION_NO_TITLE', 'stic_AWF_Forms'), ENT_QUOTES, 'UTF-8');
+                $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === '{$pane->id}' ? 'active' : ''\" @click=\"activeTab = '{$pane->id}'\">" . $paneLabel . "</button>" . $this->newLine();
             }
             $tabsHtml .= "</div>" . $this->newLine('-');
             $tabsHtml .= "<div class='tab-content'>" . $this->newLine('+');
             foreach ($panes as $pane) {
                 $isActive = $pane->id === $firstPaneId;
-                // No 'fade' class: Bootstrap's .fade:not(.show) forces opacity:0 on
-                // panes without .show — visibility here is driven by Alpine x-show
-                $tabsHtml .= "<div class='tab-pane' data-awf-pane='{$pane->id}' x-show=\"activeTab === '{$pane->id}'\"" . ($isActive ? " style='display: block;'" : " style='display: none;'") . ">" . $this->newLine('+');
+                // Visibility via a reactive :style binding (NOT x-show: Alpine
+                // caches the element's initial inline display and would restore
+                // 'none' for panes that start hidden — they would never show).
+                // The static style='display: none' only prevents the FOUC before
+                // Alpine initializes.
+                $tabsHtml .= "<div class='tab-pane' data-awf-pane='{$pane->id}' style='display: none;' :style=\"'display: ' + (activeTab === '{$pane->id}' ? 'block' : 'none')\">" . $this->newLine('+');
                 {
-                    $tabsHtml .= $this->renderSectionNode($pane, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, false);
+                    // Unified visual for EVERY tab body (spec §2.1): the content
+                    // always boxed inside a bordered white card
+                    $tabsHtml .= "<div class='card awf-section-card border-top-0 rounded-top-0 p-3'>" . $this->newLine('+');
+                    {
+                        $tabsHtml .= $this->renderSectionNode($pane, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, false);
+                    }
+                    $tabsHtml .= "</div>" . $this->newLine('-');
                 }
                 $tabsHtml .= "</div>" . $this->newLine('-');
             }
@@ -662,11 +666,42 @@ class FormHtmlGeneratorService {
         }
         $tabsHtml .= "</div>" . $this->newLine('-');
 
-        if ($bordered) {
-            // 'tabs_card': the tab area wrapped in a card (border)
-            $html .= "<div class='card mt-2'>" . $this->newLine('+');
+        // Collapsible support (exactly like standard sections): the WHOLE header
+        // is clickable (@click + cursor pointer, like the standard panels/cards)
+        // and the chevron toggles with .stop to avoid double-firing
+        $isCollapsible = !empty($section->isCollapsible);
+        $startOpen = empty($section->isCollapsed);
+        $bodyId = "awf_sect_" . md5($section->title ?? uniqid());
+        $headerClickAttr = $isCollapsible ? "@click='open = !open'" : "";
+        $headerCursorStyle = $isCollapsible ? "cursor: pointer;" : "";
+        $chevronHtml = "";
+        if ($isCollapsible) {
+            $chevronHtml = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' @click.stop='open = !open' :aria-expanded='open.toString()' aria-controls='{$bodyId}'>" . $this->newLine('+');
             {
-                $html .= "<div class='card-header p-2'>" . $this->newLine('+');
+                $chevronHtml .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" . $this->newLine();
+            }
+            $chevronHtml .= "</button>" . $this->newLine('-');
+        }
+        $xDataAttr = $isCollapsible ? "x-data=\"{ open: " . ($startOpen ? 'true' : 'false') . " }\" @invalid.capture=\"open = true\"" : "";
+        $bodyShowAttr = $isCollapsible ? "id='{$bodyId}' x-show='open' x-transition" : "";
+
+        if ($bordered) {
+            // 'card_tabs': everything framed in one .card; the title/subtitle in
+            // the .card-header; the tabs at the top of the .card-body
+            $html = "<div class='card mt-2' {$xDataAttr} style='height: auto !important;'>" . $this->newLine('+');
+            {
+                $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$headerClickAttr} style='{$headerCursorStyle}'>" . $this->newLine('+');
+                {
+                    $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                    {
+                        if ($section->title !== '') $html .= "<span>{$sectionTitle}</span>" . $this->newLine();
+                        if ($section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$sectionSubtitle}</span>" . $this->newLine();
+                    }
+                    $html .= "</div>" . $this->newLine('-');
+                    $html .= $chevronHtml;
+                }
+                $html .= "</div>" . $this->newLine('-');
+                $html .= "<div class='card-body' {$bodyShowAttr}>" . $this->newLine('+');
                 {
                     $html .= $tabsHtml;
                 }
@@ -674,7 +709,29 @@ class FormHtmlGeneratorService {
             }
             $html .= "</div>" . $this->newLine('-');
         } else {
-            $html .= $tabsHtml;
+            // 'tabs_panel': the SAME chrome as a flat panel (card wrapper + h4
+            // header + <hr>), with the tabs as its body
+            $html = "<div class='card awf-section-panel' {$xDataAttr} style='height: auto !important;'>" . $this->newLine('+');
+            {
+                $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$headerClickAttr} style='{$headerCursorStyle}'>" . $this->newLine('+');
+                {
+                    $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                    {
+                        if ($section->title !== '') $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>{$sectionTitle}</h4>" . $this->newLine();
+                        if ($section->subtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$sectionSubtitle}</div>" . $this->newLine();
+                    }
+                    $html .= "</div>" . $this->newLine('-');
+                    $html .= $chevronHtml;
+                }
+                $html .= "</div>" . $this->newLine('-');
+                $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
+                $html .= "<div class='card-body' {$bodyShowAttr}>" . $this->newLine('+');
+                {
+                    $html .= $tabsHtml;
+                }
+                $html .= "</div>" . $this->newLine('-');
+            }
+            $html .= "</div>" . $this->newLine('-');
         }
         return $html;
     }
@@ -1010,6 +1067,11 @@ class FormHtmlGeneratorService {
         $maxInstances = $rootBlock->max_instances !== null ? (int)$rootBlock->max_instances : 'null';
         $isRepeatable = $rootBlock->isRepeatable();
         $isOptional = $rootBlock->isOptional();
+        // Groups whose DESIGNATED section is a tabs container render their
+        // instances as DYNAMIC TABS (spec: group rendered as dynamic tabs):
+        // one tab + one pane per instance instead of stacked instance cards.
+        $isTabsGroup = $section !== null && in_array($section->containerType, ['panel_tabs', 'card_tabs'], true);
+        $tabsBordered = $isTabsGroup && $section->containerType === 'card_tabs';
         // Per-level loop variables (idx_l1, idx_l2) keep the Alpine scopes of
         // nested groups from shadowing each other
         // Generic per-level loop variables (idx_l1, idx_l2, ... idx_lN) keep the
@@ -1069,6 +1131,99 @@ class FormHtmlGeneratorService {
             // 2. Instance Loop (visible if active)
             $html .= "<div x-show='active' x-transition>" . $this->newLine('+');
             {
+                // --- DYNAMIC INSTANCE TABS: one tab + one pane per instance ---
+                if ($isTabsGroup) {
+                    $instanceTitle = $isRepeatable ? "{$groupTitleExpression} + ' #' + (index + 1)" : $groupTitleExpression;
+                    $tabsHtml = '';
+                    // Tab bar: one tab per instance (dynamic) + the add button (repeatable)
+                    $tabsHtml .= "<div class='nav nav-tabs' style='border-bottom: none;'>" . $this->newLine('+');
+                    {
+                        $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
+                        {
+                            $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === index ? 'active' : ''\" @click=\"activeTab = index\" x-text=\"{$instanceTitle}\"></button>" . $this->newLine();
+                        }
+                        $tabsHtml .= "</template>" . $this->newLine('-');
+                        if ($isRepeatable) {
+                            $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === instances.length - 1 ? 'active' : ''\" @click=\"instances.push({ id: nextInstanceId++ }); activeTab = instances.length - 1\" x-show=\"!{$maxInstances} || instances.length < {$maxInstances}\">" . $this->newLine('+');
+                            {
+                                $tabsHtml .= "<span>{$addLabel}</span>" . $this->newLine();
+                            }
+                            $tabsHtml .= "</button>" . $this->newLine('-');
+                        }
+                    }
+                    $tabsHtml .= "</div>" . $this->newLine('-');
+                    // Panes: one per instance (the remove button for repeatable
+                    // groups lives at the pane's top-right; the active tab clamps
+                    // when the active instance is removed)
+                    $tabsHtml .= "<div class='tab-content'>" . $this->newLine('+');
+                    {
+                        $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
+                        {
+                            $tabsHtml .= "<div class='tab-pane' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
+                            {
+                                if ($isRepeatable) {
+                                    $tabsHtml .= "<div class='d-flex justify-content-end mb-2'>" . $this->newLine('+');
+                                    {
+                                        $tabsHtml .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance); if (activeTab >= instances.length) activeTab = Math.max(0, instances.length - 1)\">" . $this->newLine('+');
+                                        {
+                                            $tabsHtml .= "<span>{$removeLabel}</span>" . $this->newLine();
+                                        }
+                                        $tabsHtml .= "</button>" . $this->newLine('-');
+                                    }
+                                    $tabsHtml .= "</div>" . $this->newLine('-');
+                                }
+                                // Unified boxed body for every tab (spec §2.1)
+                                $tabsHtml .= "<div class='card awf-section-card border-top-0 rounded-top-0 p-3'>" . $this->newLine('+');
+                                {
+                                    $tabsHtml .= $this->renderGroupInstanceContent($rootBlock, $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
+                                }
+                                $tabsHtml .= "</div>" . $this->newLine('-');
+                            }
+                            $tabsHtml .= "</div>" . $this->newLine('-');
+                        }
+                        $tabsHtml .= "</template>" . $this->newLine('-');
+                    }
+                    $tabsHtml .= "</div>" . $this->newLine('-');
+
+                    // Chrome per flavor: panel_tabs = flat <h4> + <hr>; card_tabs = .card frame
+                    if ($tabsBordered) {
+                        $html .= "<div class='card mt-2'>" . $this->newLine('+');
+                        {
+                            $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center'>" . $this->newLine('+');
+                            {
+                                $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                {
+                                    if ($section->title !== '') $html .= "<span>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                    if ($section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                }
+                                $html .= "</div>" . $this->newLine('-');
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                            $html .= "<div class='card-body'>" . $this->newLine('+');
+                            {
+                                $html .= $tabsHtml;
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                        }
+                        $html .= "</div>" . $this->newLine('-');
+                    } else {
+                        if ($section->showTitle && ($section->title !== '' || $section->subtitle !== '')) {
+                            $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center'>" . $this->newLine('+');
+                            {
+                                $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                {
+                                    if ($section->title !== '') $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</h4>" . $this->newLine();
+                                    if ($section->subtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</div>" . $this->newLine();
+                                }
+                                $html .= "</div>" . $this->newLine('-');
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                            $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
+                        }
+                        $html .= $tabsHtml;
+                    }
+                } else {
+                // --- STACKED INSTANCE CARDS (panel/card parents) ---
                 $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                 {
                     $html .= "<div class='awf-instance-card card border mb-3 shadow-sm' x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
@@ -1095,60 +1250,7 @@ class FormHtmlGeneratorService {
                         // per-block sections show inside every group instance
                         $html .= "<div class='card-body p-3 bg-white'>" . $this->newLine('+');
                         {
-                            $inner = '';
-                            $hasRootRepresentation = $section !== null && self::sectionContainsElementForBlock($section, $rootBlock->id);
-                            if ($section) {
-                                foreach ($section->elements as $el) {
-                                    if ($el instanceof FormLayoutSection) {
-                                        $inner .= $this->renderSectionNode($el, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars);
-                                    } elseif ($el instanceof FormLayoutElement) {
-                                        $inner .= $this->renderElementNode($el, $config, $theme, $instanceVar, $section, $rootBlock->id, $contentOuterVars);
-                                    }
-                                }
-                            }
-                            if ($section !== null && !$hasRootRepresentation) {
-                                $rootPanel = $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar, $outerIndexVars);
-                                if ($rootPanel !== '') $inner = $rootPanel . $inner;
-                            }
-                            if (trim($inner) !== '') {
-                                $html .= $inner;
-                            } else {
-                                // Fallback: flat rendering (root panel + children) for
-                                // structures without nested sections
-                                $html .= $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar, $outerIndexVars);
-                                foreach ($children as $childBlock) {
-                                    if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
-                                    $childHasChildren = !empty($config->getGroupChildren($childBlock));
-                                    $childIsGroupHead = $childBlock->isRepeatable() || $childBlock->isOptional() || $childHasChildren;
-                                    if ($childIsGroupHead) {
-                                        $html .= $this->generateGroupHtml($childBlock, $theme, $config, $instanceVar, null, $outerIndexVars);
-                                    } elseif ($childBlock->isOptional()) {
-                                        $childTitle = htmlspecialchars(translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $childBlock->text, ENT_QUOTES, 'UTF-8');
-                                        $html .= "<div class='awf-child-optional-wrapper my-3 p-2 border rounded bg-light' x-data='{ includeChild: false }'>" . $this->newLine('+');
-                                        {
-                                            $html .= "<div class='form-check form-switch mb-0'>" . $this->newLine('+');
-                                            {
-                                                // Per-instance activation signal `_toggle_{Child}[index]`
-                                                $html .= "<input class='form-check-input' type='checkbox' role='switch' :id=\"'child_switch_{$childBlock->id}_' + {$instanceVar}\" :name=\"'_toggle_{$childBlock->name}[' + {$instanceVar} + ']'\" value='1' x-model='includeChild'>" . $this->newLine();
-                                                $html .= "<label class='form-check-label fw-bold text-secondary small' :for=\"'child_switch_{$childBlock->id}_' + {$instanceVar}\">{$childTitle}</label>" . $this->newLine();
-                                            }
-                                            $html .= "</div>" . $this->newLine('-');
-                                            $html .= "<template x-if='includeChild'>" . $this->newLine('+');
-                                            {
-                                                $html .= "<div class='mt-2'>" . $this->newLine('+');
-                                                {
-                                                    $html .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar, $outerIndexVars);
-                                                }
-                                                $html .= "</div>" . $this->newLine('-');
-                                            }
-                                            $html .= "</template>" . $this->newLine('-');
-                                        }
-                                        $html .= "</div>" . $this->newLine('-');
-                                    } else {
-                                        $html .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar, $outerIndexVars);
-                                    }
-                                }
-                            }
+                            $html .= $this->renderGroupInstanceContent($rootBlock, $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
                         }
                         $html .= "</div>" . $this->newLine('-');
                     }
@@ -1166,12 +1268,76 @@ class FormHtmlGeneratorService {
                     }
                     $html .= "</button>" . $this->newLine('-');
                 }
+                } // end stacked-cards path (panel/card parents)
             }
             $html .= "</div>" . $this->newLine('-');
         }
         $html .= "</div>" . $this->newLine('-');
 
         return $html;
+    }
+
+    /**
+     * Builds the CONTENT of one group instance: the group section's children
+     * (nested sections, blocks and fields) rendered instance-aware, plus the
+     * fallbacks (root panel when the section holds no root representation, and
+     * the flat rendering when the section has no nested sections).
+     */
+    private function renderGroupInstanceContent(FormDataBlock $rootBlock, ?FormLayoutSection $section, array $children, FormConfig $config, FormTheme $theme, string $instanceVar, array $contentOuterVars): string {
+        $inner = '';
+        $hasRootRepresentation = $section !== null && self::sectionContainsElementForBlock($section, $rootBlock->id);
+        if ($section) {
+            foreach ($section->elements as $el) {
+                if ($el instanceof FormLayoutSection) {
+                    $inner .= $this->renderSectionNode($el, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars);
+                } elseif ($el instanceof FormLayoutElement) {
+                    $inner .= $this->renderElementNode($el, $config, $theme, $instanceVar, $section, $rootBlock->id, $contentOuterVars);
+                }
+            }
+        }
+        if ($section !== null && !$hasRootRepresentation) {
+            $rootPanel = $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar, $contentOuterVars);
+            if ($rootPanel !== '') $inner = $rootPanel . $inner;
+        }
+        if (trim($inner) !== '') {
+            return $inner;
+        }
+        // Fallback: flat rendering (root panel + children) for structures
+        // without nested sections
+        $inner = $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar, $contentOuterVars);
+        foreach ($children as $childBlock) {
+            if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
+            $childHasChildren = !empty($config->getGroupChildren($childBlock));
+            $childIsGroupHead = $childBlock->isRepeatable() || $childBlock->isOptional() || $childHasChildren;
+            if ($childIsGroupHead) {
+                $inner .= $this->generateGroupHtml($childBlock, $theme, $config, $instanceVar, null, $contentOuterVars);
+            } elseif ($childBlock->isOptional()) {
+                $childTitle = htmlspecialchars(translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $childBlock->text, ENT_QUOTES, 'UTF-8');
+                $inner .= "<div class='awf-child-optional-wrapper my-3 p-2 border rounded bg-light' x-data='{ includeChild: false }'>" . $this->newLine('+');
+                {
+                    $inner .= "<div class='form-check form-switch mb-0'>" . $this->newLine('+');
+                    {
+                        // Per-instance activation signal `_toggle_{Child}[index]`
+                        $inner .= "<input class='form-check-input' type='checkbox' role='switch' :id=\"'child_switch_{$childBlock->id}_' + {$instanceVar}\" :name=\"'_toggle_{$childBlock->name}[' + {$instanceVar} + ']'\" value='1' x-model='includeChild'>" . $this->newLine();
+                        $inner .= "<label class='form-check-label fw-bold text-secondary small' :for=\"'child_switch_{$childBlock->id}_' + {$instanceVar}\">{$childTitle}</label>" . $this->newLine();
+                    }
+                    $inner .= "</div>" . $this->newLine('-');
+                    $inner .= "<template x-if='includeChild'>" . $this->newLine('+');
+                    {
+                        $inner .= "<div class='mt-2'>" . $this->newLine('+');
+                        {
+                            $inner .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar, $contentOuterVars);
+                        }
+                        $inner .= "</div>" . $this->newLine('-');
+                    }
+                    $inner .= "</template>" . $this->newLine('-');
+                }
+                $inner .= "</div>" . $this->newLine('-');
+            } else {
+                $inner .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar, $contentOuterVars);
+            }
+        }
+        return $inner;
     }
 
     /**
@@ -2060,22 +2226,49 @@ document.addEventListener('alpine:init', () => {
       parent.appendChild(feedback);
       feedback.textContent = message;
       feedback.style.display = 'block';
+      // If the field lives inside a hidden tab pane, activate that pane first
+      // (the awf-tabs container listens for this event), then scroll to it
+      // once Alpine has flushed the pane visibility
+      const paneEl = input.closest('[data-awf-pane]');
+      if (paneEl) {
+        paneEl.dispatchEvent(new CustomEvent('awf-show-pane', { bubbles: true, detail: paneEl.dataset.awfPane }));
+      }
+      if (window.Alpine && window.Alpine.nextTick) {
+        window.Alpine.nextTick(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+      } else {
+        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     },
 
     submitForm(formElement) {
       if (this.submitting) return;
       let formValid = true;
       this.serverErrors = {};
-      
+
       formElement.querySelectorAll('input, select, textarea').forEach(input => {
         if (input.willValidate && !this.validateInput(input)) formValid = false;
       });
       if (!formValid) {
         formElement.classList.add('was-validated');
-        const firstError = formElement.querySelector('.is-invalid');
-        if (firstError) {
-          firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          firstError.focus({ preventScroll: true });
+        // Scroll AFTER Alpine flushes the reactive pane/tab visibility changes
+        // (the @invalid.capture handlers switch tabs while the fields validate):
+        // prefer the FIRST error that is actually visible in the active pane
+        const scrollToError = () => {
+          const errors = formElement.querySelectorAll('.is-invalid');
+          let target = null;
+          for (const err of errors) {
+            if (err.offsetParent !== null) { target = err; break; }
+          }
+          target = target ?? errors[errors.length - 1];
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            target.focus({ preventScroll: true });
+          }
+        };
+        if (window.Alpine && window.Alpine.nextTick) {
+          window.Alpine.nextTick(scrollToError);
+        } else {
+          scrollToError();
         }
         return;
       }

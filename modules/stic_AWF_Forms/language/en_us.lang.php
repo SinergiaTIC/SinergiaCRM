@@ -385,6 +385,8 @@ $mod_strings = array (
   'LBL_FIELD_FULL_WIDTH' => 'Take full width',
   'LBL_SECTION_EMPTY_DESC' => 'This section is empty. Move blocks here from other sections.',
   'LBL_SECTION_MOVE_FORM' => 'Outside all sections',
+  'LBL_LAYOUT_RESET_SECTIONS' => 'Default section layout',
+  'LBL_LAYOUT_RESET_SECTIONS_CONFIRM' => 'Are you sure you want to restore the sections to their default layout? All the configurations made in this step will be lost (titles, distribution, tabs...). This action cannot be undone.',
 
   // Form generation
   'LBL_CODE_GENERATING' => 'Generating code...',

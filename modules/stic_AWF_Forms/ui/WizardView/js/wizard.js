@@ -2677,7 +2677,7 @@ class WizardStep4 {
       // then its only container type is 'tab' (a pane of the parent tabs).
       // True when the section is a tabs CONTAINER (either flavor)
       isTabsContainer(section) {
-        return !!section && (section.containerType === 'tabs_card' || section.containerType === 'tabs_panel');
+        return !!section && (section.containerType === 'card_tabs' || section.containerType === 'panel_tabs');
       },
 
       // True when the section is a DIRECT child of a tabs container section:
@@ -2695,7 +2695,7 @@ class WizardStep4 {
             ?? { id: 'tab_item', text: utils.translate('LBL_SECTION_CONTAINER_TAB') };
           return [tabOption];
         }
-        const validCategories = ['panel', 'card', 'tabs_card', 'tabs_panel'];
+        const validCategories = ['panel', 'card', 'card_tabs', 'panel_tabs'];
         return stic_AwfLayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
       },
 
@@ -2708,7 +2708,9 @@ class WizardStep4 {
       handleContainerTypeChange(section, newType) {
         if (!section) return;
         if (this.isTabsContainer({ containerType: newType })) {
-          section.showTitle = false;
+          // The tabs chrome PAINTS the parent title (flat h4 or card header):
+          // showTitle forced ON (the switch is hidden for tabs parents)
+          section.showTitle = true;
           section.isCollapsible = false;
           section.isCollapsed = false;
           // Non-section elements cannot live in a tabs container: group them
@@ -2825,6 +2827,18 @@ class WizardStep4 {
         this.sections.push(new stic_AwfLayoutSection({
           title: utils.translate('LBL_SECTION_NEW'),
         }));
+      },
+
+      /**
+       * Restores the sections to their DEFAULT state: wipes the whole layout
+       * structure and lets the sync regenerate the sections that the CURRENT
+       * data blocks would define from scratch (removes any intricate manual
+       * configuration made in this step). Requires confirmation.
+       */
+      resetSectionsToDefaults() {
+        if (!confirm(utils.translate('LBL_LAYOUT_RESET_SECTIONS_CONFIRM'))) return;
+        this.formConfig.layout.structure = [];
+        this.formConfig.syncLayoutWithDataBlocks();
       },
 
       canDeleteSection(section) {

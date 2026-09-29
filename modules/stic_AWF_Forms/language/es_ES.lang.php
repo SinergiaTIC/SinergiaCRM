@@ -385,6 +385,8 @@ $mod_strings = array (
   'LBL_FIELD_FULL_WIDTH' => 'Ocupar toda la línea',
   'LBL_SECTION_EMPTY_DESC' => 'Esta sección está vacía. Mueva bloques aquí desde otras secciones.',
   'LBL_SECTION_MOVE_FORM' => 'Fuera de todas las secciones',
+  'LBL_LAYOUT_RESET_SECTIONS' => 'Configuración de secciones por defecto',
+  'LBL_LAYOUT_RESET_SECTIONS_CONFIRM' => '¿Seguro que quieres restaurar las secciones a su configuración por defecto? Se perderán todas las configuraciones hechas en este paso (títulos, distribución, pestañas...). Esta acción no se puede deshacer.',
 
   // Form generation
   'LBL_CODE_GENERATING' => 'Generando el código...',
