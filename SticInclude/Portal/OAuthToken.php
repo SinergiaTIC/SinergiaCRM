@@ -126,10 +126,10 @@ if ($grantType === 'authorization_code') {
                 . " p.name AS project_name, p.estimated_start_date, p.estimated_end_date,"
                 . " sr.decidim_excluded"
                 . " FROM stic_contacts_relationships sr"
-                . " JOIN stic_contacts_relationships_contacts_c lnk ON lnk.stic_contacts_relationships_contactscontacts_ida = sr.id"
+                . " JOIN stic_contacts_relationships_contacts_c lnk ON lnk.stic_contae394onships_idb = sr.id"
                 . " LEFT JOIN stic_contacts_relationships_project_c prj ON prj.stic_conta0d5aonships_idb = sr.id AND prj.deleted = 0"
                 . " LEFT JOIN project p ON p.id = prj.stic_contacts_relationships_projectproject_ida AND p.deleted = 0"
-                . " WHERE lnk.stic_contae394onships_idb = " . $db->quoted($portalId)
+                . " WHERE lnk.stic_contacts_relationships_contactscontacts_ida = " . $db->quoted($portalId)
                 . " AND sr.deleted = 0 AND lnk.deleted = 0 ORDER BY sr.start_date DESC");
             while ($rrow = $db->fetchByAssoc($rr)) { $rels[] = $rrow; }
         }
