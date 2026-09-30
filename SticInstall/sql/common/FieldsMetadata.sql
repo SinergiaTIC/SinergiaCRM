@@ -258,4 +258,8 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Userssda_allowed_c', 'Users', 'sda_allowed_c'),
 ('Usersstic_work_calendar_c', 'Users', 'stic_work_calendar_c'),
 ('Usersstic_clock_c', 'Users', 'stic_clock_c'),
-('Usersstic_m182_issuing_organization_c', 'Users', 'stic_m182_issuing_organization_c');
+('Usersstic_m182_issuing_organization_c', 'Users', 'stic_m182_issuing_organization_c'),
+-- EmailTemplates
+('EmailTemplatestic_whatsapp_twilio_id_c', 'EmailTemplates', 'stic_whatsapp_twilio_id_c'),
+('EmailTemplatestic_whatsapp_status_c', 'EmailTemplates', 'stic_whatsapp_status_c'),
+('EmailTemplatestic_whatsapp_category_c', 'EmailTemplates', 'stic_whatsapp_category_c');
