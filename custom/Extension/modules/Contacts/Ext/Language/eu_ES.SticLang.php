@@ -257,3 +257,6 @@ $mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'Se podrá introducir/cambiar la con
 
 // Conversaciones
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Conversaciones';
+
+// Cadenas Entorno Organizacional
+$mod_strings['LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE'] = 'Persona del entorno organizacional';
