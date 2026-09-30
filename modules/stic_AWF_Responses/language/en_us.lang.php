@@ -80,6 +80,7 @@ $mod_strings = array (
   'LBL_EXECUTION_ITEM_OK' => '✅ [OK]',
   'LBL_EXECUTION_ITEM_SKIPPED' => '⏭️ [SKIPPED]',
   'LBL_EXECUTION_ITEM_ERROR' => '❌ [ERROR]',
+  'LBL_EXECUTION_DEFERRED' => 'Deferred execution',
 
   // General
   'LBL_FIELD' => 'Field',
@@ -117,4 +118,5 @@ $mod_strings = array (
   'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_LINKS_TITLE' => 'Form Response Links',
   'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_FORMS_TITLE' => 'Advanced Web Form',
   'LBL_ANSWERS_SUBPANEL_TITLE' => 'Response details',
+  'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_DOCUMENTS_TITLE' => 'Documents',
 );

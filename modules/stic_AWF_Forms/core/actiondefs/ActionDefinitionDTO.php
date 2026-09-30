@@ -39,6 +39,7 @@ class ActionDefinitionDTO {
     public bool $isAutomatic;
     public bool $isTerminal;
     public bool $defaultContinueOnError;
+    public ?string $resumptionContext = null;
 
     public string $category;
     public string $type;
@@ -54,13 +55,19 @@ class ActionDefinitionDTO {
     public array $supportedFieldSubTypes;
 
     /** @var string[] */
+    public array $supportedFormTypes = [];
+
+    /** @var string[] */
     public array $supportedDataTypes = [];
     
     /** @var array[] */
     public array $autoApplyRules = [];
 
     public int $order;
-    
+
+    public string $flowSuccessLabel;
+    public string $flowErrorLabel;
+
     /** @var ActionParameterDefinitionDTO[] */
     public array $parameters;
 
@@ -80,10 +87,17 @@ class ActionDefinitionDTO {
         $this->isAutomatic = $def->isAutomatic;
         $this->isTerminal = $def instanceof ITerminalAction;
 
+        if ($def instanceof IDeferredAction) {
+            $this->resumptionContext = $def->getResumptionContext()->value;
+        } else {
+            $this->resumptionContext = null;
+        }
+
         $this->category = $def->category;
         $this->scope = $def->scope->value; // Convert enum to string
         $this->supportedModules = $def->supportedModules;
         $this->supportedFieldSubTypes = $def->supportedFieldSubTypes;
+        $this->supportedFormTypes = $def->supportedFormTypes;
 
         if ($def instanceof ValidatorActionDefinition) {
             $this->supportedDataTypes = array_map(
@@ -94,6 +108,11 @@ class ActionDefinitionDTO {
         }
         
         $this->order = $def->order;
+
+        if ($def instanceof IDeferredAction) {
+            $this->flowSuccessLabel = $def->getFlowSuccessLabel();
+            $this->flowErrorLabel = $def->getFlowErrorLabel();
+        }
         
         $this->parameters = array_map(
             fn($paramDef) => new ActionParameterDefinitionDTO($paramDef), 

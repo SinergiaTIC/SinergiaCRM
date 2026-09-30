@@ -94,7 +94,9 @@ $mod_strings = array(
     'LBL_EXPIRATION_DATE_ERROR' => 'La fecha de caducidad debe ser posterior a la fecha de activación.',
     'LBL_SIGNERS_ADDED_MSG' => 'firmante(s) añadido(s) correctamente',
     'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Para que los nuevos firmantes puedan firmar el documento es necesario cambiar el estado a Abierto o Permanente.',
-    'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmantes no añadidos, ya existen o se ha producido un error',
+    'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmantes no añadidos.',
+    'LBL_SIGNERS_NOT_ADDED_SINGLE_MSG' => 'Firmante(s) no añadido(s). Tal y como está configurado este proceso de firma, cada persona sólo puede añadirse una vez. Para añadir la misma persona desde otro registro, active la casilla "Permitir el mismo firmante varias veces" en la configuración de la firma.',
+    'LBL_SIGNERS_NOT_ADDED_DUPLICATE_MSG' => 'Firmante(s) no añadido(s). Una misma persona sólo puede añadirse una vez al proceso de firma desde un mismo registro origen. Si necesita añadir la misma persona, seleccione otro registro del módulo %s.',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Se omite el siguiente registro porque no se han encontrado firmantes.',
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => 'Se ha creado una campaña de notificación para la firma: ',
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Ya existe una campaña de notificación para la firma: ',
@@ -218,4 +220,8 @@ $mod_strings = array(
     'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => 'Plantilla de correo para enviar el documento firmado a los firmantes. Si no se indica lo contrario, se utiliza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70331&action=DetailView">plantilla por defecto</a>.', 
     'LBL_EMAIL_TEMPLATE_OTP_HELP' => 'Plantilla de correo para enviar el código de un solo uso al correo electrónico de los firmantes. Si no se indica lo contrario, se utiliza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70332&action=DetailView">plantilla por defecto</a>.', 
     'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => 'Plantilla de mensaje SMS para enviar el código de un solo uso al teléfono de los firmantes. Si no se indica lo contrario, se utiliza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView">plantilla por defecto</a>.',
+
+    // Allow multiple signers
+    'LBL_ALLOW_MULTIPLE_SIGNERS' => 'Permitir el mismo firmante varias veces',
+    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => '<b>No (valor por defecto):</b> Cada persona sólo puede tener un registro de firmante en el proceso de firma.<br><b>Sí:</b> Una misma persona puede tener múltiples registros de firmante, siempre que provengan de registros origen diferentes. Por ejemplo, si el proceso está basado en el módulo <i>Pagos</i>, la persona podrá tener un registro de firmante por cada pago que tenga asignado.',
 );

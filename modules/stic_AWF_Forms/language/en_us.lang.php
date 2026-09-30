@@ -70,6 +70,8 @@ $mod_strings = array (
   'LBL_PUBLIC_URL' => 'URL',
   'LBL_PROCESSING_MODE' => 'Processing mode',
   'LBL_PROCESSING_MODE_DESC' => 'Defines how received responses are managed. In synchronous mode, responses are stored and processed upon receipt. In asynchronous mode, responses are stored upon receipt and processed later through a background process, which may be of interest to optimize system performance in case of large response influx.',
+  'LBL_FORM_TYPE' => 'Form type',
+  'LBL_FORM_TYPE_DESC' => 'Defines the target audience for the form. Web forms are accessible to anyone, while CRM forms can only be filled out by authenticated users.',
   'LBL_CONFIGURATION' => 'Configuration',
   'LBL_ANALYTICS_VIEWS' => 'Total views',
   'LBL_ANALYTICS_BLOCKED' => 'Blocked views (not public)',
@@ -133,6 +135,8 @@ $mod_strings = array (
   'LBL_DATABLOCK_ADD_TITLE' => 'Configure a data block related to a system module',
   'LBL_DATABLOCK_ADD_UNLINKED' => 'Add an unlinked data block',
   'LBL_DATABLOCK_ADD_UNLINKED_TITLE' => 'Configure a data block without relating it to any system module',
+  'LBL_DATABLOCK_ADD_DOCUMENTS' => 'Add a document data block',
+  'LBL_DATABLOCK_ADD_DOCUMENTS_TITLE' => 'Add a document data block to upload files',
   'LBL_DATABLOCK_NEW' => 'New data block',
   'LBL_DATABLOCK_NEW_UNLINKED' => 'New unlinked data block',
   'LBL_DATABLOCK_MODULE' => 'Module',
@@ -159,6 +163,7 @@ $mod_strings = array (
   'LBL_FIELD_DEFINITION' => 'Definition',
   'LBL_FIELD_DEFINITION_FORM' => 'Representation in the form',
   'LBL_FIELD_DEFINITION_VALIDATIONS' => 'Data validation',
+  'LBL_FIELD_UPLOAD' => 'Upload file',
 
   'LBL_FIELD' => 'Field',
   'LBL_FIELD_NAME' => 'Name',
@@ -182,6 +187,7 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modified)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Select records',
   'LBL_FIELD_VALUE_OPTIONS' => 'Possible values',
+  'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Show internal values',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Internal value',
   'LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL' => 'Original text',
   'LBL_FIELD_VALUE_OPTION_LABEL' => 'Text',
@@ -219,8 +225,9 @@ $mod_strings = array (
   'LBL_RELATIONSHIP_NEW' => 'New data block relationship',  
   'LBL_RELATIONSHIP_NO_MODULE_RELATED' => 'No related module',
   'LBL_RELATIONSHIP_NEW_DATABLOCK' => 'New data block',
-  'LBL_RELATIONSHIP_DATABLOCK_ORIG' => 'Origin data block',
-  'LBL_RELATIONSHIP_DATABLOCK_DEST' => 'Destination data block',
+  'LBL_RELATIONSHIP_TYPE' => 'Type',
+  'LBL_RELATIONSHIP_INVOLVED_BLOCKS' => 'Involved data blocks',
+  'LBL_AWF_FIELD_SUFFIX' => 'field',
 
   // Flows
   'LBL_FLOWS' => 'Action flows',
@@ -228,6 +235,7 @@ $mod_strings = array (
   'LBL_FLOW_RECEIPT' => 'Automatic response',
   'LBL_FLOW_MAIN' => 'Main',
   'LBL_FLOW_ONERROR' => 'Error',
+  'LBL_FLOW_DEFERRED_MAIN' => 'Finished',
 
   // Flow -> Action
   'LBL_ACTION' => 'Action',
@@ -244,8 +252,7 @@ $mod_strings = array (
   'LBL_ACTION_CATEGORY' => 'Category',
   'LBL_ACTION_PARAMETERS' => 'Parameters',
   'LBL_ACTION_ACTIONS' => 'Actions',
-  'LBL_ACTIONS_SHOW_ALL' => 'Show all actions',
-  'LBL_ACTIONS_SHOW_ALL_DESC' => 'Shows all actions defined in the form, including automatically created actions.',
+  'LBL_ACTION_AUTOMATIC' => 'Automatic',
   'LBL_ACTION_NO_PARAMS' => 'No parameters',
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Select --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Module',
@@ -268,17 +275,19 @@ $mod_strings = array (
   'LBL_LAYOUT_FORM_DESIGN' => 'Form design',
   'LBL_LAYOUT_PREVIEW' => 'Preview',
   'LBL_LAYOUT_HEADER' => 'Header',
-  'LBL_LAYOUT_BODY' => 'Form',
   'LBL_LAYOUT_FOOTER' => 'Footer',
 
   // Layout -> Theme
+  'LBL_THEME_GENERAL' => 'General',
+  'LBL_THEME_WEB_TITLE_TEXT' => 'Page title',
+  'LBL_THEME_WEB_TITLE_VALUE' => 'Advanced Web Form',
   'LBL_THEME_SUBMIT_BUTTON_TEXT' => 'Submit button text',
   'LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE' => 'Submit',
   'LBL_THEME_MAIN_COLORS' => 'Colors',
   'LBL_THEME_PRIMARY_COLOR' => 'Main',
   'LBL_THEME_PAGE_BG_COLOR' => 'Page background',
   'LBL_THEME_FORM_BG_COLOR' => 'Form background',
-  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Typography and text',
+  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Text format',
   'LBL_THEME_FONT_FAMILY' => 'Font',
   'LBL_THEME_FONT_SIZE' => 'Size',
   'LBL_THEME_TEXT_COLOR' => 'Color',
@@ -338,6 +347,7 @@ $mod_strings = array (
   'LBL_SECTION_CONFIG' => 'Configuration',
   'LBL_SECTION_CONTENT' => 'Content',
   'LBL_SECTION_TITLE' => 'Title',
+  'LBL_SECTION_SUBTITLE' => 'Subtitle',
   'LBL_SECTION_NO_TITLE' => '< No title >',
   'LBL_SECTION_SHOW_TITLE' => 'Show title',
   'LBL_SECTION_CONTAINER' => 'Visual container',
@@ -352,7 +362,6 @@ $mod_strings = array (
   'LBL_CODE_LOADING' => 'Loading code...',
   'LBL_CODE_LOADING_ERROR' => 'Connection error',
 
-  'LBL_HONEYPOT_LABEL' => 'Keep this field empty',
   'LBL_REQUIRED_FIELD_MESSAGE' => 'This field must be informed',
   
   'LBL_PREVIEW_RIBBON' => 'Preview',
@@ -378,67 +387,74 @@ $mod_strings = array (
   'LBL_RATE_ARIA' => 'Rate with a %s',
 
   // Errors
-  'LBL_ERROR_DATABLOCK_IS_INVALID' => 'The data block has errors',
-  'LBL_ERROR_DATABLOCK_NAME' => 'The data block internal name is empty',
-  'LBL_ERROR_DATABLOCK_TITLE' => 'The data block must have a public name',
-  'LBL_ERROR_NO_DATABLOCKS' => 'At least one data block must be defined to continue',
-  'LBL_ERROR_FIELD_IS_INVALID' => 'The field has errors',
-  'LBL_ERROR_FIELD_NAME' => 'The field internal name is empty',
-  'LBL_ERROR_FIELD_LABEL' => 'No label exists for the field',
-  'LBL_ERROR_FIELD_TYPE' => 'Field type or editor not defined in form',
-  'LBL_ERROR_FIELD_OPTIONS' => 'Dropdown without defined options',
-  'LBL_ERROR_FIELD_FIXED_EMPTY' => 'Fixed field without assigned value',
-  'LBL_OK_FIELD_IS_VALID' => 'The field is correct',
+  'LBL_ERROR_DATABLOCK_IS_INVALID' => 'The data block has errors.',
+  'LBL_ERROR_DATABLOCK_NAME' => 'The data block internal name is empty.',
+  'LBL_ERROR_DATABLOCK_TITLE' => 'The data block must have a public name.',
+  'LBL_ERROR_NO_DATABLOCKS' => 'At least one data block must be defined to continue.',
+  'LBL_ERROR_FIELD_IS_INVALID' => 'The field has errors.',
+  'LBL_ERROR_FIELD_NAME' => 'The field internal name is empty.',
+  'LBL_ERROR_FIELD_LABEL' => 'No label exists for the field.',
+  'LBL_ERROR_FIELD_TYPE' => 'Field type or editor not defined in form.',
+  'LBL_ERROR_FIELD_OPTIONS' => 'Dropdown without defined options.',
+  'LBL_ERROR_FIELD_FIXED_EMPTY' => 'Fixed field without assigned value.',
+  'LBL_OK_FIELD_IS_VALID' => 'The field is correct.',
 
   // -- SUBPANELS --
   'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE' => 'Form responses',
-
+  
   // -- HOOK ACTIONS --
   // Generic 
   'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_TEXT' => 'Data block',
-  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DESC' => 'Select the data block to be used as a parameter in the action',
+  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DESC' => 'Select the data block to be used as a parameter in the action.',
 
   // SaveRecordAction
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Save record',
   'LBL_SAVE_RECORD_ACTION_DESC' => 'Saves or updates a record from form data',
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Field matching',
+  'LBL_SAVE_RECORD_ACTION_RELATION_CONFIGS_TEXT' => 'Relationship fields',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Save relationship',
-  'LBL_RELATE_RECORDS_ACTION_DESC' => 'Creates a relationship between two records',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Create relationship',
+  'LBL_RELATE_RECORDS_ACTION_DESC' => 'Creates a relationship between two records.',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Relationship destination',
-  'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'The destination data block or record for the relationship to save',
+  'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'The destination data block or record for the relationship to save.',
+  'LBL_RELATE_RECORDS_ACTION_SOURCE_OBJECT_TEXT' => 'Relationship origin',
   'LBL_RELATE_RECORDS_ACTION_OPTION_BLOCK_TEXT' => 'Destination data block',
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'Destination record ID',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relationship to update',
-  'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'The internal name of the relationship linking to the destination data block',
+  'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'The internal name of the relationship linking to the destination data block.',
+  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Related field',
+
+  // SaveDocumentBlockAction
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Save document',
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => 'Create a document record from a document block and link it to the response.',
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_FILENAME_TEXT' => 'Filename',
 
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Add to Target List',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Adds the processed record (person, prospect, user or organization) to an existing Target List',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Adds the processed record (person, prospect, user or organization) to an existing Target List.',
   'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_TEXT' => 'Recipient',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'Indicates the data block containing the recipient to be added to the Target List',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'Indicates the data block containing the recipient to be added to the Target List.',
   'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_TEXT' => 'Target List',
   
   // SendEmailToDataBlockAction
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TITLE' => 'Send email to form sender',
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Sends an email to the processed record (person, prospect, user or organization) contained in a data block',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Sends an email to the processed record (person, prospect, user or organization) contained in a data block.',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_TEXT' => 'Recipient',
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'Indicates the data block containing the email recipient',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'Indicates the data block containing the email recipient.',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_TEXT' => 'Email template',
 
   // SendEmailToAddressAction
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TITLE' => 'Send email to an address',
-  'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Sends an email to a specific email address',
+  'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Sends an email to a specific email address.',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Email',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Email template',
-  
-  
+    
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Send email to assigned user',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Sends an email to the assigned user of the form or a record',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Sends an email to the assigned user of the form or a record.',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_TEXT' => 'Assigned user source',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => 'Indicates the record from which the assigned user will be obtained',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => 'Indicates the record from which the assigned user will be obtained.',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_OWNER_TEXT' => 'Form',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RESPONSE_TEXT' => 'Form response',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_DATABLOCK_TEXT' => 'Data block',
@@ -448,7 +464,7 @@ $mod_strings = array (
   
   // RedirectAction
   'LBL_REDIRECT_ACTION_TITLE' => 'Go to a web page',
-  'LBL_REDIRECT_ACTION_DESC' => "Redirects the end user's browser to a specific web page",
+  'LBL_REDIRECT_ACTION_DESC' => "Redirects the end user's browser to a specific web page.",
   'LBL_REDIRECT_ACTION_URL_TEXT' => 'Redirect URL',
   'LBL_REDIRECT_ACTION_URL_DESC' => 'Indicates the address of the web page to redirect the end user. Must include the protocol (http:// or https://).',
   'LBL_REDIRECT_ACTION_METHOD_TEXT' => 'Submission method',
@@ -460,113 +476,156 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_REDIRECTING' => 'Redirecting...',
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Click here to continue',
 
+  // RedirectToRecordAction
+  'LBL_REDIRECT_TO_RECORD_ACTION_TITLE' => 'Go to a record',
+  'LBL_REDIRECT_TO_RECORD_ACTION_DESC' => "Redirects the end user's browser to a specific record's page.",
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_TEXT' => 'Record data block',
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_DESC' => 'Indicates the data block containing the record to which the end user will be redirected.',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_TEXT' => 'CRM view',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_DETAILVIEW_TEXT' => 'Detail view',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_EDITVIEW_TEXT' => 'Edit view',
+
   // RedirectSummaryPageAction
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Show data summary',
-  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => "Redirects the end user's browser to a page where provided data is shown",
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => "Redirects the end user's browser to a page where provided data is shown.",
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_TEXT' => 'Page title',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_DEFAULT' => 'Summary of provided data',
 
   // CheckSessionAction
   'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verify active session and permissions',
-  'LBL_CHECK_SESSION_ACTION_DESC' => 'Blocks form processing if there is no active user session or if the user lacks permissions to create records associated with the form',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT' => 'Message for inactive session',
-  'LBL_CHECK_SESSION_ACTION_SESSION_ERROR_MSG_TEXT_DEFAULT' => 'Unauthorized access. Please log in to continue.',
+  'LBL_CHECK_SESSION_ACTION_DESC' => 'Blocks form processing if there is no active user session or if the user lacks permissions to create records associated with the form.',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT' => 'Message for lack of permissions',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT_DEFAULT' => 'Unauthorized access. You do not have the necessary permissions to continue.',
   'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verifying access and permissions...',
   'LBL_CHECK_SESSION_ACTION_DENIED_TITLE' => '🚫 Access denied',
-  'LBL_CHECK_SESSION_ACTION_LOGIN' => 'Log in',
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Active session',
 
-
   // -- DEFERRED ACTIONS --
-  // PaymentRouterAction
-  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Make payment on external platform',
-  'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Processes the payment corresponding to a data block on an external platform.',
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Payment Commitment',
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selects the data block with the Payment Commitment to make its payment on the external platform.',
+  'LBL_PARAM_EXPIRATION_DAYS' => 'Expiration days',
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Number of days after which the deferred action will expire.',
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE' => 'Title for link already used',
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DESC' => 'Warning title that will be displayed when accessing the link if it has already been used.',
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT' => 'Action already performed',
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT' => 'Text for link already used',
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC' => 'Warning text that will be displayed when the link is accessed if it has already been used.',
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT' => 'This action has already been completed successfully before and does not need to be repeated.',
+  'LBL_PARAM_EXPIRED_TITLE' => 'Title for expired link',
+  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Warning title that will be displayed when accessing the expired link.',
+  'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Expired link',
+  'LBL_PARAM_EXPIRED_TEXT' => 'Text for expired link',
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Warning text that will be displayed when accessing the expired link.',
+  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'This link has expired for security reasons.',
 
+  // EmailConfirmationAction
+  'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirm email',
+  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Generates a unique link and sends it via email so the user can confirm the email address.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Email confirmed',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Recipient',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Specifies the data block containing the email to be verified and to which the confirmation link will be sent.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Email template',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'The email template must contain the variable {::confirmation_url::} in the message body to generate the confirmation link.',
+
+  // PaymentRouterAction
+  'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Make payment',
+  'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Processes the payment corresponding to a data block on an external platform.',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => 'Confirmed payment',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Payment Commitment',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selects the data block that contains the payment commitment for which payment must be made on an external platform.',
 
   // -- VALIDATOR ACTIONS --
   // RegexValidatorAction
   'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Regex validator',
-  'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Validates a field according to a regular expression',
+  'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Validates a field according to a regular expression.',
   'LBL_REGEX_VALIDATOR_ACTION_PATTERN_TEXT' => 'Regular expression',
-  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Field format is invalid',
+  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Field format is invalid.',
 
   // EmailValidatorAction
   'LBL_EMAIL_VALIDATOR_ACTION_TITLE' => 'Email validator',
-  'LBL_EMAIL_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid email',
-  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The email address is invalid',
+  'LBL_EMAIL_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid email.',
+  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The email address is invalid.',
 
   // DniValidatorAction
   'LBL_DNI_VALIDATOR_ACTION_TITLE' => 'DNI/NIF validator',
-  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Spanish DNI/NIF',
-  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The DNI/NIF is invalid',
+  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Spanish DNI/NIF.',
+  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The DNI/NIF is invalid.',
 
   // CifValidatorAction
   'LBL_CIF_VALIDATOR_ACTION_TITLE' => 'Legal entity NIF validator',
-  'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Spanish legal entity NIF',
-  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The NIF is invalid',
+  'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Spanish legal entity NIF.',
+  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The NIF is invalid.',
 
   // NieValidatorAction
   'LBL_NIE_VALIDATOR_ACTION_TITLE' => 'NIE validator',
-  'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Spanish NIE',
-  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The NIE is invalid',
+  'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Spanish NIE.',
+  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The NIE is invalid.',
 
   // CatSalutCipValidatorAction
   'LBL_CATSALUT_CIP_VALIDATOR_ACTION_TITLE' => 'CIP validator (CatSalut)',
-  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid CatSalut Personal Identification Code (CIP)',
-  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The CIP is invalid',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid CatSalut Personal Identification Code (CIP).',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The CIP is invalid.',
 
   // NafValidatorAction
   'LBL_NAF_VALIDATOR_ACTION_TITLE' => 'NUSS validator',
-  'LBL_NAF_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Social Security affiliation number (NUSS)',
-  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The Social Security affiliation number is invalid',
+  'LBL_NAF_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Social Security affiliation number (NUSS).',
+  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The Social Security affiliation number is invalid.',
 
   // NumericValidatorAction
   'LBL_NUMERIC_VALIDATOR_ACTION_TITLE' => 'Numeric validator',
-  'LBL_NUMERIC_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a numeric value and optionally within a range',
+  'LBL_NUMERIC_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a numeric value and optionally within a range.',
   'LBL_NUMERIC_VALIDATOR_ACTION_MIN_TEXT' => 'Minimum value (optional)',
   'LBL_NUMERIC_VALIDATOR_ACTION_MAX_TEXT' => 'Maximum value (optional)',
-  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Value must be numeric and between the allowed values',
+  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Value must be numeric and between the allowed values.',
 
   // TextLengthValidatorAction
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_TITLE' => 'Text length validator',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_DESC' => 'Validates that a field contains text with length within a range',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_DESC' => 'Validates that a field contains text with length within a range.',
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MIN_LENGTH_TEXT' => 'Minimum length (optional)',
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MAX_LENGTH_TEXT' => 'Maximum length (optional)',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Text must have a length between the allowed values',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Text must have a length between the allowed values.',
 
   // IbanValidatorAction
   'LBL_IBAN_VALIDATOR_ACTION_TITLE' => 'IBAN validator',
-  'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid IBAN',
-  'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The IBAN is invalid',
+  'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid IBAN.',
+  'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The IBAN is invalid.',
 
   // PhoneValidatorAction
   'LBL_PHONE_VALIDATOR_ACTION_TITLE' => 'Phone validator',
-  'LBL_PHONE_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Spanish phone number (at least 9 numeric digits)',
-  'LBL_PHONE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The phone number is invalid',
+  'LBL_PHONE_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Spanish phone number (at least 9 numeric digits).',
+  'LBL_PHONE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The phone number is invalid.',
 
   // SpanishZipValidatorAction
   'LBL_SPANISH_ZIP_VALIDATOR_ACTION_TITLE' => 'Zip code validator',
-  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Spanish zip code (5 numeric digits)',
-  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The zip code is invalid',
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid Spanish zip code (5 numeric digits).',
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The zip code is invalid.',
 
   // TrueValidatorAction
   'LBL_TRUE_VALIDATOR_ACTION_TITLE' => 'Mandatory selection',
-  'LBL_TRUE_VALIDATOR_ACTION_DESC' => 'Ensures a checkbox is checked (e.g., acceptance of conditions)',
-  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Acceptance of this field is necessary to continue',
+  'LBL_TRUE_VALIDATOR_ACTION_DESC' => 'Ensures a checkbox is checked (e.g., acceptance of conditions).',
+  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Acceptance of this field is necessary to continue.',
 
   // AgeValidatorAction
   'LBL_AGE_VALIDATOR_ACTION_TITLE' => 'Age validator',
-  'LBL_AGE_VALIDATOR_ACTION_DESC' => 'Calculates age from birth date and verifies it is between the allowed minimum and maximum',
+  'LBL_AGE_VALIDATOR_ACTION_DESC' => 'Calculates age from birth date and verifies it is between the allowed minimum and maximum.',
   'LBL_AGE_VALIDATOR_ACTION_MIN_YEARS_TEXT' => 'Minimum age (optional)',
   'LBL_AGE_VALIDATOR_ACTION_MAX_YEARS_TEXT' => 'Maximum age (optional)',
-  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Age is not within the allowed range',
+  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'Age is not within the allowed range.',
 
   // UrlValidatorAction
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'URL validator',
-  'LBL_URL_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid URL',
-  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The URL is invalid',
- );
+  'LBL_URL_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid URL.',
+  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The URL is invalid.',
+
+  // MaxDocumentSizeValidatorAction
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_TITLE' => 'Max file size',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Validates that the uploaded file does not exceed the maximum allowed size.',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_MAX_SIZE_MB_TEXT' => 'Maximum size (MB)',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The file exceeds the maximum allowed size.',
+
+  // AllowedExtensionsValidatorAction
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_TITLE' => 'Allowed extensions',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_DESC' => 'Validates that the uploaded file has an allowed extension.',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_EXTENSIONS_TEXT' => 'Allowed extensions (comma separated)',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'File extension is not allowed.',
+);

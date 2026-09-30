@@ -39,7 +39,7 @@ class stic_SignersUtils
      */
     public static function sendToSign($signerId)
     {
-        global $current_user, $mod_strings, $app_strings;
+        global $mod_strings, $app_strings;
 
         // Validate signer ID
         if (empty($signerId)) {
@@ -78,17 +78,19 @@ class stic_SignersUtils
 
         // Prepare mailer
         require_once 'include/SugarPHPMailer.php';
+        require_once 'include/OutboundEmail/OutboundEmail.php';
         $emailObj = new Email();
         $defaults = $emailObj->getSystemDefaultEmail();
+        $outboundEmail = new OutboundEmail();
+        $outboundEmail = $outboundEmail->getSystemMailerSettings();
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
 
-        // Set From and FromName using current user or system defaults
-        $fromEmail = $current_user->email1 ?: $defaults['email'];
-        $mail->From = $fromEmail;
-
-        $fromName = $current_user->name ?: $defaults['name'];
-        $mail->FromName = $fromName;
+        // Set From and FromName using the system outbound account (same one used to
+        // authenticate the SMTP connection) to avoid SendAsDenied errors when the
+        // current user's email differs from the account that actually sends the email.
+        $mail->From = !empty($outboundEmail->smtp_from_addr) ? $outboundEmail->smtp_from_addr : ($defaults['email'] ?? '');
+        $mail->FromName = !empty($outboundEmail->smtp_from_name) ? $outboundEmail->smtp_from_name : ($defaults['name'] ?? '');
 
         // Add recipient
         if (empty($destAddress)) {
@@ -160,7 +162,6 @@ class stic_SignersUtils
      */
     public static function sendOtpEmailToSigner($signerBean, $otpCode)
     {
-        global $current_user;
         require_once 'SticInclude/Utils.php';
 
         $signerId = $signerBean->id;
@@ -201,17 +202,19 @@ class stic_SignersUtils
 
         // Prepare mailer
         require_once 'include/SugarPHPMailer.php';
+        require_once 'include/OutboundEmail/OutboundEmail.php';
         $emailObj = new Email();
         $defaults = $emailObj->getSystemDefaultEmail();
+        $outboundEmail = new OutboundEmail();
+        $outboundEmail = $outboundEmail->getSystemMailerSettings();
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
 
-        // Set From and FromName
-        $fromEmail = $current_user->email1 ?: $defaults['email'];
-        $mail->From = $fromEmail;
-
-        $fromName = $current_user->name ?: $defaults['name'];
-        $mail->FromName = $fromName;
+        // Set From and FromName using the system outbound account (same one used to
+        // authenticate the SMTP connection) to avoid SendAsDenied errors when the
+        // current user's email differs from the account that actually sends the email.
+        $mail->From = !empty($outboundEmail->smtp_from_addr) ? $outboundEmail->smtp_from_addr : ($defaults['email'] ?? '');
+        $mail->FromName = !empty($outboundEmail->smtp_from_name) ? $outboundEmail->smtp_from_name : ($defaults['name'] ?? '');
 
         // Add recipient
         if (empty($destAddress)) {
@@ -316,7 +319,7 @@ class stic_SignersUtils
         $messageBean->message = $messageText;
         $messageBean->sender = $sender;
         $messageBean->status = 'sent'; // Assuming 'sent' is set upon creation/attempt
-        $messageBean->type = 'SevenSmsHelper'; // Specific SMS gateway type
+        $messageBean->type = 'sms';
         $messageBean->save();
 
         // Check if the message record was successfully created/sent
@@ -348,12 +351,26 @@ class stic_SignersUtils
      */
     public static function getSticSignersForContacts()
     {
-        global $app_list_strings;
+        global $current_user;
 
         $contact_id = $_REQUEST['record'];
         if (empty($contact_id)) {
             return '';
         }
+
+        require_once 'modules/SecurityGroups/SecurityGroup.php';
+        require_once 'modules/ACL/ACLController.php';
+
+        $db = DBManagerFactory::getInstance();
+        $quotedContactId = $db->quote($contact_id);
+
+        // STIC custom - Only return the signers the current user is authorized to view (owner or security group).
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/1379
+        $accessWhere = '';
+        if (ACLController::requireSecurityGroup('stic_Signers', 'list')) {
+            $accessWhere = " AND (stic_signers.assigned_user_id = '" . $db->quote($current_user->id) . "' OR " . SecurityGroup::getGroupWhere('stic_signers', 'stic_Signers', $current_user->id) . ")";
+        }
+        // END STIC custom
 
         // Construct the SQL query
         $query = "
@@ -379,9 +396,10 @@ class stic_SignersUtils
                 FROM stic_signers
                 LEFT JOIN contacts c1 ON c1.id = stic_signers.contact_id_c -- to get on_behalf_of_id
                 WHERE parent_type = 'Contacts'
-                    AND (stic_signers.parent_id = '{$contact_id}' OR stic_signers.contact_id_c = '{$contact_id}')
+                    AND (stic_signers.parent_id = '{$quotedContactId}' OR stic_signers.contact_id_c = '{$quotedContactId}')
                     AND stic_signers.status in ('pending','signed')
                     AND stic_signers.deleted = 0
+                    {$accessWhere}
                 ) AS stic_signers
         ";
         return $query;
@@ -395,10 +413,26 @@ class stic_SignersUtils
      */
     public static function getSticSignersForUsers()
     {
+        global $current_user;
+
         $user_id = $_REQUEST['record'];
         if (empty($user_id)) {
             return '';
         }
+
+        require_once 'modules/SecurityGroups/SecurityGroup.php';
+        require_once 'modules/ACL/ACLController.php';
+
+        $db = DBManagerFactory::getInstance();
+        $quotedUserId = $db->quote($user_id);
+
+        // STIC custom - Only return the signers the current user is authorized to view (owner or security group).
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/1379
+        $accessWhere = '';
+        if (ACLController::requireSecurityGroup('stic_Signers', 'list')) {
+            $accessWhere = " AND (stic_signers.assigned_user_id = '" . $db->quote($current_user->id) . "' OR " . SecurityGroup::getGroupWhere('stic_signers', 'stic_Signers', $current_user->id) . ")";
+        }
+        // END STIC custom
 
         // Construct the SQL query
         $query = "
@@ -422,9 +456,10 @@ class stic_SignersUtils
                     stic_signers.record_id
                 FROM stic_signers
                 WHERE parent_type = 'Users'
-                    AND parent_id = '{$user_id}'
+                    AND parent_id = '{$quotedUserId}'
                     AND status in ('pending','signed')
                     AND deleted = 0
+                    {$accessWhere}
                 ) AS stic_signers
         ";
 

@@ -164,7 +164,10 @@ array(
                         'name' => 'aggregated_services_complete',
                         'label' => 'LBL_AGGREGATED_SERVICES_COMPLETE',
                     ),
-                    1 => '',
+                    1 => array(
+                        'name' => 'attendances_count',
+                        'label' => 'LBL_ATTENDANCES_COUNT',
+                    ),
                 ),
                 11 => array(
                     0 => 'description',

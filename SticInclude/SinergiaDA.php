@@ -156,9 +156,9 @@ class ExternalReporting
         $fechaModificacion = filemtime($archivo);
         $fechaFormateada = date('Y-m-d H:i:s', $fechaModificacion);
 
-        $this->info = "<strong>La fecha de modificación del archivo es: " . $fechaFormateada . "</strong><br>";
+        $this->info = '<span id="sda-run-date" style="display:none;">' . $fechaFormateada . '</span>';
 
-        $this->info .= '<link rel="stylesheet" type="text/css" href="cache/themes/SuiteP/css/Stic/style.css" />';
+        $this->info .= '<div class="sda-debug-wrapper">';
 
         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': Running Createviews() function');
 
@@ -194,8 +194,7 @@ class ExternalReporting
         $this->deleteOldViews();
         $this->logStep('deleteOldViews', __LINE__, __METHOD__);
 
-        $this->info .= "<div><a href='index.php?module=Administration&action=createReportingMySQLViews&print_debug=1'>All modules</a> </div>";
-
+        
         // Reset general metadata tables
         $this->resetMetadataTables();
         $this->logStep('resetMetadataTables', __LINE__, __METHOD__);
@@ -254,6 +253,8 @@ class ExternalReporting
 
         natsort($modulesList);
 
+        $this->info .= '<div class="sda-modules">';
+
         foreach ($modulesList as $moduleName) {
             // Reset module index list
             unset($indexesToCreate);
@@ -276,7 +277,7 @@ class ExternalReporting
                     if (!in_array($moduleName, $this->sdaSettings['publishAsTable'])
                         && $this->sdaSettings['publishAsTable'][0] != '0'
                     ) {
-                        $this->info .= "<li>{$moduleName} (Omitted)</li>";
+                        $this->info .= '<div class="sda-module omitted">' . $moduleName . ' (Omitted)</div>';
                         continue 2;
                     }
                     break;
@@ -284,7 +285,7 @@ class ExternalReporting
                     if (in_array($moduleName, $this->sdaSettings['publishAsTable'])
                         || $this->sdaSettings['publishAsTable'][0] == '1'
                     ) {
-                        $this->info .= "<li>{$moduleName} (Omitted)</li>";
+                        $this->info .= '<div class="sda-module omitted">' . $moduleName . ' (Omitted)</div>';
                         continue 2;
                     }
                     break;
@@ -321,7 +322,7 @@ class ExternalReporting
 
             // Get translated module name
             $txModuleName = $langAppListStrings['moduleList'][$moduleName];
-            $this->info .= "<li module='{$moduleName}'><a href='#'>	{$txModuleName} ({$moduleName})</a></li><div id='{$moduleName}' style='display:none;'>";
+            $this->info .= '<div class="sda-module" module="' . $moduleName . '"><a href="#">' . $txModuleName . ' (' . $moduleName . ')</a><div id="' . $moduleName . '" style="display:none;">';
 
             // Sanitize text
             $viewName = $this->sanitizeText("{$this->viewPrefix}_{$tableName}");
@@ -352,9 +353,11 @@ class ExternalReporting
 
                 $fieldPrefix = ($fieldV['source'] ?? null) == 'custom_fields' ? 'c' : 'm';
 
-                // If the field is excluded, skip it
+                // If the field is excluded, skip it unless it belongs to a self-referencing relationship (auto-relationship)
                 if (in_array($fieldV['name'], $this->evenExcludedFields)) {
-                    continue;
+                    if (($fieldV['module'] ?? null) != $moduleName) {
+                        continue;
+                    }
                 }
 
                 // Conditionally controls the visibility of fields in the detail view:
@@ -468,6 +471,12 @@ class ExternalReporting
                                     $fieldV['rLabel'] = translate('LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_R_TITLE', $fieldV['module']);
                                     $fieldV['lLabel'] = translate('LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_L_TITLE', $fieldV['module']);
                                     $fieldV['autoRelJoinModuleRelLabel'] = 'LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_R_TITLE';
+                                    // Resolve the actual relationship name from the link field definition
+                                    // (needed when the link field name differs from the relationship name, e.g. member_of vs member_accounts)
+                                    $linkFieldDef = $moduleBean->getFieldDefinitions()[$fieldV['link']] ?? null;
+                                    if ($linkFieldDef && !empty($linkFieldDef['relationship'])) {
+                                        $fieldV['rel_name'] = $linkFieldDef['relationship'];
+                                    }
                                     $autoRelationships[$fieldV['link']] = $fieldV;
                                     $this->autoRelationshipsRegistered[$fieldV['link']] = $fieldV['table'];
                                 }
@@ -508,7 +517,11 @@ class ExternalReporting
                                 $indexesToCreate[] = $fieldV['alias'];
 
                                 if (!empty($fieldSrc)) {
-                                    $fieldList['related'][$fieldK] = $fieldSrc . " AS {$fieldV['alias']}";
+                                    // Skip adding to related field list for auto-relationships,
+                                    // the auto-relationship view already adds the column via parentIdfieldSrc
+                                    if (empty($fieldV['isAutoRelationship'])) {
+                                        $fieldList['related'][$fieldK] = $fieldSrc . " AS {$fieldV['alias']}";
+                                    }
                                 } else {
                                     $fieldList['failedRelations'][$fieldK] = $fieldSrc . " AS {$fieldV['alias']}";
                                 }
@@ -579,8 +592,8 @@ class ExternalReporting
                                         'column' => $fieldV['name'],
                                         'type' => 'text',
                                         'aggregations' => 'count,count_distinct,none',
-                                        'label' => $fieldV['label'],
-                                        'description' => addslashes($fieldV['label']),
+                                        'label' => "{$fieldV['label']} ({$relatedModuleName})",
+                                        'description' => addslashes("{$fieldV['label']} ({$relatedModuleName})"),
                                         'sda_hidden' => 0,
                                         'stic_type' => $fieldV['type'] . '-name',
                                     ]
@@ -596,7 +609,7 @@ class ExternalReporting
                                         'target_table' => "{$this->viewPrefix}_{$fieldV['targetModule']}",
                                         'target_column' => 'id',
                                         'info' => 'relate',
-                                        'label' => "{$fieldV['label']}|{$txModuleName}",
+                                        'label' => "{$fieldV['label']} ({$relatedModuleName})|{$txModuleName} ({$fieldV['label']})",
                                     ]
                                 );
                             }
@@ -635,9 +648,33 @@ class ExternalReporting
                             ]
                         );
                         break;
+                    case 'bool':
+
+                        $fieldV['alias'] = $fieldV['name'];
+
+                        // Create listViewName for use in metadata & view creation
+                        $listViewName = substr(join('_', [$tableName, $fieldV['name'], 'stic_boolean_list']), 0, 58);
+
+                        $fieldSrc = " IFNULL({$fieldPrefix}.{$fieldV['name']} ,'') AS {$fieldName}";
+
+                        // For boolean fields, always create the enum view with fixed '1'/'0' codes
+                        // regardless of the actual keys in stic_boolean_list
+                        $this->createFixedBooleanEnumView($listViewName);
+
+                        $this->addMetadataRecord(
+                            'sda_def_enumerations',
+                            [
+                                'source_table' => "{$this->viewPrefix}_{$tableName}",
+                                'source_column' => $fieldV['name'],
+                                'master_table' => "{$this->listViewPrefix}_{$listViewName}",
+                                'info' => 'enum_list',
+                                'stic_type' => $fieldV['type'],
+                            ]
+                        );
+                        break;
+
                     case 'enum':
                     case 'dynamicenum':
-                    case 'bool':
                     case 'radioenum':
 
                         $fieldV['alias'] = $fieldV['name'];
@@ -651,9 +688,8 @@ class ExternalReporting
 
                         $createdListView = $this->createEnumView($listName, $listViewName);
 
-                        // If there is a valid drop-down list or if it corresponds to that of a boolean field
-                        // we continue, otherwise we move on to the next column
-                        if (!empty($createdListView) || $listName == 'stic_boolean_list') {
+                        // If there is a valid drop-down list we continue, otherwise we move on to the next column
+                        if (!empty($createdListView)) {
                             $listNames[] = $createdListView;
                         } else {
                             continue 2;
@@ -725,8 +761,8 @@ class ExternalReporting
                         break;
 
                     default:
-                        $this->info .= "<div class='error' style='color:red;'>ERROR: [FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}] </div>";
-                        $this->info .= "[FATAL: Unprocessed field type. {$fieldV['type']} | Módule: {$moduleName} - Field: {$fieldV['name']}]";
+                        $this->info .= '<div class="sda-error">Unprocessed field type. ' . $fieldV['type'] . ' | Module: ' . $moduleName . ' - Field: ' . $fieldV['name'] . '</div>';
+                        $this->info .= '<span class="sda-fatal">[FATAL: Unprocessed field type. ' . $fieldV['type'] . ' | Module: ' . $moduleName . ' - Field: ' . $fieldV['name'] . ']</span>';
                         $this->info .= print_r($fieldV, true);
 
                         break;
@@ -850,8 +886,8 @@ class ExternalReporting
 
                             // Check if the virtual field label is empty
                             if (empty($virtualFieldLabel)) {
-                                $this->info .= "<div style='color:red;'>VIRTUAL FIELD ERROR: <b>[{$file}]</b> - The virtual field was not processed because there is no translation available for {$this->langCode}</div>";
-                                $this->info .= "[FATAL: Virtual Field without label $viewName - $file]";
+                                $this->info .= '<div class="sda-error">Virtual field error: <b>[' . $file . ']</b> - No translation available for ' . $this->langCode . '</div>';
+                                $this->info .= '<span class="sda-fatal">[FATAL: Virtual field without label ' . $viewName . ' - ' . $file . ']</span>';
                                 continue;
                             }
 
@@ -878,7 +914,7 @@ class ExternalReporting
                             );
                         }
                     } else {
-                        $this->info .= "<div style='color:orange;'>WARNING: The file {$file} does not contain a valid array of virtual fields.</div>";
+                        $this->info .= '<div class="sda-warning">The file ' . $file . ' does not contain a valid array of virtual fields.</div>';
                     }
 
                     // Clear the variables after processing to avoid conflicts with the next file
@@ -901,7 +937,7 @@ class ExternalReporting
             unset($qualifiedLabel);
             if (!empty($autoRelationships)) {
                 foreach ($autoRelationships as $key => $value) {
-                    if ($txModuleName != $value['rLabel']) {
+                    if ($txModuleName != $value['rLabel'] && strpos($value['rLabel'], 'LBL_') !== 0) {
                         $qualifiedLabel = "{$txModuleName} ({$value['rLabel']})";
                     } else {
                         $qualifiedLabel = "{$txModuleName} ({$value['label']})";
@@ -1030,12 +1066,12 @@ class ExternalReporting
 
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$lastSQLError}] running Query: [{$query}]");
 
-                    $this->info .= "<div class='error' style='color:red;'>ERROR: <textarea style='width:100%;height:300px;border:1px solid red;'> {$query} </textarea>({$lastSQLError})</div>";
-                    $this->info .= "[FATAL: Unable to create view $viewName]";
+                    $this->info .= '<div class="sda-error">Query failed:</div><div class="sda-query error">' . $query . '</div><div>(' . $lastSQLError . ')</div>';
+                    $this->info .= '<span class="sda-fatal">[FATAL: Unable to create view ' . $viewName . ']</span>';
 
                 } else {
-                    $this->info .= '<div style="color:green;">OK: <textarea style="width:100%;height:300px;border:1px solid green;">' . $query . '</textarea>  </div>';
-                    $this->info .= '<div style="font-size:80%"><b>Listas creadas:</b> ' . join(' | ', array_unique($listNames)) . '</div>';
+                    $this->info .= '<div class="sda-ok">View created successfully</div><div class="sda-query ok">' . $query . '</div>';
+                    $this->info .= '<div class="sda-detail"><b>Lists created:</b> ' . join(' | ', array_unique($listNames)) . '</div>';
                 };
             }
 
@@ -1052,31 +1088,31 @@ class ExternalReporting
                     if (!$db->query($indexSql)) {
                         $lastSQLError = array_pop(explode(':', $db->last_error));
                         $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$lastSQLError}] running Query: [{$indexSql}]");
-                        $this->info .= "<div class='error' style='color:red;'>ERROR: <textarea style='width:100%;height:100px;border:1px solid red;'> {$indexSql} </textarea>  ({$lastSQLError})</div>";
-                        $this->info .= "[FATAL: Unable to create index {$indexName} on view $viewName]";
+                        $this->info .= '<div class="sda-error">Index query failed:</div><div class="sda-query error">' . $indexSql . '</div><div>(' . $lastSQLError . ')</div>';
+                        $this->info .= '<span class="sda-fatal">[FATAL: Unable to create index ' . $indexName . ' on view ' . $viewName . ']</span>';
                     } else {
-                        $this->info .= "<div style='color:green;'>OK: <textarea style='width:100%;height:100px;border:1px solid green;'>{$indexSql}</textarea>  </div>";
+                        $this->info .= '<div class="sda-ok">Index created successfully</div><div class="sda-query ok">' . $indexSql . '</div>';
                     };
                 }
             }
 
-            $this->info .= "<h2>Base fields</h2>";
-            $this->info .= print_r($fieldList['base'] ?? '', true);
-            $this->info .= "<h2>Custom fields</h2>";
-            $this->info .= print_r($fieldList['custom'] ?? '', true);
-            $this->info .= "<h2>Virtual Fields</h2>";
-            $this->info .= print_r($fieldList['virtual'] ?? '', true);
+            $this->info .= '<div class="sda-detail"><b>Base fields:</b> ' . print_r($fieldList['base'] ?? '', true) . '</div>';
+            $this->info .= '<div class="sda-detail"><b>Custom fields:</b> ' . print_r($fieldList['custom'] ?? '', true) . '</div>';
+            $this->info .= '<div class="sda-detail"><b>Virtual fields:</b> ' . print_r($fieldList['virtual'] ?? '', true) . '</div>';
 
-            $this->info .= "</div>";
-            $isTable = $tableMode == 'table' ? ' <b style=color:orange>[Table]</b> ' : ' <b style=color:green>[View]</b> ';
+            $this->info .= "</div></div>";
+            $isTable = $tableMode == 'table' ? ' <span class="sda-badge" style="background:#fff3e0;color:#e65100;">Table</span> ' : ' <span class="sda-badge" style="background:#e8f5e9;color:#2e7d32;">View</span> ';
             $moduleTotalTime = round(microtime(true) - $moduleStart, 2);
             $this->info .= "<script>document.querySelectorAll('[module={$moduleName}] a').forEach(function(element) {
             element.textContent += ' ({$moduleTotalTime} s.)';
             element.innerHTML += '{$isTable}';
-            element.style.color='blue';
+            element.style.color='#283593';
+            element.style.fontWeight='500';
             });</script>";
             $this->logStep("Processing module $moduleName", __LINE__, __METHOD__);
         }
+
+        $this->info .= '</div>';
 
         // Get & populate users ACL metadata (must run after $modulesList is created)
         $this->getAndSaveUserACL($modulesList);
@@ -1097,66 +1133,17 @@ class ExternalReporting
         $this->runPostRebuildSQLScripts($modulesList);
 
         if ($callUpdateModel) {
+            $this->info .= '<h2>Update Model Call</h2>';
             $this->updateModelCall();
             $this->logStep('updateModelCall', __LINE__, __METHOD__);
         }
 
-        $this->info .= '<script>
-        // select all li elements with the attribute module
-        var liElements = document.querySelectorAll("li[module]");
-
-        // Recorre todos los elementos li seleccionados
-        for (var i = 0; i < liElements.length; i++) {
-          var li = liElements[i];
-
-          // Obtiene el valor del atributo module
-          var moduleValue = li.getAttribute("module");
-
-          // Busca el div con id igual al valor de module
-          var targetDiv = document.getElementById(moduleValue);
-
-
-          // Si se encuentra el div
-          if (targetDiv) {
-            // Comprueba si el div contiene un div con la clase error
-            var errorDivs = targetDiv.getElementsByClassName("error");
-
-            // Selecciona el elemento a dentro del li
-            var aElement = li.querySelector("a");
-
-            // Si hay elementos con la clase error dentro del div
-            if (errorDivs.length > 0) {
-              // Aplica los estilos al elemento a
-              aElement.style.backgroundColor = "red";
-              aElement.style.color = "white";
-            }
-
-            // Agrega el evento de clic al elemento li
-            li.addEventListener("click", function () {
-              var targetId = this.getAttribute("module");
-              var targetDiv = document.getElementById(targetId);
-              if (targetDiv.style.display === "none") {
-                targetDiv.style.display = "block";
-              } else {
-                targetDiv.style.display = "none";
-              }
-
-              // Obtiene el primer campo de entrada dentro del div
-              var inputField = targetDiv.querySelector("input");
-
-              // Si se encuentra el campo de entrada, le da el foco
-              if (inputField) {
-                inputField.focus();
-              }
-            });
-          }
-        }
-        </script>';
+        $this->info .= '<script src="SticInclude/SinergiaDA.js"></script>';
 
         $endTime = microtime(true);
         $totalTime = round($endTime - $startTime, 2);
         $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SinergiaDA rebuild script finished in {$totalTime} seconds.");
-        $this->info .= "<b>Rebuild ejecutado en {$totalTime} segundos. </b>";
+        $this->info .= '<div class="sda-time">Rebuild completed in ' . $totalTime . ' seconds</div>';
 
         //Adding config values
         $this->addMetadataRecord('sda_def_config', ['key' => 'rebuild_file_date', 'value' => $fechaFormateada]);
@@ -1164,6 +1151,8 @@ class ExternalReporting
 
         // Add other config values that do not depend on the variables of this function
         $this->addConfigValues();
+
+        $this->info .= '</div>';
 
         // The text output is shown only if REQUEST print_debug exists
         if (isset($_REQUEST['print_debug'])) {
@@ -1184,15 +1173,15 @@ class ExternalReporting
     {
         global $sugar_config;
 
-        $this->info .= '<div style="background-color:#eee;padding:5px;font-style:helvetica, arial;"><h2>Update Model Call</h2>';
+        $this->info .= '<div class="sda-card"><ul>';
 
         $seedString = $sugar_config['stic_sinergiada']['seed_string'] ?? '';
 
         $token = gmdate('Y') . $seedString . intVal(gmdate('d')) . intVal(gmdate('H'));
 
-        $this->info .= "<li>Token source: $token";
+        $this->info .= '<li><b>Token source:</b> <code>' . $token . '</code></li>';
         $token = md5($token);
-        $this->info .= "<li>Token md5: $token";
+        $this->info .= '<li><b>Token md5:</b> <code>' . $token . '</code></li>';
 
         // Builds the URL to be called to execute the updateModel method in SinergiaDA,
         // depending on whether a specific URL has been indicated or if a standard location will be used.
@@ -1202,10 +1191,10 @@ class ExternalReporting
             $url = "https://{$this->baseHostname}.sinergiada.org/edapi/updatemodel/update?tks=$token";
         }
 
-        $link = "<a href='$url' target='_blank'>$url</a>";
-        $link2 = addslashes("Retry <a href='$url' target='_blank'>&#9842;</a>");
+        $link = '<a href="' . $url . '" target="_blank" class="sda-url">' . $url . '</a>';
+        $link2 = addslashes('Retry <a href="' . $url . '" target="_blank">&#9842;</a>');
 
-        $this->info .= "<li>URL: {$link}";
+        $this->info .= '<li><b>URL:</b> ' . $link . '</li>';
 
         // Use curl to get url content
         $ch = curl_init($url);
@@ -1216,7 +1205,7 @@ class ExternalReporting
         // Check if the content is empty.
         if (!empty($contenido)) {
             // If the content is not empty, display it.
-            $this->info .= "<li>Response: <strong>{$contenido}</strong>";
+            $this->info .= '<li><b>Response:</b> <strong>' . $contenido . '</strong></li>';
 
             if (preg_match('/\bstatus\b.*\bok\b/i', $contenido)) {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . ' The Updatemodel method has returned state OK');
@@ -1226,10 +1215,10 @@ class ExternalReporting
             }
         } else {
             // If the content is empty, display an error message.
-            $this->info .= "[FATAL: The Updatemodel method has not been executed {$link2}]";
+            $this->info .= '<li><span class="sda-fatal">[FATAL: The Updatemodel method has not been executed ' . $link2 . ']</span></li>';
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'The Updatemodel method in the SDA instance has not been executed');
         }
-        $this->info .= "</div>";
+        $this->info .= '</ul></div>';
 
     }
 
@@ -1275,7 +1264,9 @@ class ExternalReporting
 
         $tableLabel = empty($tableLabel) ? '-' : $tableLabel;
         // **Retrieve relationship information:**
-        $rel = $db->fetchOne("select * from relationships where relationship_name='{$field['link']}'");
+        // Use the resolved relationship name if available (for cases where link field name differs from relationship name)
+        $relName = $field['rel_name'] ?? $field['link'];
+        $rel = $db->fetchOne("select * from relationships where relationship_name='{$relName}'");
 
         // **Check if necessary information is present for standard join:**
         if (!empty($rel['join_table']) && !empty($rel['join_key_lhs']) && !empty($rel['join_key_rhs'])) {
@@ -1362,21 +1353,26 @@ class ExternalReporting
         } else {
             // **Handle cases where no join table is used:**
 
-            // Check for one-to-many relationship with the current table
-            $sql = "SELECT * FROM relationships WHERE (lhs_table='{$tableName}' OR rhs_table='{$tableName}') AND (lhs_table='{$field['table']}' OR rhs_table='{$field['table']}') AND relationship_type='one-to-many'";
-            $rel = $db->fetchOne($sql);
-
-            if ($rel) {
+            // Use the relationship data already retrieved from the first query (by relationship_name).
+            // The first query already found the correct relationship; we just need to verify
+            // it is one-to-many. Avoid re-querying by table names, which is ambiguous for
+            // self-referencing relationships where both sides use the same table.
+            if ($rel && !empty($rel['relationship_type']) && $rel['relationship_type'] == 'one-to-many') {
                 // One-to-many relationship - use direct join
                 $res['field'] = "m.{$field['id_name']}";
                 $res['leftJoin'] = " LEFT JOIN {$field['table']} ON {$field['table']}.id=m.{$field['id_name']} AND {$field['table']}.deleted=0 ";
 
                 // Add metadata record
+                // For auto-relationships, source_table points to the N-side view (e.g. sda_accounts_member_of)
+                // since the parent_id column resides there, not in the main view.
+                $relSourceTable = $isAutoRelationship
+                    ? $this->truncateStringMiddle("{$this->viewPrefix}_{$tableName}_{$field['link']}", 64)
+                    : "{$this->viewPrefix}_{$tableName}";
                 $this->addMetadataRecord(
                     'sda_def_relationships',
                     [
                         'id' => $field['link'],
-                        'source_table' => "{$this->viewPrefix}_{$tableName}",
+                        'source_table' => $relSourceTable,
                         'source_column' => $field['id_name'],
                         'target_table' => "{$this->viewPrefix}_{$field['table']}",
                         'target_column' => 'id',
@@ -1384,6 +1380,11 @@ class ExternalReporting
                         'label' => "{$field['label']}|{$tableLabel}",
                     ]
                 );
+
+                // For one-to-many auto-relationships without join table, set the N-side view data
+                if ($isAutoRelationship) {
+                    $res['fieldForAutoRelationshipsNSide'] = "m.{$rel['rhs_key']}";
+                }
 
                 return $res;
 
@@ -1781,6 +1782,30 @@ class ExternalReporting
     }
 
     /**
+     * Creates a MariaDB view for boolean fields with fixed '1'/'0' codes,
+     * independent of the actual keys in stic_boolean_list.
+     * This ensures that the enum view always matches the raw DB values ('1'/'0')
+     * regardless of any modifications to the dropdown list.
+     */
+    private function createFixedBooleanEnumView($listViewName)
+    {
+        global $app_strings;
+
+        $db = DBManagerFactory::getInstance();
+        $yesLabel = $db->quote($app_strings['LBL_YES']);
+        $noLabel = $db->quote($app_strings['LBL_NO']);
+        $viewName = "{$this->listViewPrefix}_{$listViewName}";
+
+        $sqlCommand = "CREATE OR REPLACE VIEW {$viewName} AS
+            SELECT '1' as 'code', '{$yesLabel}' as 'value'
+            UNION SELECT '0', '{$noLabel}'";
+
+        if (!$db->query($sqlCommand)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$db->last_error}] running Query: [{$sqlCommand}]");
+        }
+    }
+
+    /**
      * Function to delete old views from the database
      * @return void
      */
@@ -1827,7 +1852,7 @@ class ExternalReporting
             }
 
         }
-        $this->info .= "Eliminando {$counterView} vistas y {$counterTable} tablas obsoletas.";
+        $this->info .= '<div class="sda-deleted">Deleted ' . $counterView . ' obsolete views and ' . $counterTable . ' obsolete tables</div>';
     }
 
     /**
@@ -1844,7 +1869,7 @@ class ExternalReporting
      */
     public function createMultiEnumJoinViews()
     {
-        $this->info .= "<h2>Creating enum join tables</h2>";
+        $this->info .= '<h2>Creating enum join tables</h2>';
 
         // Get instance of DBManagerFactory
         $db = DBManagerFactory::getInstance();
@@ -1854,7 +1879,7 @@ class ExternalReporting
         while ($multiField = $db->fetchByAssoc($res, false)) {
 
             $list = $multiField['master_table'];
-            $this->info .= "<li>{$list}</li>";
+            $this->info .= '<div class="sda-ok">' . $list . '</div>';
 
             $unionSelectPiece = array();
             $resList = $db->query("select * from {$list}");
@@ -1886,11 +1911,11 @@ class ExternalReporting
 
             if (!$db->query($sqlCommand)) {
 
-                $this->info .= ("<div style=color:red;>Error al crear la vista {$multienumBridgeTableName}:" . $sqlCommand . '<hr>' . array_pop(explode(':', $db->last_error)) . "</div>");
+                $this->info .= '<div class="sda-error">Error creating view ' . $multienumBridgeTableName . ':</div><div class="sda-query error">' . $sqlCommand . '</div><div>' . array_pop(explode(':', $db->last_error)) . '</div>';
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error has occurred: [{$db->last_error}] running Query: [{$sqlCommand}]");
-                $this->info .= "[FATAL: Unable to create view {$multienumBridgeTableName}]";
+                $this->info .= '<span class="sda-fatal">[FATAL: Unable to create view ' . $multienumBridgeTableName . ']</span>';
             } else {
-                $this->info .= ("<div style=color:green;> - OK: {$multienumBridgeTableName}  </div>");
+                $this->info .= ('<div class="sda-ok">' . $multienumBridgeTableName . '</div>');
             };
         }
     }
@@ -2147,13 +2172,14 @@ class ExternalReporting
      */
     public function checkSdaColumns()
     {
-        $this->info .= "<b>SDA_DEF_COLUMNS columns that do not exist in the views</b>";
+        $this->info .= '<div class="sda-subsection">SDA_DEF_COLUMNS columns that do not exist in the views</div>';
         // Get an instance of the DBManager
         $db = DBManagerFactory::getInstance();
         // Query to get all the rows from the sda_def_columns table
         $query = "SELECT `table`, `column` FROM sda_def_columns WHERE stic_type != 'virtual'";
         $result = $db->query($query);
 
+        $missingCount = 0;
         // Loop through each row
         while ($row = $db->fetchByAssoc($result)) {
             // Query to check if the column exists in the view
@@ -2163,9 +2189,12 @@ class ExternalReporting
         AND column_name='{$row["column"]}'");
             // If the column does not exist, display a message
             if ($columnExists == 0) {
-                $this->info .= "[FATAL: Table: " . $row["table"] . " - column: " . $row["column"] . " does not exist]";
-
+                $this->info .= '<div><span class="sda-fatal">[FATAL: Table: ' . $row["table"] . ' - column: ' . $row["column"] . ' does not exist]</span></div>';
+                $missingCount++;
             }
+        }
+        if ($missingCount === 0) {
+            $this->info .= '<div class="sda-ok">All columns exist in the views</div>';
         }
     }
     public function checkSdaTables($tableToCheck)
@@ -2193,7 +2222,7 @@ class ExternalReporting
  */
     public function checkSdaTablesInViews()
     {
-        $this->info .= "<br><b>SDA_DEF_COLUMNS tables that do not exist in the views</b><br>";
+        $this->info .= '<div class="sda-subsection">SDA_DEF_COLUMNS tables that do not exist in the views</div>';
 
         $db = DBManagerFactory::getInstance();
         $missingTables = "SELECT DISTINCT * FROM (
@@ -2213,23 +2242,23 @@ class ExternalReporting
         if ($result !== false) {
             if ($result->num_rows > 0) {
                 while ($row = $db->fetchByassoc($result)) {
-                    $queryDelete = "DELETE FROM {$row['sda_def_columns']} WHERE `{$columnName}` = '{$row['table']}';";
+                    $queryDelete = "DELETE FROM {$row['sda_def_columns']} WHERE `{$row['column_name']}` = '{$row['table']}';";
 
                     $deleteResult = $db->query($queryDelete);
 
                     if ($deleteResult !== false) {
-                        $this->info .= "<br>Registro {$row['table']} ha sido eliminado de {$row['sda_def_columns']}<br>";
+                        $this->info .= '<div class="sda-ok">Record ' . $row['table'] . ' deleted from ' . $row['sda_def_columns'] . '</div>';
                         $GLOBALS['log']->debug('Línea ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Registro {$row['table']} ha sido eliminado de {$row['sda_def_columns']}");
                     } else {
-                        $this->info .= "<br>Error al eliminar el registro {$row['table']} de {$row['sda_def_columns']}.<br>";
+                        $this->info .= '<div class="sda-error">Error deleting record ' . $row['table'] . ' from ' . $row['sda_def_columns'] . '</div>';
                         $GLOBALS['log']->debug('Línea ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error al eliminar el registro {$row['table']} de {$row['sda_def_columns']}");
                     }
                 }
             } else {
-                $this->info .= "No existen tablas sin relaciones en las vistas.";
+                $this->info .= '<div class="sda-ok">No orphaned tables found</div>';
             }
         } else {
-            $this->info .= "Error al ejecutar la consulta.";
+            $this->info .= '<div class="sda-error">Query execution failed</div>';
             $GLOBALS['log']->debug('Línea ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Error al ejecutar la consulta: $missingTables");
         }
     }
@@ -2247,7 +2276,7 @@ class ExternalReporting
     {
         $db = DBManagerFactory::getInstance();
         foreach ($autoRelationships as $relationship) {
-            $this->info .= "<li>" . ($relationship['source_table'] ?? 'N/A') . " -> " . ($relationship['target_table'] ?? 'N/A') . "</li>";
+            $this->info .= '<li class="sda-ok">' . ($relationship['source_table'] ?? 'N/A') . ' &rarr; ' . ($relationship['target_table'] ?? 'N/A') . '</li>';
             $query = "SELECT * FROM sda_def_columns WHERE `table` = '{$this->viewPrefix}_{$relationship['table']}'";
             $result = $db->query($query);
             while ($row = $db->fetchByAssoc($result)) {
@@ -2344,7 +2373,7 @@ class ExternalReporting
         // to allow to access to related modules data via SinergiaDA relationships
 
         if (in_array('Campaigns', $modulesList)) {
-            $this->info .= "<h2>Rebuilding SinergiaDA campaign_log view and relationships</h2>";
+            $this->info .= '<h2>Rebuilding SinergiaDA campaign_log view and relationships</h2>';
 
             $campaignLogQueries['view'] = "CREATE OR REPLACE VIEW sda_campaign_log AS
             SELECT
@@ -2410,10 +2439,10 @@ class ExternalReporting
             foreach ($campaignLogQueries as $key => $value) {
                 if (!$db->query($value)) {
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'Error creating SinergiaDA campaign_log view or relationships: ' . $db->lastError());
-                    $this->info .= '[FATAL: Error rebuilding  ' . $key . '  sda_campaign_log..]';
+                    $this->info .= '<div><span class="sda-fatal">[FATAL: Error rebuilding ' . $key . ' sda_campaign_log]</span></div>';
                 } else {
-                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'SinergiaDA campaign_log view or relationships created successfully.');
-                    $this->info .= ' - OK: SinergiaDA  ' . $key . ' sda_campaign_log creadas correctamente.<br>';
+                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . 'SinergiaCRM campaign_log view or relationships created successfully.');
+                    $this->info .= '<div class="sda-ok">SinergiaDA ' . $key . ' sda_campaign_log created successfully</div>';
                 }
             }
         }

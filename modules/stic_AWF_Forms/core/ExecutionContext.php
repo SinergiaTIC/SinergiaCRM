@@ -39,9 +39,17 @@ class ExecutionContext {
 
     public float $submissionTimestamp;
 
+    public string $formType = '';
+
     public string $defaultAssignedUserId;
     public ?string $visitorUserId = null;
 
+    /** @var array<string, array> Uploaded files from $_FILES, indexed by PHP key */
+    public array $uploadedFiles = [];
+
+    /** @var ?DeferredContextData Context object for deferred processes */
+    public ?DeferredContextData $deferredContext = null;
+    
     /**
      * Constructor for ExecutionContext.
      * @param string $formId ID of the form being processed
@@ -51,8 +59,10 @@ class ExecutionContext {
      * @param ?float $timestamp Submission timestamp (optional)
      * @param string $defaultAssignedUserId Default assigned user ID (optional)
      * @param ?SugarBean $responseBean The response Bean (optional)
+     * @param string $formType The form type (e.g., 'web', 'crm')
+     * @param array $uploadedFiles Uploaded files data from $_FILES (optional)
      */
-    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null, string $defaultAssignedUserId = '', ?SugarBean $responseBean = null) {
+    public function __construct(string $formId, string $responseId, array $formData, FormConfig $formConfig, ?float $timestamp = null, string $defaultAssignedUserId = '', ?SugarBean $responseBean = null, string $formType = '', array $uploadedFiles = []) {
         $this->formId = $formId;
         $this->responseId = $responseId;
         $this->formData = $formData;
@@ -61,6 +71,8 @@ class ExecutionContext {
         $this->submissionTimestamp = $timestamp ?? microtime(true);
         $this->defaultAssignedUserId = $defaultAssignedUserId;
         $this->responseBean = $responseBean;
+        $this->formType = $formType;
+        $this->uploadedFiles = $uploadedFiles;
     }
 
     /**
@@ -72,11 +84,11 @@ class ExecutionContext {
         $key = $result->actionConfig?->id;
         if ($key === null) {
             $key = 'unknown_' . count($this->actionResults);
-            $GLOBALS['log']->warn("Adding ActionResult with unknown action ID to ExecutionContext. Assigned key: {$key}");
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Adding ActionResult with unknown action ID to ExecutionContext. Assigned key: {$key}");
         }
         $this->actionResults[$key] = $result;
         if($result->isError()) {
-            $GLOBALS['log']->error("Action '{$result->actionConfig?->name}' resulted in ERROR: " . $result->message);
+            $GLOBALS['log']->error("Line ".__LINE__.": ".__METHOD__.": Action '{$result->actionConfig?->name}' resulted in ERROR: " . $result->message);
         }
     }
 
@@ -92,7 +104,7 @@ class ExecutionContext {
         $errorResult = new ActionResult(ResultStatus::ERROR, $actionConfig, $e->getMessage());
         $this->addActionResult($errorResult);
 
-        $GLOBALS['log']->error("AWF Execution Exception: " . $e->getMessage());
+        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": AWF Execution Exception: " . $e->getMessage());
         $GLOBALS['log']->error($e->getTraceAsString());
         
         return $errorResult;
@@ -129,7 +141,6 @@ class ExecutionContext {
         }
         return null;
     }
-
 }
 
 
