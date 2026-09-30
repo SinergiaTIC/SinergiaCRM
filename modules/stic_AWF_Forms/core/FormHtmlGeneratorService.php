@@ -285,7 +285,8 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .nav-tabs { border-bottom: 0; gap: 0; }
 #{$wrapperId} .nav-tabs .nav-link { color: {$tabIdleText}; background-color: transparent; border: 1px solid {$tabIdleBorder}; border-top: 2px solid {$tabIdleBorder}; border-bottom-color: {$tabIdleBorder}; border-top-left-radius: var(--bs-border-radius); border-top-right-radius: var(--bs-border-radius); margin-bottom: 0 !important; margin-right: -1px; transition: color .15s ease-in-out, border-color .15s ease-in-out, background-color .15s ease-in-out; }
 #{$wrapperId} .nav-tabs .nav-link:hover, #{$wrapperId} .nav-tabs .nav-link:focus-visible { color: var(--bs-body-color); background-color: {$tabHoverBg}; border-color: {$tabHoverBorder}; border-top-color: {$tabHoverBorder}; border-bottom-color: {$tabHoverBorder}; }
-#{$wrapperId} .nav-tabs .nav-link.active, #{$wrapperId} .nav-tabs .nav-link:active { color: var(--bs-body-color); background-color: transparent; border-color: {$tabIdleBorder}; border-top: 2px solid var(--bs-primary); border-bottom-color: transparent; font-weight: 600; box-shadow: none; position: relative; z-index: 2; }
+#{$wrapperId} .nav-tabs .nav-link.active, #{$wrapperId} .nav-tabs .nav-link:active { color: var(--bs-body-color); background-color: var(--bs-body-bg); border-color: {$tabIdleBorder}; border-top: 2px solid var(--bs-primary); border-bottom-color: transparent; font-weight: 600; box-shadow: none; position: relative; z-index: 2; margin-bottom: -1px !important; }
+#{$wrapperId} .tab-pane { margin-top: -1px; }
 ";
         if ($inputCssProps !== "")  $html .= "\n".$inputCssProps;
         if ($selectCssProps !== "")  $html .= "\n".$selectCssProps;
@@ -685,8 +686,14 @@ class FormHtmlGeneratorService {
                 {
                     // Unified visual for EVERY tab body (spec §2.1): the content
                     // always boxed inside a bordered white card. The pane's
-                    // SUBTITLE (when set) shows as the pane's header (gray)
-                    $tabsHtml .= "<div class='card awf-section-card border-top-0 rounded-top-0 p-3'>" . $this->newLine('+');
+                    // SUBTITLE (when set) shows as the pane's header (gray).
+                    // The card KEEPS its top border on purpose: the tab bar has
+                    // no baseline of its own (the active tab hides its bottom
+                    // edge), so with a single tab nothing else would delimit
+                    // the top of the content and the pane would look unframed.
+                    // rounded-top-0 keeps the top corners square so the pane
+                    // meets the tab bar cleanly.
+                    $tabsHtml .= "<div class='card awf-section-card rounded-top-0 p-3'>" . $this->newLine('+');
                     {
                         $paneSubtitle = htmlspecialchars($pane->subtitle ?? '', ENT_QUOTES, 'UTF-8');
                         if ($paneSubtitle !== '') $tabsHtml .= "<div class='awf-section-subtitle text-muted mb-2' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$paneSubtitle}</div>" . $this->newLine();
@@ -1233,14 +1240,15 @@ class FormHtmlGeneratorService {
                             $tabsHtml .= "<div class='tab-pane' x-data=\"{ {$instanceVar}: index }\" :data-awf-pane='index' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
                             {
                                 // The pane content is boxed in the SAME card a
-                                // plain tab pane uses (border-top-0 rounded-top-0
-                                // p-3), with the subtitle as the card's first
-                                // child, so a group's tab looks the same as a
-                                // section's tab. The user chose this deliberately:
-                                // visual parity between group tabs and plain tabs
-                                // matters more than avoiding a nested card when
-                                // the element template is itself a card.
-                                $tabsHtml .= "<div class='card awf-section-card border-top-0 rounded-top-0 p-3'>" . $this->newLine('+');
+                                // plain tab pane uses, with the subtitle as the
+                                // card's first child, so a group's tab looks the
+                                // same as a section's tab. The user chose this
+                                // deliberately: visual parity between group tabs
+                                // and plain tabs matters more than avoiding a
+                                // nested card when the element template is itself
+                                // a card. The card keeps its top border, so a
+                                // lone tab is still delimited (see the plain pane).
+                                $tabsHtml .= "<div class='card awf-section-card rounded-top-0 p-3'>" . $this->newLine('+');
                                 {
                                     if ($isRepeatable || $tabsSubtitle !== '') {
                                         $tabsHtml .= "<div class='d-flex justify-content-between align-items-center mb-2'>" . $this->newLine('+');
