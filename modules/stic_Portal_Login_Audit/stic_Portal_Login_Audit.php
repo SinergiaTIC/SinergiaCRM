@@ -55,6 +55,17 @@ class stic_Portal_Login_Audit extends Basic
     public $success;
     public $failure_reason;
     public $auth_method;
+    public $oauth_client_id;
+    public $oauth_client_name;
+
+    public function ACLAccess($view, $is_owner = 'not_set', $in_group = 'not_set')
+    {
+        $view = strtolower((string) $view);
+        if (in_array($view, array('edit', 'editview', 'popupeditview', 'save', 'delete', 'import', 'massupdate', 'duplicate'), true)) {
+            return false;
+        }
+        return parent::ACLAccess($view, $is_owner, $in_group);
+    }
 
     public function bean_implements($interface)
     {

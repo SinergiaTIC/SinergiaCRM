@@ -65,4 +65,6 @@ $mod_strings = array(
     'LBL_SUCCESS' => 'Arrakasta',
     'LBL_FAILURE_REASON' => 'Hutsaren arrazoia',
     'LBL_AUTH_METHOD' => 'Egiaztapen-metodoa',
+    'LBL_OAUTH_CLIENT_NAME' => 'OAuth aplikazioa',
+    'LBL_OAUTH_CLIENT_ID' => 'OAuth bezeroaren IDa',
 );

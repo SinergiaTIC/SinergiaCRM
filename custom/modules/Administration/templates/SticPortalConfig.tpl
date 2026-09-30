@@ -379,7 +379,7 @@
         <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_LOGIN_AUDIT_HELP}</div>
     </td>
     <td width="75%" valign="middle">
-        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_VIEW_LOG|escape}" onclick="document.location.href='index.php?module=Administration&action=sticportalconfig_audit'">
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_VIEW_LOG|escape}" onclick="document.location.href='index.php?module=stic_Portal_Login_Audit&action=index&return_module=Administration&return_action=sticportalconfig'">
     </td>
 </tr>
 </table>

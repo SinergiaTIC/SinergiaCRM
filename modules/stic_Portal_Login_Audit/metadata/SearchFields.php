@@ -13,6 +13,12 @@ $searchFields['stic_Portal_Login_Audit'] = array(
     'auth_method' => array(
         'query_type' => 'default',
     ),
+    'oauth_client_name' => array(
+        'query_type' => 'default',
+    ),
+    'oauth_client_id' => array(
+        'query_type' => 'default',
+    ),
     'name' => array(
         'query_type' => 'default',
     ),

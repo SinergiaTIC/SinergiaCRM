@@ -39,9 +39,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
     // Portal info is stored in the description field as "Contact|{id}" or "Account|{id}"
     $descParts = explode('|', $t->description ?? '');
+    $portalType = $descParts[0] ?? '';
+    $portalModule = '';
+    if ($portalType === 'Contact') {
+        $portalModule = 'Contacts';
+    } elseif ($portalType === 'Account') {
+        $portalModule = 'Accounts';
+    }
     echo json_encode([
         'valid' => true,
-        'portal_type' => $descParts[0] ?? '',
+        'portal_type' => $portalModule,
         'portal_id' => $descParts[1] ?? '',
     ]);
     exit;
@@ -97,61 +104,26 @@ if ($grantType === 'authorization_code') {
     $token->client = $clientId;
     $token->save();
 
-    $user = null;
-    $rels = [];
-
+    $emailBeanModule = '';
     if ($portalType === 'Contact') {
-        $user = $db->fetchByAssoc($db->limitQuery(
-            "SELECT c.id, c.first_name, c.last_name, c.phone_mobile, c.birthdate,"
-            . " c.primary_address_postalcode, c.primary_address_country, c.primary_address_state, c.primary_address_city,"
-            . " cc.stic_identification_number_c, cc.stic_identification_type_c,"
-            . " cc.stic_language_c, cc.stic_gender_c, cc.stic_age_c"
-            . " FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id"
-            . " WHERE c.id=" . $db->quoted($portalId), 0, 1));
-
-        if ($user) {
-            // Fetch primary email
-            $er = $db->limitQuery(
-                "SELECT ea.email_address FROM email_addr_bean_rel eabr"
-                . " JOIN email_addresses ea ON ea.id = eabr.email_address_id"
-                . " WHERE eabr.bean_id=" . $db->quoted($portalId)
-                . " AND eabr.bean_module='Contacts' AND eabr.primary_address=1"
-                . " AND eabr.deleted=0 AND ea.deleted=0", 0, 1);
-            $emailRow = $db->fetchByAssoc($er);
-            $user['email'] = $emailRow['email_address'] ?? '';
-
-            // All relationships (active + ended)
-            $rr = $db->query(
-                "SELECT sr.id, sr.name, sr.relationship_type, sr.start_date, sr.end_date, sr.role,"
-                . " p.name AS project_name, p.estimated_start_date, p.estimated_end_date,"
-                . " sr.decidim_excluded"
-                . " FROM stic_contacts_relationships sr"
-                . " JOIN stic_contacts_relationships_contacts_c lnk ON lnk.stic_contae394onships_idb = sr.id"
-                . " LEFT JOIN stic_contacts_relationships_project_c prj ON prj.stic_conta0d5aonships_idb = sr.id AND prj.deleted = 0"
-                . " LEFT JOIN project p ON p.id = prj.stic_contacts_relationships_projectproject_ida AND p.deleted = 0"
-                . " WHERE lnk.stic_contacts_relationships_contactscontacts_ida = " . $db->quoted($portalId)
-                . " AND sr.deleted = 0 AND lnk.deleted = 0 ORDER BY sr.start_date DESC");
-            while ($rrow = $db->fetchByAssoc($rr)) { $rels[] = $rrow; }
-        }
+        $emailBeanModule = 'Contacts';
     } elseif ($portalType === 'Account') {
-        $user = $db->fetchByAssoc($db->limitQuery(
-            "SELECT a.id, a.name, a.phone_office, a.phone_alternate, a.website,"
-            . " a.billing_address_postalcode, a.billing_address_country, a.billing_address_state, a.billing_address_city,"
-            . " a.description, a.account_type, a.industry,"
-            . " ac.stic_identification_number_c, ac.stic_identification_type_c, ac.stic_language_c"
-            . " FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id"
-            . " WHERE a.id=" . $db->quoted($portalId), 0, 1));
+        $emailBeanModule = 'Accounts';
+    }
 
-        if ($user) {
-            $er = $db->limitQuery(
-                "SELECT ea.email_address FROM email_addr_bean_rel eabr"
-                . " JOIN email_addresses ea ON ea.id = eabr.email_address_id"
-                . " WHERE eabr.bean_id=" . $db->quoted($portalId)
-                . " AND eabr.bean_module='Accounts' AND eabr.primary_address=1"
-                . " AND eabr.deleted=0 AND ea.deleted=0", 0, 1);
-            $emailRow = $db->fetchByAssoc($er);
-            $user['email'] = $emailRow['email_address'] ?? '';
-        }
+    $user = null;
+    if ($emailBeanModule !== '') {
+        $er = $db->limitQuery(
+            "SELECT ea.email_address FROM email_addr_bean_rel eabr"
+            . " JOIN email_addresses ea ON ea.id = eabr.email_address_id"
+            . " WHERE eabr.bean_id=" . $db->quoted($portalId)
+            . " AND eabr.bean_module=" . $db->quoted($emailBeanModule)
+            . " AND eabr.primary_address=1 AND eabr.deleted=0 AND ea.deleted=0", 0, 1);
+        $emailRow = $db->fetchByAssoc($er);
+        $user = [
+            'id' => $portalId,
+            'email' => $emailRow['email_address'] ?? '',
+        ];
     }
 
     echo json_encode([
@@ -160,10 +132,8 @@ if ($grantType === 'authorization_code') {
         'expires_in' => 3600,
         'refresh_token' => $rt,
         'portal_id' => $portalId,
-        'portal_type' => $portalType,
+        'portal_type' => $emailBeanModule,
         'user' => $user,
-        'relationships' => $rels,
-        'relationship_count' => count($rels),
     ]);
     exit;
 }

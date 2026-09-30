@@ -187,6 +187,7 @@ $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Formularios Web Avanzados';
 $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Procesos en espera de formularios';
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Notificaciones externas de formularios';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversaciones';
+$app_list_strings['moduleList']['stic_Portal_Login_Audit'] = 'Registro de auditoría de accesos al portal';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
@@ -252,6 +253,7 @@ $app_list_strings['moduleListSingular']['stic_AWF_Forms'] = 'Formulario Web Avan
 $app_list_strings['moduleListSingular']['stic_AWF_Deferred_Tickets'] = 'Proceso en espera de formulario';
 $app_list_strings['moduleListSingular']['stic_AWF_Incoming_Events'] = 'Notificación externa de formulario';
 $app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversación';
+$app_list_strings['moduleListSingular']['stic_Portal_Login_Audit'] = 'Registro de auditoría de accesos al portal';
 
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';

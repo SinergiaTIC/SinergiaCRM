@@ -57,12 +57,16 @@ array(
                         'label' => 'LBL_AUTH_METHOD',
                     ),
                     1 => array(
-                        'name' => 'name',
-                        'label' => 'LBL_NAME',
+                        'name' => 'oauth_client_name',
+                        'label' => 'LBL_OAUTH_CLIENT_NAME',
                     ),
                 ),
                 4 => array(
                     0 => array(
+                        'name' => 'oauth_client_id',
+                        'label' => 'LBL_OAUTH_CLIENT_ID',
+                    ),
+                    1 => array(
                         'name' => 'description',
                         'label' => 'LBL_DESCRIPTION',
                     ),

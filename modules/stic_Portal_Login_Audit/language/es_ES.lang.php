@@ -65,4 +65,6 @@ $mod_strings = array(
     'LBL_SUCCESS' => 'Éxito',
     'LBL_FAILURE_REASON' => 'Motivo del fallo',
     'LBL_AUTH_METHOD' => 'Método de autenticación',
+    'LBL_OAUTH_CLIENT_NAME' => 'Aplicación OAuth',
+    'LBL_OAUTH_CLIENT_ID' => 'ID del cliente OAuth',
 );

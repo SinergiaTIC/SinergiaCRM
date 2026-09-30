@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password = $_POST['password'] ?? '';
             $remember = !empty($_POST['remember']);
             $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-            $auth = SticPortalAuthUtils::authenticate($username, $password, $remember, $ip);
+            $auth = SticPortalAuthUtils::authenticate($username, $password, $remember, $ip, $isOAuth ? $oauthClientId : '', $isOAuth ? $oauthClientName : '');
             if ($auth['success']) {
                 if ($isOAuth) SticPortalAuthCodeGenerator::generateAndRedirect($auth['bean']->id, $auth['type'], $oauthClientId, $oauthRedirectUri, $oauthState);
                 $redirect = SticPortalConfigUtils::get('PORTAL_HOME_URL', 'index.php?entryPoint=sticPortalLogin');

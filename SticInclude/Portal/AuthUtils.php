@@ -574,12 +574,12 @@ class SticPortalAuthUtils
      * @param string $ipAddress Client IP for lockout tracking.
      * @return array See method body for structure.
      */
-    public static function authenticate($username, $password, $remember = false, $ipAddress = '')
+    public static function authenticate($username, $password, $remember = false, $ipAddress = '', $oauthClientId = '', $oauthClientName = '')
     {
         $GLOBALS['log']->debug(__METHOD__ . " - Authenticating user: $username from IP: $ipAddress");
         $result = self::getPortalUserByUsername($username);
         if (!$result) {
-            self::recordLoginAudit(null, null, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'not_found', 'password');
+            self::recordLoginAudit(null, null, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'not_found', 'password', $oauthClientId, $oauthClientName);
             $GLOBALS['log']->info(__METHOD__ . " - User not found: $username");
             return array('success' => false, 'error_code' => 'invalid_credentials', 'error' => 'Invalid credentials');
         }
@@ -588,19 +588,19 @@ class SticPortalAuthUtils
         $lockout = self::checkLockout($bean);
         if ($lockout['locked']) {
             $mins = max(1, ceil($lockout['remaining_seconds'] / 60));
-            self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'locked_out', 'password');
+            self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'locked_out', 'password', $oauthClientId, $oauthClientName);
             $GLOBALS['log']->info(__METHOD__ . " - Account locked: $username, remaining: {$mins}min");
             return array('success' => false, 'error_code' => 'locked', 'error' => "Account locked. Try again in {$mins} minutes");
         }
         if (self::isIpLocked($ipAddress)) {
-            self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'ip_locked', 'password');
+            self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'ip_locked', 'password', $oauthClientId, $oauthClientName);
             $GLOBALS['log']->info(__METHOD__ . " - IP locked: $ipAddress");
             return array('success' => false, 'error_code' => 'ip_locked', 'error' => 'Too many attempts. Try again later');
         }
         if (!self::verifyPassword($password, $bean->stic_portal_hashed_c)) {
             $GLOBALS['log']->error(__METHOD__ . " - Password verification FAILED for: $username, stored hash=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40) . "...");
             self::recordFailedAttempt($bean, $ipAddress);
-            self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'invalid_credentials', 'password');
+            self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'invalid_credentials', 'password', $oauthClientId, $oauthClientName);
             $GLOBALS['log']->info(__METHOD__ . " - Invalid password for: $username");
             return array('success' => false, 'error_code' => 'invalid_credentials', 'error' => 'Invalid credentials');
         }
@@ -611,7 +611,7 @@ class SticPortalAuthUtils
             $GLOBALS['log']->debug(__METHOD__ . " - Rehashed password for: $username");
         }
         self::resetFailedAttempts($bean);
-        self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'password');
+        self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'password', $oauthClientId, $oauthClientName);
         self::sendSecurityNotification($bean, 'new_login');
         $mustChange = ($bean->stic_portal_force_pw_change_c || self::isPasswordExpired($bean));
         if ($remember) self::generateRememberToken($bean);
@@ -726,7 +726,7 @@ class SticPortalAuthUtils
     }
 
     // ── Login audit ──────────────────────────────────
-    public static function recordLoginAudit($bean, $type, $username, $ipAddress, $userAgent, $success, $failureReason = null, $authMethod = 'password')
+    public static function recordLoginAudit($bean, $type, $username, $ipAddress, $userAgent, $success, $failureReason = null, $authMethod = 'password', $oauthClientId = '', $oauthClientName = '')
     {
         global $db;
         $id = create_guid();
@@ -735,7 +735,22 @@ class SticPortalAuthUtils
         $username = substr((string)$username, 0, 100);
         $failureReason = substr((string)$failureReason, 0, 32);
         $authMethod = substr((string)$authMethod, 0, 20);
-        $query = "INSERT INTO stic_portal_login_audit (id, parent_id, parent_type, username, ip_address, user_agent, success, failure_reason, auth_method, date_entered, date_modified, deleted) VALUES (" . $db->quoted($id) . ", " . ($bean ? $db->quoted($bean->id) : 'NULL') . ", " . ($type ? $db->quoted($type) : 'NULL') . ", " . $db->quoted($username) . ", " . $db->quoted($ipAddress) . ", " . $db->quoted(substr($userAgent, 0, 500)) . ", " . ($success ? '1' : '0') . ", " . ($failureReason ? $db->quoted($failureReason) : 'NULL') . ", " . $db->quoted($authMethod) . ", " . $db->quoted($now) . ", " . $db->quoted($now) . ", 0)";
+        $oauthClientId = substr((string)$oauthClientId, 0, 36);
+        $oauthClientName = substr((string)$oauthClientName, 0, 255);
+        $query = "INSERT INTO stic_portal_login_audit (id, parent_id, parent_type, username, ip_address, user_agent, success, failure_reason, auth_method, oauth_client_id, oauth_client_name, date_entered, date_modified, deleted) VALUES ("
+            . $db->quoted($id) . ", "
+            . ($bean ? $db->quoted($bean->id) : 'NULL') . ", "
+            . ($type ? $db->quoted($type) : 'NULL') . ", "
+            . $db->quoted($username) . ", "
+            . $db->quoted($ipAddress) . ", "
+            . $db->quoted(substr($userAgent, 0, 500)) . ", "
+            . ($success ? '1' : '0') . ", "
+            . ($failureReason ? $db->quoted($failureReason) : 'NULL') . ", "
+            . $db->quoted($authMethod) . ", "
+            . ($oauthClientId !== '' ? $db->quoted($oauthClientId) : 'NULL') . ", "
+            . ($oauthClientName !== '' ? $db->quoted($oauthClientName) : 'NULL') . ", "
+            . $db->quoted($now) . ", "
+            . $db->quoted($now) . ", 0)";
         $db->query($query);
     }
 
