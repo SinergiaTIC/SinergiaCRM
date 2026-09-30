@@ -1137,7 +1137,16 @@ class FormHtmlGeneratorService {
         $initialActive = $isOptional ? 'false' : 'true';
         $initialInstances = $isOptional ? '[]' : '[{ id: 0 }]';
 
-        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0 }\">" . $this->newLine('+');
+        // Error activation: only the ACTIVE instance is visible (the others are
+        // display:none), but client-side validation runs on every input
+        // (submitForm -> validateInput -> checkValidity, which ignores
+        // visibility). Without these handlers a required field left empty in a
+        // non-active instance aborts the submit and paints its message inside
+        // the hidden pane: the form silently refuses to send, with nothing the
+        // user can see. Same contract as the regular tabs container: the pane
+        // publishes its instance index and the owner of `activeTab` switches.
+        $paneActivation = "@invalid.capture=\"const paneEl = \$event.target.closest('[data-awf-pane]'); if (paneEl) activeTab = +paneEl.dataset.awfPane\" @awf-show-pane=\"activeTab = +\$event.detail\"";
+        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0 }\" {$paneActivation}>" . $this->newLine('+');
         {
             // The group section's header (title/subtitle) is rendered by the
             // loop paths below (stacked cards) or by the tabs chrome — both
@@ -1203,7 +1212,7 @@ class FormHtmlGeneratorService {
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $tabsHtml .= "<div class='tab-pane' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
+                            $tabsHtml .= "<div class='tab-pane' :data-awf-pane='index' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
                             {
                                 if ($isRepeatable || $tabsSubtitle !== '') {
                                     $tabsHtml .= "<div class='d-flex justify-content-between align-items-center mb-2'>" . $this->newLine('+');

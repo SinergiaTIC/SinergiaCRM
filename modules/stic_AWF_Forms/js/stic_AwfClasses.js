@@ -485,6 +485,14 @@ class stic_AwfDataBlock {
       if (candidate.id === this.id) return false;
       if (!candidate.is_root) return false; // Already belongs to another group
       if (candidate.is_repeatable || candidate.is_optional) return false; // Candidate blocks that are repeatable or optional cannot be children of a group
+      // A GROUP HEAD must stay a root: the sync designates a group section only
+      // for is_root heads (sync pass 3), so adopting one here would strip it of
+      // its own group representation — its children would stop being an
+      // instance-indexed subgroup and would post unindexed (per-instance data
+      // loss). This is the same rule the validated getAvailableGroupRoots()
+      // applies, which nothing in the UI called (dead code) — hence the guard
+      // is repeated here, on the path the step-2 control actually uses.
+      if (candidate.isGroupHead(allDataBlocks)) return false;
       return true;
     });
   }
@@ -3521,6 +3529,23 @@ class stic_AwfConfiguration {
     const parent = this.data_blocks.find(b => b.id === parentBlockId);
     const child = this.data_blocks.find(b => b.id === childBlockId);
     if (parent && child) {
+      // The mutator is the single choke point (step 2's control calls it
+      // directly), so it validates even though the list it is fed from is
+      // already filtered — see getAvailableCandidateChildren() for the rules:
+      //  - no self-adoption and no adoption that would build a cycle
+      //  - the CHILD must not be a group head: only is_root heads get a
+      //    designated group section (sync pass 3), so a head adopted as a
+      //    member loses its own group representation and its children would
+      //    post unindexed instead of per instance (data loss).
+      if (parent.id === child.id) return;
+      if (parent.isDescendant(child.id, this.data_blocks)) return;
+      if (child.isGroupHead(this.data_blocks)) return;
+      if (!child.is_root) return;
+      // Only a ROOT block can head a group: sync designates the group section
+      // for root heads, so giving children to a non-root parent would build a
+      // second level of grouping that nothing renders or posts per instance.
+      if (!parent.is_root) return;
+
       child.group_root = parent.id;
 
       // Also bring the child's relational dependents into the group (transitive).
@@ -3528,7 +3553,7 @@ class stic_AwfConfiguration {
       // in another group stay where they are (disjoint trees rule).
       const descendants = child.getRelationalDescendants(this.data_blocks);
       descendants.forEach(d => {
-        if (d.is_root && !d.is_repeatable && !d.is_optional) {
+        if (d.is_root && !d.is_repeatable && !d.is_optional && !d.isGroupHead(this.data_blocks)) {
           d.group_root = parent.id;
         }
       });

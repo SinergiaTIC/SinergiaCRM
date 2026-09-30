@@ -61,23 +61,23 @@ class ServerActionFlowExecutor {
                 // log a warning but let the action proceed. This preserves the pre-update
                 // behavior where no topological sort was performed server-side.
                 foreach ($actionConfig->requisite_actions as $reqActionId) {
-                    // B-6: instance-aware lookup with fallback (unrolled requisite
-                    // actions keep the plain key for instance 0)
-                    $reqResult = $this->context->getResultForAction($reqActionId);
-                    if ($reqResult === null) {
+                    // Pre-pass: only report requisites that never ran. The
+                    // authoritative gate is per instance (see
+                    // requisiteAllowsInstance() inside the unroll loop): gating
+                    // the whole action here would let instance 0's result decide
+                    // the fate of every other instance.
+                    if ($this->context->getResultForAction($reqActionId) === null) {
                         $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' (id: {$actionConfig->id}) requires action with id '{$reqActionId}' but it was not executed. Continuing anyway for backward compatibility.");
-                        continue;
-                    }
-                    if ($reqResult->isError()) {
-                        $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' skipped because requisite action '{$reqActionId}' failed.");
-                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Requisite action failed.");
-                        $this->context->addActionResult($skippedResult);
-                        continue 2;
                     }
                 }
 
                 // Check the Conditions (if any)
-                if(!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
+                // Only SCALAR-field conditions may gate the whole action here:
+                // instance-bound conditions (a field inside a group) are posted
+                // as Block[i][field] and must be resolved against the instance
+                // matrix, otherwise the flat-key lookup yields null and the
+                // action is silently skipped BEFORE the per-instance unroll.
+                if(!stic_AWFUtils::evaluateScalarConditions($actionConfig->conditions, $this->context->formConfig, $this->context->formData)) {
                     $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->text}' because condition failed.");
                     
                     // Record the action as skipped
@@ -167,7 +167,7 @@ class ServerActionFlowExecutor {
                         $this->context->addActionResult($skippedResult);
                         continue;
                     }
-                } elseif (!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
+                } elseif (!stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, [])) {
                     $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->text}' because condition failed.");
                     // Record the action as skipped
                     $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
@@ -185,6 +185,17 @@ class ServerActionFlowExecutor {
                     // bean references are read. $descriptor is the FULL
                     // loop-index vector of this instance ([i1, i2, ...]).
                     $this->context->setInstanceIndexes($descriptor);
+
+                    // Authoritative per-instance requisite gate. The result of an
+                    // unrolled requisite is stored per instance ({id}_{i} /
+                    // {id}_{i}_{j}); looking up the plain id would always return
+                    // instance 0's outcome and mask a failure on this instance.
+                    if (!$this->requisiteAllowsInstance($actionConfig, $descriptor)) {
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Requisite action failed.");
+                        $this->context->addActionResult($skippedResult);
+                        $lastResult = $skippedResult;
+                        continue;
+                    }
 
                     // B-5: per-instance condition evaluation (conditions referencing
                     // group fields are resolved against the instance matrix)
@@ -286,8 +297,8 @@ class ServerActionFlowExecutor {
                 }
 
                 // Check the Conditions (if any)
-                if (!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
-                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping terminal action '{$actionConfig->text}' because conditions failed.");
+                if (!stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, $this->context->getInstanceIndexes())) {
+                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Skipping terminal action '{$actionConfig->text}' because conditions failed.");
                     continue;
                 }
 
@@ -308,5 +319,27 @@ class ServerActionFlowExecutor {
                 $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Failed to evaluate or execute terminal action '{$actionConfig->name}': " . $t->getMessage());
             }
         }
+    }
+
+    /**
+     * Per-instance requisite gate. The result of an unrolled action is stored
+     * under a per-instance key ({id}_{i} / {id}_{i}_{j}), so the lookup must
+     * use the current descriptor; the plain-id lookup (kept as a fallback for
+     * non-unrolled requisites) always returns instance 0's outcome.
+     */
+    private function requisiteAllowsInstance($actionConfig, array $descriptor): bool {
+        $instanceKey = $this->context->getInstanceIndexKey();
+        foreach ($actionConfig->requisite_actions as $reqActionId) {
+            $reqResult = $this->context->getResultForAction($reqActionId, $instanceKey);
+            if ($reqResult === null) {
+                // Not executed at all: keep the legacy backward-compatible behaviour.
+                $reqResult = $this->context->getResultForAction($reqActionId);
+            }
+            if ($reqResult !== null && $reqResult->isError()) {
+                $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' skipped for instance " . (empty($descriptor) ? 'global' : implode(':', $descriptor)) . " because requisite action '{$reqActionId}' failed.");
+                return false;
+            }
+        }
+        return true;
     }
 }

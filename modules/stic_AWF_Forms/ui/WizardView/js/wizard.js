@@ -2935,18 +2935,31 @@ class WizardStep4 {
 
       isGroupSection(section) {
         // Sections are DESIGNATED as group sections (kind 'group' + the
-        // reference to their group root block) — no content-based heuristics
-        return !!section && this.sections.includes(section) && section.isGroupSection;
+        // reference to their group root block) — no content-based heuristics.
+        // A designated group section can be NESTED (the wizard moves a whole
+        // group section inside another section, e.g. to present the group as a
+        // tab) and the sync walks designations at ANY depth (eachDesignated),
+        // so this test must NOT be restricted to the top level: doing so
+        // silently dropped every group rule for a nested group (its members
+        // could be dragged out and would then post unindexed, losing their
+        // per-instance data, and its element template became deletable alone).
+        return !!section && section.isGroupSection === true;
       },
 
       isWithinGroupSection(section) {
+        // TRUE if the section ITSELF or ANY ancestor is a designated group
+        // section. It must accumulate: returning only the OUTERMOST
+        // section's group-ness lost the enclosing group of a group nested
+        // inside a plain section, letting its content be dragged out.
         let current = section;
+        let within = false;
         while (current) {
+          if (this.isGroupSection(current)) within = true;
           const parent = this.getParentSectionOf(current);
-          if (!parent) return this.isGroupSection(current);
+          if (!parent) return within;
           current = parent;
         }
-        return false;
+        return within;
       },
 
       groupName(section) {
@@ -3066,11 +3079,18 @@ class WizardStep4 {
       },
 
       // All standalone sections of the form (never inside a designated group),
-      // at any depth
+      // at any depth. A designated group section NESTED inside a standalone one
+      // is group structure, not a content container, so it is filtered out here
+      // too (otherwise another group could be nested inside it).
       getStandaloneSections() {
+        // A section inside a designated group is never a standalone target:
+        // the filter must be applied to the WHOLE subtree, not only to the
+        // group section itself, otherwise the group's own children/hosts would
+        // still be offered as move targets and a standalone section could be
+        // dropped into a group.
         return this.sections
           .filter(s => !this.isGroupSection(s))
-          .flatMap(s => [s, ...this.getSectionsWithin(s)]);
+          .flatMap(s => [s, ...this.getSectionsWithin(s).filter(w => !this.isWithinGroupSection(w))]);
       },
 
       // Candidate sections a SECTION can be moved into (group-scope rules):

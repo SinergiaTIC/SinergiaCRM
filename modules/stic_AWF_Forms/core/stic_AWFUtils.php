@@ -1298,10 +1298,13 @@ class stic_AWFUtils {
         }
 
         $depth = $block->getLoopDepth();
-        if (count($instanceIndexes) < $depth) {
-            return $formData[$phpKey] ?? null; // The execution stack does not address this depth
-        }
+        // Missing levels default to 0 (same rule as
+        // DataBlockResolved::resolveForBlock): a GLOBAL/terminal action resolves
+        // instance 0 instead of reading a flat key that does not exist.
         $indexes = array_slice($instanceIndexes, 0, $depth);
+        while (count($indexes) < $depth) {
+            $indexes[] = 0;
+        }
 
         $fieldDef = $block->fields[substr($cond->field_name, strpos($cond->field_name, '.') + 1)] ?? null;
         $blockKey = ($fieldDef !== null && $fieldDef->type_field === DataBlockFieldType::UNLINKED ? '_detached_' : '') . $block->name;
