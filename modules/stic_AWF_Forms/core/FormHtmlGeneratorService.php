@@ -154,6 +154,13 @@ class FormHtmlGeneratorService {
         $customCss = $this->decode($layout->custom_css);
         $primaryRgb = stic_AWFUtils::hex2rgb($theme->primary_color);
         $btnTextColor = $this->getContrastColor($theme->primary_color);
+        // Tabs: the muted tones are derived from the theme text color so they
+        // follow a dark theme (light grey) as well as the default light one.
+        $textRgb = stic_AWFUtils::hex2rgb($theme->text_color);
+        $tabIdleText = "rgba({$textRgb}, 0.55)";      // inactive tab label
+        $tabIdleBorder = "rgba({$textRgb}, 0.14)";    // inactive tab edge ("very light border")
+        $tabHoverBorder = "rgba({$textRgb}, 0.32)";
+        $tabHoverBg = "rgba({$textRgb}, 0.05)";
 
         // Pre-calculation: Which icons and functionalities are actually being used?
         // Recursive walk of the layout tree: nested sections are traversed.
@@ -226,6 +233,7 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .btn-primary { --bs-btn-bg: var(--bs-primary); --bs-btn-border-color: var(--bs-primary); --bs-btn-hover-bg: var(--bs-primary); --bs-btn-hover-border-color: var(--bs-primary); --bs-btn-color: {$btnTextColor}; --bs-btn-active-bg: var(--bs-primary); --bs-btn-active-border-color: var(--bs-primary); --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb); color: var(--bs-btn-color); }
 #{$wrapperId} .btn-primary:hover { filter: brightness(0.9); }
 #{$wrapperId} .btn-primary:active, #{$wrapperId} .btn-primary.active { filter: brightness(0.85); background-color: var(--bs-primary) !important; border-color: var(--bs-primary) !important; }
+#{$wrapperId} .btn-outline-primary { --bs-btn-color: var(--bs-primary); --bs-btn-border-color: var(--bs-primary); --bs-btn-hover-color: #fff; --bs-btn-hover-bg: var(--bs-primary); --bs-btn-hover-border-color: var(--bs-primary); --bs-btn-active-color: #fff; --bs-btn-active-bg: var(--bs-primary); --bs-btn-active-border-color: var(--bs-primary); --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb); --bs-btn-disabled-color: var(--bs-primary); --bs-btn-disabled-border-color: var(--bs-primary); }
 #{$wrapperId} h1, #{$wrapperId} .h1 { font-size: 2.5em; } #{$wrapperId} h2, #{$wrapperId} .h2 { font-size: 2em; } #{$wrapperId} h3, #{$wrapperId} .h3 { font-size: 1.75em; } #{$wrapperId} h4, #{$wrapperId} .h4 { font-size: 1.5em; } #{$wrapperId} h5, #{$wrapperId} .h5 { font-size: 1.25em; } #{$wrapperId} h6, #{$wrapperId} .h6 { font-size: 1em; }
 #{$wrapperId} .form-label { margin-bottom: 0; } #{$wrapperId} .card-header { font-size: 1em; } #{$wrapperId} .form-text, #{$wrapperId} .small { font-size: 0.85em; } #{$wrapperId} .extra-small { font-size: 0.75em; }
 #{$wrapperId} .input-group .btn { border-color: var(--bs-border-color); z-index: 0; } #{$wrapperId} .input-group .btn:hover:not(:disabled) { background-color: rgba(0, 0, 0, 0.04); }
@@ -261,13 +269,23 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-group-container { grid-column: 1 / -1; width: 100%; margin-bottom: 1.5rem; }
 #{$wrapperId} .awf-block-panel { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem; margin-bottom: 1rem; }
 #{$wrapperId} .awf-block-title { font-size: 1em; font-weight: 600; margin-bottom: 0.75rem; padding-bottom: 0.25rem; border-bottom: 1px solid var(--bs-border-color); }
-#{$wrapperId} .awf-tabs-container .nav-tabs { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; white-space: nowrap !important; border-bottom: 1px solid var(--bs-border-color); scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
+#{$wrapperId} .awf-tabs-container .nav-tabs { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; white-space: nowrap !important; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
 #{$wrapperId} .awf-tabs-container .nav-tabs::-webkit-scrollbar { display: none; }
 #{$wrapperId} .awf-tabs-container .nav-tabs .nav-item, #{$wrapperId} .awf-tabs-container .nav-tabs .nav-link { flex: 0 0 auto !important; }
-#{$wrapperId} .nav-tabs { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; white-space: nowrap !important; border-bottom: 1px solid var(--bs-border-color); padding-bottom: 1px; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
+#{$wrapperId} .nav-tabs { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; white-space: nowrap !important; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
 #{$wrapperId} .nav-tabs::-webkit-scrollbar { display: none; }
-#{$wrapperId} .nav-tabs .nav-item, #{$wrapperId} .nav-tabs .nav-link { flex: 0 0 auto !important; margin-bottom: -1px !important; }
-#{$wrapperId} .nav-tabs .nav-link.active { background-color: var(--bs-body-bg, #ffffff) !important; border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg, #ffffff) !important; border-bottom-color: var(--bs-body-bg, #ffffff) !important; position: relative; z-index: 2; }
+#{$wrapperId} .nav-tabs .nav-item, #{$wrapperId} .nav-tabs .nav-link { flex: 0 0 auto !important; }
+/* Tabs look: an INACTIVE tab is grey with a very light border (so it still
+   reads as selectable), the ACTIVE one keeps the top edge in the primary color
+   and has NO bottom edge, so it merges with the content below instead of
+   drawing a line under itself. The tab bar therefore has no baseline of its
+   own: every tab carries its own border. Tabs sit flush against each other
+   (no gap) and the active label keeps the regular text color, not the
+   primary one: the top edge alone carries the accent. */
+#{$wrapperId} .nav-tabs { border-bottom: 0; gap: 0; }
+#{$wrapperId} .nav-tabs .nav-link { color: {$tabIdleText}; background-color: transparent; border: 1px solid {$tabIdleBorder}; border-top: 2px solid {$tabIdleBorder}; border-bottom-color: {$tabIdleBorder}; border-top-left-radius: var(--bs-border-radius); border-top-right-radius: var(--bs-border-radius); margin-bottom: 0 !important; margin-right: -1px; transition: color .15s ease-in-out, border-color .15s ease-in-out, background-color .15s ease-in-out; }
+#{$wrapperId} .nav-tabs .nav-link:hover, #{$wrapperId} .nav-tabs .nav-link:focus-visible { color: var(--bs-body-color); background-color: {$tabHoverBg}; border-color: {$tabHoverBorder}; border-top-color: {$tabHoverBorder}; border-bottom-color: {$tabHoverBorder}; }
+#{$wrapperId} .nav-tabs .nav-link.active, #{$wrapperId} .nav-tabs .nav-link:active { color: var(--bs-body-color); background-color: transparent; border-color: {$tabIdleBorder}; border-top: 2px solid var(--bs-primary); border-bottom-color: transparent; font-weight: 600; box-shadow: none; position: relative; z-index: 2; }
 ";
         if ($inputCssProps !== "")  $html .= "\n".$inputCssProps;
         if ($selectCssProps !== "")  $html .= "\n".$selectCssProps;
@@ -1112,7 +1130,8 @@ class FormHtmlGeneratorService {
         // instances as DYNAMIC TABS (spec: group rendered as dynamic tabs):
         // one tab + one pane per instance instead of stacked instance cards.
         $isTabsGroup = $section !== null && in_array($section->containerType, ['panel_tabs', 'card_tabs'], true);
-        $tabsBordered = $isTabsGroup && $section->containerType === 'card_tabs';
+        // Both tabs flavors render the same FLAT chrome for a group (see the
+        // tabs branch below), so card_tabs no longer adds a card frame here.
         // Per-level loop variables (idx_l1, idx_l2) keep the Alpine scopes of
         // nested groups from shadowing each other
         // Generic per-level loop variables (idx_l1, idx_l2, ... idx_lN) keep the
@@ -1187,8 +1206,7 @@ class FormHtmlGeneratorService {
                     $instanceTitle = $isRepeatable ? "{$instanceTitleExpression} + ' #' + (index + 1)" : $instanceTitleExpression;
                     // The element template's subtitle shows in gray inside each tab
                     $tabsSubtitle = ($templateSection !== null && $templateSection->subtitle !== '') ? htmlspecialchars($templateSection->subtitle, ENT_QUOTES, 'UTF-8') : '';
-                    $tabsHtml = '';
-                    // Tab bar: one tab per instance (dynamic) + the add button (repeatable)
+                    $tabsHtml = "<div class='awf-tabs-container' style='grid-column: 1 / -1;'>" . $this->newLine('+');
                     $tabsHtml .= "<div class='nav nav-tabs'>" . $this->newLine('+');
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
@@ -1212,80 +1230,96 @@ class FormHtmlGeneratorService {
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $tabsHtml .= "<div class='tab-pane' :data-awf-pane='index' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
+                            $tabsHtml .= "<div class='tab-pane' x-data=\"{ {$instanceVar}: index }\" :data-awf-pane='index' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
                             {
-                                if ($isRepeatable || $tabsSubtitle !== '') {
-                                    $tabsHtml .= "<div class='d-flex justify-content-between align-items-center mb-2'>" . $this->newLine('+');
-                                    {
-                                        if ($tabsSubtitle !== '') {
-                                            $tabsHtml .= "<div class='awf-section-subtitle text-muted' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$tabsSubtitle}</div>" . $this->newLine();
-                                        } else {
-                                            $tabsHtml .= "<div></div>" . $this->newLine();
-                                        }
-                                        if ($isRepeatable) {
-                                            $tabsHtml .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance); if (activeTab >= instances.length) activeTab = Math.max(0, instances.length - 1)\">" . $this->newLine('+');
-                                            {
-                                                $tabsHtml .= "<span>{$removeLabel}</span>" . $this->newLine();
+                                // The pane content is boxed in the SAME card a
+                                // plain tab pane uses (border-top-0 rounded-top-0
+                                // p-3), with the subtitle as the card's first
+                                // child, so a group's tab looks the same as a
+                                // section's tab. The user chose this deliberately:
+                                // visual parity between group tabs and plain tabs
+                                // matters more than avoiding a nested card when
+                                // the element template is itself a card.
+                                $tabsHtml .= "<div class='card awf-section-card border-top-0 rounded-top-0 p-3'>" . $this->newLine('+');
+                                {
+                                    if ($isRepeatable || $tabsSubtitle !== '') {
+                                        $tabsHtml .= "<div class='d-flex justify-content-between align-items-center mb-2'>" . $this->newLine('+');
+                                        {
+                                            if ($tabsSubtitle !== '') {
+                                                $tabsHtml .= "<div class='awf-section-subtitle text-muted' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$tabsSubtitle}</div>" . $this->newLine();
+                                            } else {
+                                                $tabsHtml .= "<div></div>" . $this->newLine();
                                             }
-                                            $tabsHtml .= "</button>" . $this->newLine('-');
+                                            if ($isRepeatable) {
+                                                $tabsHtml .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance); if (activeTab >= instances.length) activeTab = Math.max(0, instances.length - 1)\">" . $this->newLine('+');
+                                                {
+                                                    $tabsHtml .= "<span>{$removeLabel}</span>" . $this->newLine();
+                                                }
+                                                $tabsHtml .= "</button>" . $this->newLine('-');
+                                            }
                                         }
+                                        $tabsHtml .= "</div>" . $this->newLine('-');
                                     }
-                                    $tabsHtml .= "</div>" . $this->newLine('-');
+                                    // The element TEMPLATE owns the layout of the
+                                    // content (its host sections), so it is what we
+                                    // pass; without it the fallback renders the root
+                                    // block panel + its direct children.
+                                    $tabsHtml .= $this->renderGroupInstanceContent($rootBlock, $templateSection, $children, $config, $theme, $instanceVar, $contentOuterVars) . $this->newLine();
                                 }
-                                // Instance body: the tab bar (title) + this row
-                                // (subtitle, remove) are the instance chrome, so
-                                // the content is rendered WITHOUT any extra card
-                                // wrapper. The element TEMPLATE owns the layout of
-                                // the content (its host sections), so it is what we
-                                // pass; without it the fallback renders the root
-                                // block panel + its direct children.
-                                $tabsHtml .= $this->renderGroupInstanceContent($rootBlock, $templateSection, $children, $config, $theme, $instanceVar, $contentOuterVars) . $this->newLine();
+                                $tabsHtml .= "</div>" . $this->newLine('-');
                             }
                             $tabsHtml .= "</div>" . $this->newLine('-');
                         }
                         $tabsHtml .= "</template>" . $this->newLine('-');
                     }
                     $tabsHtml .= "</div>" . $this->newLine('-');
+                    $tabsHtml .= "</div>" . $this->newLine('-');
 
-                    // Chrome per flavor: panel_tabs = flat <h4> + <hr>; card_tabs = .card frame
-                    if ($tabsBordered) {
-                        $html .= "<div class='card mt-2'>" . $this->newLine('+');
-                        {
+                    // Group tabs use the SAME chrome as a plain tab section, so a
+                    // group's tabs are indistinguishable from a section's tabs
+                    // (same frame, same header, same padding, same borders):
+                    // card_tabs -> .card + .card-header + .card-body,
+                    // panel_tabs -> flat panel + h4 header + <hr> + .card-body.
+                    $isCardTabsGroup = $section !== null && $section->containerType === 'card_tabs';
+                    if ($isCardTabsGroup) {
+                        $html .= "<div class='card mt-2' style='height: auto !important;'>" . $this->newLine('+');
+                    } else {
+                        $html .= "<div class='card awf-section-panel' style='height: auto !important;'>" . $this->newLine('+');
+                    }
+                    {
+                        if ($isCardTabsGroup) {
+                            $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center'>" . $this->newLine('+');
+                            {
+                                $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                {
+                                    if ($section->showTitle && $section->title !== '') $html .= "<span>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                    if ($section->showTitle && $section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                }
+                                $html .= "</div>" . $this->newLine('-');
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                        } else {
                             if ($section->showTitle && ($section->title !== '' || $section->subtitle !== '')) {
-                                $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center'>" . $this->newLine('+');
+                                $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center'>" . $this->newLine('+');
                                 {
                                     $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
                                     {
-                                        if ($section->title !== '') $html .= "<span>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
-                                        if ($section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                        if ($section->title !== '') $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</h4>" . $this->newLine();
+                                        if ($section->subtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</div>" . $this->newLine();
                                     }
                                     $html .= "</div>" . $this->newLine('-');
                                 }
                                 $html .= "</div>" . $this->newLine('-');
                             }
-                            $html .= "<div class='card-body'>" . $this->newLine('+');
-                            {
-                                $html .= $tabsHtml;
-                            }
-                            $html .= "</div>" . $this->newLine('-');
-                        }
-                        $html .= "</div>" . $this->newLine('-');
-                    } else {
-                        if ($section->showTitle && ($section->title !== '' || $section->subtitle !== '')) {
-                            $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center'>" . $this->newLine('+');
-                            {
-                                $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
-                                {
-                                    if ($section->title !== '') $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</h4>" . $this->newLine();
-                                    if ($section->subtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</div>" . $this->newLine();
-                                }
-                                $html .= "</div>" . $this->newLine('-');
-                            }
-                            $html .= "</div>" . $this->newLine('-');
                             $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
                         }
-                        $html .= $tabsHtml;
+                        $html .= "<div class='card-body'>" . $this->newLine('+');
+                        {
+                            $html .= $tabsHtml;
+                        }
+                        $html .= "</div>" . $this->newLine('-');
                     }
+                    $html .= "</div>" . $this->newLine('-');
                 } else {
                 // --- STACKED INSTANCE CARDS (panel/card parents): the section's
                 //     flavor (panel = flat header + hr; card = .card frame with
