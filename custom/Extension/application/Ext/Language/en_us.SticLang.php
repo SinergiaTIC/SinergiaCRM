@@ -186,6 +186,7 @@ $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Advanced Web Forms';
 $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Form Deferred Tickets';
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Form External Notifications';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversations';
+$app_list_strings['moduleList']['stic_Organizational_Environment'] = 'Organizational environment';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
@@ -4216,6 +4217,22 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Calls';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
+
+// Organizational Environment Relationships List
+$app_list_strings['stic_organizational_environment_relationships_list'][''] = '';
+$app_list_strings['stic_organizational_environment_relationships_list']['accounts_belongs_to'] = 'Belongs to';
+$app_list_strings['stic_organizational_environment_relationships_list']['accounts_related_to'] = 'Related to';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_administration_manager'] = 'Administration manager';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_area_manager'] = 'Service/program/area manager';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_board'] = 'Board';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_communication_manager'] = 'Communication manager';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_director'] = 'Director';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_general_manager'] = 'General manager';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_president'] = 'President';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_trustee'] = 'Trustee';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_volunteer_coordinator'] = 'Volunteer coordinator';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_worker'] = 'Worker';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_generic_contact'] = 'Generic contact';
 
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

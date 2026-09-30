@@ -2699,6 +2699,18 @@ $dictionary["Contact"]["fields"]["contacts_stic_conversations"] = array (
     'vname' => 'LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE',
 );
 
+// Organizational Environment Relationships
+$dictionary["Contact"]["fields"]["stic_organizational_environment_contacts"] = array (
+  'name' => 'stic_organizational_environment_contacts',
+  'type' => 'link',
+  'relationship' => 'stic_organizational_environment_contacts',
+  'source' => 'non-db',
+  'module' => 'stic_Organizational_Environment',
+  'bean_name' => 'stic_Organizational_Environment',
+  'side' => 'right',
+  'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE',
+);
+
 // Modified properties in native fields
 $dictionary['Contact']['fields']['first_name']['massupdate'] = 0;
 $dictionary['Contact']['fields']['first_name']['merge_filter'] = 'selected';
