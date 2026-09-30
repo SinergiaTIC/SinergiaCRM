@@ -4235,5 +4235,21 @@ $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
 
+// Llista de relacions de l'entorn organitzacional
+$app_list_strings['stic_organizational_environment_relationships_list'][''] = '';
+$app_list_strings['stic_organizational_environment_relationships_list']['accounts_belongs_to'] = 'Pertany a';
+$app_list_strings['stic_organizational_environment_relationships_list']['accounts_related_to'] = 'Relacionat amb';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_administration_manager'] = "Responsable d'administració";
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_area_manager'] = 'Responsable de servei/programa/àrea';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_board'] = 'Junta directiva';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_communication_manager'] = 'Responsable de comunicació';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_director'] = 'Director/a';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_general_manager'] = 'Gerent';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_president'] = 'President/a';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_trustee'] = 'Patró/ona';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_volunteer_coordinator'] = 'Responsable de voluntariat';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_worker'] = 'Treballador/a';
+$app_list_strings['stic_organizational_environment_relationships_list']['contacts_generic_contact'] = 'Contacte genèric';
+
 // Llista dinàmica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
