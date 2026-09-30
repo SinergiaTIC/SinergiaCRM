@@ -1,0 +1,86 @@
+<?php
+// created: 2026-09-29 16:53:54
+$dictionary["stic_organizational_environment_contacts"] = array (
+  'true_relationship_type' => 'one-to-many',
+  'relationships' => 
+  array (
+    'stic_organizational_environment_contacts' => 
+    array (
+      'lhs_module' => 'Contacts',
+      'lhs_table' => 'contacts',
+      'lhs_key' => 'id',
+      'rhs_module' => 'stic_Organizational_Environment',
+      'rhs_table' => 'stic_organizational_environment',
+      'rhs_key' => 'id',
+      'relationship_type' => 'many-to-many',
+      'join_table' => 'stic_organizational_environment_contacts_c',
+      'join_key_lhs' => 'stic_organizational_environment_contactscontacts_ida',
+      'join_key_rhs' => 'stic_organ4541ronment_idb',
+    ),
+  ),
+  'table' => 'stic_organizational_environment_contacts_c',
+  'fields' => 
+  array (
+    0 => 
+    array (
+      'name' => 'id',
+      'type' => 'varchar',
+      'len' => 36,
+    ),
+    1 => 
+    array (
+      'name' => 'date_modified',
+      'type' => 'datetime',
+    ),
+    2 => 
+    array (
+      'name' => 'deleted',
+      'type' => 'bool',
+      'len' => '1',
+      'default' => '0',
+      'required' => true,
+    ),
+    3 => 
+    array (
+      'name' => 'stic_organizational_environment_contactscontacts_ida',
+      'type' => 'varchar',
+      'len' => 36,
+    ),
+    4 => 
+    array (
+      'name' => 'stic_organ4541ronment_idb',
+      'type' => 'varchar',
+      'len' => 36,
+    ),
+  ),
+  'indices' => 
+  array (
+    0 => 
+    array (
+      'name' => 'stic_organizational_environment_contactsspk',
+      'type' => 'primary',
+      'fields' => 
+      array (
+        0 => 'id',
+      ),
+    ),
+    1 => 
+    array (
+      'name' => 'stic_organizational_environment_contacts_ida1',
+      'type' => 'index',
+      'fields' => 
+      array (
+        0 => 'stic_organizational_environment_contactscontacts_ida',
+      ),
+    ),
+    2 => 
+    array (
+      'name' => 'stic_organizational_environment_contacts_alt',
+      'type' => 'alternate_key',
+      'fields' => 
+      array (
+        0 => 'stic_organ4541ronment_idb',
+      ),
+    ),
+  ),
+);
