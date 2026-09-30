@@ -78,6 +78,11 @@ class MetaService
         'precision',
         'comments',
         'required',
+        // STIC-Custom — Include dropdown options for enum/multienum fields in V8 Meta API response
+        // https://github.com/SuiteCRM/SuiteCRM/pull/10614
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1220
+        'options',
+        // END STIC-Custom
     ];
 
     /**
@@ -164,6 +169,14 @@ class MetaService
         $fieldList = [];
         foreach ($bean->field_defs as $fieldName => $fieldDef) {
             $fieldList[$fieldName] = $this->pruneVardef($fieldDef);
+
+            // STIC-Custom — Include dropdown options for enum/multienum fields in V8 Meta API response
+            // https://github.com/SuiteCRM/SuiteCRM/pull/10614
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1220
+            if ($this->checkIfFieldHasEnumType($fieldList[$fieldName])) {
+                $this->setDropdownData($fieldList[$fieldName]);
+            }
+            // END STIC-Custom
         }
 
         return $fieldList;
@@ -192,6 +205,28 @@ class MetaService
 
         return $pruned;
     }
+    // STIC-Custom — Include dropdown options for enum/multienum fields in V8 Meta API response
+    // https://github.com/SuiteCRM/SuiteCRM/pull/10614
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1220
+    /**
+     * @param array $def
+     * @return bool
+     */
+    private function checkIfFieldHasEnumType(array $def): bool
+    {
+        return $def['type'] === 'enum' || $def['type'] === 'multienum';
+    }
+
+    /**
+     * @param array $def
+     */
+    private function setDropdownData(array &$def): void
+    {
+        global $app_list_strings;
+
+        $def['option_items'] = $app_list_strings[$def['options']] ?? [];
+    }
+    // END STIC-Custom
 
     /**
      * Build the response with the swagger schema.
