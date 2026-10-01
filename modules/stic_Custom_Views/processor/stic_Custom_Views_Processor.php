@@ -257,12 +257,26 @@ class stic_Custom_Views_Processor
                 return str_replace('.', $dec_sep, $value);
 
             case "date":
-                return $timedate->asUser($timedate->fromDbFormat($value, TimeDate::DB_DATE_FORMAT), $current_user);
+                $format = TimeDate::DB_DATE_FORMAT;
+                break;
             case "datetime":
             case "datetimecombo":
-                return $timedate->asUser($timedate->fromDbFormat($value, TimeDate::DB_DATETIME_FORMAT), $current_user);
+                $format = TimeDate::DB_DATETIME_FORMAT;
+                break;
+            default:
+                return $value;
         }
-        return $value;
+
+        // Date and DateTime value processing
+        if ($value === null || trim((string) $value) === '') {
+            return ''; 
+        }
+        $date = $timedate->fromDbFormat($value, $format);
+        if (!$date instanceof DateTime) {
+            $GLOBALS['log']->error('stic_Custom_Views: Can not convert "' . $value . '" with format ' . $format);
+            return $value;
+        }
+        return $timedate->asUser($date, $current_user);
     }
 
     /**
