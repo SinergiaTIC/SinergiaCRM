@@ -68,4 +68,7 @@ $mod_strings = array (
   'LBL_END_DATE' => 'Fecha de baja',
   'LBL_REFERENCE_ACCOUNT' => 'Organización de referencia',
   'LBL_ACTIVE' => 'Activa',
+  'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE' => 'Organización base',
+  'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización del entorno',
+  'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona del entorno',
 );
