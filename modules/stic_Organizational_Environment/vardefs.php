@@ -144,6 +144,108 @@ $dictionary['stic_Organizational_Environment'] = array(
     'optimistic_locking' => true,
     'unified_search' => true,
 );
+
+$dictionary["stic_Organizational_Environment"]["fields"]["stic_organizational_environment_accounts_1"] = array (
+  'name' => 'stic_organizational_environment_accounts_1',
+  'type' => 'link',
+  'relationship' => 'stic_organizational_environment_accounts_1',
+  'source' => 'non-db',
+  'module' => 'Accounts',
+  'bean_name' => 'Account',
+  'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
+  'id_name' => 'stic_organizational_environment_accounts_1accounts_ida',
+);
+$dictionary["stic_Organizational_Environment"]["fields"]["stic_organizational_environment_accounts_1_name"] = array (
+  'name' => 'stic_organizational_environment_accounts_1_name',
+  'type' => 'relate',
+  'source' => 'non-db',
+  'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
+  'save' => true,
+  'id_name' => 'stic_organizational_environment_accounts_1accounts_ida',
+  'link' => 'stic_organizational_environment_accounts_1',
+  'table' => 'accounts',
+  'module' => 'Accounts',
+  'rname' => 'name',
+);
+$dictionary["stic_Organizational_Environment"]["fields"]["stic_organizational_environment_accounts_1accounts_ida"] = array (
+  'name' => 'stic_organizational_environment_accounts_1accounts_ida',
+  'type' => 'link',
+  'relationship' => 'stic_organizational_environment_accounts_1',
+  'source' => 'non-db',
+  'reportable' => false,
+  'side' => 'right',
+  'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE',
+);
+
+$dictionary["stic_Organizational_Environment"]["fields"]["stic_organizational_environment_accounts"] = array (
+  'name' => 'stic_organizational_environment_accounts',
+  'type' => 'link',
+  'relationship' => 'stic_organizational_environment_accounts',
+  'source' => 'non-db',
+  'module' => 'Accounts',
+  'bean_name' => 'Account',
+  'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_FROM_ACCOUNTS_TITLE',
+  'id_name' => 'stic_organizational_environment_accountsaccounts_ida',
+);
+$dictionary["stic_Organizational_Environment"]["fields"]["stic_organizational_environment_accounts_name"] = array (
+  'name' => 'stic_organizational_environment_accounts_name',
+  'type' => 'relate',
+  'source' => 'non-db',
+  'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_FROM_ACCOUNTS_TITLE',
+  'save' => true,
+  'id_name' => 'stic_organizational_environment_accountsaccounts_ida',
+  'link' => 'stic_organizational_environment_accounts',
+  'table' => 'accounts',
+  'module' => 'Accounts',
+  'rname' => 'name',
+);
+$dictionary["stic_Organizational_Environment"]["fields"]["stic_organizational_environment_accountsaccounts_ida"] = array (
+  'name' => 'stic_organizational_environment_accountsaccounts_ida',
+  'type' => 'link',
+  'relationship' => 'stic_organizational_environment_accounts',
+  'source' => 'non-db',
+  'reportable' => false,
+  'side' => 'right',
+  'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE',
+);
+
+$dictionary["stic_Organizational_Environment"]["fields"]["stic_organizational_environment_contacts"] = array (
+  'name' => 'stic_organizational_environment_contacts',
+  'type' => 'link',
+  'relationship' => 'stic_organizational_environment_contacts',
+  'source' => 'non-db',
+  'module' => 'Contacts',
+  'bean_name' => 'Contact',
+  'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_CONTACTS_TITLE',
+  'id_name' => 'stic_organizational_environment_contactscontacts_ida',
+);
+$dictionary["stic_Organizational_Environment"]["fields"]["stic_organizational_environment_contacts_name"] = array (
+  'name' => 'stic_organizational_environment_contacts_name',
+  'type' => 'relate',
+  'source' => 'non-db',
+  'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_CONTACTS_TITLE',
+  'save' => true,
+  'id_name' => 'stic_organizational_environment_contactscontacts_ida',
+  'link' => 'stic_organizational_environment_contacts',
+  'table' => 'contacts',
+  'module' => 'Contacts',
+  'rname' => 'name',
+  'db_concat_fields' => 
+  array (
+    0 => 'first_name',
+    1 => 'last_name',
+  ),
+);
+$dictionary["stic_Organizational_Environment"]["fields"]["stic_organizational_environment_contactscontacts_ida"] = array (
+  'name' => 'stic_organizational_environment_contactscontacts_ida',
+  'type' => 'link',
+  'relationship' => 'stic_organizational_environment_contacts',
+  'source' => 'non-db',
+  'reportable' => false,
+  'side' => 'right',
+  'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE',
+);
+
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }
