@@ -2732,20 +2732,19 @@ class WizardStep4 {
       },
 
       // Side effects of changing a section's container type:
-      //  - a tabs container (either flavor) hides its own title, turns its DIRECT
-      //    section children into 'tab_item' panes (title forced on, collapse off)
-      //    and groups any direct NON-section elements into a new child pane
-      //    ('Nova secció');
+      //  - a tabs container (either flavor) turns its DIRECT section children
+      //    into 'tab_item' panes (title forced on, collapse off) and groups any
+      //    direct NON-section elements into a new child pane ('Nova secció');
       //  - leaving tabs reverts the 'tab_item' children to plain panels.
       handleContainerTypeChange(section, newType) {
         if (!section) return;
         if (this.isTabsContainer({ containerType: newType })) {
-          // The tabs chrome PAINTS the parent title (flat h4 or card header):
-          // showTitle forced ON (the switch is hidden for tabs parents).
-          // Collapsible flags are NOT reset: they lie dormant while the tabs
-          // chrome is active and apply again if the parent goes back to
-          // panel/card.
-          section.showTitle = true;
+          // The PARENT's own showTitle is left untouched: a tabs container
+          // honors it like a plain panel/card (off = no header, just the tab
+          // bar and its panes). Its child PANES always need their title, since
+          // it IS the tab label.
+          // Collapsible flags are NOT reset: they only apply while a visible
+          // header exists (the wizard already hides them with showTitle).
           // Non-section elements cannot live in a tabs container: group them
           // into a new child pane ('Nova secció')
           const nonSectionElements = section.elements.filter(el => el.type !== 'section');

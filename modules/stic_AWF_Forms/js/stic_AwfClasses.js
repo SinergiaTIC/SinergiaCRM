@@ -1815,6 +1815,70 @@ class stic_AwfLayout {
       const groupTitle = block ? (block.group_title || block.text) : '';
       return (groupTitle ? groupTitle + ' ' : '') + '(' + utils.translate('LBL_SECTION_GROUP_SUFFIX') + ')';
     };
+    // Whether a section holds a whole-block element of `block` (at any depth)
+    const sectionContainsBlock = (section, block, seen = new Set()) => {
+      if (seen.has(section.id)) return false;
+      seen.add(section.id);
+      if (section.elements.some(e => e.ref_id === block.id)) return true;
+      return section.elements.some(e => e.type === 'section' && sectionContainsBlock(e, block, seen));
+    };
+    // Whether `block` is a DESCENDANT of the group owned by `groupRootId`
+    // (walks the whole group_root chain). Guards the "nested group head" logic
+    // from being applied to an ANCESTOR of the group being processed.
+    const isDescendantOfGroup = (groupRootId, block) => {
+      let cur = block;
+      const seen = new Set();
+      while (cur && !seen.has(cur.id)) {
+        seen.add(cur.id);
+        if (!cur.group_root || cur.group_root === '') return false;
+        if (cur.group_root === groupRootId) return true;
+        cur = dataBlocks.find(b => b.id === cur.group_root);
+      }
+      return false;
+    };
+    // Whether `block` needs its OWN designated group section while the group
+    // `groupRootId` is being processed: every group head but the group's own root
+    // (the root is hosted as a plain section inside its own template)
+    const needsOwnGroupSection = (groupRootId, block) =>
+      block.id !== groupRootId && isGroupHead(block) && isDescendantOfGroup(groupRootId, block);
+    // The designated group section of a group root, wherever it lives inside
+    // `hostRoot` (the top level or nested inside another group's template)
+    const findDesignatedSection = (rootId, hostRoot) => {
+      let found = null;
+      const walk = (section, seen) => {
+        if (found || seen.has(section.id)) return;
+        seen.add(section.id);
+        if (section.isGroupSection && section.groupRootBlockId === rootId) { found = section; return; }
+        section.elements.forEach(el => { if (el.type === 'section') walk(el, seen); });
+      };
+      walk(hostRoot, new Set());
+      return found;
+    };
+    // The DIRECT child section of `hostRoot` that hosts `block` (the block's own
+    // nested section inside the group's template), if it already exists
+    const findDirectChildHost = (hostRoot, block, seen = new Set()) => {
+      if (seen.has(hostRoot.id)) return null;
+      seen.add(hostRoot.id);
+      for (const el of hostRoot.elements) {
+        if (el.type !== 'section' || seen.has(el.id)) continue;
+        if (sectionContainsBlock(el, block)) return el;
+      }
+      return null;
+    };
+    // Turns `section` into the designated group section of `block`, keeping the
+    // object identity (Alpine bindings keep working) and giving it its element
+    // template
+    const designateGroupSection = (section, block) => {
+      if (!(section.isGroupSection && section.groupRootBlockId === block.id)) {
+        Object.setPrototypeOf(section, stic_AwfLayoutGroupSection.prototype);
+        section.kind = 'group';
+        section.groupRootBlockId = block.id;
+      }
+      if (!section.is_custom_title) section.title = groupSectionTitle(block);
+      section.showTitle = true; // Group sections show their title by default
+      ensureGroupTemplate(section, block);
+      return section;
+    };
     const blockHostSection = (groupSection, block, seen = new Set()) => {
       if (seen.has(block.id)) return null;
       seen.add(block.id);
@@ -1822,18 +1886,40 @@ class stic_AwfLayout {
       // child. The block's host is searched/created inside it.
       const template = findGroupTemplate(groupSection);
       if (!template) return groupSection; // Defensive (the template pass creates it)
+      const ownGroupSection = needsOwnGroupSection(groupSection.groupRootBlockId, block);
+      // The subgroup's OWN designated section, when it already exists, is the
+      // section that represents the group: the block's host sections live INSIDE
+      // its template, so they must never be designated again.
+      const designated = ownGroupSection ? findDesignatedSection(block.id, template) : null;
       const host = findBlockHostSection(template, block);
-      if (host) return host;
+      if (host) {
+        // An existing host of a NESTED group head becomes that group's own
+        // designated section (in place: identity preserved)
+        return ownGroupSection && !designated ? designateGroupSection(host, block) : host;
+      }
+      // Reuse the designated section created for this subgroup, so repeated
+      // syncs never duplicate it
+      if (designated) return designated;
       let container = template;
-      if (block.group_root && block.group_root !== groupSection.groupRootBlockId) {
+      if (block.group_root && block.group_root !== groupSection.groupRootBlockId
+        && isDescendantOfGroup(groupSection.groupRootBlockId, block)) {
         const parent = dataBlocks.find(b => b.id === block.group_root);
         if (parent) {
           const parentHost = blockHostSection(groupSection, parent, seen);
           if (parentHost) container = parentHost;
         }
       }
-      const nested = new stic_AwfLayoutSection({ title: block.text });
+      // The container may itself be a nested group section: its content belongs
+      // inside ITS own element template
+      if (container.isGroupSection) {
+        const containerTemplate = findGroupTemplate(container);
+        if (containerTemplate) container = containerTemplate;
+      }
+      const nested = ownGroupSection
+        ? new stic_AwfLayoutGroupSection({ title: groupSectionTitle(block), groupRootBlockId: block.id })
+        : new stic_AwfLayoutSection({ title: block.text });
       container.elements.push(nested);
+      if (ownGroupSection) { nested.showTitle = true; ensureGroupTemplate(nested, block); }
       return nested;
     };
     // Returns the group's TEMPLATE child, creating it (as the first child,
@@ -1871,7 +1957,10 @@ class stic_AwfLayout {
     };
     eachDesignated(s => {
       const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
-      if (!gBlock || !isGroupHead(gBlock) || !gBlock.is_root) {
+      // A group section stays valid while its root is a group head. The root
+      // does NOT have to be top level: a group head nested in another group
+      // (depth 2) is a group of its own and owns its designated section.
+      if (!gBlock || !isGroupHead(gBlock)) {
         s.kind = '';
         s.groupRootBlockId = '';
         s.toggle_label = '';
@@ -1885,6 +1974,37 @@ class stic_AwfLayout {
     eachDesignated(s => {
       if (seenGroupRoots.has(s.groupRootBlockId)) { s.kind = ''; s.groupRootBlockId = ''; return; }
       seenGroupRoots.add(s.groupRootBlockId);
+    });
+    // Whether a section lives inside the TEMPLATE of some group section (i.e. it
+    // represents a MEMBER of that group), as opposed to inside a plain top-level
+    // section (a group section the user moved there on purpose, which stays)
+    const isInsideGroupTemplate = (target) => {
+      let found = false;
+      const walk = (sec, insideTemplate) => {
+        if (found) return;
+        if (sec === target) { found = insideTemplate; return; }
+        sec.elements.forEach(el => {
+          if (found || el.type !== 'section') return;
+          walk(el, insideTemplate || el.groupTemplate === true);
+        });
+      };
+      this.structure.forEach(s => { if (!found) walk(s, false); });
+      return found;
+    };
+    // A group root that is no longer a member of another group (the user
+    // ungrouped it) must have its designated section at the level where its group
+    // lives. A designation left nested inside another group's template is
+    // RELEASED (section and content preserved) so the top-level designation below
+    // builds its canonical section at the top level.
+    eachDesignated(s => {
+      const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
+      if (!gBlock || !gBlock.is_root) return;         // Still a member: keep it nested
+      if (this.structure.includes(s)) return;        // Already at the top level
+      if (!isInsideGroupTemplate(s)) return;         // User-nested top-level section: keep it
+      s.kind = '';
+      s.groupRootBlockId = '';
+      if (!s.is_custom_title) s.title = gBlock.text;
+      seenGroupRoots.delete(gBlock.id);
     });
     // Designate (legacy heuristic) or create
     const firstReferencedBlockOf = (section) => {
@@ -1928,6 +2048,47 @@ class stic_AwfLayout {
       eachDesignated(s => { if (!found && s.groupRootBlockId === rootId) found = s; });
       return found;
     };
+    // NESTED group heads (depth 2): a group head inside another group is a group
+    // of its own, so it gets its OWN designated group section — nested inside the
+    // template of its DIRECT parent group and carrying its own element template.
+    // Without it the wizard tree shows a plain section (no "<group> (group)"
+    // title, no "<group> (element)" template) and the renderer falls back to the
+    // host section title for the subgroup instances, losing the group's own
+    // instance titles and micro-copy labels.
+    const designateNestedGroups = () => {
+      dataBlocks.forEach(block => {
+        if (block.is_root) return;              // Top-level roots: designated above
+        if (!isGroupHead(block)) return;        // Plain member: hosted in a plain section
+        if (findDesignated(block.id)) return;    // Already designated
+        // The nested group section lives in the template of its nearest ancestor
+        // group head that already has a designated section
+        let parentSection = null, parentBlock = null;
+        let cur = block;
+        const guard = new Set();
+        while (cur && cur.group_root && !guard.has(cur.id)) {
+          guard.add(cur.id);
+          const parent = dataBlocks.find(b => b.id === cur.group_root);
+          if (!parent) break;
+          if (isGroupHead(parent)) {
+            const section = findDesignated(parent.id);
+            if (section) { parentSection = section; parentBlock = parent; break; }
+          }
+          cur = parent;
+        }
+        if (!parentSection) return; // No ancestor group section yet: handled later
+        const parentTemplate = ensureGroupTemplate(parentSection, parentBlock);
+        if (!parentTemplate) return;
+        // Upgrade the block's existing host section in place, or create it when
+        // the block has no host yet (its content is placed by the passes below)
+        let host = findDirectChildHost(parentTemplate, block);
+        if (!host) {
+          host = new stic_AwfLayoutSection({ title: block.text });
+          parentTemplate.elements.push(host);
+        }
+        designateGroupSection(host, block);
+      });
+    };
+    designateNestedGroups();
     // Legacy label migration (Task 7.17): group labels used to live on the
     // block; move them to the designated section (the renderer's source of
     // truth) and drop the legacy block properties from the saved JSON.
@@ -2042,9 +2203,15 @@ class stic_AwfLayout {
 
     // ---- 4. Group-section normalization (2-level template model: the whole
     //         group's content lives inside its tab_item TEMPLATE child) ----
-    this.structure.forEach(section => {
-      if (!section.isGroupSection) return;
-      const rootBlock = dataBlocks.find(b => b.id === section.groupRootBlockId);
+    // EVERY designated group section, top level AND nested (depth 2 subgroups),
+    // in tree order: the parent group's template is always normalized (and
+    // therefore exists) before the subgroups nested inside it. Idempotent: it is
+    // re-run after the orphan pass, which places content into these sections.
+    const normalizeGroupSections = () => {
+      const designatedSections = [];
+      eachDesignated(s => designatedSections.push(s));
+      designatedSections.forEach(section => {
+        const rootBlock = dataBlocks.find(b => b.id === section.groupRootBlockId);
 
       // e) FIRST: the 2-level template structure — wrap ALL the group's content
       //    (per-block hosts, direct elements) inside ONE template child = the
@@ -2117,14 +2284,16 @@ class stic_AwfLayout {
       });
 
       // d) the group root's host section always comes first (inside the template)
-      if (rootBlock) {
-        const rootNested = template.elements.find(el => el.type === 'section'
-          && el.elements.some(e => e.ref_id === rootBlock.id));
-        if (rootNested && template.elements[0] !== rootNested) {
-          template.elements = [rootNested, ...template.elements.filter(e => e !== rootNested)];
+        if (rootBlock) {
+          const rootNested = template.elements.find(el => el.type === 'section'
+            && el.elements.some(e => e.ref_id === rootBlock.id));
+          if (rootNested && template.elements[0] !== rootNested) {
+            template.elements = [rootNested, ...template.elements.filter(e => e !== rootNested)];
+          }
         }
-      }
-    });
+      });
+    };
+    normalizeGroupSections();
 
     // ---- 5. Orphans: renderable blocks not yet present in the layout ----
     dataBlocks.forEach(block => {
@@ -2190,6 +2359,12 @@ class stic_AwfLayout {
       this.structure.splice(idx + 1, 0, ...sections);
     });
     appendedSections.forEach(s => this.structure.push(s));
+
+    // Re-normalize: the extraction/orphan passes above create the group sections
+    // of blocks that became roots or members (and place block elements inside
+    // them), so every designated group section — including the ones inserted just
+    // now — gets its element template and its per-block host sections.
+    normalizeGroupSections();
 
     // ---- 7. Group sections take the group name but do NOT display their title
     //         (unless manually customized) ----

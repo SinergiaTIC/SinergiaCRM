@@ -152,11 +152,16 @@ class FormHtmlGeneratorService {
         $layout = $config->layout;
         $theme = $layout->theme;
         $customCss = $this->decode($layout->custom_css);
-        $primaryRgb = stic_AWFUtils::hex2rgb($theme->primary_color);
-        $btnTextColor = $this->getContrastColor($theme->primary_color);
+        // Only the places that DERIVE numbers from the color need a validated
+        // hex: hex2rgb() has no validation, so a stored theme holding "" or a
+        // CSS name like "white" yields garbage (e.g. rgba(0, 0, 14, ...)) and
+        // silently paints the wrong tones. The raw theme values are still used
+        // as-is in the CSS custom properties, where CSS understands color names.
+        $primaryRgb = stic_AWFUtils::hex2rgb($this->validThemeHex($theme->primary_color, '#0d6efd'));
+        $btnTextColor = $this->getContrastColor($this->validThemeHex($theme->primary_color, '#0d6efd'));
         // Tabs: the muted tones are derived from the theme text color so they
         // follow a dark theme (light grey) as well as the default light one.
-        $textRgb = stic_AWFUtils::hex2rgb($theme->text_color);
+        $textRgb = stic_AWFUtils::hex2rgb($this->validThemeHex($theme->text_color, '#212529'));
         $tabIdleText = "rgba({$textRgb}, 0.55)";      // inactive tab label
         $tabIdleBorder = "rgba({$textRgb}, 0.14)";    // inactive tab edge ("very light border")
         $tabHoverBorder = "rgba({$textRgb}, 0.32)";
@@ -284,6 +289,7 @@ class FormHtmlGeneratorService {
    primary one: the top edge alone carries the accent. */
 #{$wrapperId} .nav-tabs { border-bottom: 0; gap: 0; }
 #{$wrapperId} .nav-tabs .nav-link { color: {$tabIdleText}; background-color: transparent; border: 1px solid {$tabIdleBorder}; border-top: 2px solid {$tabIdleBorder}; border-bottom-color: {$tabIdleBorder}; border-top-left-radius: var(--bs-border-radius); border-top-right-radius: var(--bs-border-radius); margin-bottom: 0 !important; margin-right: -1px; transition: color .15s ease-in-out, border-color .15s ease-in-out, background-color .15s ease-in-out; }
+#{$wrapperId} .nav-tabs .nav-link:last-child { margin-right: 0; }
 #{$wrapperId} .nav-tabs .nav-link:hover, #{$wrapperId} .nav-tabs .nav-link:focus-visible { color: var(--bs-body-color); background-color: {$tabHoverBg}; border-color: {$tabHoverBorder}; border-top-color: {$tabHoverBorder}; border-bottom-color: {$tabHoverBorder}; }
 #{$wrapperId} .nav-tabs .nav-link.active, #{$wrapperId} .nav-tabs .nav-link:active { color: var(--bs-body-color); background-color: var(--bs-body-bg); border-color: {$tabIdleBorder}; border-top: 2px solid var(--bs-primary); border-bottom-color: transparent; font-weight: 600; box-shadow: none; position: relative; z-index: 2; margin-bottom: -1px !important; }
 #{$wrapperId} .tab-pane { margin-top: -1px; }
@@ -494,10 +500,17 @@ class FormHtmlGeneratorService {
             if (!$groupRootBlock) {
                 return "<!-- Group section has an invalid or missing group root reference -->" . $this->newLine();
             }
-        } else if ($currentGroupRootId !== null) {
+        } else if ($currentGroupRootId !== null && empty($section->groupTemplate)) {
             // Inside a group's loop: a nested section holding a subgroup head (a
             // group head of depth 2, different from the current loop's root)
             // renders that subgroup's own loop
+            //
+            // The loop's OWN element template is excluded: it is instance
+            // STRUCTURE rendered by the loop, not a section to be re-evaluated.
+            // Detecting a subgroup there would make it hijack the whole template
+            // (the sibling content would be lost and the subgroup would inherit
+            // the parent's titles and micro-copy). Subgroups are detected in the
+            // template's CHILDREN, each with its own designated section.
             $groupRootBlock = $this->findGroupRootInSection($config, $section, $currentGroupRootId);
         }
 
@@ -707,10 +720,15 @@ class FormHtmlGeneratorService {
         }
         $tabsHtml .= "</div>" . $this->newLine('-');
 
+        // The header (title/subtitle + collapsible chevron) is rendered ONLY when
+        // the section shows its title, exactly like a plain panel/card. Without
+        // a header there is nothing to click, so collapse is inert: the content
+        // must stay reachable, never hidden behind a toggle nobody can fire.
+        $hasHeader = $section->showTitle && ($section->title !== '' || $section->subtitle !== '');
         // Collapsible support (exactly like standard sections): the WHOLE header
         // is clickable (@click + cursor pointer, like the standard panels/cards)
         // and the chevron toggles with .stop to avoid double-firing
-        $isCollapsible = !empty($section->isCollapsible);
+        $isCollapsible = $hasHeader && !empty($section->isCollapsible);
         $startOpen = empty($section->isCollapsed);
         $bodyId = "awf_sect_" . md5($section->title ?? uniqid());
         $headerClickAttr = $isCollapsible ? "@click='open = !open'" : "";
@@ -731,17 +749,19 @@ class FormHtmlGeneratorService {
             // the .card-header; the tabs at the top of the .card-body
             $html = "<div class='card mt-2' {$xDataAttr} style='height: auto !important;'>" . $this->newLine('+');
             {
-                $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$headerClickAttr} style='{$headerCursorStyle}'>" . $this->newLine('+');
-                {
-                    $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                if ($hasHeader) {
+                    $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$headerClickAttr} style='{$headerCursorStyle}'>" . $this->newLine('+');
                     {
-                        if ($section->title !== '') $html .= "<span>{$sectionTitle}</span>" . $this->newLine();
-                        if ($section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$sectionSubtitle}</span>" . $this->newLine();
+                        $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                        {
+                            if ($section->title !== '') $html .= "<span>{$sectionTitle}</span>" . $this->newLine();
+                            if ($section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$sectionSubtitle}</span>" . $this->newLine();
+                        }
+                        $html .= "</div>" . $this->newLine('-');
+                        $html .= $chevronHtml;
                     }
                     $html .= "</div>" . $this->newLine('-');
-                    $html .= $chevronHtml;
                 }
-                $html .= "</div>" . $this->newLine('-');
                 $html .= "<div class='card-body' {$bodyShowAttr}>" . $this->newLine('+');
                 {
                     $html .= $tabsHtml;
@@ -754,18 +774,20 @@ class FormHtmlGeneratorService {
             // header + <hr>), with the tabs as its body
             $html = "<div class='card awf-section-panel' {$xDataAttr} style='height: auto !important;'>" . $this->newLine('+');
             {
-                $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$headerClickAttr} style='{$headerCursorStyle}'>" . $this->newLine('+');
-                {
-                    $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                if ($hasHeader) {
+                    $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$headerClickAttr} style='{$headerCursorStyle}'>" . $this->newLine('+');
                     {
-                        if ($section->title !== '') $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>{$sectionTitle}</h4>" . $this->newLine();
-                        if ($section->subtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$sectionSubtitle}</div>" . $this->newLine();
+                        $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                        {
+                            if ($section->title !== '') $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>{$sectionTitle}</h4>" . $this->newLine();
+                            if ($section->subtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$sectionSubtitle}</div>" . $this->newLine();
+                        }
+                        $html .= "</div>" . $this->newLine('-');
+                        $html .= $chevronHtml;
                     }
                     $html .= "</div>" . $this->newLine('-');
-                    $html .= $chevronHtml;
+                    $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
                 }
-                $html .= "</div>" . $this->newLine('-');
-                $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
                 $html .= "<div class='card-body' {$bodyShowAttr}>" . $this->newLine('+');
                 {
                     $html .= $tabsHtml;
@@ -1289,26 +1311,48 @@ class FormHtmlGeneratorService {
                     // card_tabs -> .card + .card-header + .card-body,
                     // panel_tabs -> flat panel + h4 header + <hr> + .card-body.
                     $isCardTabsGroup = $section !== null && $section->containerType === 'card_tabs';
+                    // Collapsible support: a tabs GROUP honors isCollapsible just
+                    // like a plain tab section and a stacked instance group, so the
+                    // flag never behaves differently depending on the containerType.
+                    // A tabs GROUP honors showTitle exactly like a plain tabs section: with the
+                    // title off there is NO header at all (no empty .card-header,
+                    // no orphan <hr>), just the tab bar and its panes.
+                    $hasTabsGroupHeader = $section !== null && $section->showTitle && ($section->title !== '' || $section->subtitle !== '');
+                    $isCollapsibleTabsGroup = $section !== null && !empty($section->isCollapsible) && $hasTabsGroupHeader;
+                    $tabsGroupStartOpen = ($section !== null && empty($section->isCollapsed)) ? 'true' : 'false';
+                    $tabsGroupBodyId = 'awf_sect_' . md5(($section !== null ? $section->title : '') . '_' . $rootBlock->id . '_tabs');
+                    $tabsGroupXData = $isCollapsibleTabsGroup ? "x-data=\"{ open: {$tabsGroupStartOpen} }\" @invalid.capture=\"open = true\"" : "";
+                    $tabsGroupClick = $isCollapsibleTabsGroup ? "@click='open = !open'" : "";
+                    $tabsGroupCursor = $isCollapsibleTabsGroup ? "cursor: pointer;" : "";
+                    $tabsGroupToggleBtn = '';
+                    if ($isCollapsibleTabsGroup) {
+                        $tabsGroupToggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' @click.stop='open = !open' :aria-expanded='open.toString()' aria-controls='{$tabsGroupBodyId}'>" . $this->newLine('+');
+                        {
+                            $tabsGroupToggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" . $this->newLine();
+                        }
+                        $tabsGroupToggleBtn .= "</button>" . $this->newLine('-');
+                    }
                     if ($isCardTabsGroup) {
-                        $html .= "<div class='card mt-2' style='height: auto !important;'>" . $this->newLine('+');
+                        $html .= "<div class='card mt-2' {$tabsGroupXData} style='height: auto !important;'>" . $this->newLine('+');
                     } else {
-                        $html .= "<div class='card awf-section-panel' style='height: auto !important;'>" . $this->newLine('+');
+                        $html .= "<div class='card awf-section-panel' {$tabsGroupXData} style='height: auto !important;'>" . $this->newLine('+');
                     }
                     {
-                        if ($isCardTabsGroup) {
-                            $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center'>" . $this->newLine('+');
-                            {
-                                $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                        if ($hasTabsGroupHeader) {
+                            if ($isCardTabsGroup) {
+                                $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$tabsGroupClick} style='{$tabsGroupCursor}'>" . $this->newLine('+');
                                 {
-                                    if ($section->showTitle && $section->title !== '') $html .= "<span>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
-                                    if ($section->showTitle && $section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                    $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                    {
+                                        if ($section->title !== '') $html .= "<span>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                        if ($section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
+                                    $html .= $tabsGroupToggleBtn . $this->newLine();
                                 }
                                 $html .= "</div>" . $this->newLine('-');
-                            }
-                            $html .= "</div>" . $this->newLine('-');
-                        } else {
-                            if ($section->showTitle && ($section->title !== '' || $section->subtitle !== '')) {
-                                $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center'>" . $this->newLine('+');
+                            } else {
+                                $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$tabsGroupClick} style='{$tabsGroupCursor}'>" . $this->newLine('+');
                                 {
                                     $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
                                     {
@@ -1316,12 +1360,15 @@ class FormHtmlGeneratorService {
                                         if ($section->subtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</div>" . $this->newLine();
                                     }
                                     $html .= "</div>" . $this->newLine('-');
+                                    $html .= $tabsGroupToggleBtn . $this->newLine();
                                 }
                                 $html .= "</div>" . $this->newLine('-');
+                                // The <hr> belongs to the panel header only
+                                $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
                             }
-                            $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
                         }
-                        $html .= "<div class='card-body'>" . $this->newLine('+');
+                        $tabsGroupShowAttr = $isCollapsibleTabsGroup ? " id='{$tabsGroupBodyId}' x-show='open' x-transition" : "";
+                        $html .= "<div class='card-body'{$tabsGroupShowAttr}>" . $this->newLine('+');
                         {
                             $html .= $tabsHtml;
                         }
@@ -2681,6 +2728,23 @@ JS;
      * Calculates whether the text should be black or white according to the font color using the YIQ formula.
      * @param string $hexColor The background color in hexadecimal format (e.g., '#ff0000' or '#f00')
      */
+    /**
+     * Normalizes a theme color to a 3/6-digit hex, falling back to the theme
+     * default when the stored value cannot be converted to RGB.
+     *
+     * @param string $color    Stored theme color (may be "", "white", "#12345"…)
+     * @param string $fallback Default hex to use when $color is not usable
+     * @return string          A hex string safe to feed hex2rgb()/getContrastColor()
+     */
+    private function validThemeHex(?string $color, string $fallback): string
+    {
+        $hex = ltrim(trim((string) $color), '#');
+        if (preg_match('/^(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $hex) !== 1) {
+            $hex = ltrim(trim($fallback), '#');
+        }
+        return '#' . $hex;
+    }
+
     private function getContrastColor($hexColor) {
         $hexColor = str_replace('#', '', $hexColor);
         

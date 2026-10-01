@@ -516,13 +516,8 @@
                                                                         </template>
                                                                     </select>
                                                                 </div>
-                                                                <!-- Show Title (INVISIBLE for tabs containers AND 'tab_item' panes:
-                                                                     tabs have no title (the tab bar replaces it) and a pane's title
-                                                                     is its tab label — the switch makes no sense there).
-                                                                     The group's element template ALWAYS shows its title when it is
-                                                                     a panel/card (its title is the per-instance header): the switch
-                                                                     is DISABLED (always checked) -->
-                                                                <div class="col-3 form-check form-switch d-flex align-items-center mb-0" x-show="!isTabsContainer(section) && section.containerType !== 'tab_item'">
+                                                                <!-- Show Title (INVISIBLE for 'tab_item' panes only) -->
+                                                                <div class="col-3 form-check form-switch d-flex align-items-center mb-0" x-show="section.containerType !== 'tab_item'">
                                                                     <label :for="`section${section.id}_showTitle`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_SHOW_TITLE')"></label>
                                                                     <input :id="`section${section.id}_showTitle`" class="form-check-input" type="checkbox" role="switch" x-model="section.showTitle"
                                                                             :disabled="isGroupTemplateChild(section)"
