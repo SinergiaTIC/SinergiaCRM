@@ -71,8 +71,21 @@ class FormLayout {
         $dto->custom_js = $data['custom_js'] ?? '';
 
         if (isset($data['structure']) && is_array($data['structure'])) {
+            $seenGroupRoots = [];
             foreach ($data['structure'] as $secData) {
-                $dto->structure[] = FormLayoutSection::fromJsonArray($dto, $secData);
+                if (!is_array($secData)) continue;
+                $sectionData = $secData;
+                $rawGroupRootBlockId = $secData['groupRootBlockId'] ?? '';
+                $groupRootBlockId = is_scalar($rawGroupRootBlockId) ? (string)$rawGroupRootBlockId : '';
+                if (($secData['kind'] ?? null) === 'group' && $groupRootBlockId !== '' && isset($seenGroupRoots[$groupRootBlockId])) {
+                    $sectionData['kind'] = '';
+                    $sectionData['groupRootBlockId'] = '';
+                }
+                $section = FormLayoutSection::fromJsonArray($dto, $sectionData);
+                $dto->structure[] = $section;
+                if ($section instanceof FormLayoutGroupSection && $section->groupRootBlockId !== '') {
+                    $seenGroupRoots[$section->groupRootBlockId] = true;
+                }
             }
         }
 

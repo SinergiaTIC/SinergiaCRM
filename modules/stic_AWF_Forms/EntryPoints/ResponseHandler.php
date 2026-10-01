@@ -490,11 +490,14 @@ class ResponseHandler
 
         global $app_list_strings;
 
-        // Consolidate links: A single link for each affected bean
-        $consolidatedBeans = []; 
+        // Consolidate links: a single link for each affected bean AND instance
+        // (B-7): repeatable groups create the same bean module ids per instance,
+        // so the instance addressing ("i" or "i:j") is part of the key, giving
+        // one independent stic_AWF_Links record per (beanId, instance).
+        $consolidatedBeans = [];
         foreach ($context->actionResults as $result) {
             foreach ($result->modifiedBeans as $modBean) {
-                $key = $modBean->moduleName . ':' . $modBean->beanId;
+                $key = $modBean->moduleName . ':' . $modBean->beanId . ':' . ($modBean->instanceIndex ?? '');
 
                 if (!isset($consolidatedBeans[$key])) {
                     // First time we touch it
@@ -606,160 +609,248 @@ class ResponseHandler
 
         foreach ($config->data_blocks as $block) {
             // Datablock is detached
-            if (empty($block->module)) continue; 
-            
-            $targetBean = BeanFactory::newBean($block->module);
-            $realVardefs = $targetBean ? $targetBean->field_defs : [];
-            if (empty($realVardefs)) continue;
+            if (empty($block->module)) continue;
 
-            foreach ($block->fields as $formField) {
-                $inputKeyInForm = $formField->getKey();
-                $inputKey = $formField->getPhpKey();
-                $value = $data[$inputKey] ?? null;
-                $label = rtrim($formField->label, ":");
-                
-                if ($formField->type == 'relate') {
-                    continue; // Skip relate fields
-                }
-
-                // Skip file upload fields — validated separately via $_FILES in SaveDocumentBlockAction
-                if ($formField->type_in_form === 'file') {
+            // Child blocks (group_root set) are validated together with their root when the root
+            // is a repeatable or optional group. Children of SIMPLE groups (mandatory, max=1) are
+            // validated individually as scalar blocks (they use static field names).
+            if (!empty($block->group_root)) {
+                $rootBlock = $config->data_blocks[$block->group_root] ?? null;
+                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
                     continue;
                 }
+                // Simple group child: fall through to scalar validation below
+            }
 
-                // Validation of required field (Required) (in Form)
-                if ($formField->required_in_form) {
-                    if ($value === null || $value === '' || (is_array($value) && empty($value))) {
-                        $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
-                                                                        translate('LBL_ERROR_REQUIRED_FIELD', 'stic_AWF_Responses');
-                        $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_REQUIRED_FIELD', 'stic_AWF_Responses');
-                        continue;
-                    }
+            // Repeatable and optional groups are processed as groups:
+            // resolve instances, validate root + descendants per instance.
+            // Simple groups (mandatory, max=1) with children keep the scalar path: the root
+            // is validated as a normal block, and children are validated individually (they
+            // use static field names). This preserves backward compatibility with non-expandable
+            // actions until generic unrolling (B-4) lands.
+            if ($block->isRepeatable() || $block->isOptional()) {
+                $context = new ExecutionContext('', '', $data, $config, null, '', null, '');
+                $instances = DataBlockResolved::resolveInstances($block, $data, $context);
+                $minInstances = $block->min_instances;
+                $maxInstances = $block->max_instances;
+                if ($maxInstances !== null && count($instances) > $maxInstances) {
+                    $errors['errorDescriptions'][$block->name] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$block->text}': ".
+                                                                   translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
+                    $errors['errors'][$block->name] = translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
                 }
-
-                // If is empty and not required: Do not validate type
-                if ($value === null || $value === '' || (is_array($value) && empty($value))) {
-                    continue;
+                if (count($instances) < $minInstances) {
+                    $errors['errorDescriptions'][$block->name] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$block->text}': ".
+                                                                   translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
+                    $errors['errors'][$block->name] = translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
                 }
-
-                // Validate Selected values in form
-                if (!empty($formField->value_options) && $formField->value_type === DataBlockFieldValueType::SELECTABLE) {
-                    $validValues = array_map(fn($opt) => $opt->value, $formField->value_options);
-                    $submittedValues = is_array($value) ? $value : [$value];
-                    foreach ($submittedValues as $subVal) {
-                        if ($subVal === '' || $subVal === null) {
+                $children = $config->getGroupDescendants($block);
+                foreach ($instances as $resolvedBlock) {
+                    $blocksToValidate = array_merge([$block], $children);
+                    foreach ($blocksToValidate as $blockToValidate) {
+                        if ($blockToValidate->name === $block->name) {
+                            $this->validateBlockFields($blockToValidate, $resolvedBlock, $data, $errors);
                             continue;
                         }
-                        if (!in_array($subVal, $validValues)) {
-                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
-                                                                            translate('LBL_ERROR_VALUE_FIELD', 'stic_AWF_Responses') . ' ({$subVal})';
-                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_VALUE_FIELD', 'stic_AWF_Responses') . ' ({$subVal})';
-                            break; 
-                        }
-                    }
-                }                
-
-                // Validation of data type (from VarDefs)
-                $defField = isset($realVardefs[$formField->name]) ? $realVardefs[$formField->name] : null;
-                $typeToCheck = $defField ? $defField['type'] : $formField->type_in_form;
-                // Special case for emails
-                if ($typeToCheck === 'varchar' && str_starts_with($defField['name'], 'email')) {
-                    $typeToCheck = 'email';
-                }
-                
-                switch ($typeToCheck) {
-                    case 'int':
-                    case 'integer':
-                        if (!filter_var($value, FILTER_VALIDATE_INT) && $value !== '0' && $value !== 0) {
-                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
-                                                                            translate('LBL_ERROR_INTEGER_FIELD', 'stic_AWF_Responses');
-                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_INTEGER_FIELD', 'stic_AWF_Responses');
-                        }
-                        break;
-
-                    case 'decimal':
-                    case 'float':
-                    case 'currency':
-                    case 'number': // type_in_form
-                        if (!is_numeric($value)) {
-                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
-                                                                            translate('LBL_ERROR_NUMERIC_FIELD', 'stic_AWF_Responses');
-                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_NUMERIC_FIELD', 'stic_AWF_Responses');
-                        }
-                        break;
-
-                    case 'date':
-                    case 'datetime':
-                    case 'datetimecombo':
-                        if (strtotime($value) === false) {
-                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
-                                                                            translate('LBL_ERROR_DATE_FIELD', 'stic_AWF_Responses');
-                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_DATE_FIELD', 'stic_AWF_Responses');
-                        }
-                        break;
-
-                    case 'bool':
-                    case 'boolean':
-                    case 'select_checkbox':
-                    case 'select_switch':
-                        if (filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === null) {
-                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
-                                                                            translate('LBL_ERROR_BOOL_FIELD', 'stic_AWF_Responses');
-                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_BOOL_FIELD', 'stic_AWF_Responses');
-                        }                        
-                        break;
-
-                    case 'enum':
-                    case 'radioenum':
-                    case 'select': // type_in_form
-                    case 'select_radio': // type_in_form
-                        // Validate that the option actually exists in the CRM
-                        if ($defField && isset($defField['options'])) {
-                            global $app_list_strings;
-                            $domain = $app_list_strings[$defField['options']] ?? [];
-                            if (!empty($domain) && !array_key_exists($value, $domain)) {
-                                $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
-                                                                                translate('LBL_ERROR_ENUM_FIELD', 'stic_AWF_Responses');
-                                $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_ENUM_FIELD', 'stic_AWF_Responses');
+                        // Validate every inner instance j of the outer instance i, with per-level min/max checks.
+                        if ($blockToValidate->getLoopDepth() >= 2) {
+                            $innerInstances = DataBlockResolved::resolveInstances($blockToValidate, $data, $context, [$resolvedBlock->instanceIndex]);
+                            $innerMax = $blockToValidate->max_instances;
+                            if ($innerMax !== null && count($innerInstances) > $innerMax) {
+                                $errorKey = $blockToValidate->name . '_' . $resolvedBlock->instanceIndex;
+                                $errors['errorDescriptions'][$errorKey] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$blockToValidate->text}': ".
+                                                                               translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
+                                $errors['errors'][$errorKey] = translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
                             }
-                        }
-                        break;
-
-                    case 'email':
-                    case 'text_email':
-                        if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
-                                                                            translate('LBL_ERROR_EMAIL_FIELD', 'stic_AWF_Responses');
-                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_EMAIL_FIELD', 'stic_AWF_Responses');
-                        }
-                        break;
-                }
-
-                // BACKEND VALIDATION FOR CUSTOM VALIDATORS
-                if (!empty($formField->validations)) {
-                    foreach ($formField->validations as $valConfig) {
-                        // Check conditions (if any)
-                        if (!stic_AWFUtils::evaluateConditions($valConfig->conditions, $data)) {
-                            continue; // Conditions are not met, skip this validation
-                        }
-                       
-                        $validatorDef = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
-                        foreach ($validatorDef as $def) {
-                            if ($def->getName() === $valConfig->validator && $def instanceof ValidatorActionDefinition) {
-                                if (!$def->validateBackend($value, $valConfig->params)) {
-                                    $errorMsg = !empty($valConfig->message) ? $valConfig->message : $def->getDefaultErrorMessage();
-                                    $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': " . $errorMsg;
-                                    $errors['errors'][$inputKeyInForm] = $errorMsg;
-                                    break 2; // If a validation fails: stop processing that field.
-                                }
+                            if (count($innerInstances) < $blockToValidate->min_instances) {
+                                $errorKey = $blockToValidate->name . '_' . $resolvedBlock->instanceIndex;
+                                $errors['errorDescriptions'][$errorKey] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$blockToValidate->text}': ".
+                                                                               translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
+                                $errors['errors'][$errorKey] = translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
                             }
+                            foreach ($innerInstances as $innerResolved) {
+                                $this->validateBlockFields($blockToValidate, $innerResolved, $data, $errors);
+                            }
+                            continue;
                         }
+                        // Child block fields are resolved with the same instance index,
+                        // reading their own indexed data (ChildBlock[index][field])
+                        $resolvedBlockForBlock = new DataBlockResolved($blockToValidate, $data, $context, $resolvedBlock->instanceIndex);
+                        $this->validateBlockFields($blockToValidate, $resolvedBlockForBlock, $data, $errors);
                     }
-                }                
+                }
+                continue;
             }
+
+            $resolvedBlock = new DataBlockResolved($block, $data, new ExecutionContext('', '', $data, $config, null, '', null, ''));
+            $this->validateBlockFields($block, $resolvedBlock, $data, $errors);
         }
 
         return $errors;
+    }
+
+    /**
+     * Validate all fields of a block against a resolved data block.
+     * @param FormDataBlock $block
+     * @param DataBlockResolved $resolvedBlock
+     * @param array $data
+     * @param array $errors
+     */
+    private function validateBlockFields(FormDataBlock $block, DataBlockResolved $resolvedBlock, array $data, array &$errors): void {
+        $targetBean = BeanFactory::newBean($block->module);
+        $realVardefs = $targetBean ? $targetBean->field_defs : [];
+        if (empty($realVardefs)) return;
+
+        $instanceIndex = $resolvedBlock->instanceIndex;
+
+        // Multi-index addressing (n-dimensional matrix): the block's full
+        // loop-index vector (outer to inner).
+        $instanceIndexes = $resolvedBlock->getLoopIndexes();
+
+        foreach ($block->fields as $formField) {
+            $inputKeyInForm = $instanceIndexes !== [] ? $formField->getKeyForIdForIndexes($instanceIndexes) : $formField->getKeyForId($instanceIndex);
+            $inputKey = $instanceIndexes !== [] ? $formField->getPhpKeyForIndexes($instanceIndexes) : ($instanceIndex !== null ? $formField->getPhpKeyForInstance($instanceIndex) : $formField->getPhpKey());
+            $value = $resolvedBlock->getFieldValue($formField->name);
+            $label = rtrim($formField->label, ":");
+
+            if ($formField->type == 'relate') {
+                continue; // Skip relate fields
+            }
+
+            // Skip file upload fields — validated separately via $_FILES in SaveDocumentBlockAction
+            if ($formField->type_in_form === 'file') {
+                continue;
+            }
+
+            // Validation of required field (Required) (in Form)
+            if ($formField->required_in_form) {
+                if ($value === null || $value === '' || (is_array($value) && empty($value))) {
+                    $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ".
+                                                                    translate('LBL_ERROR_REQUIRED_FIELD', 'stic_AWF_Responses');
+                    $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_REQUIRED_FIELD', 'stic_AWF_Responses');
+                    continue;
+                }
+            }
+
+            // If is empty and not required: Do not validate type
+            if ($value === null || $value === '' || (is_array($value) && empty($value))) {
+                continue;
+            }
+
+            // Validate Selected values in form
+            if (!empty($formField->value_options) && $formField->value_type === DataBlockFieldValueType::SELECTABLE) {
+                $validValues = array_map(fn($opt) => $opt->value, $formField->value_options);
+                $submittedValues = is_array($value) ? $value : [$value];
+                foreach ($submittedValues as $subVal) {
+                    if ($subVal === '' || $subVal === null) {
+                        continue;
+                    }
+                    if (!in_array($subVal, $validValues)) {
+                        $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ".
+                                                                        translate('LBL_ERROR_VALUE_FIELD', 'stic_AWF_Responses') . ' ({$subVal})';
+                        $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_VALUE_FIELD', 'stic_AWF_Responses') . ' ({$subVal})';
+                        break;
+                    }
+                }
+            }
+
+            // Validation of data type (from VarDefs)
+            $defField = isset($realVardefs[$formField->name]) ? $realVardefs[$formField->name] : null;
+            $typeToCheck = $defField ? $defField['type'] : $formField->type_in_form;
+            // Special case for emails
+            if ($typeToCheck === 'varchar' && str_starts_with($defField['name'], 'email')) {
+                $typeToCheck = 'email';
+            }
+
+            switch ($typeToCheck) {
+                case 'int':
+                case 'integer':
+                    if (!filter_var($value, FILTER_VALIDATE_INT) && $value !== '0' && $value !== 0) {
+                        $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ".
+                                                                        translate('LBL_ERROR_INTEGER_FIELD', 'stic_AWF_Responses');
+                        $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_INTEGER_FIELD', 'stic_AWF_Responses');
+                    }
+                    break;
+
+                case 'decimal':
+                case 'float':
+                case 'currency':
+                case 'number': // type_in_form
+                    if (!is_numeric($value)) {
+                        $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ".
+                                                                        translate('LBL_ERROR_NUMERIC_FIELD', 'stic_AWF_Responses');
+                        $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_NUMERIC_FIELD', 'stic_AWF_Responses');
+                    }
+                    break;
+
+                case 'date':
+                case 'datetime':
+                case 'datetimecombo':
+                    if (strtotime($value) === false) {
+                        $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ".
+                                                                        translate('LBL_ERROR_DATE_FIELD', 'stic_AWF_Responses');
+                        $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_DATE_FIELD', 'stic_AWF_Responses');
+                    }
+                    break;
+
+                case 'bool':
+                case 'boolean':
+                case 'select_checkbox':
+                case 'select_switch':
+                    if (filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === null) {
+                        $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ".
+                                                                        translate('LBL_ERROR_BOOL_FIELD', 'stic_AWF_Responses');
+                        $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_BOOL_FIELD', 'stic_AWF_Responses');
+                    }
+                    break;
+
+                case 'enum':
+                case 'radioenum':
+                case 'select': // type_in_form
+                case 'select_radio': // type_in_form
+                    // Validate that the option actually exists in the CRM
+                    if ($defField && isset($defField['options'])) {
+                        global $app_list_strings;
+                        $domain = $app_list_strings[$defField['options']] ?? [];
+                        if (!empty($domain) && !array_key_exists($value, $domain)) {
+                            $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ".
+                                                                            translate('LBL_ERROR_ENUM_FIELD', 'stic_AWF_Responses');
+                            $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_ENUM_FIELD', 'stic_AWF_Responses');
+                        }
+                    }
+                    break;
+
+                case 'email':
+                case 'text_email':
+                    if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
+                        $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ".
+                                                                        translate('LBL_ERROR_EMAIL_FIELD', 'stic_AWF_Responses');
+                        $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_EMAIL_FIELD', 'stic_AWF_Responses');
+                    }
+                    break;
+            }
+
+            // BACKEND VALIDATION FOR CUSTOM VALIDATORS
+            if (!empty($formField->validations)) {
+                foreach ($formField->validations as $valConfig) {
+                    // Check conditions (if any)
+                    if (!stic_AWFUtils::evaluateConditions($valConfig->conditions, $data)) {
+                        continue; // Conditions are not met, skip this validation
+                    }
+
+                    $validatorDef = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
+                    foreach ($validatorDef as $def) {
+                        if ($def->getName() === $valConfig->validator && $def instanceof ValidatorActionDefinition) {
+                            if (!$def->validateBackend($value, $valConfig->params)) {
+                                $errorMsg = !empty($valConfig->message) ? $valConfig->message : $def->getDefaultErrorMessage();
+                                $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': " . $errorMsg;
+                                $errors['errors'][$inputKeyInForm] = $errorMsg;
+                                break 2; // If a validation fails: stop processing that field.
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -779,15 +870,74 @@ class ResponseHandler
         //     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship 'details_link' in Responses bean.");
         // }
 
+        $context = new ExecutionContext('', '', $submittedData, $formConfig, null, '', null, '');
         foreach ($formConfig->data_blocks as $block) {
-            foreach ($block->fields as $field) {
+            // Child blocks are processed together with their root when the root is repeatable/optional.
+            // Children of SIMPLE groups fall through to scalar detail generation.
+            if (!empty($block->group_root)) {
+                $rootBlock = $formConfig->data_blocks[$block->group_root] ?? null;
+                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                    continue;
+                }
+            }
+
+            // Repeatable and optional groups: generate details for root + descendants per instance.
+            if ($block->isRepeatable() || $block->isOptional()) {
+                $instances = DataBlockResolved::resolveInstances($block, $submittedData, $context);
+                $children = $formConfig->getGroupDescendants($block);
+                foreach ($instances as $instance) {
+                    $blocksToProcess = array_merge([$block], $children);
+                    foreach ($blocksToProcess as $blockToProcess) {
+                        // depth-2 descendants: one detail block per [outer, inner] instance
+                        if ($blockToProcess->getLoopDepth() >= 2) {
+                            $innerInstances = DataBlockResolved::resolveInstances($blockToProcess, $submittedData, $context, [$instance->instanceIndex]);
+                            foreach ($innerInstances as $innerInstance) {
+                                $this->generateBlockDetailsForIndexes($blockToProcess, $responseBean, $formBean, $submittedData, [$instance->instanceIndex, $innerInstance->instanceIndex], $orderCounter, $uploadedFiles);
+                            }
+                            continue;
+                        }
+                        $this->generateBlockDetails($blockToProcess, $responseBean, $formBean, $submittedData, $instance->instanceIndex, $orderCounter, $uploadedFiles);
+                    }
+                }
+                continue;
+            }
+
+            $this->generateBlockDetails($block, $responseBean, $formBean, $submittedData, null, $orderCounter, $uploadedFiles);
+        }
+    }
+
+    /**
+     * Generates the analytical response details beans for all fields of a block.
+     * @param FormDataBlock $block Block to process
+     * @param SugarBean $responseBean Response bean
+     * @param SugarBean $formBean Form bean
+     * @param array $submittedData Data sent in the submission
+     * @param ?int $instanceIndex Instance index for repeatable blocks, or null for scalar blocks
+     * @param int $orderCounter Global order counter (passed by reference)
+     */
+    private function generateBlockDetails(FormDataBlock $block, SugarBean $responseBean, SugarBean $formBean, array $submittedData, ?int $instanceIndex, int &$orderCounter, array $uploadedFiles = []): void {
+        $instanceIndexes = $instanceIndex !== null ? [$instanceIndex] : [];
+        $this->generateBlockDetailsForIndexes($block, $responseBean, $formBean, $submittedData, $instanceIndexes, $orderCounter, $uploadedFiles);
+    }
+
+    /**
+     * Multi-index variant: $instanceIndexes holds one index per
+     * repeatable loop level, outer to inner ([] for scalar blocks, [i] for
+     * depth-1, [i, j] for depth-2).
+     */
+    private function generateBlockDetailsForIndexes(FormDataBlock $block, SugarBean $responseBean, SugarBean $formBean, array $submittedData, array $instanceIndexes, int &$orderCounter, array $uploadedFiles = []): void {
+        global $app_strings;
+
+        foreach ($block->fields as $field) {
+            $currentOrder = $orderCounter;
+            $orderCounter += 1;
 
                 // Skip fixed fields
                 if ($field->type_field === DataBlockFieldType::FIXED) continue;
 
-                // Skip file upload fields — binary data is not stored as response details
+                // Skip file upload fields — binary data is not stored as response details.
+                // For document blocks, store the uploaded file name as the detail record.
                 if ($field->type_in_form === 'file') {
-                    // Store document reference if this is a document block
                     if ($block->is_document_block) {
                         $currentOrder = $orderCounter++;
                         $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
@@ -811,90 +961,99 @@ class ResponseHandler
                     continue;
                 }
 
-                // Input key
+            // Read the raw value from the submitted structure
+            // (scalar blocks use the flat PHP key, repeatable instances use the
+            // indexed array — depth-2 blocks navigate [outer][inner])
+            if (!empty($instanceIndexes)) {
+                $isUnlinked = $field->type_field === DataBlockFieldType::UNLINKED;
+                $sourceArray = $submittedData[($isUnlinked ? '_detached_' : '') . $block->name] ?? [];
+                foreach ($instanceIndexes as $index) {
+                    $sourceArray = is_array($sourceArray) ? ($sourceArray[$index] ?? []) : [];
+                }
+                $rawValue = is_array($sourceArray) ? ($sourceArray[$field->name] ?? null) : null;
+            } else {
                 $inputKey = $field->getPhpKey();
-                
                 $rawValue = $submittedData[$inputKey] ?? null;
-                
-                // Calculate readable text and value to store
-                $readableText = $rawValue;
-                $storedValue = $rawValue;
-                
-                // List type fields (select, multiselect, radio)
-                if (!empty($field->value_options)) {
-                    if (is_array($rawValue)) {
-                        // Multi-selection
-                        $labels = [];
-                        foreach ($rawValue as $valItem) {
-                            $opt = $this->findOption($field->value_options, $valItem);
-                            $labels[] = $opt ? $opt->text : $valItem;
-                        }
-                        $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE); // Store JSON ["A","B"]
-                        $readableText = implode(', ', $labels); // Text: "Option A, Option B"
-                    } else {
-                        // Single selection
-                        $opt = $this->findOption($field->value_options, $rawValue);
-                        if ($opt) {
-                            $readableText = $opt->text;
-                        }
-                    }
-                } 
-                // Boolean fields (checkbox)
-                elseif ($field->type === 'bool' || $field->type === 'checkbox') {
-                    $isTrue = ($rawValue === '1' || $rawValue === 'on' || $rawValue === 'true' || $rawValue === true);
-                    $readableText = $isTrue ? $app_strings['LBL_YES'] : $app_strings['LBL_NO'];
-                    $storedValue = $isTrue ? '1' : '0';
-                }
-                // Generic arrays that are not lists
-                elseif (is_array($rawValue)) {
-                    $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE);
-                    $readableText = 'Array'; 
-                }
-
-                // Create analytical response bean
-                $currentOrder = $orderCounter++;
-                $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
-                $detailBean->stic_awf_responses_id_c = $responseBean->id;
-                $detailBean->stic_awf_forms_id_c = $formBean->id ?? ''; 
-                $detailBean->assigned_user_id = $responseBean->assigned_user_id;
-                
-                $detailBean->question_key = $block->name . '.' . $field->name;
-                $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
-                $detailBean->question_label = rtrim($detailBean->question_label, ' :');
-                if (!empty($field->description)) {
-                    $detailBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
-                }
-                $detailBean->question_section = $block->text;
-                
-                $detailBean->question_sort_order = $currentOrder;
-
-                $detailBean->answer_value = (string)$storedValue;
-                $detailBean->answer_text = (string)$readableText;
-                $detailBean->answer_type = $field->type_in_form;
-                
-                // Save the value as integer to facilitate analysis
-                // Special handling for rating fields to normalize them to a 0-100 scale
-                if ($field->type_in_form === 'rating' && is_numeric($rawValue)) {
-                    $rawNum = (float)$rawValue;
-                    
-                    if ($field->subtype_in_form === 'rating_nps') {
-                        // NPS (0-10) -> Scale 0-100
-                        $normalized = $rawNum * 10;
-                    } else {
-                        // Stars, emojis, lights, thumbs (1-5) -> Scale 0-100: 1=20, 2=40, 3=60, 4=80, 5=100
-                        $normalized = $rawNum * 20;
-                    }
-                    // Make sure to store a clean integer limited between 0 and 100
-                    $detailBean->answer_integer = (int)max(0, min(100, round($normalized)));
-                } elseif (!is_array($rawValue) && is_numeric($rawValue)) {
-                    // Save the numeric value if applicable
-                    $detailBean->answer_integer = (int)round((float)$rawValue);
-                } else {
-                    $detailBean->answer_integer = 0;
-                }
-
-                $detailBean->save();
             }
+
+            // Calculate readable text and value to store
+            $readableText = $rawValue;
+            $storedValue = $rawValue;
+
+            // List type fields (select, multiselect, radio)
+            if (!empty($field->value_options)) {
+                if (is_array($rawValue)) {
+                    // Multi-selection
+                    $labels = [];
+                    foreach ($rawValue as $valItem) {
+                        $opt = $this->findOption($field->value_options, $valItem);
+                        $labels[] = $opt ? $opt->text : $valItem;
+                    }
+                    $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE); // Store JSON ["A","B"]
+                    $readableText = implode(', ', $labels); // Text: "Option A, Option B"
+                } else {
+                    // Single selection
+                    $opt = $this->findOption($field->value_options, $rawValue);
+                    if ($opt) {
+                        $readableText = $opt->text;
+                    }
+                }
+            }
+            // Boolean fields (checkbox)
+            elseif ($field->type === 'bool' || $field->type === 'checkbox') {
+                $isTrue = ($rawValue === '1' || $rawValue === 'on' || $rawValue === 'true' || $rawValue === true);
+                $readableText = $isTrue ? $app_strings['LBL_YES'] : $app_strings['LBL_NO'];
+                $storedValue = $isTrue ? '1' : '0';
+            }
+            // Generic arrays that are not lists
+            elseif (is_array($rawValue)) {
+                $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE);
+                $readableText = 'Array';
+            }
+
+            // Create analytical response bean
+            $currentOrder = $orderCounter++;
+            $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
+            $detailBean->stic_awf_responses_id_c = $responseBean->id;
+            $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
+            $detailBean->assigned_user_id = $responseBean->assigned_user_id;
+
+            $detailBean->question_key = !empty($instanceIndexes) ? $field->getKeyForIndexes($instanceIndexes) : $block->name . '.' . $field->name;
+            $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+            $detailBean->question_label = rtrim($detailBean->question_label, ' :');
+            if (!empty($field->description)) {
+                $detailBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
+            }
+            $detailBean->question_section = $block->text;
+
+            $detailBean->question_sort_order = $currentOrder;
+
+            $detailBean->answer_value = (string)$storedValue;
+            $detailBean->answer_text = (string)$readableText;
+            $detailBean->answer_type = $field->type_in_form;
+
+            // Save the value as integer to facilitate analysis
+            // Special handling for rating fields to normalize them to a 0-100 scale
+            if ($field->type_in_form === 'rating' && is_numeric($rawValue)) {
+                $rawNum = (float)$rawValue;
+
+                if ($field->subtype_in_form === 'rating_nps') {
+                    // NPS (0-10) -> Scale 0-100
+                    $normalized = $rawNum * 10;
+                } else {
+                    // Stars, emojis, lights, thumbs (1-5) -> Scale 0-100: 1=20, 2=40, 3=60, 4=80, 5=100
+                    $normalized = $rawNum * 20;
+                }
+                // Make sure to store a clean integer limited between 0 and 100
+                $detailBean->answer_integer = (int)max(0, min(100, round($normalized)));
+            } elseif (!is_array($rawValue) && is_numeric($rawValue)) {
+                // Save the numeric value if applicable
+                $detailBean->answer_integer = (int)round((float)$rawValue);
+            } else {
+                $detailBean->answer_integer = 0;
+            }
+
+            $detailBean->save();
         }
     }
 

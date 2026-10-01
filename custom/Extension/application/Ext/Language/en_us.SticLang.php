@@ -4011,8 +4011,9 @@ $app_list_strings['stic_awf_forms_field_value_type_list']['dataBlock'] = 'Data b
 // Advanced Web Forms: configuration->layout->structure->containerType
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel'] = 'Panel (simple)';
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card'] = 'Card (with border)';
-$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tabs'] = 'Tabs';
-$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['accordion'] = 'Accordion';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel_tabs'] = 'Panel with tabs';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card_tabs'] = 'Card with tabs';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tab_item'] = 'Tab';
 
 // Advanced Web Forms: configuration->layout->theme->shadow_intensity
 $app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['none'] = 'No shadow (flat)';

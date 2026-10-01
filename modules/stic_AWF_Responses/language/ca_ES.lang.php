@@ -114,6 +114,8 @@ $mod_strings = array (
   'LBL_ERROR_ENUM_FIELD' => 'Opció no vàlida per al desplegable.',
   'LBL_ERROR_EMAIL_FIELD' => 'El valor ha de ser una adreça de correu vàlida.',
   'LBL_ERROR_VALUE_FIELD' => 'El valor no és vàlid per al camp.',
+  'LBL_ERROR_REPEATABLE_MAX_INSTANCES' => 'S\'ha superat el nombre màxim d\'entrades.',
+  'LBL_ERROR_REPEATABLE_MIN_INSTANCES' => 'Aquest camp requereix un nombre mínim d\'entrades.',
   
   // Subpanels
   'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_LINKS_TITLE' => 'Vincles de la resposta al formulari',
