@@ -1822,6 +1822,15 @@ class stic_AwfLayout {
       if (section.elements.some(e => e.ref_id === block.id)) return true;
       return section.elements.some(e => e.type === 'section' && sectionContainsBlock(e, block, seen));
     };
+    // Whether the EXACT element instance lives inside `root`'s subtree
+    // (used to tell "this element travelled with the moved group" from
+    // "this is another copy of the same block elsewhere")
+    const treeContainsElement = (root, target, seen = new Set()) => {
+      if (!root || seen.has(root)) return false;
+      seen.add(root);
+      if ((root.elements || []).some((el) => el === target)) return true;
+      return (root.elements || []).some((el) => el.type === 'section' && treeContainsElement(el, target, seen));
+    };
     // Whether `block` is a DESCENDANT of the group owned by `groupRootId`
     // (walks the whole group_root chain). Guards the "nested group head" logic
     // from being applied to an ANCESTOR of the group being processed.
@@ -2137,6 +2146,38 @@ class stic_AwfLayout {
       if (ownerRootId && !rootHomeSection.has(ownerRootId)) rootHomeSection.set(ownerRootId, section);
     });
 
+    // Moves an EXISTING designated group section into the destination template
+    // and returns it. Used when a block that already had its own top-level
+    // group section is linked into another group: the section must MOVE inside
+    // the parent (identity and its own template are preserved, so nothing is
+    // rebuilt), instead of leaving a stale duplicate behind.
+    const moveSectionTo = (section, destTemplate) => {
+      if (!section || !destTemplate || section === destTemplate) return null;
+      if (findDesignatedSection(section.groupRootBlockId, destTemplate) === section) return section;
+      // Refuse to move a section into its own subtree: that would detach it from
+      // the tree instead of relocating it
+      const isInside = (root, target, seen = new Set()) => {
+        if (!root || seen.has(root)) return false;
+        seen.add(root);
+        return root === target
+          || (root.elements || []).some((el) => el.type === 'section' && isInside(el, target, seen));
+      };
+      if (isInside(section, destTemplate)) return null;
+      // Drop it from wherever it currently hangs (top level or another section)
+      this.structure = this.structure.filter((s) => s !== section);
+      const dropFrom = (parent, seen) => {
+        if (!parent || !parent.elements || seen.has(parent)) return false;
+        seen.add(parent);
+        const idx = parent.elements.indexOf(section);
+        if (idx >= 0) { parent.elements.splice(idx, 1); return true; }
+        return parent.elements.some((el) => el.type === 'section' && dropFrom(el, seen));
+      };
+      const pending = this.structure.slice();
+      while (pending.length) dropFrom(pending.shift(), new Set());
+      destTemplate.elements.push(section);
+      return section;
+    };
+
     // Creates (once) the home top-level section of a root block
     const newSectionsForRoots = []; // { section, afterSection }
     const ensureRootHome = (rootBlock, afterSection = null) => {
@@ -2159,11 +2200,45 @@ class stic_AwfLayout {
       return home;
     };
 
+    // The home of a root block must be a TOP-LEVEL section, so a block that
+    // just got a group root cannot be homed inside the parent's group template.
+    // A block that ALREADY had its own top-level group section must be MOVED
+    // into the parent instead: keeping the old section would render the group
+    // twice (the stale copy would be pruned as empty on a LATER sync, so the
+    // duplicate would also persist for a while).
+    const moveExistingHomeToParent = (rootBlock, parentGroupSection) => {
+      const parentTemplate = findGroupTemplate(parentGroupSection);
+      if (!parentTemplate) return;
+      // The group section that currently represents the subgroup: its top-level
+      // home, or the one already designated anywhere in the tree
+      const existing = rootHomeSection.get(rootBlock.id)
+        || this.structure.find((s) => s.isGroupSection && s.groupRootBlockId === rootBlock.id)
+        || (() => {
+          let hit = null;
+          this.structure.forEach((s) => { if (!hit) hit = findDesignatedSection(rootBlock.id, s); });
+          return hit;
+        })();
+      if (existing && moveSectionTo(existing, parentTemplate)) {
+        rootHomeSection.set(rootBlock.id, existing);
+        return existing;
+      }
+      return null;
+    };
+
     // ---- 3. Extraction: a block whose top-level root is not the section's owner is
     //         moved to its root's home (covers ungrouped blocks and re-grouping).
     //         Blocks already inside the right group section keep their nested position.
     //         A block only stays when this top-level section IS the canonical home of
     //         its root (a misplaced/duplicate section loses its blocks to the home).
+    // Elements re-homed into the very section being processed (or into one of its
+    // ancestors, whose `survivors` assignment runs later) are tracked per TARGET
+    // section, so the `survivors` rewrite neither wipes them nor keeps a copy in
+    // the section they were moved out of.
+    const pushedInto = new Map();
+    const notePush = (host, el) => {
+      if (!pushedInto.has(host)) pushedInto.set(host, new Set());
+      pushedInto.get(host).add(el);
+    };
     const processTopSection = (topSection, ownerRootId) => {
       const ownerBlock = ownerRootId ? dataBlocks.find(b => b.id === ownerRootId) : null;
       const sectionIsGroup = !!ownerBlock && isGroupHead(ownerBlock);
@@ -2184,13 +2259,33 @@ class stic_AwfLayout {
           // Standalone blocks in a standalone (non-group) section stay: shared manual sections
           if (!sectionIsGroup && r === block.id && !isGroupHead(block)) { survivors.push(el); return; }
 
+          // The block is a SUBGROUP of another group: its own group section must live
+          // inside THAT group's template. If it already had one of its own at
+          // top level, MOVE it instead of homing it there (which would leave the
+          // group rendered twice).
+          const parentRootId = topRootIdOf(block);
+          if (isGroupHead(block) && parentRootId !== block.id) {
+            let parentGroupSection = null;
+            this.structure.forEach((s) => { if (!parentGroupSection) parentGroupSection = findDesignatedSection(parentRootId, s); });
+            const moved = moveExistingHomeToParent(block, parentGroupSection);
+            // The move relocated the whole group section, so this element
+            // travelled with it: it stays where it is instead of being pulled
+            // out and re-pushed (which would blank the group template).
+            if (moved && treeContainsElement(moved, el)) { survivors.push(el); return; }
+          }
+
           // Move the element to its top root's home (its own nested section when
           // the home is a group section, or the standalone section itself)
           const home = ensureRootHome(rootBlock, topSection);
           const host = isGroupHead(rootBlock) ? blockHostSection(home, block) : home;
+          // Already homed here: keeping it avoids a duplicated element
+          if (host === section) { survivors.push(el); return; }
           host.elements.push(el);
+          notePush(host, el);
         });
-        section.elements = survivors;
+        const kept = new Set(survivors);
+        const pushed = pushedInto.get(section) || new Set();
+        section.elements = section.elements.filter((el) => kept.has(el) || pushed.has(el));
       };
       processSection(topSection);
     };
