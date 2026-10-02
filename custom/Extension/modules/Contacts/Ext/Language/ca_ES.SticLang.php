@@ -257,3 +257,6 @@ $mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = "Per tal de poder editar la contrase
 
 // Converses
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Converses';
+
+// Cadenes Entorn Organitzacional
+$mod_strings['LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE'] = "Persona de l'entorn organitzacional";
