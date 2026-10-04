@@ -61,21 +61,31 @@ class SticRecycleBinHookCode
         $createdById = $current_user->id ?? '1';
 
         $recycleBinId = create_guid();
-        $recycleBean = BeanFactory::newBean('stic_Recycle_Bin');
-        $recycleBean->new_with_id = true;
-        $recycleBean->id = $recycleBinId;
-        $recycleBean->name = $recordName;
-        $recycleBean->date_entered = $dateDeleted;
-        $recycleBean->date_modified = $dateDeleted;
-        $recycleBean->created_by = $createdById;
-        $recycleBean->record_module = $module;
-        $recycleBean->record_id = $recordId;
-        $recycleBean->record_name = $recordName;
-        $recycleBean->date_deleted = $dateDeleted;
-        $recycleBean->user_deleted_id = $userId;
-        $recycleBean->original_assigned_user_id = $bean->assigned_user_id ?? '';
-        $recycleBean->assigned_user_id = $bean->assigned_user_id ?? '';
-        $recycleBean->save(false);
+        // Direct SQL INSERT (no beans) so no after_save logic hooks / workflows are triggered.
+        $assignedUserId = $bean->assigned_user_id ?? null;
+        $sql = 'INSERT INTO stic_recycle_bin (
+                    id, name, date_entered, date_modified, modified_user_id, created_by,
+                    deleted, assigned_user_id, original_assigned_user_id,
+                    record_module, record_id, record_name, date_deleted, user_deleted_id,
+                    restored
+                ) VALUES (
+                    ' . $db->quoted($recycleBinId) . ',
+                    ' . $db->quoted($recordName) . ',
+                    ' . $db->quoted($dateDeleted) . ',
+                    ' . $db->quoted($dateDeleted) . ',
+                    ' . $db->quoted($userId) . ',
+                    ' . $db->quoted($createdById) . ',
+                    0,
+                    ' . (empty($assignedUserId) ? 'NULL' : $db->quoted($assignedUserId)) . ',
+                    ' . (empty($assignedUserId) ? 'NULL' : $db->quoted($assignedUserId)) . ',
+                    ' . $db->quoted($module) . ',
+                    ' . $db->quoted($recordId) . ',
+                    ' . $db->quoted($recordName) . ',
+                    ' . $db->quoted($dateDeleted) . ',
+                    ' . $db->quoted($userId) . ',
+                    0
+                )';
+        $db->query($sql);
 
         $this->captureRelationships($bean, $recycleBinId, $db);
     }

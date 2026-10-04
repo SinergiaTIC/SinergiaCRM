@@ -59,7 +59,7 @@ $listViewDefs['stic_Recycle_Bin'] = array(
     ),
     'USER_DELETED_NAME' => array(
         'width' => '12%',
-        'label' => 'LBL_USER_DELETED',
+        'label' => 'LBL_DELETED_BY',
         'default' => true,
     ),
     'RELATIONSHIP_COUNT' => array(

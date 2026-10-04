@@ -61,14 +61,14 @@ $mod_strings = array(
     // Custom fields
     'LBL_RECORD_MODULE' => 'Module',
     'LBL_RECORD_ID' => 'Record ID',
-    'LBL_RECORD_NAME' => 'Record Name',
-    'LBL_DATE_DELETED' => 'Deletion Date',
-    'LBL_DELETED_BY' => 'Deleted By',
-    'LBL_DATE_RESTORED' => 'Restore Date',
-    'LBL_RESTORED_BY' => 'Restored By',
+    'LBL_RECORD_NAME' => 'Record name',
+    'LBL_DATE_DELETED' => 'Deletion date',
+    'LBL_DELETED_BY' => 'Deleted by',
+    'LBL_DATE_RESTORED' => 'Restoration date',
+    'LBL_RESTORED_BY' => 'Restored by',
     'LBL_RESTORED' => 'Restored',
     'LBL_ORIGINAL_ASSIGNED_USER_ID' => 'Original Assigned User ID',
-    'LBL_ORIGINAL_ASSIGNED_TO' => 'Original Assigned To',
+    'LBL_ORIGINAL_ASSIGNED_TO' => 'Original assigned to',
 
     // Relationships submodule
     'LBL_RECYCLEBIN' => 'Recycle Bin',
