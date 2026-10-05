@@ -330,9 +330,9 @@ $layout_defs['Accounts']['subpanel_setup']['history']['collection_list']['stic_M
 $layout_defs["Accounts"]["subpanel_setup"]['stic_organizational_environment_accounts'] = array (
   'order' => 100,
   'module' => 'stic_Organizational_Environment',
-  'subpanel_name' => 'default',
-  'sort_order' => 'asc',
-  'sort_by' => 'id',
+  'subpanel_name' => 'ForEnvironmentAccounts',
+  'sort_order' => 'desc',
+  'sort_by' => 'start_date',
   'title_key' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE',
   'get_subpanel_data' => 'stic_organizational_environment_accounts',
   'top_buttons' => 
@@ -352,9 +352,9 @@ $layout_defs["Accounts"]["subpanel_setup"]['stic_organizational_environment_acco
 $layout_defs["Accounts"]["subpanel_setup"]['stic_organizational_environment_accounts_1'] = array (
   'order' => 100,
   'module' => 'stic_Organizational_Environment',
-  'subpanel_name' => 'default',
-  'sort_order' => 'asc',
-  'sort_by' => 'id',
+  'subpanel_name' => 'ForEnvironmentAccounts',
+  'sort_order' => 'desc',
+  'sort_by' => 'start_date',
   'title_key' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE',
   'get_subpanel_data' => 'stic_organizational_environment_accounts_1',
   'top_buttons' => 
