@@ -1707,7 +1707,7 @@ class ExternalReporting
         $tmpConfigValues['last_rebuild'] = date('Y-m-d H:i:s');
 
         // Iterate over 'stic_sinergiada' settings and add them to the config values
-        foreach ($sugar_config['stic_sinergiada'] as $key => $value) {
+        foreach (($sugar_config['stic_sinergiada'] ?? []) as $key => $value) {
             if (is_array($value)) {
                 // If the setting is an array, add each sub-element with a composite key
                 foreach ($value as $key2 => $value2) {
@@ -1955,7 +1955,7 @@ class ExternalReporting
 
         // Preload user groups if group permissions are enabled for better performance
         $userGroups = [];
-        if ($sugar_config['stic_sinergiada']['group_permissions_enabled']) {
+        if ($sugar_config['stic_sinergiada']['group_permissions_enabled'] ?? false) {
             $groupsQuery = "SELECT user_name, name as 'group'
                        FROM sda_def_user_groups WHERE `name` != 'EDA_ADMIN' AND `name` != 'EDA_RO'";
             $groupsResult = $db->query($groupsQuery);

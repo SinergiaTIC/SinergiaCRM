@@ -176,7 +176,7 @@ class CustomAdministrationController extends AdministrationController
         $configurator->config['stic_sinergiada']['enabled'] = !empty($_POST['enabled']);
         $configurator->config['stic_sinergiada']['group_permissions_enabled'] = !empty($_POST['group_permissions_enabled']);
         $configurator->config['stic_sinergiada']['auto_rebuild_on_studio_events'] = !empty($_POST['auto_rebuild_on_studio_events']);
-        $configurator->config['stic_sinergiada']['max_users_processed'] = $_POST['max_users_processed'] !== '' ? (int) $_POST['max_users_processed'] : '';
+        $configurator->config['stic_sinergiada']['max_users_processed'] = ($_POST['max_users_processed'] ?? '') !== '' ? (int) $_POST['max_users_processed'] : '';
 
         // publish_as_table: handle modules selected via multi-select.
         // Always store an array (empty array when nothing is selected), so the value is
@@ -189,11 +189,12 @@ class CustomAdministrationController extends AdministrationController
 
         // Cache settings (known fields)
         $knownCacheKeys = ['cache_enabled', 'cache_units', 'cache_quantity', 'cache_hours', 'cache_minutes'];
+        $cacheUnits = $_POST['cache_units'] ?? '';
         $configurator->config['stic_sinergiada']['config']['cache_enabled'] = !empty($_POST['cache_enabled']);
-        $configurator->config['stic_sinergiada']['config']['cache_units'] = $_POST['cache_units'] ?? 'days';
-        $configurator->config['stic_sinergiada']['config']['cache_quantity'] = $_POST['cache_quantity'] !== '' ? (int) $_POST['cache_quantity'] : '';
-        $configurator->config['stic_sinergiada']['config']['cache_hours'] = isset($_POST['cache_hours']) ? str_pad((string)(int)$_POST['cache_hours'], 2, '0', STR_PAD_LEFT) : '00';
-        $configurator->config['stic_sinergiada']['config']['cache_minutes'] = isset($_POST['cache_minutes']) ? str_pad((string)(int)$_POST['cache_minutes'], 2, '0', STR_PAD_LEFT) : '00';
+        $configurator->config['stic_sinergiada']['config']['cache_units'] = in_array($cacheUnits, ['days', 'hours'], true) ? $cacheUnits : 'days';
+        $configurator->config['stic_sinergiada']['config']['cache_quantity'] = ($_POST['cache_quantity'] ?? '') !== '' ? (int) $_POST['cache_quantity'] : '';
+        $configurator->config['stic_sinergiada']['config']['cache_hours'] = str_pad((string) max(0, min(23, (int) ($_POST['cache_hours'] ?? 0))), 2, '0', STR_PAD_LEFT);
+        $configurator->config['stic_sinergiada']['config']['cache_minutes'] = str_pad((string) max(0, min(59, (int) ($_POST['cache_minutes'] ?? 0))), 2, '0', STR_PAD_LEFT);
 
         // Extra / unknown config keys (from "Otras configuraciones" section)
         $extraConfig = $_POST['extra_config'] ?? [];
