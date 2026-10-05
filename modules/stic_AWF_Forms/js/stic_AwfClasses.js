@@ -1977,12 +1977,47 @@ class stic_AwfLayout {
         s.remove_button_label = '';
       }
     });
-    // De-duplicate: only the FIRST designated section per group root stays
-    // (tree order, so a nested designation survives only while it is the first)
-    const seenGroupRoots = new Set();
+    // De-duplicate: only ONE designated section per group root stays. When the
+    // same root has several (a subgroup linked into a parent used to leave a
+    // stale top-level copy), the one that CARRIES CONTENT wins — tree order
+    // alone could keep an empty remnant and demote the real one. A demoted
+    // remnant with no content anywhere in its subtree is DETACHED from the
+    // tree: its template child counts as an element, so the generic empty
+    // section prune never removes it and it would render as a stray empty
+    // section header forever.
+    const hasContentElements = (section, seen = new Set()) => {
+      if (!section || seen.has(section)) return false;
+      seen.add(section);
+      return (section.elements || []).some(el => el.type === 'datablock' || el.type === 'field'
+        || (el.type === 'section' && hasContentElements(el, seen)));
+    };
+    const detachSection = (section) => {
+      if (!section) return;
+      this.structure = this.structure.filter(s => s !== section);
+      const dropFrom = (parent, seen) => {
+        if (!parent || !parent.elements || seen.has(parent)) return false;
+        seen.add(parent);
+        const idx = parent.elements.indexOf(section);
+        if (idx >= 0) { parent.elements.splice(idx, 1); return true; }
+        return parent.elements.some(el => el.type === 'section' && dropFrom(el, seen));
+      };
+      this.structure.forEach(s => dropFrom(s, new Set()));
+    };
+    const designatedByRoot = new Map();
     eachDesignated(s => {
-      if (seenGroupRoots.has(s.groupRootBlockId)) { s.kind = ''; s.groupRootBlockId = ''; return; }
-      seenGroupRoots.add(s.groupRootBlockId);
+      if (!designatedByRoot.has(s.groupRootBlockId)) designatedByRoot.set(s.groupRootBlockId, []);
+      designatedByRoot.get(s.groupRootBlockId).push(s);
+    });
+    const seenGroupRoots = new Set();
+    designatedByRoot.forEach(sections => {
+      const survivor = sections.find(s => hasContentElements(s)) || sections[0];
+      seenGroupRoots.add(survivor.groupRootBlockId);
+      sections.forEach(s => {
+        if (s === survivor) return;
+        s.kind = '';
+        s.groupRootBlockId = '';
+        if (!hasContentElements(s)) detachSection(s);
+      });
     });
     // Whether a section lives inside the TEMPLATE of some group section (i.e. it
     // represents a MEMBER of that group), as opposed to inside a plain top-level
@@ -2142,6 +2177,11 @@ class stic_AwfLayout {
       }
       const first = firstBlockOf(section);
       if (!first) return;
+      // A designated group section is the canonical home of ITS OWN root only
+      // (mapped above): the section of a SUBGROUP can never become the parent
+      // root's home, or the parent's content would be placed inside the
+      // subgroup's own template (inverted hierarchy, parent group left empty)
+      if (section.isGroupSection) return;
       const ownerRootId = topRootIdOf(first);
       if (ownerRootId && !rootHomeSection.has(ownerRootId)) rootHomeSection.set(ownerRootId, section);
     });
@@ -2164,16 +2204,7 @@ class stic_AwfLayout {
       };
       if (isInside(section, destTemplate)) return null;
       // Drop it from wherever it currently hangs (top level or another section)
-      this.structure = this.structure.filter((s) => s !== section);
-      const dropFrom = (parent, seen) => {
-        if (!parent || !parent.elements || seen.has(parent)) return false;
-        seen.add(parent);
-        const idx = parent.elements.indexOf(section);
-        if (idx >= 0) { parent.elements.splice(idx, 1); return true; }
-        return parent.elements.some((el) => el.type === 'section' && dropFrom(el, seen));
-      };
-      const pending = this.structure.slice();
-      while (pending.length) dropFrom(pending.shift(), new Set());
+      detachSection(section);
       destTemplate.elements.push(section);
       return section;
     };
@@ -2207,8 +2238,16 @@ class stic_AwfLayout {
     // twice (the stale copy would be pruned as empty on a LATER sync, so the
     // duplicate would also persist for a while).
     const moveExistingHomeToParent = (rootBlock, parentGroupSection) => {
-      const parentTemplate = findGroupTemplate(parentGroupSection);
-      if (!parentTemplate) return;
+      if (!parentGroupSection) return null;
+      // The parent's template must exist BEFORE the move: a home created during
+      // this same pass has none yet, and moving into a group section without a
+      // template would leave the subgroup's section outside the instance loop
+      let parentTemplate = findGroupTemplate(parentGroupSection);
+      if (!parentTemplate) {
+        const parentBlock = dataBlocks.find(b => b.id === parentGroupSection.groupRootBlockId);
+        parentTemplate = ensureGroupTemplate(parentGroupSection, parentBlock);
+      }
+      if (!parentTemplate) return null;
       // The group section that currently represents the subgroup: its top-level
       // home, or the one already designated anywhere in the tree
       const existing = rootHomeSection.get(rootBlock.id)
@@ -2262,11 +2301,12 @@ class stic_AwfLayout {
           // The block is a SUBGROUP of another group: its own group section must live
           // inside THAT group's template. If it already had one of its own at
           // top level, MOVE it instead of homing it there (which would leave the
-          // group rendered twice).
+          // group rendered twice). The parent's designated section — created
+          // with its template when it does not exist yet — is the destination.
           const parentRootId = topRootIdOf(block);
           if (isGroupHead(block) && parentRootId !== block.id) {
-            let parentGroupSection = null;
-            this.structure.forEach((s) => { if (!parentGroupSection) parentGroupSection = findDesignatedSection(parentRootId, s); });
+            let parentGroupSection = findDesignated(parentRootId);
+            if (!parentGroupSection) parentGroupSection = ensureRootHome(rootBlock, topSection);
             const moved = moveExistingHomeToParent(block, parentGroupSection);
             // The move relocated the whole group section, so this element
             // travelled with it: it stays where it is instead of being pulled
@@ -2461,10 +2501,11 @@ class stic_AwfLayout {
     // now — gets its element template and its per-block host sections.
     normalizeGroupSections();
 
-    // ---- 7. Group sections take the group name but do NOT display their title
-    //         (unless manually customized) ----
-    this.structure.forEach(section => {
-      if (!section.isGroupSection) return;
+    // ---- 7. Group sections take the group name (unless manually customized)
+    //         and show their title by default. NESTED group sections included:
+    //         a renamed subgroup must refresh its section title too, or the
+    //         form would keep showing the old group name ----
+    eachDesignated(section => {
       const owner = dataBlocks.find(b => b.id === section.groupRootBlockId);
       if (owner && !section.is_custom_title) {
         section.title = groupSectionTitle(owner);
