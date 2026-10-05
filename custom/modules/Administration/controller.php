@@ -206,7 +206,15 @@ class CustomAdministrationController extends AdministrationController
         }
 
         // Public URL
-        $configurator->config['stic_sinergiada_public']['url'] = $_POST['public_url'] ?? '';
+        // Only persist the URL when it has a value. If left empty, the key is removed so that
+        // no empty line is written to config_override.php and a URL defined elsewhere (config.php,
+        // manual override, etc.) is not silently overwritten.
+        $publicUrl = trim($_POST['public_url'] ?? '');
+        if ($publicUrl !== '') {
+            $configurator->config['stic_sinergiada_public']['url'] = $publicUrl;
+        } else {
+            unset($configurator->config['stic_sinergiada_public']['url']);
+        }
 
         // Log changes
         $userId = $current_user->id;
@@ -227,7 +235,7 @@ class CustomAdministrationController extends AdministrationController
             // Read existing override, then only update our specific keys
             $overrideArray = $configurator->readOverride();
             $sdaConfig = $configurator->config['stic_sinergiada'];
-            $sdaPublicConfig = $configurator->config['stic_sinergiada_public'];
+            $sdaPublicConfig = $configurator->config['stic_sinergiada_public'] ?? [];
             $overrideArray['stic_sinergiada'] = $sdaConfig;
             $overrideArray['stic_sinergiada_public'] = $sdaPublicConfig;
             $overrideString = "<?php\n/***CONFIGURATOR***/\n";
