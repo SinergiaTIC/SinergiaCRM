@@ -178,13 +178,14 @@ class CustomAdministrationController extends AdministrationController
         $configurator->config['stic_sinergiada']['auto_rebuild_on_studio_events'] = !empty($_POST['auto_rebuild_on_studio_events']);
         $configurator->config['stic_sinergiada']['max_users_processed'] = $_POST['max_users_processed'] !== '' ? (int) $_POST['max_users_processed'] : '';
 
-        // publish_as_table: handle modules selected via multi-select
+        // publish_as_table: handle modules selected via multi-select.
+        // Always store an array (empty array when nothing is selected), so the value is
+        // consistent with how SinergiaDA consumes it.
         $publish = $_POST['publish_as_table'] ?? [];
-        if (empty($publish)) {
-            $configurator->config['stic_sinergiada']['publish_as_table'] = false;
-        } else {
-            $configurator->config['stic_sinergiada']['publish_as_table'] = array_values($publish);
+        if (!is_array($publish)) {
+            $publish = [];
         }
+        $configurator->config['stic_sinergiada']['publish_as_table'] = array_values($publish);
 
         // Cache settings (known fields)
         $knownCacheKeys = ['cache_enabled', 'cache_units', 'cache_quantity', 'cache_hours', 'cache_minutes'];
