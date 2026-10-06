@@ -174,6 +174,16 @@ class stic_AwfDataBlock {
   }
 
   /**
+   * Whether this is an "unlinked" data block (created with no module): its
+   * fields post detached (`_detached.`) and it can hold no relationships.
+   * Manual group membership is reserved for these blocks: a LINKED block
+   * belongs to a group only through its relationships (auto-adoption).
+   */
+  get isUnlinked() {
+    return !this.module;
+  }
+
+  /**
    * Gets all fields available to be setted in this DataBlock
    * @returns {array} FieldInformation
    * FieldInformation: { name, text, type, required, options, inViews }
@@ -330,11 +340,41 @@ class stic_AwfDataBlock {
   }
 
   /**
+   * Whether this block has at least one VISIBLE form field (a field that
+   * renders an input: not FIXED, not hidden). Matches the renderer's and the
+   * sync's renderability predicate, so "visible" means what actually draws.
+   */
+  hasVisibleFormFields() {
+    return (this.fields || []).some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
+  }
+
+  /**
+   * Whether the whole DEPENDENCY TREE — this block plus every block that would
+   * live in its group: its current members (group_root chain) AND its
+   * relational dependents (the ones auto-adoption would pull in) — has at
+   * least one VISIBLE form field. Optional/Repeatable are only offered when
+   * something in the group renders an input: N instances of a group that
+   * draws nothing are indistinguishable, and an optional group that renders
+   * no input could never be activated by filling a field.
+   */
+  hasVisibleFormFieldsInTree(allDataBlocks) {
+    if (this.hasVisibleFormFields()) return true;
+    const tree = [...this.getDescendants(allDataBlocks), ...this.getRelationalDescendants(allDataBlocks)];
+    return tree.some(b => b.hasVisibleFormFields());
+  }
+
+  /**
    * Checks if this DataBlock can be configured as optional (min_instances = 0).
    * @param {stic_AwfDataBlock[]} allDataBlocks 
    * @returns {boolean}
    */
   canBeOptional(allDataBlocks) {
+    // A block whose whole dependency tree renders NO visible form field can
+    // never be optional: the optional activation model falls back to a real
+    // form field being filled, and a group that draws no input could never
+    // be activated that way
+    if (!this.hasVisibleFormFieldsInTree(allDataBlocks)) return false;
+
     // System required blocks can never be optional
     if (this.required) return false;
 
@@ -362,6 +402,11 @@ class stic_AwfDataBlock {
    * @returns {boolean}
    */
   canBeRepeatable(allDataBlocks) {
+    // A block whose whole dependency tree renders NO visible form field can
+    // never be repeatable: N instances of a group that draws no input are
+    // indistinguishable ghost instances
+    if (!this.hasVisibleFormFieldsInTree(allDataBlocks)) return false;
+
     // Check if block can be converted into a Group Root
     if (!this.canBeGroupRoot(allDataBlocks)) return false;
 
@@ -480,10 +525,26 @@ class stic_AwfDataBlock {
    * @returns {stic_AwfDataBlock[]}
    */
   getAvailableCandidateChildren(allDataBlocks) {
-    if (!this.is_root) return [];
+    // Any GROUP HEAD offers candidates — top-level roots AND subgroup heads.
+    // A head deeper than level 1 cannot: group nesting is limited to 2 levels,
+    // so its members would sit at level 3 (nothing renders or posts them).
+    if (!this.isGroupHead(allDataBlocks) || this.getDepth(allDataBlocks) > 1) return [];
+    // When this head is a SUBGROUP (a member of another group), blocks of the
+    // SAME parent group are candidates too: adding them RE-PARENTS them into
+    // the subgroup (the same rule adoptRelatedOrphans applies automatically).
+    const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
     return allDataBlocks.filter(candidate => {
       if (candidate.id === this.id) return false;
-      if (!candidate.is_root) return false; // Already belongs to another group
+      const isOrphan = candidate.is_root;
+      const isSameGroupChild = myGroupRoot && candidate.group_root === myGroupRoot;
+      // Top-level heads only adopt orphans; subgroups also re-parent same-group children
+      if (!isOrphan && !isSameGroupChild) return false;
+      // MANUAL membership is reserved for UNLINKED blocks (any group level): a
+      // linked block belongs to a group only through its relationships — the
+      // auto-adoption of adoptRelatedOrphans() decides its placement, so it
+      // must never be offered (or added) by hand. Unlinked blocks have no
+      // relationships: the group is the ONLY instance context they can get.
+      if (!candidate.isUnlinked) return false;
       if (candidate.is_repeatable || candidate.is_optional) return false; // Candidate blocks that are repeatable or optional cannot be children of a group
       // A GROUP HEAD must stay a root: the sync designates a group section only
       // for is_root heads (sync pass 3), so adopting one here would strip it of
@@ -562,17 +623,28 @@ class stic_AwfDataBlock {
   canBeGroupRoot(allDataBlocks) {
     if (!allDataBlocks || !Array.isArray(allDataBlocks)) return true;
 
-    // The group this block currently belongs to (if any). With flat model, group_root IS the root.
-    // Descendants in the SAME group can follow this block into a new subgroup — that's fine.
-    // Descendants in a DIFFERENT group would be stolen → blocked (restriction 4).
-    const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
-
-    // Disjoint Trees check: no relational descendant may belong to a DIFFERENT group.
-    // (A descendant that is itself a group head is fine — nested groups are allowed as long
-    // as the N×M rule is respected, which is enforced by canBeRepeatable, not here.)
+    // Disjoint Trees check: no relational descendant may belong to a group
+    // OUTSIDE this block's own group tree. A descendant nested in a SUBGROUP
+    // of this block (root -> subgroup head -> member) lives INSIDE this tree:
+    // its group_root chain walks up to this block (or to the group this block
+    // itself belongs to), so it is fine. Without the walk, forming a nested
+    // subgroup would freeze the root's own switches — a member's group_root
+    // points to the subgroup head, not to this block, and the flat comparison
+    // wrongly read it as "a different group".
     const relationalDescendants = this.getRelationalDescendants(allDataBlocks);
     for (const descendant of relationalDescendants) {
-      if (descendant.group_root && descendant.group_root !== this.id && descendant.group_root !== myGroupRoot) return false;
+      if (!descendant.group_root || descendant.group_root === this.id) continue;
+      let head = descendant.group_root;
+      const seen = new Set();
+      let inside = false;
+      while (head && !seen.has(head)) {
+        seen.add(head);
+        if (head === this.id || head === this.group_root) { inside = true; break; }
+        const headBlock = allDataBlocks.find(b => b.id === head);
+        if (!headBlock) break;
+        head = headBlock.group_root;
+      }
+      if (!inside) return false;
     }
 
     return true;
@@ -1895,6 +1967,28 @@ class stic_AwfLayout {
       // child. The block's host is searched/created inside it.
       const template = findGroupTemplate(groupSection);
       if (!template) return groupSection; // Defensive (the template pass creates it)
+      // A member of a NESTED subgroup (its DIRECT group head is not this
+      // group's root) is hosted inside that subgroup's OWN designated section,
+      // never directly in this template: it renders and posts per
+      // (ancestor, subgroup) instance pair. Walk the block's group_root chain
+      // from this group's root down to its direct head, descending through the
+      // intermediate heads' designated sections (chain-built with cycle
+      // guards; a missing intermediate section falls back to this template).
+      const headChain = [];
+      {
+        const chainSeen = new Set([block.id]);
+        let cur = dataBlocks.find(b => b.id === block.group_root);
+        while (cur && !chainSeen.has(cur.id)) { chainSeen.add(cur.id); headChain.unshift(cur); cur = dataBlocks.find(b => b.id === cur.group_root); }
+      }
+      let hostRoot = groupSection;
+      for (let i = 0; i < headChain.length; i++) {
+        if (headChain[i].id !== hostRoot.groupRootBlockId) continue;
+        if (i + 1 >= headChain.length) break;              // hostRoot is the direct head's section
+        const sub = findDesignated(headChain[i + 1].id);
+        if (!sub || sub === hostRoot) break;
+        hostRoot = sub;
+      }
+      if (hostRoot !== groupSection) return blockHostSection(hostRoot, block);
       const ownGroupSection = needsOwnGroupSection(groupSection.groupRootBlockId, block);
       // The subgroup's OWN designated section, when it already exists, is the
       // section that represents the group: the block's host sections live INSIDE
@@ -1964,44 +2058,60 @@ class stic_AwfLayout {
       };
       this.structure.forEach(walk);
     };
+    // Demotes a designated group section AND dissolves the wrapper the group
+    // machinery built for it: the section is replaced IN PLACE by its own
+    // content, with the template child unwrapped one level (its children go
+    // up, keeping their identity, so Alpine bindings survive). The wrapper
+    // and its "(group)"/"(element)" titles were auto-created; keeping them
+    // after the group is gone would leave stray headers and a useless nesting
+    // level that NO later pass prunes (the generic prunes only remove
+    // sections with no children, and a template child always counts as one).
+    // An empty wrapper dissolves entirely. Collected-then-processed: never
+    // called while eachDesignated is walking (splicing a parent's elements
+    // during a forEach skips the lifted siblings).
+    const demoteSectionLifted = (s) => {
+      s.kind = '';
+      s.groupRootBlockId = '';
+      s.toggle_label = '';
+      s.add_button_label = '';
+      s.remove_button_label = '';
+      const template = (s.elements || []).find(el => el.type === 'section' && el.groupTemplate === true);
+      const lifted = template
+        ? [...s.elements.filter(el => el !== template), ...template.elements]
+        : [...(s.elements || [])];
+      const replaceIn = (arr) => {
+        const i = arr.indexOf(s);
+        if (i >= 0) { arr.splice(i, 1, ...lifted); return true; }
+        return false;
+      };
+      if (replaceIn(this.structure)) return;
+      const walk = (sec) => {
+        const i = (sec.elements || []).indexOf(s);
+        if (i >= 0) { sec.elements.splice(i, 1, ...lifted); return true; }
+        return (sec.elements || []).some(el => el.type === 'section' && walk(el));
+      };
+      this.structure.some(walk);
+    };
+    const demoteRootless = [];
     eachDesignated(s => {
       const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
       // A group section stays valid while its root is a group head. The root
       // does NOT have to be top level: a group head nested in another group
       // (depth 2) is a group of its own and owns its designated section.
-      if (!gBlock || !isGroupHead(gBlock)) {
-        s.kind = '';
-        s.groupRootBlockId = '';
-        s.toggle_label = '';
-        s.add_button_label = '';
-        s.remove_button_label = '';
-      }
+      if (!gBlock || !isGroupHead(gBlock)) demoteRootless.push(s);
     });
+    demoteRootless.forEach(demoteSectionLifted);
     // De-duplicate: only ONE designated section per group root stays. When the
     // same root has several (a subgroup linked into a parent used to leave a
     // stale top-level copy), the one that CARRIES CONTENT wins — tree order
-    // alone could keep an empty remnant and demote the real one. A demoted
-    // remnant with no content anywhere in its subtree is DETACHED from the
-    // tree: its template child counts as an element, so the generic empty
-    // section prune never removes it and it would render as a stray empty
-    // section header forever.
+    // alone could keep an empty remnant and demote the real one. The losers are
+    // demoted AND unwrapped (an empty one dissolves entirely; one with user
+    // content keeps it, one level up, without the group's stray wrapper).
     const hasContentElements = (section, seen = new Set()) => {
       if (!section || seen.has(section)) return false;
       seen.add(section);
       return (section.elements || []).some(el => el.type === 'datablock' || el.type === 'field'
         || (el.type === 'section' && hasContentElements(el, seen)));
-    };
-    const detachSection = (section) => {
-      if (!section) return;
-      this.structure = this.structure.filter(s => s !== section);
-      const dropFrom = (parent, seen) => {
-        if (!parent || !parent.elements || seen.has(parent)) return false;
-        seen.add(parent);
-        const idx = parent.elements.indexOf(section);
-        if (idx >= 0) { parent.elements.splice(idx, 1); return true; }
-        return parent.elements.some(el => el.type === 'section' && dropFrom(el, seen));
-      };
-      this.structure.forEach(s => dropFrom(s, new Set()));
     };
     const designatedByRoot = new Map();
     eachDesignated(s => {
@@ -2014,9 +2124,7 @@ class stic_AwfLayout {
       seenGroupRoots.add(survivor.groupRootBlockId);
       sections.forEach(s => {
         if (s === survivor) return;
-        s.kind = '';
-        s.groupRootBlockId = '';
-        if (!hasContentElements(s)) detachSection(s);
+        demoteSectionLifted(s);
       });
     });
     // Whether a section lives inside the TEMPLATE of some group section (i.e. it
@@ -2038,18 +2146,19 @@ class stic_AwfLayout {
     // A group root that is no longer a member of another group (the user
     // ungrouped it) must have its designated section at the level where its group
     // lives. A designation left nested inside another group's template is
-    // RELEASED (section and content preserved) so the top-level designation below
-    // builds its canonical section at the top level.
+    // RELEASED and its wrapper dissolved, so the top-level designation below
+    // builds the canonical section at the top level and the parent group's
+    // template keeps no stray shells.
+    const demoteReleased = [];
     eachDesignated(s => {
       const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
       if (!gBlock || !gBlock.is_root) return;         // Still a member: keep it nested
       if (this.structure.includes(s)) return;        // Already at the top level
       if (!isInsideGroupTemplate(s)) return;         // User-nested top-level section: keep it
-      s.kind = '';
-      s.groupRootBlockId = '';
-      if (!s.is_custom_title) s.title = gBlock.text;
+      demoteReleased.push(s);
       seenGroupRoots.delete(gBlock.id);
     });
+    demoteReleased.forEach(demoteSectionLifted);
     // Designate (legacy heuristic) or create
     const firstReferencedBlockOf = (section) => {
       for (const el of section.elements) {
@@ -2191,6 +2300,20 @@ class stic_AwfLayout {
     // group section is linked into another group: the section must MOVE inside
     // the parent (identity and its own template are preserved, so nothing is
     // rebuilt), instead of leaving a stale duplicate behind.
+    // Detaches a section from wherever it hangs (top level or any nesting
+    // level), keeping its own subtree intact
+    const detachSection = (section) => {
+      if (!section) return;
+      this.structure = this.structure.filter(s => s !== section);
+      const dropFrom = (parent, seen) => {
+        if (!parent || !parent.elements || seen.has(parent)) return false;
+        seen.add(parent);
+        const idx = parent.elements.indexOf(section);
+        if (idx >= 0) { parent.elements.splice(idx, 1); return true; }
+        return parent.elements.some(el => el.type === 'section' && dropFrom(el, seen));
+      };
+      this.structure.forEach(s => dropFrom(s, new Set()));
+    };
     const moveSectionTo = (section, destTemplate) => {
       if (!section || !destTemplate || section === destTemplate) return null;
       if (findDesignatedSection(section.groupRootBlockId, destTemplate) === section) return section;
@@ -2290,7 +2413,21 @@ class stic_AwfLayout {
           const block = dataBlocks.find(b => b.id === el.ref_id);
           if (!block) { survivors.push(el); return; }
           const r = topRootIdOf(block);
-          if (r === ownerRootId && isCanonicalHome) { survivors.push(el); return; } // Own member/root in its home: stays
+          // A member of a NESTED subgroup keeps its nested position ONLY when
+          // it already lives inside its DIRECT head's designated section: one
+          // still sitting in an ancestor's template (placed there before the
+          // subgroup existed, e.g. after undoing and re-forming subgroups) must
+          // MOVE into the subgroup — it renders and posts per (ancestor,
+          // subgroup) instance pair, not per ancestor instance.
+          const directHead = (block.group_root && block.group_root !== block.id)
+            ? dataBlocks.find(b => b.id === block.group_root) : null;
+          const headIsNested = !!(directHead && directHead.group_root && directHead.group_root !== directHead.id);
+          const nestedHomeOk = () => {
+            if (!headIsNested) return true;
+            const sub = findDesignated(directHead.id);
+            return !!sub && sectionContainsSection(sub, section);
+          };
+          if (r === ownerRootId && isCanonicalHome && nestedHomeOk()) { survivors.push(el); return; } // Own member/root in its home: stays
 
           const rootBlock = dataBlocks.find(b => b.id === r);
           if (!rootBlock) { survivors.push(el); return; }
@@ -3731,10 +3868,17 @@ class stic_AwfConfiguration {
   disbandGroup(parentBlock) {
     if (!parentBlock) return;
 
-    // 1. Release ALL descendant blocks in the branch (BFS)
+    // 1. Release ALL descendant blocks in the branch (BFS). When a SUBGROUP
+    //    head dissolves, its members follow the head INTO THE HEAD'S OWN
+    //    GROUP (the enclosing parent group): they lived per (parent,
+    //    subgroup) instance and degrade to per-parent instance, NOT to
+    //    top-level orphans (that would silently drop the enclosing group's
+    //    instance context). A top-level head releases to top level as before.
+    const releaseTo = (parentBlock.group_root && parentBlock.group_root !== parentBlock.id)
+      ? parentBlock.group_root : '';
     const descendants = parentBlock.getDescendants(this.data_blocks);
     descendants.forEach(child => {
-      child.group_root = '';
+      child.group_root = releaseTo;
     });
 
     // 2. Reset limits and clear group metadata
@@ -3791,6 +3935,9 @@ class stic_AwfConfiguration {
     if (!block) return;
 
     if (isOptional) {
+      // Choke-point guard (the UI disables the switch, but the mutator must
+      // validate too): a block with no visible form field can never be optional
+      if (!block.canBeOptional(this.data_blocks)) return;
       block.min_instances = 0;
 
       // Auto-adopt orphan dependent blocks
@@ -3848,23 +3995,39 @@ class stic_AwfConfiguration {
       //    designated group section (sync pass 3), so a head adopted as a
       //    member loses its own group representation and its children would
       //    post unindexed instead of per instance (data loss).
+      //  - the CHILD must be UNLINKED: linked blocks join a group only
+      //    through their relationships (auto-adoption), never by hand.
       if (parent.id === child.id) return;
       if (parent.isDescendant(child.id, this.data_blocks)) return;
       if (child.isGroupHead(this.data_blocks)) return;
-      if (!child.is_root) return;
-      // Only a ROOT block can head a group: sync designates the group section
-      // for root heads, so giving children to a non-root parent would build a
-      // second level of grouping that nothing renders or posts per instance.
-      if (!parent.is_root) return;
+      // MANUAL membership is reserved for UNLINKED blocks (any group level):
+      // a linked block joins a group only through its relationships (the
+      // auto-adoption of adoptRelatedOrphans()), never by hand
+      if (!child.isUnlinked) return;
+      // The child must be an orphan, OR — when the parent is a SUBGROUP — a
+      // block of the same parent group (re-parented into the subgroup)
+      const parentGroupRoot = (parent.group_root && parent.group_root !== parent.id) ? parent.group_root : null;
+      const childIsOrphan = child.is_root;
+      const childIsSameGroupChild = parentGroupRoot && child.group_root === parentGroupRoot;
+      if (!childIsOrphan && !childIsSameGroupChild) return;
+      // Only a group head can receive members, and only up to nesting level 2:
+      // sync designates the group sections of root heads and (depth-2) subgroup
+      // heads, but a head deeper than level 1 would place its members at level
+      // 3, which nothing renders or posts per instance.
+      if (!parent.isGroupHead(this.data_blocks) || parent.getDepth(this.data_blocks) > 1) return;
 
       child.group_root = parent.id;
 
       // Also bring the child's relational dependents into the group (transitive).
-      // Only adopt orphans (is_root) that are not themselves group heads — blocks already
-      // in another group stay where they are (disjoint trees rule).
+      // Orphans (is_root) always follow; when re-parenting a same-group child
+      // into a SUBGROUP, its dependents in the SAME parent group follow too —
+      // one left behind at the parent level would resolve its FK against the
+      // subgroup's instance 0 only (padded index), silently mis-linking every
+      // deeper instance. Dependents in OTHER groups stay (disjoint trees rule).
       const descendants = child.getRelationalDescendants(this.data_blocks);
       descendants.forEach(d => {
-        if (d.is_root && !d.is_repeatable && !d.is_optional && !d.isGroupHead(this.data_blocks)) {
+        if ((d.is_root || (parentGroupRoot && d.group_root === parentGroupRoot))
+          && !d.is_repeatable && !d.is_optional && !d.isGroupHead(this.data_blocks)) {
           d.group_root = parent.id;
         }
       });

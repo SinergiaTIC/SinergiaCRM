@@ -1117,6 +1117,12 @@ class WizardStep2 {
       changeGroupRoot(block, newRootId) {
         if (!block) return;
 
+        // Manual membership is reserved for UNLINKED blocks: a linked block
+        // joins a group only through its relationships (auto-adoption), so
+        // assigning it a group root by hand is refused (removal — empty
+        // newRootId — stays allowed for any member)
+        if (newRootId && !block.isUnlinked) return;
+
         const oldRoot = block.getGroupHeadBlock(this.data_blocks);
         block.group_root = newRootId || '';
 
