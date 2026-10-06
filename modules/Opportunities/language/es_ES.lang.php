@@ -108,5 +108,5 @@ $mod_strings = array(
     // SNIP
 
     'LBL_AOS_CONTRACTS' => 'Contratos',
-    'LBL_AOS_QUOTES' => 'Presupuestos',
+    'LBL_AOS_QUOTES' => 'Presupuestos',   
 );
