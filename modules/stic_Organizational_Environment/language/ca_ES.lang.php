@@ -71,4 +71,10 @@ $mod_strings = array (
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE' => 'Organització base',
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_FROM_ACCOUNTS_TITLE' => "Organització de l'entorn",
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_CONTACTS_TITLE' => "Persona de l'entorn",
+  'LBL_START_DATE_ERROR' => "La data d'alta ha de ser igual o anterior a la data de baixa.",
+  'LBL_END_DATE_ERROR' => "La data de baixa ha de ser igual o posterior a la data d'alta.",
+  'LBL_MUST_RELATE_TO_AN_ACCOUNT_OR_A_CONTACT' => "Cal indicar una persona o una organització de l'entorn.",
+  'LBL_ONLY_ONE_ENVIRONMENT_RECORD' => "Només es pot indicar una persona o una organització de l'entorn.",
+  'LBL_BASE_ACCOUNT_REQUIRED' => "L'organització base és obligatòria.",
+  'LBL_RELATIONSHIP_PREFIX_ERROR' => "El tipus de relació no correspon a la persona o organització de l'entorn seleccionada.",
 );
