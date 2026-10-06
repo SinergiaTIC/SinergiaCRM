@@ -71,4 +71,10 @@ $mod_strings = array (
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE' => 'Base account',
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Environment account',
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_CONTACTS_TITLE' => 'Environment contact',
+  'LBL_START_DATE_ERROR' => 'Start date must be equal or before End date.',
+  'LBL_END_DATE_ERROR' => 'End date must be equal or after Start date.',
+  'LBL_MUST_RELATE_TO_AN_ACCOUNT_OR_A_CONTACT' => 'An Environment contact or account is required.',
+  'LBL_ONLY_ONE_ENVIRONMENT_RECORD' => 'Only one Environment contact or account can be set.',
+  'LBL_BASE_ACCOUNT_REQUIRED' => 'The base organization is required.',
+  'LBL_RELATIONSHIP_PREFIX_ERROR' => 'The relationship type does not match the selected Environment account or contact.',
 );
