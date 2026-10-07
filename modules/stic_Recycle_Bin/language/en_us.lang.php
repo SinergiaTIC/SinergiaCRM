@@ -67,7 +67,12 @@ $mod_strings = array(
     'LBL_DATE_RESTORED' => 'Restoration date',
     'LBL_RESTORED_BY' => 'Restored by',
     'LBL_RESTORED' => 'Restored',
+    'LBL_MERGED' => 'Merged',
+    'LBL_SURVIVING_RECORD' => 'Surviving record',
+    'LBL_MERGED_NOTICE' => 'This record was deleted as a result of a merge and cannot be restored.',
     'LBL_ORIGINAL_ASSIGNED_USER_ID' => 'Original Assigned User ID',
+    'LBL_ORIGINAL_MODIFIED_USER_ID' => 'Original Modified User ID',
+    'LBL_ORIGINAL_DATE_MODIFIED' => 'Original Date Modified',
     'LBL_ORIGINAL_ASSIGNED_TO' => 'Original assigned to',
 
     // Relationships submodule
@@ -101,6 +106,7 @@ $mod_strings = array(
     'LBL_RESTORE_INVALID_ID' => 'Invalid record identifier.',
     'LBL_RESTORE_NOT_FOUND' => 'Record not found.',
     'LBL_RESTORE_ALREADY' => 'Record has already been restored.',
+    'LBL_RESTORE_MERGED' => 'This record was merged into another record and cannot be restored.',
     'LBL_RESTORE_NO_TABLE' => 'Original record table not found.',
     'LBL_RESTORE_RESULTS' => 'Restore Results',
     'LBL_RESTORE_RECORDS_RESTORED' => 'records restored successfully.',

@@ -67,6 +67,12 @@ $subpanel_layout = array(
             'width' => '8%',
             'default' => true,
         ),
+        'skip_reason' => array(
+            'type' => 'enum',
+            'vname' => 'LBL_SKIP_REASON',
+            'width' => '16%',
+            'default' => true,
+        ),
         'date_entered' => array(
             'type' => 'datetime',
             'vname' => 'LBL_DATE_ENTERED',

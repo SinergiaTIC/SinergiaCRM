@@ -59,6 +59,7 @@ class stic_Recycle_Bin_Relationships extends Basic
     public $related_record_id;
     public $related_record_name;
     public $restored;
+    public $skip_reason;
 
     public function __construct()
     {

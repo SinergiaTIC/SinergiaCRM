@@ -67,7 +67,12 @@ $mod_strings = array(
     'LBL_DATE_RESTORED' => 'Data de restauració',
     'LBL_RESTORED_BY' => 'Restaurat per',
     'LBL_RESTORED' => 'Restaurat',
+    'LBL_MERGED' => 'Combinat',
+    'LBL_SURVIVING_RECORD' => 'Registre conservat',
+    'LBL_MERGED_NOTICE' => 'Aquest registre es va eliminar com a resultat d\'una combinació i no es pot restaurar.',
     'LBL_ORIGINAL_ASSIGNED_USER_ID' => 'ID Usuari assignat original',
+    'LBL_ORIGINAL_MODIFIED_USER_ID' => 'ID Usuari modificador original',
+    'LBL_ORIGINAL_DATE_MODIFIED' => 'Data de modificació original',
     'LBL_ORIGINAL_ASSIGNED_TO' => 'Assignat a original',
 
     // Relationships submodule
@@ -101,6 +106,7 @@ $mod_strings = array(
     'LBL_RESTORE_INVALID_ID' => 'Identificador de registre no vàlid.',
     'LBL_RESTORE_NOT_FOUND' => 'No s\'ha trobat el registre.',
     'LBL_RESTORE_ALREADY' => 'El registre ja s\'ha restaurat.',
+    'LBL_RESTORE_MERGED' => 'Aquest registre s\'ha combinat amb un altre i no es pot restaurar.',
     'LBL_RESTORE_NO_TABLE' => 'No s\'ha trobat la taula del registre original.',
     'LBL_RESTORE_RESULTS' => 'Resultats de la restauració',
     'LBL_RESTORE_RECORDS_RESTORED' => 'registres restaurats correctament.',

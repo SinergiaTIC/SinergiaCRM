@@ -28,10 +28,21 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $searchFields['stic_Recycle_Bin'] = array(
     'record_name' => array('query_type' => 'default'),
     'record_module' => array('query_type' => 'default'),
-    'date_deleted' => array(
+    'date_deleted' => array('query_type' => 'default'),
+    'range_date_deleted' => array(
         'query_type' => 'default',
-        'operator' => '=',
-        'db_field' => array('date_deleted'),
+        'enable_range_search' => true,
+        'is_date_field' => true,
+    ),
+    'start_range_date_deleted' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true,
+    ),
+    'end_range_date_deleted' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true,
     ),
     'restored' => array('query_type' => 'default'),
     'user_deleted_id' => array(

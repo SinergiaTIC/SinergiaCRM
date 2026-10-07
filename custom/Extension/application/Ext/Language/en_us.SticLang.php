@@ -4225,5 +4225,10 @@ $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
 
+// Recycle bin relationship skip reasons
+$app_list_strings['stic_recycle_skip_reason_list'][''] = '';
+$app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Related record deleted';
+$app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Related record reassigned';
+
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

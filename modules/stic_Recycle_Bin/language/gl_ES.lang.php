@@ -67,7 +67,12 @@ $mod_strings = array(
     'LBL_DATE_RESTORED' => 'Fecha de restauración',
     'LBL_RESTORED_BY' => 'Restaurado por',
     'LBL_RESTORED' => 'Restaurado',
+    'LBL_MERGED' => 'Combinado',
+    'LBL_SURVIVING_RECORD' => 'Registro conservado',
+    'LBL_MERGED_NOTICE' => 'Este registro se eliminó como resultado de una combinación y no se puede restaurar.',
     'LBL_ORIGINAL_ASSIGNED_USER_ID' => 'ID Usuario asignado original',
+    'LBL_ORIGINAL_MODIFIED_USER_ID' => 'ID Usuario modificador original',
+    'LBL_ORIGINAL_DATE_MODIFIED' => 'Fecha de modificación original',
     'LBL_ORIGINAL_ASSIGNED_TO' => 'Asignado a original',
 
     // Relationships submodule
@@ -101,6 +106,7 @@ $mod_strings = array(
     'LBL_RESTORE_INVALID_ID' => 'Identificador de registro no válido.',
     'LBL_RESTORE_NOT_FOUND' => 'Registro no encontrado.',
     'LBL_RESTORE_ALREADY' => 'El registro ya ha sido restaurado.',
+    'LBL_RESTORE_MERGED' => 'Este registro fue combinado con otro y no se puede restaurar.',
     'LBL_RESTORE_NO_TABLE' => 'No se ha encontrado la tabla original del registro.',
     'LBL_RESTORE_RESULTS' => 'Resultados de la recuperación',
     'LBL_RESTORE_RECORDS_RESTORED' => 'registros recuperados correctamente.',

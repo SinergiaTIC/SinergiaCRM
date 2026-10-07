@@ -104,6 +104,16 @@ $dictionary['stic_Recycle_Bin'] = array(
             'vname' => 'LBL_ORIGINAL_ASSIGNED_USER_ID',
             'type' => 'id',
         ),
+        'original_modified_user_id' => array(
+            'name' => 'original_modified_user_id',
+            'vname' => 'LBL_ORIGINAL_MODIFIED_USER_ID',
+            'type' => 'id',
+        ),
+        'original_date_modified' => array(
+            'name' => 'original_date_modified',
+            'vname' => 'LBL_ORIGINAL_DATE_MODIFIED',
+            'type' => 'datetime',
+        ),
         'original_assigned_to' => array(
             'name' => 'original_assigned_to',
             'vname' => 'LBL_ORIGINAL_ASSIGNED_TO',
@@ -146,6 +156,8 @@ $dictionary['stic_Recycle_Bin'] = array(
             'name' => 'date_deleted',
             'vname' => 'LBL_DATE_DELETED',
             'type' => 'datetime',
+            'enable_range_search' => true,
+            'options' => 'date_range_search_dom',
         ),
         'user_deleted_id' => array(
             'name' => 'user_deleted_id',
@@ -208,6 +220,24 @@ $dictionary['stic_Recycle_Bin'] = array(
             'type' => 'bool',
             'default' => 0,
         ),
+        'merged' => array(
+            'name' => 'merged',
+            'vname' => 'LBL_MERGED',
+            'type' => 'bool',
+            'default' => 0,
+        ),
+        'merged_into_id' => array(
+            'name' => 'merged_into_id',
+            'vname' => 'LBL_SURVIVING_RECORD',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        'merged_into_name' => array(
+            'name' => 'merged_into_name',
+            'vname' => 'LBL_SURVIVING_RECORD',
+            'type' => 'varchar',
+            'len' => 255,
+        ),
         'recycle_bin_relationships' => array(
             'name' => 'recycle_bin_relationships',
             'type' => 'link',
@@ -233,6 +263,16 @@ $dictionary['stic_Recycle_Bin'] = array(
             'name' => 'idx_stic_rb_restored',
             'type' => 'index',
             'fields' => array('restored'),
+        ),
+        array(
+            'name' => 'idx_stic_rb_merged',
+            'type' => 'index',
+            'fields' => array('merged'),
+        ),
+        array(
+            'name' => 'idx_stic_rb_merged_into',
+            'type' => 'index',
+            'fields' => array('merged_into_id'),
         ),
         array(
             'name' => 'idx_stic_rb_user_deleted',

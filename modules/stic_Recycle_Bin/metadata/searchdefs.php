@@ -40,6 +40,10 @@ $searchdefs['stic_Recycle_Bin'] = array(
                 'name' => 'record_module',
                 'default' => true,
             ),
+            'date_deleted' => array(
+                'name' => 'date_deleted',
+                'default' => true,
+            ),
         ),
         'advanced_search' => array(
             'record_name' => array('name' => 'record_name'),
@@ -49,7 +53,10 @@ $searchdefs['stic_Recycle_Bin'] = array(
             'user_deleted_id' => array(
                 'name' => 'user_deleted_id',
                 'type' => 'enum',
-                'function' => array('name' => 'get_user_array'),
+                'function' => array(
+                    'name' => 'get_user_array',
+                    'params' => array(false),
+                ),
             ),
         ),
     ),

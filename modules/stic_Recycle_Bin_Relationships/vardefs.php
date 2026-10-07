@@ -148,6 +148,14 @@ $dictionary['stic_Recycle_Bin_Relationships'] = array(
             'type' => 'bool',
             'default' => 0,
         ),
+        'skip_reason' => array(
+            'name' => 'skip_reason',
+            'vname' => 'LBL_SKIP_REASON',
+            'type' => 'enum',
+            'options' => 'stic_recycle_skip_reason_list',
+            'len' => 100,
+            'default' => '',
+        ),
     ),
     'indices' => array(
         array(

@@ -35,12 +35,18 @@ $viewdefs['stic_Recycle_Bin']['DetailView'] = array(
     ),
     'panels' => array(
         'LBL_DEFAULT_PANEL' => array(
-            array('record_name', 'record_module'),
-            array('assigned_user_name', 'user_deleted_name'),
-            array('original_assigned_to', ''),
+            array(
+                array(
+                    'name' => 'record_name',
+                    'label' => 'LBL_RECORD_NAME',
+                    'customCode' => '{if $fields.restored.value == 1 && $fields.merged.value != 1}<a href="index.php?module={$fields.record_module.value}&action=DetailView&record={$fields.record_id.value}">{$fields.record_name.value}</a>{else}{$fields.record_name.value}{/if}',
+                ),
+                'record_module',
+            ),
+            array('user_deleted_name', 'original_assigned_to'),
             array('date_deleted', 'restored'),
+            array('merged', ''),
             array('date_restored', 'user_restored_name'),
-            array('date_entered', 'date_modified'),
         ),
     ),
 );

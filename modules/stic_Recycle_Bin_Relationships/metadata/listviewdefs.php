@@ -56,6 +56,11 @@ $listViewDefs['stic_Recycle_Bin_Relationships'] = array(
         'label' => 'LBL_RESTORED',
         'default' => true,
     ),
+    'SKIP_REASON' => array(
+        'width' => '16%',
+        'label' => 'LBL_SKIP_REASON',
+        'default' => true,
+    ),
     'DATE_ENTERED' => array(
         'width' => '12%',
         'label' => 'LBL_DATE_ENTERED',

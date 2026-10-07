@@ -63,11 +63,23 @@ class SticRecycleBinHookCode
         $recycleBinId = create_guid();
         // Direct SQL INSERT (no beans) so no after_save logic hooks / workflows are triggered.
         $assignedUserId = $bean->assigned_user_id ?? null;
+        // Snapshot of the pre-delete audit data so the restore can leave the
+        // original record exactly as it was before the deletion.
+        $originalModifiedUserId = $bean->modified_user_id ?? null;
+        $originalDateModified = $bean->date_modified ?? null;
+        // Records deleted as a result of a merge (MergeRecords/SaveMerge via
+        // $mergeSource->mark_deleted()) are flagged as merged: they are shown as
+        // combined and cannot be restored. The surviving (master) record id is
+        // kept so the detail view can link to it.
+        $merged = self::isMergeDelete($bean) ? 1 : 0;
+        $mergedIntoId = $merged ? self::getMergeMasterId($bean) : null;
+        $mergedIntoName = $merged && !empty($mergedIntoId) ? self::getMergeMasterName($bean, $mergedIntoId, $db) : '';
         $sql = 'INSERT INTO stic_recycle_bin (
                     id, name, date_entered, date_modified, modified_user_id, created_by,
                     deleted, assigned_user_id, original_assigned_user_id,
+                    original_modified_user_id, original_date_modified,
                     record_module, record_id, record_name, date_deleted, user_deleted_id,
-                    restored
+                    restored, merged, merged_into_id, merged_into_name
                 ) VALUES (
                     ' . $db->quoted($recycleBinId) . ',
                     ' . $db->quoted($recordName) . ',
@@ -78,14 +90,23 @@ class SticRecycleBinHookCode
                     0,
                     ' . (empty($assignedUserId) ? 'NULL' : $db->quoted($assignedUserId)) . ',
                     ' . (empty($assignedUserId) ? 'NULL' : $db->quoted($assignedUserId)) . ',
+                    ' . (empty($originalModifiedUserId) ? 'NULL' : $db->quoted($originalModifiedUserId)) . ',
+                    ' . (empty($originalDateModified) ? 'NULL' : $db->quoted($originalDateModified)) . ',
                     ' . $db->quoted($module) . ',
                     ' . $db->quoted($recordId) . ',
                     ' . $db->quoted($recordName) . ',
                     ' . $db->quoted($dateDeleted) . ',
                     ' . $db->quoted($userId) . ',
-                    0
+                    0,
+                    ' . $merged . ',
+                    ' . (empty($mergedIntoId) ? 'NULL' : $db->quoted($mergedIntoId)) . ',
+                    ' . $db->quoted($mergedIntoName) . '
                 )';
-        $db->query($sql);
+        $result = $db->query($sql);
+        if ($result === false) {
+            $log->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': recycle bin INSERT failed: ' . $db->lastError());
+            return;
+        }
 
         $this->captureRelationships($bean, $recycleBinId, $db);
     }
@@ -241,7 +262,7 @@ class SticRecycleBinHookCode
                     id, name, date_entered, date_modified, created_by,
                     stic_recycle_bin_id, relationship_name,
                     join_table, related_module,
-                    related_record_id, related_record_name
+                    related_record_id, related_record_name, skip_reason
                 ) VALUES (
                     " . $db->quoted($relId) . ",
                     " . $relRecordName . ",
@@ -252,7 +273,8 @@ class SticRecycleBinHookCode
                     " . $joinTableQ . ",
                     " . $relModule . ",
                     " . $relRecordId . ",
-                    " . $relRecordName . "
+                    " . $relRecordName . ",
+                    ''
                 )";
         $db->query($sql);
     }
@@ -266,6 +288,74 @@ class SticRecycleBinHookCode
     private static function isValidId($id)
     {
         return is_string($id) && preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i', $id) === 1;
+    }
+
+    /**
+     * Detects whether the current deletion comes from a record merge.
+     * MergeRecords/SaveMerge.php deletes the losing records with
+     * $mergeSource->mark_deleted(), which fires this same before_delete hook.
+     * In that request $_REQUEST['merged_ids'] holds the ids being merged.
+     *
+     * @param SugarBean $bean The bean being deleted
+     * @return bool true if the deletion is the result of a merge
+     */
+    private static function isMergeDelete($bean)
+    {
+        if (!empty($_REQUEST['merged_ids']) && is_array($_REQUEST['merged_ids'])) {
+            if (in_array($bean->id, $_REQUEST['merged_ids'], true)) {
+                return true;
+            }
+        }
+        if (!empty($_REQUEST['module']) && $_REQUEST['module'] === 'MergeRecords'
+            && !empty($_REQUEST['action']) && $_REQUEST['action'] === 'SaveMerge'
+            && !empty($_REQUEST['merge_module']) && $_REQUEST['merge_module'] === $bean->module_dir
+        ) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the id of the surviving (master) record when the deletion comes
+     * from a merge. In MergeRecords/SaveMerge.php, $_REQUEST['record'] holds
+     * the master record while $_REQUEST['merged_ids'] holds the losers.
+     *
+     * @param SugarBean $bean The bean being deleted
+     * @return string|null Master record id or null if it cannot be determined
+     */
+    private static function getMergeMasterId($bean)
+    {
+        if (!empty($_REQUEST['record']) && self::isValidId($_REQUEST['record'])
+            && $_REQUEST['record'] !== $bean->id
+        ) {
+            return $_REQUEST['record'];
+        }
+        return null;
+    }
+
+    /**
+     * Returns the name of the surviving (master) record at merge time. The merge
+     * happens within a single module, so the master's table is the bean's table.
+     *
+     * @param SugarBean $bean The bean being deleted
+     * @param string $masterId Surviving record id
+     * @param object $db Database instance
+     * @return string Master record name or empty string
+     */
+    private static function getMergeMasterName($bean, $masterId, $db)
+    {
+        $table = $bean->table_name ?? '';
+        if (!self::isValidIdentifier($table) || !self::isValidId($masterId)) {
+            return '';
+        }
+        $result = $db->query(
+            'SELECT name FROM `' . $table . '`'
+            . ' WHERE id = ' . $db->quoted($masterId) . ' AND deleted = 0 LIMIT 1'
+        );
+        if ($result && $row = $db->fetchByAssoc($result)) {
+            return $row['name'] ?? '';
+        }
+        return '';
     }
 
     /**

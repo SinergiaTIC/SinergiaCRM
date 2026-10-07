@@ -51,6 +51,7 @@ $mod_strings = array(
     'LBL_RELATED_RECORD_ID' => 'ID del registro relacionado',
     'LBL_RELATED_RECORD_NAME' => 'Nombre del registro relacionado',
     'LBL_RESTORED' => 'Restaurado',
+    'LBL_SKIP_REASON' => 'Motivo de omisión',
 
     // Subpanel
     'LBL_RECYCLE_BIN_RELATIONSHIPS_SUBPANEL_TITLE' => 'Relaciones de la papelera',

@@ -52,6 +52,7 @@ $mod_strings = array(
     'LBL_RELATED_RECORD_ID' => 'Related record ID',
     'LBL_RELATED_RECORD_NAME' => 'Related record name',
     'LBL_RESTORED' => 'Restored',
+    'LBL_SKIP_REASON' => 'Skip reason',
 
     // Subpanel
     'LBL_RECYCLE_BIN_RELATIONSHIPS_SUBPANEL_TITLE' => 'Recycle Bin Relationships',

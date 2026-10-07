@@ -61,7 +61,12 @@ class stic_Recycle_Bin extends Basic
     public $date_restored;
     public $user_restored_id;
     public $restored;
+    public $merged;
+    public $merged_into_id;
+    public $merged_into_name;
     public $original_assigned_user_id;
+    public $original_modified_user_id;
+    public $original_date_modified;
     public $original_assigned_to;
 
     public function __construct()

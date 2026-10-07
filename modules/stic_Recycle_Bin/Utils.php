@@ -70,6 +70,14 @@ class stic_Recycle_BinUtils
             ];
         }
 
+        if (!empty($binBean->merged)) {
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': record was merged, restore not allowed: ' . $recycleBinId);
+            return [
+                'success' => false,
+                'message' => translate('LBL_RESTORE_MERGED', 'stic_Recycle_Bin'),
+            ];
+        }
+
         $module = $binBean->record_module;
         $recordId = $binBean->record_id;
 
@@ -96,7 +104,7 @@ class stic_Recycle_BinUtils
         );
 
         while ($rel = $db->fetchByAssoc($relsResult)) {
-            $restored = self::reinsertRelationshipRow($rel, $module, $recordId, $db);
+            $restored = self::reinsertRelationshipRow($rel, $module, $recordId, $db, $binBean->date_deleted ?? null);
             if ($restored) {
                 $relationsRestored++;
             } else {
@@ -110,6 +118,25 @@ class stic_Recycle_BinUtils
         }
 
         self::replayRelationshipAddHooks($bean, $recycleBinId, $db);
+
+        // Leave the original record with its pre-delete audit data instead of
+        // the restore datetime/user. Only applies when the snapshot was captured
+        // (entries created before it fall back to the standard behavior).
+        $auditSet = array();
+        if (!empty($binBean->original_date_modified)) {
+            $auditSet[] = 'date_modified = ' . $db->quoted($binBean->original_date_modified);
+        }
+        if (!empty($binBean->original_modified_user_id)) {
+            $auditSet[] = 'modified_user_id = ' . $db->quoted($binBean->original_modified_user_id);
+        }
+        if (!empty($auditSet)) {
+            $db->query(
+                'UPDATE ' . self::quoteIdentifier($table)
+                . ' SET ' . implode(', ', $auditSet)
+                . ' WHERE id = ' . $db->quoted($recordId)
+            );
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': pre-delete audit data reapplied: ' . $recordId);
+        }
 
         $nowDb = $GLOBALS['timedate']->nowDb();
         $currentUserId = $current_user->id ?? '1';
@@ -231,9 +258,10 @@ class stic_Recycle_BinUtils
      * @param string $module Parent module being restored
      * @param string $recordId Parent record ID
      * @param object $db Database instance
+     * @param string|null $dateDeleted Deletion datetime of the bin entry (Y-m-d H:i:s)
      * @return bool true if restored, false if skipped
      */
-    private static function reinsertRelationshipRow($rel, $module, $recordId, $db)
+    private static function reinsertRelationshipRow($rel, $module, $recordId, $db, $dateDeleted = null)
     {
         global $log;
 
@@ -257,6 +285,7 @@ class stic_Recycle_BinUtils
         $relatedBean = BeanFactory::getBean($rel['related_module'], $rel['related_record_id'], [], true);
         if (!$relatedBean || !empty($relatedBean->deleted) || empty($relatedBean->id)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': related record not available (soft-deleted or missing): ' . $rel['related_module'] . ' / ' . $rel['related_record_id']);
+            self::setSkipReason($db, $rel['id'] ?? null, 'related_deleted');
             return false;
         }
 
@@ -278,15 +307,15 @@ class stic_Recycle_BinUtils
 
         $restored = false;
         if (empty($joinTable)) {
-            $restored = self::restoreOneToMany($bean, $linkName, $recordId, $relatedBean, $relDef, $db);
+            $restored = self::restoreOneToMany($bean, $linkName, $recordId, $relatedBean, $relDef, $db, $rel['id'] ?? null);
         } else {
-            $restored = self::restoreManyToMany($module, $linkName, $recordId, $relatedBean, $relDef, $joinTable, $db);
+            $restored = self::restoreManyToMany($module, $linkName, $recordId, $relatedBean, $relDef, $joinTable, $db, $dateDeleted, $rel['id'] ?? null);
         }
 
         if ($restored) {
             $db->query(
-                'UPDATE stic_recycle_bin_relationships SET restored = 1
-                 WHERE id = ' . $db->quoted($rel['id'])
+                'UPDATE stic_recycle_bin_relationships SET restored = 1, skip_reason = \'\''
+                . ' WHERE id = ' . $db->quoted($rel['id'])
             );
             return true;
         }
@@ -306,7 +335,7 @@ class stic_Recycle_BinUtils
      *
      * @return bool true if the UPDATE affected at least one row
      */
-    private static function restoreOneToMany($bean, $linkName, $recordId, $relatedBean, $relDef, $db)
+    private static function restoreOneToMany($bean, $linkName, $recordId, $relatedBean, $relDef, $db, $relId = null)
     {
         global $log;
 
@@ -336,7 +365,29 @@ class stic_Recycle_BinUtils
         $valueQ = $db->quoted($recordId);
         $whereQ = $db->quoted($relatedBean->id);
 
-        $sql = "UPDATE $tableQ SET $columnQ = $valueQ WHERE id = $whereQ AND deleted = 0";
+        // A 1:M child can only point to one parent: if it has been reassigned
+        // to another record since the deletion, it is no longer orphan and must
+        // not be stolen back. Only restore when the FK is empty or still ours.
+        $checkResult = $db->query("SELECT $columnQ FROM $tableQ WHERE id = $whereQ AND deleted = 0");
+        if ($checkResult === false) {
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': check query failed');
+            return false;
+        }
+        $currentRow = $db->fetchByAssoc($checkResult);
+        if (empty($currentRow)) {
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': related row not available: ' . $relatedBean->id);
+            self::setSkipReason($db, $relId, 'related_deleted');
+            return false;
+        }
+        $currentParent = $currentRow[$ourColumn] ?? null;
+        if ($currentParent !== null && $currentParent !== '' && $currentParent !== $recordId) {
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': related row reassigned to another parent (' . $currentParent . '), skipping: ' . $relatedBean->id);
+            self::setSkipReason($db, $relId, 'reassigned');
+            return false;
+        }
+
+        $sql = "UPDATE $tableQ SET $columnQ = $valueQ WHERE id = $whereQ AND deleted = 0"
+            . " AND ($columnQ IS NULL OR $columnQ = '' OR $columnQ = $valueQ)";
         $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $sql);
         $result = $db->query($sql);
         if ($result === false) {
@@ -361,9 +412,11 @@ class stic_Recycle_BinUtils
      * @param array $relDef Relationship definition from the rel object
      * @param string $joinTable M2M join table
      * @param object $db Database instance
+     * @param string|null $dateDeleted Deletion datetime of the bin entry (Y-m-d H:i:s)
+     * @param string|null $relId Recycle bin relationship row ID (to record the skip reason)
      * @return bool true if the row was undeleted or inserted
      */
-    private static function restoreManyToMany($module, $linkName, $recordId, $relatedBean, $relDef, $joinTable, $db)
+    private static function restoreManyToMany($module, $linkName, $recordId, $relatedBean, $relDef, $joinTable, $db, $dateDeleted = null, $relId = null)
     {
         global $log;
 
@@ -387,6 +440,16 @@ class stic_Recycle_BinUtils
 
         if (!self::isValidIdentifier($ourKey) || !self::isValidIdentifier($theirKey)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': invalid keys: ourKey=' . $ourKey . ' theirKey=' . $theirKey);
+            return false;
+        }
+
+        // Reassigned-record guard: if the related record has been linked to
+        // another parent of the same module after this entry's deletion, it is
+        // no longer orphan and restoring would give it two parents. Older
+        // coexisting links (genuine multi-parent M2M) still restore normally.
+        if (self::hasNewerParentLink($db, $module, $joinTable, $ourKey, $theirKey, $recordId, $relatedBean->id, $dateDeleted)) {
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': related record reassigned to another parent after deletion, skipping: ' . $relatedBean->id);
+            self::setSkipReason($db, $relId, 'reassigned');
             return false;
         }
 
@@ -449,6 +512,85 @@ class stic_Recycle_BinUtils
         $affected = $db->getAffectedRowCount($result);
         $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': inserted, affected rows: ' . $affected);
         return $affected > 0;
+    }
+
+    /**
+     * Checks whether the related record has been linked to another parent of
+     * the same module after the bin entry's deletion date. Used to avoid
+     * restoring a relationship over a reassignment (the record would end up
+     * with two parents). Links older than the deletion (genuine multi-parent
+     * M2M) do not block the restore.
+     *
+     * @param object $db Database instance
+     * @param string $module Parent module being restored
+     * @param string $joinTable M2M join table
+     * @param string $ourKey Join column pointing to the parent side
+     * @param string $theirKey Join column pointing to the related side
+     * @param string $recordId Parent record ID being restored
+     * @param string $relatedId Related record ID
+     * @param string|null $dateDeleted Deletion datetime of the bin entry (Y-m-d H:i:s)
+     * @return bool true if a newer link to another parent exists
+     */
+    private static function hasNewerParentLink($db, $module, $joinTable, $ourKey, $theirKey, $recordId, $relatedId, $dateDeleted)
+    {
+        global $log;
+
+        if (!self::isValidIdentifier($joinTable) || !self::isValidIdentifier($ourKey) || !self::isValidIdentifier($theirKey)) {
+            return false;
+        }
+        if (!self::isValidId($recordId) || !self::isValidId($relatedId)) {
+            return false;
+        }
+
+        $joinTableQ = self::quoteIdentifier($joinTable);
+        $ourKeyQ = self::quoteIdentifier($ourKey);
+        $theirKeyQ = self::quoteIdentifier($theirKey);
+
+        $sql = 'SELECT date_modified FROM ' . $joinTableQ
+            . ' WHERE ' . $theirKeyQ . ' = ' . $db->quoted($relatedId)
+            . ' AND ' . $ourKeyQ . ' != ' . $db->quoted($recordId)
+            . ' AND deleted = 0';
+        if ($joinTable === 'email_addr_bean_rel' && self::isValidModule($module)) {
+            $sql .= " AND bean_module = " . $db->quoted($module);
+        }
+        $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $sql);
+        $result = $db->query($sql);
+        if ($result === false) {
+            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': conflict check query failed, proceeding');
+            return false;
+        }
+
+        while ($row = $db->fetchByAssoc($result)) {
+            $linkModified = $row['date_modified'] ?? null;
+            if ($linkModified === null || $linkModified === '') {
+                $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': other active parent link without date, skipping restore: relatedId=' . $relatedId);
+                return true;
+            }
+            if (empty($dateDeleted) || $linkModified >= $dateDeleted) {
+                $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': other active parent link newer than deletion (' . $linkModified . ' >= ' . $dateDeleted . '), skipping restore: relatedId=' . $relatedId);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Records why a relationship row was skipped (or clears the reason on success).
+     *
+     * @param object $db Database instance
+     * @param string|null $relId Recycle bin relationship row ID
+     * @param string $reason One of '', 'related_deleted', 'reassigned'
+     * @return void
+     */
+    private static function setSkipReason($db, $relId, $reason)
+    {
+        if (!self::isValidId($relId) || !in_array($reason, array('', 'related_deleted', 'reassigned'), true)) {
+            return;
+        }
+        $db->query(
+            'UPDATE stic_recycle_bin_relationships SET skip_reason = ' . $db->quoted($reason)
+            . ' WHERE id = ' . $db->quoted($relId)
+        );
     }
 
     /**

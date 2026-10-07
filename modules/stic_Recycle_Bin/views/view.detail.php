@@ -54,6 +54,7 @@ class stic_Recycle_BinViewDetail extends ViewDetail
 
         $html = $this->hideUnwantedButtons($html);
         $html = $this->injectRestoreAction($html);
+        $html = $this->prependMergedNotice($html);
 
         echo $html;
 
@@ -95,6 +96,10 @@ class stic_Recycle_BinViewDetail extends ViewDetail
             return $html;
         }
 
+        if (!empty($this->bean->merged)) {
+            return $html;
+        }
+
         $recordId = $this->bean->id;
         if (!self::isValidId($recordId)) {
             return $html;
@@ -131,6 +136,80 @@ class stic_Recycle_BinViewDetail extends ViewDetail
             $html .= $hiddenForm;
         }
         return $html;
+    }
+
+    /**
+     * Prepends a warning banner above all detail fields when the entry comes
+     * from a merge: merged records cannot be restored. When the surviving
+     * record is known, a link to it is included.
+     *
+     * @param string $html Rendered detail view HTML
+     * @return string HTML with the notice prepended
+     */
+    private function prependMergedNotice($html)
+    {
+        if (empty($this->bean->merged)) {
+            return $html;
+        }
+
+        $notice = '<div class="alert alert-warning" role="alert">'
+            . htmlspecialchars(translate('LBL_MERGED_NOTICE', 'stic_Recycle_Bin'), ENT_QUOTES);
+
+        $link = $this->getSurvivingRecordLink();
+        if ($link !== null) {
+            $notice .= ' ' . htmlspecialchars(translate('LBL_SURVIVING_RECORD', 'stic_Recycle_Bin'), ENT_QUOTES)
+                . ': <a href="' . htmlspecialchars($link['url'], ENT_QUOTES) . '">'
+                . htmlspecialchars($link['label'], ENT_QUOTES) . '</a>';
+        }
+        $notice .= '</div>';
+
+        return $notice . $html;
+    }
+
+    /**
+     * Resolves the surviving record link for a merged entry, if the master
+     * record id is known. The name is resolved live so it reflects renames
+     * after the merge; falls back to the stored snapshot and then the id.
+     *
+     * @return array|null Array with url and label, or null
+     */
+    private function getSurvivingRecordLink()
+    {
+        $recordModule = $this->bean->record_module ?? '';
+        $masterId = $this->bean->merged_into_id ?? '';
+        if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', (string)$recordModule)
+            || !self::isValidId($masterId)
+        ) {
+            return null;
+        }
+
+        $seed = BeanFactory::newBean($recordModule);
+        if (!$seed || empty($seed->table_name)
+            || !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', (string)$seed->table_name)
+        ) {
+            return null;
+        }
+
+        global $db;
+        $result = $db->query(
+            'SELECT name FROM `' . $seed->table_name . '`'
+            . ' WHERE id = ' . $db->quoted($masterId) . ' AND deleted = 0 LIMIT 1'
+        );
+        $label = '';
+        if ($result && $row = $db->fetchByAssoc($result)) {
+            $label = $row['name'] ?? '';
+        }
+        if ($label === '') {
+            $label = $this->bean->merged_into_name ?? '';
+        }
+        if ($label === '') {
+            $label = $masterId;
+        }
+
+        return array(
+            'url' => 'index.php?module=' . $recordModule . '&action=DetailView&record=' . $masterId,
+            'label' => $label,
+        );
     }
 
     /**
