@@ -264,6 +264,7 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
+    setAutofill(["name"]);
     stic_oe_initEditView();
     break;
   case "detail":
