@@ -29,6 +29,100 @@ var module = "stic_Organizational_Environment";
 /* VALIDATION DEPENDENCIES */
 var validationDependencies = {};
 
+/* VALIDATION CALLBACKS */
+
+// Required base organization field
+addToValidateCallback(
+  getFormName(),
+  "stic_organizational_environment_accounts_1_name",
+  "related",
+  false,
+  SUGAR.language.get(module, "LBL_BASE_ACCOUNT_REQUIRED"),
+  () =>
+    Boolean(
+      stic_oe_getFieldValue(
+        "stic_organizational_environment_accounts_1accounts_ida",
+      ),
+    ),
+);
+
+// Must relate to either an account or a contact - Accounts
+addToValidateCallback(
+  getFormName(),
+  "stic_organizational_environment_accounts_name",
+  "related",
+  false,
+  SUGAR.language.get(module, "LBL_MUST_RELATE_TO_AN_ACCOUNT_OR_A_CONTACT"),
+  () =>
+    Boolean(stic_oe_getFieldValue(stic_oe_fields.environment_account.name)) ||
+    Boolean(stic_oe_getFieldValue(stic_oe_fields.environment_contact.name)),
+);
+
+// Must relate to either an account or a contact - Contacts
+addToValidateCallback(
+  getFormName(),
+  "stic_organizational_environment_contacts_name",
+  "related",
+  false,
+  SUGAR.language.get(module, "LBL_MUST_RELATE_TO_AN_ACCOUNT_OR_A_CONTACT"),
+  () =>
+    Boolean(stic_oe_getFieldValue(stic_oe_fields.environment_account.name)) ||
+    Boolean(stic_oe_getFieldValue(stic_oe_fields.environment_contact.name)),
+);
+
+// Only one environment record allowed at a time
+addToValidateCallback(
+  getFormName(),
+  "stic_organizational_environment_accounts_name",
+  "relate",
+  false,
+  SUGAR.language.get(module, "LBL_ONLY_ONE_ENVIRONMENT_RECORD"),
+  () =>
+    !(
+      stic_oe_getFieldValue(stic_oe_fields.environment_account.name) &&
+      stic_oe_getFieldValue(stic_oe_fields.environment_contact.name)
+    ),
+);
+
+// Validate selected relationship type valid
+addToValidateCallback(
+  getFormName(),
+  "relationship_type",
+  "enum",
+  false,
+  SUGAR.language.get(module, "LBL_RELATIONSHIP_PREFIX_ERROR"),
+  () => {
+    if (
+      !stic_oe_getFieldInForm(
+        "stic_organizational_environment_accounts_name",
+      ) ||
+      !stic_oe_getFieldInForm("stic_organizational_environment_contacts_name")
+    ) {
+      return true;
+    }
+    const key = stic_oe_getFieldValue("relationship_type");
+    return !key || key.startsWith(`${stic_oe_getActiveEnvironmentType()}_`);
+  },
+);
+
+addToValidateCallback(
+  getFormName(),
+  "end_date",
+  "date",
+  false,
+  SUGAR.language.get(module, "LBL_END_DATE_ERROR"),
+  () => checkStartAndEndDatesCoherence("start_date", "end_date"),
+);
+
+addToValidateCallback(
+  getFormName(),
+  "start_date",
+  "date",
+  false,
+  SUGAR.language.get(module, "LBL_START_DATE_ERROR"),
+  () => checkStartAndEndDatesCoherence("start_date", "end_date"),
+);
+
 // Fields data
 const stic_oe_fields = {
   environment_account: {
@@ -170,14 +264,11 @@ switch (viewType()) {
   case "edit":
   case "quickcreate":
   case "popup":
-    console.log("[OE] viewType =", viewType());
     stic_oe_initEditView();
     break;
   case "detail":
-    console.log("[OE] viewType =", viewType());
     break;
   case "list":
-    console.log("[OE] viewType =", viewType());
     break;
   default:
     break;
