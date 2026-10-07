@@ -1650,6 +1650,10 @@ class stic_AwfLayout {
     // 3. Map sub-objects
     this.theme = new stic_AwfTheme(data.theme ?? {});
     this.structure = (data.structure || this.structure).map(s => stic_AwfLayoutSection.fromData(s, true));
+    // A saved config may carry two top-level sections with the same id (from a
+    // legacy sync): sanitize on load so the wizard never renders duplicate
+    // x-for keys before the first sync runs.
+    this.ensureUniqueSectionIds();
 
     // Decode: If it comes from the DB (JSON), it will come in Base64. If it is new, it will be empty.
     this.header_html = utils.fromBase64(this.header_html);
@@ -2122,6 +2126,10 @@ class stic_AwfLayout {
       seenGroupRoots.delete(gBlock.id);
     });
     demoteReleased.forEach(demoteSectionLifted);
+    // New top-level sections created during THIS sync: group homes from the
+    // designation below plus root homes from extraction/orphans
+    // { section, afterSection, rootId } — pass 6 inserts/orders them.
+    const newSectionsForRoots = [];
     // Designate (legacy heuristic) or create
     const firstReferencedBlockOf = (section) => {
       for (const el of section.elements) {
@@ -2156,6 +2164,7 @@ class stic_AwfLayout {
         const home = new stic_AwfLayoutGroupSection({ title: groupSectionTitle(block), groupRootBlockId: block.id });
         home.showTitle = !block.is_optional; // optional groups hide their title by default
         this.structure.push(home);
+        newSectionsForRoots.push({ section: home, afterSection: null, rootId: block.id });
       }
     });
     // Finds the (single) designated group section of a group root, wherever it
@@ -2297,7 +2306,6 @@ class stic_AwfLayout {
     };
 
     // Creates (once) the home top-level section of a root block
-    const newSectionsForRoots = []; // { section, afterSection }
     const ensureRootHome = (rootBlock, afterSection = null) => {
       let home = rootHomeSection.get(rootBlock.id);
       if (home) return home;
@@ -2314,7 +2322,7 @@ class stic_AwfLayout {
         home = new stic_AwfLayoutSection({ title: rootBlock.text });
       }
       rootHomeSection.set(rootBlock.id, home);
-      newSectionsForRoots.push({ section: home, afterSection });
+      newSectionsForRoots.push({ section: home, afterSection, rootId: rootBlock.id });
       return home;
     };
 
@@ -2579,11 +2587,17 @@ class stic_AwfLayout {
     });
 
     // ---- 6. Insert the new top-level sections created during extraction/orphans:
-    //         right after their source section, or appended at the end ----
+    //         right after their source section, or appended at the end.
+    //         Membership is checked BY ID, never by reference: under Alpine
+    //         reactivity the section objects are Proxies, so includes()/indexOf()
+    //         can miss a section that IS present and append a duplicate (which
+    //         then crashes the step-4 list with "Duplicate key on x-for") ----
+    const structureIndexOfId = (id) => this.structure.findIndex(s => s && s.id === id);
     const insertionsBySource = new Map();
     const appendedSections = [];
     newSectionsForRoots.forEach(({ section, afterSection }) => {
-      if (afterSection && this.structure.includes(afterSection)) {
+      if (section && structureIndexOfId(section.id) >= 0) return; // Group homes were pushed by the designation pass
+      if (afterSection && structureIndexOfId(afterSection.id) >= 0) {
         if (!insertionsBySource.has(afterSection)) insertionsBySource.set(afterSection, []);
         insertionsBySource.get(afterSection).push(section);
       } else {
@@ -2591,10 +2605,44 @@ class stic_AwfLayout {
       }
     });
     insertionsBySource.forEach((sections, afterSection) => {
-      const idx = this.structure.indexOf(afterSection);
+      const idx = structureIndexOfId(afterSection.id);
+      if (idx < 0) return;
       this.structure.splice(idx + 1, 0, ...sections);
     });
     appendedSections.forEach(s => this.structure.push(s));
+
+    // ---- 6b. DEFAULT-SECTION ORDER: sections created during this sync follow
+    //          the data_blocks order. Group homes used to be pushed during
+    //          designation (early) while plain homes were appended at pass 6,
+    //          so a fresh layout showed ALL group sections first. Only the
+    //          SLOTS of the sections created here (afterSection == null:
+    //          designation + orphans) are re-arranged; pre-existing sections,
+    //          user structure and the extraction homes anchored after their
+    //          source keep their exact position.
+    //          Keyed BY ID (never by reference): under Alpine reactivity the
+    //          section objects are Proxies, so reference comparisons are
+    //          unreliable and could duplicate a section (duplicate x-for key).
+    //          The reorder only runs when every created id occupies exactly
+    //          one slot, guaranteeing a safe permutation. ----
+    const defaultHomeRootById = new Map();
+    newSectionsForRoots.forEach(({ section, afterSection, rootId }) => {
+      if (afterSection || !section || section.id == null) return;
+      if (!this.structure.some(s => s && s.id === section.id)) return;
+      if (!defaultHomeRootById.has(section.id)) defaultHomeRootById.set(section.id, rootId);
+    });
+    if (defaultHomeRootById.size > 1) {
+      const orderOf = (section) => {
+        const i = dataBlocks.findIndex(b => b.id === defaultHomeRootById.get(section.id));
+        return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+      };
+      const positions = [];
+      this.structure.forEach((s, i) => { if (s && defaultHomeRootById.has(s.id)) positions.push(i); });
+      // One slot per created id → the write-back below is a bijection
+      if (positions.length === defaultHomeRootById.size) {
+        const sorted = positions.map(i => this.structure[i]).sort((a, b) => orderOf(a) - orderOf(b));
+        positions.forEach((pos, i) => { this.structure[pos] = sorted[i]; });
+      }
+    }
 
     // Re-normalize: the extraction/orphan passes above create the group sections
     // of blocks that became roots or members (and place block elements inside
@@ -2618,6 +2666,11 @@ class stic_AwfLayout {
     // ---- 8. Tabs containers hold ONLY sections: group any direct non-section
     //         elements into a new child pane ('Nova secció'), recursively ----
     const normalizeTabsContainer = (section) => {
+      // Rule (2026-10-07): a 'tab_item' pane ALWAYS shows its title — it IS
+      // the tab label. The wizard hides the switch for panes, so the stored
+      // state is forced to the canonical true (legacy/imported configs may
+      // carry false and the render would never learn about the hidden switch).
+      if (section.containerType === 'tab_item' && section.showTitle !== true) section.showTitle = true;
       if ((section.containerType === 'card_tabs' || section.containerType === 'panel_tabs') && section.elements.some(el => el.type !== 'section')) {
         const pane = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NEW') });
         pane.containerType = 'tab_item';
@@ -2631,6 +2684,34 @@ class stic_AwfLayout {
       });
     };
     this.structure.forEach(normalizeTabsContainer);
+
+    // ---- 9. Integrity guard: Alpine's x-for keys top-level sections by id, so
+    //         the structure must NEVER end a sync with a repeated or missing
+    //         id. Exact duplicate references (the same object pushed twice by a
+    //         legacy/edge pass) are collapsed; two distinct sections that share
+    //         an id get a fresh one. This keeps the wizard from crashing with
+    //         "Duplicate key on x-for" after a sync. ----
+    this.ensureUniqueSectionIds();
+  }
+
+  /**
+   * Guarantees the top-level sections have unique, defined ids. Alpine's x-for
+   * keys sections by id, so a repeated or missing id crashes the step-4 list
+   * ("Duplicate key on x-for" / "Cannot read properties of undefined"). Exact
+   * duplicate references are collapsed; distinct sections sharing an id get a
+   * fresh one.
+   */
+  ensureUniqueSectionIds() {
+    const seenRefs = new Set();
+    const seenIds = new Set();
+    this.structure = this.structure.filter(section => {
+      if (!section) return false;
+      if (seenRefs.has(section)) return false;
+      seenRefs.add(section);
+      if (section.id == null || seenIds.has(section.id)) section.id = utils.newId('sect');
+      seenIds.add(section.id);
+      return true;
+    });
   }
 
   _addSectionWithBlock(block) {
@@ -2877,7 +2958,6 @@ class stic_AwfConfiguration {
 
     // Only regenerate actions if the hash has changed since last time
     if (currentHash !== this._lastDataBlocksHash) {
-      console.log("AWF: DataBlocks structure changed. Regenerating automatic actions...");
       this.regenerateAutomaticActions();
         
       // Update the known hash

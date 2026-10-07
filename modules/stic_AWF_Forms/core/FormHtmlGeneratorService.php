@@ -551,6 +551,16 @@ class FormHtmlGeneratorService {
             return $this->renderSectionChildren($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
         }
 
+        // An auto-generated block HOST (titled with the block text) whose block
+        // has NOTHING to show in the form renders chrome-less: its card would be
+        // an empty titled box (the block's fields render nothing). Nested
+        // subgroup hosts keep rendering their own cards inside it; user-titled
+        // sections keep their own chrome (sectionHostedBlockId returns null).
+        $hostedBlockId = self::sectionHostedBlockId($section, $config);
+        if ($hostedBlockId !== null && !self::blockHasRenderableFields($config->data_blocks[$hostedBlockId])) {
+            return $this->renderSectionChildren($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
+        }
+
         $containerClass = ($section->containerType === 'card') ? 'awf-section-card' : 'awf-section-panel';
         $sectionPanelId = "awf_sect_" . md5($section->title ?? uniqid());
 
@@ -1739,6 +1749,30 @@ class FormHtmlGeneratorService {
             }
         }
         return true;
+    }
+
+    /**
+     * The data block a plain section is an auto-generated HOST of: the sync
+     * creates those sections titled with the block text, holding only elements
+     * (the block or its unbundled fields) of that same block. Returns null for
+     * user structure (a custom/renamed title, mixed blocks) so it keeps its own
+     * chrome. Nested sections (subgroup hosts) decide for themselves and never
+     * disqualify the parent.
+     *
+     * @param FormLayoutSection $section The layout section to inspect
+     * @param FormConfig $config The full form configuration
+     * @return string|null The hosted block id, or null when not an auto host
+     */
+    private static function sectionHostedBlockId(FormLayoutSection $section, FormConfig $config): ?string {
+        if ($section instanceof FormLayoutGroupSection || !empty($section->groupTemplate)) return null;
+        $blockId = null;
+        foreach ($section->elements as $el) {
+            if (!($el instanceof FormLayoutElement)) continue;
+            if ($blockId !== null && $el->ref_id !== $blockId) return null;
+            $blockId = $el->ref_id;
+        }
+        if ($blockId === null || !isset($config->data_blocks[$blockId])) return null;
+        return $section->title === $config->data_blocks[$blockId]->text ? $blockId : null;
     }
 
     /**

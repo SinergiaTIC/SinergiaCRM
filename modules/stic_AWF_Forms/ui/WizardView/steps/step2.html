@@ -346,11 +346,11 @@
                                   </template>
                                   <template x-if="field.isFieldInForm()">
                                     <div class="input-group" role="group">
-                                      <button type="button" class="btn" :disabled="index <= firstFieldInFormIndex" @click="moveUp(index);"
+                                      <button type="button" class="btn" :disabled="!canMoveUpField(index)" @click="moveUpField(index);"
                                               :title="utils.translate('LBL_BUTTON_MOVE_UP')">
                                         <span class="suitepicon suitepicon-action-move-up"></span>
                                       </button>
-                                      <button type="button" class="btn" :disabled="index < firstFieldInFormIndex || index === item.fields.length - 1" @click="moveDown(index);"
+                                      <button type="button" class="btn" :disabled="!canMoveDownField(index)" @click="moveDownField(index);"
                                               :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
                                         <span class="suitepicon suitepicon-action-move-down"></span>
                                       </button>
@@ -390,7 +390,7 @@
                           <td class="col-8">
                             <div x-data="WizardStep2.duplicateFieldsxData(item, index)">
                               <div class="dropdown" x-ref="dropdown">
-                                <button type="button" class="form-select form-control text-start" @click="opened = !opened">
+                                <button type="button" class="form-select form-control text-start" @click="opened = !opened" style="text-transform: none !important;">
                                   <span x-text="selectedFieldsText" class="text-truncate me-2" style="max-width: 90%;"></span>
                                 </button>
                                 <div x-show="opened" x-transition @click.away="opened = false" class="bg-white border shadow p-3 mt-1 position-absolute" 

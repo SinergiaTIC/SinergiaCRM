@@ -709,7 +709,7 @@ class ResponseHandler
         foreach ($block->fields as $formField) {
             $inputKeyInForm = $instanceIndexes !== [] ? $formField->getKeyForIdForIndexes($instanceIndexes) : $formField->getKeyForId($instanceIndex);
             $inputKey = $instanceIndexes !== [] ? $formField->getPhpKeyForIndexes($instanceIndexes) : ($instanceIndex !== null ? $formField->getPhpKeyForInstance($instanceIndex) : $formField->getPhpKey());
-            $value = $resolvedBlock->getFieldValue($formField->name);
+            $value = $resolvedBlock->getFieldValue($formField->name)?->value;
             $label = rtrim($formField->label, ":");
 
             if ($formField->type == 'relate') {

@@ -520,7 +520,6 @@
                                                                 <div class="col-3 form-check form-switch d-flex align-items-center mb-0" x-show="section.containerType !== 'tab_item'">
                                                                     <label :for="`section${section.id}_showTitle`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_SHOW_TITLE')"></label>
                                                                     <input :id="`section${section.id}_showTitle`" class="form-check-input" type="checkbox" role="switch" x-model="section.showTitle"
-                                                                            :disabled="isGroupTemplateChild(section)"
                                                                             @change="if(!section.showTitle) { section.isCollapsible = false; section.isCollapsed = false; }"/>
                                                                 </div>
                                                                 <!-- Collapsible (not for 'tab_item' panes) -->

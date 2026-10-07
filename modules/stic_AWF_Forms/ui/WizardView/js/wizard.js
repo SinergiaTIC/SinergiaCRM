@@ -1671,8 +1671,30 @@ class WizardStep2 {
       get formConfig() { return window.alpineComponent.formConfig; },
       get data_blocks() { return this.formConfig.data_blocks; },
 
-      get firstFieldInFormIndex() {
-        return this.dataBlock.fields.filter(f => !f.isFieldInForm()).length;
+      canMoveUpField(index) {
+        return this.dataBlock.fields.slice(0, index).some(f => f.isFieldInForm());
+      },
+
+      canMoveDownField(index) {
+        return this.dataBlock.fields.slice(index + 1).some(f => f.isFieldInForm());
+      },
+
+      moveUpField(index) {
+        const fields = this.dataBlock.fields;
+        let target = index - 1;
+        while (target >= 0 && !fields[target].isFieldInForm()) target--;
+        if (target < 0) return;
+        const [field] = fields.splice(index, 1);
+        fields.splice(target, 0, field);
+      },
+
+      moveDownField(index) {
+        const fields = this.dataBlock.fields;
+        let target = index + 1;
+        while (target < fields.length && !fields[target].isFieldInForm()) target++;
+        if (target >= fields.length) return;
+        const [field] = fields.splice(index, 1);
+        fields.splice(target, 0, field);
       },
 
       get summaryDescription() {
