@@ -2970,16 +2970,20 @@ class WizardStep4 {
       groupName(section) {
         const group = this.getGroup(section) || this.getSubgroupHead(section);
         if (!group) return null;
-        
-        return group.group_title;
+
+        return group.group_title || group.text || '';
       },
 
       getGroup(section) {
         // The group's root block comes from the section's explicit
-        // reference (robust to content changes: unbundled fields, moved elements)
+        // reference (robust to content changes: unbundled fields, moved elements).
+        // is_root is NOT required: a depth-2 subgroup head has group_root set
+        // but owns its OWN designated section (needsOwnGroupSection), so the
+        // header/badges must resolve it too (the wizard crashed reading
+        // getSectionGroup(section).is_optional for that case).
         if (!this.isGroupSection(section)) return null;
         const block = section.getGroupBlock(this.data_blocks);
-        if (!block || !block.is_root || !block.isGroupHead(this.data_blocks)) return null;
+        if (!block || !block.isGroupHead(this.data_blocks)) return null;
         return block;
       },
 

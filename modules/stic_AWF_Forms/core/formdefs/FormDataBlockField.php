@@ -169,4 +169,15 @@ class FormDataBlockField {
         }
         return $key . '_' . $this->name;
     }
+
+    /**
+     * The FILES key for an instance-aware field: the FLAT underscore-joined
+     * form ("_detached_BlockName_i1_i2_fieldName") with every loop index.
+     * File inputs post under this form (NOT the bracket matrix) because PHP
+     * nests bracket-named $_FILES entries, which the flat uploaded-files
+     * parser cannot address.
+     */
+    public function getFileKeyForIndexes(array $indexes): string {
+        return str_replace('.', '_', $this->getKeyForIdForIndexes($indexes));
+    }
 }

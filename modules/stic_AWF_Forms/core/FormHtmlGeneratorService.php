@@ -1209,20 +1209,30 @@ class FormHtmlGeneratorService {
                 // The switch renders inside the ENCLOSING repeatable loops (for a
                 // depth-2 subgroup: inside the parent group's loop), so the signal
                 // is indexed by the enclosing loop variables ($contentOuterVars).
+                // The DOM id/for must follow the same rule: a STATIC id repeats
+                // once per parent instance and duplicate ids make every label
+                // toggle the FIRST repetition's switch (the browser resolves
+                // `for` to the first matching id in the document).
                 if (!empty($contentOuterVars)) {
                     $indexedSignalName = $toggleSignalName;
+                    $switchIdExpr = "'switch_{$rootBlock->id}'";
                     foreach ($contentOuterVars as $outerVar) {
                         $indexedSignalName .= "[' + {$outerVar} + ']";
+                        $switchIdExpr .= " + '_' + {$outerVar}";
                     }
                     $switchNameAttr = ":name=\"'{$indexedSignalName}'\"";
+                    $switchIdAttr = ":id=\"{$switchIdExpr}\"";
+                    $switchForAttr = ":for=\"{$switchIdExpr}\"";
                 } else {
                     $switchNameAttr = "name='{$toggleSignalName}'";
+                    $switchIdAttr = "id='switch_{$rootBlock->id}'";
+                    $switchForAttr = "for='switch_{$rootBlock->id}'";
                 }
                 $html .= "<div class='form-check form-switch mb-3'>" . $this->newLine('+');
                 {
-                    $html .= "<input class='form-check-input' type='checkbox' role='switch' id='switch_{$rootBlock->id}' {$switchNameAttr} value='1' x-model='active' " .
+                    $html .= "<input class='form-check-input' type='checkbox' role='switch' {$switchIdAttr} {$switchNameAttr} value='1' x-model='active' " .
                             "@change=\"if (!active) { instances = []; } else if (instances.length === 0) { instances.push({ id: nextInstanceId++ }); }\">" . $this->newLine();
-                    $html .= "<label class='form-check-label mb-0' for='switch_{$rootBlock->id}'>{$toggleLabel}</label>" . $this->newLine();
+                    $html .= "<label class='form-check-label mb-0' {$switchForAttr}>{$toggleLabel}</label>" . $this->newLine();
                 }
                 $html .= "</div>" . $this->newLine('-');
             }
@@ -1888,7 +1898,19 @@ class FormHtmlGeneratorService {
         // --- SPECIAL CASES (File Upload - Compact Bootstrap 5 File Input) ---
 
         if ($field->type_in_form === 'file') {
-            return $this->generateFileField($field, $theme) .$this->newLine();
+            // Instance-aware file input: the NAME uses the flat underscore form
+            // ("_detached_Block_' + idx_l1 + '_' + idx_l2 + '_field") because PHP
+            // nests bracket-named $_FILES entries (unaddressable by the flat
+            // uploaded-files parser), while the ID/label keep the standard
+            // instance DOM-id convention. Scalar files keep the plain dot key
+            // (PHP itself mangles dots to underscores in the FILES key).
+            $fileKeyTemplate = null;
+            if ($isInstance) {
+                $filePrefix = str_replace('.', '_', $namePrefix);
+                $fileKeyTemplate = $filePrefix . $field->data_block->name . $idIndexPart . $field->name;
+            }
+            $fileIdTemplate = $isInstance ? $inputKeyForId : null;
+            return $this->generateFileField($field, $theme, $fileKeyTemplate, $fileIdTemplate) .$this->newLine();
         }
 
         // --- COMMON CASES ---
@@ -2041,11 +2063,30 @@ class FormHtmlGeneratorService {
      * Renders a customized native Bootstrap 5 file input wrapped in an illusion text-group.
      * Guarantees left-aligned actions, disabled secondary modifiers, and shared SVG extraction.
      */
-    private function generateFileField(FormDataBlockField $field, FormTheme $theme): string {
+    /**
+     * @param FormDataBlockField $field
+     * @param FormTheme $theme
+     * @param ?string $instanceKeyTemplate Flat underscore-joined NAME template for
+     *        group instances (Alpine expression), null for scalar fields
+     * @param ?string $instanceIdTemplate Instance DOM-id template (Alpine expression),
+     *        null for scalar fields
+     */
+    private function generateFileField(FormDataBlockField $field, FormTheme $theme, ?string $instanceKeyTemplate = null, ?string $instanceIdTemplate = null): string {
         $inputName = $field->getKey();
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
         $asterisk = $field->required_in_form ? "<span class='awf-required' aria-hidden='true'>*</span>" : '';
+        // Instance-aware attribute builders: dynamic (Alpine) for group instances,
+        // static for scalar fields
+        $fileIdAttr = $instanceIdTemplate !== null
+            ? ":id=\"'f_' + '{$instanceIdTemplate}'\""
+            : "id='f_{$inputName}'";
+        $fileLabelAttr = $instanceIdTemplate !== null
+            ? ":for=\"'f_' + '{$instanceIdTemplate}'\""
+            : "for='f_{$inputName}'";
+        $fileNameAttr = $instanceKeyTemplate !== null
+            ? ":name=\"'{$instanceKeyTemplate}'\""
+            : "name='{$inputName}'";
         
         $isFloating = !empty($theme->floating_labels);
 
@@ -2088,7 +2129,11 @@ class FormHtmlGeneratorService {
         $ariaDescribedBy = "";
         if ($field->description != '') {
             $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
-            $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
+            // Instance help ids: strip the Alpine expression parts of the template
+            $helpKey = $instanceIdTemplate !== null
+                ? str_replace(array("'", ' + '), '', $instanceIdTemplate)
+                : $inputName;
+            $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $helpKey);
             $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
             $ariaDescribedBy = "aria-describedby='{$helpId}'";
         }
@@ -2096,7 +2141,7 @@ class FormHtmlGeneratorService {
         $html = "<div class='awf-field' x-data='awfFileField()'>" .$this->newLine('+');
         {
             if (!$isFloating) {
-                $html .= "<label for='f_{$inputName}' class='form-label'>{$label} {$asterisk}</label>" . $this->newLine();
+                $html .= "<label {$fileLabelAttr} class='form-label'>{$label} {$asterisk}</label>" . $this->newLine();
             }
 
             $html .= "<div class='input-group'>" .$this->newLine('+');
@@ -2120,7 +2165,7 @@ class FormHtmlGeneratorService {
                          "style='cursor: pointer;' @click='\$refs.fileInput.click()'>" .$this->newLine();
                 
                 if ($isFloating) {
-                    $html .= "<label for='f_{$inputName}'>{$label} {$asterisk}</label>" . $this->newLine();
+                    $html .= "<label {$fileLabelAttr}>{$label} {$asterisk}</label>" . $this->newLine();
                     $html .= "</div>" .$this->newLine('-');
                 }
 
@@ -2130,7 +2175,7 @@ class FormHtmlGeneratorService {
             $html .= "</div>" .$this->newLine('-');
 
             // The actual file input remains hidden to avoid disrupting the label flow
-            $html .= "<input type='file' name='{$inputName}' x-ref='fileInput' id='f_{$inputName}' " .
+            $html .= "<input type='file' {$fileNameAttr} x-ref='fileInput' {$fileIdAttr} " .
                      "style='display: none !important;' @change='updateFileInfo()' {$requiredAttr} {$acceptAttr} {$ariaDescribedBy} {$validationsAttr}>" .$this->newLine();
 
             if ($description !== '') {

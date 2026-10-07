@@ -204,7 +204,12 @@ class DataBlockResolved {
         // Process detached fields
         foreach ($config->fields as $fieldName => $fieldDef) {
             if ($fieldDef->type_field !== DataBlockFieldType::UNLINKED) continue;
-            $value = $detachedInstance[$fieldName] ?? null;
+            // FILE fields never land in the POST matrix: the file input posts
+            // under the flat per-instance key (see FormHtmlGeneratorService),
+            // so the resolved value is the uploaded file's name
+            $value = $fieldDef->type_in_form === 'file'
+                ? ($context->uploadedFiles[$fieldDef->getFileKeyForIndexes($keyIndexes)]['name'] ?? null)
+                : ($detachedInstance[$fieldName] ?? null);
             $crmFieldType = $fieldDef->type;
             $castedValue = stic_AWFUtils::castCrmValue($value, $crmFieldType, $context);
             $logicalKey = $fieldDef->getKeyForIndexes($keyIndexes);
@@ -245,6 +250,32 @@ class DataBlockResolved {
      * @param array $prefix Already-fixed ancestor loop indexes (outer to inner)
      * @return DataBlockResolved[]
      */
+    /**
+     * Instance indexes at the CURRENT enumeration level contributed by the
+     * block's FILE fields: their flat per-instance keys
+     * ("_detached_Block_i1_i2_field") carry the FULL loop-index stack, so an
+     * instance whose only value is an uploaded file (files never land in the
+     * POST matrix) is still enumerated. Only the indexes BELOW the already
+     * fixed prefix are returned.
+     */
+    private static function fileKeyLevelIndexes(FormDataBlock $block, ExecutionContext $context, array $prefix): array {
+        $depth = $block->getLoopDepth();
+        if ($depth < 1) return [];
+        $levelIndexes = [];
+        foreach ($block->fields as $fieldDef) {
+            if ($fieldDef->type_in_form !== 'file') continue;
+            $base = ($fieldDef->type_field === DataBlockFieldType::UNLINKED ? '_detached_' : '') . $block->name;
+            $pattern = '/^' . preg_quote($base, '/') . '((?:_\d+){' . $depth . '})_' . preg_quote($fieldDef->name, '/') . '$/';
+            foreach (array_keys($context->uploadedFiles) as $key) {
+                if (!preg_match($pattern, (string)$key, $m)) continue;
+                $vector = array_map('intval', explode('_', trim($m[1], '_')));
+                if (array_slice($vector, 0, count($prefix)) !== array_map('intval', $prefix)) continue;
+                if (isset($vector[count($prefix)])) $levelIndexes[] = $vector[count($prefix)];
+            }
+        }
+        return $levelIndexes;
+    }
+
     public static function resolveInstances(FormDataBlock $block, array $formData, ExecutionContext $context, array $prefix = []): array {
         $depth = $block->getLoopDepth();
         $blockName = $block->name;
@@ -259,7 +290,11 @@ class DataBlockResolved {
 
         $indexes = array_unique(array_merge(
             array_filter(array_keys($linkedNode), 'is_int'),
-            array_filter(array_keys($detachedNode), 'is_int')
+            array_filter(array_keys($detachedNode), 'is_int'),
+            // FILE fields never land in the POST matrix: their flat per-instance
+            // keys ("_detached_Block_i1_i2_field") enumerate instances too — an
+            // instance whose ONLY value is the uploaded file must be resolved
+            self::fileKeyLevelIndexes($block, $context, $prefix)
         ));
         sort($indexes);
 
@@ -397,12 +432,15 @@ class DataBlockResolved {
             }
         }
 
-        // Fallback: uploaded files for the block's file fields
+        // Fallback: uploaded files for the block's file fields (the flat
+        // per-instance key with the FULL loop-index stack — files never land
+        // in the POST matrix)
         foreach ($this->dataBlock->fields as $fieldDef) {
             if ($fieldDef->type_in_form !== 'file') continue;
-            $phpKey = $fieldDef->getPhpKey();
+            $phpKey = $this->loopIndexes !== []
+                ? $fieldDef->getFileKeyForIndexes($this->loopIndexes)
+                : $fieldDef->getPhpKey();
             if (!empty($this->executionContext->uploadedFiles[$phpKey]['name'])) return true;
-            if ($this->instanceIndex !== null && !empty($this->executionContext->uploadedFiles[$phpKey . '_' . $this->instanceIndex]['name'])) return true;
         }
 
         return false;

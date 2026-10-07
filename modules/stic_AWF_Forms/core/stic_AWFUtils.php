@@ -249,8 +249,14 @@ class stic_AWFUtils {
 
                                 $isUnlinked = $fieldDef->type_field === DataBlockFieldType::UNLINKED;
                                 $blockArrayKey = ($isUnlinked ? '_detached_' : '') . $groupBlock->name;
-                                // Value to display
+                                // Value to display: the POST matrix, or the uploaded
+                                // file's name for FILE fields (they post under the flat
+                                // per-instance key, never into the matrix)
                                 $value = $formData[$blockArrayKey][$instance->instanceIndex][$fieldDef->name] ?? '';
+                                if ($fieldDef->type_in_form === 'file') {
+                                    $fileKey = $fieldDef->getFileKeyForIndexes([$instance->instanceIndex]);
+                                    $value = $context->uploadedFiles[$fileKey]['name'] ?? '';
+                                }
                                 $html .= self::renderSummaryFieldRow($fieldDef, $value, $borderColor, $textColor, $hasFields);
                             }
                         }

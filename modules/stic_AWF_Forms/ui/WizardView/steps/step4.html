@@ -425,13 +425,13 @@
                                                             <div class="d-flex flex-column ">
                                                                 <!-- Group Badge -->
                                                                 <span class="badge bg-transparent text-dark" style="margin-left:-10px; margin-top:-5px;font-weight: normal;" 
-                                                                      x-text="'📦 ' + groupName(section)" :title="utils.translate('LBL_DATABLOCK_GROUP')"></span>
+                                                                      x-text="groupName(section) ? '📦 ' + groupName(section) : ''" :title="utils.translate('LBL_DATABLOCK_GROUP')"></span>
                                                                 <!-- Optional and Repeatable Badges -->
                                                                 <div class="d-flex justify-content-start">
                                                                     <!-- Optional Badge -->
-                                                                    <span class="badge bg-info me-2" x-show="getSectionGroup(section).is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
+                                                                    <span class="badge bg-info me-2" x-show="getSectionGroup(section)?.is_optional" x-text="utils.translate('LBL_DATABLOCK_GROUP_OPTIONAL')"></span>
                                                                     <!-- Repeatable Badge -->
-                                                                    <span class="badge bg-primary" x-show="getSectionGroup(section).is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
+                                                                    <span class="badge bg-primary" x-show="getSectionGroup(section)?.is_repeatable" x-text="utils.translate('LBL_DATABLOCK_GROUP_REPEATABLE')"></span>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -448,7 +448,7 @@
                                                         </div>
 
                                                         <!-- Buttons -->
-                                                        <div class="d-flex align-items-center gap-2">
+                                                        <div class="d-flex align-items-center gap-2" style="max-width: 50%;">
                                                             <!-- Toggle Config Panel -->
                                                             <button class="btn btn-sm" @click="showSettings = !showSettings"
                                                                     :class="{'active': showSettings}" :title="utils.translate('LBL_SECTION_CONFIG')">
@@ -565,7 +565,7 @@
                                                                             <i class="inline-help glyphicon glyphicon-info-sign"></i>
                                                                             <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DESC')"></div>
                                                                             <input type="text" :id="`sectionToggleLabel_${section.id}`" class="form-control form-control-sm" x-model="section.toggle_label"
-                                                                                   :placeholder="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT') + ' ' + (getGroup(section).group_title || getGroup(section).text)">
+                                                                                   :placeholder="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT') + ' ' + (getGroup(section)?.group_title || getGroup(section)?.text || '')">
                                                                         </div>
                                                                     </template>
 
@@ -633,7 +633,7 @@
                                                             </template>
                                                             <span x-text="getElementHeader(element)"></span>
                                                         </div>
-                                                        <div class="d-inline-flex gap-2 align-items-center">
+                                                        <div class="d-inline-flex gap-2 align-items-center" style="max-width: 50%;">
                                                             <!-- Field layout settings (field elements only): gear toggle -->
                                                             <template x-if="element.type === 'field'">
                                                                 <button class="btn btn-sm" @click="showFieldSettings = !showFieldSettings"

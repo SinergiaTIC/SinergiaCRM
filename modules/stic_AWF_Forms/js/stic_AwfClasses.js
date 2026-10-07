@@ -378,9 +378,6 @@ class stic_AwfDataBlock {
     // System required blocks can never be optional
     if (this.required) return false;
 
-    // Check if block can be converted into a Group Root
-    if (!this.canBeGroupRoot(allDataBlocks)) return false;
-
     // Child blocks with a mandatory FK relate field pointing to their parent cannot be optional
     if (this.is_child && this.group_root) {
       const hasMandatoryParentLink = this.fields.some(field => field.required && field.type === 'relate' && 
@@ -407,9 +404,6 @@ class stic_AwfDataBlock {
     // indistinguishable ghost instances
     if (!this.hasVisibleFormFieldsInTree(allDataBlocks)) return false;
 
-    // Check if block can be converted into a Group Root
-    if (!this.canBeGroupRoot(allDataBlocks)) return false;
-
     // Count repeatable ancestors (group_root chain walk)
     let repeatableCount = 0;
     let currentParentId = this.group_root;
@@ -428,8 +422,11 @@ class stic_AwfDataBlock {
     }
 
     // Count repeatable descendants in the SAME group (relational descendants).
-    // (Descendants in other groups are blocked by canBeGroupRoot; orphan repeatable
-    // descendants are never adopted by adoptRelatedOrphans, so they don't multiply.)
+    // (Descendants in OTHER groups are not stolen: adoption only takes orphans
+    // and same-group children, so they neither multiply nor block anything
+    // here — a relational descendant may legitimately live in another group,
+    // e.g. "Entorn personal" linked to the scalar Adult while sitting in the
+    // Menor group.)
     const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
     const descendants = this.getRelationalDescendants(allDataBlocks);
     for (const d of descendants) {
@@ -613,47 +610,9 @@ class stic_AwfDataBlock {
   }
 
   /**
-   * Checks if this block can be converted into a Group Root (repeatable or optional)
-   * according to the Disjoint Trees rule.
-   * None of its relational descendants can belong to another group.
-   * 
-   * @param {stic_AwfDataBlock[]} allDataBlocks 
-   * @returns {boolean}
-   */
-  canBeGroupRoot(allDataBlocks) {
-    if (!allDataBlocks || !Array.isArray(allDataBlocks)) return true;
-
-    // Disjoint Trees check: no relational descendant may belong to a group
-    // OUTSIDE this block's own group tree. A descendant nested in a SUBGROUP
-    // of this block (root -> subgroup head -> member) lives INSIDE this tree:
-    // its group_root chain walks up to this block (or to the group this block
-    // itself belongs to), so it is fine. Without the walk, forming a nested
-    // subgroup would freeze the root's own switches — a member's group_root
-    // points to the subgroup head, not to this block, and the flat comparison
-    // wrongly read it as "a different group".
-    const relationalDescendants = this.getRelationalDescendants(allDataBlocks);
-    for (const descendant of relationalDescendants) {
-      if (!descendant.group_root || descendant.group_root === this.id) continue;
-      let head = descendant.group_root;
-      const seen = new Set();
-      let inside = false;
-      while (head && !seen.has(head)) {
-        seen.add(head);
-        if (head === this.id || head === this.group_root) { inside = true; break; }
-        const headBlock = allDataBlocks.find(b => b.id === head);
-        if (!headBlock) break;
-        head = headBlock.group_root;
-      }
-      if (!inside) return false;
-    }
-
-    return true;
-  }
-
-  /**
    * Helper to check if this block could be placed under candidate without violating N x M
-   * @param {stic_AwfDataBlock} candidate 
-   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @param {stic_AwfDataBlock} candidate
+   * @param {stic_AwfDataBlock[]} allDataBlocks
    * @returns {boolean}
    */
   canBeRepeatableInParent(candidate, allDataBlocks) {
@@ -1874,18 +1833,13 @@ class stic_AwfLayout {
       }
       return template || null;
     };
-    // Default template title: the group's name + " (element)" (translated),
-    // so the template is clearly the element blueprint of the group
+    // Default template title: "Element" (translated),
     const groupTemplateTitle = (rootBlock) => {
-      const groupTitle = rootBlock ? (rootBlock.group_title || rootBlock.text) : '';
-      return (groupTitle ? groupTitle + ' ' : '') + '(' + utils.translate('LBL_SECTION_TEMPLATE_SUFFIX') + ')';
+      return utils.translate('LBL_SECTION_TEMPLATE_TITLE');
     };
-    // Default group section title: the group's name + " (group)" (translated),
-    // clearly distinguishing the section that REPRESENTS the group from its
-    // element template child ("... (element)")
+    // Default group section title: the group's name
     const groupSectionTitle = (block) => {
-      const groupTitle = block ? (block.group_title || block.text) : '';
-      return (groupTitle ? groupTitle + ' ' : '') + '(' + utils.translate('LBL_SECTION_GROUP_SUFFIX') + ')';
+      return block ? (block.group_title || block.text) : '';
     };
     // Whether a section holds a whole-block element of `block` (at any depth)
     const sectionContainsBlock = (section, block, seen = new Set()) => {
@@ -1954,9 +1908,13 @@ class stic_AwfLayout {
         Object.setPrototypeOf(section, stic_AwfLayoutGroupSection.prototype);
         section.kind = 'group';
         section.groupRootBlockId = block.id;
+        // Title-visibility default for a NEW group section: an optional group
+        // hides its title by default (the include-switch label already names
+        // the group; the wizard checkbox can re-enable it). Only at creation:
+        // running this on every sync would overwrite the user's choice.
+        section.showTitle = !block.is_optional;
       }
       if (!section.is_custom_title) section.title = groupSectionTitle(block);
-      section.showTitle = true; // Group sections show their title by default
       ensureGroupTemplate(section, block);
       return section;
     };
@@ -2022,7 +1980,7 @@ class stic_AwfLayout {
         ? new stic_AwfLayoutGroupSection({ title: groupSectionTitle(block), groupRootBlockId: block.id })
         : new stic_AwfLayoutSection({ title: block.text });
       container.elements.push(nested);
-      if (ownGroupSection) { nested.showTitle = true; ensureGroupTemplate(nested, block); }
+      if (ownGroupSection) { nested.showTitle = !block.is_optional; ensureGroupTemplate(nested, block); }
       return nested;
     };
     // Returns the group's TEMPLATE child, creating it (as the first child,
@@ -2035,7 +1993,12 @@ class stic_AwfLayout {
           containerType: 'tab_item',
         });
         template.groupTemplate = true;
-        template.showTitle = true; // The element template shows its title by default
+        // Title-visibility default for a NEW element template: a
+        // NON-repeatable group holds a single instance, so the element title
+        // would just repeat the group title — hidden by default (the wizard
+        // checkbox re-enables it). Repeatable groups keep it visible: it
+        // names each instance ("#1", "#2").
+        template.showTitle = rootBlock ? !!rootBlock.is_repeatable : true;
         groupSection.elements.unshift(template);
       }
       return template;
@@ -2186,11 +2149,12 @@ class stic_AwfLayout {
         candidate.kind = 'group';
         candidate.groupRootBlockId = block.id;
         if (!candidate.is_custom_title) candidate.title = groupSectionTitle(block);
-        candidate.showTitle = true; // Group sections show their title by default
+        // New group section: optional groups hide their title by default
+        candidate.showTitle = !block.is_optional;
       } else {
         // Create the group section (its content will be filled by the passes below)
         const home = new stic_AwfLayoutGroupSection({ title: groupSectionTitle(block), groupRootBlockId: block.id });
-        home.showTitle = true; // Group sections show their title by default
+        home.showTitle = !block.is_optional; // optional groups hide their title by default
         this.structure.push(home);
       }
     });
@@ -2345,7 +2309,7 @@ class stic_AwfLayout {
           title: groupSectionTitle(rootBlock),
           groupRootBlockId: rootBlock.id,
         });
-        home.showTitle = true; // Group sections show their title by default
+        home.showTitle = !rootBlock.is_optional; // optional groups hide their title by default
       } else {
         home = new stic_AwfLayoutSection({ title: rootBlock.text });
       }
@@ -2505,11 +2469,11 @@ class stic_AwfLayout {
         template.containerType = 'panel';
       }
       // The template's default title mirrors the group's name + " (element)":
-      // refreshed on group renames unless the user customized it. The template
-      // shows its title by default (per instance in the render, and as the
-      // element's name in the wizard tree).
+      // refreshed on group renames unless the user customized it. Title
+      // VISIBILITY is a default set at template creation (hidden for
+      // non-repeatable groups) and never forced here, or the user's wizard
+      // choice would flip back on every sync.
       if (!template.is_custom_title) template.title = groupTemplateTitle(rootBlock);
-      template.showTitle = true;
       const outsideElements = section.elements.filter(el => el.id !== template.id);
       if (outsideElements.length > 0) {
         section.elements = [template];
@@ -2638,15 +2602,16 @@ class stic_AwfLayout {
     // now — gets its element template and its per-block host sections.
     normalizeGroupSections();
 
-    // ---- 7. Group sections take the group name (unless manually customized)
-    //         and show their title by default. NESTED group sections included:
-    //         a renamed subgroup must refresh its section title too, or the
-    //         form would keep showing the old group name ----
+    // ---- 7. Group sections take the group name (unless manually customized).
+    //         NESTED group sections included: a renamed subgroup must refresh
+    //         its section title too, or the form would keep showing the old
+    //         group name. Title VISIBILITY is never forced here: it is a
+    //         default set when the section is created (hidden when the group
+    //         is optional) and afterwards belongs to the user's choice ----
     eachDesignated(section => {
       const owner = dataBlocks.find(b => b.id === section.groupRootBlockId);
       if (owner && !section.is_custom_title) {
         section.title = groupSectionTitle(owner);
-        section.showTitle = true; // Group sections show their title by default
       }
     });
 
@@ -3809,6 +3774,32 @@ class stic_AwfConfiguration {
     }
 
   /**
+   * Whether a dependent GROUP HEAD can be adopted (nested) into parentBlock's
+   * group: the resulting branch must keep the N×M rule (at most 2 repeatable
+   * levels — evaluated exactly as if the head had become repeatable in place,
+   * the same rule the in-place switch applies) and the group nesting must stay
+   * within 2 levels (the head's depth becomes the parent's + 1, plus 1 more
+   * when the head already has members of its own).
+   * @param {stic_AwfDataBlock} head
+   * @param {stic_AwfDataBlock} parentBlock
+   * @returns {boolean}
+   */
+  canAdoptHeadIntoGroup(head, parentBlock) {
+    if (!head || !parentBlock) return false;
+    // N×M: temporarily join and evaluate the in-place rule
+    const prevGroupRoot = head.group_root;
+    head.group_root = parentBlock.id;
+    const branchOk = head.canBeRepeatable(this.data_blocks);
+    head.group_root = prevGroupRoot;
+    if (!branchOk) return false;
+    // Nesting depth: the head lands at parentDepth + 1; its own members one
+    // level deeper — the whole nesting must stay within 2 levels
+    const parentDepth = parentBlock.getDepth(this.data_blocks);
+    const subtreeHeight = head.getChildren(this.data_blocks).length > 0 ? 1 : 0;
+    return parentDepth + 1 + subtreeHeight <= 2;
+  }
+
+  /**
    * Adopts orphan blocks that depend on parentBlock when parentBlock becomes a group root.
    * Traverses transitively (BFS): adopted children also adopt their own dependents, so
    * chains like Adult -> Entorn Familiar -> Menor -> Inscripcio are fully grouped.
@@ -3830,7 +3821,6 @@ class stic_AwfConfiguration {
 
        this.data_blocks.forEach(candidate => {
          if (visited.has(candidate.id)) return;
-         if (candidate.is_repeatable || candidate.is_optional) return; // Skip existing group heads
 
          // Adopt if: (a) candidate is an orphan (is_root), OR
          //           (b) candidate is in the same parent group (will be reparented into the subgroup)
@@ -3838,6 +3828,15 @@ class stic_AwfConfiguration {
          const isSameGroupChild = parentGroupRoot && candidate.group_root === parentGroupRoot
            && candidate.id !== parentBlock.id;
          if (!isOrphan && !isSameGroupChild) return;
+
+         // A dependent GROUP HEAD (optional/repeatable) is adopted as a NESTED
+         // subgroup head, so defining the form INSIDE-OUT (first the payment,
+         // then the Menor) converges with the outside-in order — but ONLY
+         // when the result is a valid nesting: the branch keeps the N×M rule
+         // (at most 2 repeatable levels, checked as if the head had become
+         // repeatable in place) and the group nesting stays within 2 levels.
+         if ((candidate.is_repeatable || candidate.is_optional)
+           && !this.canAdoptHeadIntoGroup(candidate, parentBlock)) return;
 
          if (this.isBlockDependentOnParent(candidate, current)) {
            if (current.hasAncestor(candidate, this.data_blocks)) return; // Cycle guard
