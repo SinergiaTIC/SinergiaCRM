@@ -73,8 +73,8 @@ $mod_strings = array (
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona del entorno',
   'LBL_START_DATE_ERROR' => 'La fecha de alta debe ser igual o anterior a la fecha de baja.',
   'LBL_END_DATE_ERROR' => 'La fecha de baja debe ser igual o posterior a la fecha de alta.',
-  'LBL_MUST_RELATE_TO_AN_ACCOUNT_OR_A_CONTACT' => 'Hay que indicar una persona u organización del entorno.',
-  'LBL_ONLY_ONE_ENVIRONMENT_RECORD' => 'Sólo puede indicarse una persona u organización del entorno.',
+  'LBL_MUST_RELATE_TO_AN_ACCOUNT_OR_A_CONTACT' => 'Hay que seleccionar una persona u organización del entorno.',
+  'LBL_ONLY_ONE_ENVIRONMENT_RECORD' => 'Sólo puede seleccionarse una persona u organización del entorno.',
   'LBL_BASE_ACCOUNT_REQUIRED' => 'La organización base es obligatoria.',
   'LBL_RELATIONSHIP_PREFIX_ERROR' => 'El tipo de relación no corresponde con la organización o la persona del entorno seleccionada.',
 );
