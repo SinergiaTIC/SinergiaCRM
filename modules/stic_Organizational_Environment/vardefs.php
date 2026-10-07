@@ -250,3 +250,8 @@ if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }
 VardefManager::createVardef('stic_Organizational_Environment', 'stic_Organizational_Environment', array('basic','assignable','security_groups'));
+
+// Set special values for SuiteCRM base fields
+$dictionary['stic_Organizational_Environment']['fields']['name']['required'] = '0'; // Name is not required in this module
+$dictionary['stic_Organizational_Environment']['fields']['name']['importable'] = true; // Name is importable but not required in this module
+$dictionary['stic_Organizational_Environment']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
