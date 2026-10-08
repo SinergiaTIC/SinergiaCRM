@@ -95,25 +95,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 $otherBean = BeanFactory::getBean($module, $ref->beanId);
                 if (!$otherBean) continue;
 
-                $matchedRule = null;
-                foreach ($duplicateRules as $rule) {
-                    $match = true;
-                    foreach ($rule->fields as $fieldName) {
-                        $fieldValue = $block->getFieldValue($fieldName)?->value;
-                        if ($fieldValue === null || $fieldValue === '') {
-                            $match = false;
-                            break;
-                        }
-                        if (($otherBean->$fieldName ?? null) != $fieldValue) {
-                            $match = false;
-                            break;
-                        }
-                    }
-                    if ($match) {
-                        $matchedRule = $rule;
-                        break;
-                    }
-                }
+                $matchedRule = self::matchDuplicateRule($block, $otherBean, $duplicateRules);
 
                 if ($matchedRule !== null) {
                     $bean = $otherBean;
@@ -137,6 +119,8 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
         if ($bean === null) {
             foreach ($duplicateRules as $rule) {
+                // A rule with NO fields cannot identify a duplicate: ignore it
+                if (empty($rule->fields)) continue;
                 $scalarFields = [];
                 $emailValues = [];
                 $skipRule = false;
@@ -526,6 +510,42 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         }
 
         return $injectedAny;
+    }
+
+    /**
+     * Returns the FIRST duplicate rule that identifies `$otherBean` as a
+     * duplicate of the given instance, or null.
+     *
+     * A rule with NO fields is IGNORED: it cannot identify a duplicate, and an
+     * empty rule would otherwise match EVERY other bean. A block with no form
+     * fields keeps the default EMPTY rule, so without this guard every
+     * repeatable instance would be treated as a duplicate of the first one and
+     * collapsed into it (the reported bug: a group child with no fields created
+     * only for the first instance).
+     *
+     * @param DataBlockResolved $block The instance being saved
+     * @param object $otherBean A bean created earlier in the same request
+     * @param array $rules The block's duplicate detection rules
+     * @return ?object The matched rule, or null
+     */
+    private static function matchDuplicateRule(DataBlockResolved $block, $otherBean, array $rules) {
+        foreach ($rules as $rule) {
+            if (empty($rule->fields)) continue; // empty rule cannot identify duplicates
+            $match = true;
+            foreach ($rule->fields as $fieldName) {
+                $fieldValue = $block->getFieldValue($fieldName)?->value;
+                if ($fieldValue === null || $fieldValue === '') {
+                    $match = false;
+                    break;
+                }
+                if (($otherBean->$fieldName ?? null) != $fieldValue) {
+                    $match = false;
+                    break;
+                }
+            }
+            if ($match) return $rule;
+        }
+        return null;
     }
 
 }

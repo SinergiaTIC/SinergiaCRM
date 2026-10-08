@@ -536,12 +536,12 @@ class stic_AwfDataBlock {
       const isSameGroupChild = myGroupRoot && candidate.group_root === myGroupRoot;
       // Top-level heads only adopt orphans; subgroups also re-parent same-group children
       if (!isOrphan && !isSameGroupChild) return false;
-      // MANUAL membership is reserved for UNLINKED blocks (any group level): a
-      // linked block belongs to a group only through its relationships — the
-      // auto-adoption of adoptRelatedOrphans() decides its placement, so it
-      // must never be offered (or added) by hand. Unlinked blocks have no
-      // relationships: the group is the ONLY instance context they can get.
-      if (!candidate.isUnlinked) return false;
+      // MANUAL membership is reserved for UNLINKED blocks (any group level) and
+      // for blocks with a MANY-TO-MANY relationship to a block of THIS group: a
+      // linked 1-N block belongs to a group only through its relationships
+      // (auto-adoption of adoptRelatedOrphans() decides its placement), but an
+      // N-M partner has no FK, so the user adds it by hand.
+      if (!candidate.isUnlinked && !this.isManyToManyGroupCandidate(candidate, allDataBlocks)) return false;
       if (candidate.is_repeatable || candidate.is_optional) return false; // Candidate blocks that are repeatable or optional cannot be children of a group
       // A GROUP HEAD must stay a root: the sync designates a group section only
       // for is_root heads (sync pass 3), so adopting one here would strip it of
@@ -579,6 +579,46 @@ class stic_AwfDataBlock {
     if (parent?.relationships?.some(r => r.related_datablock_id === this.id && r.initiator_id === this.id)) return true;
 
     return false;
+  }
+
+  /**
+   * Whether this block is linked to `other` by a MANY-TO-MANY relationship.
+   * An N-M relationship has NO foreign key on either side, so neither block can
+   * be auto-adopted into the other's group (auto-adoption follows the FK /
+   * initiator direction). The relationship metadata decides: anything that is
+   * not one-to-many / one-to-one counts as many-to-many (the SuiteCRM default
+   * when the metadata is missing).
+   * @param {stic_AwfDataBlock} other
+   * @returns {boolean}
+   */
+  isManyToManyWith(other) {
+    if (!other || !this.module || !other.module || this.id === other.id) return false;
+    const names = new Set();
+    (this.relationships || []).forEach(r => { if (r.related_datablock_id === other.id) names.add(r.name); });
+    (other.relationships || []).forEach(r => { if (r.related_datablock_id === this.id) names.add(r.name); });
+    if (names.size === 0) return false;
+    for (const name of names) {
+      const meta = utils.getModuleInformation(this.module)?.relationships?.[name]
+        || utils.getModuleInformation(other.module)?.relationships?.[name];
+      const type = meta?.relationship_type || meta?.type;
+      if (type === 'one-to-many' || type === '1-N' || type === 'one-to-one' || type === '1-1') return false;
+    }
+    return true;
+  }
+
+  /**
+   * Whether `candidate` may be added to THIS group BY HAND because it is linked
+   * to one of the group's blocks by a many-to-many relationship. The group is
+   * this head plus its current members. N-M partners have no FK, so they cannot
+   * be auto-adopted; the user adds them manually.
+   * @param {stic_AwfDataBlock} candidate
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {boolean}
+   */
+  isManyToManyGroupCandidate(candidate, allDataBlocks) {
+    if (!candidate || candidate.isUnlinked || !candidate.module) return false;
+    const groupBlocks = [this, ...this.getDescendants(allDataBlocks)];
+    return groupBlocks.some(g => g.id !== candidate.id && candidate.isManyToManyWith(g));
   }
 
   /**
@@ -2468,7 +2508,8 @@ class stic_AwfLayout {
       // INTERNAL 2-level wrapper the user never edits on its own — its chrome is
       // DERIVED from the group on every sync:
       //  - containerType: tabs parent -> 'tab_item' pane; accordion parent ->
-      //    'accordion_item'; panel/card -> 'panel'
+      //    'accordion_item'; otherwise 'card' (the repeating "Elements" section
+      //    is shown with border + title)
       //  - showTitle: ALWAYS true (it names the instances / tab panes)
       //  - subtitle: ELIMINATED (the group subtitle carries the help text)
       //  - collapsibility: stacked cards (panel/card) follow the group's
@@ -2477,7 +2518,7 @@ class stic_AwfLayout {
       const groupIsTabs = section.containerType === 'panel_tabs' || section.containerType === 'card_tabs';
       const groupIsAccordion = section.containerType === 'panel_accordion' || section.containerType === 'card_accordion';
       const groupIsTabbed = groupIsTabs || groupIsAccordion;
-      template.containerType = groupIsTabs ? 'tab_item' : (groupIsAccordion ? 'accordion_item' : 'panel');
+      template.containerType = groupIsTabs ? 'tab_item' : (groupIsAccordion ? 'accordion_item' : 'card');
       template.showTitle = true;
       template.subtitle = '';
       template.isCollapsible = groupIsTabbed ? false : !!section.isCollapsible;
@@ -2541,12 +2582,13 @@ class stic_AwfLayout {
         }
 
       // e) Spec (2026-10-08): the group's CONTENT sections (one per data block,
-      //    inside the template) are plain sections. With SEVERAL content
-      //    sections each renders as a CARD; with exactly ONE, that section
-      //    renders FLAT (panel, no title, no borders) and the singular record
-      //    name defaults to its title (e.g. a repeatable "Document" group labels
-      //    its instances "Document", "Document #2", ...). Designated subgroup
-      //    hosts keep their own group chrome.
+      //    inside the template) are plain sections rendered as PANEL by default
+      //    (the repeating "Elements" TEMPLATE above carries the border + title).
+      //    When the group has exactly ONE content section, that section ALSO
+      //    hides its title (the instance label already names it) and the
+      //    singular record name defaults to its title (e.g. a repeatable
+      //    "Document" group labels its instances "Document", "Document #2", ...).
+      //    Designated subgroup hosts keep their own group chrome.
       const contentSections = template.elements.filter(el => el.type === 'section');
       if (contentSections.length === 1 && !contentSections[0].isGroupSection) {
         const only = contentSections[0];
@@ -2559,7 +2601,7 @@ class stic_AwfLayout {
         if (!template.is_custom_title) template.title = singleName || groupTemplateTitle(rootBlock);
       } else {
         contentSections.forEach(sec => {
-          if (!sec.isGroupSection) sec.containerType = 'card';
+          if (!sec.isGroupSection) sec.containerType = 'panel';
         });
       }
       });
@@ -4130,10 +4172,13 @@ class stic_AwfConfiguration {
       if (parent.id === child.id) return;
       if (parent.isDescendant(child.id, this.data_blocks)) return;
       if (child.isGroupHead(this.data_blocks)) return;
-      // MANUAL membership is reserved for UNLINKED blocks (any group level):
-      // a linked block joins a group only through its relationships (the
-      // auto-adoption of adoptRelatedOrphans()), never by hand
-      if (!child.isUnlinked) return;
+      // MANUAL membership: UNLINKED blocks (any group level) OR blocks with a
+      // many-to-many relationship to a block already in the group (an N-M
+      // partner has no FK, so auto-adoption cannot place it: the user adds it).
+      // A linked 1-N block still joins only through its relationships.
+      const parentGroupBlocks = [parent, ...parent.getDescendants(this.data_blocks)];
+      const childHasNm = parentGroupBlocks.some(g => g.id !== child.id && child.isManyToManyWith(g));
+      if (!child.isUnlinked && !childHasNm) return;
       // The child must be an orphan, OR — when the parent is a SUBGROUP — a
       // block of the same parent group (re-parented into the subgroup)
       const parentGroupRoot = (parent.group_root && parent.group_root !== parent.id) ? parent.group_root : null;

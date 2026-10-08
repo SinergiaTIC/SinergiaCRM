@@ -2798,7 +2798,9 @@ class WizardStep4 {
         const isTabs = this.isTabsContainer(section);
         const isAccordion = this.isAccordionContainer(section);
         const isTabbed = isTabs || isAccordion;
-        template.containerType = isTabs ? 'tab_item' : (isAccordion ? 'accordion_item' : 'panel');
+        // The repeating "Elements" template is a CARD (border + title) unless
+        // the group is a tabs/accordion container (then it is the matching item)
+        template.containerType = isTabs ? 'tab_item' : (isAccordion ? 'accordion_item' : 'card');
         template.showTitle = true;
         template.subtitle = '';
         template.isCollapsible = isTabbed ? false : !!section.isCollapsible;

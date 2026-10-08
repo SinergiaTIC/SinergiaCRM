@@ -672,9 +672,12 @@ class ResponseHandler
                             }
                             continue;
                         }
-                        // Child block fields are resolved with the same instance index,
-                        // reading their own indexed data (ChildBlock[index][field])
-                        $resolvedBlockForBlock = new DataBlockResolved($blockToValidate, $data, $context, $resolvedBlock->instanceIndex);
+                        // Child block fields are resolved with the SAME loop-index
+                        // stack as the outer instance, reading their own indexed
+                        // data (ChildBlock[i1]...[in][field]). The constructor
+                        // expects the full array of loop indexes, not the scalar
+                        // instanceIndex.
+                        $resolvedBlockForBlock = new DataBlockResolved($blockToValidate, $data, $context, $resolvedBlock->loopIndexes);
                         $this->validateBlockFields($blockToValidate, $resolvedBlockForBlock, $data, $errors);
                     }
                 }

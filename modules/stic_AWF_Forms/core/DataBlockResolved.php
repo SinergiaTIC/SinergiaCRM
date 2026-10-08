@@ -308,6 +308,24 @@ class DataBlockResolved {
             if ($block->isOptional()) {
                 return [];
             }
+            // A NON-head block inside a group that submits NO data of its own
+            // (typically because it renders no fields at all) still needs ONE
+            // instance PER parent instance: mirror the nearest group-head
+            // ancestor's instances instead of a single [0]. Otherwise a
+            // repeatable group would create the child only for its FIRST
+            // instance (the reported bug).
+            if (!$block->isGroupHead() && !empty($block->group_root)) {
+                $parent = $block->form_config->data_blocks[$block->group_root] ?? null;
+                if ($parent !== null && $parent->id !== $block->id && $parent->isGroupHead()) {
+                    $parentInstances = self::resolveInstances($parent, $formData, $context, $prefix);
+                    if (!empty($parentInstances)) {
+                        return array_map(
+                            fn ($parentInstance) => new DataBlockResolved($block, $formData, $context, $parentInstance->loopIndexes),
+                            $parentInstances
+                        );
+                    }
+                }
+            }
             $indexes = [0];
             $remainingLevels = max($remainingLevels, 0);
         }

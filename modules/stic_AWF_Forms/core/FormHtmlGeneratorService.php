@@ -166,6 +166,14 @@ class FormHtmlGeneratorService {
         $tabIdleBorder = "rgba({$textRgb}, 0.14)";    // inactive tab edge ("very light border")
         $tabHoverBorder = "rgba({$textRgb}, 0.32)";
         $tabHoverBg = "rgba({$textRgb}, 0.05)";
+        // Accordion collapsed header: slightly different from the tabs — a
+        // greyish idle surface that darkens on hover (the text tones are shared).
+        $accIdleBg = "rgba({$textRgb}, 0.04)";
+        $accHoverBg = "rgba({$textRgb}, 0.08)";
+        // Soft action buttons: the label is a NEUTRAL grey (the body text color
+        // lightened/darkened), NOT the accent color; only the tint/border carry
+        // the primary/danger hue.
+        $softBtnText = "rgba({$textRgb}, 0.7)";
 
         // Pre-calculation: Which icons and functionalities are actually being used?
         // Recursive walk of the layout tree: nested sections are traversed.
@@ -231,14 +239,15 @@ class FormHtmlGeneratorService {
         $fileValidationFix = "\n/* Fix for file input validation in Bootstrap 5 without glow overlay */\n#{$wrapperId} .awf-field:has(input[type='file'].is-invalid) .form-control[readonly],\n#{$wrapperId} .was-validated .awf-field:has(input[type='file']:invalid) .form-control[readonly] { border-color: #dc3545 !important; box-shadow: none !important; }\n";
 
         $html = "<style>
-#{$wrapperId} { --bs-primary: {$theme->primary_color}; --bs-primary-rgb: {$primaryRgb}; --bs-body-bg: {$theme->form_bg_color}; --bs-body-color: {$theme->text_color}; --bs-border-color: {$theme->border_color}; --bs-border-radius: {$theme->border_radius_controls}px; --bs-body-font-family: {$theme->font_family}; --bs-btn-border-radius: {$theme->border_radius_controls}px; --awf-page-bg: {$theme->page_bg_color}; --awf-max-width: {$theme->form_width}; --awf-box-shadow: {$shadowVal}; --awf-border-width: {$theme->border_width}px; --awf-sec-cols: {$secCols}; --awf-sec-min-px: {$secMinPx}; --awf-field-cols: {$fieldCols}; --awf-field-min-px: {$fieldMinPx}; --awf-card-radius: {$theme->border_radius_container}px; --awf-field-spacing: {$fieldSpacing}; --awf-section-height: {$sectionHeight}; --awf-label-weight: {$labelWeightVal}; --awf-submit-width: {$submitWidthVal}; background-color: var(--awf-page-bg); font-family: var(--bs-body-font-family); color: var(--bs-body-color); font-size: {$theme->font_size}px; line-height: 1.5; padding: 2rem 1rem; min-height: 100vh; }
+#{$wrapperId} { --bs-primary: {$theme->primary_color}; --bs-primary-rgb: {$primaryRgb}; --bs-danger: #dc3545; --bs-danger-rgb: 220, 53, 69; --bs-body-bg: {$theme->form_bg_color}; --bs-body-color: {$theme->text_color}; --bs-border-color: {$theme->border_color}; --bs-border-radius: {$theme->border_radius_controls}px; --bs-body-font-family: {$theme->font_family}; --bs-btn-border-radius: {$theme->border_radius_controls}px; --awf-page-bg: {$theme->page_bg_color}; --awf-max-width: {$theme->form_width}; --awf-box-shadow: {$shadowVal}; --awf-border-width: {$theme->border_width}px; --awf-sec-cols: {$secCols}; --awf-sec-min-px: {$secMinPx}; --awf-field-cols: {$fieldCols}; --awf-field-min-px: {$fieldMinPx}; --awf-card-radius: {$theme->border_radius_container}px; --awf-field-spacing: {$fieldSpacing}; --awf-section-height: {$sectionHeight}; --awf-label-weight: {$labelWeightVal}; --awf-submit-width: {$submitWidthVal}; background-color: var(--awf-page-bg); font-family: var(--bs-body-font-family); color: var(--bs-body-color); font-size: {$theme->font_size}px; line-height: 1.5; padding: 2rem 1rem; min-height: 100vh; }
 #{$wrapperId} .form-control, #{$wrapperId} .form-select, #{$wrapperId} .btn, #{$wrapperId} .input-group-text, #{$wrapperId} .form-check-input, #{$wrapperId} .form-check-label { font-size: 1em; }
 #{$wrapperId} .form-control:focus, #{$wrapperId} .form-select:focus, #{$wrapperId} .form-check-input:focus { border-color: var(--bs-primary); box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25); }
 #{$wrapperId} .form-check-input:checked { background-color: var(--bs-primary); border-color: var(--bs-primary); }
 #{$wrapperId} .btn-primary { --bs-btn-bg: var(--bs-primary); --bs-btn-border-color: var(--bs-primary); --bs-btn-hover-bg: var(--bs-primary); --bs-btn-hover-border-color: var(--bs-primary); --bs-btn-color: {$btnTextColor}; --bs-btn-active-bg: var(--bs-primary); --bs-btn-active-border-color: var(--bs-primary); --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb); color: var(--bs-btn-color); }
 #{$wrapperId} .btn-primary:hover { filter: brightness(0.9); }
 #{$wrapperId} .btn-primary:active, #{$wrapperId} .btn-primary.active { filter: brightness(0.85); background-color: var(--bs-primary) !important; border-color: var(--bs-primary) !important; }
-#{$wrapperId} .btn-outline-primary { --bs-btn-color: var(--bs-primary); --bs-btn-border-color: var(--bs-primary); --bs-btn-hover-color: #fff; --bs-btn-hover-bg: var(--bs-primary); --bs-btn-hover-border-color: var(--bs-primary); --bs-btn-active-color: #fff; --bs-btn-active-bg: var(--bs-primary); --bs-btn-active-border-color: var(--bs-primary); --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb); --bs-btn-disabled-color: var(--bs-primary); --bs-btn-disabled-border-color: var(--bs-primary); }
+#{$wrapperId} .btn-outline-primary { --bs-btn-bg: rgba(var(--bs-primary-rgb), 0.15); --bs-btn-color: {$softBtnText}; --bs-btn-border-color: rgba(var(--bs-primary-rgb), 0.25); --bs-btn-hover-color: {$btnTextColor}; --bs-btn-hover-bg: var(--bs-primary); --bs-btn-hover-border-color: var(--bs-primary); --bs-btn-active-color: {$btnTextColor}; --bs-btn-active-bg: var(--bs-primary); --bs-btn-active-border-color: var(--bs-primary); --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb); --bs-btn-disabled-color: {$softBtnText}; --bs-btn-disabled-bg: rgba(var(--bs-primary-rgb), 0.15); --bs-btn-disabled-border-color: rgba(var(--bs-primary-rgb), 0.25); }
+#{$wrapperId} .btn-outline-danger { --bs-btn-bg: rgba(var(--bs-danger-rgb), 0.12); --bs-btn-color: {$softBtnText}; --bs-btn-border-color: rgba(var(--bs-danger-rgb), 0.25); --bs-btn-hover-color: #fff; --bs-btn-hover-bg: var(--bs-danger); --bs-btn-hover-border-color: var(--bs-danger); --bs-btn-active-color: #fff; --bs-btn-active-bg: var(--bs-danger); --bs-btn-active-border-color: var(--bs-danger); --bs-btn-focus-shadow-rgb: var(--bs-danger-rgb); --bs-btn-disabled-color: {$softBtnText}; --bs-btn-disabled-bg: rgba(var(--bs-danger-rgb), 0.12); --bs-btn-disabled-border-color: rgba(var(--bs-danger-rgb), 0.25); }
 #{$wrapperId} h1, #{$wrapperId} .h1 { font-size: 2.5em; } #{$wrapperId} h2, #{$wrapperId} .h2 { font-size: 2em; } #{$wrapperId} h3, #{$wrapperId} .h3 { font-size: 1.75em; } #{$wrapperId} h4, #{$wrapperId} .h4 { font-size: 1.5em; } #{$wrapperId} h5, #{$wrapperId} .h5 { font-size: 1.25em; } #{$wrapperId} h6, #{$wrapperId} .h6 { font-size: 1em; }
 #{$wrapperId} .form-label { margin-bottom: 0; } #{$wrapperId} .card-header { font-size: 1em; } #{$wrapperId} .form-text, #{$wrapperId} .small { font-size: 0.85em; } #{$wrapperId} .extra-small { font-size: 0.75em; }
 #{$wrapperId} .input-group .btn { border-color: var(--bs-border-color); z-index: 0; } #{$wrapperId} .input-group .btn:hover:not(:disabled) { background-color: rgba(0, 0, 0, 0.04); }
@@ -280,27 +289,21 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .nav-tabs { flex-wrap: nowrap !important; overflow-x: auto !important; overflow-y: hidden !important; white-space: nowrap !important; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; }
 #{$wrapperId} .nav-tabs::-webkit-scrollbar { display: none; }
 #{$wrapperId} .nav-tabs .nav-item, #{$wrapperId} .nav-tabs .nav-link { flex: 0 0 auto !important; }
-/* Tabs look: an INACTIVE tab is grey with a very light border (so it still
-   reads as selectable), the ACTIVE one keeps the top edge in the primary color
-   and has NO bottom edge, so it merges with the content below instead of
-   drawing a line under itself. The tab bar therefore has no baseline of its
-   own: every tab carries its own border. Tabs sit flush against each other
-   (no gap) and the active label keeps the regular text color, not the
-   primary one: the top edge alone carries the accent. */
 #{$wrapperId} .nav-tabs { border-bottom: 0; gap: 0; }
-#{$wrapperId} .nav-tabs .nav-link { color: {$tabIdleText}; background-color: transparent; border: 1px solid {$tabIdleBorder}; border-top: 2px solid {$tabIdleBorder}; border-bottom-color: {$tabIdleBorder}; border-top-left-radius: var(--bs-border-radius); border-top-right-radius: var(--bs-border-radius); margin-bottom: 0 !important; margin-right: -1px; transition: color .15s ease-in-out, border-color .15s ease-in-out, background-color .15s ease-in-out; }
+#{$wrapperId} .nav-tabs .nav-link { color: {$tabIdleText}; background-color: transparent; border: 1px solid {$tabIdleBorder}; border-top: 3px solid {$tabIdleBorder}; border-bottom-color: {$tabIdleBorder}; border-top-left-radius: var(--bs-border-radius); border-top-right-radius: var(--bs-border-radius); margin-bottom: 0 !important; margin-right: -1px; transition: color .15s ease-in-out, border-color .15s ease-in-out, background-color .15s ease-in-out; }
 #{$wrapperId} .nav-tabs .nav-link:last-child { margin-right: 0; }
 #{$wrapperId} .nav-tabs .nav-link:hover, #{$wrapperId} .nav-tabs .nav-link:focus-visible { color: var(--bs-body-color); background-color: {$tabHoverBg}; border-color: {$tabHoverBorder}; border-top-color: {$tabHoverBorder}; border-bottom-color: {$tabHoverBorder}; }
-#{$wrapperId} .nav-tabs .nav-link.active, #{$wrapperId} .nav-tabs .nav-link:active { color: var(--bs-body-color); background-color: var(--bs-body-bg); border-color: {$tabIdleBorder}; border-top: 2px solid var(--bs-primary); border-bottom-color: transparent; font-weight: 600; box-shadow: none; position: relative; z-index: 2; margin-bottom: -1px !important; }
+#{$wrapperId} .nav-tabs .nav-link.active, #{$wrapperId} .nav-tabs .nav-link:active { color: var(--bs-body-color); background-color: var(--bs-body-bg); border-color: {$tabIdleBorder}; border-top: 3px solid var(--bs-primary); border-bottom-color: transparent; font-weight: 600; box-shadow: none; position: relative; z-index: 2; margin-bottom: -1px !important; }
 #{$wrapperId} .tab-pane { margin-top: -1px; }
-/* Accordion look: a bordered stack of items; the OPEN item is marked with the
-   theme primary color (left accent + tinted header + colored label). Only one
-   item is open at a time (Alpine `openItem`). */
-#{$wrapperId} .awf-accordion { border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); overflow: hidden; }
-#{$wrapperId} .awf-accordion-item + .awf-accordion-item { border-top: 1px solid var(--bs-border-color); }
-#{$wrapperId} .awf-accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .75rem 1rem; background-color: rgba(0, 0, 0, 0.02); border: 0; border-left: 3px solid transparent; text-align: left; font-weight: 600; color: var(--bs-body-color); cursor: pointer; transition: background-color .15s ease-in-out, color .15s ease-in-out, border-color .15s ease-in-out; }
-#{$wrapperId} .awf-accordion-header:hover, #{$wrapperId} .awf-accordion-header:focus-visible { background-color: rgba(var(--bs-primary-rgb), 0.06); }
-#{$wrapperId} .awf-accordion-header.is-open { color: var(--bs-primary); border-left-color: var(--bs-primary); background-color: rgba(var(--bs-primary-rgb), 0.08); }
+/* Accordion shares the SAME theme tones and the SAME 3px primary accent as the
+   tabs (idle label/border, hover tone, open = primary accent + tinted bg). The
+   open item also paints its TOP edge with the primary color, mirroring the
+   active tab's top edge. */
+#{$wrapperId} .awf-accordion { border: 1px solid {$tabIdleBorder}; border-radius: var(--bs-border-radius); overflow: hidden; }
+#{$wrapperId} .awf-accordion-item + .awf-accordion-item { border-top: 1px solid {$tabIdleBorder}; }
+#{$wrapperId} .awf-accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .75rem 1rem; background-color: {$accIdleBg}; border: 0; border-left: 3px solid transparent; text-align: left; font-weight: 600; color: {$tabIdleText}; cursor: pointer; transition: color .15s ease-in-out, border-color .15s ease-in-out, background-color .15s ease-in-out; }
+#{$wrapperId} .awf-accordion-header:hover, #{$wrapperId} .awf-accordion-header:focus-visible { color: var(--bs-body-color); background-color: {$accHoverBg}; }
+#{$wrapperId} .awf-accordion-header.is-open { color: var(--bs-body-color); border-left-color: var(--bs-primary); background-color: rgba(var(--bs-primary-rgb), 0.2); }
 #{$wrapperId} .awf-accordion-title { flex: 1 1 auto; }
 #{$wrapperId} .awf-accordion-chevron { flex: 0 0 auto; width: .55em; height: .55em; margin-right: .25rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .2s ease; }
 #{$wrapperId} .awf-accordion-chevron.open { transform: rotate(-135deg); }
