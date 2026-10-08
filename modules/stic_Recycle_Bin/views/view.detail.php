@@ -55,6 +55,9 @@ class stic_Recycle_BinViewDetail extends ViewDetail
         $html = $this->hideUnwantedButtons($html);
         $html = $this->injectRestoreAction($html);
         $html = $this->prependMergedNotice($html);
+        if (!empty($this->bean->restored) || !empty($this->bean->merged)) {
+            $html = $this->hideActionsMenu($html);
+        }
 
         echo $html;
 
@@ -76,6 +79,23 @@ class stic_Recycle_BinViewDetail extends ViewDetail
                . '.dropdown-menu li:has(input[onclick*="showRelatedSignatures"])'
                . '{display:none!important}'
                . '</style>';
+        $pos = strrpos($html, '</body>');
+        if ($pos !== false) {
+            return substr($html, 0, $pos) . $style . substr($html, $pos);
+        }
+        return $style . $html;
+    }
+
+    /**
+     * Hides the whole Actions dropdown when the entry offers no actions
+     * (already restored or merged records cannot be restored).
+     *
+     * @param string $html Full rendered detail view HTML
+     * @return string HTML with the CSS rule appended
+     */
+    private function hideActionsMenu($html)
+    {
+        $style = '<style>#detail_header_action_menu,li#tab-actions{display:none!important}</style>';
         $pos = strrpos($html, '</body>');
         if ($pos !== false) {
             return substr($html, 0, $pos) . $style . substr($html, $pos);

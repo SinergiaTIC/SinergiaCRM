@@ -88,6 +88,7 @@ $mod_strings = array(
 
     // List view
     'LBL_RELATIONSHIP_COUNT' => 'Relationships',
+    'LBL_LIST_EMPTY_INFO' => 'Records deleted from any CRM module are automatically registered here, allowing administrators to recover them along with their relationships.',
 
     // Actions
     'LBL_RESTORE' => 'Restore',

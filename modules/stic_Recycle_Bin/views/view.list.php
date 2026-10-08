@@ -56,6 +56,11 @@ class stic_Recycle_BinViewList extends ViewList
             $this->lv->ss->assign('savedSearchData', $this->searchForm->getSavedSearchData());
             $this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params);
             $this->injectComputedColumns();
+            if (empty($this->lv->data['data'])) {
+                echo '<div class="alert alert-info" role="alert">'
+                    . htmlspecialchars(translate('LBL_LIST_EMPTY_INFO', 'stic_Recycle_Bin'), ENT_QUOTES)
+                    . '</div>';
+            }
             $savedSearchName = empty($_REQUEST['saved_search_select_name']) ? '' : (' - ' . $_REQUEST['saved_search_select_name']);
             echo $this->lv->display();
             $this->injectMassRestoreScript();

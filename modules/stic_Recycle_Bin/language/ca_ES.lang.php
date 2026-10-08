@@ -88,6 +88,7 @@ $mod_strings = array(
 
     // List view
     'LBL_RELATIONSHIP_COUNT' => 'Relacions',
+    'LBL_LIST_EMPTY_INFO' => 'En aquest mòdul es registren automàticament els registres eliminats de qualsevol mòdul del CRM i permet als administradors recuperar-los juntament amb les seves relacions.',
 
     // Actions
     'LBL_RESTORE' => 'Restaurar',

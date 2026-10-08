@@ -88,6 +88,7 @@ $mod_strings = array(
 
     // List view
     'LBL_RELATIONSHIP_COUNT' => 'Relaciones',
+    'LBL_LIST_EMPTY_INFO' => 'En este módulo se registran automáticamente los registros eliminados de cualquier módulo del CRM y permite a los administradores recuperarlos junto con sus relaciones.',
 
     // Actions
     'LBL_RESTORE' => 'Recuperar',
