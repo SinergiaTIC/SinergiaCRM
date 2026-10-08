@@ -26,27 +26,16 @@ $subpanel_layout = array(
     'top_buttons' => array(),
     'where' => '',
     'list_fields' => array(
-        'stic_recycle_bin_name' => array(
-            'type' => 'relate',
-            'link' => true,
-            'vname' => 'LBL_STIC_RECYCLE_BIN',
-            'id' => 'STIC_RECYCLE_BIN_ID',
+        'related_record_name' => array(
+            'type' => 'varchar',
+            'vname' => 'LBL_RELATED_RECORD_NAME',
             'width' => '20%',
             'default' => true,
-            'widget_class' => 'SubPanelDetailViewLink',
-            'target_module' => 'stic_Recycle_Bin',
-            'target_record_key' => 'stic_recycle_bin_id',
         ),
         'related_module' => array(
             'type' => 'varchar',
             'vname' => 'LBL_RELATED_MODULE',
             'width' => '12%',
-            'default' => true,
-        ),
-        'related_record_name' => array(
-            'type' => 'varchar',
-            'vname' => 'LBL_RELATED_RECORD_NAME',
-            'width' => '20%',
             'default' => true,
         ),
         'relationship_name' => array(

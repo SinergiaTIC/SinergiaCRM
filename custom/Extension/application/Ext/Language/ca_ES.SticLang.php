@@ -4240,7 +4240,7 @@ $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
 
-// Motius d'omissió de relacions de la paperera
+// Motius de no restauració de relacions de la paperera
 $app_list_strings['stic_recycle_skip_reason_list'][''] = '';
 $app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Registre relacionat eliminat';
 $app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Registre relacionat reassignat';

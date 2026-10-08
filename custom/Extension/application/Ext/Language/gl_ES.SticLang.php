@@ -4243,7 +4243,7 @@ $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensaxes';
 
-// Motivos de omisión de relaciones de la papelera
+// Motivos de no restauración de relaciones de la papelera
 $app_list_strings['stic_recycle_skip_reason_list'][''] = '';
 $app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Registro relacionado eliminado';
 $app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Registro relacionado reasignado';
