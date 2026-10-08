@@ -20,14 +20,17 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-/* HEADER */
+// Set module name
 var module = "stic_Organizational_Environment";
 
 /* INCLUDES */
-// loadScript("include/javascript/moment.min.js");
+loadScript("include/javascript/moment.min.js");
 
 /* VALIDATION DEPENDENCIES */
-var validationDependencies = {};
+var validationDependencies = {
+  start_date: "end_date",
+  end_date: "start_date",
+};
 
 /* VALIDATION CALLBACKS */
 
@@ -40,9 +43,7 @@ addToValidateCallback(
   SUGAR.language.get(module, "LBL_BASE_ACCOUNT_REQUIRED"),
   () =>
     Boolean(
-      stic_oe_getFieldValue(
-        "stic_organizational_environment_accounts_1accounts_ida",
-      ),
+      getFieldValue("stic_organizational_environment_accounts_1accounts_ida"),
     ),
 );
 
@@ -54,8 +55,8 @@ addToValidateCallback(
   false,
   SUGAR.language.get(module, "LBL_MUST_RELATE_TO_AN_ACCOUNT_OR_A_CONTACT"),
   () =>
-    Boolean(stic_oe_getFieldValue(stic_oe_fields.environment_account.name)) ||
-    Boolean(stic_oe_getFieldValue(stic_oe_fields.environment_contact.name)),
+    Boolean(getFieldValue(environmentFields.environmentAccount.name)) ||
+    Boolean(getFieldValue(environmentFields.environmentContact.name)),
 );
 
 // Must relate to either an account or a contact - Contacts
@@ -66,21 +67,21 @@ addToValidateCallback(
   false,
   SUGAR.language.get(module, "LBL_MUST_RELATE_TO_AN_ACCOUNT_OR_A_CONTACT"),
   () =>
-    Boolean(stic_oe_getFieldValue(stic_oe_fields.environment_account.name)) ||
-    Boolean(stic_oe_getFieldValue(stic_oe_fields.environment_contact.name)),
+    Boolean(getFieldValue(environmentFields.environmentAccount.name)) ||
+    Boolean(getFieldValue(environmentFields.environmentContact.name)),
 );
 
 // Only one environment record allowed at a time
 addToValidateCallback(
   getFormName(),
   "stic_organizational_environment_accounts_name",
-  "relate",
+  "related",
   false,
   SUGAR.language.get(module, "LBL_ONLY_ONE_ENVIRONMENT_RECORD"),
   () =>
     !(
-      stic_oe_getFieldValue(stic_oe_fields.environment_account.name) &&
-      stic_oe_getFieldValue(stic_oe_fields.environment_contact.name)
+      hasRelateValue(environmentFields.environmentAccount) &&
+      hasRelateValue(environmentFields.environmentContact)
     ),
 );
 
@@ -93,170 +94,135 @@ addToValidateCallback(
   SUGAR.language.get(module, "LBL_RELATIONSHIP_PREFIX_ERROR"),
   () => {
     if (
-      !stic_oe_getFieldInForm(
-        "stic_organizational_environment_accounts_name",
-      ) ||
-      !stic_oe_getFieldInForm("stic_organizational_environment_contacts_name")
+      !getFieldElement("stic_organizational_environment_accounts_name") ||
+      !getFieldElement("stic_organizational_environment_contacts_name")
     ) {
       return true;
     }
-    const key = stic_oe_getFieldValue("relationship_type");
-    return !key || key.startsWith(`${stic_oe_getActiveEnvironmentType()}_`);
+    const key = getFieldValue("relationship_type");
+    return !key || key.startsWith(`${getActiveEnvironmentType()}_`);
   },
 );
 
-addToValidateCallback(
-  getFormName(),
-  "end_date",
-  "date",
-  false,
-  SUGAR.language.get(module, "LBL_END_DATE_ERROR"),
-  () => checkStartAndEndDatesCoherence("start_date", "end_date"),
-);
-
-addToValidateCallback(
-  getFormName(),
-  "start_date",
-  "date",
-  false,
-  SUGAR.language.get(module, "LBL_START_DATE_ERROR"),
-  () => checkStartAndEndDatesCoherence("start_date", "end_date"),
-);
+for (const date of ["start_date", "end_date"]) {
+  addToValidateCallback(
+    getFormName(),
+    date,
+    "date",
+    false,
+    SUGAR.language.get(module, `LBL_${date.toUpperCase()}_ERROR`),
+    () => checkStartAndEndDatesCoherence("start_date", "end_date"),
+  );
+}
 
 // Fields data
-const stic_oe_fields = {
-  environment_account: {
+const environmentFields = {
+  environmentAccount: {
     id: "stic_organizational_environment_accountsaccounts_ida",
     name: "stic_organizational_environment_accounts_name",
     type: "accounts",
   },
-  environment_contact: {
+  environmentContact: {
     id: "stic_organizational_environment_contactscontacts_ida",
     name: "stic_organizational_environment_contacts_name",
     type: "contacts",
   },
-  base_organization: {
-    id: "stic_organizational_environment_accounts_1accounts_ida",
-    name: "stic_organizational_environment_accounts_1_name",
-  },
 };
 
-let stic_oe_relationshipTypeOptions = null;
+let relationshipTypeOptions = null;
 
-// Return the active form, including when this view is a subpanel quick create.
-function stic_oe_getForm() {
-  const formName = getFormName();
-  return document.forms[formName] || document.getElementById(formName);
-}
-
-// Find a field in the active form so duplicate IDs in other forms are ignored.
-function stic_oe_getFieldInForm(fieldId) {
-  const form = stic_oe_getForm();
-  return form
-    ? form.querySelector(`#${fieldId}`)
-    : document.getElementById(fieldId);
-}
-
-// Read a field's current value, returning an empty string when it is absent.
-const stic_oe_getFieldValue = (fieldId) =>
-  stic_oe_getFieldInForm(fieldId)?.value ?? "";
+// Find a field element
+const getFieldElement = (fieldId) =>
+  document.forms[getFormName()]?.querySelector(`#${fieldId}`) ?? null;
 
 // A relate is selected when either its hidden ID or visible name has a value.
-const stic_oe_hasRelateValue = ({ id, name }) =>
-  Boolean(stic_oe_getFieldValue(id) || stic_oe_getFieldValue(name));
+const hasRelateValue = ({ id, name }) =>
+  Boolean(getFieldValue(id) || getFieldValue(name));
 
 // Identify which relationship-type prefix belongs to the selected relate.
-const stic_oe_getActiveEnvironmentType = () => {
+const getActiveEnvironmentType = () => {
   for (const field of [
-    stic_oe_fields.environment_account,
-    stic_oe_fields.environment_contact,
+    environmentFields.environmentAccount,
+    environmentFields.environmentContact,
   ]) {
-    if (stic_oe_hasRelateValue(field)) return field.type;
+    if (hasRelateValue(field)) return field.type;
   }
   return "";
 };
 
 // Clear both the visible name and hidden foreign key for a relate field.
-const stic_oe_clearRelateField = ({ id, name }) => {
+const clearRelateField = ({ id, name }) => {
   for (const fieldId of [id, name]) {
-    const element = stic_oe_getFieldInForm(fieldId);
+    const element = getFieldElement(fieldId);
     if (element) element.value = "";
   }
 };
 
 // Show options for the active relate; with no relate selected, show every option.
-const stic_oe_filterRelationshipTypeOptions = (
-  type,
-  clearSelection = false,
-) => {
-  const select = stic_oe_getFieldInForm("relationship_type");
+const filterRelationshipTypeOptions = (type, clearSelection = false) => {
+  const select = getFieldElement("relationship_type");
   if (!select) return;
 
-  stic_oe_relationshipTypeOptions ??= [...select.options].map((option) =>
-    option.cloneNode(true),
-  );
+  relationshipTypeOptions ??= [...select.options].map((o) => o.cloneNode(true));
 
   const selected = clearSelection ? "" : select.value;
-  select.length = 0;
-  for (const option of stic_oe_relationshipTypeOptions) {
-    if (option.value === "" || !type || option.value.startsWith(`${type}_`)) {
-      select.add(option.cloneNode(true));
-    }
-  }
+
+  select.replaceChildren(
+    ...relationshipTypeOptions
+      .filter(
+        (option) =>
+          !option.value || !type || option.value.startsWith(`${type}_`),
+      )
+      .map((option) => option.cloneNode(true)),
+  );
   select.value = selected;
 };
 
 // Prefer the relate that triggered this sync; infer from values during initialization.
-const stic_oe_syncEnvironmentRelates = (
-  changedField,
-  clearSelection = false,
-) => {
+const syncEnvironmentRelates = (changedField, clearSelection = false) => {
   const type =
-    changedField && stic_oe_hasRelateValue(changedField)
+    changedField && hasRelateValue(changedField)
       ? (changedField.type ?? "")
-      : stic_oe_getActiveEnvironmentType();
+      : getActiveEnvironmentType();
 
   if (type === "accounts")
-    stic_oe_clearRelateField(stic_oe_fields.environment_contact);
+    clearRelateField(environmentFields.environmentContact);
   else if (type === "contacts")
-    stic_oe_clearRelateField(stic_oe_fields.environment_account);
+    clearRelateField(environmentFields.environmentAccount);
 
-  stic_oe_filterRelationshipTypeOptions(type, clearSelection);
+  filterRelationshipTypeOptions(type, clearSelection);
 };
 
 // Handle changes from either relate input, including manual deletion of its name.
-const stic_oe_onEnvironmentRelateChange = (field, isNameInput = false) => {
+const onEnvironmentRelateChange = (field, isNameInput = false) => {
   // Only the name input owns this rule: the popup writes the hidden ID first,
   // so clearing it here would drop the ID just returned by the popup.
-  if (isNameInput && !stic_oe_getFieldValue(field.name)) {
-    const idInput = stic_oe_getFieldInForm(field.id);
+  if (isNameInput && !getFieldValue(field.name)) {
+    const idInput = getFieldElement(field.id);
     if (idInput) idInput.value = "";
   }
 
   // Sync the environment relates to ensure the correct relationship type options are displayed.
-  stic_oe_syncEnvironmentRelates(field, true);
+  syncEnvironmentRelates(field, true);
 };
 
 // Register change handlers on each visible relate name and hidden foreign key.
-function stic_oe_initEditView() {
-  const yahooEvent = globalThis.YAHOO?.util?.Event;
-
+function initOEEditView() {
   for (const field of [
-    stic_oe_fields.environment_account,
-    stic_oe_fields.environment_contact,
+    environmentFields.environmentAccount,
+    environmentFields.environmentContact,
   ]) {
     for (const fieldId of [field.id, field.name]) {
-      const element = stic_oe_getFieldInForm(fieldId);
+      const element = getFieldElement(fieldId);
       if (!element) continue;
 
       const handleChange = () =>
-        stic_oe_onEnvironmentRelateChange(field, fieldId === field.name);
-      if (yahooEvent) yahooEvent.addListener(element, "change", handleChange);
-      else element.addEventListener("change", handleChange);
+        onEnvironmentRelateChange(field, fieldId === field.name);
+      YAHOO.util.Event.addListener(element, "change", handleChange);
     }
   }
 
-  stic_oe_syncEnvironmentRelates();
+  syncEnvironmentRelates();
 }
 
 /* VIEWS CUSTOM CODE */
@@ -265,7 +231,8 @@ switch (viewType()) {
   case "quickcreate":
   case "popup":
     setAutofill(["name"]);
-    stic_oe_initEditView();
+    addRequiredMark("stic_organizational_environment_accounts_1_name");
+    initOEEditView();
     break;
   case "detail":
     break;
