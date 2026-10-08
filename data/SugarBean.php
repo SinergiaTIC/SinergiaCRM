@@ -2548,7 +2548,11 @@ class SugarBean
                     $this->$key = trim($this->$key);
                 }
 
-                if (isset($def['type']) && ($def['type'] == 'html' || $def['type'] == 'longhtml')) {
+                // STIC-Custom 20260901 JCH - Avoid using property "key" if it is not set for html/longhtml fields
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1399
+                // if (isset($def['type']) && ($def['type'] == 'html' || $def['type'] == 'longhtml')) {
+                if (isset($def['type']) && ($def['type'] == 'html' || $def['type'] == 'longhtml') && property_exists($this, $key)) {
+                // END STIC-Custom (JCH 20260901)
                     $this->$key = purify_html($this->$key, ['HTML.ForbiddenElements' => ['iframe' => true]]);
                 // STIC-Custom 20210326 jchg: Avoid cleaning html in email templates body to preserve content pasted from external sources
                 // STIC#607

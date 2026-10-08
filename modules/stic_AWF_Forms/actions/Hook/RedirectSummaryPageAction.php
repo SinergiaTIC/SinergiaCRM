@@ -76,10 +76,6 @@ class RedirectSummaryPageAction extends HookActionDefinition implements ITermina
             'summaryHtml' => $summaryHtml
         ));
         return $result;
-
-        if (!defined('sugarEntry') || !sugarEntry) {
-            define('sugarEntry', true);
-        }
     }
 
     /**
