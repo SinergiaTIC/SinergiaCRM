@@ -1997,12 +1997,10 @@ class stic_AwfLayout {
           containerType: 'tab_item',
         });
         template.groupTemplate = true;
-        // Title-visibility default for a NEW element template: a
-        // NON-repeatable group holds a single instance, so the element title
-        // would just repeat the group title — hidden by default (the wizard
-        // checkbox re-enables it). Repeatable groups keep it visible: it
-        // names each instance ("#1", "#2").
-        template.showTitle = rootBlock ? !!rootBlock.is_repeatable : true;
+        // The template title is ALWAYS visible (spec: it names the instances /
+        // tab panes). The unified group panel lets the user set the singular
+        // record name; visibility itself is not user-configurable.
+        template.showTitle = true;
         groupSection.elements.unshift(template);
       }
       return template;
@@ -2466,21 +2464,23 @@ class stic_AwfLayout {
       //    reference could push the template inside itself, corrupting the
       //    structure with a cycle (infinite recursion / infinite sections).
       const template = ensureGroupTemplate(section, rootBlock);
-      // The template's container type FOLLOWS the group's flavor: a tabs
-      // parent renders its instances as dynamic tabs (template = tab_item
-      // pane); a panel/card parent renders stacked instance cards (template =
-      // plain panel, user-changeable to card in the wizard)
+      // Spec "Simplificación UX del Wizard (Paso 4)": the element template is an
+      // INTERNAL 2-level wrapper the user never edits on its own — its chrome is
+      // DERIVED from the group on every sync:
+      //  - containerType: tabs parent -> 'tab_item' pane; panel/card -> 'panel'
+      //  - showTitle: ALWAYS true (it names the instances / tab panes)
+      //  - subtitle: ELIMINATED (the group subtitle carries the help text)
+      //  - collapsibility: stacked cards (panel/card) follow the group's
+      //    isCollapsible/isCollapsed; tabs panes never collapse individually
       const groupIsTabs = section.containerType === 'panel_tabs' || section.containerType === 'card_tabs';
-      if (groupIsTabs) {
-        template.containerType = 'tab_item';
-      } else if (template.containerType === 'tab_item') {
-        template.containerType = 'panel';
-      }
-      // The template's default title mirrors the group's name + " (element)":
-      // refreshed on group renames unless the user customized it. Title
-      // VISIBILITY is a default set at template creation (hidden for
-      // non-repeatable groups) and never forced here, or the user's wizard
-      // choice would flip back on every sync.
+      template.containerType = groupIsTabs ? 'tab_item' : 'panel';
+      template.showTitle = true;
+      template.subtitle = '';
+      template.isCollapsible = groupIsTabs ? false : !!section.isCollapsible;
+      template.isCollapsed = (!groupIsTabs && section.isCollapsible) ? !!section.isCollapsed : false;
+      // The template's default title is the singular record name (user
+      // editable in the unified group panel): refreshed on group renames
+      // unless the user customized it.
       if (!template.is_custom_title) template.title = groupTemplateTitle(rootBlock);
       const outsideElements = section.elements.filter(el => el.id !== template.id);
       if (outsideElements.length > 0) {

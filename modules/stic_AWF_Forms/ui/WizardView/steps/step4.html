@@ -527,14 +527,15 @@
                                                                     <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
                                                                         <label :for="`section${section.id}_isCollapsible`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_IS_COLLAPSIBLE')"></label>
                                                                         <input :id="`section${section.id}_isCollapsible`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsible"
-                                                                                @change="if(!section.isCollapsible) { section.isCollapsed = false; }"/>
+                                                                                @change="if(!section.isCollapsible) { section.isCollapsed = false; } syncGroupTemplateChrome(section)"/>
                                                                     </div>
                                                                 </template>
                                                                 <!-- Collaped (not for 'tab' panes) -->
                                                                 <template x-if="section.showTitle && section.isCollapsible && section.containerType !== 'tab_item'">
                                                                     <div class="col-3 form-check form-switch d-flex align-items-center mb-0">
                                                                         <label :for="`section${section.id}_isCollapsed`" class="form-check-label me-2" x-text="utils.translateForFieldLabel('LBL_SECTION_ISCOLLAPSED')"></label>
-                                                                        <input :id="`section${section.id}_isCollapsed`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsed"/>
+                                                                        <input :id="`section${section.id}_isCollapsed`" class="form-check-input" type="checkbox" role="switch" x-model="section.isCollapsed"
+                                                                                @change="syncGroupTemplateChrome(section)"/>
                                                                     </div>
                                                                 </template>
                                                             </div>
@@ -550,6 +551,20 @@
                                                                     <div class="col-9">
                                                                         <label :for="`section${section.id}_subtitle`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_SUBTITLE')"></label>
                                                                         <input :id="`section${section.id}_subtitle`" type="text" class="form-control" autocomplete="off" x-model="section.subtitle"/>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+
+                                                            <!-- Group singular record name (internal element
+                                                                 template title: "Menor", "Participante", ...) -->
+                                                            <template x-if="isGroupSection(section)">
+                                                                <div class="row mt-2">
+                                                                    <div class="col-6" x-init="utils.setInlineHelpQtip()">
+                                                                        <label :for="`section${section.id}_templateTitle`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_GROUP_SINGULAR_NAME')"></label>
+                                                                        <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                                        <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_SECTION_GROUP_SINGULAR_NAME_DESC')"></div>
+                                                                        <input :id="`section${section.id}_templateTitle`" type="text" class="form-control" autocomplete="off"
+                                                                               :value="getGroupTemplateTitle(section)" @input="setGroupTemplateTitle(section, $event.target.value)"/>
                                                                     </div>
                                                                 </div>
                                                             </template>
@@ -595,11 +610,11 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Section Body (group sections: p-0 so the element template
-                                                     child sits flush/attached to the group card) -->
-                                                <div class="card-body" :class="isGroupSection(section) ? 'p-0' : 'p-2'" x-show="!isCollapsed" x-transition>
+                                                <!-- Section Body (the group's internal element template
+                                                     is flattened: its children render directly) -->
+                                                <div class="card-body p-2" x-show="!isCollapsed" x-transition>
                                                     <!-- Content: data blocks and (level < 2) nested sections -->
-                                                    <template x-for="(element, index) in section.elements" :key="element.id">
+                                                    <template x-for="(element, index) in getSectionBodyElements(section)" :key="element.id">
                                                         <div>
                                                             <template x-if="element.type === 'section'">
                                                                 <div x-data="{ section: element, level: level + 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
@@ -610,7 +625,7 @@
                                                             </template>
                                                         </div>
                                                     </template>
-                                                    <template x-if="section.elements.length === 0">
+                                                    <template x-if="getSectionBodyElements(section).length === 0">
                                                         <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
                                                     </template>
                                                 </div>

@@ -2737,6 +2737,54 @@ class WizardStep4 {
         return !!parent && parent.isGroupSection === true;
       },
 
+      // The group's element TEMPLATE child (the internal 2-level wrapper).
+      // Spec "Simplificación UX del Wizard (Paso 4)": it is NEVER shown as an
+      // independent node in step 4; its children render inside the group card.
+      getGroupTemplate(section) {
+        if (!section || !this.isGroupSection(section)) return null;
+        return section.elements.find(el => el.type === 'section' && el.groupTemplate === true) || null;
+      },
+
+      isGroupTemplateSection(section) {
+        return !!section && section.groupTemplate === true;
+      },
+
+      // Children rendered inside a section card in step 4. A group section's
+      // template child is an internal wrapper: its children (the per-block host
+      // sections) are shown directly inside the group card, so the user can
+      // order the fields without seeing the template node.
+      getSectionBodyElements(section) {
+        const template = this.getGroupTemplate(section);
+        return template ? template.elements : (section ? section.elements : []);
+      },
+
+      // Singular record name (template.title), edited from the unified group panel
+      getGroupTemplateTitle(section) {
+        const template = this.getGroupTemplate(section);
+        return template ? (template.title || '') : '';
+      },
+
+      setGroupTemplateTitle(section, value) {
+        const template = this.getGroupTemplate(section);
+        if (!template) return;
+        template.title = value;
+        template.is_custom_title = true;
+      },
+
+      // Keeps the internal template chrome DERIVED from the group while editing
+      // (the same rules the sync enforces): containerType, showTitle, subtitle
+      // and collapsibility are never edited on the template directly.
+      syncGroupTemplateChrome(section) {
+        const template = this.getGroupTemplate(section);
+        if (!template) return;
+        const isTabs = this.isTabsContainer(section);
+        template.containerType = isTabs ? 'tab_item' : 'panel';
+        template.showTitle = true;
+        template.subtitle = '';
+        template.isCollapsible = isTabs ? false : !!section.isCollapsible;
+        template.isCollapsed = (!isTabs && section.isCollapsible) ? !!section.isCollapsed : false;
+      },
+
       // Container options for a section: a direct child of tabs can only be a
       // 'tab_item' pane; a group's template child offers panel/card when its
       // parent group is not a tabs container (with a tabs parent the template
@@ -2799,6 +2847,9 @@ class WizardStep4 {
             }
           });
         }
+        // A group section's internal template chrome is DERIVED (spec §5.3):
+        // keep it consistent immediately, not only on the next sync
+        if (this.isGroupSection(section)) this.syncGroupTemplateChrome(section);
       },
 
 
@@ -3147,14 +3198,17 @@ class WizardStep4 {
         const candidates = groupRoot
           ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
           : this.getStandaloneSections();
-        const targets = candidates.filter(s => !excluded.has(s.id) && (!parent || s.id !== parent.id));
+        // The internal group template is never a move target (it is hidden)
+        const targets = candidates.filter(s => !excluded.has(s.id) && !this.isGroupTemplateSection(s) && (!parent || s.id !== parent.id));
         return this.canMoveSectionOut(section) ? [...targets, this.getFormMoveTarget()] : targets;
       },
 
       // Hierarchical section label: "Parent - Child - ..." (walks up the parents)
       getSectionLabel(section) {
         const own = section.title || utils.translate('LBL_SECTION_NO_TITLE');
-        const parent = this.getParentSectionOf(section);
+        let parent = this.getParentSectionOf(section);
+        // Skip the internal group template level (it is hidden in the UI)
+        while (parent && this.isGroupTemplateSection(parent)) parent = this.getParentSectionOf(parent);
         return parent ? `${this.getSectionLabel(parent)} - ${own}` : own;
       },
 
@@ -3220,7 +3274,7 @@ class WizardStep4 {
         const candidates = groupRoot
           ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
           : this.getStandaloneSections();
-        return candidates.filter(s => s.id !== fromSection.id && !this.isTabsContainer(s));
+        return candidates.filter(s => s.id !== fromSection.id && !this.isTabsContainer(s) && !this.isGroupTemplateSection(s));
       },
 
       // Adds a new (empty) nested section to ANY section, titled "Nova secció"
