@@ -368,7 +368,6 @@ $mod_strings = array (
   // Layout -> Sections
   'LBL_SECTIONS' => 'Seccions',
   'LBL_SECTION_ADD' => 'Afegeix una secció',
-  'LBL_SECTION_NEW' => 'Nova secció',
   'LBL_SECTION_TEMPLATE_TITLE' => 'Element',
   'LBL_SECTION_GROUP_SINGULAR_NAME' => 'Nom singular del registre',
   'LBL_SECTION_GROUP_SINGULAR_NAME_DESC' => 'Nom en singular de cada registre del grup (per exemple «Menor» o «Participant»). Serveix per etiquetar les instàncies.',
@@ -378,6 +377,8 @@ $mod_strings = array (
   'LBL_SECTION_NO_TITLE' => '< Sense títol >',
   'LBL_SECTION_SHOW_TITLE' => 'Mostra el títol',
   'LBL_SECTION_CONTAINER' => 'Contenidor visual',
+  'LBL_SECTION_CONTAINER_TAB_ITEM' => 'Pestanya',
+  'LBL_SECTION_CONTAINER_ACCORDION_ITEM' => 'Element d\'acordió',
   'LBL_SECTION_IS_COLLAPSIBLE' => 'Col·lapsable',
   'LBL_SECTION_ISCOLLAPSED' => 'Col·lapsat inicialment',
   'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Mou a...',

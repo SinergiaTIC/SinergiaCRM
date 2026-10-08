@@ -368,7 +368,6 @@ $mod_strings = array (
   // Layout -> Sections
   'LBL_SECTIONS' => 'Secciones',
   'LBL_SECTION_ADD' => 'Añadir sección',
-  'LBL_SECTION_NEW' => 'Nueva sección',
   'LBL_SECTION_TEMPLATE_TITLE' => 'Elemento',
   'LBL_SECTION_GROUP_SINGULAR_NAME' => 'Nombre singular del registro',
   'LBL_SECTION_GROUP_SINGULAR_NAME_DESC' => 'Nombre en singular de cada registro del grupo (por ejemplo «Menor» o «Participante»). Se usa para etiquetar las instancias.',
@@ -378,6 +377,8 @@ $mod_strings = array (
   'LBL_SECTION_NO_TITLE' => '< Sin título >',
   'LBL_SECTION_SHOW_TITLE' => 'Mostrar título',
   'LBL_SECTION_CONTAINER' => 'Contenedor visual',
+  'LBL_SECTION_CONTAINER_TAB_ITEM' => 'Pestaña',
+  'LBL_SECTION_CONTAINER_ACCORDION_ITEM' => 'Elemento de acordeón',
   'LBL_SECTION_IS_COLLAPSIBLE' => 'Colapsable',
   'LBL_SECTION_ISCOLLAPSED' => 'Colapsado inicialmente',
   'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Mover a...',

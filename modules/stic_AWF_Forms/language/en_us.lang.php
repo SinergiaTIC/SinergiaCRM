@@ -368,7 +368,6 @@ $mod_strings = array (
   // Layout -> Sections
   'LBL_SECTIONS' => 'Sections',
   'LBL_SECTION_ADD' => 'Add section',
-  'LBL_SECTION_NEW' => 'New section',
   'LBL_SECTION_TEMPLATE_TITLE' => 'Element',
   'LBL_SECTION_GROUP_SINGULAR_NAME' => 'Singular record name',
   'LBL_SECTION_GROUP_SINGULAR_NAME_DESC' => 'Singular name of each group record (for example "Minor" or "Participant"). Used to label the instances.',
@@ -378,6 +377,8 @@ $mod_strings = array (
   'LBL_SECTION_NO_TITLE' => '< No title >',
   'LBL_SECTION_SHOW_TITLE' => 'Show title',
   'LBL_SECTION_CONTAINER' => 'Visual container',
+  'LBL_SECTION_CONTAINER_TAB_ITEM' => 'Tab',
+  'LBL_SECTION_CONTAINER_ACCORDION_ITEM' => 'Accordion item',
   'LBL_SECTION_IS_COLLAPSIBLE' => 'Collapsible',
   'LBL_SECTION_ISCOLLAPSED' => 'Initially collapsed',
   'LBL_SECTION_MOVE_ELEMENT_NO_OPTION' => 'Move to...',

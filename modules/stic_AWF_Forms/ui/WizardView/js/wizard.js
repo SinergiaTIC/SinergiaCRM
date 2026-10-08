@@ -2722,6 +2722,17 @@ class WizardStep4 {
         return !!section && (section.containerType === 'card_tabs' || section.containerType === 'panel_tabs');
       },
 
+      // True when the section is an accordion CONTAINER (either flavor)
+      isAccordionContainer(section) {
+        return !!section && (section.containerType === 'card_accordion' || section.containerType === 'panel_accordion');
+      },
+
+      // A 'tab_item' / 'accordion_item' section is a pane/item: its title IS the
+      // tab label / accordion header (always shown, never collapsible alone)
+      isItemSection(section) {
+        return !!section && (section.containerType === 'tab_item' || section.containerType === 'accordion_item');
+      },
+
       // True when the section is a DIRECT child of a tabs container section:
       // then its only container type is 'tab_item' (a pane of the parent tabs).
       isDirectChildOfTabs(section) {
@@ -2729,10 +2740,17 @@ class WizardStep4 {
         return this.isTabsContainer(parent);
       },
 
+      // True when the section is a DIRECT child of an accordion container:
+      // then its only container type is 'accordion_item'.
+      isDirectChildOfAccordion(section) {
+        const parent = this.getParentSectionOf(section);
+        return this.isAccordionContainer(parent);
+      },
+
       // A group section's template child (2-level model) is identified by the
-      // persistent groupTemplate marker (legacy: its tab_item container type).
+      // persistent groupTemplate marker (legacy: its tab_item/accordion_item type).
       isGroupTemplateChild(section) {
-        if (section?.groupTemplate !== true && section?.containerType !== 'tab_item') return false;
+        if (section?.groupTemplate !== true && section?.containerType !== 'tab_item' && section?.containerType !== 'accordion_item') return false;
         const parent = this.getParentSectionOf(section);
         return !!parent && parent.isGroupSection === true;
       },
@@ -2778,71 +2796,93 @@ class WizardStep4 {
         const template = this.getGroupTemplate(section);
         if (!template) return;
         const isTabs = this.isTabsContainer(section);
-        template.containerType = isTabs ? 'tab_item' : 'panel';
+        const isAccordion = this.isAccordionContainer(section);
+        const isTabbed = isTabs || isAccordion;
+        template.containerType = isTabs ? 'tab_item' : (isAccordion ? 'accordion_item' : 'panel');
         template.showTitle = true;
         template.subtitle = '';
-        template.isCollapsible = isTabs ? false : !!section.isCollapsible;
-        template.isCollapsed = (!isTabs && section.isCollapsible) ? !!section.isCollapsed : false;
+        template.isCollapsible = isTabbed ? false : !!section.isCollapsible;
+        template.isCollapsed = (!isTabbed && section.isCollapsible) ? !!section.isCollapsed : false;
       },
 
-      // Container options for a section: a direct child of tabs can only be a
-      // 'tab_item' pane; a group's template child offers panel/card when its
-      // parent group is not a tabs container (with a tabs parent the template
-      // IS a tab_item pane: locked); otherwise panel/card/tabs.
+      // Container options for a section: a direct child of tabs/accordion can
+      // only be the matching item; a group's template child offers panel/card
+      // when its parent group is not a tabs/accordion container (with a
+      // tabs/accordion parent the template IS an item: locked); otherwise
+      // panel/card/tabs/accordion.
       getAvailableContainerTypes(section) {
         if (this.isDirectChildOfTabs(section)) {
           const tabOption = stic_AwfLayoutSection.containerType_in_formList().find(c => c.id === 'tab_item')
-            ?? { id: 'tab_item', text: utils.translate('LBL_SECTION_CONTAINER_TAB') };
+            ?? { id: 'tab_item', text: utils.translate('LBL_SECTION_CONTAINER_TAB_ITEM') };
           return [tabOption];
+        }
+        if (this.isDirectChildOfAccordion(section)) {
+          const itemOption = stic_AwfLayoutSection.containerType_in_formList().find(c => c.id === 'accordion_item')
+            ?? { id: 'accordion_item', text: utils.translate('LBL_SECTION_CONTAINER_ACCORDION_ITEM') };
+          return [itemOption];
         }
         if (this.isGroupTemplateChild(section)) {
           const parent = this.getParentSectionOf(section);
           const parentIsTabs = this.isTabsContainer(parent);
-          const validIds = parentIsTabs ? ['tab_item'] : ['panel', 'card'];
+          const parentIsAccordion = this.isAccordionContainer(parent);
+          const validIds = parentIsTabs ? ['tab_item'] : (parentIsAccordion ? ['accordion_item'] : ['panel', 'card']);
           const list = stic_AwfLayoutSection.containerType_in_formList();
-          if (parentIsTabs && !list.some(c => c.id === 'tab_item')) list.push({ id: 'tab_item', text: utils.translate('LBL_SECTION_CONTAINER_TAB') });
+          if (parentIsTabs && !list.some(c => c.id === 'tab_item')) list.push({ id: 'tab_item', text: utils.translate('LBL_SECTION_CONTAINER_TAB_ITEM') });
+          if (parentIsAccordion && !list.some(c => c.id === 'accordion_item')) list.push({ id: 'accordion_item', text: utils.translate('LBL_SECTION_CONTAINER_ACCORDION_ITEM') });
           return list.filter(c => validIds.includes(c.id));
         }
-        const validCategories = ['panel', 'card', 'card_tabs', 'panel_tabs'];
+        const validCategories = ['panel', 'card', 'card_tabs', 'panel_tabs', 'card_accordion', 'panel_accordion'];
         return stic_AwfLayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
       },
 
       // Side effects of changing a section's container type:
-      //  - a tabs container (either flavor) turns its DIRECT section children
-      //    into 'tab_item' panes (title forced on, collapse off) and groups any
-      //    direct NON-section elements into a new child pane ('Nova secció');
-      //  - leaving tabs reverts the 'tab_item' children to plain panels.
+      //  - a tabs/accordion container turns its DIRECT section children into the
+      //    matching items ('tab_item' / 'accordion_item'; title forced on,
+      //    collapse off) and groups any direct NON-section elements into a new child item 
+      //  - leaving tabs/accordion reverts the items to plain panels.
       handleContainerTypeChange(section, newType) {
         if (!section) return;
-        if (this.isTabsContainer({ containerType: newType })) {
-          // The PARENT's own showTitle is left untouched: a tabs container
-          // honors it like a plain panel/card (off = no header, just the tab
-          // bar and its panes). Its child PANES always need their title, since
-          // it IS the tab label.
+        const newIsTabs = this.isTabsContainer({ containerType: newType });
+        const newIsAccordion = this.isAccordionContainer({ containerType: newType });
+        if (newIsTabs || newIsAccordion) {
+          // The PARENT's own showTitle is left untouched: a tabs/accordion
+          // container honors it like a plain panel/card (off = no header, just
+          // the bar/headers and their items). Its child ITEMS always need their
+          // title, since it IS the tab label / accordion header.
           // Collapsible flags are NOT reset: they only apply while a visible
           // header exists (the wizard already hides them with showTitle).
-          // Non-section elements cannot live in a tabs container: group them
-          // into a new child pane ('Nova secció')
+          // Non-section elements cannot live in the container: group them into a new child item
+          const itemType = newIsAccordion ? 'accordion_item' : 'tab_item';
           const nonSectionElements = section.elements.filter(el => el.type !== 'section');
           if (nonSectionElements.length > 0) {
-            const pane = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NEW') });
-            pane.containerType = 'tab_item';
-            pane.showTitle = true;
-            pane.isCollapsible = false;
-            pane.isCollapsed = false;
-            pane.elements = nonSectionElements;
+            const item = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
+            item.containerType = itemType;
+            item.showTitle = true;
+            item.isCollapsible = false;
+            item.isCollapsed = false;
+            item.elements = nonSectionElements;
             section.elements = section.elements.filter(el => el.type === 'section');
-            section.elements.push(pane);
+            section.elements.push(item);
+          }
+          // A tabs/accordion container needs at least ONE item to render: an
+          // empty section gets a single empty item (spec 2026-10-08)
+          if (!section.elements.some(el => el.type === 'section')) {
+            const item = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
+            item.containerType = itemType;
+            item.showTitle = true;
+            item.isCollapsible = false;
+            item.isCollapsed = false;
+            section.elements.push(item);
           }
           section.elements.forEach(el => {
-            if (el.type === 'section' && el.containerType !== 'tab_item') {
-              el.containerType = 'tab_item';
+            if (el.type === 'section' && el.containerType !== itemType) {
+              el.containerType = itemType;
               el.showTitle = true;
             }
           });
         } else {
           section.elements.forEach(el => {
-            if (el.type === 'section' && el.containerType === 'tab_item') {
+            if (el.type === 'section' && (el.containerType === 'tab_item' || el.containerType === 'accordion_item')) {
               el.containerType = 'panel';
             }
           });
@@ -2932,7 +2972,7 @@ class WizardStep4 {
 
       createSection() {
         this.sections.push(new stic_AwfLayoutSection({
-          title: utils.translate('LBL_SECTION_NEW'),
+          title: utils.translate('LBL_SECTION_NO_TITLE'),
         }));
       },
 
@@ -2953,7 +2993,7 @@ class WizardStep4 {
         // NEVER be deleted in isolation — the group is removed as a whole
         // (parent section), so the template is protected here (identified by
         // its groupTemplate marker; legacy configs: the tab_item container)
-        if (section && (section.groupTemplate === true || section.containerType === 'tab_item') && this.isGroupSection(this.getParentSectionOf(section))) {
+        if (section && (section.groupTemplate === true || section.containerType === 'tab_item' || section.containerType === 'accordion_item') && this.isGroupSection(this.getParentSectionOf(section))) {
           return false;
         }
         // A section (top-level or nested) can be deleted only when it holds no
@@ -3230,15 +3270,20 @@ class WizardStep4 {
         if (idx >= 0) arr.splice(idx, 1);
         target.elements.push(section);
 
-        // Container-type coherence: a section moved INTO a tabs container
-        // becomes a 'tab_item' pane (title on, collapse off); a pane moved out
-        // of it reverts to a plain panel.
+        // Container-type coherence: a section moved INTO a tabs/accordion
+        // container becomes the matching item (title on, collapse off); an item
+        // moved out of it reverts to a plain panel.
         if (this.isTabsContainer(target)) {
           section.containerType = 'tab_item';
           section.showTitle = true;
           section.isCollapsible = false;
           section.isCollapsed = false;
-        } else if (section.containerType === 'tab_item') {
+        } else if (this.isAccordionContainer(target)) {
+          section.containerType = 'accordion_item';
+          section.showTitle = true;
+          section.isCollapsible = false;
+          section.isCollapsed = false;
+        } else if (section.containerType === 'tab_item' || section.containerType === 'accordion_item') {
           section.containerType = 'panel';
         }
       },
@@ -3274,13 +3319,13 @@ class WizardStep4 {
         const candidates = groupRoot
           ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
           : this.getStandaloneSections();
-        return candidates.filter(s => s.id !== fromSection.id && !this.isTabsContainer(s) && !this.isGroupTemplateSection(s));
+        return candidates.filter(s => s.id !== fromSection.id && !this.isTabsContainer(s) && !this.isAccordionContainer(s) && !this.isGroupTemplateSection(s));
       },
 
-      // Adds a new (empty) nested section to ANY section, titled "Nova secció"
+      // Adds a new (empty) nested section to ANY section,
       // like the top-level add-section button, and focuses its title editor
       addNestedSection(section) {
-        const nested = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NEW') });
+        const nested = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
         section.elements.push(nested);
 
         // Once rendered: scroll to the new section card and start editing its title

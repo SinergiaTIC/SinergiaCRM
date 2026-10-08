@@ -4014,6 +4014,9 @@ $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card']
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel_tabs'] = 'Panel with tabs';
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card_tabs'] = 'Card with tabs';
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tab_item'] = 'Tab';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel_accordion'] = 'Panel with accordion';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card_accordion'] = 'Card with accordion';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['accordion_item'] = 'Accordion item';
 
 // Advanced Web Forms: configuration->layout->theme->shadow_intensity
 $app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['none'] = 'No shadow (flat)';

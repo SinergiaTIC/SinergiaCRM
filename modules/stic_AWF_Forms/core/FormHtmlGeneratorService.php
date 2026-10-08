@@ -293,6 +293,18 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .nav-tabs .nav-link:hover, #{$wrapperId} .nav-tabs .nav-link:focus-visible { color: var(--bs-body-color); background-color: {$tabHoverBg}; border-color: {$tabHoverBorder}; border-top-color: {$tabHoverBorder}; border-bottom-color: {$tabHoverBorder}; }
 #{$wrapperId} .nav-tabs .nav-link.active, #{$wrapperId} .nav-tabs .nav-link:active { color: var(--bs-body-color); background-color: var(--bs-body-bg); border-color: {$tabIdleBorder}; border-top: 2px solid var(--bs-primary); border-bottom-color: transparent; font-weight: 600; box-shadow: none; position: relative; z-index: 2; margin-bottom: -1px !important; }
 #{$wrapperId} .tab-pane { margin-top: -1px; }
+/* Accordion look: a bordered stack of items; the OPEN item is marked with the
+   theme primary color (left accent + tinted header + colored label). Only one
+   item is open at a time (Alpine `openItem`). */
+#{$wrapperId} .awf-accordion { border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); overflow: hidden; }
+#{$wrapperId} .awf-accordion-item + .awf-accordion-item { border-top: 1px solid var(--bs-border-color); }
+#{$wrapperId} .awf-accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .75rem 1rem; background-color: rgba(0, 0, 0, 0.02); border: 0; border-left: 3px solid transparent; text-align: left; font-weight: 600; color: var(--bs-body-color); cursor: pointer; transition: background-color .15s ease-in-out, color .15s ease-in-out, border-color .15s ease-in-out; }
+#{$wrapperId} .awf-accordion-header:hover, #{$wrapperId} .awf-accordion-header:focus-visible { background-color: rgba(var(--bs-primary-rgb), 0.06); }
+#{$wrapperId} .awf-accordion-header.is-open { color: var(--bs-primary); border-left-color: var(--bs-primary); background-color: rgba(var(--bs-primary-rgb), 0.08); }
+#{$wrapperId} .awf-accordion-title { flex: 1 1 auto; }
+#{$wrapperId} .awf-accordion-chevron { flex: 0 0 auto; width: .55em; height: .55em; margin-right: .25rem; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .2s ease; }
+#{$wrapperId} .awf-accordion-chevron.open { transform: rotate(-135deg); }
+#{$wrapperId} .awf-accordion-body { padding: 1rem; }
 ";
         if ($inputCssProps !== "")  $html .= "\n".$inputCssProps;
         if ($selectCssProps !== "")  $html .= "\n".$selectCssProps;
@@ -540,10 +552,23 @@ class FormHtmlGeneratorService {
             return $this->renderSectionChildren($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
         }
 
+        // Accordion ITEM sections ('accordion_item', a direct child of an
+        // accordion container) render chrome-less: the item chrome (header +
+        // chevron) belongs to the parent accordion
+        if ($section->containerType === 'accordion_item') {
+            return $this->renderSectionChildren($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
+        }
+
         // Tabs CONTAINERS (tabs_card/tabs_panel): their nested sections become
         // tab panes (only at chrome level; a pane renders its children flat)
         if ($withChrome && in_array($section->containerType, ['card_tabs', 'panel_tabs'], true)) {
             return $this->renderContainerSections($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, $section->containerType === 'card_tabs');
+        }
+
+        // Accordion CONTAINERS (accordion_card/accordion_panel): their nested
+        // sections become accordion items (one open at a time)
+        if ($withChrome && in_array($section->containerType, ['card_accordion', 'panel_accordion'], true)) {
+            return $this->renderAccordionSections($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, $section->containerType === 'card_accordion');
         }
 
         // Pane content (no chrome): the section's children without its own card/header
@@ -654,7 +679,7 @@ class FormHtmlGeneratorService {
      * switching (no Bootstrap JS needed). $bordered (tabs_card) wraps the tab
      * area in a card (border); tabs_panel keeps it plain. A tabs container
      * holds ONLY sections: any direct block/field element is grouped into a
-     * synthetic trailing pane ('Nova secció'). Tab labels use the nested
+     * synthetic trailing pane. Tab labels use the nested
      * section's title (or the translated fallback); hidden tab panes activate
      * automatically when a field inside them fails validation (@invalid.capture).
      */
@@ -674,12 +699,11 @@ class FormHtmlGeneratorService {
                 $directElements[] = $el;
             }
         }
-        // A tabs container holds only sections: group direct elements into a
-        // synthetic trailing pane ('Nova secció'), matching the wizard behavior
+        // A tabs container holds only sections: group direct elements into a synthetic trailing pane, matching the wizard behavior
         if (!empty($directElements)) {
             $syntheticPane = new FormLayoutSection();
             $syntheticPane->id = 'synthetic_' . uniqid();
-            $syntheticPane->title = translate('LBL_SECTION_NEW', 'stic_AWF_Forms');
+            $syntheticPane->title = translate('LBL_SECTION_NO_TITLE', 'stic_AWF_Forms');
             $syntheticPane->containerType = 'tab_item';
             $syntheticPane->showTitle = true;
             $syntheticPane->elements = $directElements;
@@ -800,7 +824,148 @@ class FormHtmlGeneratorService {
                 }
                 $html .= "<div class='card-body' {$bodyShowAttr}>" . $this->newLine('+');
                 {
-                    $html .= $tabsHtml;
+                     $html .= $tabsHtml;
+                }
+                $html .= "</div>" . $this->newLine('-');
+            }
+            $html .= "</div>" . $this->newLine('-');
+        }
+        return $html;
+    }
+
+    /**
+     * Renders a section whose containerType is 'card_accordion' or
+     * 'panel_accordion': its RENDERABLE nested sections become accordion items,
+     * and only ONE item is open at a time. Alpine drives the switching (no
+     * Bootstrap JS needed). $bordered (card_accordion) wraps the accordion in a
+     * card (border); panel_accordion keeps it as a flat panel. An accordion
+     * container holds ONLY sections: any direct block/field element is grouped
+     * into a synthetic trailing item. Hidden items activate
+     * automatically when a field inside them fails validation (@invalid.capture).
+     * The OPEN item is marked with the theme PRIMARY color (palette).
+     */
+    private function renderAccordionSections(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar, ?string $currentGroupRootId, array $outerIndexVars, bool $bordered): string {
+        $sectionTitle = htmlspecialchars($section->title ?? '', ENT_QUOTES, 'UTF-8');
+        $sectionSubtitle = htmlspecialchars($section->subtitle ?? '', ENT_QUOTES, 'UTF-8');
+
+        // Collect renderable nested sections (items) + direct elements
+        $items = [];
+        $directElements = [];
+        foreach ($section->elements as $el) {
+            if ($el instanceof FormLayoutSection) {
+                if ($el instanceof FormLayoutGroupSection || self::sectionHasRenderableContent($el, $config, $currentGroupRootId)) {
+                    $items[] = $el;
+                }
+            } else {
+                $directElements[] = $el;
+            }
+        }
+        // An accordion container holds only sections: group direct elements into a synthetic trailing item, matching the wizard behavior
+        if (!empty($directElements)) {
+            $syntheticItem = new FormLayoutSection();
+            $syntheticItem->id = 'synthetic_' . uniqid();
+            $syntheticItem->title = translate('LBL_SECTION_NO_TITLE', 'stic_AWF_Forms');
+            $syntheticItem->containerType = 'accordion_item';
+            $syntheticItem->showTitle = true;
+            $syntheticItem->elements = $directElements;
+            $items[] = $syntheticItem;
+        }
+        if (empty($items)) return '';
+        $firstItemId = $items[0]->id;
+
+        // Only ONE item open at a time: Alpine owns `openItem`. The @invalid.capture
+        // handler opens the item that contains a field failing validation.
+        $accHtml = "<div class='awf-accordion' style='grid-column: 1 / -1;' x-data=\"{ openItem: '{$firstItemId}' }\" @invalid.capture=\"const itemEl = \$event.target.closest('[data-awf-item]'); if (itemEl) openItem = itemEl.dataset.awfItem\" @awf-show-item=\"openItem = \$event.detail\">" . $this->newLine('+');
+        {
+            foreach ($items as $item) {
+                $itemLabel = htmlspecialchars($item->title !== '' ? $item->title : translate('LBL_SECTION_NO_TITLE', 'stic_AWF_Forms'), ENT_QUOTES, 'UTF-8');
+                $itemSubtitle = htmlspecialchars($item->subtitle ?? '', ENT_QUOTES, 'UTF-8');
+                $accHtml .= "<div class='awf-accordion-item' data-awf-item='{$item->id}'>" . $this->newLine('+');
+                {
+                    $accHtml .= "<button type='button' class='awf-accordion-header' :class=\"openItem === '{$item->id}' ? 'is-open' : ''\" @click=\"openItem = (openItem === '{$item->id}' ? null : '{$item->id}')\" :aria-expanded=\"(openItem === '{$item->id}').toString()\">" . $this->newLine('+');
+                    {
+                        $accHtml .= "<span class='awf-accordion-title'>{$itemLabel}</span>" . $this->newLine();
+                        $accHtml .= "<span class='awf-accordion-chevron' :class=\"openItem === '{$item->id}' ? 'open' : ''\"></span>" . $this->newLine();
+                    }
+                    $accHtml .= "</button>" . $this->newLine('-');
+                    $accHtml .= "<div class='awf-accordion-body' x-show=\"openItem === '{$item->id}'\" x-transition>" . $this->newLine('+');
+                    {
+                        if ($itemSubtitle !== '') $accHtml .= "<div class='awf-section-subtitle text-muted mb-2' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$itemSubtitle}</div>" . $this->newLine();
+                        $accHtml .= $this->renderSectionNode($item, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, false);
+                    }
+                    $accHtml .= "</div>" . $this->newLine('-');
+                }
+                $accHtml .= "</div>" . $this->newLine('-');
+            }
+        }
+        $accHtml .= "</div>" . $this->newLine('-');
+
+        // The header (title/subtitle + collapsible chevron) is rendered ONLY when
+        // the section shows its title, exactly like a plain panel/card. Without
+        // a header there is nothing to click, so collapse is inert: the content
+        // must stay reachable, never hidden behind a toggle nobody can fire.
+        $hasHeader = $section->showTitle && ($section->title !== '' || $section->subtitle !== '');
+        $isCollapsible = $hasHeader && !empty($section->isCollapsible);
+        $startOpen = empty($section->isCollapsed);
+        $bodyId = "awf_sect_" . md5($section->title ?? uniqid());
+        $headerClickAttr = $isCollapsible ? "@click='open = !open'" : "";
+        $headerCursorStyle = $isCollapsible ? "cursor: pointer;" : "";
+        $chevronHtml = "";
+        if ($isCollapsible) {
+            $chevronHtml = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' @click.stop='open = !open' :aria-expanded='open.toString()' aria-controls='{$bodyId}'>" . $this->newLine('+');
+            {
+                $chevronHtml .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" . $this->newLine();
+            }
+            $chevronHtml .= "</button>" . $this->newLine('-');
+        }
+        $xDataAttr = $isCollapsible ? "x-data=\"{ open: " . ($startOpen ? 'true' : 'false') . " }\" @invalid.capture=\"open = true\"" : "";
+        $bodyShowAttr = $isCollapsible ? "id='{$bodyId}' x-show='open' x-transition" : "";
+
+        if ($bordered) {
+            // 'card_accordion': everything framed in one .card
+            $html = "<div class='card mt-2' {$xDataAttr} style='height: auto !important;'>" . $this->newLine('+');
+            {
+                if ($hasHeader) {
+                    $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$headerClickAttr} style='{$headerCursorStyle}'>" . $this->newLine('+');
+                    {
+                        $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                        {
+                            if ($section->title !== '') $html .= "<span>{$sectionTitle}</span>" . $this->newLine();
+                            if ($section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$sectionSubtitle}</span>" . $this->newLine();
+                        }
+                        $html .= "</div>" . $this->newLine('-');
+                        $html .= $chevronHtml;
+                    }
+                    $html .= "</div>" . $this->newLine('-');
+                }
+                $html .= "<div class='card-body' {$bodyShowAttr}>" . $this->newLine('+');
+                {
+                    $html .= $accHtml;
+                }
+                $html .= "</div>" . $this->newLine('-');
+            }
+            $html .= "</div>" . $this->newLine('-');
+        } else {
+            // 'panel_accordion': the SAME chrome as a flat panel
+            $html = "<div class='card awf-section-panel' {$xDataAttr} style='height: auto !important;'>" . $this->newLine('+');
+            {
+                if ($hasHeader) {
+                    $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$headerClickAttr} style='{$headerCursorStyle}'>" . $this->newLine('+');
+                    {
+                        $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                        {
+                            if ($section->title !== '') $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>{$sectionTitle}</h4>" . $this->newLine();
+                            if ($section->subtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$sectionSubtitle}</div>" . $this->newLine();
+                        }
+                        $html .= "</div>" . $this->newLine('-');
+                        $html .= $chevronHtml;
+                    }
+                    $html .= "</div>" . $this->newLine('-');
+                    $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
+                }
+                $html .= "<div class='card-body' {$bodyShowAttr}>" . $this->newLine('+');
+                {
+                    $html .= $accHtml;
                 }
                 $html .= "</div>" . $this->newLine('-');
             }
@@ -1169,6 +1334,10 @@ class FormHtmlGeneratorService {
         // instances as DYNAMIC TABS (spec: group rendered as dynamic tabs):
         // one tab + one pane per instance instead of stacked instance cards.
         $isTabsGroup = $section !== null && in_array($section->containerType, ['panel_tabs', 'card_tabs'], true);
+        // Groups whose DESIGNATED section is an accordion container render their
+        // instances as ACCORDION ITEMS (one open at a time), mirroring the tabs
+        // group: same chrome, same add/remove controls.
+        $isAccordionGroup = $section !== null && in_array($section->containerType, ['panel_accordion', 'card_accordion'], true);
         // Both tabs flavors render the same FLAT chrome for a group (see the
         // tabs branch below), so card_tabs no longer adds a card frame here.
         // Per-level loop variables (idx_l1, idx_l2) keep the Alpine scopes of
@@ -1203,8 +1372,8 @@ class FormHtmlGeneratorService {
         // the hidden pane: the form silently refuses to send, with nothing the
         // user can see. Same contract as the regular tabs container: the pane
         // publishes its instance index and the owner of `activeTab` switches.
-        $paneActivation = "@invalid.capture=\"const paneEl = \$event.target.closest('[data-awf-pane]'); if (paneEl) activeTab = +paneEl.dataset.awfPane\" @awf-show-pane=\"activeTab = +\$event.detail\"";
-        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0 }\" {$paneActivation}>" . $this->newLine('+');
+        $paneActivation = "@invalid.capture=\"const paneEl = \$event.target.closest('[data-awf-pane]'); if (paneEl) activeTab = +paneEl.dataset.awfPane; const itemEl = \$event.target.closest('[data-awf-item]'); if (itemEl) openItem = +itemEl.dataset.awfItem\" @awf-show-pane=\"activeTab = +\$event.detail\"";
+        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0, openItem: 0 }\" {$paneActivation}>" . $this->newLine('+');
         {
             // The group section's header (title/subtitle) is rendered by the
             // loop paths below (stacked cards) or by the tabs chrome — both
@@ -1391,6 +1560,119 @@ class FormHtmlGeneratorService {
                         $html .= "<div class='card-body'{$tabsGroupShowAttr}>" . $this->newLine('+');
                         {
                             $html .= $tabsHtml;
+                        }
+                        $html .= "</div>" . $this->newLine('-');
+                    }
+                    $html .= "</div>" . $this->newLine('-');
+                } else if ($isAccordionGroup) {
+                    // --- DYNAMIC INSTANCE ACCORDION: one item per instance, only
+                    //     one open at a time (`openItem`). Mirrors the tabs group:
+                    //     same chrome, same add/remove controls ---
+                    $instanceTitle = $isRepeatable ? "{$instanceTitleExpression} + ' #' + (index + 1)" : $instanceTitleExpression;
+                    $accSubtitle = ($templateSection !== null && $templateSection->subtitle !== '') ? htmlspecialchars($templateSection->subtitle, ENT_QUOTES, 'UTF-8') : '';
+                    $accHtml = "<div class='awf-accordion' style='grid-column: 1 / -1;'>" . $this->newLine('+');
+                    {
+                        $accHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
+                        {
+                            $accHtml .= "<div class='awf-accordion-item' :data-awf-item='index'>" . $this->newLine('+');
+                            {
+                                $accHtml .= "<div class='awf-accordion-header' :class=\"openItem === index ? 'is-open' : ''\" @click=\"openItem = (openItem === index ? null : index)\" style='cursor: pointer;'>" . $this->newLine('+');
+                                {
+                                    $accHtml .= "<span class='awf-accordion-title' x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
+                                    $accHtml .= "<span class='d-flex align-items-center gap-2'>" . $this->newLine();
+                                    if ($isRepeatable) {
+                                        $accHtml .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click.stop=\"instances = instances.filter(i => i !== instance); if (activeTab >= instances.length) activeTab = Math.max(0, instances.length - 1); if (openItem >= instances.length) openItem = Math.max(0, instances.length - 1)\">" . $this->newLine('+');
+                                        {
+                                            $accHtml .= "<span>{$removeLabel}</span>" . $this->newLine();
+                                        }
+                                        $accHtml .= "</button>" . $this->newLine('-');
+                                    }
+                                    $accHtml .= "<span class='awf-accordion-chevron' :class=\"openItem === index ? 'open' : ''\"></span>" . $this->newLine();
+                                    $accHtml .= "</span>" . $this->newLine();
+                                }
+                                $accHtml .= "</div>" . $this->newLine('-');
+                                $accHtml .= "<div class='awf-accordion-body' x-show='openItem === index' x-transition x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                                {
+                                    if ($accSubtitle !== '') $accHtml .= "<div class='awf-section-subtitle text-muted mb-2' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$accSubtitle}</div>" . $this->newLine();
+                                    $accHtml .= $this->renderGroupInstanceContent($rootBlock, $templateSection, $children, $config, $theme, $instanceVar, $contentOuterVars) . $this->newLine();
+                                }
+                                $accHtml .= "</div>" . $this->newLine('-');
+                            }
+                            $accHtml .= "</div>" . $this->newLine('-');
+                        }
+                        $accHtml .= "</template>" . $this->newLine('-');
+                        if ($isRepeatable) {
+                            $accHtml .= "<div class='p-2'>" . $this->newLine('+');
+                            {
+                                $accHtml .= "<button type='button' class='btn btn-sm btn-outline-primary' @click=\"instances.push({ id: nextInstanceId++ }); openItem = instances.length - 1\" x-show=\"!{$maxInstances} || instances.length < {$maxInstances}\">" . $this->newLine('+');
+                                {
+                                    $accHtml .= "<span>{$addLabel}</span>" . $this->newLine();
+                                }
+                                $accHtml .= "</button>" . $this->newLine('-');
+                            }
+                            $accHtml .= "</div>" . $this->newLine('-');
+                        }
+                    }
+                    $accHtml .= "</div>" . $this->newLine('-');
+
+                    // Same chrome as the tabs group (card_accordion -> .card +
+                    // .card-header + .card-body; panel_accordion -> flat panel +
+                    // h4 header + <hr> + .card-body), honoring showTitle and
+                    // isCollapsible exactly like a plain accordion section.
+                    $isCardAccordionGroup = $section !== null && $section->containerType === 'card_accordion';
+                    $hasAccGroupHeader = $section !== null && $section->showTitle && ($section->title !== '' || $section->subtitle !== '');
+                    $isCollapsibleAccGroup = $section !== null && !empty($section->isCollapsible) && $hasAccGroupHeader;
+                    $accGroupStartOpen = ($section !== null && empty($section->isCollapsed)) ? 'true' : 'false';
+                    $accGroupBodyId = 'awf_sect_' . md5(($section !== null ? $section->title : '') . '_' . $rootBlock->id . '_accordion');
+                    $accGroupXData = $isCollapsibleAccGroup ? "x-data=\"{ open: {$accGroupStartOpen} }\" @invalid.capture=\"open = true\"" : "";
+                    $accGroupClick = $isCollapsibleAccGroup ? "@click='open = !open'" : "";
+                    $accGroupCursor = $isCollapsibleAccGroup ? "cursor: pointer;" : "";
+                    $accGroupToggleBtn = '';
+                    if ($isCollapsibleAccGroup) {
+                        $accGroupToggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' @click.stop='open = !open' :aria-expanded='open.toString()' aria-controls='{$accGroupBodyId}'>" . $this->newLine('+');
+                        {
+                            $accGroupToggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" . $this->newLine();
+                        }
+                        $accGroupToggleBtn .= "</button>" . $this->newLine('-');
+                    }
+                    if ($isCardAccordionGroup) {
+                        $html .= "<div class='card mt-2' {$accGroupXData} style='height: auto !important;'>" . $this->newLine('+');
+                    } else {
+                        $html .= "<div class='card awf-section-panel' {$accGroupXData} style='height: auto !important;'>" . $this->newLine('+');
+                    }
+                    {
+                        if ($hasAccGroupHeader) {
+                            if ($isCardAccordionGroup) {
+                                $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$accGroupClick} style='{$accGroupCursor}'>" . $this->newLine('+');
+                                {
+                                    $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                    {
+                                        if ($section->title !== '') $html .= "<span>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                        if ($section->subtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</span>" . $this->newLine();
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
+                                    $html .= $accGroupToggleBtn . $this->newLine();
+                                }
+                                $html .= "</div>" . $this->newLine('-');
+                            } else {
+                                $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$accGroupClick} style='{$accGroupCursor}'>" . $this->newLine('+');
+                                {
+                                    $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
+                                    {
+                                        if ($section->title !== '') $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>" . htmlspecialchars($section->title, ENT_QUOTES, 'UTF-8') . "</h4>" . $this->newLine();
+                                        if ($section->subtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>" . htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8') . "</div>" . $this->newLine();
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
+                                    $html .= $accGroupToggleBtn . $this->newLine();
+                                }
+                                $html .= "</div>" . $this->newLine('-');
+                                $html .= "<hr class='mt-1 mb-3' style='opacity: 0.15'>" . $this->newLine();
+                            }
+                        }
+                        $accGroupShowAttr = $isCollapsibleAccGroup ? " id='{$accGroupBodyId}' x-show='open' x-transition" : "";
+                        $html .= "<div class='card-body'{$accGroupShowAttr}>" . $this->newLine('+');
+                        {
+                            $html .= $accHtml;
                         }
                         $html .= "</div>" . $this->newLine('-');
                     }

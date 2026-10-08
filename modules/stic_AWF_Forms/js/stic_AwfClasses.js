@@ -1993,7 +1993,7 @@ class stic_AwfLayout {
       let template = findGroupTemplate(groupSection);
       if (!template) {
         template = new stic_AwfLayoutSection({
-          title: rootBlock ? groupTemplateTitle(rootBlock) : utils.translate('LBL_SECTION_NEW'),
+          title: rootBlock ? groupTemplateTitle(rootBlock) : utils.translate('LBL_SECTION_NO_TITLE'),
           containerType: 'tab_item',
         });
         template.groupTemplate = true;
@@ -2467,17 +2467,21 @@ class stic_AwfLayout {
       // Spec "Simplificación UX del Wizard (Paso 4)": the element template is an
       // INTERNAL 2-level wrapper the user never edits on its own — its chrome is
       // DERIVED from the group on every sync:
-      //  - containerType: tabs parent -> 'tab_item' pane; panel/card -> 'panel'
+      //  - containerType: tabs parent -> 'tab_item' pane; accordion parent ->
+      //    'accordion_item'; panel/card -> 'panel'
       //  - showTitle: ALWAYS true (it names the instances / tab panes)
       //  - subtitle: ELIMINATED (the group subtitle carries the help text)
       //  - collapsibility: stacked cards (panel/card) follow the group's
-      //    isCollapsible/isCollapsed; tabs panes never collapse individually
+      //    isCollapsible/isCollapsed; tabs/accordion items never collapse
+      //    individually
       const groupIsTabs = section.containerType === 'panel_tabs' || section.containerType === 'card_tabs';
-      template.containerType = groupIsTabs ? 'tab_item' : 'panel';
+      const groupIsAccordion = section.containerType === 'panel_accordion' || section.containerType === 'card_accordion';
+      const groupIsTabbed = groupIsTabs || groupIsAccordion;
+      template.containerType = groupIsTabs ? 'tab_item' : (groupIsAccordion ? 'accordion_item' : 'panel');
       template.showTitle = true;
       template.subtitle = '';
-      template.isCollapsible = groupIsTabs ? false : !!section.isCollapsible;
-      template.isCollapsed = (!groupIsTabs && section.isCollapsible) ? !!section.isCollapsed : false;
+      template.isCollapsible = groupIsTabbed ? false : !!section.isCollapsible;
+      template.isCollapsed = (!groupIsTabbed && section.isCollapsible) ? !!section.isCollapsed : false;
       // The template's default title is the singular record name (user
       // editable in the unified group panel): refreshed on group renames
       // unless the user customized it.
@@ -2518,7 +2522,7 @@ class stic_AwfLayout {
 
       // c) remove EMPTY auto-generated host sections (inside the template):
       //    untitled ones, or ones titled with the text of any data block.
-      //    User-created sections ("Nova secció" / renamed) are always preserved.
+      //    User-created sections are always preserved.
       const blockTexts = new Set(dataBlocks.map(b => b.text));
       [...template.elements].forEach(el => {
         if (el.type !== 'section' || el.elements.length > 0) return;
@@ -2535,6 +2539,29 @@ class stic_AwfLayout {
             template.elements = [rootNested, ...template.elements.filter(e => e !== rootNested)];
           }
         }
+
+      // e) Spec (2026-10-08): the group's CONTENT sections (one per data block,
+      //    inside the template) are plain sections. With SEVERAL content
+      //    sections each renders as a CARD; with exactly ONE, that section
+      //    renders FLAT (panel, no title, no borders) and the singular record
+      //    name defaults to its title (e.g. a repeatable "Document" group labels
+      //    its instances "Document", "Document #2", ...). Designated subgroup
+      //    hosts keep their own group chrome.
+      const contentSections = template.elements.filter(el => el.type === 'section');
+      if (contentSections.length === 1 && !contentSections[0].isGroupSection) {
+        const only = contentSections[0];
+        only.containerType = 'panel';
+        only.showTitle = false;
+        // The singular name defaults to the single content block's CURRENT name
+        const blockEl = only.elements.find(e => e && e.ref_id);
+        const singleBlock = blockEl ? dataBlocks.find(b => b.id === blockEl.ref_id) : null;
+        const singleName = singleBlock ? singleBlock.text : only.title;
+        if (!template.is_custom_title) template.title = singleName || groupTemplateTitle(rootBlock);
+      } else {
+        contentSections.forEach(sec => {
+          if (!sec.isGroupSection) sec.containerType = 'card';
+        });
+      }
       });
     };
     normalizeGroupSections();
@@ -2663,27 +2690,51 @@ class stic_AwfLayout {
       }
     });
 
-    // ---- 8. Tabs containers hold ONLY sections: group any direct non-section
-    //         elements into a new child pane ('Nova secció'), recursively ----
-    const normalizeTabsContainer = (section) => {
-      // Rule (2026-10-07): a 'tab_item' pane ALWAYS shows its title — it IS
-      // the tab label. The wizard hides the switch for panes, so the stored
-      // state is forced to the canonical true (legacy/imported configs may
-      // carry false and the render would never learn about the hidden switch).
-      if (section.containerType === 'tab_item' && section.showTitle !== true) section.showTitle = true;
-      if ((section.containerType === 'card_tabs' || section.containerType === 'panel_tabs') && section.elements.some(el => el.type !== 'section')) {
-        const pane = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NEW') });
-        pane.containerType = 'tab_item';
-        pane.showTitle = true;
-        pane.elements = section.elements.filter(el => el.type !== 'section');
+    // ---- 8. Tabs/accordion containers hold ONLY sections: group any direct
+    //         non-section elements into a new child pane/item,
+    //         recursively. Their inner sections are ALWAYS the matching item
+    //         type ('tab_item' / 'accordion_item'), and an item ALWAYS shows
+    //         its title (it IS the tab label / accordion header) ----
+    const isTabsContainerType = (ct) => ct === 'card_tabs' || ct === 'panel_tabs';
+    const isAccordionContainerType = (ct) => ct === 'card_accordion' || ct === 'panel_accordion';
+    const normalizeContainerSections = (section) => {
+      const ct = section.containerType;
+      const isTabs = isTabsContainerType(ct);
+      const isAccordion = isAccordionContainerType(ct);
+      // A pane/item ALWAYS shows its title (the wizard hides the switch for it,
+      // so a stored false would be uneditable): forced to the canonical true
+      if ((ct === 'tab_item' || ct === 'accordion_item') && section.showTitle !== true) section.showTitle = true;
+      // Direct non-section elements become a synthetic trailing pane/item
+      if ((isTabs || isAccordion) && section.elements.some(el => el.type !== 'section')) {
+        const item = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
+        item.containerType = isAccordion ? 'accordion_item' : 'tab_item';
+        item.showTitle = true;
+        item.elements = section.elements.filter(el => el.type !== 'section');
         section.elements = section.elements.filter(el => el.type === 'section');
-        section.elements.push(pane);
+        section.elements.push(item);
+      }
+      // An accordion container's inner sections are ALWAYS accordion_item
+      if (isAccordion) {
+        section.elements.forEach(el => {
+          if (el.type === 'section' && el.containerType !== 'accordion_item') {
+            el.containerType = 'accordion_item';
+            el.showTitle = true;
+          }
+        });
+      }
+      // A tabs/accordion container holds ONLY sections and needs at least ONE
+      // item to render: an empty container gets a single empty item (spec 2026-10-08)
+      if ((isTabs || isAccordion) && !section.elements.some(el => el.type === 'section')) {
+        const item = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
+        item.containerType = isAccordion ? 'accordion_item' : 'tab_item';
+        item.showTitle = true;
+        section.elements.push(item);
       }
       section.elements.forEach(el => {
-        if (el.type === 'section') normalizeTabsContainer(el);
+        if (el.type === 'section') normalizeContainerSections(el);
       });
     };
-    this.structure.forEach(normalizeTabsContainer);
+    this.structure.forEach(normalizeContainerSections);
 
     // ---- 9. Integrity guard: Alpine's x-for keys top-level sections by id, so
     //         the structure must NEVER end a sync with a repeated or missing
