@@ -85,6 +85,20 @@ addToValidateCallback(
     ),
 );
 
+// Only one environment record allowed at a time
+addToValidateCallback(
+  getFormName(),
+  "stic_organizational_environment_contacts_name",
+  "related",
+  false,
+  SUGAR.language.get(module, "LBL_ONLY_ONE_ENVIRONMENT_RECORD"),
+  () =>
+    !(
+      hasRelateValue(environmentFields.environmentAccount) &&
+      hasRelateValue(environmentFields.environmentContact)
+    ),
+);
+
 // Validate selected relationship type valid
 addToValidateCallback(
   getFormName(),
@@ -225,6 +239,45 @@ function initOEEditView() {
   syncEnvironmentRelates();
 }
 
+// The relate that must not be filled should not look editable. The double click keeps working, this only removes the misleading icon and classes.
+const hideBlockedRelatePencil = () => {
+  const [accountField, contactField] = Object.values(environmentFields).map(
+    ({ name }) => name,
+  );
+
+  const editableRelateFields = document.querySelectorAll(
+    `[field="${accountField}"], [field="${contactField}"]`,
+  );
+
+  for (const editableRelateField of editableRelateFields) {
+    const editableFieldParentScope =
+      editableRelateField.closest("tr") ?? document;
+
+    const otherFieldType =
+      editableRelateField.getAttribute("field") === accountField
+        ? contactField
+        : accountField;
+
+    const otherFieldElement = editableFieldParentScope.querySelector(
+      `[field="${otherFieldType}"]`,
+    );
+
+    // Hide the pencil icon if the other field has a value and this one is empty.
+    if (
+      otherFieldElement &&
+      !editableRelateField.textContent.trim() &&
+      otherFieldElement.textContent.trim()
+    ) {
+      editableRelateField.classList.add("non-editable");
+      editableRelateField.classList.remove("inlineEdit");
+      editableRelateField.style.cursor = "default";
+      editableRelateField.querySelector(".inlineEditIcon")?.remove();
+    }
+  }
+};
+
+hideBlockedRelatePencil();
+
 /* VIEWS CUSTOM CODE */
 switch (viewType()) {
   case "edit":
@@ -235,8 +288,8 @@ switch (viewType()) {
     initOEEditView();
     break;
   case "detail":
-    break;
   case "list":
+    hideBlockedRelatePencil();
     break;
   default:
     break;
