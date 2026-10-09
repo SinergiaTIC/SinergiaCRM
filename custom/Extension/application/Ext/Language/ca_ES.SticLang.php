@@ -306,7 +306,7 @@ $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productes
 $app_list_strings['parent_type_display']['stic_Assets'] = 'Actius';
 $app_list_strings['parent_type_display']['stic_Conversations'] = 'Converses';
 $app_list_strings['parent_type_display']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
-$app_list_strings['parent_type_display']['stic_Recycle_Bin_Relationships'] = 'Relació de la paperera';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
@@ -357,7 +357,7 @@ $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productes
 $app_list_strings['record_type_display']['stic_Assets'] = 'Actius';
 $app_list_strings['record_type_display']['stic_Conversations'] = 'Converses';
 $app_list_strings['record_type_display']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
-$app_list_strings['record_type_display']['stic_Recycle_Bin_Relationships'] = 'Relació de la paperera';
+$app_list_strings['record_type_display']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
@@ -408,7 +408,7 @@ $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Pro
 $app_list_strings['record_type_display_notes']['stic_Assets'] = 'Actius';
 $app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Converses';
 $app_list_strings['record_type_display_notes']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
-$app_list_strings['record_type_display_notes']['stic_Recycle_Bin_Relationships'] = 'Relació de la paperera';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';
@@ -3707,6 +3707,11 @@ $app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Interessats';
 $app_list_strings['stic_messages_parent_type_display']['Employees'] = 'Empleats';
 
+// Converses: Tipus
+$app_list_strings['stic_conversations_types_list'][''] = '';
+$app_list_strings['stic_conversations_types_list']['type1'] = 'Tipus 1';
+$app_list_strings['stic_conversations_types_list']['type2'] = 'Tipus 2';
+
 // Vistes personalitzades: Tipus d'usuari
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuari regular';
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrador';
@@ -4086,11 +4091,6 @@ $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Ignorat';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Tractat';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sense canvis';
 
-// Converses: Tipus
-$app_list_strings['stic_conversations_types_list'][''] = '';
-$app_list_strings['stic_conversations_types_list']['type1'] = 'Tipus 1';
-$app_list_strings['stic_conversations_types_list']['type2'] = 'Tipus 2';
-
 // Advanced Web Forms Deferred Tickets: status
 $app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
 $app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pendent';
@@ -4105,6 +4105,18 @@ $app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pendent';
 $app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Processat';
 $app_list_strings['stic_awf_incoming_events_status']['error'] = 'Fallit';
 $app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignorat';
+
+// Paperera de reciclatge: Motius de no restauració de relacions de la paperera
+$app_list_strings['stic_recycle_skip_reason_list'][''] = '';
+$app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Registre relacionat eliminat';
+$app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Registre relacionat reassignat';
+
+// Paperera de reciclatge: Origen de l'eliminació
+$app_list_strings['stic_recycle_deletion_source_list'][''] = '';
+$app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Vista de detall';
+$app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acció massiva';
+$app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinació de registres';
+$app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acció externa';
 
 // Modificacions del core de SuiteCRM
 
@@ -4244,18 +4256,6 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
-
-// Motius de no restauració de relacions de la paperera
-$app_list_strings['stic_recycle_skip_reason_list'][''] = '';
-$app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Registre relacionat eliminat';
-$app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Registre relacionat reassignat';
-
-// Procedència de l'eliminació a la paperera
-$app_list_strings['stic_recycle_deletion_source_list'][''] = '';
-$app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Vista de detall';
-$app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acció massiva';
-$app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinació de registres';
-$app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acció externa';
 
 // Llista dinàmica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
