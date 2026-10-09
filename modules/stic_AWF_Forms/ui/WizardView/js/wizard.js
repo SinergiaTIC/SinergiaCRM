@@ -2776,6 +2776,20 @@ class WizardStep4 {
         return template ? template.elements : (section ? section.elements : []);
       },
 
+      // True when `section` is the SOLE content section of its group: the group
+      // has exactly one data-block host, so its title is hidden and the singular
+      // record name comes from its block — its own configuration panel has no
+      // effect, so the wizard hides its gear button (nothing to configure).
+      isSoleGroupContentSection(section) {
+        if (!section) return false;
+        const template = this.getParentSectionOf(section);
+        if (!template || !this.isGroupTemplateSection(template)) return false;
+        const group = this.getParentSectionOf(template);
+        if (!group || !this.isGroupSection(group)) return false;
+        const contentSections = (template.elements || []).filter(el => el.type === 'section');
+        return contentSections.length === 1 && contentSections[0].id === section.id;
+      },
+
       // Singular record name (template.title), edited from the unified group panel
       getGroupTemplateTitle(section) {
         const template = this.getGroupTemplate(section);

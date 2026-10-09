@@ -2582,13 +2582,17 @@ class stic_AwfLayout {
         }
 
       // e) Spec (2026-10-08): the group's CONTENT sections (one per data block,
-      //    inside the template) are plain sections rendered as PANEL by default
-      //    (the repeating "Elements" TEMPLATE above carries the border + title).
-      //    When the group has exactly ONE content section, that section ALSO
-      //    hides its title (the instance label already names it) and the
-      //    singular record name defaults to its title (e.g. a repeatable
-      //    "Document" group labels its instances "Document", "Document #2", ...).
-      //    Designated subgroup hosts keep their own group chrome.
+      //    inside the template) default to PANEL (the repeating "Elements"
+      //    TEMPLATE above carries the border + title). They are NOT forced on
+      //    every sync: with SEVERAL content sections the user may change their
+      //    containerType in the wizard (new hosts are created as 'panel' by
+      //    blockHostSection()).
+      //    When the group has exactly ONE content section, that section is fully
+      //    derived: it hides its title (the instance label already names it), is
+      //    a panel, and the singular record name defaults to its title (e.g. a
+      //    repeatable "Document" group labels its instances "Document",
+      //    "Document #2", ...). The wizard hides its config button (nothing to
+      //    configure). Designated subgroup hosts keep their own group chrome.
       const contentSections = template.elements.filter(el => el.type === 'section');
       if (contentSections.length === 1 && !contentSections[0].isGroupSection) {
         const only = contentSections[0];
@@ -2599,10 +2603,6 @@ class stic_AwfLayout {
         const singleBlock = blockEl ? dataBlocks.find(b => b.id === blockEl.ref_id) : null;
         const singleName = singleBlock ? singleBlock.text : only.title;
         if (!template.is_custom_title) template.title = singleName || groupTemplateTitle(rootBlock);
-      } else {
-        contentSections.forEach(sec => {
-          if (!sec.isGroupSection) sec.containerType = 'panel';
-        });
       }
       });
     };

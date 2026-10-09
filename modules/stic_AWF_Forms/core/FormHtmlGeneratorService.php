@@ -1891,13 +1891,12 @@ class FormHtmlGeneratorService {
         $inner = '';
         $hasRootRepresentation = $section !== null && self::sectionContainsElementForBlock($section, $rootBlock->id);
         if ($section) {
-            foreach ($section->elements as $el) {
-                if ($el instanceof FormLayoutSection) {
-                    $inner .= $this->renderSectionNode($el, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars);
-                } elseif ($el instanceof FormLayoutElement) {
-                    $inner .= $this->renderElementNode($el, $config, $theme, $instanceVar, $section, $rootBlock->id, $contentOuterVars);
-                }
-            }
+            // Render the group's content sections through the SAME helper a plain
+            // section uses: it wraps them in `.awf-grid-sections` (the grid gap
+            // that spaces the cards). Concatenating them directly left the group
+            // instance cards stuck together (no gap) while a normal section's
+            // tabs showed the correct spacing.
+            $inner = $this->renderSectionChildren($section, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars);
         }
         if ($section !== null && !$hasRootRepresentation) {
             $rootPanel = $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar, $contentOuterVars);

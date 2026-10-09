@@ -449,9 +449,11 @@
 
                                                         <!-- Buttons -->
                                                         <div class="d-flex align-items-center gap-2" style="max-width: 50%;">
-                                                            <!-- Toggle Config Panel -->
+                                                            <!-- Toggle Config Panel (hidden for the SOLE content
+                                                                 section of a group: its config is fully derived) -->
                                                             <button class="btn btn-sm" @click="showSettings = !showSettings"
-                                                                    :class="{'active': showSettings}" :title="utils.translate('LBL_SECTION_CONFIG')">
+                                                                    :class="{'active': showSettings}" :title="utils.translate('LBL_SECTION_CONFIG')"
+                                                                    x-show="!isSoleGroupContentSection(section)">
                                                                 <span class="awf-icon-gear" :class="showSettings ? 'awf-icon-gear-fill' : ''"></span>
                                                             </button>
 
@@ -555,26 +557,23 @@
                                                                 </div>
                                                             </template>
 
-                                                            <!-- Group singular record name (internal element
-                                                                 template title: "Menor", "Participante", ...) -->
-                                                            <template x-if="isGroupSection(section)">
-                                                                <div class="row mt-2">
-                                                                    <div class="col-6" x-init="utils.setInlineHelpQtip()">
-                                                                        <label :for="`section${section.id}_templateTitle`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_GROUP_SINGULAR_NAME')"></label>
-                                                                        <i class="inline-help glyphicon glyphicon-info-sign"></i>
-                                                                        <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_SECTION_GROUP_SINGULAR_NAME_DESC')"></div>
-                                                                        <input :id="`section${section.id}_templateTitle`" type="text" class="form-control" autocomplete="off"
-                                                                               :value="getGroupTemplateTitle(section)" @input="setGroupTemplateTitle(section, $event.target.value)"/>
-                                                                    </div>
-                                                                </div>
-                                                            </template>
-
                                                             <!-- Optional/Repeatable Group Sections -->
-                                                            <template x-if="getGroup(section)?.is_optional || getGroup(section)?.is_repeatable">
+                                                            <template x-if="getGroup(section)?.is_optional || getGroup(section)?.is_repeatable || isGroupSection(section)">
                                                                 <div class="row mt-2">
+                                                                    <!-- Group singular record name  -->
+                                                                    <template x-if="isGroupSection(section)">
+                                                                        <div class="col-3" x-init="utils.setInlineHelpQtip()">
+                                                                            <label :for="`section${section.id}_templateTitle`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_GROUP_SINGULAR_NAME')"></label>
+                                                                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_SECTION_GROUP_SINGULAR_NAME_DESC')"></div>
+                                                                            <input :id="`section${section.id}_templateTitle`" type="text" class="form-control"
+                                                                                   :value="getGroupTemplateTitle(section)" @input="setGroupTemplateTitle(section, $event.target.value)"/>
+                                                                        </div>
+                                                                    </template>                                                                    
+
                                                                     <!-- Inclusion switch label (optional) -->
                                                                     <template x-if="getGroup(section)?.is_optional">
-                                                                        <div class="col-6" x-init="utils.setInlineHelpQtip()">
+                                                                        <div class="col-3" x-init="utils.setInlineHelpQtip()">
                                                                             <label :for="`sectionToggleLabel_${section.id}`" class="form-label" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_INCLUDE_LABEL')"></label>
                                                                             <i class="inline-help glyphicon glyphicon-info-sign"></i>
                                                                             <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_INCLUDE_LABEL_DESC')"></div>
