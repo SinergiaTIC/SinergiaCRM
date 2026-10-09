@@ -43,8 +43,8 @@ $mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_ALT'] = 'Unión Europea - NextGene
 $mod_strings['LBL_STIC_SINERGIADA_NOT_ALLOWED'] = 'No tiene habilitado el acceso a SinergiaDA. Contacte con el administrador.'; 
 
 // Accounts, Contacts, Leads and Opportunities
-$mod_strings['LBL_NEW_FORM_TITLE'] = 'Nueva Persona';
-$mod_strings['LNK_NEW_CONTACT'] = 'Nueva Persona';
-$mod_strings['LNK_NEW_ACCOUNT'] = 'Crear una Organización';
-$mod_strings['LNK_NEW_OPPORTUNITY'] = 'Nueva Subvención';
-$mod_strings['LNK_NEW_LEAD'] = 'Nuevo Interesado';
+$mod_strings['LBL_NEW_FORM_TITLE'] = 'Nova Persoa';
+$mod_strings['LNK_NEW_CONTACT'] = 'Nova Persoa';
+$mod_strings['LNK_NEW_ACCOUNT'] = 'Crear unha Organización';
+$mod_strings['LNK_NEW_OPPORTUNITY'] = 'Nova Subvención';
+$mod_strings['LNK_NEW_LEAD'] = 'Novo Interesado';
