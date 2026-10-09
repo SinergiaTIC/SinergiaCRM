@@ -94,7 +94,7 @@ class actionSendToSign extends actionBase
         global $current_user;
         $currentUserId = $current_user->id ?? '1';
 
-        require_once 'custom/modules/stic_Signatures/SignatureSignersManager.php';
+        require_once 'modules/stic_Signatures/SignatureSignersManager.php';
 
         $result = SignatureSignersManager::addSignersToSignature(
             $signatureId,

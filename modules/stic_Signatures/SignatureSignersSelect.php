@@ -43,7 +43,7 @@ if (empty($current_user->id) && !empty($_SESSION['authenticated_user_id'])) {
     $current_user = BeanFactory::getBean('Users', $_SESSION['authenticated_user_id']);
 }
 
-require_once 'custom/modules/stic_Signatures/SignatureSignersManager.php';
+require_once 'modules/stic_Signatures/SignatureSignersManager.php';
 
 $module = $_REQUEST['module'] ?? '';
 $signatureId = $_REQUEST['signature-id'] ?? '';

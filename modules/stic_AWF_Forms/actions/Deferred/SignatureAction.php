@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
-require_once 'custom/modules/stic_Signatures/SignatureSignersManager.php';
+require_once 'modules/stic_Signatures/SignatureSignersManager.php';
 
 /**
  * SignatureAction
