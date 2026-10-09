@@ -26,4 +26,4 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings['LBL_STIC_RECYCLE_BIN_LINK_TITLE'] = 'Recycle Bin';
-$mod_strings['LBL_STIC_RECYCLE_BIN_DESCRIPTION'] = 'View and recover deleted records from any CRM module.';
+$mod_strings['LBL_STIC_RECYCLE_BIN_DESCRIPTION'] = 'View and restore deleted records from any module.';
