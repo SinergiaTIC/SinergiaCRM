@@ -198,3 +198,6 @@ $mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'To edit the password, the "Enable p
 
 // Conversations
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Conversations';
+
+// Organizational Environment strings
+$mod_strings['LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE'] = 'Network contact organizational environment';

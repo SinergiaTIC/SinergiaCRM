@@ -326,3 +326,47 @@ $layout_defs['Accounts']['subpanel_setup']['history']['collection_list']['stic_M
     'generate_select' => true,
     'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'sent', 'error', 'received', 'redirected'"),
 );
+
+$layout_defs["Accounts"]["subpanel_setup"]['stic_organizational_environment_accounts'] = array (
+  'order' => 100,
+  'module' => 'stic_Organizational_Environment',
+  'subpanel_name' => 'ForEnvironmentAccounts',
+  'sort_order' => 'desc',
+  'sort_by' => 'start_date',
+  'title_key' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE',
+  'get_subpanel_data' => 'stic_organizational_environment_accounts',
+  'top_buttons' => 
+  array (
+    0 => 
+    array (
+      'widget_class' => 'SubPanelTopButtonQuickCreate',
+    ),
+    1 => 
+    array (
+      'widget_class' => 'SubPanelTopSelectButton',
+      'mode' => 'MultiSelect',
+    ),
+  ),
+);
+
+$layout_defs["Accounts"]["subpanel_setup"]['stic_organizational_environment_accounts_1'] = array (
+  'order' => 100,
+  'module' => 'stic_Organizational_Environment',
+  'subpanel_name' => 'ForEnvironmentAccounts',
+  'sort_order' => 'desc',
+  'sort_by' => 'start_date',
+  'title_key' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_STIC_ORGANIZATIONAL_ENVIRONMENT_TITLE',
+  'get_subpanel_data' => 'stic_organizational_environment_accounts_1',
+  'top_buttons' => 
+  array (
+    0 => 
+    array (
+      'widget_class' => 'SubPanelTopButtonQuickCreate',
+    ),
+    1 => 
+    array (
+      'widget_class' => 'SubPanelTopSelectButton',
+      'mode' => 'MultiSelect',
+    ),
+  ),
+);
