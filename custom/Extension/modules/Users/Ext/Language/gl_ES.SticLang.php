@@ -35,26 +35,26 @@ $mod_strings['LBL_MODIFIED_ID'] = 'Modificado por';
 $mod_strings['LBL_STIC_PROSPECT_LISTS_SUBPANEL_TITLE'] = 'Listas de Público Obxectivo';
 
 // SinergiaCRM terminology
-$mod_strings['LBL_QUICK_ACCOUNT'] = 'Nueva Organización';
-$mod_strings['LBL_QUICK_CONTACT'] = 'Nueva Personas';
-$mod_strings['LBL_QUICK_LEAD'] = 'Nuevo Interesado';
-$mod_strings['LBL_QUICK_OPPORTUNITY'] = 'Nueva Subvención';
-$mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizaciones';
-$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Personas';
-$mod_strings['LBL_OPPORTUNITY_SUBPANEL_TITLE'] = 'Subvenciones';
+$mod_strings['LBL_QUICK_ACCOUNT'] = 'Nova Organización';
+$mod_strings['LBL_QUICK_CONTACT'] = 'Nova Persoa';
+$mod_strings['LBL_QUICK_LEAD'] = 'Novo Interesado';
+$mod_strings['LBL_QUICK_OPPORTUNITY'] = 'Nova Subvención';
+$mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizacións';
+$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Persoas';
+$mod_strings['LBL_OPPORTUNITY_SUBPANEL_TITLE'] = 'Subvencións';
 $mod_strings['LBL_ACCOUNT_NAME'] = 'Organización';
-$mod_strings['LBL_CONTACT_NAME'] = 'Persona';
-$mod_strings['LBL_EMAILS_ACCOUNTS_REL'] = 'Emails:Organizaciones';
-$mod_strings['LBL_EMAILS_CONTACTS_REL'] = 'Emails:Personas';
+$mod_strings['LBL_CONTACT_NAME'] = 'Persoa';
+$mod_strings['LBL_EMAILS_ACCOUNTS_REL'] = 'Emails:Organizacións';
+$mod_strings['LBL_EMAILS_CONTACTS_REL'] = 'Emails:Persoas';
 $mod_strings['LBL_EMAILS_LEADS_REL'] = 'Emails:Interesados';
-$mod_strings['LBL_EMAILS_OPPORTUNITIES_REL'] = 'Emails:Subvenciones';
-$mod_strings['LBL_LIST_CONTACT'] = 'Personas';
+$mod_strings['LBL_EMAILS_OPPORTUNITIES_REL'] = 'Emails:Subvencións';
+$mod_strings['LBL_LIST_CONTACT'] = 'Persoas';
 $mod_strings['LBL_LIST_LEAD'] = 'Interesados';
-$mod_strings['LBL_CREATE_CONTACT'] = 'Nueva Persona';
-$mod_strings['LBL_CREATE_LEAD'] = 'Nuevo Interesado';
-$mod_strings['LBL_CREATE_CONTACTS'] = 'Crear Persona' /* for 508 compliance fix */;
+$mod_strings['LBL_CREATE_CONTACT'] = 'Nova Persoa';
+$mod_strings['LBL_CREATE_LEAD'] = 'Novo Interesado';
+$mod_strings['LBL_CREATE_CONTACTS'] = 'Crear Persoa' /* for 508 compliance fix */;
 $mod_strings['LBL_CREATE_LEADS'] = 'Crear Interesado' /* for 508 compliance fix */;
-$mod_strings['LBL_CURRENCY_TEXT'] = 'Seleccione la moneda que será mostrada por defecto cuando cree nuevos registros. Esta será también la moneda mostrada en las columnas de cantidad en la vista de lista de Subvenciones.';     
+$mod_strings['LBL_CURRENCY_TEXT'] = 'Seleccione a moeda que será mostrada por defecto cando cree novos rexistros. Esta será tamén a moeda mostrada nas columnas de Cantidade nas Vistas de Lista de Subvencións.';     
 
 // Incorpora
 $mod_strings['LBL_INC_REFERENCE_GROUP'] = 'Grupo de referencia (Incorpora)';
