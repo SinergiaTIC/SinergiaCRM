@@ -26,4 +26,4 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings['LBL_STIC_RECYCLE_BIN_LINK_TITLE'] = 'Paperera de reciclatge';
-$mod_strings['LBL_STIC_RECYCLE_BIN_DESCRIPTION'] = 'Visualitzar i recuperar registres eliminats de qualsevol mòdul del CRM.';
+$mod_strings['LBL_STIC_RECYCLE_BIN_DESCRIPTION'] = 'Mostra i permet recuperar registres eliminats de qualsevol mòdul.';
