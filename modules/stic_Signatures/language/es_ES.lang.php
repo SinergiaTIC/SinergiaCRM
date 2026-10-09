@@ -95,8 +95,8 @@ $mod_strings = array(
     'LBL_SIGNERS_ADDED_MSG' => 'firmante(s) añadido(s) correctamente',
     'LBL_SIGNERS_ADDED_CLOSED_MSG' => 'Para que los nuevos firmantes puedan firmar el documento es necesario cambiar el estado a Abierto o Permanente.',
     'LBL_SIGNERS_NOT_ADDED_MSG' => 'Firmantes no añadidos.',
-    'LBL_SIGNERS_NOT_ADDED_SINGLE_MSG' => 'Firmante(s) no añadido(s). Cada persona solo puede añadirse una vez por proceso de firma. Para añadir la misma persona desde otro registro, activa "Permitir mismo firmante varias veces" en la configuración de la firma.',
-    'LBL_SIGNERS_NOT_ADDED_DUPLICATE_MSG' => 'Firmante(s) no añadido(s). La misma persona solo puede añadirse una vez por registro origen. Si necesitas añadir la misma persona de nuevo, selecciona un registro de %s diferente.',
+    'LBL_SIGNERS_NOT_ADDED_SINGLE_MSG' => 'Firmante(s) no añadido(s). Tal y como está configurado este proceso de firma, cada persona sólo puede añadirse una vez. Para añadir la misma persona desde otro registro, active la casilla "Permitir el mismo firmante varias veces" en la configuración de la firma.',
+    'LBL_SIGNERS_NOT_ADDED_DUPLICATE_MSG' => 'Firmante(s) no añadido(s). Una misma persona sólo puede añadirse una vez al proceso de firma desde un mismo registro origen. Si necesita añadir la misma persona, seleccione otro registro del módulo %s.',
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => 'Se omite el siguiente registro porque no se han encontrado firmantes.',
     'LBL_EMAILS_SENT_MSG' => 'correo(s) electrónico(s) enviados correctamente a los firmantes',
     'LBL_EMAILS_NOT_SENT_MSG' => 'correo(s) electrónico(s) no enviados porque el firmante no tiene dirección de correo o se ha producido un error',
@@ -227,6 +227,6 @@ $mod_strings = array(
     'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => 'Plantilla de mensaje SMS para enviar el código de un solo uso al teléfono de los firmantes. Si no se indica lo contrario, se utiliza la <a target="_blank" href="index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView">plantilla por defecto</a>.',
 
     // Allow multiple signers
-    'LBL_ALLOW_MULTIPLE_SIGNERS' => 'Permitir mismo firmante varias veces',
-    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => 'Cuando está habilitado, la misma persona/usuario puede tener múltiples registros de firmante dentro de este proceso de firma, siempre que provengan de registros origen diferentes (por ejemplo, diferentes inscripciones, eventos o pagos). Cuando está deshabilitado (valor por defecto), cada persona/usuario solo puede tener un registro de firmante por proceso de firma.',
+    'LBL_ALLOW_MULTIPLE_SIGNERS' => 'Permitir el mismo firmante varias veces',
+    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => '<b>No (valor por defecto):</b> Cada persona sólo puede tener un registro de firmante en el proceso de firma.<br><b>Sí:</b> Una misma persona puede tener múltiples registros de firmante, siempre que provengan de registros origen diferentes. Por ejemplo, si el proceso está basado en el módulo <i>Pagos</i>, la persona podrá tener un registro de firmante por cada pago que tenga asignado.',
 );

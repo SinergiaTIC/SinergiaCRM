@@ -68,6 +68,33 @@ class ResponseHandler
         $rawPostData = $_POST;
         $cleanData = $this->sanitizeInput($rawPostData);
 
+        // Process uploaded files from $_FILES
+        $uploadedFiles = [];
+        foreach ($_FILES as $key => $fileInfo) {
+            if (is_array($fileInfo['error'])) {
+                // Handle multi-file uploads (not supported yet, but keep structure safe)
+                foreach ($fileInfo['error'] as $i => $error) {
+                    if ($error === UPLOAD_ERR_OK && isset($fileInfo['tmp_name'][$i])) {
+                        $uploadedFiles[$key . '_' . $i] = [
+                            'name' => $fileInfo['name'][$i],
+                            'type' => $fileInfo['type'][$i],
+                            'tmp_name' => $fileInfo['tmp_name'][$i],
+                            'error' => $error,
+                            'size' => $fileInfo['size'][$i],
+                        ];
+                    }
+                }
+            } elseif ($fileInfo['error'] === UPLOAD_ERR_OK) {
+                $uploadedFiles[$key] = [
+                    'name' => $fileInfo['name'],
+                    'type' => $fileInfo['type'],
+                    'tmp_name' => $fileInfo['tmp_name'],
+                    'error' => $fileInfo['error'],
+                    'size' => $fileInfo['size'],
+                ];
+            }
+        }
+
         $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
@@ -247,7 +274,7 @@ class ResponseHandler
         $responseBean->save();
 
         // Execution Context
-        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean, $formBean->form_type);
+        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean, $formBean->form_type, $uploadedFiles);
         $context->visitorUserId = $realUserId;
 
         // Html Summary
@@ -353,7 +380,7 @@ class ResponseHandler
                 $this->saveLinks($responseBean, $context);
 
                 // Generate analytical response details
-                $this->generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData);
+                $this->generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData, $context->uploadedFiles);
 
                 // Generate execution log
                 stic_AWFUtils::updateResponseExecutionLog($context);
@@ -595,6 +622,11 @@ class ResponseHandler
                     continue; // Skip relate fields
                 }
 
+                // Skip file upload fields — validated separately via $_FILES in SaveDocumentBlockAction
+                if ($formField->type_in_form === 'file') {
+                    continue;
+                }
+
                 // Validation of required field (Required) (in Form)
                 if ($formField->required_in_form) {
                     if ($value === null || $value === '' || (is_array($value) && empty($value))) {
@@ -737,7 +769,7 @@ class ResponseHandler
      * @param FormConfig $formConfig Form configuration
      * @param array $submittedData Data sent in the submission
      */
-    private function generateResponseDetails(SugarBean $responseBean, SugarBean $formBean, FormConfig $formConfig, array $submittedData): void {
+    private function generateResponseDetails(SugarBean $responseBean, SugarBean $formBean, FormConfig $formConfig, array $submittedData, array $uploadedFiles = []): void {
         global $app_strings;
 
         // Global counter
@@ -749,11 +781,35 @@ class ResponseHandler
 
         foreach ($formConfig->data_blocks as $block) {
             foreach ($block->fields as $field) {
-                $currentOrder = $orderCounter;
-                $orderCounter += 1;
 
                 // Skip fixed fields
                 if ($field->type_field === DataBlockFieldType::FIXED) continue;
+
+                // Skip file upload fields — binary data is not stored as response details
+                if ($field->type_in_form === 'file') {
+                    // Store document reference if this is a document block
+                    if ($block->is_document_block) {
+                        $currentOrder = $orderCounter++;
+                        $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
+                        $detailBean->stic_awf_responses_id_c = $responseBean->id;
+                        $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
+                        $detailBean->assigned_user_id = $responseBean->assigned_user_id;
+                        $detailBean->question_key = $block->name . '.' . $field->name;
+                        $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+                        $detailBean->question_label = rtrim($detailBean->question_label, ' :');
+                        $detailBean->question_section = $block->text;
+                        $detailBean->question_sort_order = $currentOrder;
+
+                        $phpKey = $field->getPhpKey();
+                        $fileName = $uploadedFiles[$phpKey]['name'] ?? '';
+                        $detailBean->answer_value = $fileName;
+                        $detailBean->answer_text = $fileName;
+                        $detailBean->answer_type = 'file';
+                        $detailBean->answer_integer = 0;
+                        $detailBean->save();
+                    }
+                    continue;
+                }
 
                 // Input key
                 $inputKey = $field->getPhpKey();
@@ -796,6 +852,7 @@ class ResponseHandler
                 }
 
                 // Create analytical response bean
+                $currentOrder = $orderCounter++;
                 $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
                 $detailBean->stic_awf_responses_id_c = $responseBean->id;
                 $detailBean->stic_awf_forms_id_c = $formBean->id ?? ''; 

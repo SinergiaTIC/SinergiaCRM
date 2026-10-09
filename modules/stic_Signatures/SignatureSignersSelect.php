@@ -94,8 +94,8 @@ if ($result['ok'] !== 0) {
 }
 
 if ($result['ko'] !== 0) {
-    $moduleSingular = translate($result['module_name'] ?? '', $result['module_name'] ?? '');
-    if (!empty($result['allow_multiple_signers'])) {
+    $moduleSingular = translate($result['module_name'] ?? '', $result['module_name']);
+    if ($result['allow_multiple_signers']) {
         $msg = "<p class='msg-error'><strong>{$result['ko']}</strong> " . sprintf(translate('LBL_SIGNERS_NOT_ADDED_DUPLICATE_MSG', 'stic_Signatures'), "<strong>{$moduleSingular}</strong>") . "</p>";
     } else {
         $msg = "<p class='msg-error'><strong>{$result['ko']}</strong> " . translate('LBL_SIGNERS_NOT_ADDED_SINGLE_MSG', 'stic_Signatures') . "</p>";

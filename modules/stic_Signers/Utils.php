@@ -94,6 +94,13 @@ class stic_SignersUtils
         $mail->From = !empty($outboundEmail->smtp_from_addr) ? $outboundEmail->smtp_from_addr : ($defaults['email'] ?? '');
         $mail->FromName = !empty($outboundEmail->smtp_from_name) ? $outboundEmail->smtp_from_name : ($defaults['name'] ?? '');
 
+        // Add recipient
+        if (empty($destAddress)) {
+            // If no destination address, return false (or handle error appropriately)
+            ob_clean();
+            echo json_encode(false);
+            die();
+        }
         $mail->AddAddress($destAddress);
 
         // Cargar beans relacionados: signature, contact/user (si aplica) y el signer ya cargado

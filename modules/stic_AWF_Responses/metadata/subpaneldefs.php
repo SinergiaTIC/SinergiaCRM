@@ -32,3 +32,13 @@ $layout_defs["stic_AWF_Responses"]["subpanel_setup"]['details_link'] = array(
     'get_subpanel_data' => 'details_link',
     'top_buttons' => array(), 
 );
+$layout_defs["stic_AWF_Responses"]["subpanel_setup"]['stic_awf_responses_documents'] = array(
+    'order' => 110,
+    'module' => 'Documents',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+    'get_subpanel_data' => 'stic_awf_responses_documents',
+    'top_buttons' => array(),
+);
