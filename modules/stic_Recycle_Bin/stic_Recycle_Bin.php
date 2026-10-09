@@ -62,6 +62,7 @@ class stic_Recycle_Bin extends Basic
     public $user_restored_id;
     public $restored;
     public $merged;
+    public $deletion_source;
     public $merged_into_id;
     public $merged_into_name;
     public $original_assigned_user_id;

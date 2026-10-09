@@ -226,6 +226,16 @@ $dictionary['stic_Recycle_Bin'] = array(
             'type' => 'bool',
             'default' => 0,
         ),
+        'deletion_source' => array(
+            'name' => 'deletion_source',
+            'vname' => 'LBL_DELETION_SOURCE',
+            'type' => 'enum',
+            'options' => 'stic_recycle_deletion_source_list',
+            'len' => 100,
+            'default' => '',
+            'massupdate' => false,
+            'inline_edit' => false,
+        ),
         'merged_into_id' => array(
             'name' => 'merged_into_id',
             'vname' => 'LBL_SURVIVING_RECORD',
@@ -268,6 +278,11 @@ $dictionary['stic_Recycle_Bin'] = array(
             'name' => 'idx_stic_rb_merged',
             'type' => 'index',
             'fields' => array('merged'),
+        ),
+        array(
+            'name' => 'idx_stic_rb_deletion_source',
+            'type' => 'index',
+            'fields' => array('deletion_source'),
         ),
         array(
             'name' => 'idx_stic_rb_merged_into',

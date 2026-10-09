@@ -55,7 +55,7 @@ class stic_Recycle_BinViewDetail extends ViewDetail
         $html = $this->hideUnwantedButtons($html);
         $html = $this->injectRestoreAction($html);
         $html = $this->prependMergedNotice($html);
-        if (!empty($this->bean->restored) || !empty($this->bean->merged)) {
+        if (!empty($this->bean->restored)) {
             $html = $this->hideActionsMenu($html);
         }
 
@@ -88,7 +88,7 @@ class stic_Recycle_BinViewDetail extends ViewDetail
 
     /**
      * Hides the whole Actions dropdown when the entry offers no actions
-     * (already restored or merged records cannot be restored).
+     * (already restored records cannot be restored again).
      *
      * @param string $html Full rendered detail view HTML
      * @return string HTML with the CSS rule appended
@@ -113,10 +113,6 @@ class stic_Recycle_BinViewDetail extends ViewDetail
     private function injectRestoreAction($html)
     {
         if (!empty($this->bean->restored)) {
-            return $html;
-        }
-
-        if (!empty($this->bean->merged)) {
             return $html;
         }
 
@@ -160,15 +156,14 @@ class stic_Recycle_BinViewDetail extends ViewDetail
 
     /**
      * Prepends a warning banner above all detail fields when the entry comes
-     * from a merge: merged records cannot be restored. When the surviving
-     * record is known, a link to it is included.
+     * from a merge. When the surviving record is known, a link to it is included.
      *
      * @param string $html Rendered detail view HTML
      * @return string HTML with the notice prepended
      */
     private function prependMergedNotice($html)
     {
-        if (empty($this->bean->merged)) {
+        if (!$this->isMergeEntry()) {
             return $html;
         }
 
@@ -230,6 +225,20 @@ class stic_Recycle_BinViewDetail extends ViewDetail
             'url' => 'index.php?module=' . $recordModule . '&action=DetailView&record=' . $masterId,
             'label' => $label,
         );
+    }
+
+    /**
+     * Tells whether the displayed entry comes from a merge (fallback to the
+     * legacy merged flag for older entries).
+     *
+     * @return bool true if the entry is a merged record
+     */
+    private function isMergeEntry()
+    {
+        if (!empty($this->bean->deletion_source)) {
+            return (string)$this->bean->deletion_source === 'merge';
+        }
+        return !empty($this->bean->merged);
     }
 
     /**

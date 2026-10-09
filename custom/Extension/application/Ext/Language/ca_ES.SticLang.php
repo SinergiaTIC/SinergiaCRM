@@ -4250,5 +4250,12 @@ $app_list_strings['stic_recycle_skip_reason_list'][''] = '';
 $app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Registre relacionat eliminat';
 $app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Registre relacionat reassignat';
 
+// Procedència de l'eliminació a la paperera
+$app_list_strings['stic_recycle_deletion_source_list'][''] = '';
+$app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Vista de detall';
+$app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acció massiva';
+$app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinació de registres';
+$app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acció externa';
+
 // Llista dinàmica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

@@ -68,8 +68,9 @@ $mod_strings = array(
     'LBL_RESTORED_BY' => 'Restaurado por',
     'LBL_RESTORED' => 'Restaurado',
     'LBL_MERGED' => 'Combinado',
+    'LBL_DELETION_SOURCE' => 'Motivo de la eliminación',
     'LBL_SURVIVING_RECORD' => 'Registro conservado',
-    'LBL_MERGED_NOTICE' => 'Este registro se eliminó como resultado de una combinación y no se puede restaurar.',
+    'LBL_MERGED_NOTICE' => 'Este registro se eliminó como resultado de una combinación.',
     'LBL_ORIGINAL_ASSIGNED_USER_ID' => 'ID Usuario asignado original',
     'LBL_ORIGINAL_MODIFIED_USER_ID' => 'ID Usuario modificador original',
     'LBL_ORIGINAL_DATE_MODIFIED' => 'Fecha de modificación original',
@@ -92,9 +93,9 @@ $mod_strings = array(
 
     // Actions
     'LBL_RESTORE' => 'Recuperar',
-    'LBL_RESTORE_RECORD' => 'Recuperar registro',
+    'LBL_RESTORE_RECORD' => 'Restaurar registro',
     'LBL_RESTORE_CONFIRM' => '¿Está seguro de que desea recuperar este registro?',
-    'LBL_MASS_RESTORE' => 'Recuperar seleccionados',
+    'LBL_MASS_RESTORE' => 'Restaurar seleccionados',
     'LBL_MASS_RESTORE_CONFIRM' => '¿Está seguro de que desea recuperar los registros seleccionados?',
     'LBL_MASS_RESTORE_SUCCESS' => '%d registros recuperados correctamente.',
     'LBL_MASS_RESTORE_PARTIAL' => '%d registros recuperados, %d omitidos (ya estaban restaurados o no son válidos).',

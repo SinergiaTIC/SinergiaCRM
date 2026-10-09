@@ -73,11 +73,11 @@ $listViewDefs['stic_Recycle_Bin'] = array(
         'default' => true,
         'type' => 'bool',
     ),
-    'MERGED' => array(
-        'width' => '10%',
-        'label' => 'LBL_MERGED',
+    'DELETION_SOURCE' => array(
+        'width' => '12%',
+        'label' => 'LBL_DELETION_SOURCE',
         'default' => true,
-        'type' => 'bool',
+        'inline_edit' => false,
     ),
     'DATE_RESTORED' => array(
         'width' => '10%',

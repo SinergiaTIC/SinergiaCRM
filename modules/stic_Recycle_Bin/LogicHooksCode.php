@@ -67,11 +67,11 @@ class SticRecycleBinHookCode
         // original record exactly as it was before the deletion.
         $originalModifiedUserId = $bean->modified_user_id ?? null;
         $originalDateModified = $bean->date_modified ?? null;
-        // Records deleted as a result of a merge (MergeRecords/SaveMerge via
-        // $mergeSource->mark_deleted()) are flagged as merged: they are shown as
-        // combined and cannot be restored. The surviving (master) record id is
-        // kept so the detail view can link to it.
-        $merged = self::isMergeDelete($bean) ? 1 : 0;
+        // Deletion source: merge, mass action, detail view or other.
+        // The merged flag is kept in sync for backward compatibility with
+        // entries captured before the deletion_source field existed.
+        $deletionSource = self::getDeletionSource($bean);
+        $merged = $deletionSource === 'merge' ? 1 : 0;
         $mergedIntoId = $merged ? self::getMergeMasterId($bean) : null;
         $mergedIntoName = $merged && !empty($mergedIntoId) ? self::getMergeMasterName($bean, $mergedIntoId, $db) : '';
         $sql = 'INSERT INTO stic_recycle_bin (
@@ -79,7 +79,7 @@ class SticRecycleBinHookCode
                     deleted, assigned_user_id, original_assigned_user_id,
                     original_modified_user_id, original_date_modified,
                     record_module, record_id, record_name, date_deleted, user_deleted_id,
-                    restored, merged, merged_into_id, merged_into_name
+                    restored, merged, deletion_source, merged_into_id, merged_into_name
                 ) VALUES (
                     ' . $db->quoted($recycleBinId) . ',
                     ' . $db->quoted($recordName) . ',
@@ -99,6 +99,7 @@ class SticRecycleBinHookCode
                     ' . $db->quoted($userId) . ',
                     0,
                     ' . $merged . ',
+                    ' . $db->quoted($deletionSource) . ',
                     ' . (empty($mergedIntoId) ? 'NULL' : $db->quoted($mergedIntoId)) . ',
                     ' . $db->quoted($mergedIntoName) . '
                 )';
@@ -288,6 +289,81 @@ class SticRecycleBinHookCode
     private static function isValidId($id)
     {
         return is_string($id) && preg_match('/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i', $id) === 1;
+    }
+
+    /**
+     * Determines the deletion source for the captured record.
+     *
+     * @param SugarBean $bean The bean being deleted
+     * @return string One of 'merge', 'mass', 'detail', 'other'
+     */
+    private static function getDeletionSource($bean)
+    {
+        if (self::isMergeDelete($bean)) {
+            return 'merge';
+        }
+        if (self::isMassDelete($bean)) {
+            return 'mass';
+        }
+        if (self::isDetailDelete($bean)) {
+            return 'detail';
+        }
+        return 'other';
+    }
+
+    /**
+     * Detects deletions triggered from the list view mass action.
+     * MassUpdate.php retrieves each id from $_POST['mass'] and calls
+     * mark_deleted() when $_POST['Delete'] is set.
+     *
+     * @param SugarBean $bean The bean being deleted
+     * @return bool true if the deletion comes from a mass delete action
+     */
+    private static function isMassDelete($bean)
+    {
+        $deleteRequested = !empty($_POST['Delete']) || !empty($_REQUEST['Delete']);
+        if (!$deleteRequested) {
+            return false;
+        }
+        foreach (array('mass', 'uid', 'selected_ids') as $key) {
+            if (!empty($_REQUEST[$key]) && is_array($_REQUEST[$key])) {
+                if (in_array($bean->id, $_REQUEST[$key], true)) {
+                    return true;
+                }
+            }
+            if (!empty($_POST[$key]) && is_array($_POST[$key])) {
+                if (in_array($bean->id, $_POST[$key], true)) {
+                    return true;
+                }
+            }
+        }
+        if (!empty($_REQUEST['action']) && strtolower((string)$_REQUEST['action']) === 'massupdate') {
+            return true;
+        }
+        if (!empty($_REQUEST['massupdate']) && (string)$_REQUEST['massupdate'] === 'true') {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Detects deletions triggered from a record's detail view (single delete).
+     *
+     * @param SugarBean $bean The bean being deleted
+     * @return bool true if the deletion comes from the detail view delete action
+     */
+    private static function isDetailDelete($bean)
+    {
+        if (empty($_REQUEST['action']) || strtolower((string)$_REQUEST['action']) !== 'delete') {
+            return false;
+        }
+        if (!empty($_REQUEST['module']) && $_REQUEST['module'] !== $bean->module_dir) {
+            return false;
+        }
+        if (!empty($_REQUEST['record']) && $_REQUEST['record'] !== $bean->id) {
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -77,8 +77,7 @@ class stic_Recycle_BinViewList extends ViewList
     /**
      * Echoes a self-contained <script> block that:
      *  - Marks each row's checkbox with data-restored="1" when the row is already
-     *    restored (and data-merged="1" when it comes from a merge), so the bulk
-     *    action can warn the user.
+     *    restored, so the bulk action can warn the user.
      *  - Defines window.sticRecycleBinMassRestore() which validates the selection
      *    and posts a new form to action=mass_restore with the selected uids.
      *
@@ -101,7 +100,6 @@ class stic_Recycle_BinViewList extends ViewList
                 $restoredMap[] = array(
                     'id' => $row['ID'],
                     'restored' => !empty($row['RESTORED']) ? 1 : 0,
-                    'merged' => !empty($row['MERGED']) ? 1 : 0,
                 );
             }
         }
@@ -114,14 +112,14 @@ class stic_Recycle_BinViewList extends ViewList
             . 'function sticAttachRestored(){'
             . 'for(var i=0;i<restoredData.length;i++){'
             . 'var cb=document.querySelector("input[name=\\"mass[]\\"][value=\\""+restoredData[i].id+"\\"]");'
-            . 'if(cb){cb.setAttribute("data-restored",String(restoredData[i].restored));cb.setAttribute("data-merged",String(restoredData[i].merged||0));}'
+            . 'if(cb){cb.setAttribute("data-restored",String(restoredData[i].restored));}'
             . '}'
             . '}'
             . 'if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",sticAttachRestored);}else{sticAttachRestored();}'
             . 'window.sticRecycleBinMassRestore=function(){'
             . 'if(typeof sugarListView==="undefined"||!sugarListView.get_checks()||sugarListView.get_checks_count()<1){alert(' . json_encode($alertNoSelected) . ');return false;}'
             . 'var checked=document.querySelectorAll("input[name=\\"mass[]\\"]:checked");'
-            . 'var already=0;for(var i=0;i<checked.length;i++){if(checked[i].getAttribute("data-restored")==="1"||checked[i].getAttribute("data-merged")==="1"){already++;}}'
+            . 'var already=0;for(var i=0;i<checked.length;i++){if(checked[i].getAttribute("data-restored")==="1"){already++;}}'
             . 'if(already>0&&already===checked.length){alert(' . json_encode($alertAllAlready) . ');return false;}'
             . 'if(already>0&&!window.confirm(' . json_encode($confirmMixed) . ')){return false;}'
             . 'var f=document.createElement("form");f.method="POST";f.action="index.php";'

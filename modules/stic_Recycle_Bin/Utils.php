@@ -70,14 +70,6 @@ class stic_Recycle_BinUtils
             ];
         }
 
-        if (!empty($binBean->merged)) {
-            $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': record was merged, restore not allowed: ' . $recycleBinId);
-            return [
-                'success' => false,
-                'message' => translate('LBL_RESTORE_MERGED', 'stic_Recycle_Bin'),
-            ];
-        }
-
         $module = $binBean->record_module;
         $recordId = $binBean->record_id;
 

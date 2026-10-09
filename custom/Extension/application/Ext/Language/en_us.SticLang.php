@@ -4232,5 +4232,12 @@ $app_list_strings['stic_recycle_skip_reason_list'][''] = '';
 $app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Related record deleted';
 $app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Related record reassigned';
 
+// Recycle bin deletion source
+$app_list_strings['stic_recycle_deletion_source_list'][''] = '';
+$app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Detail view';
+$app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Mass action';
+$app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Record merge';
+$app_list_strings['stic_recycle_deletion_source_list']['other'] = 'External action';
+
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

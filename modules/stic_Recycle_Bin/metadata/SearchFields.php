@@ -45,6 +45,7 @@ $searchFields['stic_Recycle_Bin'] = array(
         'is_date_field' => true,
     ),
     'restored' => array('query_type' => 'default'),
+    'deletion_source' => array('query_type' => 'default'),
     'user_deleted_id' => array(
         'query_type' => 'default',
         'operator' => '=',

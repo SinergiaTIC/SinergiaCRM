@@ -50,6 +50,7 @@ $searchdefs['stic_Recycle_Bin'] = array(
             'record_module' => array('name' => 'record_module'),
             'date_deleted' => array('name' => 'date_deleted'),
             'restored' => array('name' => 'restored'),
+            'deletion_source' => array('name' => 'deletion_source'),
             'user_deleted_id' => array(
                 'name' => 'user_deleted_id',
                 'type' => 'enum',
