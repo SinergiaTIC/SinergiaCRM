@@ -45,8 +45,8 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Deslucrativizado por SinergiaCR
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM foi desenvolvido pola Asociación SinergiaTIC. O software é fornecido COMO ESTÁ, sen garantía ningunha. Baixo a licenza AGPLv3. Para máis información, visite o <a href="https://www.sinergiacrm.org">web de SinergiaCRM</a>.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa é software libre. Permítese a súa redistribución e/ou modificación baixo os termos da Licenza Pública Xeral Affero de GNU versión 3, publicada pola Free Software Foundation, incluíndo calquera permiso adicional indicado no encabezamento do código fonte.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos os nomes de outras empresas e produtos mencionados aquí poden ser marcas rexistradas das súas respectivas compañías asociadas.';
-$app_strings['ERR_OPT_IN_RELATION_INCORRECT'] = 'Para autorizar es necesario que el correo esté relacionado con una Organización/Persona/Interesado/Público Objetivo';
-$app_strings['LBL_CONFIRM_OPT_IN_ONLY_FOR_PERSON'] = 'Envío de correo de confirmación de autorización sólo para Organizaciones/Personas/Interesados/Público Objetivo';
+$app_strings['ERR_OPT_IN_RELATION_INCORRECT'] = 'Para autorizar é necesario que o correo estea relacionado cunha Organización/Persoa/Interesado/Público Obxectivo';
+$app_strings['LBL_CONFIRM_OPT_IN_ONLY_FOR_PERSON'] = 'Envío de correo de confirmación de autorización só para Organizacións/Persoas/Interesados/Público Obxectivo';
 $app_strings['LBL_LIST_ACCOUNT_NAME'] = 'Organización';
 
 // Creación de registro horario vía cabecera
@@ -3979,7 +3979,7 @@ $app_list_strings['stic_awf_forms_field_type_in_form_list']['date'] = '🗓️ T
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['select'] = '▼ Opcións predeterminadas';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['rating'] = '🏅 Valoración';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['hidden'] = '🕵️ Oculta';
-$app_list_strings['stic_awf_forms_field_type_in_form_list']['file'] = '📄 Fichero';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['file'] = '📄 Ficheiro';
 
 // Advanced Web Forms: configuration->data_block->field->subtype_in_form
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text'] = '🔤 Texto simple';
@@ -4003,7 +4003,7 @@ $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_emoji'] =
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_lights'] = '🚦 Semáforo';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_thumbs'] = '👍 Polgares';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 Escala 0-10 (NPS)';
-$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['file_upload'] = '📎 Fichero adjunto';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['file_upload'] = '📎 Ficheiros adxunto';
 
 // Advanced Web Forms: configuration->data_block->field->value_type
 $app_list_strings['stic_awf_forms_field_value_type_list']['editable'] = 'Editable';
