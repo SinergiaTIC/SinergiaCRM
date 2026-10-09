@@ -26,4 +26,4 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings['LBL_STIC_RECYCLE_BIN_LINK_TITLE'] = 'Papelera de reciclaje';
-$mod_strings['LBL_STIC_RECYCLE_BIN_DESCRIPTION'] = 'Visualizar y recuperar registros eliminados de cualquier módulo del CRM.';
+$mod_strings['LBL_STIC_RECYCLE_BIN_DESCRIPTION'] = 'Visualizar y recuperar registros eliminados de cualquier módulo.';
