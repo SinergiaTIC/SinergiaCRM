@@ -34,17 +34,17 @@ class stic_SignersUtils
      * signing link, parses the email template, and sends the request using SugarCRM's mailer.
      *
      * @param string $signerId The ID of the signer to whom the email should be sent.
-     * @throws Exception If a required bean is not found, the destination email is empty, or the email sending fails.
-     * @return void
+     * @param bool $showMessage Whether to append success/error messages via SugarApplication. Default true.
+     * @return bool True if the email was sent successfully, false otherwise.
      */
-    public static function sendToSign($signerId)
+    public static function sendToSign($signerId, $showMessage = true)
     {
         global $mod_strings, $app_strings;
 
         // Validate signer ID
         if (empty($signerId)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signer ID cannot be empty.");
-            return;
+            return false;
         }
 
         // Retrieve the signer bean
@@ -52,7 +52,7 @@ class stic_SignersUtils
 
         if (!$signerBean) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signer with ID {$signerId} not found.");
-            return;
+            return false;
         }
 
         // Retrieve the related signature bean
@@ -60,7 +60,7 @@ class stic_SignersUtils
         $signatureBean = SticUtils::getRelatedBeanObject($signerBean, 'stic_signatures_stic_signers');
         if (!$signatureBean) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Related signature for signer ID {$signerId} not found.");
-            return;
+            return false;
         }
 
         // Get the email template ID from the signature, or use a default if not set
@@ -72,8 +72,10 @@ class stic_SignersUtils
 
         if (empty($destAddress)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": No email address available for signer ID {$signerId}.");
-            SugarApplication::appendErrorMessage("<p class='label label-warning'>{$mod_strings['LBL_SIGNER_NO_EMAIL']} ({$signerBean->name}) </p>");
-            return;
+            if ($showMessage) {
+                SugarApplication::appendErrorMessage("<p class='label label-warning'>{$mod_strings['LBL_SIGNER_NO_EMAIL']} ({$signerBean->name}) </p>");
+            }
+            return false;
         }
 
         // Prepare mailer
@@ -120,7 +122,8 @@ class stic_SignersUtils
 
         // Validate final parsed body
         if (empty($body_html)) {
-            throw new Exception("Parsed email body is empty after applying template '{$templateId}'.");
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Parsed email body is empty after applying template '{$templateId}'.");
+            return false;
         }
 
         $mailBodyHtml = $body_html;
@@ -137,16 +140,19 @@ class stic_SignersUtils
         if (!$mail->Send()) {
             $msg = "There was an error sending the email to {$destAddress}. Mailer Error: " . $mail->ErrorInfo;
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $msg);
-            SugarApplication::appendErrorMessage("<p class='label label-warning'>Error: {$app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']} </p>");
-            SugarApplication::redirect('index.php?module=stic_Signers&action=DetailView&record=' . $signerId);
-
-            throw new Exception($msg);
+            if ($showMessage) {
+                SugarApplication::appendErrorMessage("<p class='label label-warning'>Error: {$app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']} </p>");
+            }
+            return false;
         } else {
             // On success: display message, log debug, and log the action
-            SugarApplication::appendSuccessMessage("<p class='label label-success'> {$mod_strings['LBL_SIGNER_EMAIL_SUCCESS']} ({$signerBean->name})</p>");
+            if ($showMessage) {
+                SugarApplication::appendSuccessMessage("<p class='label label-success'> {$mod_strings['LBL_SIGNER_EMAIL_SUCCESS']} ({$signerBean->name})</p>");
+            }
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Email sent successfully to {$destAddress}.");
             require_once 'modules/stic_Signature_Log/Utils.php';
             stic_SignatureLogUtils::logSignatureAction('EMAIL_SENT', $signerId, 'SIGNER', $destAddress);
+            return true;
         }
     }
 

@@ -50,7 +50,11 @@ if (
      $userOrContactsTargets = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " parent_id = '{$_REQUEST['targetId']}' ");
 
      // Redirect to the signature portal with the signerId parameter
-     Header('Location: index.php?entryPoint=sticSign&signerId=' . $userOrContactsTargets[0]->id);
+     $redirectUrl = 'index.php?entryPoint=sticSign&signerId=' . $userOrContactsTargets[0]->id;
+     if (!empty($_REQUEST['returnToken'])) {
+         $redirectUrl .= '&returnToken=' . urlencode($_REQUEST['returnToken']);
+     }
+     Header('Location: ' . $redirectUrl);
      die();
 
 }
@@ -117,6 +121,15 @@ if (!empty($_REQUEST['signatureAction'])) {
                     'message' => 'No data provided',
                 ];
             }
+
+            // If there is a returnToken (AWF integration), include the redirect URL to resume the deferred flow
+            $returnToken = $_REQUEST['returnToken'] ?? '';
+            if ($result['success'] && !empty($returnToken)) {
+                global $sugar_config;
+                $siteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
+                $result['redirectUrl'] = $siteUrl . '/index.php?entryPoint=stic_AWF_returnHandler&token=' . urlencode($returnToken);
+            }
+
             ob_clean();
             echo json_encode($result);
             die();
