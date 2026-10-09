@@ -4014,8 +4014,12 @@ $app_list_strings['stic_awf_forms_field_value_type_list']['dataBlock'] = 'Bloc d
 // Advanced Web Forms: configuration->layout->structure->containerType
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel'] = 'Panell (simple)';
 $app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card'] = 'Targeta (amb vora)';
-$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tabs'] = 'Pestanyes';
-$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['accordion'] = 'Acordió';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel_tabs'] = 'Panell amb pestanyes';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card_tabs'] = 'Targeta amb pestanyes';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tab_item'] = 'Pestanya';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel_accordion'] = 'Panell amb acordió';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card_accordion'] = 'Targeta amb acordió';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['accordion_item'] = "Element d'acordió";
 
 // Advanced Web Forms: configuration->layout->theme->shadow_intensity
 $app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['none'] = 'Sense ombra (pla)';

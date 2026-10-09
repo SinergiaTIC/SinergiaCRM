@@ -177,7 +177,9 @@ class ParameterResolverService {
             return null;
         }
 
-        return new DataBlockResolved($dataBlockConfig, $context->formData, $context);
+        // Loop-depth-aware instance resolution: picks the correct instance indexes 
+        // from the context for the block's own depth.
+        return DataBlockResolved::resolveForBlock($dataBlockConfig, $context->formData, $context);
     }
 
     private function resolveBean(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?BeanReference {
@@ -241,13 +243,34 @@ class ParameterResolverService {
 
         $crmFieldType = $fieldDefinition?->type ?? 'text';
         $finalValue = null;
-        if (array_key_exists($phpKey, $context->formData)) {
-            // Fill value from form data
-            $finalValue = stic_AWFUtils::castCrmValue($context->formData[$phpKey], $crmFieldType, $context);
-        } else {
-            // If not set in form data, then find if is a field with fixed value in DataBlock
-            if ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
+
+        // If an instance is being executed and the field belongs to a group, read
+        // the value from the indexed form structure: a field at loop depth d is
+        // addressed by the FIRST d indexes of the active stack:
+        // formData['Block'][i1]...[id]['field']
+        if ($context->getInstanceIndexes() !== [] && $foundBlock !== null && $foundBlock->getLoopDepth() >= 1) {
+            $blockArrayKey = $isDetached ? '_detached_' . $foundBlock->name : $foundBlock->name;
+            $node = is_array($context->formData[$blockArrayKey] ?? null) ? $context->formData[$blockArrayKey] : [];
+            $indexes = array_slice($context->getInstanceIndexes(), 0, $foundBlock->getLoopDepth());
+            while (count($indexes) < $foundBlock->getLoopDepth()) { $indexes[] = 0; }
+            foreach ($indexes as $levelIndex) {
+                $node = is_array($node) ? ($node[$levelIndex] ?? null) : null;
+            }
+            $row = is_array($node) ? $node : [];
+            if (array_key_exists($fieldName, $row)) {
+                $finalValue = stic_AWFUtils::castCrmValue($row[$fieldName], $crmFieldType, $context);
+            } elseif ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
                 $finalValue = stic_AWFUtils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
+            }
+        } else {
+            if (array_key_exists($phpKey, $context->formData)) {
+                // Fill value from form data
+                $finalValue = stic_AWFUtils::castCrmValue($context->formData[$phpKey], $crmFieldType, $context);
+            } else {
+                // If not set in form data, then find if is a field with fixed value in DataBlock
+                if ($fieldDefinition !== null && $fieldDefinition->value_type === DataBlockFieldValueType::FIXED) {
+                    $finalValue = stic_AWFUtils::castCrmValue($fieldDefinition->value, $crmFieldType, $context);
+                }
             }
         }
         return new DataBlockFieldResolved($formKey, $fieldName, $fieldDefinition, $finalValue);

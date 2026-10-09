@@ -154,12 +154,115 @@ class stic_AWFUtils {
             $html .= "<table style=\"width: 100%;border-collapse: collapse;margin-bottom: 0px;\">";
             $hasFields = false;
 
-            // Elements of the section (data blocks)
-            foreach ($section->elements as $element) {
-                if ($element->type !== 'datablock') continue;
+            // Elements of the section (data blocks): collect them RECURSIVELY,
+            // since the layout nests the blocks inside host sections (Paso 4
+            // composite model). Field elements (unbundled blocks) also count as
+            // block references; blocks are de-duplicated per section walk.
+            $collectBlockElements = function ($containerSection) use (&$collectBlockElements) {
+                $found = [];
+                foreach ($containerSection->elements as $element) {
+                    if ($element->type === 'datablock' || $element->type === 'field') {
+                        $found[$element->ref_id] = true;
+                    } elseif ($element->type === 'section') {
+                        foreach ($collectBlockElements($element) as $refId => $v) {
+                            $found[$refId] = true;
+                        }
+                    }
+                }
+                return $found;
+            };
+            $sectionBlockIds = $collectBlockElements($section);
 
-                $block = $context->getDataBlockById($element->ref_id);
+            foreach (array_keys($sectionBlockIds) as $blockId) {
+                $block = $context->getDataBlockById($blockId);
                 if (!$block) continue;
+
+                // Child blocks are rendered together with their root when the root is repeatable/optional.
+                // Children of SIMPLE groups fall through to scalar summary rendering.
+                if (!empty($block->group_root)) {
+                    $rootBlock = $context->formConfig->data_blocks[$block->group_root] ?? null;
+                    if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                        continue;
+                    }
+                }
+
+                // Repeatable and optional groups render as per-instance rows in the summary.
+                if ($block->isRepeatable() || $block->isOptional()) {
+                    // Use transitive descendants (multi-level branches);
+                    // config comes from the context ($formConfig was never defined in this scope).
+                    $formConfig = $context->formConfig;
+                    $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '');
+                    $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
+                    $instances = DataBlockResolved::resolveInstances($block, $formData, $summaryContext);
+                    $instanceNumber = 1;
+                    foreach ($instances as $instance) {
+                        $instanceLabel = rtrim($block->text, ' :') . " #" . $instanceNumber;
+                        $html .= "<tr><td colspan=\"2\" style=\"padding: 8px 12px;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.05);border-bottom: 1px solid {$borderColor};\">" . htmlspecialchars($instanceLabel) . "</td></tr>";
+                        $hasFields = true;
+                        $instanceNumber++;
+
+                        foreach ($groupBlocks as $groupBlock) {
+                            // Skip blocks with no visible (non-fixed, labelled) fields:
+                            // they would render empty instance sub-rows
+                            $hasVisibleFields = false;
+                            foreach ($groupBlock->fields as $visibleCheck) {
+                                if ($visibleCheck->type_field !== DataBlockFieldType::FIXED && !empty($visibleCheck->label)) {
+                                    $hasVisibleFields = true;
+                                    break;
+                                }
+                            }
+                            if (!$hasVisibleFields) continue;
+
+                            $groupBlockLoopDepth = $groupBlock->getLoopDepth();
+                            // Blocks inside nested group loops (depth >= 2, N optional
+                            // levels): one sub-row per inner instance, values read from
+                            // their RESOLVED instances (each field reads its own matrix —
+                            // linked or detached)
+                            if ($groupBlockLoopDepth >= 2) {
+                                $subInstances = DataBlockResolved::resolveInstances($groupBlock, $formData, $summaryContext, [$instance->instanceIndex]);
+                                $innerNumber = 1;
+                                foreach ($subInstances as $subInstance) {
+                                    $innerLabel = rtrim($groupBlock->text, ' :') . " #" . $innerNumber;
+                                    $html .= "<tr><td colspan=\"2\" style=\"padding: 6px 12px 6px 28px;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.03);border-bottom: 1px solid {$borderColor};\">" . htmlspecialchars($innerLabel) . "</td></tr>";
+                                    $hasFields = true;
+                                    $innerNumber++;
+                                    foreach ($groupBlock->fields as $fieldDef) {
+                                        // Only show visible fields in the form
+                                        if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+                                        // If it has no label, it is not displayed
+                                        if (empty($fieldDef->label)) continue;
+
+                                        $value = $subInstance->getFieldValue($fieldDef->name)?->value
+                                              ?? $subInstance->getDetachedFieldValue($fieldDef->name)?->value
+                                              ?? '';
+                                        $html .= self::renderSummaryFieldRow($fieldDef, $value, $borderColor, $textColor, $hasFields);
+                                    }
+                                }
+                                continue;
+                            }
+
+                            foreach ($groupBlock->fields as $fieldDef) {
+                                // Only show visible fields in the form
+                                if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+                                // If it has no label, it is not displayed
+                                if (empty($fieldDef->label)) continue;
+
+                                $isUnlinked = $fieldDef->type_field === DataBlockFieldType::UNLINKED;
+                                $blockArrayKey = ($isUnlinked ? '_detached_' : '') . $groupBlock->name;
+                                // Value to display: the POST matrix, or the uploaded
+                                // file's name for FILE fields (they post under the flat
+                                // per-instance key, never into the matrix)
+                                $value = $formData[$blockArrayKey][$instance->instanceIndex][$fieldDef->name] ?? '';
+                                if ($fieldDef->type_in_form === 'file') {
+                                    $fileKey = $fieldDef->getFileKeyForIndexes([$instance->instanceIndex]);
+                                    $value = $context->uploadedFiles[$fileKey]['name'] ?? '';
+                                }
+                                $html .= self::renderSummaryFieldRow($fieldDef, $value, $borderColor, $textColor, $hasFields);
+                            }
+                        }
+                    }
+                    continue;
+                }
 
                 foreach ($block->fields as $fieldDef) {
                     // Only show visible fields in the form
@@ -172,180 +275,16 @@ class stic_AWFUtils {
                     }
 
                     $formKey = $fieldDef->getPhpKey();
-                    
+
                     // Value to display
                     $value = $formData[$formKey] ?? '';
-                    $isHtmlValue = false; // Flag to indicate if the value contains HTML (for proper escaping)
 
                     // For file fields, get the filename from the uploaded files data
                     if ($fieldDef->type_in_form === 'file' && isset($context->uploadedFiles[$formKey]['name'])) {
                         $value = $context->uploadedFiles[$formKey]['name'];
                     }
 
-                    // Render rating fields with icons
-                    if ($fieldDef->type_in_form === 'rating') { 
-                        $rawNum = (int)$value;
-                        $subtype = !empty($fieldDef->subtype_in_form) ? $fieldDef->subtype_in_form : 'rating_stars';
-                        $isHtmlValue = true; 
-                        
-                        if ($value === '' || $value === null) {
-                            $displayValue = '<em style="color:#9aa0a6;">[ '.translate('LBL_EMPTY', 'stic_AWF_Responses').' ]</em>';
-                        } else {
-                            $displayValue = '<div style="display:inline-flex; gap:10px; align-items:center; font-size:1.5em; line-height:1;">';
-                            
-                            // Stars, emojis, thumbs or lights
-                            if (in_array($subtype, ['rating_stars', 'rating_emoji', 'rating_thumbs', 'rating_lights'])) {
-                                $options = [];
-                                $isCumulative = false;
-                                $isLight = false;
-                                $baseColors = []; 
-                                
-                                // Get official icons and colors from Iconify API based on the subtype
-                                if ($subtype === 'rating_stars') {
-                                    $isCumulative = true;
-                                    for ($i = 1; $i <= 5; $i++) {
-                                        $options[$i] = ['empty' => 'bi:star', 'fill' => 'bi:star-fill'];
-                                        $baseColors[$i] = 'ffc107'; // Yellow for all stars
-                                    }
-                                } elseif ($subtype === 'rating_emoji') {
-                                    $options = [
-                                        1 => ['empty' => 'bi:emoji-angry',   'fill' => 'bi:emoji-angry-fill'],
-                                        2 => ['empty' => 'bi:emoji-frown',   'fill' => 'bi:emoji-frown-fill'],
-                                        3 => ['empty' => 'bi:emoji-neutral', 'fill' => 'bi:emoji-neutral-fill'],
-                                        4 => ['empty' => 'bi:emoji-smile',   'fill' => 'bi:emoji-smile-fill'],
-                                        5 => ['empty' => 'bi:emoji-laughing','fill' => 'bi:emoji-laughing-fill']
-                                    ];
-                                    $baseColors = [1 => 'dc3545', 2 => 'fd7e14', 3 => 'ffc107', 4 => '20c997', 5 => '198754'];
-                                } elseif ($subtype === 'rating_thumbs') {
-                                    $options = [
-                                        1 => ['empty' => 'bi:hand-thumbs-down', 'fill' => 'bi:hand-thumbs-down-fill'],
-                                        5 => ['empty' => 'bi:hand-thumbs-up',   'fill' => 'bi:hand-thumbs-up-fill']
-                                    ];
-                                    $baseColors = [1 => 'dc3545', 5 => '198754'];
-                                } elseif ($subtype === 'rating_lights') {
-                                    $isLight = true;
-                                    $options = [
-                                        1 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill'],
-                                        3 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill'],
-                                        5 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill']
-                                    ];
-                                    $baseColors = [1 => 'dc3545', 3 => 'ffc107', 5 => '198754'];
-                                }
-                                $displayValue = '<div style="display:inline-flex; gap:12px; align-items:center;">';
-
-                                // Render each icon
-                                foreach ($options as $val => $iconNames) {
-                                    $active = $isCumulative ? ($val <= $rawNum) : ($val === $rawNum);
-                                    
-                                    $iconName = $active ? $iconNames['fill'] : $iconNames['empty'];
-                                    $targetColor = $baseColors[$val];
-
-                                    if ($active) {
-                                        $colorHex = $targetColor;
-                                        $scale = 'transform: scale(1.6);';
-                                    } else {
-                                        $colorHex = $isLight ? $targetColor : 'adb5bd';
-                                        $alfa = $isLight ? '20' : '80'; 
-                                        $colorHex .= $alfa;
-                                        $scale = '';
-                                    }
-                                    
-                                    $imgUrl = "https://api.iconify.design/{$iconName}.svg?color=%23{$colorHex}";
-                                    $displayValue .= "<img src='{$imgUrl}' style='{$scale} display:inline-block; vertical-align:middle; margin-right:6px;' alt='rating' />";
-                                }
-                                $displayValue .= '</div>';
-                            }
-
-                            // NPS (0 to 10)
-                            elseif ($subtype === 'rating_nps') {
-                                $displayValue = '<div style="display:flex; width:100%; gap:2px;">';
-                                for ($i = 0; $i <= 10; $i++) {
-                                    $active = ($i === $rawNum);
-                                    if ($active) {
-                                        if ($i <= 6) { $bg = '#dc3545'; $color = '#fff'; $border = '#dc3545'; }
-                                        elseif ($i <= 8) { $bg = '#ffc107'; $color = '#212529'; $border = '#ffc107'; }
-                                        else { $bg = '#198754'; $color = '#fff'; $border = '#198754'; }
-                                    } else {
-                                        $bg = 'transparent'; $color = '#6c757d'; $border = '#dee2e6';
-                                    }
-                                    $opacity = $active ? '1' : '0.6';
-                                    $displayValue .= "<span style='flex:1; text-align:center; padding:5px 2px; font-weight:bold; background-color:{$bg}; color:{$color}; border:1px solid {$border}; border-radius:3px; opacity:{$opacity};'>{$i}</span>";
-                                }
-                                $displayValue .= '</div>';
-                            }
-                            $displayValue .= '</div>';
-                        }
-                    }
-                    // Boolean (checkboxes and Switches)
-                    elseif ($fieldDef->type === 'bool' || $fieldDef->type === 'checkbox' || in_array($fieldDef->subtype_in_form, ['select_checkbox', 'select_switch'])) {
-                        global $app_strings;
-                        $isTrue = ($value === '1' || $value === 'on' || $value === 'true' || $value === true);
-                        $yesStr = $app_strings['LBL_YES'] ?? 'Yes';
-                        $noStr  = $app_strings['LBL_NO'] ?? 'No';
-                        
-                        if ($isTrue) {
-                            $displayValue = "<span style='color: #198754; font-weight: bold;'>✓ {$yesStr}</span>";
-                        } else {
-                            $displayValue = "<span style='color: #dc3545;'>✗ {$noStr}</span>";
-                        }
-                        $isHtmlValue = true; // Do not scape the string
-                    }
-                    // Dates and times
-                    elseif (in_array($fieldDef->type, ['date', 'datetime', 'datetimecombo']) || in_array($fieldDef->subtype_in_form, ['date', 'date_time', 'date_datetime'])) {
-                        if ($value === '' || $value === null) {
-                            $displayValue = '<em style="color:#9aa0a6;">[ '.translate('LBL_EMPTY', 'stic_AWF_Responses').' ]</em>';
-                            $isHtmlValue = true;
-                        } else {
-                            global $timedate;
-                            try {
-                                $dt = new \DateTime($value);
-                                if ($fieldDef->type === 'date' || $fieldDef->subtype_in_form === 'date') {
-                                    $displayValue = $timedate->asUserDate($dt);
-                                } elseif ($fieldDef->subtype_in_form === 'date_time') {
-                                    $displayValue = $timedate->asUserTime($dt);
-                                } else {
-                                    $displayValue = $timedate->asUser($dt);
-                                }
-                            } catch (\Exception $e) {
-                                $displayValue = $value; 
-                            }
-                        }
-                    }
-                    // Enum and multienum with value options: we display the text instead of the value
-                    elseif (!empty($fieldDef->value_options)) {
-                        // Helper function to find the text of a value
-                        $findLabel = function($val) use ($fieldDef) {
-                            foreach ($fieldDef->value_options as $opt) {
-                                if ($opt->value == $val) return $opt->text;
-                            }
-                            return $val; 
-                        };
-    
-                        if (is_array($value)) {
-                            $labels = array_map($findLabel, $value);
-                            $displayValue = implode(', ', $labels);
-                        } else {
-                            $displayValue = $findLabel($value);
-                        }
-                    } 
-                    // For other fields, we display the value directly (after converting arrays to strings)
-                    else {
-                        if (is_array($value)) {
-                            $value = implode(', ', $value);
-                        }
-                        $displayValue = $value;
-                    }
-                    
-                    // If the value does not contain HTML (like the rating field), we escape it to prevent XSS and preserve formatting
-                    if (!$isHtmlValue) {
-                        $displayValue = nl2br(htmlspecialchars((string)$displayValue));
-                    }
-
-                    $html .= "<tr>";
-                    $html .= "<td style=\"padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;width: 35%;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.02);\">" . htmlspecialchars($fieldDef->label) . "</td>";
-                    $html .= "<td style=\"padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;width: 65%;\">" . $displayValue . "</td>";
-                    $html .= "</tr>";
-                    $hasFields = true;
+                    $html .= self::renderSummaryFieldRow($fieldDef, $value, $borderColor, $textColor, $hasFields);
                 }
             }
 
@@ -359,6 +298,187 @@ class stic_AWFUtils {
         $html .= "</div>";
         $html .= "</div>";
         
+        return $html;
+    }
+
+    /**
+     * Renders a single summary table row for a field with the given value.
+     * @param FormDataBlockField $fieldDef Field definition
+     * @param mixed $value Raw form value
+     * @param string $borderColor Table border color
+     * @param string $textColor Table text color
+     * @param bool $hasFields Set to true when a row is rendered
+     * @return string The generated <tr> HTML
+     */
+    private static function renderSummaryFieldRow(FormDataBlockField $fieldDef, mixed $value, string $borderColor, string $textColor, bool &$hasFields): string {
+        $isHtmlValue = false; // Flag to indicate if the value contains HTML (for proper escaping)
+        $html = '';
+
+        // Render rating fields with icons
+        if ($fieldDef->type_in_form === 'rating') { 
+            $rawNum = (int)$value;
+            $subtype = !empty($fieldDef->subtype_in_form) ? $fieldDef->subtype_in_form : 'rating_stars';
+            $isHtmlValue = true; 
+            
+            if ($value === '' || $value === null) {
+                $displayValue = '<em style="color:#9aa0a6;">[ '.translate('LBL_EMPTY', 'stic_AWF_Responses').' ]</em>';
+            } else {
+                $displayValue = '<div style="display:inline-flex; gap:10px; align-items:center; font-size:1.5em; line-height:1;">';
+                
+                // Stars, emojis, thumbs or lights
+                if (in_array($subtype, ['rating_stars', 'rating_emoji', 'rating_thumbs', 'rating_lights'])) {
+                    $options = [];
+                    $isCumulative = false;
+                    $isLight = false;
+                    $baseColors = []; 
+                    
+                    // Get official icons and colors from Iconify API based on the subtype
+                    if ($subtype === 'rating_stars') {
+                        $isCumulative = true;
+                        for ($i = 1; $i <= 5; $i++) {
+                            $options[$i] = ['empty' => 'bi:star', 'fill' => 'bi:star-fill'];
+                            $baseColors[$i] = 'ffc107'; // Yellow for all stars
+                        }
+                    } elseif ($subtype === 'rating_emoji') {
+                        $options = [
+                            1 => ['empty' => 'bi:emoji-angry',   'fill' => 'bi:emoji-angry-fill'],
+                            2 => ['empty' => 'bi:emoji-frown',   'fill' => 'bi:emoji-frown-fill'],
+                            3 => ['empty' => 'bi:emoji-neutral', 'fill' => 'bi:emoji-neutral-fill'],
+                            4 => ['empty' => 'bi:emoji-smile',   'fill' => 'bi:emoji-smile-fill'],
+                            5 => ['empty' => 'bi:emoji-laughing','fill' => 'bi:emoji-laughing-fill']
+                        ];
+                        $baseColors = [1 => 'dc3545', 2 => 'fd7e14', 3 => 'ffc107', 4 => '20c997', 5 => '198754'];
+                    } elseif ($subtype === 'rating_thumbs') {
+                        $options = [
+                            1 => ['empty' => 'bi:hand-thumbs-down', 'fill' => 'bi:hand-thumbs-down-fill'],
+                            5 => ['empty' => 'bi:hand-thumbs-up',   'fill' => 'bi:hand-thumbs-up-fill']
+                        ];
+                        $baseColors = [1 => 'dc3545', 5 => '198754'];
+                    } elseif ($subtype === 'rating_lights') {
+                        $isLight = true;
+                        $options = [
+                            1 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill'],
+                            3 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill'],
+                            5 => ['empty' => 'bi:circle-fill', 'fill' => 'bi:circle-fill']
+                        ];
+                        $baseColors = [1 => 'dc3545', 3 => 'ffc107', 5 => '198754'];
+                    }
+                    $displayValue = '<div style="display:inline-flex; gap:12px; align-items:center;">';
+
+                    // Render each icon
+                    foreach ($options as $val => $iconNames) {
+                        $active = $isCumulative ? ($val <= $rawNum) : ($val === $rawNum);
+                        
+                        $iconName = $active ? $iconNames['fill'] : $iconNames['empty'];
+                        $targetColor = $baseColors[$val];
+
+                        if ($active) {
+                            $colorHex = $targetColor;
+                            $scale = 'transform: scale(1.6);';
+                        } else {
+                            $colorHex = $isLight ? $targetColor : 'adb5bd';
+                            $alfa = $isLight ? '20' : '80'; 
+                            $colorHex .= $alfa;
+                            $scale = '';
+                        }
+                        
+                        $imgUrl = "https://api.iconify.design/{$iconName}.svg?color=%23{$colorHex}";
+                        $displayValue .= "<img src='{$imgUrl}' style='{$scale} display:inline-block; vertical-align:middle; margin-right:6px;' alt='rating' />";
+                    }
+                    $displayValue .= '</div>';
+                }
+
+                // NPS (0 to 10)
+                elseif ($subtype === 'rating_nps') {
+                    $displayValue = '<div style="display:flex; width:100%; gap:2px;">';
+                    for ($i = 0; $i <= 10; $i++) {
+                        $active = ($i === $rawNum);
+                        if ($active) {
+                            if ($i <= 6) { $bg = '#dc3545'; $color = '#fff'; $border = '#dc3545'; }
+                            elseif ($i <= 8) { $bg = '#ffc107'; $color = '#212529'; $border = '#ffc107'; }
+                            else { $bg = '#198754'; $color = '#fff'; $border = '#198754'; }
+                        } else {
+                            $bg = 'transparent'; $color = '#6c757d'; $border = '#dee2e6';
+                        }
+                        $opacity = $active ? '1' : '0.6';
+                        $displayValue .= "<span style='flex:1; text-align:center; padding:5px 2px; font-weight:bold; background-color:{$bg}; color:{$color}; border:1px solid {$border}; border-radius:3px; opacity:{$opacity};'>{$i}</span>";
+                    }
+                    $displayValue .= '</div>';
+                }
+                $displayValue .= '</div>';
+            }
+        }
+        // Boolean (checkboxes and Switches)
+        elseif ($fieldDef->type === 'bool' || $fieldDef->type === 'checkbox' || in_array($fieldDef->subtype_in_form, ['select_checkbox', 'select_switch'])) {
+            global $app_strings;
+            $isTrue = ($value === '1' || $value === 'on' || $value === 'true' || $value === true);
+            $yesStr = $app_strings['LBL_YES'] ?? 'Yes';
+            $noStr  = $app_strings['LBL_NO'] ?? 'No';
+            
+            if ($isTrue) {
+                $displayValue = "<span style='color: #198754; font-weight: bold;'>✓ {$yesStr}</span>";
+            } else {
+                $displayValue = "<span style='color: #dc3545;'>✗ {$noStr}</span>";
+            }
+            $isHtmlValue = true; // Do not scape the string
+        }
+        // Dates and times
+        elseif (in_array($fieldDef->type, ['date', 'datetime', 'datetimecombo']) || in_array($fieldDef->subtype_in_form, ['date', 'date_time', 'date_datetime'])) {
+            if ($value === '' || $value === null) {
+                $displayValue = '<em style="color:#9aa0a6;">[ '.translate('LBL_EMPTY', 'stic_AWF_Responses').' ]</em>';
+                $isHtmlValue = true;
+            } else {
+                global $timedate;
+                try {
+                    $dt = new \DateTime($value);
+                    if ($fieldDef->type === 'date' || $fieldDef->subtype_in_form === 'date') {
+                        $displayValue = $timedate->asUserDate($dt);
+                    } elseif ($fieldDef->subtype_in_form === 'date_time') {
+                        $displayValue = $timedate->asUserTime($dt);
+                    } else {
+                        $displayValue = $timedate->asUser($dt);
+                    }
+                } catch (\Exception $e) {
+                    $displayValue = $value; 
+                }
+            }
+        }
+        // Enum and multienum with value options: we display the text instead of the value
+        elseif (!empty($fieldDef->value_options)) {
+            // Helper function to find the text of a value
+            $findLabel = function($val) use ($fieldDef) {
+                foreach ($fieldDef->value_options as $opt) {
+                    if ($opt->value == $val) return $opt->text;
+                }
+                return $val; 
+            };
+
+            if (is_array($value)) {
+                $labels = array_map($findLabel, $value);
+                $displayValue = implode(', ', $labels);
+            } else {
+                $displayValue = $findLabel($value);
+            }
+        } 
+        // For other fields, we display the value directly (after converting arrays to strings)
+        else {
+            if (is_array($value)) {
+                $value = implode(', ', $value);
+            }
+            $displayValue = $value;
+        }
+        
+        // If the value does not contain HTML (like the rating field), we escape it to prevent XSS and preserve formatting
+        if (!$isHtmlValue) {
+            $displayValue = nl2br(htmlspecialchars((string)$displayValue));
+        }
+
+        $html .= "<tr>";
+        $html .= "<td style=\"padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;width: 35%;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.02);\">" . htmlspecialchars($fieldDef->label) . "</td>";
+        $html .= "<td style=\"padding: 8px 12px;border-bottom: 1px solid {$borderColor};vertical-align: top;width: 65%;\">" . $displayValue . "</td>";
+        $html .= "</tr>";
+        $hasFields = true;
+
         return $html;
     }
 
@@ -394,11 +514,76 @@ class stic_AWFUtils {
                 $text .= "--------------------\n";
             }
 
-            foreach ($section->elements as $element) {
-                if ($element->type !== 'datablock') continue;
-
-                $block = $context->getDataBlockById($element->ref_id);
+            foreach (array_keys(self::collectSummaryBlockIds($section)) as $blockId) {
+                $block = $context->getDataBlockById($blockId);
                 if (!$block) continue;
+
+                // Child blocks are rendered together with their root when the root
+                // is repeatable/optional. Children of SIMPLE groups fall through to
+                // scalar summary rendering.
+                if (!empty($block->group_root)) {
+                    $rootBlock = $context->formConfig->data_blocks[$block->group_root] ?? null;
+                    if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
+                        continue;
+                    }
+                }
+
+                // Repeatable and optional groups render as per-instance rows.
+                if ($block->isRepeatable() || $block->isOptional()) {
+                    $formConfig = $context->formConfig;
+                    $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
+                    $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '');
+                    $instances = DataBlockResolved::resolveInstances($block, $formData, $summaryContext);
+                    $instanceNumber = 1;
+                    foreach ($instances as $instance) {
+                        $text .= rtrim($block->text, ' :') . " #" . $instanceNumber . "\n";
+                        $instanceNumber++;
+
+                        foreach ($groupBlocks as $groupBlock) {
+                            // Skip blocks with no visible (non-fixed, labelled) fields
+                            $hasVisibleFields = false;
+                            foreach ($groupBlock->fields as $visibleCheck) {
+                                if ($visibleCheck->type_field !== DataBlockFieldType::FIXED && !empty($visibleCheck->label)) {
+                                    $hasVisibleFields = true;
+                                    break;
+                                }
+                            }
+                            if (!$hasVisibleFields) continue;
+
+                            $groupBlockLoopDepth = $groupBlock->getLoopDepth();
+                            if ($groupBlockLoopDepth >= 2) {
+                                // Nested group loops (depth >= 2, N optional levels): one
+                                // sub-block row per inner instance, values from the RESOLVED
+                                // instances (each field reads its own matrix)
+                                $subInstances = DataBlockResolved::resolveInstances($groupBlock, $formData, $summaryContext, [$instance->instanceIndex]);
+                                $innerNumber = 1;
+                                foreach ($subInstances as $subInstance) {
+                                    $text .= "  " . rtrim($groupBlock->text, ' :') . " #" . $innerNumber . "\n";
+                                    $innerNumber++;
+                                    foreach ($groupBlock->fields as $fieldDef) {
+                                        if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+                                        if (empty($fieldDef->label)) continue;
+                                        $value = $subInstance->getFieldValue($fieldDef->name)?->value
+                                              ?? $subInstance->getDetachedFieldValue($fieldDef->name)?->value
+                                              ?? '';
+                                        $text .= "  " . self::formatSummaryTextValue($fieldDef, $value) . "\n";
+                                    }
+                                }
+                            } else {
+                                // Depth-1: fields from the instance matrix (Block[i][field])
+                                foreach ($groupBlock->fields as $fieldDef) {
+                                    if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+                                    if (empty($fieldDef->label)) continue;
+                                    $isUnlinked = $fieldDef->type_field === DataBlockFieldType::UNLINKED;
+                                    $blockArrayKey = ($isUnlinked ? '_detached_' : '') . $groupBlock->name;
+                                    $value = $formData[$blockArrayKey][$instance->instanceIndex][$fieldDef->name] ?? '';
+                                    $text .= "  " . self::formatSummaryTextValue($fieldDef, $value) . "\n";
+                                }
+                            }
+                        }
+                    }
+                    continue;
+                }
 
                 foreach ($block->fields as $fieldDef) {
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
@@ -408,36 +593,60 @@ class stic_AWFUtils {
 
                     // Value to display
                     $value = $formData[$formKey] ?? '';
-
-                    if (!empty($fieldDef->value_options)) {
-                         $findLabel = function($val) use ($fieldDef) {
-                            foreach ($fieldDef->value_options as $opt) {
-                                if ($opt->value == $val) return $opt->text;
-                            }
-                            return $val; 
-                        };
-    
-                        if (is_array($value)) {
-                            $labels = array_map($findLabel, $value);
-                            $displayValue = implode(', ', $labels);
-                        } else {
-                            $displayValue = $findLabel($value);
-                        }
-                    } else {
-                        if (is_array($value)) {
-                            $value = implode(', ', $value);
-                        }
-                        $displayValue = $value;
-                    }
-                    
-                    // Format: "Label: Value"
-                    $text .= "{$fieldDef->label} {$displayValue}\n";
+                    $text .= self::formatSummaryTextValue($fieldDef, $value) . "\n";
                 }
             }
             $text .= "\n";
         }
-        
+
         return $text;
+    }
+
+    /**
+     * Recursively collects the data-block IDs referenced by a section's
+     * elements (datablock AND unbundled field elements), walking nested
+     * sections, de-duplicated per section walk.
+     * @return array<string, true>
+     */
+    private static function collectSummaryBlockIds($containerSection): array {
+        $found = [];
+        foreach ($containerSection->elements as $element) {
+            if ($element->type === 'datablock' || $element->type === 'field') {
+                $found[$element->ref_id] = true;
+            } elseif ($element->type === 'section') {
+                foreach (self::collectSummaryBlockIds($element) as $refId => $v) {
+                    $found[$refId] = true;
+                }
+            }
+        }
+        return $found;
+    }
+
+    /**
+     * Formats one "Label: Value" line for the plain-text summary, resolving
+     * value-option labels and flattening arrays.
+     */
+    private static function formatSummaryTextValue(FormDataBlockField $fieldDef, $value): string {
+        if (!empty($fieldDef->value_options)) {
+            $findLabel = function ($val) use ($fieldDef) {
+                foreach ($fieldDef->value_options as $opt) {
+                    if ($opt->value == $val) return $opt->text;
+                }
+                return $val;
+            };
+            if (is_array($value)) {
+                $labels = array_map($findLabel, $value);
+                $displayValue = implode(', ', $labels);
+            } else {
+                $displayValue = $findLabel($value);
+            }
+        } else {
+            if (is_array($value)) {
+                $value = implode(', ', $value);
+            }
+            $displayValue = $value;
+        }
+        return rtrim($fieldDef->label, ' :') . ': ' . $displayValue;
     }
 
     /**
@@ -884,6 +1093,30 @@ class stic_AWFUtils {
      */
     public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
         foreach ($formConfig->data_blocks as $dataBlock) {
+            // Child blocks are filled together with their root when the root
+            // renders a loop (repeatable, optional OR simple with children).
+            if (!empty($dataBlock->group_root)) {
+                $rootBlock = $formConfig->data_blocks[$dataBlock->group_root] ?? null;
+                if ($rootBlock && $rootBlock->getLoopDepth() >= 1) {
+                    continue;
+                }
+            }
+
+            // Group blocks process boolean fields for ALL their instances
+            // (n-dimensional matrices: one level per group head in the chain).
+            if ($dataBlock->getLoopDepth() >= 1) {
+                // Use transitive descendants (multi-level branches)
+                $blocksInGroup = array_merge([$dataBlock], $formConfig->getGroupDescendants($dataBlock));
+                foreach (['', '_detached_'] as $prefix) {
+                    foreach ($blocksInGroup as $blockInGroup) {
+                        $blockKey = $prefix . $blockInGroup->name;
+                        if (!is_array($formData[$blockKey] ?? null)) continue;
+                        self::fillMissingBooleansRecursive($blockInGroup, $formData, $blockKey, []);
+                    }
+                }
+                continue;
+            }
+
             foreach ($dataBlock->fields as $field) {
                 if ($field->type === 'bool' || $field->type === 'checkbox' || in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) {
                     $phpKey = $field->getPhpKey();
@@ -891,6 +1124,41 @@ class stic_AWFUtils {
                         $formData[$phpKey] = '0';
                     }
                 }
+            }
+        }
+    }
+
+    /**
+     * Walks the block's n-dimensional instance matrix recursively and fills
+     * missing boolean/checkbox values ('0') at every leaf row ($indexes =
+     * the loop indexes accumulated so far, outer to inner).
+     */
+    private static function fillMissingBooleansRecursive(FormDataBlock $blockInGroup, array &$formData, string $blockKey, array $indexes): void {
+        $node = &$formData[$blockKey];
+        foreach ($indexes as $idx) {
+            if (!is_array($node)) return;
+            $node = &$node[$idx];
+        }
+        if (!is_array($node)) return;
+
+        $blockDepth = $blockInGroup->getLoopDepth();
+        $isLeafLevel = count($indexes) >= $blockDepth;
+        if (!$isLeafLevel) {
+            // Intermediate level: recurse into each int-keyed sub-row
+            foreach (array_keys($node) as $idx) {
+                if (!is_int($idx)) continue;
+                self::fillMissingBooleansRecursive($blockInGroup, $formData, $blockKey, array_merge($indexes, [$idx]));
+            }
+            return;
+        }
+
+        foreach ($blockInGroup->fields as $field) {
+            if ($field->type_field === DataBlockFieldType::FIXED) continue;
+            if ($field->type !== 'bool' && $field->type !== 'checkbox' && !in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) continue;
+            $isUnlinked = $field->type_field === DataBlockFieldType::UNLINKED;
+            if (str_starts_with($blockKey, '_detached_') !== $isUnlinked) continue;
+            if (!isset($node[$field->name])) {
+                $node[$field->name] = '0';
             }
         }
     }
@@ -917,25 +1185,143 @@ class stic_AWFUtils {
             $expectedValue = $cond->value;
             $submittedValue = $formData[$phpKey] ?? null;
 
-            $isMatch = is_array($submittedValue) 
-                ? in_array($expectedValue, $submittedValue)
-                : ($submittedValue == $expectedValue);
-
-            // Evaluate based on the operator
-            switch ($cond->operator) {
-                case 'Equal_To':
-                    if (!$isMatch) return false;
-                    break;
-                case 'Not_Equal_To':
-                    if ($isMatch) return false;
-                    break;
-                // Future operators (>, <, IN, etc.) go here
-                default:
-                    return false; // Unknown operator fails safely
+            if (!self::compareConditionValue($cond, $submittedValue)) {
+                return false;
             }
         }
 
         return true; // All conditions passed
+    }
+
+    /**
+     * Evaluates a condition against a submitted value using the condition's operator.
+     * Unknown operators fail safely (false).
+     */
+    private static function compareConditionValue($cond, $submittedValue): bool {
+        $expectedValue = $cond->value;
+        $isMatch = is_array($submittedValue)
+            ? in_array($expectedValue, $submittedValue)
+            : ($submittedValue == $expectedValue);
+
+        switch ($cond->operator) {
+            case 'Equal_To':
+                return $isMatch;
+            case 'Not_Equal_To':
+                return !$isMatch;
+            // Future operators (>, <, IN, etc.) go here
+            default:
+                return false; // Unknown operator fails safely
+        }
+    }
+
+    /**
+     * True when any condition references a field of a repeatable/optional group
+     * (loop-depth >= 1). Those conditions cannot be evaluated once with scalar
+     * keys: they must be evaluated per instance inside the unrolling loop (B-5).
+     */
+    public static function hasInstanceBoundConditions(?array $conditions, FormConfig $formConfig): bool {
+        if (empty($conditions)) {
+            return false;
+        }
+        foreach ($conditions as $cond) {
+            if (empty($cond->field_name)) continue;
+            $block = self::resolveConditionBlock($cond->field_name, $formConfig);
+            if ($block !== null && $block->getLoopDepth() >= 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Evaluates the SCALAR part of the conditions (fields outside any
+     * repeatable/optional group). Used before the unrolling loop when the
+     * action mixes scalar and instance-bound conditions: the scalar part gates
+     * the whole action, the instance part is evaluated per instance (B-5).
+     */
+    public static function evaluateScalarConditions(?array $conditions, FormConfig $formConfig, array $formData): bool {
+        if (empty($conditions)) {
+            return true;
+        }
+        foreach ($conditions as $cond) {
+            if (empty($cond->field_name)) continue;
+            $block = self::resolveConditionBlock($cond->field_name, $formConfig);
+            if ($block !== null && $block->getLoopDepth() >= 1) continue; // Instance-bound: evaluated per instance
+            $phpKey = str_replace('.', '_', $cond->field_name);
+            if (!self::compareConditionValue($cond, $formData[$phpKey] ?? null)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Evaluates the INSTANCE-BOUND part of the conditions for a specific
+     * instance (B-5). Fields of group blocks are read from the indexed POST
+     * matrix using the active loop-index stack: a field at loop depth d reads
+     * Block[i1]...[id][field] (the first d indexes of the stack). Scalar
+     * conditions are re-evaluated too (cheap and keeps semantics: the action
+     * only runs when ALL its conditions hold for this instance).
+     */
+    public static function evaluateConditionsForInstance(?array $conditions, FormConfig $formConfig, array $formData, array $instanceIndexes = []): bool {
+        if (empty($conditions)) {
+            return true;
+        }
+        foreach ($conditions as $cond) {
+            if (empty($cond->field_name)) continue;
+            $submittedValue = self::resolveConditionFieldValue($cond, $formConfig, $formData, $instanceIndexes);
+            if (!self::compareConditionValue($cond, $submittedValue)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Resolves the block referenced by a condition field name ("Block.field").
+     * Returns null when the name is malformed or the block does not exist.
+     */
+    private static function resolveConditionBlock(string $fieldName, FormConfig $formConfig): ?FormDataBlock {
+        $dotPos = strpos($fieldName, '.');
+        if ($dotPos === false) return null;
+        $blockName = substr($fieldName, 0, $dotPos);
+        foreach ($formConfig->data_blocks as $block) {
+            if ($block->name === $blockName) return $block;
+        }
+        return null;
+    }
+
+    /**
+     * Reads the submitted value of a condition field, resolving instance-aware
+     * POST paths for fields inside groups: the first d indexes of the active
+     * stack (d = the block's loop depth) navigate the matrix.
+     */
+    private static function resolveConditionFieldValue($cond, FormConfig $formConfig, array $formData, array $instanceIndexes = []) {
+        $block = self::resolveConditionBlock($cond->field_name, $formConfig);
+        $phpKey = str_replace('.', '_', $cond->field_name);
+        if ($block === null || $block->getLoopDepth() === 0) {
+            return $formData[$phpKey] ?? null;
+        }
+
+        $depth = $block->getLoopDepth();
+        // Missing levels default to 0 (same rule as
+        // DataBlockResolved::resolveForBlock): a GLOBAL/terminal action resolves
+        // instance 0 instead of reading a flat key that does not exist.
+        $indexes = array_slice($instanceIndexes, 0, $depth);
+        while (count($indexes) < $depth) {
+            $indexes[] = 0;
+        }
+
+        $fieldDef = $block->fields[substr($cond->field_name, strpos($cond->field_name, '.') + 1)] ?? null;
+        $blockKey = ($fieldDef !== null && $fieldDef->type_field === DataBlockFieldType::UNLINKED ? '_detached_' : '') . $block->name;
+
+        $node = $formData[$blockKey] ?? null;
+        foreach ($indexes as $index) {
+            if (!is_array($node)) return null;
+            $node = $node[$index] ?? null;
+        }
+        if (!is_array($node)) return null;
+        return $node[substr($cond->field_name, strpos($cond->field_name, '.') + 1)] ?? null;
     }
 
     /**
@@ -1009,14 +1395,42 @@ class stic_AWFUtils {
         $deferredContext = DeferredContextData::fromJson($ticket->context_data);
         $context->deferredContext = $deferredContext;
 
-        // Datablock references to beans
-        foreach ($deferredContext->blockReferences as $blockId => $beanId) {
-            if (isset($formConfig->data_blocks[$blockId])) {
-                $formConfig->data_blocks[$blockId]->setBeanReference($beanId);
-            }
-        }
+        // Datablock references to beans (see applyDeferredBlockReferences)
+        self::applyDeferredBlockReferences($context, $deferredContext);
 
         return $context;
+    }
+
+    /**
+     * Restores the data block bean references captured in a deferred ticket's
+     * context snapshot. Standalone blocks use the plain block id key; group
+     * members (optional/repeatable) use "blockId@index" keys (one per resolved
+     * instance) so per-instance deferred flows can address the exact record of
+     * each instance. The ticket's own loop-index stack scopes the resumed flow
+     * to the instance the ticket belongs to.
+     */
+    public static function applyDeferredBlockReferences(ExecutionContext $context, DeferredContextData $deferredContext): void
+    {
+        foreach ($deferredContext->blockReferences as $refKey => $beanId) {
+            $index = null;
+            $blockId = $refKey;
+            if (strpos($refKey, '@') !== false) {
+                [$blockId, $index] = explode('@', $refKey, 2);
+            }
+            $block = $context->formConfig->data_blocks[$blockId] ?? null;
+            if ($block === null) {
+                continue;
+            }
+            if ($index === null && ($block->isRepeatable() || !empty($block->group_root))) {
+                // Legacy snapshot: repeatable members without an index key cannot
+                // be restored (the instance they belong to is unknown)
+                continue;
+            }
+            $block->setBeanReference($beanId, $index);
+        }
+        if (!empty($deferredContext->instanceIndexes)) {
+            $context->setInstanceIndexes($deferredContext->instanceIndexes);
+        }
     }
 
     /**
@@ -1027,6 +1441,10 @@ class stic_AWFUtils {
     {
         $blockReferences = [];
         foreach ($context->formConfig->data_blocks as $bId => $b) {
+            // Restriction: deferred actions operate on non-repeatable blocks only.
+            if ($b->isRepeatable() || !empty($b->group_root)) {
+                continue;
+            }
             if ($b->getBeanReference() !== null) {
                 $blockReferences[$bId] = $b->getBeanReference()->beanId;
             }

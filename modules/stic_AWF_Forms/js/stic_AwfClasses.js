@@ -43,6 +43,11 @@ class stic_AwfDataBlock {
       duplicate_detections: [], // Duplicate detection definition
       is_document_block: false, // Indicates if it is a Document block (auto-configured)
       save_action_id: "",       // ID of the data block save action
+      min_instances: 1,         // Minimum required instances (0 = optional)
+      max_instances: 1,         // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
+      group_title: '',          // Visual title for the repeat group
+      is_custom_group_title: false, // Flag to track manual title overrides
+      group_root: '',           // ID of the immediate parent block (List Adjacency)
     });
 
     // 2. Overwrite with provided data
@@ -55,6 +60,20 @@ class stic_AwfDataBlock {
     if (this.duplicate_detections.length == 0) {
       this.duplicate_detections.push(new stic_AwfDuplicateDetection());
     }
+  }
+
+  get is_repeatable() { return this.max_instances === null || parseInt(this.max_instances, 10) > 1;}
+
+  get is_optional() { return parseInt(this.min_instances, 10) === 0; }
+
+  get is_root() { return !this.group_root || this.group_root === ''; }
+
+  get is_child() { return !this.is_root; }
+
+  get custom_group_title() { return this.group_title; }
+  set custom_group_title(value) {
+    this.is_custom_group_title = true;
+    this.group_title = value
   }
 
   getValidationErrors() {
@@ -113,6 +132,30 @@ class stic_AwfDataBlock {
   }
 
   /**
+   * Gets the instance-aware field input name for repeatable blocks.
+   * For non-repeatable blocks, delegates to getFieldInputName.
+   * @param {stic_AwfField} field
+   * @param {number|null} index Instance index
+   * @returns {string}
+   */
+  getFieldInputNameForInstance(field, index) {
+    if (index === null || index === undefined) {
+      return this.getFieldInputName(field);
+    }
+    const prefix = field.type_field === 'unlinked' ? '_detached.' : '';
+    return `${prefix}${this.name}[${index}].${field.name}`;
+  }
+
+  /**
+   * Returns child blocks that belong to this repeatable root.
+   * @param {stic_AwfDataBlock[]} dataBlocks
+   * @returns {stic_AwfDataBlock[]}
+   */
+  getChildren(dataBlocks) {
+    return dataBlocks.filter(b => b.group_root === this.id);
+  }
+
+  /**
    * Gets the text to show in the description of this DataBlock
    * @returns {string}
    */
@@ -128,6 +171,16 @@ class stic_AwfDataBlock {
       return this.getModuleInformation().text;
     }
     return '';
+  }
+
+  /**
+   * Whether this is an "unlinked" data block (created with no module): its
+   * fields post detached (`_detached.`) and it can hold no relationships.
+   * Manual group membership is reserved for these blocks: a LINKED block
+   * belongs to a group only through its relationships (auto-adoption).
+   */
+  get isUnlinked() {
+    return !this.module;
   }
 
   /**
@@ -271,26 +324,6 @@ class stic_AwfDataBlock {
     return field.name;
   }
 
-  /**
-   * Gets a suggested text for a new DataBlock for a module
-   * @param {string} moduleName The module
-   * @returns {string} The suggested text for a new DataBlock
-   */
-  suggestDataBlockText(moduleName) {
-    let module = utils.getModuleInformation(moduleName);
-    if (!module || !module.textSingular) {
-      return "";
-    }
-
-    let text = module.textSingular;
-    let index = 0;
-    while(this.data_blocks.some((b) => b.text === text || b.name === name)) {
-      index++;
-      text = `${module.textSingular} ${index}`;
-    }
-    return text;
-  }
-
   addRelationship(relName, relatedBlockId, relationshipType = 'many-to-many') {
     // Prevent exact duplicates (same name + same block)
     if (this.relationships.some(r => r.name === relName && r.related_datablock_id === relatedBlockId)) return false;
@@ -305,6 +338,602 @@ class stic_AwfDataBlock {
       this.relationships = this.relationships.filter(r => r.name !== relName);
     }
   }
+
+  /**
+   * Whether this block has at least one VISIBLE form field (a field that
+   * renders an input: not FIXED, not hidden). Matches the renderer's and the
+   * sync's renderability predicate, so "visible" means what actually draws.
+   */
+  hasVisibleFormFields() {
+    return (this.fields || []).some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
+  }
+
+  /**
+   * Whether the whole DEPENDENCY TREE — this block plus every block that would
+   * live in its group: its current members (group_root chain) AND its
+   * relational dependents (the ones auto-adoption would pull in) — has at
+   * least one VISIBLE form field. Optional/Repeatable are only offered when
+   * something in the group renders an input: N instances of a group that
+   * draws nothing are indistinguishable, and an optional group that renders
+   * no input could never be activated by filling a field.
+   */
+  hasVisibleFormFieldsInTree(allDataBlocks) {
+    if (this.hasVisibleFormFields()) return true;
+    const tree = [...this.getDescendants(allDataBlocks), ...this.getRelationalDescendants(allDataBlocks)];
+    return tree.some(b => b.hasVisibleFormFields());
+  }
+
+  /**
+   * Checks if this DataBlock can be configured as optional (min_instances = 0).
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  canBeOptional(allDataBlocks) {
+    // A block whose whole dependency tree renders NO visible form field can
+    // never be optional: the optional activation model falls back to a real
+    // form field being filled, and a group that draws no input could never
+    // be activated that way
+    if (!this.hasVisibleFormFieldsInTree(allDataBlocks)) return false;
+
+    // System required blocks can never be optional
+    if (this.required) return false;
+
+    // Child blocks with a mandatory FK relate field pointing to their parent cannot be optional
+    if (this.is_child && this.group_root) {
+      const hasMandatoryParentLink = this.fields.some(field => field.required && field.type === 'relate' && 
+                                                               (field.value === this.group_root || 
+                                                                (field.value_type === 'dataBlock' && field.value === this.group_root))
+      );
+      if (hasMandatoryParentLink) return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Checks if this block can be set as repeatable. Nested repeatable groups
+   * are allowed up to depth 2 — the branch may hold at most TWO repeatable blocks
+   * (e.g. Adult (1) → Minor (N) → Registration (M)). This block becoming repeatable
+   * must keep the total of repeatable ancestors + descendants in the branch ≤ 2.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  canBeRepeatable(allDataBlocks) {
+    // A block whose whole dependency tree renders NO visible form field can
+    // never be repeatable: N instances of a group that draws no input are
+    // indistinguishable ghost instances
+    if (!this.hasVisibleFormFieldsInTree(allDataBlocks)) return false;
+
+    // Count repeatable ancestors (group_root chain walk)
+    let repeatableCount = 0;
+    let currentParentId = this.group_root;
+    const visited = new Set([this.id]);
+
+    while (currentParentId) {
+      if (visited.has(currentParentId)) break; // Prevent infinite loop in malformed data
+      visited.add(currentParentId);
+
+      const parentBlock = allDataBlocks.find(b => b.id === currentParentId);
+      if (!parentBlock) break;
+
+      if (parentBlock.is_repeatable) repeatableCount++;
+
+      currentParentId = parentBlock.group_root;
+    }
+
+    // Count repeatable descendants in the SAME group (relational descendants).
+    // (Descendants in OTHER groups are not stolen: adoption only takes orphans
+    // and same-group children, so they neither multiply nor block anything
+    // here — a relational descendant may legitimately live in another group,
+    // e.g. "Entorn personal" linked to the scalar Adult while sitting in the
+    // Menor group.)
+    const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
+    const descendants = this.getRelationalDescendants(allDataBlocks);
+    for (const d of descendants) {
+      if (d.id === this.id) continue;
+      const inSameGroup = d.group_root === this.id || (myGroupRoot && d.group_root === myGroupRoot);
+      if (inSameGroup && d.is_repeatable) repeatableCount++;
+    }
+
+    // Depth-2 rule: adding this block as repeatable must keep the branch ≤ 2
+    return repeatableCount + 1 <= 2;
+  }
+
+  /**
+   * Checks if the given candidate ID is a descendant of this block.
+   * @param {string} candidateId 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  isDescendant(candidateId, allDataBlocks) {
+    const queue = [this.id];
+    const visited = new Set();
+
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+      if (visited.has(currentId)) continue;
+      visited.add(currentId);
+
+      const children = allDataBlocks.filter(b => b.group_root === currentId);
+      for (const child of children) {
+        if (child.id === candidateId) return true;
+        queue.push(child.id);
+      }
+    }
+
+    return false;
+  }  
+
+  /**
+   * Checks whether candidate is an ancestor of this block in the group_root chain.
+   * Used to prevent adoption cycles (A -> B -> A) during transitive adoption.
+   * @param {stic_AwfDataBlock} candidate
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {boolean}
+   */
+  hasAncestor(candidate, allDataBlocks) {
+    let currentParentId = this.group_root;
+    const visited = new Set([this.id]);
+
+    while (currentParentId) {
+      if (currentParentId === candidate.id) return true;
+      if (visited.has(currentParentId)) break; // Prevent infinite loop in malformed data
+      visited.add(currentParentId);
+
+      const parentBlock = allDataBlocks.find(b => b.id === currentParentId);
+      if (!parentBlock) break;
+      currentParentId = parentBlock.group_root;
+    }
+
+    return false;
+  }
+
+  /**
+   * Returns valid candidate parent blocks for this block to join as a child.
+   * Filters out self, descendants (cycle prevention), and invalid N x M combinations.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]}
+   */
+  getAvailableGroupRoots(allDataBlocks) {
+    return allDataBlocks.filter(candidate => {
+      // 1. Cannot be itself
+      if (candidate.id === this.id) return false;
+
+      // 2. Cannot be an existing descendant (prevents cycles)
+      if (this.isDescendant(candidate.id, allDataBlocks)) return false;
+
+      // 3. If this block is ALREADY repeatable, candidates MUST NOT be repeatable
+      //    nor have repeatable ancestors (prevents N x M beyond the depth-2 rule)
+      if (this.is_repeatable && !this.canBeRepeatableInParent(candidate, allDataBlocks)) return false;
+
+      // 4. Depth guard: group nesting is limited to 2 levels. The resulting
+      //    depth of this block (candidate depth + 1) plus its own subtree height
+      //    (1 if it already has children) must not exceed 2.
+      const subtreeHeight = this.getChildren(allDataBlocks).length > 0 ? 1 : 0;
+      if (candidate.getDepth(allDataBlocks) + 1 + subtreeHeight > 2) return false;
+
+      return true;
+    });
+  }
+
+  /**
+   * Returns candidate independent blocks that can be manually added to this group.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]}
+   */
+  getAvailableCandidateChildren(allDataBlocks) {
+    // Any GROUP HEAD offers candidates — top-level roots AND subgroup heads.
+    // A head deeper than level 1 cannot: group nesting is limited to 2 levels,
+    // so its members would sit at level 3 (nothing renders or posts them).
+    if (!this.isGroupHead(allDataBlocks) || this.getDepth(allDataBlocks) > 1) return [];
+    // When this head is a SUBGROUP (a member of another group), blocks of the
+    // SAME parent group are candidates too: adding them RE-PARENTS them into
+    // the subgroup (the same rule adoptRelatedOrphans applies automatically).
+    const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
+    return allDataBlocks.filter(candidate => {
+      if (candidate.id === this.id) return false;
+      const isOrphan = candidate.is_root;
+      const isSameGroupChild = myGroupRoot && candidate.group_root === myGroupRoot;
+      // Top-level heads only adopt orphans; subgroups also re-parent same-group children
+      if (!isOrphan && !isSameGroupChild) return false;
+      // MANUAL membership is reserved for UNLINKED blocks (any group level) and
+      // for blocks with a MANY-TO-MANY relationship to a block of THIS group: a
+      // linked 1-N block belongs to a group only through its relationships
+      // (auto-adoption of adoptRelatedOrphans() decides its placement), but an
+      // N-M partner has no FK, so the user adds it by hand.
+      if (!candidate.isUnlinked && !this.isManyToManyGroupCandidate(candidate, allDataBlocks)) return false;
+      if (candidate.is_repeatable || candidate.is_optional) return false; // Candidate blocks that are repeatable or optional cannot be children of a group
+      // A GROUP HEAD must stay a root: the sync designates a group section only
+      // for is_root heads (sync pass 3), so adopting one here would strip it of
+      // its own group representation — its children would stop being an
+      // instance-indexed subgroup and would post unindexed (per-instance data
+      // loss). This is the same rule the validated getAvailableGroupRoots()
+      // applies, which nothing in the UI called (dead code) — hence the guard
+      // is repeated here, on the path the step-2 control actually uses.
+      if (candidate.isGroupHead(allDataBlocks)) return false;
+      return true;
+    });
+  }
+
+  /**
+   * Checks if this block is a relational child of parentBlockId (depends on it via FK/relate
+   * field or block-to-block relationship where this block is the N side / initiator).
+   * Unified dependency check — replaces the 5 duplicated inline closures.
+   * @param {string} parentId 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {boolean}
+   */
+  isRelationalChild(parentId, allDataBlocks) {
+    if (!parentId || this.id === parentId) return false;
+
+    // A) Has a relate/FK field pointing to parent
+    if (this.fields?.some(f => f.type === 'relate' &&
+        (f.value === parentId || (f.value_type === 'dataBlock' && f.value === parentId))
+    )) return true;
+
+    // B) Has a relationship entry pointing to parent where THIS block is the initiator (N side)
+    if (this.relationships?.some(r => r.related_datablock_id === parentId && r.initiator_id === this.id)) return true;
+
+    // C) Parent has a relationship entry pointing to this block where THIS block is the initiator
+    const parent = allDataBlocks?.find(b => b.id === parentId);
+    if (parent?.relationships?.some(r => r.related_datablock_id === this.id && r.initiator_id === this.id)) return true;
+
+    return false;
+  }
+
+  /**
+   * Whether this block is linked to `other` by a MANY-TO-MANY relationship.
+   * An N-M relationship has NO foreign key on either side, so neither block can
+   * be auto-adopted into the other's group (auto-adoption follows the FK /
+   * initiator direction). The relationship metadata decides: anything that is
+   * not one-to-many / one-to-one counts as many-to-many (the SuiteCRM default
+   * when the metadata is missing).
+   * @param {stic_AwfDataBlock} other
+   * @returns {boolean}
+   */
+  isManyToManyWith(other) {
+    if (!other || !this.module || !other.module || this.id === other.id) return false;
+    const names = new Set();
+    (this.relationships || []).forEach(r => { if (r.related_datablock_id === other.id) names.add(r.name); });
+    (other.relationships || []).forEach(r => { if (r.related_datablock_id === this.id) names.add(r.name); });
+    if (names.size === 0) return false;
+    for (const name of names) {
+      const meta = utils.getModuleInformation(this.module)?.relationships?.[name]
+        || utils.getModuleInformation(other.module)?.relationships?.[name];
+      const type = meta?.relationship_type || meta?.type;
+      if (type === 'one-to-many' || type === '1-N' || type === 'one-to-one' || type === '1-1') return false;
+    }
+    return true;
+  }
+
+  /**
+   * Whether `candidate` may be added to THIS group BY HAND because it is linked
+   * to one of the group's blocks by a many-to-many relationship. The group is
+   * this head plus its current members. N-M partners have no FK, so they cannot
+   * be auto-adopted; the user adds them manually.
+   * @param {stic_AwfDataBlock} candidate
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {boolean}
+   */
+  isManyToManyGroupCandidate(candidate, allDataBlocks) {
+    if (!candidate || candidate.isUnlinked || !candidate.module) return false;
+    const groupBlocks = [this, ...this.getDescendants(allDataBlocks)];
+    return groupBlocks.some(g => g.id !== candidate.id && candidate.isManyToManyWith(g));
+  }
+
+  /**
+   * Gets all blocks that are relationally dependent on this block (transitive FK / relate tree).
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]} Relational descendant blocks
+   */
+  getRelationalDescendants(allDataBlocks) {
+    const descendants = [];
+    const queue = [this.id];
+    const visited = new Set([this.id]);
+
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+
+      allDataBlocks.forEach(candidate => {
+        if (visited.has(candidate.id)) return;
+
+        if (candidate.isRelationalChild(currentId, allDataBlocks)) {
+          visited.add(candidate.id);
+          descendants.push(candidate);
+          queue.push(candidate.id);
+        }
+      });
+    }
+
+    return descendants;
+  }
+
+  /**
+   * Helper to check if this block could be placed under candidate without violating N x M
+   * @param {stic_AwfDataBlock} candidate
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {boolean}
+   */
+  canBeRepeatableInParent(candidate, allDataBlocks) {
+    if (candidate.is_repeatable) return false;
+    return candidate.canBeRepeatable(allDataBlocks);
+  }
+
+  /**
+   * Obté tots els descendents d'un DataBlock evitant bucles infinits.
+   * @param {stic_AwfDataBlock[]} allBlocks 
+   * @param {Set<string>} visited 
+   * @returns {stic_AwfDataBlock[]}
+   */
+  getDescendants(allBlocks, visited = new Set()) {
+    if (visited.has(this.id)) return [];
+    visited.add(this.id);
+
+    let descendants = [];
+    const children = this.getChildren(allBlocks);
+
+    children.forEach(child => {
+      descendants.push(child);
+      descendants.push(...child.getDescendants(allBlocks, visited));
+    });
+
+    return descendants;
+  }
+
+  /**
+   * Returns the nearest ancestor (or self) that actually holds group cardinality (optional or repeatable).
+   * @param {stic_AwfDataBlock[]} dataBlocks 
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getGroupHeadBlock(dataBlocks) {
+    if (this.is_repeatable || this.is_optional) return this;
+    let current = this.getParentBlock(dataBlocks);
+    while (current) {
+      if (current.is_repeatable || current.is_optional) {
+        return current;
+      }
+      current = current.getParentBlock(dataBlocks);
+    }
+    return null;
+  }
+
+  /**
+   * Returns the immediate parent block this block belongs to (the block that this.group_root
+   * points to). With flat groups this is the group root; with nested subgroups it is the
+   * subgroup head directly above this block.
+   * @param {stic_AwfDataBlock[]} dataBlocks
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getParentBlock(dataBlocks) {
+    if (!this.group_root) return null;
+    return dataBlocks.find(b => b.id === this.group_root) || null;
+  }
+
+  /**
+   * Returns the nesting depth of this block inside the group hierarchy.
+   * 0 = top-level (visual group root), 1 = direct child, 2 = grandchild, etc.
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {number}
+   */
+  getDepth(allDataBlocks) {
+    let depth = 0;
+    let current = this;
+    const visited = new Set([this.id]);
+
+    while (current && current.group_root) {
+      if (visited.has(current.group_root)) break; // Cycle guard for malformed data
+      visited.add(current.group_root);
+
+      const parent = allDataBlocks.find(b => b.id === current.group_root);
+      if (!parent) break;
+
+      depth++;
+      current = parent;
+    }
+
+    return depth;
+  }
+
+  /**
+   * Gets group member blocks sorted hierarchically (Top-Down BFS)
+   * starting from the group root block.
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock[]} Array of sorted member blocks
+   */
+  getGroupMembersSorted(allDataBlocks) {
+    if (!allDataBlocks || !Array.isArray(allDataBlocks)) return [];
+
+    // Members of THIS block's group: blocks whose group_root points to this block
+    const memberBlocks = allDataBlocks.filter(b => b.group_root === this.id && b.id !== this.id);
+
+    if (memberBlocks.length <= 1) {
+      return memberBlocks;
+    }
+
+    // Calculate hierarchical depth (BFS) relative to this block
+    const depthMap = new Map();
+    depthMap.set(this.id, 0);
+
+    const queue = [this.id];
+    const visited = new Set([this.id]);
+
+    while (queue.length > 0) {
+      const parentId = queue.shift();
+      const parentDepth = depthMap.get(parentId);
+
+      allDataBlocks.forEach(candidate => {
+        if (visited.has(candidate.id)) return;
+
+        if (candidate.isRelationalChild(parentId, allDataBlocks)) {
+          visited.add(candidate.id);
+          depthMap.set(candidate.id, parentDepth + 1);
+          queue.push(candidate.id);
+        }
+      });
+    }
+
+    // Sort member blocks by depth (Top-Down: closer to root first)
+    return memberBlocks.sort((a, b) => {
+      const depthA = depthMap.get(a.id) ?? 999;
+      const depthB = depthMap.get(b.id) ?? 999;
+
+      if (depthA !== depthB) {
+        return depthA - depthB;
+      }
+
+      return allDataBlocks.indexOf(a) - allDataBlocks.indexOf(b);
+    });
+  }
+
+  /**
+   * Re-evaluates default group title by concatenating the root block's name 
+   * and all member block names in hierarchical Top-Down order.
+   * Unless the user has manually customized it.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   */
+  refreshGroupTitle(allDataBlocks) {
+    if (this.is_custom_group_title) return;
+
+    if (!this.is_root && this.group_root) {
+      // If called on a child block, delegate title refresh to the root block
+      const root = allDataBlocks.find(b => b.id === this.group_root);
+      if (root) {
+        root.refreshGroupTitle(allDataBlocks);
+      }
+      return;
+    }
+
+    // Get member blocks sorted hierarchically (Top-Down: Depth 1, Depth 2, etc.)
+    const sortedMembers = this.getGroupMembersSorted(allDataBlocks);
+
+    // The full group list starts with this root block followed by sorted members
+    const fullGroupBlocks = [this, ...sortedMembers];
+
+    // Compose the title joining block texts in exact hierarchical order
+    this.group_title = fullGroupBlocks.map(b => (b.text || '').trim()).filter(t => t.length > 0).join(' + ');
+  }
+
+  /**
+   * Checks if this block acts as a group head (root group or sub-group head).
+   * @param {stic_AwfDataBlock[]} dataBlocks 
+   * @returns {boolean}
+   */
+  isGroupHead(dataBlocks) {
+    return this.is_repeatable || this.is_optional || this.getChildren(dataBlocks).length > 0;
+  }
+
+  /**
+   * Ensures min_instances and max_instances constraints are strictly coherent:
+   * - min_instances: normalized to 0 (optional) or 1 (mandatory).
+   * - max_instances: null (unlimited repeatable), 1 (simple), or integer >= 2 (limited repeatable).
+   */
+  sanitizeRepeatableLimits() {
+    // Normalize min_instances (0 o 1)
+    let minVal = parseInt(this.min_instances, 10);
+    if (isNaN(minVal) || minVal < 0 || minVal > 1) {
+      this.min_instances = 1;
+    } else {
+      this.min_instances = minVal;
+    }
+
+    // Normalize max_instances
+    if (this.max_instances === null || this.max_instances === '') {
+      this.max_instances = null; // Unlimited repeatable (null)
+      return;
+    }
+
+    let maxVal = parseInt(this.max_instances, 10);
+    if (isNaN(maxVal) || maxVal <= 1) {
+      this.max_instances = 1; // Any value <= 1 is converted to a simple block (1)
+    } else {
+      this.max_instances = maxVal; // Values >= 2 are kept as limited repeatable blocks
+    }
+  }
+
+  /**
+   * Gets the root DataBlock of the group to which this block belongs.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getGroupRootBlock(allDataBlocks) {
+    let current = this;
+    const visited = new Set();
+    while (current && current.group_root) {
+      if (visited.has(current.id)) break; 
+      visited.add(current.id);
+      const parent = allDataBlocks.find(b => b.id === current.group_root);
+      if (!parent) break;
+      current = parent;
+    }
+    return current !== this ? current : null;
+  }
+
+  /**
+   * Gets the title of the group to which this blog belongs.
+   * @param {stic_AwfDataBlock[]} allDataBlocks 
+   * @returns {string}
+   */
+  getGroupTitle(allDataBlocks) {
+    const parent = this.getParentBlock(allDataBlocks);
+    return parent ? (parent.group_title || parent.text) : '';
+  }
+
+  /**
+   * Returns true if and only if the block is part of a group BUT is not integrated
+   * into the CRM relationship tree of said group root.
+   * 
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {boolean}
+   */
+  isManualGroupMemberOutsideTree(allDataBlocks) {
+    // If it does not have group_root assigned, it is not part of any group
+    if (!this.group_root) return false;
+
+    // Find the root block of the group (R)
+    const rootBlock = allDataBlocks.find(b => b.id === this.group_root);
+    if (!rootBlock) return false;
+
+    // Get the set of IDs of all blocks in the relational tree of R
+    const treeBlockIds = this.getGroupTreeBlockIds(rootBlock, allDataBlocks);
+
+    // Condition: has group AND does NOT belong to the relational tree
+    return !treeBlockIds.has(this.id);
+  }
+
+  /**
+   * Get recursively the set of IDs of all descendant blocks related to the root block 
+   * through module relationships (FK / relate).
+   * 
+   * @param {stic_AwfDataBlock} rootBlock
+   * @param {stic_AwfDataBlock[]} allDataBlocks
+   * @returns {Set<string>}
+   */
+  getGroupTreeBlockIds(rootBlock, allDataBlocks) {
+    const treeIds = new Set();
+    const queue = [rootBlock.id];
+
+    while (queue.length > 0) {
+      const currentId = queue.shift();
+      if (treeIds.has(currentId)) continue;
+      
+      treeIds.add(currentId);
+      const currentBlock = allDataBlocks.find(b => b.id === currentId);
+      if (!currentBlock) continue;
+
+      allDataBlocks.forEach(candidate => {
+        if (treeIds.has(candidate.id)) return;
+
+        if (candidate.isRelationalChild(currentId, allDataBlocks)) {
+          queue.push(candidate.id);
+        }
+      });
+    }
+
+    return treeIds;
+  }
+
 }
 
 /**
@@ -336,6 +965,8 @@ class stic_AwfField {
       value_text: '',          // The text to display for the field value
       related_module: '',      // Related module (if applicable)
       validations: [],         // Field validations
+      start_new_row: false,    // Indicates if the field should start a new row in the form
+      full_width: false,       // Indicates if the field should take full width in the form
     });
 
     // 2. Overwrite with provided data
@@ -655,11 +1286,12 @@ class stic_AwfField {
     this.value_options = [];
     if (originalOptions) {
       originalOptions.forEach(o => {
+        const optionText = (typeof o.text === 'string') ? utils.decodeHTMLString(o.text) : o.text;
         this.value_options.push(new stic_AwfValueOption({
           value: o.id,
           is_visible: true,
-          text_original: o.text,
-          text: o.text,
+          text_original: optionText,
+          text: optionText,
         }));
       });
     }
@@ -954,6 +1586,7 @@ class stic_AwfAction {
       flow_error_id: null,      // ID of the failure flow
       flow_success_text: null,  // Final text for the success flow
       flow_error_text: null,    // Final text for the failure flow
+      repeat_group: null,       // { rootBlockId, groupTitle, isRoot } when the action targets a block of a repeatable group, null otherwise
     });
 
     this.flow_success_text = utils.translate("LBL_FLOW_DEFERRED_MAIN");
@@ -1056,7 +1689,11 @@ class stic_AwfLayout {
 
     // 3. Map sub-objects
     this.theme = new stic_AwfTheme(data.theme ?? {});
-    this.structure = (data.structure || this.structure).map(s => new stic_AwfLayoutSection(s));
+    this.structure = (data.structure || this.structure).map(s => stic_AwfLayoutSection.fromData(s, true));
+    // A saved config may carry two top-level sections with the same id (from a
+    // legacy sync): sanitize on load so the wizard never renders duplicate
+    // x-for keys before the first sync runs.
+    this.ensureUniqueSectionIds();
 
     // Decode: If it comes from the DB (JSON), it will come in Base64. If it is new, it will be empty.
     this.header_html = utils.fromBase64(this.header_html);
@@ -1067,58 +1704,1107 @@ class stic_AwfLayout {
 
   /**
    * Synchronizes the visual structure with the actual data blocks.
-   *  - Removes references to deleted blocks
-   *  - Removes duplicate blocks (keeps only the first occurrence)
-   *  - Removes/Ignores blocks that have no visible fields
-   *  - Adds new data blocks at the end.
+   *
+   * Layout model: `structure` holds top-level sections. A section is either:
+   *  - a STANDALONE section: holds standalone blocks (shared manual sections allowed);
+   *  - a GROUP section: holds NESTED SECTIONS, each holding data blocks of the group
+   *    (the group's root block is a normal block element inside a nested section).
+   *
+   * Invariants enforced:
+   *  - every renderable block is placed exactly once (deleted/duplicate/non-renderable
+   *    references are removed, recursively);
+   *  - a block always lives in the top-level section of its TOP-LEVEL root
+   *    (the whole group_root chain is walked, order-independent);
+   *  - group members live inside their group section's nested sections;
+   *  - blocks ungrouped in step 2 are extracted to their own top-level section;
+   *  - user-created sections (including empty and nested ones) are preserved.
+   *
    * @param {stic_AwfDataBlock[]} dataBlocks Current list of data blocks
    */
   syncWithDataBlocks(dataBlocks) {
-    const placedBlockIds = new Set(); // Set of placed blocks
-    const cleanStructure = [];
+    const placedBlockIds = new Set();      // Blocks represented in the layout (whole or unbundled)
+    const wholeBlockPlaced = new Set();    // Blocks represented by a whole block element
+    const fragmentKeys = new Set();        // blockId::fieldName — each field renders once
+    const fragmentsByBlock = new Map();    // blockId -> [{ section, el }]
 
-    // Cleanup of the blocks of the visual structure
-    this.structure.forEach(section => {
-      const validElements = section.elements = section.elements.filter(el => {
-        if (el.type != 'datablock') return true; // It's not a block: keep it
-
-        // We check that the block exists
-        const block = dataBlocks.find(b => b.id === el.ref_id);
-        
-        if (!block) return false; // The block no longer exists
-        if (placedBlockIds.has(el.ref_id)) return false; // It's a duplicate
-        
-        // Check field visibility
-        // (if it has only fixed or hidden fields, it should not be in the layout)
-        if (!block.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return false;
-          
-        // Mark the block as placed
-        placedBlockIds.add(el.ref_id); 
+    // ---- 0. Cycle repair: drop any section element that references one of its
+    //         own ancestors (self/nested reference). A corrupted structure with
+    //         a section cycle would otherwise overflow the stack in every
+    //         recursive walk below (findBlockHostSection, cleanElements, ...)
+    //         and render infinitely many sections in the wizard.
+    const repairCycles = (section, ancestorIds) => {
+      section.elements = section.elements.filter(el => {
+        if (el.type !== 'section') return true;
+        if (ancestorIds.has(el.id)) return false; // Cycle edge: remove it
         return true;
       });
-      section.elements = validElements;
+      const childIds = new Set(ancestorIds);
+      childIds.add(section.id);
+      section.elements.forEach(el => { if (el.type === 'section') repairCycles(el, childIds); });
+    };
+    this.structure.forEach(s => repairCycles(s, new Set()));
 
-      if (section.elements.length > 0) {
-        cleanStructure.push(section);
+    const hasRenderableFields = (blk) => blk.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
+    const isRenderable = (block) => hasRenderableFields(block) || block.getDescendants(dataBlocks).some(hasRenderableFields);
+    const isGroupHead = (block) => block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
+    // Top-level root of a block, walking the whole group_root chain (order-independent)
+    const topRootIdOf = (block, seen = new Set()) => {
+      if (!block || !block.group_root || block.group_root === '') return block?.id ?? null;
+      if (seen.has(block.id)) return null;
+      seen.add(block.id);
+      const parent = dataBlocks.find(b => b.id === block.group_root);
+      return parent ? topRootIdOf(parent, seen) : null;
+    };
+
+    // ---- 1. Recursive cleanup: drop deleted/duplicate/non-renderable elements
+    //         (whole blocks AND unbundled field fragments). Sections (including
+    //         nested ones) are user structure: always kept.
+    const cleanElements = (section) => {
+      section.elements = section.elements.filter(el => {
+        if (el.type === 'section') { cleanElements(el); return true; }
+        if (el.type === 'field') {
+          // Unbundled field fragment (ref_id points to the data block)
+          const block = dataBlocks.find(b => b.id === el.ref_id);
+          if (!block) return false;                                  // The block no longer exists
+          const field = block.fields.find(f => f.name === el.field_name);
+          if (!field || field.type_field === 'fixed') return false;  // Nothing to render
+          if (wholeBlockPlaced.has(block.id)) return false;            // A whole element already represents the block
+          const key = block.id + '::' + el.field_name;
+          if (fragmentKeys.has(key)) return false;                   // Duplicate fragment
+          fragmentKeys.add(key);
+          if (!fragmentsByBlock.has(block.id)) fragmentsByBlock.set(block.id, []);
+          fragmentsByBlock.get(block.id).push({ section, el });
+          // The block is represented by its fragments: the orphan pass must not
+          // re-create it as a whole block element
+          placedBlockIds.add(block.id);
+          return true;
+        }
+        if (el.type !== 'datablock') return true;
+        const block = dataBlocks.find(b => b.id === el.ref_id);
+        if (!block) return false;                    // The block no longer exists
+        if (placedBlockIds.has(el.ref_id)) return false; // It's a duplicate
+        if (!isRenderable(block)) return false;      // Nothing visible to render
+        placedBlockIds.add(el.ref_id);
+        wholeBlockPlaced.add(el.ref_id);
+        return true;
+      });
+    };
+    this.structure.forEach(cleanElements);
+
+    // ---- 2. Normalization of unbundled blocks (field fragments) ----
+    // A block stays unbundled only when it is FULLY unbundled (every rendered
+    // field has exactly one fragment — any block can be unbundled in step 4,
+    // the "group head" concept does not apply there). Otherwise the fragments
+    // are re-grouped into a single block element: no field is lost.
+    fragmentsByBlock.forEach((fragments, blockId) => {
+      const block = dataBlocks.find(b => b.id === blockId);
+      if (!block) return;
+      const renderedFields = block.fields.filter(f => f.type_field !== 'fixed');
+      const fullyUnbundled = renderedFields.length > 0
+        && renderedFields.every(f => fragmentKeys.has(blockId + '::' + f.name));
+      if (fullyUnbundled) return; // Keep the fragments
+
+      const first = fragments[0];
+      const firstSection = first.section;
+      const firstIndex = firstSection.elements.indexOf(first.el);
+      // Remove every fragment of the block
+      fragments.forEach(({ section, el }) => {
+        const i = section.elements.indexOf(el);
+        if (i >= 0) section.elements.splice(i, 1);
+      });
+      // Insert a whole block element at the position of the first fragment
+      // (unless the block already has a whole block element elsewhere)
+      if (!wholeBlockPlaced.has(blockId)) {
+        firstSection.elements.splice(
+          Math.min(firstIndex, firstSection.elements.length), 0,
+          new stic_AwfLayoutElement({ type: 'datablock', ref_id: blockId })
+        );
+        wholeBlockPlaced.add(blockId);
       }
     });
 
-    this.structure = cleanStructure;
+    // ---- Helpers over (possibly nested) section content ----
+    const firstBlockOf = (section) => {
+      for (const el of section.elements) {
+        if (el.type === 'datablock') {
+          const b = dataBlocks.find(x => x.id === el.ref_id);
+          if (b) return b;
+        } else if (el.type === 'section') {
+          const b = firstBlockOf(el);
+          if (b) return b;
+        }
+      }
+      return null;
+    };
+    // Whether `inner` is `outer` itself or lives anywhere inside it. Sections
+    // are tracked by id: under Alpine reactive proxies reference identity is
+    // unreliable, and a corrupted structure with a cycle would recurse forever.
+    const sectionContainsSection = (outer, inner, seen = new Set()) => {
+      if (outer.id === inner.id) return true;
+      if (seen.has(outer.id)) return false;
+      seen.add(outer.id);
+      return outer.elements.some(el => el.type === 'section' && sectionContainsSection(el, inner, seen));
+    };
 
-    // Add the missing blocks
-    const orphanBlocks = dataBlocks.filter(b => {
-      if (placedBlockIds.has(b.id)) return false; // The block is placed
-      if (!b.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden')) return false; // Only has fixed or hidden fields
+    // The nested section of a group section that hosts a block: the one already
+    // containing it, or a new one titled with the block text. With the 2-level
+    // template model (spec): ALL the hosts live inside the group's TEMPLATE
+    // child (tab_item) — the group section itself only holds the template.
+    // Sections are tracked by id (not by reference): under Alpine reactive
+    // proxies reference identity is unreliable and a corrupted structure with
+    // a section cycle would otherwise cause infinite recursion (stack overflow).
+    const findBlockHostSection = (hostRoot, block, seen = new Set()) => {
+      if (seen.has(hostRoot.id)) return null;
+      seen.add(hostRoot.id);
+      for (const el of hostRoot.elements) {
+        if (el.type !== 'section' || seen.has(el.id)) continue;
+        if (el.elements.some(e => e.ref_id === block.id)) return el;
+        const nestedHost = findBlockHostSection(el, block, seen);
+        if (nestedHost) return nestedHost;
+      }
+      return null;
+    };
+    // The group's TEMPLATE child: identified by the persistent groupTemplate
+    // marker (legacy configs are recognized by their tab_item container type
+    // and upgraded in place). The container type follows the group's flavor
+    // (tabs parent -> tab_item pane; panel/card parent -> plain panel), so the
+    // marker — not the container type — is the structural identity.
+    const findGroupTemplate = (groupSection) => {
+      let template = groupSection.elements.find(el => el.type === 'section' && el.groupTemplate === true);
+      if (!template) {
+        template = groupSection.elements.find(el => el.type === 'section' && el.containerType === 'tab_item');
+        if (template) template.groupTemplate = true;
+      }
+      return template || null;
+    };
+    // Default template title: "Element" (translated),
+    const groupTemplateTitle = (rootBlock) => {
+      return utils.translate('LBL_SECTION_TEMPLATE_TITLE');
+    };
+    // Default group section title: the group's name
+    const groupSectionTitle = (block) => {
+      return block ? (block.group_title || block.text) : '';
+    };
+    // Whether a section holds a whole-block element of `block` (at any depth)
+    const sectionContainsBlock = (section, block, seen = new Set()) => {
+      if (seen.has(section.id)) return false;
+      seen.add(section.id);
+      if (section.elements.some(e => e.ref_id === block.id)) return true;
+      return section.elements.some(e => e.type === 'section' && sectionContainsBlock(e, block, seen));
+    };
+    // Whether the EXACT element instance lives inside `root`'s subtree
+    // (used to tell "this element travelled with the moved group" from
+    // "this is another copy of the same block elsewhere")
+    const treeContainsElement = (root, target, seen = new Set()) => {
+      if (!root || seen.has(root)) return false;
+      seen.add(root);
+      if ((root.elements || []).some((el) => el === target)) return true;
+      return (root.elements || []).some((el) => el.type === 'section' && treeContainsElement(el, target, seen));
+    };
+    // Whether `block` is a DESCENDANT of the group owned by `groupRootId`
+    // (walks the whole group_root chain). Guards the "nested group head" logic
+    // from being applied to an ANCESTOR of the group being processed.
+    const isDescendantOfGroup = (groupRootId, block) => {
+      let cur = block;
+      const seen = new Set();
+      while (cur && !seen.has(cur.id)) {
+        seen.add(cur.id);
+        if (!cur.group_root || cur.group_root === '') return false;
+        if (cur.group_root === groupRootId) return true;
+        cur = dataBlocks.find(b => b.id === cur.group_root);
+      }
+      return false;
+    };
+    // Whether `block` needs its OWN designated group section while the group
+    // `groupRootId` is being processed: every group head but the group's own root
+    // (the root is hosted as a plain section inside its own template)
+    const needsOwnGroupSection = (groupRootId, block) =>
+      block.id !== groupRootId && isGroupHead(block) && isDescendantOfGroup(groupRootId, block);
+    // The designated group section of a group root, wherever it lives inside
+    // `hostRoot` (the top level or nested inside another group's template)
+    const findDesignatedSection = (rootId, hostRoot) => {
+      let found = null;
+      const walk = (section, seen) => {
+        if (found || seen.has(section.id)) return;
+        seen.add(section.id);
+        if (section.isGroupSection && section.groupRootBlockId === rootId) { found = section; return; }
+        section.elements.forEach(el => { if (el.type === 'section') walk(el, seen); });
+      };
+      walk(hostRoot, new Set());
+      return found;
+    };
+    // The DIRECT child section of `hostRoot` that hosts `block` (the block's own
+    // nested section inside the group's template), if it already exists
+    const findDirectChildHost = (hostRoot, block, seen = new Set()) => {
+      if (seen.has(hostRoot.id)) return null;
+      seen.add(hostRoot.id);
+      for (const el of hostRoot.elements) {
+        if (el.type !== 'section' || seen.has(el.id)) continue;
+        if (sectionContainsBlock(el, block)) return el;
+      }
+      return null;
+    };
+    // Turns `section` into the designated group section of `block`, keeping the
+    // object identity (Alpine bindings keep working) and giving it its element
+    // template
+    const designateGroupSection = (section, block) => {
+      if (!(section.isGroupSection && section.groupRootBlockId === block.id)) {
+        Object.setPrototypeOf(section, stic_AwfLayoutGroupSection.prototype);
+        section.kind = 'group';
+        section.groupRootBlockId = block.id;
+        // Title-visibility default for a NEW group section: an optional group
+        // hides its title by default (the include-switch label already names
+        // the group; the wizard checkbox can re-enable it). Only at creation:
+        // running this on every sync would overwrite the user's choice.
+        section.showTitle = !block.is_optional;
+      }
+      if (!section.is_custom_title) section.title = groupSectionTitle(block);
+      ensureGroupTemplate(section, block);
+      return section;
+    };
+    const blockHostSection = (groupSection, block, seen = new Set()) => {
+      if (seen.has(block.id)) return null;
+      seen.add(block.id);
+      // 2-level template model: the group's content lives inside its TEMPLATE
+      // child. The block's host is searched/created inside it.
+      const template = findGroupTemplate(groupSection);
+      if (!template) return groupSection; // Defensive (the template pass creates it)
+      // A member of a NESTED subgroup (its DIRECT group head is not this
+      // group's root) is hosted inside that subgroup's OWN designated section,
+      // never directly in this template: it renders and posts per
+      // (ancestor, subgroup) instance pair. Walk the block's group_root chain
+      // from this group's root down to its direct head, descending through the
+      // intermediate heads' designated sections (chain-built with cycle
+      // guards; a missing intermediate section falls back to this template).
+      const headChain = [];
+      {
+        const chainSeen = new Set([block.id]);
+        let cur = dataBlocks.find(b => b.id === block.group_root);
+        while (cur && !chainSeen.has(cur.id)) { chainSeen.add(cur.id); headChain.unshift(cur); cur = dataBlocks.find(b => b.id === cur.group_root); }
+      }
+      let hostRoot = groupSection;
+      for (let i = 0; i < headChain.length; i++) {
+        if (headChain[i].id !== hostRoot.groupRootBlockId) continue;
+        if (i + 1 >= headChain.length) break;              // hostRoot is the direct head's section
+        const sub = findDesignated(headChain[i + 1].id);
+        if (!sub || sub === hostRoot) break;
+        hostRoot = sub;
+      }
+      if (hostRoot !== groupSection) return blockHostSection(hostRoot, block);
+      const ownGroupSection = needsOwnGroupSection(groupSection.groupRootBlockId, block);
+      // The subgroup's OWN designated section, when it already exists, is the
+      // section that represents the group: the block's host sections live INSIDE
+      // its template, so they must never be designated again.
+      const designated = ownGroupSection ? findDesignatedSection(block.id, template) : null;
+      const host = findBlockHostSection(template, block);
+      if (host) {
+        // An existing host of a NESTED group head becomes that group's own
+        // designated section (in place: identity preserved)
+        return ownGroupSection && !designated ? designateGroupSection(host, block) : host;
+      }
+      // Reuse the designated section created for this subgroup, so repeated
+      // syncs never duplicate it
+      if (designated) return designated;
+      let container = template;
+      if (block.group_root && block.group_root !== groupSection.groupRootBlockId
+        && isDescendantOfGroup(groupSection.groupRootBlockId, block)) {
+        const parent = dataBlocks.find(b => b.id === block.group_root);
+        if (parent) {
+          const parentHost = blockHostSection(groupSection, parent, seen);
+          if (parentHost) container = parentHost;
+        }
+      }
+      // The container may itself be a nested group section: its content belongs
+      // inside ITS own element template
+      if (container.isGroupSection) {
+        const containerTemplate = findGroupTemplate(container);
+        if (containerTemplate) container = containerTemplate;
+      }
+      const nested = ownGroupSection
+        ? new stic_AwfLayoutGroupSection({ title: groupSectionTitle(block), groupRootBlockId: block.id })
+        : new stic_AwfLayoutSection({ title: block.text });
+      container.elements.push(nested);
+      if (ownGroupSection) { nested.showTitle = !block.is_optional; ensureGroupTemplate(nested, block); }
+      return nested;
+    };
+    // Returns the group's TEMPLATE child, creating it (as the first child,
+    // holding the whole instance content) when missing.
+    const ensureGroupTemplate = (groupSection, rootBlock) => {
+      let template = findGroupTemplate(groupSection);
+      if (!template) {
+        template = new stic_AwfLayoutSection({
+          title: rootBlock ? groupTemplateTitle(rootBlock) : utils.translate('LBL_SECTION_NO_TITLE'),
+          containerType: 'tab_item',
+        });
+        template.groupTemplate = true;
+        // The template title is ALWAYS visible (spec: it names the instances /
+        // tab panes). The unified group panel lets the user set the singular
+        // record name; visibility itself is not user-configurable.
+        template.showTitle = true;
+        groupSection.elements.unshift(template);
+      }
+      return template;
+    };
 
-      return true;
+    // ---- 2b. Group section designation: every group (a root block that is a
+    //          group head) has exactly ONE designated group section representing
+    //          it (kind: 'group' + groupRootBlockId), at the TOP LEVEL or NESTED
+    //          inside another section (a group section moved into one of them in
+    //          the wizard). The designation does NOT depend on the section content
+    //          (blocks may be whole elements or unbundled field fragments anywhere).
+    // Sections whose group no longer exists go back to plain (content preserved).
+    // Group-only micro-copy labels (toggle/add/remove) make no sense on a plain
+    // section: cleared so they cannot resurface if the group is re-created.
+    // Walks EVERY designated group section (top-level and nested) in tree order
+    const eachDesignated = (fn) => {
+      const walk = (section) => {
+        if (section.isGroupSection) fn(section);
+        section.elements.forEach(el => { if (el.type === 'section') walk(el); });
+      };
+      this.structure.forEach(walk);
+    };
+    // Demotes a designated group section AND dissolves the wrapper the group
+    // machinery built for it: the section is replaced IN PLACE by its own
+    // content, with the template child unwrapped one level (its children go
+    // up, keeping their identity, so Alpine bindings survive). The wrapper
+    // and its "(group)"/"(element)" titles were auto-created; keeping them
+    // after the group is gone would leave stray headers and a useless nesting
+    // level that NO later pass prunes (the generic prunes only remove
+    // sections with no children, and a template child always counts as one).
+    // An empty wrapper dissolves entirely. Collected-then-processed: never
+    // called while eachDesignated is walking (splicing a parent's elements
+    // during a forEach skips the lifted siblings).
+    const demoteSectionLifted = (s) => {
+      s.kind = '';
+      s.groupRootBlockId = '';
+      s.toggle_label = '';
+      s.add_button_label = '';
+      s.remove_button_label = '';
+      const template = (s.elements || []).find(el => el.type === 'section' && el.groupTemplate === true);
+      const lifted = template
+        ? [...s.elements.filter(el => el !== template), ...template.elements]
+        : [...(s.elements || [])];
+      const replaceIn = (arr) => {
+        const i = arr.indexOf(s);
+        if (i >= 0) { arr.splice(i, 1, ...lifted); return true; }
+        return false;
+      };
+      if (replaceIn(this.structure)) return;
+      const walk = (sec) => {
+        const i = (sec.elements || []).indexOf(s);
+        if (i >= 0) { sec.elements.splice(i, 1, ...lifted); return true; }
+        return (sec.elements || []).some(el => el.type === 'section' && walk(el));
+      };
+      this.structure.some(walk);
+    };
+    const demoteRootless = [];
+    eachDesignated(s => {
+      const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
+      // A group section stays valid while its root is a group head. The root
+      // does NOT have to be top level: a group head nested in another group
+      // (depth 2) is a group of its own and owns its designated section.
+      if (!gBlock || !isGroupHead(gBlock)) demoteRootless.push(s);
+    });
+    demoteRootless.forEach(demoteSectionLifted);
+    // De-duplicate: only ONE designated section per group root stays. When the
+    // same root has several (a subgroup linked into a parent used to leave a
+    // stale top-level copy), the one that CARRIES CONTENT wins — tree order
+    // alone could keep an empty remnant and demote the real one. The losers are
+    // demoted AND unwrapped (an empty one dissolves entirely; one with user
+    // content keeps it, one level up, without the group's stray wrapper).
+    const hasContentElements = (section, seen = new Set()) => {
+      if (!section || seen.has(section)) return false;
+      seen.add(section);
+      return (section.elements || []).some(el => el.type === 'datablock' || el.type === 'field'
+        || (el.type === 'section' && hasContentElements(el, seen)));
+    };
+    const designatedByRoot = new Map();
+    eachDesignated(s => {
+      if (!designatedByRoot.has(s.groupRootBlockId)) designatedByRoot.set(s.groupRootBlockId, []);
+      designatedByRoot.get(s.groupRootBlockId).push(s);
+    });
+    const seenGroupRoots = new Set();
+    designatedByRoot.forEach(sections => {
+      const survivor = sections.find(s => hasContentElements(s)) || sections[0];
+      seenGroupRoots.add(survivor.groupRootBlockId);
+      sections.forEach(s => {
+        if (s === survivor) return;
+        demoteSectionLifted(s);
+      });
+    });
+    // Whether a section lives inside the TEMPLATE of some group section (i.e. it
+    // represents a MEMBER of that group), as opposed to inside a plain top-level
+    // section (a group section the user moved there on purpose, which stays)
+    const isInsideGroupTemplate = (target) => {
+      let found = false;
+      const walk = (sec, insideTemplate) => {
+        if (found) return;
+        if (sec === target) { found = insideTemplate; return; }
+        sec.elements.forEach(el => {
+          if (found || el.type !== 'section') return;
+          walk(el, insideTemplate || el.groupTemplate === true);
+        });
+      };
+      this.structure.forEach(s => { if (!found) walk(s, false); });
+      return found;
+    };
+    // A group root that is no longer a member of another group (the user
+    // ungrouped it) must have its designated section at the level where its group
+    // lives. A designation left nested inside another group's template is
+    // RELEASED and its wrapper dissolved, so the top-level designation below
+    // builds the canonical section at the top level and the parent group's
+    // template keeps no stray shells.
+    const demoteReleased = [];
+    eachDesignated(s => {
+      const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
+      if (!gBlock || !gBlock.is_root) return;         // Still a member: keep it nested
+      if (this.structure.includes(s)) return;        // Already at the top level
+      if (!isInsideGroupTemplate(s)) return;         // User-nested top-level section: keep it
+      demoteReleased.push(s);
+      seenGroupRoots.delete(gBlock.id);
+    });
+    demoteReleased.forEach(demoteSectionLifted);
+    // New top-level sections created during THIS sync: group homes from the
+    // designation below plus root homes from extraction/orphans
+    // { section, afterSection, rootId } — pass 6 inserts/orders them.
+    const newSectionsForRoots = [];
+    // Designate (legacy heuristic) or create
+    const firstReferencedBlockOf = (section) => {
+      for (const el of section.elements) {
+        if (el.type === 'section') {
+          const nested = firstReferencedBlockOf(el);
+          if (nested) return nested;
+        } else if (el.ref_id) {
+          const block = dataBlocks.find(b => b.id === el.ref_id);
+          if (block) return block;
+        }
+      }
+      return null;
+    };
+    dataBlocks.forEach(block => {
+      if (!block.is_root || !isGroupHead(block)) return;
+      if (seenGroupRoots.has(block.id)) return; // Already designated (top-level or nested)
+      const candidate = this.structure.find(s => {
+        if (s.kind === 'group') return false;
+        const first = firstReferencedBlockOf(s);
+        return first && topRootIdOf(first) === block.id;
+      });
+      if (candidate) {
+        // Convert IN PLACE: the object identity is kept (Alpine bindings keep working)
+        Object.setPrototypeOf(candidate, stic_AwfLayoutGroupSection.prototype);
+        candidate.kind = 'group';
+        candidate.groupRootBlockId = block.id;
+        if (!candidate.is_custom_title) candidate.title = groupSectionTitle(block);
+        // New group section: optional groups hide their title by default
+        candidate.showTitle = !block.is_optional;
+      } else {
+        // Create the group section (its content will be filled by the passes below)
+        const home = new stic_AwfLayoutGroupSection({ title: groupSectionTitle(block), groupRootBlockId: block.id });
+        home.showTitle = !block.is_optional; // optional groups hide their title by default
+        this.structure.push(home);
+        newSectionsForRoots.push({ section: home, afterSection: null, rootId: block.id });
+      }
+    });
+    // Finds the (single) designated group section of a group root, wherever it
+    // lives (top level or nested inside another section)
+    const findDesignated = (rootId) => {
+      let found = null;
+      eachDesignated(s => { if (!found && s.groupRootBlockId === rootId) found = s; });
+      return found;
+    };
+    // NESTED group heads (depth 2): a group head inside another group is a group
+    // of its own, so it gets its OWN designated group section — nested inside the
+    // template of its DIRECT parent group and carrying its own element template.
+    // Without it the wizard tree shows a plain section (no "<group> (group)"
+    // title, no "<group> (element)" template) and the renderer falls back to the
+    // host section title for the subgroup instances, losing the group's own
+    // instance titles and micro-copy labels.
+    const designateNestedGroups = () => {
+      dataBlocks.forEach(block => {
+        if (block.is_root) return;              // Top-level roots: designated above
+        if (!isGroupHead(block)) return;        // Plain member: hosted in a plain section
+        if (findDesignated(block.id)) return;    // Already designated
+        // The nested group section lives in the template of its nearest ancestor
+        // group head that already has a designated section
+        let parentSection = null, parentBlock = null;
+        let cur = block;
+        const guard = new Set();
+        while (cur && cur.group_root && !guard.has(cur.id)) {
+          guard.add(cur.id);
+          const parent = dataBlocks.find(b => b.id === cur.group_root);
+          if (!parent) break;
+          if (isGroupHead(parent)) {
+            const section = findDesignated(parent.id);
+            if (section) { parentSection = section; parentBlock = parent; break; }
+          }
+          cur = parent;
+        }
+        if (!parentSection) return; // No ancestor group section yet: handled later
+        const parentTemplate = ensureGroupTemplate(parentSection, parentBlock);
+        if (!parentTemplate) return;
+        // Upgrade the block's existing host section in place, or create it when
+        // the block has no host yet (its content is placed by the passes below)
+        let host = findDirectChildHost(parentTemplate, block);
+        if (!host) {
+          host = new stic_AwfLayoutSection({ title: block.text });
+          parentTemplate.elements.push(host);
+        }
+        designateGroupSection(host, block);
+      });
+    };
+    designateNestedGroups();
+    // Legacy label migration (Task 7.17): group labels used to live on the
+    // block; move them to the designated section (the renderer's source of
+    // truth) and drop the legacy block properties from the saved JSON.
+    eachDesignated(s => {
+      const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
+      if (!gBlock) return;
+      ['toggle_label', 'add_button_label', 'remove_button_label'].forEach(key => {
+        if (typeof gBlock[key] === 'string' && gBlock[key] !== '') {
+          if (!s[key]) s[key] = gBlock[key];
+          delete gBlock[key];
+        }
+      });
+    });
+    // Adopt the unbundled fragments of the group's members: they must render
+    // inside the group's loop, so they cannot stay in outside sections
+    fragmentsByBlock.forEach((fragments, blockId) => {
+      const block = dataBlocks.find(b => b.id === blockId);
+      if (!block) return;
+      const rootId = topRootIdOf(block);
+      if (!rootId) return;
+      const root = dataBlocks.find(b => b.id === rootId);
+      if (!root || !isGroupHead(root)) return;
+      const home = findDesignated(root.id);
+      if (!home) return;
+      const host = blockHostSection(home, block);
+      fragments.forEach(({ section, el }) => {
+        const i = section.elements.indexOf(el);
+        if (i >= 0 && !sectionContainsSection(home, section)) {
+          section.elements.splice(i, 1);
+          host.elements.push(el);
+        }
+      });
     });
 
-    if (orphanBlocks.length > 0) {
-      // Create a section for each block
-      orphanBlocks.forEach(block => {
-        this._addSectionWithBlock(block);
+    // The home (top-level section) of every top-level root present in the layout
+    const rootHomeSection = new Map();
+    this.structure.forEach(section => {
+      // Designated group sections are the canonical home of their group root,
+      // even when they hold no elements (e.g. all its content is unbundled field fragments elsewhere)
+      if (section.kind === 'group' && section.groupRootBlockId && !rootHomeSection.has(section.groupRootBlockId)) {
+        rootHomeSection.set(section.groupRootBlockId, section);
+      }
+      const first = firstBlockOf(section);
+      if (!first) return;
+      // A designated group section is the canonical home of ITS OWN root only
+      // (mapped above): the section of a SUBGROUP can never become the parent
+      // root's home, or the parent's content would be placed inside the
+      // subgroup's own template (inverted hierarchy, parent group left empty)
+      if (section.isGroupSection) return;
+      const ownerRootId = topRootIdOf(first);
+      if (ownerRootId && !rootHomeSection.has(ownerRootId)) rootHomeSection.set(ownerRootId, section);
+    });
+
+    // Moves an EXISTING designated group section into the destination template
+    // and returns it. Used when a block that already had its own top-level
+    // group section is linked into another group: the section must MOVE inside
+    // the parent (identity and its own template are preserved, so nothing is
+    // rebuilt), instead of leaving a stale duplicate behind.
+    // Detaches a section from wherever it hangs (top level or any nesting
+    // level), keeping its own subtree intact
+    const detachSection = (section) => {
+      if (!section) return;
+      this.structure = this.structure.filter(s => s !== section);
+      const dropFrom = (parent, seen) => {
+        if (!parent || !parent.elements || seen.has(parent)) return false;
+        seen.add(parent);
+        const idx = parent.elements.indexOf(section);
+        if (idx >= 0) { parent.elements.splice(idx, 1); return true; }
+        return parent.elements.some(el => el.type === 'section' && dropFrom(el, seen));
+      };
+      this.structure.forEach(s => dropFrom(s, new Set()));
+    };
+    const moveSectionTo = (section, destTemplate) => {
+      if (!section || !destTemplate || section === destTemplate) return null;
+      if (findDesignatedSection(section.groupRootBlockId, destTemplate) === section) return section;
+      // Refuse to move a section into its own subtree: that would detach it from
+      // the tree instead of relocating it
+      const isInside = (root, target, seen = new Set()) => {
+        if (!root || seen.has(root)) return false;
+        seen.add(root);
+        return root === target
+          || (root.elements || []).some((el) => el.type === 'section' && isInside(el, target, seen));
+      };
+      if (isInside(section, destTemplate)) return null;
+      // Drop it from wherever it currently hangs (top level or another section)
+      detachSection(section);
+      destTemplate.elements.push(section);
+      return section;
+    };
+
+    // Creates (once) the home top-level section of a root block
+    const ensureRootHome = (rootBlock, afterSection = null) => {
+      let home = rootHomeSection.get(rootBlock.id);
+      if (home) return home;
+      const groupHead = isGroupHead(rootBlock);
+      if (groupHead) {
+        // Group sections are designated: kind 'group' + the reference to
+        // their root block; they hold the group name but do NOT display the title
+        home = new stic_AwfLayoutGroupSection({
+          title: groupSectionTitle(rootBlock),
+          groupRootBlockId: rootBlock.id,
+        });
+        home.showTitle = !rootBlock.is_optional; // optional groups hide their title by default
+      } else {
+        home = new stic_AwfLayoutSection({ title: rootBlock.text });
+      }
+      rootHomeSection.set(rootBlock.id, home);
+      newSectionsForRoots.push({ section: home, afterSection, rootId: rootBlock.id });
+      return home;
+    };
+
+    // The home of a root block must be a TOP-LEVEL section, so a block that
+    // just got a group root cannot be homed inside the parent's group template.
+    // A block that ALREADY had its own top-level group section must be MOVED
+    // into the parent instead: keeping the old section would render the group
+    // twice (the stale copy would be pruned as empty on a LATER sync, so the
+    // duplicate would also persist for a while).
+    const moveExistingHomeToParent = (rootBlock, parentGroupSection) => {
+      if (!parentGroupSection) return null;
+      // The parent's template must exist BEFORE the move: a home created during
+      // this same pass has none yet, and moving into a group section without a
+      // template would leave the subgroup's section outside the instance loop
+      let parentTemplate = findGroupTemplate(parentGroupSection);
+      if (!parentTemplate) {
+        const parentBlock = dataBlocks.find(b => b.id === parentGroupSection.groupRootBlockId);
+        parentTemplate = ensureGroupTemplate(parentGroupSection, parentBlock);
+      }
+      if (!parentTemplate) return null;
+      // The group section that currently represents the subgroup: its top-level
+      // home, or the one already designated anywhere in the tree
+      const existing = rootHomeSection.get(rootBlock.id)
+        || this.structure.find((s) => s.isGroupSection && s.groupRootBlockId === rootBlock.id)
+        || (() => {
+          let hit = null;
+          this.structure.forEach((s) => { if (!hit) hit = findDesignatedSection(rootBlock.id, s); });
+          return hit;
+        })();
+      if (existing && moveSectionTo(existing, parentTemplate)) {
+        rootHomeSection.set(rootBlock.id, existing);
+        return existing;
+      }
+      return null;
+    };
+
+    // ---- 3. Extraction: a block whose top-level root is not the section's owner is
+    //         moved to its root's home (covers ungrouped blocks and re-grouping).
+    //         Blocks already inside the right group section keep their nested position.
+    //         A block only stays when this top-level section IS the canonical home of
+    //         its root (a misplaced/duplicate section loses its blocks to the home).
+    // Elements re-homed into the very section being processed (or into one of its
+    // ancestors, whose `survivors` assignment runs later) are tracked per TARGET
+    // section, so the `survivors` rewrite neither wipes them nor keeps a copy in
+    // the section they were moved out of.
+    const pushedInto = new Map();
+    const notePush = (host, el) => {
+      if (!pushedInto.has(host)) pushedInto.set(host, new Set());
+      pushedInto.get(host).add(el);
+    };
+    const processTopSection = (topSection, ownerRootId) => {
+      const ownerBlock = ownerRootId ? dataBlocks.find(b => b.id === ownerRootId) : null;
+      const sectionIsGroup = !!ownerBlock && isGroupHead(ownerBlock);
+      const isCanonicalHome = rootHomeSection.get(ownerRootId) === topSection;
+      const processSection = (section) => {
+        const survivors = [];
+        section.elements.forEach(el => {
+          if (el.type === 'section') { processSection(el); survivors.push(el); return; }
+          if (el.type !== 'datablock') { survivors.push(el); return; }
+          const block = dataBlocks.find(b => b.id === el.ref_id);
+          if (!block) { survivors.push(el); return; }
+          const r = topRootIdOf(block);
+          // A member of a NESTED subgroup keeps its nested position ONLY when
+          // it already lives inside its DIRECT head's designated section: one
+          // still sitting in an ancestor's template (placed there before the
+          // subgroup existed, e.g. after undoing and re-forming subgroups) must
+          // MOVE into the subgroup — it renders and posts per (ancestor,
+          // subgroup) instance pair, not per ancestor instance.
+          const directHead = (block.group_root && block.group_root !== block.id)
+            ? dataBlocks.find(b => b.id === block.group_root) : null;
+          const headIsNested = !!(directHead && directHead.group_root && directHead.group_root !== directHead.id);
+          const nestedHomeOk = () => {
+            if (!headIsNested) return true;
+            const sub = findDesignated(directHead.id);
+            return !!sub && sectionContainsSection(sub, section);
+          };
+          if (r === ownerRootId && isCanonicalHome && nestedHomeOk()) { survivors.push(el); return; } // Own member/root in its home: stays
+
+          const rootBlock = dataBlocks.find(b => b.id === r);
+          if (!rootBlock) { survivors.push(el); return; }
+
+          // Standalone blocks in a standalone (non-group) section stay: shared manual sections
+          if (!sectionIsGroup && r === block.id && !isGroupHead(block)) { survivors.push(el); return; }
+
+          // The block is a SUBGROUP of another group: its own group section must live
+          // inside THAT group's template. If it already had one of its own at
+          // top level, MOVE it instead of homing it there (which would leave the
+          // group rendered twice). The parent's designated section — created
+          // with its template when it does not exist yet — is the destination.
+          const parentRootId = topRootIdOf(block);
+          if (isGroupHead(block) && parentRootId !== block.id) {
+            let parentGroupSection = findDesignated(parentRootId);
+            if (!parentGroupSection) parentGroupSection = ensureRootHome(rootBlock, topSection);
+            const moved = moveExistingHomeToParent(block, parentGroupSection);
+            // The move relocated the whole group section, so this element
+            // travelled with it: it stays where it is instead of being pulled
+            // out and re-pushed (which would blank the group template).
+            if (moved && treeContainsElement(moved, el)) { survivors.push(el); return; }
+          }
+
+          // Move the element to its top root's home (its own nested section when
+          // the home is a group section, or the standalone section itself)
+          const home = ensureRootHome(rootBlock, topSection);
+          const host = isGroupHead(rootBlock) ? blockHostSection(home, block) : home;
+          // Already homed here: keeping it avoids a duplicated element
+          if (host === section) { survivors.push(el); return; }
+          host.elements.push(el);
+          notePush(host, el);
+        });
+        const kept = new Set(survivors);
+        const pushed = pushedInto.get(section) || new Set();
+        section.elements = section.elements.filter((el) => kept.has(el) || pushed.has(el));
+      };
+      processSection(topSection);
+    };
+    this.structure.forEach(section => {
+      const first = firstBlockOf(section);
+      const ownerRootId = first ? topRootIdOf(first) : null;
+      if (ownerRootId === null) return; // Empty section (user structure): nothing to reassign
+      processTopSection(section, ownerRootId);
+    });
+
+    // ---- 4. Group-section normalization (2-level template model: the whole
+    //         group's content lives inside its tab_item TEMPLATE child) ----
+    // EVERY designated group section, top level AND nested (depth 2 subgroups),
+    // in tree order: the parent group's template is always normalized (and
+    // therefore exists) before the subgroups nested inside it. Idempotent: it is
+    // re-run after the orphan pass, which places content into these sections.
+    const normalizeGroupSections = () => {
+      const designatedSections = [];
+      eachDesignated(s => designatedSections.push(s));
+      designatedSections.forEach(section => {
+        const rootBlock = dataBlocks.find(b => b.id === section.groupRootBlockId);
+
+      // e) FIRST: the 2-level template structure — wrap ALL the group's content
+      //    (per-block hosts, direct elements) inside ONE template child = the
+      //    INSTANCE TEMPLATE. Its title is the source of the instance labels
+      //    ("Template #N" / "Template").
+      //    Elements are compared by id (never by reference): under Alpine
+      //    reactive proxies reference identity is unreliable and comparing by
+      //    reference could push the template inside itself, corrupting the
+      //    structure with a cycle (infinite recursion / infinite sections).
+      const template = ensureGroupTemplate(section, rootBlock);
+      // Spec "Simplificación UX del Wizard (Paso 4)": the element template is an
+      // INTERNAL 2-level wrapper the user never edits on its own — its chrome is
+      // DERIVED from the group on every sync:
+      //  - containerType: tabs parent -> 'tab_item' pane; accordion parent ->
+      //    'accordion_item'; otherwise 'card' (the repeating "Elements" section
+      //    is shown with border + title)
+      //  - showTitle: ALWAYS true (it names the instances / tab panes)
+      //  - subtitle: ELIMINATED (the group subtitle carries the help text)
+      //  - collapsibility: stacked cards (panel/card) follow the group's
+      //    isCollapsible/isCollapsed; tabs/accordion items never collapse
+      //    individually
+      const groupIsTabs = section.containerType === 'panel_tabs' || section.containerType === 'card_tabs';
+      const groupIsAccordion = section.containerType === 'panel_accordion' || section.containerType === 'card_accordion';
+      const groupIsTabbed = groupIsTabs || groupIsAccordion;
+      template.containerType = groupIsTabs ? 'tab_item' : (groupIsAccordion ? 'accordion_item' : 'card');
+      template.showTitle = true;
+      template.subtitle = '';
+      template.isCollapsible = groupIsTabbed ? false : !!section.isCollapsible;
+      template.isCollapsed = (!groupIsTabbed && section.isCollapsible) ? !!section.isCollapsed : false;
+      // The template's default title is the singular record name (user
+      // editable in the unified group panel): refreshed on group renames
+      // unless the user customized it.
+      if (!template.is_custom_title) template.title = groupTemplateTitle(rootBlock);
+      const outsideElements = section.elements.filter(el => el.id !== template.id);
+      if (outsideElements.length > 0) {
+        section.elements = [template];
+        template.elements = [...template.elements.filter(t => t.id !== template.id), ...outsideElements];
+      }
+
+      // a) direct block elements (inside the template) -> their own nested
+      //    host section (titled with the block text)
+      const directBlocks = template.elements.filter(el => el.type === 'datablock');
+      if (directBlocks.length > 0) {
+        template.elements = template.elements.filter(el => el.type !== 'datablock');
+        directBlocks.forEach(el => {
+          const block = dataBlocks.find(b => b.id === el.ref_id);
+          if (block) blockHostSection(section, block).elements.push(el);
+          else template.elements.push(el);
+        });
+      }
+
+      // b) UNTITLED nested sections (inside the template) are auto-generated
+      //    containers of previous versions: their blocks are distributed to
+      //    their own sections and the (now empty) untitled section is removed.
+      //    Titled nested sections are user structure: always preserved.
+      [...template.elements].forEach(el => {
+        if (el.type !== 'section' || el.title) return;
+        const innerBlocks = el.elements.filter(e => e.type === 'datablock');
+        el.elements = el.elements.filter(e => e.type !== 'datablock');
+        innerBlocks.forEach(blockEl => {
+          const block = dataBlocks.find(b => b.id === blockEl.ref_id);
+          if (block) blockHostSection(section, block).elements.push(blockEl);
+          else el.elements.push(blockEl);
+        });
+        if (el.elements.length === 0) template.elements.splice(template.elements.indexOf(el), 1);
       });
+
+      // c) remove EMPTY auto-generated host sections (inside the template):
+      //    untitled ones, or ones titled with the text of any data block.
+      //    User-created sections are always preserved.
+      const blockTexts = new Set(dataBlocks.map(b => b.text));
+      [...template.elements].forEach(el => {
+        if (el.type !== 'section' || el.elements.length > 0) return;
+        if (!el.title || blockTexts.has(el.title)) {
+          template.elements.splice(template.elements.indexOf(el), 1);
+        }
+      });
+
+      // d) the group root's host section always comes first (inside the template)
+        if (rootBlock) {
+          const rootNested = template.elements.find(el => el.type === 'section'
+            && el.elements.some(e => e.ref_id === rootBlock.id));
+          if (rootNested && template.elements[0] !== rootNested) {
+            template.elements = [rootNested, ...template.elements.filter(e => e !== rootNested)];
+          }
+        }
+
+      // e) Spec (2026-10-08): the group's CONTENT sections (one per data block,
+      //    inside the template) default to PANEL (the repeating "Elements"
+      //    TEMPLATE above carries the border + title). They are NOT forced on
+      //    every sync: with SEVERAL content sections the user may change their
+      //    containerType in the wizard (new hosts are created as 'panel' by
+      //    blockHostSection()).
+      //    When the group has exactly ONE content section, that section is fully
+      //    derived: it hides its title (the instance label already names it), is
+      //    a panel, and the singular record name defaults to its title (e.g. a
+      //    repeatable "Document" group labels its instances "Document",
+      //    "Document #2", ...). The wizard hides its config button (nothing to
+      //    configure). Designated subgroup hosts keep their own group chrome.
+      const contentSections = template.elements.filter(el => el.type === 'section');
+      if (contentSections.length === 1 && !contentSections[0].isGroupSection) {
+        const only = contentSections[0];
+        only.containerType = 'panel';
+        only.showTitle = false;
+        // The singular name defaults to the single content block's CURRENT name
+        const blockEl = only.elements.find(e => e && e.ref_id);
+        const singleBlock = blockEl ? dataBlocks.find(b => b.id === blockEl.ref_id) : null;
+        const singleName = singleBlock ? singleBlock.text : only.title;
+        if (!template.is_custom_title) template.title = singleName || groupTemplateTitle(rootBlock);
+      }
+      });
+    };
+    normalizeGroupSections();
+
+    // ---- 5. Orphans: renderable blocks not yet present in the layout ----
+    dataBlocks.forEach(block => {
+      if (placedBlockIds.has(block.id)) return;
+      if (!isRenderable(block)) return;
+      const r = topRootIdOf(block);
+      const rootBlock = dataBlocks.find(b => b.id === r);
+      if (!rootBlock) return;
+
+      if (r === block.id) {
+        // Root block: gets its own top-level section
+        const home = ensureRootHome(rootBlock);
+        const host = isGroupHead(rootBlock) ? blockHostSection(home, block) : home;
+        host.elements.push(new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id }));
+        placedBlockIds.add(block.id);
+        // Group heads: each descendant gets its own nested section as well
+        if (isGroupHead(block)) {
+          block.getDescendants(dataBlocks).forEach(child => {
+            if (placedBlockIds.has(child.id) || !isRenderable(child)) return;
+            blockHostSection(home, child).elements.push(new stic_AwfLayoutElement({ type: 'datablock', ref_id: child.id }));
+            placedBlockIds.add(child.id);
+          });
+        }
+      } else {
+        // Child block: its own nested section inside the group section; the group
+        // root (if not placed yet) goes first, into its own nested section
+        const home = ensureRootHome(rootBlock);
+        const rootHost = blockHostSection(home, rootBlock);
+        if (!placedBlockIds.has(rootBlock.id) && !rootHost.elements.some(e => e.type === 'datablock' && e.ref_id === rootBlock.id)) {
+          rootHost.elements.unshift(new stic_AwfLayoutElement({ type: 'datablock', ref_id: rootBlock.id }));
+          placedBlockIds.add(rootBlock.id);
+        }
+        blockHostSection(home, block).elements.push(new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id }));
+        placedBlockIds.add(block.id);
+      }
+    });
+
+    // ---- 5b. Remove EMPTY top-level auto-sections: untitled ones or ones titled
+    //          with the text of a data block whose block is no longer inside
+    //          (e.g. the block joined a group). Group sections and user-renamed
+    //          sections always stay.
+    const allBlockTexts = new Set(dataBlocks.map(b => b.text));
+    this.structure = this.structure.filter(s => {
+      if (s.elements.length > 0) return true;
+      if (s.isGroupSection) return true;
+      return !(allBlockTexts.has(s.title) && !s.is_custom_title);
+    });
+
+    // ---- 6. Insert the new top-level sections created during extraction/orphans:
+    //         right after their source section, or appended at the end.
+    //         Membership is checked BY ID, never by reference: under Alpine
+    //         reactivity the section objects are Proxies, so includes()/indexOf()
+    //         can miss a section that IS present and append a duplicate (which
+    //         then crashes the step-4 list with "Duplicate key on x-for") ----
+    const structureIndexOfId = (id) => this.structure.findIndex(s => s && s.id === id);
+    const insertionsBySource = new Map();
+    const appendedSections = [];
+    newSectionsForRoots.forEach(({ section, afterSection }) => {
+      if (section && structureIndexOfId(section.id) >= 0) return; // Group homes were pushed by the designation pass
+      if (afterSection && structureIndexOfId(afterSection.id) >= 0) {
+        if (!insertionsBySource.has(afterSection)) insertionsBySource.set(afterSection, []);
+        insertionsBySource.get(afterSection).push(section);
+      } else {
+        appendedSections.push(section);
+      }
+    });
+    insertionsBySource.forEach((sections, afterSection) => {
+      const idx = structureIndexOfId(afterSection.id);
+      if (idx < 0) return;
+      this.structure.splice(idx + 1, 0, ...sections);
+    });
+    appendedSections.forEach(s => this.structure.push(s));
+
+    // ---- 6b. DEFAULT-SECTION ORDER: sections created during this sync follow
+    //          the data_blocks order. Group homes used to be pushed during
+    //          designation (early) while plain homes were appended at pass 6,
+    //          so a fresh layout showed ALL group sections first. Only the
+    //          SLOTS of the sections created here (afterSection == null:
+    //          designation + orphans) are re-arranged; pre-existing sections,
+    //          user structure and the extraction homes anchored after their
+    //          source keep their exact position.
+    //          Keyed BY ID (never by reference): under Alpine reactivity the
+    //          section objects are Proxies, so reference comparisons are
+    //          unreliable and could duplicate a section (duplicate x-for key).
+    //          The reorder only runs when every created id occupies exactly
+    //          one slot, guaranteeing a safe permutation. ----
+    const defaultHomeRootById = new Map();
+    newSectionsForRoots.forEach(({ section, afterSection, rootId }) => {
+      if (afterSection || !section || section.id == null) return;
+      if (!this.structure.some(s => s && s.id === section.id)) return;
+      if (!defaultHomeRootById.has(section.id)) defaultHomeRootById.set(section.id, rootId);
+    });
+    if (defaultHomeRootById.size > 1) {
+      const orderOf = (section) => {
+        const i = dataBlocks.findIndex(b => b.id === defaultHomeRootById.get(section.id));
+        return i === -1 ? Number.MAX_SAFE_INTEGER : i;
+      };
+      const positions = [];
+      this.structure.forEach((s, i) => { if (s && defaultHomeRootById.has(s.id)) positions.push(i); });
+      // One slot per created id → the write-back below is a bijection
+      if (positions.length === defaultHomeRootById.size) {
+        const sorted = positions.map(i => this.structure[i]).sort((a, b) => orderOf(a) - orderOf(b));
+        positions.forEach((pos, i) => { this.structure[pos] = sorted[i]; });
+      }
     }
+
+    // Re-normalize: the extraction/orphan passes above create the group sections
+    // of blocks that became roots or members (and place block elements inside
+    // them), so every designated group section — including the ones inserted just
+    // now — gets its element template and its per-block host sections.
+    normalizeGroupSections();
+
+    // ---- 7. Group sections take the group name (unless manually customized).
+    //         NESTED group sections included: a renamed subgroup must refresh
+    //         its section title too, or the form would keep showing the old
+    //         group name. Title VISIBILITY is never forced here: it is a
+    //         default set when the section is created (hidden when the group
+    //         is optional) and afterwards belongs to the user's choice ----
+    eachDesignated(section => {
+      const owner = dataBlocks.find(b => b.id === section.groupRootBlockId);
+      if (owner && !section.is_custom_title) {
+        section.title = groupSectionTitle(owner);
+      }
+    });
+
+    // ---- 8. Tabs/accordion containers hold ONLY sections: group any direct
+    //         non-section elements into a new child pane/item,
+    //         recursively. Their inner sections are ALWAYS the matching item
+    //         type ('tab_item' / 'accordion_item'), and an item ALWAYS shows
+    //         its title (it IS the tab label / accordion header) ----
+    const isTabsContainerType = (ct) => ct === 'card_tabs' || ct === 'panel_tabs';
+    const isAccordionContainerType = (ct) => ct === 'card_accordion' || ct === 'panel_accordion';
+    const normalizeContainerSections = (section) => {
+      const ct = section.containerType;
+      const isTabs = isTabsContainerType(ct);
+      const isAccordion = isAccordionContainerType(ct);
+      // A pane/item ALWAYS shows its title (the wizard hides the switch for it,
+      // so a stored false would be uneditable): forced to the canonical true
+      if ((ct === 'tab_item' || ct === 'accordion_item') && section.showTitle !== true) section.showTitle = true;
+      // Direct non-section elements become a synthetic trailing pane/item
+      if ((isTabs || isAccordion) && section.elements.some(el => el.type !== 'section')) {
+        const item = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
+        item.containerType = isAccordion ? 'accordion_item' : 'tab_item';
+        item.showTitle = true;
+        item.elements = section.elements.filter(el => el.type !== 'section');
+        section.elements = section.elements.filter(el => el.type === 'section');
+        section.elements.push(item);
+      }
+      // An accordion container's inner sections are ALWAYS accordion_item
+      if (isAccordion) {
+        section.elements.forEach(el => {
+          if (el.type === 'section' && el.containerType !== 'accordion_item') {
+            el.containerType = 'accordion_item';
+            el.showTitle = true;
+          }
+        });
+      }
+      // A tabs/accordion container holds ONLY sections and needs at least ONE
+      // item to render: an empty container gets a single empty item (spec 2026-10-08)
+      if ((isTabs || isAccordion) && !section.elements.some(el => el.type === 'section')) {
+        const item = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
+        item.containerType = isAccordion ? 'accordion_item' : 'tab_item';
+        item.showTitle = true;
+        section.elements.push(item);
+      }
+      section.elements.forEach(el => {
+        if (el.type === 'section') normalizeContainerSections(el);
+      });
+    };
+    this.structure.forEach(normalizeContainerSections);
+
+    // ---- 9. Integrity guard: Alpine's x-for keys top-level sections by id, so
+    //         the structure must NEVER end a sync with a repeated or missing
+    //         id. Exact duplicate references (the same object pushed twice by a
+    //         legacy/edge pass) are collapsed; two distinct sections that share
+    //         an id get a fresh one. This keeps the wizard from crashing with
+    //         "Duplicate key on x-for" after a sync. ----
+    this.ensureUniqueSectionIds();
+  }
+
+  /**
+   * Guarantees the top-level sections have unique, defined ids. Alpine's x-for
+   * keys sections by id, so a repeated or missing id crashes the step-4 list
+   * ("Duplicate key on x-for" / "Cannot read properties of undefined"). Exact
+   * duplicate references are collapsed; distinct sections sharing an id get a
+   * fresh one.
+   */
+  ensureUniqueSectionIds() {
+    const seenRefs = new Set();
+    const seenIds = new Set();
+    this.structure = this.structure.filter(section => {
+      if (!section) return false;
+      if (seenRefs.has(section)) return false;
+      seenRefs.add(section);
+      if (section.id == null || seenIds.has(section.id)) section.id = utils.newId('sect');
+      seenIds.add(section.id);
+      return true;
+    });
   }
 
   _addSectionWithBlock(block) {
@@ -1208,45 +2894,104 @@ class stic_AwfTheme {
 }
 
 /**
+ * Defines a base visual node (container or element)
+ */
+class stic_AwfLayoutNode {
+  constructor(data = {}) {
+    this.id = data.id || utils.newId('node');
+    this.type = data.type || 'datablock';
+  }
+}
+
+/**
  * Defines a visual container
  */
-class stic_AwfLayoutSection {
+class stic_AwfLayoutSection extends stic_AwfLayoutNode {
   constructor(data = {}) {
+    super(data);
     Object.assign(this, {
       id: utils.newId('sect'), // ID of the section
+      type: 'section',
+
       title: "",               // Title to display
       subtitle: "",            // Subtitle to display
       showTitle: true,         // Indicates if the title will be shown
+      is_custom_title: false,  // Flag to track manual title overrides (sync no longer auto-renames the section)
       isCollapsible: false,    // Indicates if the section can be collapsed
       isCollapsed: false,      // Indicates if the section will appear initially collapsed
+
+      toggle_label: '',        // Label for the "include instance data" toggle switch
+      add_button_label: '',    // Label for the "add new instance" button
+      remove_button_label: '', // Label for the "remove instance" button
       
       containerType: 'panel',  // Type of visual container: 'panel' (simple), 'card' (with border), 'tabs', 'accordion'
-      elements: [],
+      elements: [],            // Can contain instances of stic_AwfLayoutElement or stic_AwfLayoutSection
+
+      kind: '',                // Section kind: '' (plain) or 'group' (represents a data-block group)
+      groupRootBlockId: '',    // For group sections: the ID of the group's root data block
     });
 
     Object.assign(this, data);
 
-    this.elements = (data.elements || this.elements).map(e => new stic_AwfLayoutElement(e));
+    this.elements = (data.elements || []).map(e => stic_AwfLayoutSection.fromData(e, false));
+  }
+
+  // Polymorphic node factory: group sections are instantiated as
+  // stic_AwfLayoutGroupSection; plain sections and block/field elements as before
+  static fromData(e, topLevel = true) {
+    if (e.type === 'section' || Array.isArray(e.elements) || (topLevel && e.kind === 'group')) {
+      // Group designations are valid at ANY depth (a group section moved into
+      // another section, e.g. inside a tabs container): never stripped on load
+      if (e.kind === 'group') return new stic_AwfLayoutGroupSection(e);
+      const sectionData = topLevel ? e : Object.assign({}, e, { kind: '', groupRootBlockId: '' });
+      return new stic_AwfLayoutSection(sectionData);
+    }
+    return new stic_AwfLayoutElement(e);
+  }
+
+  // Whether this section represents a data-block group
+  get isGroupSection() { return this.kind === 'group'; }
+
+  // For group sections: the group's root data block (or null)
+  getGroupBlock(dataBlocks) {
+    if (this.kind !== 'group') return null;
+    return dataBlocks.find(b => b.id === this.groupRootBlockId) || null;
   }
 
   static containerType_in_formList(asString = false){
     return utils.getList("stic_awf_forms_layout_structure_container_type_list", asString);
   }
   get containerType_in_formText(){
-    return stic_AwfLayoutSection.containerType_in_formList().find(i => i.id == this.containerType)?.text;  
+    return stic_AwfLayoutSection.containerType_in_formList().find(i => i.id == this.containerType)?.text;
+  }
+}
+
+/**
+ * Section that REPRESENTS a data-block group: fixed at the top level of
+ * the layout, it holds the group's content (nested sections, blocks or fields)
+ * and renders the group's instance loop. The reference to its group root block
+ * makes it robust to content changes (unbundled fields, moved elements).
+ */
+class stic_AwfLayoutGroupSection extends stic_AwfLayoutSection {
+  constructor(data = {}) {
+    super(data);
+    this.kind = 'group';
+    this.groupRootBlockId = data.groupRootBlockId || '';
   }
 }
 
 /**
  * Element inside a visual container
  */
-class stic_AwfLayoutElement {
+class stic_AwfLayoutElement extends stic_AwfLayoutNode {
   constructor(data = {}) {
+    super(data);
     Object.assign(this, {
       id: utils.newId('el'),  // ID of the element
-      
-      type: 'datablock',      // Element type: 'datablock' (possible extensions: 'line', etc)
-      ref_id: '',             // Reference ID (the ID of the stic_AwfDataBlock)
+
+      type: 'datablock',      // Element type: 'datablock', 'field'
+      ref_id: '',             // Reference Data block ID (the ID of the stic_AwfDataBlock)
+      field_name: '',         // Name of the field (for field elements)
     });
 
     Object.assign(this, data);
@@ -1306,7 +3051,6 @@ class stic_AwfConfiguration {
 
     // Only regenerate actions if the hash has changed since last time
     if (currentHash !== this._lastDataBlocksHash) {
-      console.log("AWF: DataBlocks structure changed. Regenerating automatic actions...");
       this.regenerateAutomaticActions();
         
       // Update the known hash
@@ -1430,7 +3174,7 @@ class stic_AwfConfiguration {
     });
   }
 
- /**
+  /**
    * Gets a suggested text for a new DataBlock for a module
    * @param {string} moduleName The module
    * @returns {string} The suggested text for a new DataBlock
@@ -1509,6 +3253,14 @@ class stic_AwfConfiguration {
       text = `${baseText} ${index}`;
     }
     dataBlock.text = text;
+
+    // Refresh group titles across the hierarchy
+    this.data_blocks.forEach(b => {
+      if (b.isGroupHead(this.data_blocks)) {
+        b.refreshGroupTitle(this.data_blocks);
+      }
+    });
+    this.refreshGroups();
 
     // Update references in Actions
     this.flows.forEach(flow => {
@@ -1685,7 +3437,7 @@ class stic_AwfConfiguration {
     }
 
     this.data_blocks.push(dataBlock);
-
+    this.refreshGroups();
     return dataBlock;
   }
 
@@ -1782,6 +3534,13 @@ class stic_AwfConfiguration {
 
     // Remove DataBlock
     this.data_blocks = this.data_blocks.filter(d => d.id != dataBlock.id);
+
+    // Clear group_root for children of the deleted block
+    this.data_blocks.forEach(d => {
+      if (d.group_root === dataBlock.id) {
+        d.group_root = '';
+      }
+    });
   }
 
   deleteDataBlockField(dataBlock, field) {
@@ -1834,6 +3593,7 @@ class stic_AwfConfiguration {
         });
       });
     });
+    this.refreshGroups();
   }
 
   /**
@@ -1841,10 +3601,14 @@ class stic_AwfConfiguration {
    * @param {string} excludeField (Optional) The field name to exclude from the list (to avoid circular references)
    * @returns {Array} [{name: 'Block.Field', text: 'BlockName » Field label'}]
    */
-  getAllFieldsInForm(excludeName = null) {
+  getAllFieldsInForm(excludeName = null, includeRepeatable = false) {
     let allFields = [];
 
     this.data_blocks.forEach(block => {
+      // Exclude fields from repeatable blocks from global conditions
+      if (!includeRepeatable && (block.is_repeatable || (block.group_root && block.group_root !== ''))) {
+        return;
+      }
       block.fields.forEach(field => {
         if (field.type_field === 'fixed') return;
         let fullName = block.getFieldInputName(field);
@@ -1996,6 +3760,7 @@ class stic_AwfConfiguration {
       });
     });
 
+    this.refreshGroups();
     return dataBlock;
   }
 
@@ -2041,6 +3806,8 @@ class stic_AwfConfiguration {
       if (relDatablock) {
         relDatablock.removeRelationship(relName, datablockId);
       }
+      this.refreshGroups();
+
       // Remove RelateRecordsAction for this relationship
       this.flows.forEach(flow => {
         flow.actions = flow.actions.filter(a => {
@@ -2150,6 +3917,630 @@ class stic_AwfConfiguration {
     dataBlocks.push({ id: -1, text: utils.translate('LBL_DATABLOCK_NEW') });
 
     return dataBlocks;
+  }
+
+  /**
+   * Cleans group metadata ONLY if the block is no longer a group at all.
+   * A block is a group if: it is repeatable OR optional OR has children.
+   * @param {stic_AwfDataBlock} block
+   */
+  cleanGroupMetadataIfNeeded(block) {
+    if (!block) return;
+    const children = block.getChildren(this.data_blocks);
+    const isStillGroup = block.is_repeatable || block.is_optional || children.length > 0;
+
+    if (!isStillGroup) {
+      block.group_title = '';
+    }
+  }
+
+  /**
+   * Helper to check if a candidate block depends on parentBlock via relate field or relationship.
+   * Thin wrapper around stic_AwfDataBlock::isRelationalChild (unified dependency check).
+   * @param {stic_AwfDataBlock} candidate 
+   * @param {stic_AwfDataBlock} parentBlock 
+   * @returns {boolean}
+   */
+    isBlockDependentOnParent(candidate, parentBlock) {
+      if (!candidate || !parentBlock) return false;
+      return candidate.isRelationalChild(parentBlock.id, this.data_blocks);
+    }
+
+  /**
+   * Whether a dependent GROUP HEAD can be adopted (nested) into parentBlock's
+   * group: the resulting branch must keep the N×M rule (at most 2 repeatable
+   * levels — evaluated exactly as if the head had become repeatable in place,
+   * the same rule the in-place switch applies) and the group nesting must stay
+   * within 2 levels (the head's depth becomes the parent's + 1, plus 1 more
+   * when the head already has members of its own).
+   * @param {stic_AwfDataBlock} head
+   * @param {stic_AwfDataBlock} parentBlock
+   * @returns {boolean}
+   */
+  canAdoptHeadIntoGroup(head, parentBlock) {
+    if (!head || !parentBlock) return false;
+    // N×M: temporarily join and evaluate the in-place rule
+    const prevGroupRoot = head.group_root;
+    head.group_root = parentBlock.id;
+    const branchOk = head.canBeRepeatable(this.data_blocks);
+    head.group_root = prevGroupRoot;
+    if (!branchOk) return false;
+    // Nesting depth: the head lands at parentDepth + 1; its own members one
+    // level deeper — the whole nesting must stay within 2 levels
+    const parentDepth = parentBlock.getDepth(this.data_blocks);
+    const subtreeHeight = head.getChildren(this.data_blocks).length > 0 ? 1 : 0;
+    return parentDepth + 1 + subtreeHeight <= 2;
+  }
+
+  /**
+   * Adopts orphan blocks that depend on parentBlock when parentBlock becomes a group root.
+   * Traverses transitively (BFS): adopted children also adopt their own dependents, so
+   * chains like Adult -> Entorn Familiar -> Menor -> Inscripcio are fully grouped.
+   * @param {stic_AwfDataBlock} parentBlock 
+   */
+   adoptRelatedOrphans(parentBlock) {
+     if (!parentBlock) return;
+
+     // When parentBlock is a child of another group (subgroup head), blocks in the SAME parent
+     // group can be reparented into this subgroup. Otherwise, only orphan (is_root) blocks are adopted.
+     const parentGroupRoot = (parentBlock.group_root && parentBlock.group_root !== parentBlock.id)
+       ? parentBlock.group_root : null;
+
+     const queue = [parentBlock];
+     const visited = new Set([parentBlock.id]);
+
+     while (queue.length > 0) {
+       const current = queue.shift();
+
+       this.data_blocks.forEach(candidate => {
+         if (visited.has(candidate.id)) return;
+
+         // Adopt if: (a) candidate is an orphan (is_root), OR
+         //           (b) candidate is in the same parent group (will be reparented into the subgroup)
+         const isOrphan = candidate.is_root;
+         const isSameGroupChild = parentGroupRoot && candidate.group_root === parentGroupRoot
+           && candidate.id !== parentBlock.id;
+         if (!isOrphan && !isSameGroupChild) return;
+
+         // A dependent GROUP HEAD (optional/repeatable) is adopted as a NESTED
+         // subgroup head, so defining the form INSIDE-OUT (first the payment,
+         // then the Menor) converges with the outside-in order — but ONLY
+         // when the result is a valid nesting: the branch keeps the N×M rule
+         // (at most 2 repeatable levels, checked as if the head had become
+         // repeatable in place) and the group nesting stays within 2 levels.
+         if ((candidate.is_repeatable || candidate.is_optional)
+           && !this.canAdoptHeadIntoGroup(candidate, parentBlock)) return;
+
+         if (this.isBlockDependentOnParent(candidate, current)) {
+           if (current.hasAncestor(candidate, this.data_blocks)) return; // Cycle guard
+
+           candidate.group_root = parentBlock.id;
+           visited.add(candidate.id);
+           queue.push(candidate); // Its own dependents will be adopted next
+         }
+       });
+     }
+
+     parentBlock.refreshGroupTitle(this.data_blocks);
+
+     // Also refresh the parent group's title (members may have moved into the subgroup)
+     if (parentGroupRoot) {
+       const parentGroup = this.data_blocks.find(b => b.id === parentGroupRoot);
+       if (parentGroup) parentGroup.refreshGroupTitle(this.data_blocks);
+     }
+   }
+
+  /**
+   * Disbands a group, releasing all its children and resetting group metadata.
+   * Releases the whole descendant branch (transitive), not just
+   * direct children: with multi-level adoption a level-2+ descendant would otherwise keep
+   * pointing to an already-disbanded intermediate parent.
+   * @param {stic_AwfDataBlock} parentBlock 
+   */
+  disbandGroup(parentBlock) {
+    if (!parentBlock) return;
+
+    // 1. Release ALL descendant blocks in the branch (BFS). When a SUBGROUP
+    //    head dissolves, its members follow the head INTO THE HEAD'S OWN
+    //    GROUP (the enclosing parent group): they lived per (parent,
+    //    subgroup) instance and degrade to per-parent instance, NOT to
+    //    top-level orphans (that would silently drop the enclosing group's
+    //    instance context). A top-level head releases to top level as before.
+    const releaseTo = (parentBlock.group_root && parentBlock.group_root !== parentBlock.id)
+      ? parentBlock.group_root : '';
+    const descendants = parentBlock.getDescendants(this.data_blocks);
+    descendants.forEach(child => {
+      child.group_root = releaseTo;
+    });
+
+    // 2. Reset limits and clear group metadata
+    parentBlock.min_instances = 1;
+    parentBlock.max_instances = 1;
+    parentBlock.group_title = '';
+    parentBlock.is_custom_group_title = false;
+  }
+
+  /**
+   * Toggles repeatable status without destroying optionality (0..N <-> 0..1).
+   * @param {stic_AwfDataBlock} block 
+   * @param {boolean} isRepeatable 
+   */
+  setBlockRepeatable(block, isRepeatable) {
+    if (!block) return;
+
+    if (isRepeatable) {
+      if (!block.canBeRepeatable(this.data_blocks)) return;
+      block.max_instances = null; // Unlimited (>1)
+
+      // Auto-adopt orphan dependent blocks
+      this.adoptRelatedOrphans(block);
+      block.refreshGroupTitle(this.data_blocks);
+
+      // Ensure default group title if missing
+      if (!block.group_title || !block.group_title.trim()) {
+        const children = block.getDescendants(this.data_blocks);
+        const blockNames = [block.text, ...children.map(c => c.text)];
+        block.group_title = blockNames.join(' + ');
+      }
+    } else {
+      block.max_instances = 1;
+
+      // If it is also NOT optional, completely disband the group
+      if (!block.is_optional) {
+        this.ungroupBlock(block);
+        return;
+      }
+    }
+
+    block.sanitizeRepeatableLimits();
+    this.cleanGroupMetadataIfNeeded(block);
+    this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
+  }
+
+  /**
+   * Toggles optional status without destroying repeatability (0..N <-> 1..N).
+   * @param {stic_AwfDataBlock} block 
+   * @param {boolean} isOptional 
+   */
+  setBlockOptional(block, isOptional) {
+    if (!block) return;
+
+    if (isOptional) {
+      // Choke-point guard (the UI disables the switch, but the mutator must
+      // validate too): a block with no visible form field can never be optional
+      if (!block.canBeOptional(this.data_blocks)) return;
+      block.min_instances = 0;
+
+      // Auto-adopt orphan dependent blocks
+      this.adoptRelatedOrphans(block);
+      block.refreshGroupTitle(this.data_blocks);
+
+      // Ensure default group labels if missing
+      if (!block.group_title || !block.group_title.trim()) {
+        const children = block.getDescendants(this.data_blocks);
+        const blockNames = [block.text, ...children.map(c => c.text)];
+        block.group_title = blockNames.join(' + ');
+      }
+    } else {
+      block.min_instances = 1;
+
+      // If it is also NOT repeatable, completely disband the group
+      if (!block.is_repeatable) {
+        this.ungroupBlock(block);
+        return;
+      }
+    }
+
+
+    block.sanitizeRepeatableLimits();
+    this.cleanGroupMetadataIfNeeded(block);
+    this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
+  }
+  
+  /**
+   * Hard reset: completely disbands a group into a standard 1..1 standalone block.
+   * @param {stic_AwfDataBlock} block 
+   */
+  ungroupBlock(block) {
+    if (!block) return;
+    this.disbandGroup(block);
+    this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
+  }
+
+  /**
+   * Manually assign a child block to a parent group.
+   * @param {string} parentBlockId 
+   * @param {string} childBlockId 
+   */
+  addChildToGroup(parentBlockId, childBlockId) {
+    const parent = this.data_blocks.find(b => b.id === parentBlockId);
+    const child = this.data_blocks.find(b => b.id === childBlockId);
+    if (parent && child) {
+      // The mutator is the single choke point (step 2's control calls it
+      // directly), so it validates even though the list it is fed from is
+      // already filtered — see getAvailableCandidateChildren() for the rules:
+      //  - no self-adoption and no adoption that would build a cycle
+      //  - the CHILD must not be a group head: only is_root heads get a
+      //    designated group section (sync pass 3), so a head adopted as a
+      //    member loses its own group representation and its children would
+      //    post unindexed instead of per instance (data loss).
+      //  - the CHILD must be UNLINKED: linked blocks join a group only
+      //    through their relationships (auto-adoption), never by hand.
+      if (parent.id === child.id) return;
+      if (parent.isDescendant(child.id, this.data_blocks)) return;
+      if (child.isGroupHead(this.data_blocks)) return;
+      // MANUAL membership: UNLINKED blocks (any group level) OR blocks with a
+      // many-to-many relationship to a block already in the group (an N-M
+      // partner has no FK, so auto-adoption cannot place it: the user adds it).
+      // A linked 1-N block still joins only through its relationships.
+      const parentGroupBlocks = [parent, ...parent.getDescendants(this.data_blocks)];
+      const childHasNm = parentGroupBlocks.some(g => g.id !== child.id && child.isManyToManyWith(g));
+      if (!child.isUnlinked && !childHasNm) return;
+      // The child must be an orphan, OR — when the parent is a SUBGROUP — a
+      // block of the same parent group (re-parented into the subgroup)
+      const parentGroupRoot = (parent.group_root && parent.group_root !== parent.id) ? parent.group_root : null;
+      const childIsOrphan = child.is_root;
+      const childIsSameGroupChild = parentGroupRoot && child.group_root === parentGroupRoot;
+      if (!childIsOrphan && !childIsSameGroupChild) return;
+      // Only a group head can receive members, and only up to nesting level 2:
+      // sync designates the group sections of root heads and (depth-2) subgroup
+      // heads, but a head deeper than level 1 would place its members at level
+      // 3, which nothing renders or posts per instance.
+      if (!parent.isGroupHead(this.data_blocks) || parent.getDepth(this.data_blocks) > 1) return;
+
+      child.group_root = parent.id;
+
+      // Also bring the child's relational dependents into the group (transitive).
+      // Orphans (is_root) always follow; when re-parenting a same-group child
+      // into a SUBGROUP, its dependents in the SAME parent group follow too —
+      // one left behind at the parent level would resolve its FK against the
+      // subgroup's instance 0 only (padded index), silently mis-linking every
+      // deeper instance. Dependents in OTHER groups stay (disjoint trees rule).
+      const descendants = child.getRelationalDescendants(this.data_blocks);
+      descendants.forEach(d => {
+        if ((d.is_root || (parentGroupRoot && d.group_root === parentGroupRoot))
+          && !d.is_repeatable && !d.is_optional && !d.isGroupHead(this.data_blocks)) {
+          d.group_root = parent.id;
+        }
+      });
+
+      this.refreshGroups();
+    }
+  }
+
+  /**
+   * Removes a child block from its current group.
+   * @param {string} childBlockId 
+   */
+  removeChildFromGroup(childBlockId) {
+    const child = this.data_blocks.find(b => b.id === childBlockId);
+    if (child) {
+      child.group_root = '';
+      this.refreshGroups();
+    }
+  }
+
+  /**
+   * Returns repeatable-group metadata for a block, or null if the block is not part
+   * of any repeatable group.
+   * @param {stic_AwfDataBlock} block
+   * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+   */
+  getRepeatGroupInfo(block) {
+    if (!block) return null;
+    let rootBlock = null;
+    let isRoot = false;
+    if (block.is_repeatable) {
+      rootBlock = block;
+      isRoot = true;
+    } else if (block.group_root && block.group_root !== '') {
+      rootBlock = this.data_blocks.find(b => b.id === block.group_root) || null;
+    }
+    if (!rootBlock) return null;
+    return {
+      rootBlockId: rootBlock.id,
+      groupTitle: rootBlock.group_title || rootBlock.text,
+      isRoot: isRoot,
+    };
+  }
+
+  /**
+   * Resolves the block referenced by a parameter value.
+   * - DATA_BLOCK parameters: value is the block id directly.
+   * - FIELD / FIELD_LIST / CRM_RECORD parameters: value is "BlockName.field" (or "_detached.BlockName.field"),
+   *   resolve to the owning block by name.
+   * @param {stic_AwfActionParameter} param
+   * @returns {stic_AwfDataBlock|null}
+   */
+  _getBlockForActionParameter(param) {
+    if (!param || !param.value) return null;
+    // Direct data-block reference
+    if (param.type === 'dataBlock') {
+      return this.data_blocks.find(b => b.id === param.value) || null;
+    }
+    // Field-based reference: value is "<prefix>BlockName.field"
+    if (param.type === 'field' || param.type === 'field_list' || param.type === 'crmRecord') {
+      const raw = String(param.value);
+      const stripped = raw.startsWith('_detached.') ? raw.slice('_detached.'.length) : raw;
+      const dotPos = stripped.indexOf('.');
+      if (dotPos <= 0) return null;
+      const blockName = stripped.slice(0, dotPos);
+      return this.data_blocks.find(b => b.name === blockName) || null;
+    }
+    return null;
+  }
+
+  /**
+   * Returns the motor group of a block: the nearest ancestor (or self) that acts as a
+   * repeatable group head (cardinality > 1). Returns null for scalar blocks.
+   * Uses getGroupHeadBlock which walks the immediate-parent chain (supports subgroups).
+   * @param {stic_AwfDataBlock} block
+   * @returns {stic_AwfDataBlock|null}
+   */
+  getBlockMotorGroup(block) {
+    if (!block) return null;
+    // Only repeatable heads are motor groups (optional-only groups are 0..1, not motor).
+    if (block.is_repeatable) return block;
+    const head = block.getGroupHeadBlock(this.data_blocks);
+    return (head && head.is_repeatable) ? head : null;
+  }
+
+  /**
+   * Returns the group head of a block for DISPLAY purposes: the nearest ancestor (or self)
+   * that acts as a group head — repeatable, optional, OR a simple block with children.
+   * Unlike getBlockMotorGroup, this includes optional and simple groups (not just repeatable).
+   * @param {stic_AwfDataBlock} block
+   * @returns {stic_AwfDataBlock|null}
+   */
+  _getBlockGroupHead(block) {
+    if (!block) return null;
+    if (block.is_repeatable || block.is_optional || block.getChildren(this.data_blocks).length > 0) return block;
+    let current = block.getParentBlock(this.data_blocks);
+    while (current) {
+      if (current.is_repeatable || current.is_optional || current.getChildren(this.data_blocks).length > 0) return current;
+      current = current.getParentBlock(this.data_blocks);
+    }
+    return null;
+  }
+
+  /**
+   * Returns the group binding of an action for DISPLAY purposes (badge, grouping).
+   * Inspects ALL parameters (dataBlock, field, field_list, crmRecord types) and execution
+   * conditions — not just `data_block_id` — so custom actions with non-standard parameter
+   * names are correctly detected. Detects any group type (repeatable, optional, or simple
+   * with children). Always computed LIVE from the current data-block structure.
+   * @param {stic_AwfAction} action
+   * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+   */
+  getActionGroupBinding(action) {
+    if (!action) return null;
+    const blocksReferenced = new Set();
+
+    // 1. All parameters — resolve block via _getBlockForActionParameter (handles dataBlock,
+    //    field, field_list, crmRecord types, not just data_block_id)
+    (action.parameters || []).forEach(param => {
+      const block = this._getBlockForActionParameter(param);
+      if (block) blocksReferenced.add(block.id);
+    });
+
+    // 2. Conditions — field_name is "BlockName.field"
+    (action.conditions || []).forEach(cond => {
+      if (!cond.field_name) return;
+      const raw = String(cond.field_name);
+      const stripped = raw.startsWith('_detached.') ? raw.slice('_detached.'.length) : raw;
+      const dotPos = stripped.indexOf('.');
+      if (dotPos <= 0) return;
+      const blockName = stripped.slice(0, dotPos);
+      const block = this.data_blocks.find(b => b.name === blockName);
+      if (block) blocksReferenced.add(block.id);
+    });
+
+    // Find the first referenced block whose group head exists.
+    for (const blockId of blocksReferenced) {
+      const block = this.data_blocks.find(b => b.id === blockId);
+      if (!block) continue;
+      const head = this._getBlockGroupHead(block);
+      if (head) {
+        return {
+          rootBlockId: head.id,
+          groupTitle: head.group_title || head.text,
+          isRoot: head.id === block.id,
+        };
+      }
+    }
+    return null;
+  }
+
+  /**
+   * AWF Paso 3 §2 — Returns the single Motor Group of an action.
+   * An action belongs to Grup X if any of its parameters (required or not) or its
+   * execution conditions reference a block that belongs to Grup X (root or relational child).
+   * Terminal/global actions always return null (§3.2): they cannot bind to repeatable groups.
+   * @param {stic_AwfAction} action
+   * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null if the action is scalar-only
+   */
+  getActionMotorGroup(action) {
+    if (!action) return null;
+    // Terminal / global actions cannot be bound to a repeatable group (§3.2)
+    if (action.is_terminal) return null;
+    const def = utils.getDefinedActions()?.find(d => d.name === action.name);
+    if (def && def.resumptionContext === 'original_user' && !def.isTerminal) {
+      // Pure global actions (e.g. one-off admin notice) — no motor group.
+      // Heuristic: treat deferred "original_user" non-terminal actions as global.
+      // (Terminal flag is authoritative; this is a secondary guard.)
+    }
+
+    const blocksReferenced = new Set();
+    // 1. Parameters
+    (action.parameters || []).forEach(param => {
+      const block = this._getBlockForActionParameter(param);
+      if (block) blocksReferenced.add(block.id);
+    });
+    // 2. Conditions — field_name is "BlockName.field"
+    (action.conditions || []).forEach(cond => {
+      if (!cond.field_name) return;
+      const raw = String(cond.field_name);
+      const stripped = raw.startsWith('_detached.') ? raw.slice('_detached.'.length) : raw;
+      const dotPos = stripped.indexOf('.');
+      if (dotPos <= 0) return;
+      const blockName = stripped.slice(0, dotPos);
+      const block = this.data_blocks.find(b => b.name === blockName);
+      if (block) blocksReferenced.add(block.id);
+    });
+
+    // Find the first referenced block whose motor group is repeatable.
+    // All repeatable-bound references must share the SAME motor group (disjoint rule, §2.3);
+    // if two different motor groups are found, the action is in an inconsistent state —
+    // return the first so the UI can highlight the conflict.
+    let motorFound = null;
+    for (const blockId of blocksReferenced) {
+      const block = this.data_blocks.find(b => b.id === blockId);
+      if (!block) continue;
+      const motor = this.getBlockMotorGroup(block);
+      if (motor) {
+        if (!motorFound) {
+          motorFound = motor;
+        } else if (motor.id !== motorFound.id) {
+          // Cross-group conflict — keep the first detected motor; the UI layer
+          // (getAllowedParamBlocks) will prevent adding the conflicting reference.
+          break;
+        }
+      }
+    }
+    if (!motorFound) return null;
+    return {
+      rootBlockId: motorFound.id,
+      groupTitle: motorFound.group_title || motorFound.text,
+      isRoot: true,
+    };
+  }
+
+  /**
+   * Re-evaluate and update all groups on the form: orphan adoption and group titles.
+   */
+  refreshGroups() {
+    // Process EVERY group head (root groups AND subgroup heads).
+    // A block is a head when it holds cardinality (repeatable/optional) or has direct children.
+    this.data_blocks.forEach(block => {
+      if (block.is_repeatable || block.is_optional || block.getChildren(this.data_blocks).length > 0) {
+        this.adoptRelatedOrphans(block);
+        block.refreshGroupTitle(this.data_blocks);
+      }
+    });
+    this.prepareForSave();
+    this.syncLayoutWithDataBlocks();
+  }
+
+/**
+   * Gets all data blocks ordered hierarchically (Top-Down DFS).
+   * Ensures that Group Root blocks ALWAYS precede their child/member blocks.
+   * 
+   * @returns {stic_AwfDataBlock[]} Ordered array of data blocks
+   */
+  /**
+   * Builds the 2-level visual tree for Step 2: groups are container cards
+   * that hold their data block cards — the group's root block is a normal card
+   * inside the group container. Level-3+ descendants (legacy data) are flattened
+   * into the level-2 members so no block ever disappears from the UI.
+   * @returns {Array<{block: stic_AwfDataBlock, isGroup: boolean, members: Array}>}
+   */
+  getVisualTree() {
+    const buildNode = (block, depth) => {
+      const isGroup = block.isGroupHead(this.data_blocks);
+      let members = [];
+      if (isGroup) {
+        if (depth < 2) {
+          members = block.getChildren(this.data_blocks).map(c => buildNode(c, depth + 1));
+        } else {
+          // Defensive flattening of legacy level-3+ descendants (depth > 2 can no
+          // longer be created via getAvailableGroupRoots, but old configs may exist)
+          members = block.getDescendants(this.data_blocks).map(c => ({ block: c, isGroup: false, members: [] }));
+        }
+      }
+      return { block, isGroup, members };
+    };
+    return this.getOrderedDataBlocks().filter(b => b.is_root).map(b => buildNode(b, 1));
+  }
+
+  getOrderedDataBlocks() {
+    const ordered = [];
+    const visited = new Set();
+
+    /**
+     * Gets all direct relational children and group members for a parent block
+     */
+    const getChildrenAndMembers = (parent) => {
+      return this.data_blocks.filter(candidate => {
+        if (candidate.id === parent.id) return false;
+
+        // 1. Direct member of the group
+        if (candidate.group_root === parent.id) return true;
+
+        // 2. Relational child (without explicit external group)
+        if (!candidate.group_root && candidate.isRelationalChild(parent.id, this.data_blocks)) return true;
+
+        return false;
+      });
+    };
+
+    /**
+     * DFS Traversal helper
+     */
+    const traverse = (block) => {
+      if (!block || visited.has(block.id)) return;
+
+      // GUARANTEE: If block belongs to a group root that hasn't been visited yet,
+      // force traversal of the group root FIRST.
+      if (block.group_root && block.group_root !== block.id && !visited.has(block.group_root)) {
+        const rootBlock = this.data_blocks.find(b => b.id === block.group_root);
+        if (rootBlock) {
+          traverse(rootBlock);
+          return; // The root traversal will recursively visit this child in correct order
+        }
+      }
+
+      visited.add(block.id);
+      ordered.push(block);
+
+      // Get children and group members
+      const children = getChildrenAndMembers(block);
+
+      // Sort children/members Top-Down (parents before their children)
+      children.sort((a, b) => {
+        if (a.isRelationalChild(b.id, this.data_blocks)) return 1;  // 'b' is parent of 'a' -> 'b' comes first
+        if (b.isRelationalChild(a.id, this.data_blocks)) return -1; // 'a' is parent of 'b' -> 'a' comes first
+        return this.data_blocks.indexOf(a) - this.data_blocks.indexOf(b);
+      });
+
+      // Recurse into children
+      children.forEach(child => traverse(child));
+    };
+
+    // 1. Dynamically compute true top-level root blocks
+    const rootBlocks = this.data_blocks.filter(candidate => {
+      if (candidate.group_root && candidate.group_root !== candidate.id) {
+        return false; // Belongs to a group -> NOT a top-level root
+      }
+      const hasParentInList = this.data_blocks.some(parent => 
+        parent.id !== candidate.id && candidate.isRelationalChild(parent.id, this.data_blocks)
+      );
+      return !hasParentInList;
+    });
+
+    // 2. Process top-level root blocks first
+    rootBlocks.forEach(root => traverse(root));
+
+    // 3. Fallback for orphan cycles or unvisited blocks
+    this.data_blocks.forEach(block => {
+      if (!visited.has(block.id)) {
+        traverse(block);
+      }
+    });
+
+    return ordered;
   }
 
   /**
@@ -2264,6 +4655,7 @@ class stic_AwfConfiguration {
         if (newAction) {
           block.save_action_id = newAction.id;
           newAction.text = `${utils.translate('LBL_SAVE_RECORD_ACTION_TITLE')}: ${block.text}`;
+          newAction.repeat_group = this.getRepeatGroupInfo(block);
           outgoing1n.forEach(r => handledRelationshipNames.add(r.name));
         }
       }
@@ -2315,6 +4707,7 @@ class stic_AwfConfiguration {
                 const newAction = this.addAction(actionDef, params, '0');
                 if (newAction) {
                   newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${block.text}.${field.text_original || field.name} = ${field.value_text || field.value}`;
+                  newAction.repeat_group = this.getRepeatGroupInfo(block);
                 }
               }
             }
@@ -2376,6 +4769,9 @@ class stic_AwfConfiguration {
               const newAction = this.addAction(actionDef, params, '0');
               if (newAction) {
                 newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${blockOrig.text} ${arrow} ${blockDest.text}`;
+                // A block-to-block relationship belongs to a group if either side is part of one.
+                // The group of the initiator side (blockOrig) takes precedence; otherwise fall back to dest.
+                newAction.repeat_group = this.getRepeatGroupInfo(blockOrig) || this.getRepeatGroupInfo(blockDest);
               }
             }
           }
@@ -2485,121 +4881,22 @@ class stic_AwfConfiguration {
     const autoActions = flow.actions.filter(a => a.is_automatic);
     const manualActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order >= -1);
     const terminalActions = flow.actions.filter(a => a.is_terminal);
-    flow.actions = [...preAutoActions, ...autoActions, ...manualActions, ...terminalActions];
 
-    // Reassign order property.
-    // Pre-auto actions keep their original negative order (fixed, before saves).
-    // Automatic actions keep order -1 (before default manual actions).
-    // Manual actions stay at order 0 so is_fixed_order remains false (reorderable).
-    // Terminal actions keep their order (999).
-    flow.actions.forEach((a) => {
-      if (a.is_automatic) a.order = -1;
-      else if (a.is_terminal) { /* keep 999 */ }
-      else if (a.order < -1) { /* keep pre-auto negative order */ }
-      else a.order = 0;
+    // AWF Paso 3 §ADR-5 — Contiguous per-branch grouping of automatic actions.
+    // Within autoActions, keep topological order but cluster actions of the SAME
+    // hierarchy branch (group_root) together so all persistence of one branch
+    // resolves in sequence. A stable sort by branch key preserves the topo order
+    // inside each branch.
+    const branchKey = (a) => {
+      const motor = this.getActionMotorGroup(a);
+      return motor ? motor.rootBlockId : '';
+    };
+    autoActions.sort((a, b) => {
+      const ka = branchKey(a), kb = branchKey(b);
+      if (ka === kb) return (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0);
+      return ka < kb ? -1 : 1; // empty branch key ('') groups scalar auto-actions first
     });
 
-    return deferred;
-  }
-
-  /**
-   * Sorts the actions of a flow topologically using Kahn's algorithm based on requisite_actions.
-   * Detects cycles and marks the closing edge as deferred (removes it from requisites) so the
-   * topological sort can complete. Deferred edges are returned so the caller knows which
-   * RelateRecordsAction dependencies were broken.
-   * @param {stic_AwfFlow} flow The flow to sort
-   * @returns {Array} List of deferred edges: { from: actionId, to: actionId }
-   */
-  sortFlowTopologically(flow) {
-    if (!flow || !flow.actions || flow.actions.length === 0) return [];
-
-    // Build action map for name resolution
-    let actionMap = new Map();
-    flow.actions.forEach(a => actionMap.set(a.id, a));
-
-    // Build adjacency list and in-degree count from requisite_actions
-    // Edge: requisite -> action (action depends on requisite)
-    let inDegree = new Map();
-    let dependents = new Map(); // actionId -> [actionIds that depend on it]
-    flow.actions.forEach(a => {
-      inDegree.set(a.id, 0);
-      dependents.set(a.id, []);
-    });
-
-    flow.actions.forEach(a => {
-      (a.requisite_actions || []).forEach(reqId => {
-        if (actionMap.has(reqId)) {
-          dependents.get(reqId).push(a.id);
-          inDegree.set(a.id, inDegree.get(a.id) + 1);
-        }
-      });
-    });
-
-    // Kahn's algorithm (BFS)
-    let sorted = [];
-    let queue = [];
-    inDegree.forEach((deg, id) => { if (deg === 0) queue.push(id); });
-
-    while (queue.length > 0) {
-      let currentId = queue.shift();
-      sorted.push(currentId);
-      dependents.get(currentId).forEach(depId => {
-        inDegree.set(depId, inDegree.get(depId) - 1);
-        if (inDegree.get(depId) === 0) queue.push(depId);
-      });
-    }
-
-    // Cycle detection: if sorted < total, there is a cycle
-    let deferred = [];
-    if (sorted.length < flow.actions.length) {
-      // Find actions in the cycle (those not yet sorted)
-      let remaining = new Set(flow.actions.filter(a => !sorted.includes(a.id)).map(a => a.id));
-
-      // For each remaining action, find a requisite that is also remaining (the cycle edge)
-      remaining.forEach(actionId => {
-        let action = actionMap.get(actionId);
-        let cycleReq = (action.requisite_actions || []).find(r => remaining.has(r));
-        if (cycleReq) {
-          deferred.push({ from: cycleReq, to: actionId });
-          // Remove the deferred edge so the sort can proceed
-          action.requisite_actions = action.requisite_actions.filter(r => r !== cycleReq);
-          inDegree.set(actionId, inDegree.get(actionId) - 1);
-          if (inDegree.get(actionId) === 0) queue.push(actionId);
-        }
-      });
-
-      // Continue BFS after breaking cycles
-      while (queue.length > 0) {
-        let currentId = queue.shift();
-        sorted.push(currentId);
-        dependents.get(currentId).forEach(depId => {
-          inDegree.set(depId, inDegree.get(depId) - 1);
-          if (inDegree.get(depId) === 0) queue.push(depId);
-        });
-      }
-
-      // If there are still unsorted actions, force them at the end (resilience against multi-edge cycles)
-      let forced = [];
-      flow.actions.forEach(a => {
-        if (!sorted.includes(a.id)) {
-          sorted.push(a.id);
-          forced.push(a.id);
-        }
-      });
-    }
-
-    // Reorder flow.actions according to topological order
-    let sortedMap = new Map();
-    sorted.forEach((id, index) => sortedMap.set(id, index));
-    flow.actions.sort((a, b) => (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0));
-
-    // Group actions: pre-auto (order < -1) → auto (is_automatic) → manual → terminal.
-    // Preserves topological order within each group but prevents actions
-    // from being interleaved across groups.
-    const preAutoActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order < -1);
-    const autoActions = flow.actions.filter(a => a.is_automatic);
-    const manualActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order >= -1);
-    const terminalActions = flow.actions.filter(a => a.is_terminal);
     flow.actions = [...preAutoActions, ...autoActions, ...manualActions, ...terminalActions];
 
     // Reassign order property.
