@@ -77,4 +77,10 @@ $mod_strings = array (
 
     // Campos de filtro en relaciones muchos a muchos
     'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Evento (vía Inscricións)',
+
+    // Mensajes de feedback de interfaz de usuario para creación de asistencias
+    'LBL_UI_CREATED_LIST' => 'Se han creado asistencias para los días %s.',
+    'LBL_UI_CREATED_COUNT' => 'Se han creado asistencias para %d días.',
+    'LBL_UI_NOOP_LIST' => 'No se han creado nuevas asistencias para los días %s.',
+    'LBL_UI_NOOP_COUNT' => 'No se han creado nuevas asistencias para %d días.',
 );
