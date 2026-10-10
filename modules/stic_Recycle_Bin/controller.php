@@ -5,16 +5,16 @@
  * Copyright (C) 2013 - 2023 SinergiaTIC Association
  *
  * This program is free software; you can redistribute it and/or modify it under
- * the terms of the GNU Affero General Public License version 3 as published by
- * the Free Software Foundation.
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
  * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
  * details.
  *
- * You should have received a copy of the GNU Affero General Public License along
- * with this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA.
  *
@@ -54,6 +54,11 @@ class stic_Recycle_BinController extends SugarController
             return;
         }
 
+        // Stay on the bin entry detail view after the restore attempt (success or
+        // failure) so the user sees the updated fields and the per-relationship
+        // restored/skipped status in the subpanel.
+        $entryDetailUrl = 'index.php?module=stic_Recycle_Bin&action=DetailView&record=' . $recordId;
+
         $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': restoring record: ' . $recordId);
 
         try {
@@ -61,7 +66,7 @@ class stic_Recycle_BinController extends SugarController
         } catch (Throwable $e) {
             $log->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': exception: ' . $e->getMessage());
             SugarApplication::appendErrorMessage(translate('LBL_RESTORE_FAIL', 'stic_Recycle_Bin'));
-            SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
+            SugarApplication::redirect($entryDetailUrl);
             return;
         }
 
@@ -80,7 +85,7 @@ class stic_Recycle_BinController extends SugarController
             SugarApplication::appendErrorMessage($result['message'] ?? translate('LBL_RESTORE_FAIL', 'stic_Recycle_Bin'));
         }
 
-        SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
+        SugarApplication::redirect($entryDetailUrl);
     }
 
     /**
