@@ -38,14 +38,14 @@ $mod_strings = array(
     'LNK_LIST' => 'Recycle Bin Relationships',
 
     // Panels
-    'LBL_RECYCLE_RELATIONSHIP_INFO' => 'Relationship Information',
-    'LBL_RECYCLE_RELATED_RECORD' => 'Related Record',
+    'LBL_RECYCLE_RELATIONSHIP_INFO' => 'Relationship information',
+    'LBL_RECYCLE_RELATED_RECORD' => 'Related record',
     'LBL_RECYCLE_STATUS' => 'Status',
 
     // Fields
     'LBL_STIC_RECYCLE_BIN_ID' => 'Recycle Bin ID',
     'LBL_STIC_RECYCLE_BIN' => 'Recycle Bin',
-    'LBL_RECYCLE_RECORD_ID' => 'Original Record ID',
+    'LBL_RECYCLE_RECORD_ID' => 'Original record ID',
     'LBL_RELATIONSHIP_NAME' => 'Relationship name',
     'LBL_JOIN_TABLE' => 'Join table',
     'LBL_RELATED_MODULE' => 'Related module',
