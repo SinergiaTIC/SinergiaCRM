@@ -50,7 +50,10 @@ class stic_SignaturesUtils
             return $html;
         }
         $html = preg_replace('/<img\b[^>]*SignaturePlaceholder\.png[^>]*\/?>/i', self::SIGNATURE_TOKEN, $html);
-        $html = preg_replace('/&lt;\s*img\b.*?SignaturePlaceholder\.png.*?&gt;/is', self::SIGNATURE_TOKEN, $html);
+        // Encoded variant: stay within a single &lt;...&gt; tag (never cross &gt; or &lt;),
+        // otherwise one match could span from an earlier <img> (e.g. a logo) to the
+        // signature marker, wiping all content in between.
+        $html = preg_replace('/&lt;\s*img\b(?:(?!&(lt|gt);).)*?SignaturePlaceholder\.png(?:(?!&(lt|gt);).)*?&gt;/is', self::SIGNATURE_TOKEN, $html);
         return $html;
     }
 
