@@ -32,9 +32,9 @@ $mod_strings = array(
     'LBL_HOMEPAGE_TITLE' => 'Papelera de reciclaje',
 
     // General
-    'LBL_SEARCH_FORM_TITLE' => 'Buscar en la papelera',
-    'LBL_LIST_FORM_TITLE' => 'Listado de papelera',
-    'LBL_NEW_FORM_TITLE' => 'Nueva entrada en papelera',
+    'LBL_SEARCH_FORM_TITLE' => 'Buscar en la papelera de reciclaje',
+    'LBL_LIST_FORM_TITLE' => 'Listado de papelera de reciclaje',
+    'LBL_NEW_FORM_TITLE' => 'Nueva entrada en papelera de reciclaje',
     'LNK_LIST' => 'Papelera de reciclaje',
 
     // Panels
@@ -70,7 +70,7 @@ $mod_strings = array(
     'LBL_MERGED' => 'Combinado',
     'LBL_DELETION_SOURCE' => 'Motivo de la eliminación',
     'LBL_SURVIVING_RECORD' => 'Registro conservado',
-    'LBL_MERGED_NOTICE' => 'Este registro se eliminó como resultado de una combinación, si se restaura no se recuperarán las relaciones que han sido reasignadas.',
+    'LBL_MERGED_NOTICE' => 'Este registro se eliminó como resultado de una combinación. Si se restaura no se recuperarán las relaciones que han sido reasignadas; en todo caso, será necesario hacerlo manualmente.',
     'LBL_ORIGINAL_ASSIGNED_USER_ID' => 'ID Usuario asignado original',
     'LBL_ORIGINAL_MODIFIED_USER_ID' => 'ID Usuario modificador original',
     'LBL_ORIGINAL_DATE_MODIFIED' => 'Fecha de modificación original',
@@ -85,23 +85,23 @@ $mod_strings = array(
     'LBL_RELATED_MODULE' => 'Módulo relacionado',
     'LBL_RELATED_RECORD_ID' => 'ID del registro relacionado',
     'LBL_RELATED_RECORD_NAME' => 'Nombre del registro relacionado',
-    'LBL_RECYCLE_BIN_RELATIONSHIPS' => 'Relaciones en el momento del borrado',
+    'LBL_RECYCLE_BIN_RELATIONSHIPS' => 'Relaciones en el momento de la eliminación',
 
     // List view
     'LBL_RELATIONSHIP_COUNT' => 'Relaciones',
-    'LBL_LIST_EMPTY_INFO' => 'En este módulo se registran automáticamente los registros eliminados de cualquier módulo del CRM y permite a los administradores recuperarlos junto con sus relaciones.',
+    'LBL_LIST_EMPTY_INFO' => 'En este módulo se registran automáticamente los registros eliminados de cualquier módulo del CRM, permitiendo que los administradores puedan recuperarlos junto a sus relaciones.',
 
     // Actions
-    'LBL_RESTORE' => 'Recuperar',
-    'LBL_RESTORE_RECORD' => 'Restaurar registro',
-    'LBL_RESTORE_CONFIRM' => '¿Está seguro de que desea recuperar este registro?',
-    'LBL_MASS_RESTORE' => 'Restaurar seleccionados',
-    'LBL_MASS_RESTORE_CONFIRM' => '¿Está seguro de que desea recuperar los registros seleccionados?',
+    'LBL_RESTORE' => 'Restaurar',
+    'LBL_RESTORE_RECORD' => 'Restaurar',
+    'LBL_RESTORE_CONFIRM' => '¿Seguro que desea recuperar este registro?',
+    'LBL_MASS_RESTORE' => 'Restaurar',
+    'LBL_MASS_RESTORE_CONFIRM' => '¿Seguro que desea recuperar los registros seleccionados?',
     'LBL_MASS_RESTORE_SUCCESS' => '%d registros recuperados correctamente.',
-    'LBL_MASS_RESTORE_PARTIAL' => '%d registros recuperados, %d omitidos (ya estaban restaurados o no son válidos).',
+    'LBL_MASS_RESTORE_PARTIAL' => '%d registros recuperados correctamente y %d omitidos (no válidos o ya restaurados anteriormente).',
     'LBL_MASS_RESTORE_ALL_ALREADY' => 'Los %d registros seleccionados ya habían sido restaurados.',
-    'LBL_MASS_RESTORE_ALL_ALREADY_RESTORED' => 'Los registros seleccionados ya han sido restaurados.',
-    'LBL_MASS_RESTORE_MIXED_CONFIRM' => 'Algunos de los registros seleccionados ya han sido restaurados. ¿Continuar con los registros restantes?',
+    'LBL_MASS_RESTORE_ALL_ALREADY_RESTORED' => 'Los registros seleccionados ya han sido restaurados anteriormente y, por tanto, no se pueden volver a restaurar.',
+    'LBL_MASS_RESTORE_MIXED_CONFIRM' => 'Algunos de los registros seleccionados ya han sido restaurados anteriormente y, por tanto, no se pueden volver a restaurar. ¿Desea continuar con los registros restantes?',
     'LBL_NO_RECORDS_SELECTED' => 'No hay registros seleccionados.',
     'LBL_RESTORE_SUCCESS' => 'Registro recuperado correctamente.',
     'LBL_RESTORE_FAIL' => 'Error al recuperar el registro.',
@@ -113,13 +113,13 @@ $mod_strings = array(
     'LBL_RESTORE_RESULTS' => 'Resultados de la recuperación',
     'LBL_RESTORE_RECORDS_RESTORED' => 'registros recuperados correctamente.',
     'LBL_RESTORE_RECORDS_FAILED' => 'registros no se pudieron recuperar.',
-    'LBL_RESTORE_RELATIONS_RESTORED' => '%d relaciones restablecidas.',
-    'LBL_RESTORE_RELATIONS_SKIPPED' => '%d relaciones omitidas (registros relacionados ya no disponibles).',
+    'LBL_RESTORE_RELATIONS_RESTORED' => '%d relaciones restauradas.',
+    'LBL_RESTORE_RELATIONS_SKIPPED' => '%d relaciones omitidas porque los registros relacionados ya no están disponibles.',
 
     // Generic
     'LBL_YES' => 'Sí',
     'LBL_NO' => 'No',
-    'LBL_NO_RELATIONSHIPS' => 'No hay relaciones registradas para este registro.',
+    'LBL_NO_RELATIONSHIPS' => 'Este registro no tiene relaciones con otros registros.',
     'LBL_NO_ACCESS' => 'No tiene permiso para acceder a esta sección.',
 
     // Module list
