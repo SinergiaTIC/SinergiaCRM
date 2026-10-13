@@ -38,10 +38,10 @@ $mod_strings = array(
     'LNK_LIST' => 'Recycle Bin',
 
     // Panels
-    'LBL_DEFAULT_PANEL' => 'Deleted Record Information',
+    'LBL_DEFAULT_PANEL' => 'Deleted record information',
 
     // Field labels
-    'LBL_NAME' => 'Record Name',
+    'LBL_NAME' => 'Record name',
     'LBL_ID' => 'ID',
     'LBL_DATE_ENTERED' => 'Date Created',
     'LBL_DATE_MODIFIED' => 'Date Modified',
@@ -68,9 +68,9 @@ $mod_strings = array(
     'LBL_RESTORED_BY' => 'Restored by',
     'LBL_RESTORED' => 'Restored',
     'LBL_MERGED' => 'Merged',
-    'LBL_DELETION_SOURCE' => 'Deletion reason',
+    'LBL_DELETION_SOURCE' => 'Deletion source',
+    'LBL_MERGED_NOTICE' => 'This record was deleted as a result of a merge. Restoring it will not recover the relationships that have been reassigned; in any case, this will need to be done manually.',
     'LBL_SURVIVING_RECORD' => 'Surviving record',
-    'LBL_MERGED_NOTICE' => 'This record was deleted as a result of a merge, reassigned relationships will not be recovered if it is restored.',
     'LBL_ORIGINAL_ASSIGNED_USER_ID' => 'Original Assigned User ID',
     'LBL_ORIGINAL_MODIFIED_USER_ID' => 'Original Modified User ID',
     'LBL_ORIGINAL_DATE_MODIFIED' => 'Original Date Modified',
@@ -85,23 +85,23 @@ $mod_strings = array(
     'LBL_RELATED_MODULE' => 'Related module',
     'LBL_RELATED_RECORD_ID' => 'Related record ID',
     'LBL_RELATED_RECORD_NAME' => 'Related record name',
-    'LBL_RECYCLE_BIN_RELATIONSHIPS' => 'Relationships at Time of Deletion',
+    'LBL_RECYCLE_BIN_RELATIONSHIPS' => 'Relationships at the time of deletion',
 
     // List view
     'LBL_RELATIONSHIP_COUNT' => 'Relationships',
-    'LBL_LIST_EMPTY_INFO' => 'Records deleted from any CRM module are automatically registered here, allowing administrators to recover them along with their relationships.',
+    'LBL_LIST_EMPTY_INFO' => 'Records deleted from any CRM module are automatically recorded here, allowing administrators to restore them along with their relationships.',
 
     // Actions
     'LBL_RESTORE' => 'Restore',
-    'LBL_RESTORE_RECORD' => 'Restore Record',
+    'LBL_RESTORE_RECORD' => 'Restore',
     'LBL_RESTORE_CONFIRM' => 'Are you sure you want to restore this record?',
-    'LBL_MASS_RESTORE' => 'Restore Selected',
+    'LBL_MASS_RESTORE' => 'Restore',
     'LBL_MASS_RESTORE_CONFIRM' => 'Are you sure you want to restore the selected records?',
     'LBL_MASS_RESTORE_SUCCESS' => '%d records restored successfully.',
-    'LBL_MASS_RESTORE_PARTIAL' => '%d records restored, %d skipped (already restored or invalid).',
+    'LBL_MASS_RESTORE_PARTIAL' => '%d records restored successfully, %d skipped (already restored or invalid).',
     'LBL_MASS_RESTORE_ALL_ALREADY' => 'All %d selected records have already been restored.',
-    'LBL_MASS_RESTORE_ALL_ALREADY_RESTORED' => 'The selected records have already been restored.',
-    'LBL_MASS_RESTORE_MIXED_CONFIRM' => 'Some of the selected records have already been restored. Continue with the remaining records?',
+    'LBL_MASS_RESTORE_ALL_ALREADY_RESTORED' => 'The selected records have already been restored and, therefore, cannot be restored again.',
+    'LBL_MASS_RESTORE_MIXED_CONFIRM' => 'Some of the selected records have already been restored and, therefore, cannot be restored again. Do you want to continue with the remaining records?',
     'LBL_NO_RECORDS_SELECTED' => 'No records selected.',
     'LBL_RESTORE_SUCCESS' => 'Record restored successfully.',
     'LBL_RESTORE_FAIL' => 'Failed to restore record.',
@@ -119,9 +119,9 @@ $mod_strings = array(
     // Generic
     'LBL_YES' => 'Yes',
     'LBL_NO' => 'No',
-    'LBL_NO_RELATIONSHIPS' => 'No relationships recorded for this record.',
+    'LBL_NO_RELATIONSHIPS' => 'This record has no relationships with other records.',
     'LBL_NO_ACCESS' => 'You do not have permission to access this section.',
 
     // Module list
-    'LBL_RECYCLE_MODULE_LIST' => 'All Modules',
+    'LBL_RECYCLE_MODULE_LIST' => 'All modules',
 );
