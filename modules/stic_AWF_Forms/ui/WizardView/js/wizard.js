@@ -2790,17 +2790,22 @@ class WizardStep4 {
         return contentSections.length === 1 && contentSections[0].id === section.id;
       },
 
-      // Singular record name (template.title), edited from the unified group panel
+      // Singular record name: the group ROOT block's element_singular_name
+      // (defined in step 2) is the single source of truth; the internal
+      // template's title mirrors it (refreshed on every sync).
       getGroupTemplateTitle(section) {
+        const root = this.getGroup(section) || this.getSubgroupHead(section);
+        if (root && root.element_singular_name) return root.element_singular_name;
         const template = this.getGroupTemplate(section);
         return template ? (template.title || '') : '';
       },
 
       setGroupTemplateTitle(section, value) {
+        // Write to the BLOCK (step 2's field) and mirror it live on the template
+        const root = this.getGroup(section) || this.getSubgroupHead(section);
+        if (root) root.element_singular_name = value;
         const template = this.getGroupTemplate(section);
-        if (!template) return;
-        template.title = value;
-        template.is_custom_title = true;
+        if (template) template.title = value;
       },
 
       // Keeps the internal template chrome DERIVED from the group while editing
@@ -3376,18 +3381,6 @@ class WizardStep4 {
         const block = this.getDataBlock(element);
         if (!block || element.type !== 'field') return null;
         return block.fields.find(f => f.name === element.field_name) || null;
-      },
-
-      getElementHeader(element) {
-        const dataBlock = this.getDataBlock(element);
-        if (element.type === 'field') {
-          // "Block name.Field name"
-          const field = dataBlock?.fields.find(f => f.name === element.field_name);
-          let fieldText = field ? (field.label || field.text_original || field.name) : element.field_name;
-          fieldText = utils.fromFieldLabelText(fieldText);
-          return dataBlock ? `${dataBlock.text}.${fieldText}` : utils.fromFieldLabelText(element.field_name);
-        }
-        return dataBlock ? utils.fromFieldLabelText(dataBlock.text) : element.type;
       },
 
       canUnbundleElement(element) {

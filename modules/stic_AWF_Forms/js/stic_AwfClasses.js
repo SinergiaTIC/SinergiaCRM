@@ -48,6 +48,7 @@ class stic_AwfDataBlock {
       group_title: '',          // Visual title for the repeat group
       is_custom_group_title: false, // Flag to track manual title overrides
       group_root: '',           // ID of the immediate parent block (List Adjacency)
+      element_singular_name: '', // Singular name for repeatable elements (for UI)
     });
 
     // 2. Overwrite with provided data
@@ -1877,9 +1878,10 @@ class stic_AwfLayout {
       }
       return template || null;
     };
-    // Default template title: "Element" (translated),
+    // Default template title: the group root's SINGULAR element name (defined in
+    // step 2). Fallback to the generic "Element" label when unset.
     const groupTemplateTitle = (rootBlock) => {
-      return utils.translate('LBL_SECTION_TEMPLATE_TITLE');
+      return (rootBlock && rootBlock.element_singular_name) || utils.translate('LBL_SECTION_TEMPLATE_TITLE');
     };
     // Default group section title: the group's name
     const groupSectionTitle = (block) => {
@@ -2027,13 +2029,12 @@ class stic_AwfLayout {
       if (ownGroupSection) { nested.showTitle = !block.is_optional; ensureGroupTemplate(nested, block); }
       return nested;
     };
-    // Returns the group's TEMPLATE child, creating it (as the first child,
-    // holding the whole instance content) when missing.
+    // Returns the group's TEMPLATE child, creating it (as the first child, holding the whole instance content) when missing.
     const ensureGroupTemplate = (groupSection, rootBlock) => {
       let template = findGroupTemplate(groupSection);
       if (!template) {
         template = new stic_AwfLayoutSection({
-          title: rootBlock ? groupTemplateTitle(rootBlock) : utils.translate('LBL_SECTION_NO_TITLE'),
+          title: groupTemplateTitle(rootBlock),
           containerType: 'tab_item',
         });
         template.groupTemplate = true;
@@ -2523,10 +2524,12 @@ class stic_AwfLayout {
       template.subtitle = '';
       template.isCollapsible = groupIsTabbed ? false : !!section.isCollapsible;
       template.isCollapsed = (!groupIsTabbed && section.isCollapsible) ? !!section.isCollapsed : false;
-      // The template's default title is the singular record name (user
-      // editable in the unified group panel): refreshed on group renames
-      // unless the user customized it.
-      if (!template.is_custom_title) template.title = groupTemplateTitle(rootBlock);
+      // The template title IS the group root's element_singular_name (defined in
+      // step 2): the single source of truth, refreshed on every sync (no user
+      // "custom title" flag on the template any more). Defaults to the root
+      // block's text when unset.
+      if (rootBlock && !rootBlock.element_singular_name) rootBlock.element_singular_name = rootBlock.text;
+      template.title = groupTemplateTitle(rootBlock);
       const outsideElements = section.elements.filter(el => el.id !== template.id);
       if (outsideElements.length > 0) {
         section.elements = [template];
@@ -2598,11 +2601,6 @@ class stic_AwfLayout {
         const only = contentSections[0];
         only.containerType = 'panel';
         only.showTitle = false;
-        // The singular name defaults to the single content block's CURRENT name
-        const blockEl = only.elements.find(e => e && e.ref_id);
-        const singleBlock = blockEl ? dataBlocks.find(b => b.id === blockEl.ref_id) : null;
-        const singleName = singleBlock ? singleBlock.text : only.title;
-        if (!template.is_custom_title) template.title = singleName || groupTemplateTitle(rootBlock);
       }
       });
     };
@@ -4081,6 +4079,10 @@ class stic_AwfConfiguration {
         const children = block.getDescendants(this.data_blocks);
         const blockNames = [block.text, ...children.map(c => c.text)];
         block.group_title = blockNames.join(' + ');
+      }
+
+      if (!block.element_singular_name) {
+        block.element_singular_name = block.text;
       }
     } else {
       block.max_instances = 1;

@@ -639,12 +639,18 @@
                                                     <div class="d-flex justify-content-between align-items-center">
                                                         <div class="d-flex align-items-center gap-2">
                                                             <template x-if="element.type === 'datablock'">
-                                                                <strong x-text="utils.translateForFieldLabel('LBL_DATABLOCK')"></strong>
+                                                                <div>
+                                                                    <strong x-text="utils.translateForFieldLabel('LBL_DATABLOCK')"></strong>
+                                                                    <span x-text="utils.fromFieldLabelText(getDataBlock(element).text)"></span>
+                                                                </div>
                                                             </template>
                                                             <template x-if="element.type === 'field'">
-                                                                <strong x-text="utils.translateForFieldLabel('LBL_FIELD')"></strong>
+                                                                <div>
+                                                                    <strong x-text="utils.translateForFieldLabel('LBL_FIELD')"></strong>
+                                                                    <span x-text="'(' + utils.fromFieldLabelText(getDataBlock(element).text) + ')'"></span>
+                                                                    <span :id="`sectionFieldLabelEdit-${element.groupRootBlockId}.${getField(element).name}`" data-model="getField(element).label" x-init="sticControls.editableText($el);"></span>
+                                                                </div>
                                                             </template>
-                                                            <span x-text="getElementHeader(element)"></span>
                                                         </div>
                                                         <div class="d-inline-flex gap-2 align-items-center" style="max-width: 50%;">
                                                             <!-- Field layout settings (field elements only): gear toggle -->
@@ -729,10 +735,8 @@
                                                     <div class="card-body p-0" x-show="!isCollapsed" x-transition>
                                                         <template x-if="element.type !== 'section'">
                                                             <template x-for="field in getFields(element)" :key="field.name">
-                                                                <!-- Each field box holds its own layout config: it grows
-                                                                        in place and the rest of the boxes reflow around it -->
                                                                 <div class="border rounded px-2 py-1 m-2 d-inline-flex align-items-center gap-1" x-data="{ open: false }">
-                                                                    <span x-text="utils.fromFieldLabelText(field.label)"></span>
+                                                                    <span :id="`sectionFieldLabelEdit-${element.groupRootBlockId}.${field.name}`" data-model="field.label" x-init="sticControls.editableText($el);"></span>
                                                                     <button class="btn btn-sm" :class="open ? 'active' : ''"
                                                                             :title="utils.translate('LBL_FIELD_CONFIG')" @click="open = !open;">
                                                                         <span class="awf-icon-gear" :class="open ? 'awf-icon-gear-fill' : ''"></span>

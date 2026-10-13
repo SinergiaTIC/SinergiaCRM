@@ -992,11 +992,17 @@ class FormHtmlGeneratorService {
 
         $flush = function () use (&$html, &$buffer, &$openContainer) {
             if ($openContainer === '') return;
-            $html .= "<div class='{$openContainer}'>" . $this->newLine('+');
-            {
-                $html .= $buffer;
+            // Do NOT emit an empty grid wrapper: callers (e.g. the group
+            // instance content) rely on an EMPTY string to fall back to their
+            // flat rendering. An empty `<div class='awf-grid-sections'></div>`
+            // would look "non-empty" and silently skip that fallback.
+            if (trim($buffer) !== '') {
+                $html .= "<div class='{$openContainer}'>" . $this->newLine('+');
+                {
+                    $html .= $buffer;
+                }
+                $html .= "</div>" . $this->newLine('-');
             }
-            $html .= "</div>" . $this->newLine('-');
             $buffer = '';
             $openContainer = '';
         };

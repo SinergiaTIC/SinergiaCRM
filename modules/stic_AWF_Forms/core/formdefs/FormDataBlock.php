@@ -43,6 +43,7 @@ class FormDataBlock {
     public string $group_title = '';         // Visual title for the repeat group
     public bool $is_custom_group_title = false; // Flag to track manual title overrides
     public string $group_root = '';  // ID of the repeatable root this block belongs to
+    public string $element_singular_name = ''; // Singular name for repeatable elements (for UI)
 
     private ?BeanReference $beanReference = null; // Bean where the data block has been saved
 
@@ -72,6 +73,7 @@ class FormDataBlock {
         $dto->is_custom_group_title = isset($data['is_custom_group_title']) ? (bool)$data['is_custom_group_title'] : false;
         
         $dto->group_root = $data['group_root'] ?? '';
+        $dto->element_singular_name = $data['element_singular_name'] ?? '';
 
         $dto->fields = [];
         if (isset($data['fields'])) {
