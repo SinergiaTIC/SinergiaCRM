@@ -213,40 +213,32 @@ function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 't
                 $tableOpenTag = $matches[1];
             }
 
-            // Build the table header (rendered once, no $aos_* variables)
-            $tableHeaderHtml = '';
-            if (!empty($headerRows) && $tableOpenTag !== '') {
-                $tableHeaderHtml = $tableOpenTag . '<tbody>' . implode('', $headerRows) . '</tbody></table>';
+            if ($tableOpenTag === '') {
+                // No opening tag, cannot rebuild the table, keep it as is
+                $processedText .= $beforeTable . $tableBlock;
+                $remainingText = substr($remainingText, $tableEndPos);
+                continue;
             }
 
-            // Build the table for group iteration (content rows with $aos_* variables only)
-            $tableForIteration = '';
-            if (!empty($contentRows)) {
-                if ($tableOpenTag !== '') {
-                    $tableForIteration = $tableOpenTag . '<tbody>' . implode('', $contentRows) . '</tbody></table>';
-                } else {
-                    $tableForIteration = implode('', $contentRows);
-                }
-            }
+            // Build a single table so header and content columns share the same widths.
+            // Header rows are rendered once and content rows once per group, all inside the same table.
+            $tableHtml = $tableOpenTag . '<tbody>' . implode('', $headerRows);
 
-            // Append text before table
-            $processedText .= $beforeTable;
-
-            // Render table header once
-            if (!empty($tableHeaderHtml)) {
-                $processedText .= templateParser::parse_template($tableHeaderHtml, array());
-            }
-
-            // Iterate through groups
+            $contentBlock = implode('', $contentRows);
             $obb = array();
             foreach ($lineItemsGroups as $group_id => $lineItemsArray) {
-                $groupPartTemp = populate_product_lines($tableForIteration, $lineItemsArray);
+                $groupPartTemp = populate_product_lines($contentBlock, $lineItemsArray);
                 $groupPartTemp = populate_service_lines($groupPartTemp, $lineItemsArray);
 
                 $obb['AOS_Line_Item_Groups'] = $group_id;
-                $processedText .= templateParser::parse_template($groupPartTemp, $obb);
-                $processedText .= '<br />';
+                $tableHtml .= templateParser::parse_template($groupPartTemp, $obb);
             }
+
+            $tableHtml .= '</tbody></table>';
+
+            // Append text before table and the rendered table once
+            $processedText .= $beforeTable;
+            $processedText .= templateParser::parse_template($tableHtml, array());
         } else {
             // Table without group variables - keep as is
             $processedText .= $beforeTable . $tableBlock;
