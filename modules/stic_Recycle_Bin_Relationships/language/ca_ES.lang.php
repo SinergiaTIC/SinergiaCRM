@@ -27,15 +27,15 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 $mod_strings = array(
     // Module info
-    'LBL_MODULE_NAME' => 'Relacions de la paperera',
-    'LBL_MODULE_TITLE' => 'Relacions de la paperera',
-    'LBL_HOMEPAGE_TITLE' => 'Relacions de la paperera',
+    'LBL_MODULE_NAME' => 'Relacions de la Paperera',
+    'LBL_MODULE_TITLE' => 'Relacions de la Paperera',
+    'LBL_HOMEPAGE_TITLE' => 'Relacions de la Paperera',
 
     // General
-    'LBL_SEARCH_FORM_TITLE' => 'Cercar relacions de la paperera',
-    'LBL_LIST_FORM_TITLE' => 'Llistat de relacions de la paperera',
-    'LBL_NEW_FORM_TITLE' => 'Nova relació de la paperera',
-    'LNK_LIST' => 'Relacions de la paperera',
+    'LBL_SEARCH_FORM_TITLE' => 'Cerca Relacions de la Paperera',
+    'LBL_LIST_FORM_TITLE' => 'Llista de Relacions de la Paperera',
+    'LBL_NEW_FORM_TITLE' => 'Nova Relació de la Paperera',
+    'LNK_LIST' => 'Relacions de la Paperera',
 
     // Panels
     'LBL_RECYCLE_RELATIONSHIP_INFO' => 'Informació de la relació',
@@ -43,10 +43,10 @@ $mod_strings = array(
     'LBL_RECYCLE_STATUS' => 'Estat',
 
     // Fields
-    'LBL_STIC_RECYCLE_BIN_ID' => 'ID de paperera',
-    'LBL_STIC_RECYCLE_BIN' => 'Paperera',
+    'LBL_STIC_RECYCLE_BIN_ID' => 'ID de la Paperera',
+    'LBL_STIC_RECYCLE_BIN' => 'Registre de la Paperera',
     'LBL_RELATIONSHIP_NAME' => 'Nom de la relació',
-    'LBL_JOIN_TABLE' => 'Taula d\'unió',
+    'LBL_JOIN_TABLE' => "Taula d'unió",
     'LBL_RELATED_MODULE' => 'Mòdul relacionat',
     'LBL_RELATED_RECORD_ID' => 'ID del registre relacionat',
     'LBL_RELATED_RECORD_NAME' => 'Nom del registre relacionat',
@@ -54,5 +54,5 @@ $mod_strings = array(
     'LBL_SKIP_REASON' => 'Motiu de no restauració',
 
     // Subpanel
-    'LBL_RECYCLE_BIN_RELATIONSHIPS_SUBPANEL_TITLE' => 'Relacions de la paperera',
+    'LBL_RECYCLE_BIN_RELATIONSHIPS_SUBPANEL_TITLE' => 'Relacions de la Paperera',
 );
