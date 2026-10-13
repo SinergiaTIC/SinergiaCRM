@@ -118,12 +118,14 @@ class stic_SignaturesUtils
 
                     $options = $options_array;
 
-                    // Build module path and label if not 'LBL_DELETED'
-                    if ($module_arr['vname'] !== 'LBL_DELETED') {
-                        $options_array['$' . $module->table_name . ':' . $name] = translate($module_arr['vname'], $module->module_dir);
-                        $module_path = $module_arr['module'] . ':' . ($module_arr['id_name'] ?? $module_arr['link']);
-                        $fmod_options_array[$module_path] = translate($relate_module->module_dir) . ' : ' . translate($module_arr['vname'], $module->module_dir);
+                    // Skip relate fields without label key to avoid warnings
+                    if (!isset($module_arr['vname']) || $module_arr['vname'] === 'LBL_DELETED') {
+                        continue;
                     }
+                    // Build module path and label
+                    $options_array['$' . $module->table_name . ':' . $name] = translate($module_arr['vname'], $module->module_dir);
+                    $module_path = $module_arr['module'] . ':' . ($module_arr['id_name'] ?? $module_arr['link']);
+                    $fmod_options_array[$module_path] = translate($relate_module->module_dir) . ' : ' . translate($module_arr['vname'], $module->module_dir);
                 }
             }
         }
