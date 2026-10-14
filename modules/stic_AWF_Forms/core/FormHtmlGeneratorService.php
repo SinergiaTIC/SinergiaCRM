@@ -405,8 +405,18 @@ class FormHtmlGeneratorService {
                 }
 
                 if ($isPreview) {
-                    // In preview: deactivate submit action and show alert
-                    $formAttributes = 'action="#" autocomplete="off" onsubmit="event.preventDefault(); alert(\''.translate('LBL_PREVIEW_MODE_ALERT', 'stic_AWF_Forms').'\'); return false;"';
+                    // In preview: prevent the submit and show an alert. The
+                    // message is JSON-encoded (with hex-escaped quotes) and then
+                    // HTML-escaped, so it survives inside the double-quoted
+                    // attribute even when it contains apostrophes/quotes — the
+                    // Catalan "L'enviament…" used to break the onsubmit handler
+                    // (unbalanced alert string) and the form submitted instead.
+                    $previewAlert = htmlspecialchars(
+                        json_encode(translate('LBL_PREVIEW_MODE_ALERT', 'stic_AWF_Forms'), JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_TAG | JSON_HEX_AMP),
+                        ENT_QUOTES,
+                        'UTF-8'
+                    );
+                    $formAttributes = 'action="#" autocomplete="off" onsubmit="event.preventDefault(); alert(' . $previewAlert . '); return false;"';
                     $alpineSubmit = "";
                 } else {
                     $formAttributes = "action='{$actionUrl}' method='POST' novalidate enctype='multipart/form-data'";
