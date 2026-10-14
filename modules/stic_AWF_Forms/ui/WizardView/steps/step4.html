@@ -685,14 +685,16 @@
                                                                 </button>
                                                             </template>
 
-                                                            <!-- Move up/down buttons -->
+                                                            <!-- Move up/down buttons (enabled purely by POSITION,
+                                                                 like the section move: a group member's element is
+                                                                 reorderable within its own section too) -->
                                                             <div class="input-group w-auto" role="group" style="min-width: 64px;">
                                                                 <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_UP')"
-                                                                        :disabled="elementIndexIn(parentSection, element) <= 0 || getDataBlock(element)?.is_child" @click="moveElementUp(parentSection, element);">
+                                                                        :disabled="elementIndexIn(parentSection, element) <= 0" @click="moveElementUp(parentSection, element);">
                                                                     <span class="suitepicon suitepicon-action-move-up"></span>
                                                                 </button>
                                                                 <button type="button" class="btn" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')"
-                                                                        :disabled="elementIndexIn(parentSection, element) >= parentSection.elements.length - 1 || getDataBlock(element)?.is_child" @click="moveElementDown(parentSection, element);">
+                                                                        :disabled="elementIndexIn(parentSection, element) >= parentSection.elements.length - 1" @click="moveElementDown(parentSection, element);">
                                                                     <span class="suitepicon suitepicon-action-move-down"></span>
                                                                 </button>
                                                             </div>

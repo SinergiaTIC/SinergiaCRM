@@ -3035,33 +3035,32 @@ class WizardStep4 {
       canMoveUpSection(section) {
         const arr = this.getParentSectionOf(section)?.elements || this.sections;
         const idx = arr.findIndex(el => el.id === section.id);
-        return idx > 0 && arr.slice(0, idx).some(el => el.type === 'section');
+        return idx > 0;
       },
-      
+
       moveUpSection(section) {
+        // Swap with the ADJACENT sibling, whether it is a section or an element
+        // (field/block): a nested section must be able to move past a field at
+        // the same level (the old version skipped elements and got stuck).
         const arr = this.getParentSectionOf(section)?.elements || this.sections;
         const idx = arr.findIndex(el => el.id === section.id);
-        let j = idx - 1;
-        while (j >= 0 && arr[j].type !== 'section') j--;
-        if (idx <= 0 || j < 0) return;
+        if (idx <= 0) return;
         const [item] = arr.splice(idx, 1);
-        arr.splice(j, 0, item);
+        arr.splice(idx - 1, 0, item);
       },
 
       canMoveDownSection(section) {
         const arr = this.getParentSectionOf(section)?.elements || this.sections;
         const idx = arr.findIndex(el => el.id === section.id);
-        return idx >= 0 && arr.slice(idx + 1).some(el => el.type === 'section');
+        return idx >= 0 && idx < arr.length - 1;
       },
 
       moveDownSection(section) {
         const arr = this.getParentSectionOf(section)?.elements || this.sections;
         const idx = arr.findIndex(el => el.id === section.id);
-        let j = idx + 1;
-        while (j < arr.length && arr[j].type !== 'section') j++;
-        if (idx < 0 || j >= arr.length) return;
+        if (idx < 0 || idx >= arr.length - 1) return;
         const [item] = arr.splice(idx, 1);
-        arr.splice(j, 0, item);
+        arr.splice(idx + 1, 0, item);
       },
 
       getDataBlock(element) {
