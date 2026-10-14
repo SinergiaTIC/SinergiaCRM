@@ -50,6 +50,7 @@ class SignatureSignersManager
             'ok' => 0,
             'ko' => 0,
             'errors' => [],
+            'allow_multiple_signers' => false,
         ];
 
         if (empty($signatureId)) {
@@ -82,21 +83,28 @@ class SignatureSignersManager
 
         $destSigners = stic_SignaturesUtils::getSignatureSigners($signatureId, $recordIds);
 
-        $existingSigners = self::getExistingSignerIds($signatureId);
+        $allowMultipleVal = property_exists($stic_SignatureBean, 'allow_multiple_signers') ? $stic_SignatureBean->allow_multiple_signers : '0';
+        $allowMultipleSigners = ($allowMultipleVal === '1' || $allowMultipleVal === 1 || $allowMultipleVal === true);
+        $existingSigners = self::getExistingSignerKeys($signatureId, $allowMultipleSigners);
 
         $okCounter = 0;
         $koCounter = 0;
 
-        foreach ($destSigners as $destSignerId => $destSigner) {
-            $destSignerBean = BeanFactory::getBean($destSigner['module'], $destSignerId);
+        foreach ($destSigners as $destSignerKey => $destSigner) {
+            $signerId = $destSigner['id'];
+            $destSignerBean = BeanFactory::getBean($destSigner['module'], $signerId);
             if (!$destSignerBean) {
-                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not obtain signer data for ID: " . $destSignerId);
+                $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not obtain signer data for ID: " . $signerId);
                 $koCounter++;
                 continue;
             }
 
-            if (in_array($destSignerId, $existingSigners)) {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Skipping existing signer with ID: " . $destSignerId);
+            $signerKey = $allowMultipleSigners
+                ? $signerId . ':' . ($destSigner['sourceId'] ?? '')
+                : $signerId;
+
+            if (in_array($signerKey, $existingSigners)) {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Skipping existing signer with key: " . $signerKey);
                 $koCounter++;
                 continue;
             }
@@ -106,7 +114,7 @@ class SignatureSignersManager
             $stic_SignerBean->assigned_user_id = $currentUserId ?: $stic_SignatureBean->assigned_user_id;
             $stic_SignerBean->created_by = $currentUserId ?: $stic_SignatureBean->assigned_user_id;
             $stic_SignerBean->parent_type = $destSigner['module'];
-            $stic_SignerBean->parent_id = $destSignerId;
+            $stic_SignerBean->parent_id = $signerId;
             $stic_SignerBean->parent_name = $destSignerBean->full_name;
             $stic_SignerBean->record_id = $destSigner['sourceId'];
             $stic_SignerBean->record_type = $destSigner['sourceModule'];
@@ -114,7 +122,7 @@ class SignatureSignersManager
             $stic_SignerBean->email_address = $destSigner['email'];
             $stic_SignerBean->phone = $destSigner['phone'];
             $stic_SignerBean->status = 'pending';
-            $stic_SignerBean->contact_id_c = $destSigner['onBehalfOfId'] != $destSignerId ? $destSigner['onBehalfOfId'] : null;
+            $stic_SignerBean->contact_id_c = $destSigner['onBehalfOfId'] != $signerId ? $destSigner['onBehalfOfId'] : null;
 
             $stic_SignerBean->save();
             if (!empty($stic_SignerBean->id)) {
@@ -130,6 +138,8 @@ class SignatureSignersManager
 
         $result['ok'] = $okCounter;
         $result['ko'] = $koCounter;
+        $result['allow_multiple_signers'] = $allowMultipleSigners;
+        $result['module_name'] = $moduleName;
         $result['success'] = $okCounter > 0 || $koCounter === 0;
 
         return $result;
@@ -167,23 +177,37 @@ class SignatureSignersManager
     }
 
     /**
-     * Retrieve existing signer IDs for a given signature.
+     * Retrieve existing signer keys for a given signature.
      *
      * @param string $signatureId
+     * @param bool|string $allowMultipleSigners
      * @return array
      */
-    protected static function getExistingSignerIds($signatureId)
+    protected static function getExistingSignerKeys($signatureId, $allowMultipleSigners = false)
     {
-        $SQL = "SELECT ss.parent_id as id
-                FROM stic_signatures s
-                JOIN stic_signatures_stic_signers_c ssssc ON s.id = ssssc.stic_signatures_stic_signersstic_signatures_ida AND ssssc.deleted = 0
-                JOIN stic_signers ss ON ss.id = ssssc.stic_signatures_stic_signersstic_signers_idb AND ss.deleted = 0
-                WHERE s.deleted = 0
-                AND s.id = '{$signatureId}'";
+        if ($allowMultipleSigners) {
+            $SQL = "SELECT ss.parent_id as id, ss.record_id as record_id
+                    FROM stic_signatures s
+                    JOIN stic_signatures_stic_signers_c ssssc ON s.id = ssssc.stic_signatures_stic_signersstic_signatures_ida AND ssssc.deleted = 0
+                    JOIN stic_signers ss ON ss.id = ssssc.stic_signatures_stic_signersstic_signers_idb AND ss.deleted = 0
+                    WHERE s.deleted = 0
+                    AND s.id = '{$signatureId}'";
+        } else {
+            $SQL = "SELECT ss.parent_id as id
+                    FROM stic_signatures s
+                    JOIN stic_signatures_stic_signers_c ssssc ON s.id = ssssc.stic_signatures_stic_signersstic_signatures_ida AND ssssc.deleted = 0
+                    JOIN stic_signers ss ON ss.id = ssssc.stic_signatures_stic_signersstic_signers_idb AND ss.deleted = 0
+                    WHERE s.deleted = 0
+                    AND s.id = '{$signatureId}'";
+        }
         $result = DBManagerFactory::getInstance()->query($SQL, true);
         $existingSigners = [];
         while ($row = DBManagerFactory::getInstance()->fetchByAssoc($result, false)) {
-            $existingSigners[] = $row['id'];
+            if ($allowMultipleSigners) {
+                $existingSigners[] = $row['id'] . ':' . ($row['record_id'] ?? '');
+            } else {
+                $existingSigners[] = $row['id'];
+            }
         }
         return $existingSigners;
     }
