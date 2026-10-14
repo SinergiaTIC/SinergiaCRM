@@ -873,9 +873,15 @@ class WizardStep2 {
             onValidatorChange() {
               // Only reset parameters if the user makes a REAL CHANGE of validator
               if (this.validation && this.validation.validator !== this._originalValidator) {
-                  this.validation.params = {};
-                  this.validation.message = '';
-                  this._originalValidator = this.validation.validator; 
+                const def = utils.getDefinedActions().find(a => a.name === this.validation.validator);
+                const defaultParams = {};
+                if (def && def.parameters) {
+                  def.parameters.forEach(p => { defaultParams[p.name] = p.defaultValue || ''; });
+                }
+
+                this.validation.params = defaultParams;
+                this.validation.message = '';
+                this._originalValidator = this.validation.validator; 
               }
             },
 
@@ -1191,6 +1197,17 @@ class WizardStep2 {
           }
         });
       },
+      handleAddDocumentDatablock() {
+        const text = this.formConfig.suggestDataBlockText('Documents');
+        const dataBlock = this.formConfig.addDataBlockModule('Documents', true, text);
+        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
+        this.$nextTick(() => {
+          const element = document.getElementById('dataBlock_' + dataBlock.id); 
+          if(element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      },
     };
   }
  
@@ -1231,7 +1248,11 @@ class WizardStep2 {
           }
         };
         if (this.optionValuesRelated != ''){
-          listName = `${utils.getModuleInformation(this.relatedModule)?.text} (${this.optionValuesRelated.split('|').length})`;
+          let relatedModuleText = utils.getModuleInformation(this.relatedModule)?.text;
+          if(!relatedModuleText && this.selectedFieldInfo?.module) {
+            relatedModuleText = SUGAR.language.languages.app_list_strings.moduleList[this.selectedFieldInfo.module] ?? this.selectedFieldInfo.module;
+          }
+          listName = `${relatedModuleText} (${this.optionValuesRelated.split('|').length})`;
         }
         if (listName == '' && this.field && this.field.value_options.length > 0) {
           listName = this.field.value_options.filter(v => v.is_visible).map(v => v.text).join(', ');
@@ -1241,7 +1262,8 @@ class WizardStep2 {
 
       get relatedModule() {
         if (this.field && this.field.type == 'relate') {
-          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options);
+          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options)
+                 || this.selectedFieldInfo?.module || '';
         }
         return '';
       },
@@ -1304,7 +1326,7 @@ class WizardStep2 {
         });
         this.$watch('field.text_original', (newText, oldText) => {
           if (!this.field) return;
-          if (this.field.type_field == 'unlinked') {
+          if (this.field.type_field == 'unlinked' && this.field.type_in_form !== 'file') {
             let newName = stic_AwfConfiguration.cleanName(newText);
             if (newName != this.field.name) {
               this.field.name = this.dataBlock.suggestFieldName(newName);
@@ -1378,6 +1400,8 @@ class WizardStep2 {
               this.field.type = 'date';
             } else if (newType == 'number') {
               this.field.type = 'float';
+            } else if (newType == 'file_upload') {
+              this.field.type = 'file';
             } else {
               this.field.type = 'varchar';
             }

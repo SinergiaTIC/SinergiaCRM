@@ -189,9 +189,9 @@ class RelateRecordsAction extends HookBeanActionDefinition {
 
             $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Linked via FK '{$relationIdName}' to ID {$targetBeanId}");
             $dataToLog = [
-                ['key' => 'relationship_name', 'label' => $this->translate('RELATIONSHIP_TEXT'), 'value' => $linkName],
-                ['key' => 'target_object', 'label' => $this->translate('TARGET_OBJECT_TEXT'), 'value' => $targetBeanId],
-                ['key' => 'fk_field', 'label' => $this->translate('RELATION_ID_NAME_TEXT'), 'value' => $relationIdName],
+                ['key' => "relationship_name_{$targetBeanId}", 'label' => $this->translate('RELATIONSHIP_TEXT'), 'value' => $linkName],
+                ['key' => "target_object_{$targetBeanId}", 'label' => $this->translate('TARGET_OBJECT_TEXT'), 'value' => $targetBeanId],
+                ['key' => "fk_field_{$targetBeanId}", 'label' => $this->translate('RELATION_ID_NAME_TEXT'), 'value' => $relationIdName],
             ];
             $actionResult->registerActionMetadata($bean, $dataToLog);
 
@@ -209,6 +209,7 @@ class RelateRecordsAction extends HookBeanActionDefinition {
 
         try {
             $bean->$linkName->add($targetBeanId);
+            $targetModule = $bean->$linkName->getRelatedModuleName();
         } catch (\Exception $e) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Error linking records: " . $e->getMessage());
         }
@@ -218,10 +219,22 @@ class RelateRecordsAction extends HookBeanActionDefinition {
 
         $actionResult = new ActionResult(ResultStatus::OK, $actionConfig, "Linked via '{$linkName}' to ID {$targetBeanId}");
         $dataToLog = [
-            ['key' => 'relationship_name', 'label' => $this->translate('RELATIONSHIP_TEXT'), 'value' => $linkName],
-            ['key' => 'target_object', 'label' => $this->translate('TARGET_OBJECT_TEXT'), 'value' => $targetBeanId],
+            ['key' => "relationship_name_{$targetBeanId}", 'label' => $this->translate('RELATIONSHIP_TEXT'), 'value' => $linkName],
+            ['key' => "target_object_{$targetBeanId}", 'label' => $this->translate('TARGET_OBJECT_TEXT'), 'value' => $targetBeanId],
         ];
         $actionResult->registerActionMetadata($bean, $dataToLog);
+
+        // Register the target bean as well, so a Link appears for both sides of the N-M relationship
+        if (!empty($targetModule)) {
+            $targetBean = BeanFactory::getBean($targetModule, $targetBeanId);
+            if ($targetBean) {
+                $targetDataToLog = [
+                    ['key' => "relationship_name_{$bean->id}", 'label' => $this->translate('RELATIONSHIP_TEXT'), 'value' => $linkName],
+                    ['key' => "source_object_{$bean->id}", 'label' => $this->translate('SOURCE_OBJECT_TEXT'), 'value' => $bean->id],
+                ];
+                $actionResult->registerActionMetadata($targetBean, $targetDataToLog);
+            }
+        }
 
         return $actionResult;
     }

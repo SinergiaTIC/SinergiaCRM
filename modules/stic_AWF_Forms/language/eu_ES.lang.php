@@ -414,7 +414,7 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_RELATION_CONFIGS_TEXT' => 'Campos de relación',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Crear relación',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros.',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino de la relación',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloque de datos o registro destino de la relación a guardar.',
@@ -522,7 +522,7 @@ $mod_strings = array (
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correo confirmado',
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
-  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación.',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'La plantilla de correo electrónico deberá tener la variable {::confirmation_url::} en el cuerpo del mensaje para que se genere el enlace de confirmación.',
 
