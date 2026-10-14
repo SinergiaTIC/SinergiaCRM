@@ -26,6 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 require_once 'include/MVC/View/views/view.detail.php';
+require_once 'modules/stic_Recycle_Bin/Utils.php';
 require_once 'SticInclude/Views.php';
 
 class stic_Recycle_BinViewDetail extends ViewDetail
@@ -55,6 +56,7 @@ class stic_Recycle_BinViewDetail extends ViewDetail
         $html = $this->hideUnwantedButtons($html);
         $html = $this->injectRestoreAction($html);
         $html = $this->prependMergedNotice($html);
+        $html = $this->prependFlashMessage($html);
         if (!empty($this->bean->restored)) {
             $html = $this->hideActionsMenu($html);
         }
@@ -185,6 +187,19 @@ class stic_Recycle_BinViewDetail extends ViewDetail
         $notice .= '</div>';
 
         return $notice . $html;
+    }
+
+    /**
+     * Prepends the pending restore-result message (if any) to the detail view,
+     * rendered with the same "alert" markup and colour (warning) as the
+     * merged-records notice.
+     *
+     * @param string $html Rendered detail view HTML
+     * @return string HTML with the flash message prepended
+     */
+    private function prependFlashMessage($html)
+    {
+        return stic_Recycle_BinUtils::renderFlashMessage() . $html;
     }
 
     /**

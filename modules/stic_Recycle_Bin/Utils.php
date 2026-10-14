@@ -180,6 +180,37 @@ class stic_Recycle_BinUtils
     }
 
     /**
+     * Stores a one-shot restore-result message so it survives the redirect back to
+     * the view, where it is rendered as an "alert" block. A separate slot is needed
+     * because the platform's own flash is rendered in the header as
+     * <p class="success">/<p class="error">.
+     *
+     * @param string $message Already translated message text
+     * @return void
+     */
+    public static function setFlashMessage($message)
+    {
+        $_SESSION['stic_recycle_bin_flash'] = $message;
+    }
+
+    /**
+     * Renders and clears the pending one-shot message as an "alert" block, using
+     * the same colour (warning) as the merged-records notice.
+     *
+     * @return string HTML alert block, or '' when there is no pending message
+     */
+    public static function renderFlashMessage()
+    {
+        $message = $_SESSION['stic_recycle_bin_flash'] ?? '';
+        unset($_SESSION['stic_recycle_bin_flash']);
+        if ($message === '') {
+            return '';
+        }
+
+        return '<div class="alert alert-warning" role="alert">' . htmlspecialchars($message, ENT_QUOTES) . '</div>';
+    }
+
+    /**
      * Replays the framework's after_relationship_add event for every relationship
      * restored with the given record.
      *

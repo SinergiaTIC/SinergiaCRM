@@ -26,6 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 require_once 'include/MVC/View/views/view.list.php';
+require_once 'modules/stic_Recycle_Bin/Utils.php';
 require_once 'SticInclude/Views.php';
 
 class stic_Recycle_BinViewList extends ViewList
@@ -44,6 +45,10 @@ class stic_Recycle_BinViewList extends ViewList
 
     public function listViewProcess()
     {
+        if (empty($_REQUEST['search_form_only'])) {
+            echo stic_Recycle_BinUtils::renderFlashMessage();
+        }
+
         $this->processSearchForm();
         $this->lv->searchColumns = $this->searchForm->searchColumns;
 
