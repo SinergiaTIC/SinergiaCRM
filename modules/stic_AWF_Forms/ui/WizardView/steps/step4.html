@@ -413,7 +413,7 @@
 
                                         <!-- Reusable Template: SECTION -->
                                             <template id="awfTplLayoutSection">
-                                                <div :id="'sectionCard_' + section.id" class="card datablock mb-3 shadow-sm transition-all awf-wizard-section-card"
+                                                <div :id="'sectionCard_' + section.id" class="card datablock mb-3 ms-3 shadow-sm transition-all awf-wizard-section-card"
                                                      :style="isGroupTemplateChild(section) ? 'border: none;' : ''" x-data="{showSettings: false, isCollapsed: false}">
                                                 <!-- Integrated Group header (Rendered ONLY if item is a group head/subgroup) -->
                                                 <template x-if="isGroupSection(section) || isNestedGroupSection(section)">
@@ -609,8 +609,7 @@
                                                     </div>
                                                 </div>
 
-                                                <!-- Section Body (the group's internal element template
-                                                     is flattened: its children render directly) -->
+                                                <!-- Section Body (the group's internal element template is flattened: its children render directly) -->
                                                 <div class="card-body p-2" x-show="!isCollapsed" x-transition>
                                                     <!-- Content: data blocks and (level < 2) nested sections -->
                                                     <template x-for="(element, index) in getSectionBodyElements(section)" :key="element.id">
