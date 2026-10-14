@@ -1118,6 +1118,10 @@ class stic_AWFUtils {
             }
 
             foreach ($dataBlock->fields as $field) {
+                if ($field->type_field === DataBlockFieldType::FIXED) {
+                    continue;
+                }
+
                 if ($field->type === 'bool' || $field->type === 'checkbox' || in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) {
                     $phpKey = $field->getPhpKey();
                     if (!isset($formData[$phpKey])) {
