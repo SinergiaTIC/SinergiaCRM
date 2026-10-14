@@ -76,7 +76,7 @@ $dictionary['stic_Recycle_Bin_Relationships'] = array(
         ),
         'assigned_user_id' => array(
             'name' => 'assigned_user_id',
-            'vname' => 'LBL_ASSIGNED_TO_ID',
+            'vname' => 'LBL_ASSIGNED_TO',
             'type' => 'id',
         ),
         'assigned_user_name' => array(
@@ -90,12 +90,12 @@ $dictionary['stic_Recycle_Bin_Relationships'] = array(
         ),
         'stic_recycle_bin_id' => array(
             'name' => 'stic_recycle_bin_id',
-            'vname' => 'LBL_STIC_RECYCLE_BIN_ID',
+            'vname' => 'LBL_ID',
             'type' => 'id',
         ),
         'stic_recycle_bin_name' => array(
             'name' => 'stic_recycle_bin_name',
-            'vname' => 'LBL_STIC_RECYCLE_BIN',
+            'vname' => 'LBL_NAME',
             'type' => 'relate',
             'source' => 'non-db',
             'module' => 'stic_Recycle_Bin',
@@ -110,7 +110,7 @@ $dictionary['stic_Recycle_Bin_Relationships'] = array(
             'source' => 'non-db',
             'module' => 'stic_Recycle_Bin',
             'bean_name' => 'stic_Recycle_Bin',
-            'vname' => 'LBL_STIC_RECYCLE_BIN',
+            'vname' => 'LBL_NAME',
         ),
         'relationship_name' => array(
             'name' => 'relationship_name',
@@ -132,7 +132,7 @@ $dictionary['stic_Recycle_Bin_Relationships'] = array(
         ),
         'related_record_id' => array(
             'name' => 'related_record_id',
-            'vname' => 'LBL_RELATED_RECORD_ID',
+            'vname' => 'LBL_ID',
             'type' => 'varchar',
             'len' => 36,
         ),

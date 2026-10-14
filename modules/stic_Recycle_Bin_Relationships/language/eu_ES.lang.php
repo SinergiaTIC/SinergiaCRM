@@ -21,38 +21,11 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
-$mod_strings = array(
-    // Module info
-    'LBL_MODULE_NAME' => 'Relaciones de la Papelera',
-    'LBL_MODULE_TITLE' => 'Relaciones de la Papelera',
-    'LBL_HOMEPAGE_TITLE' => 'Relaciones de la Papelera',
-
-    // General
-    'LBL_SEARCH_FORM_TITLE' => 'Buscar Relaciones de la Papelera',
-    'LBL_LIST_FORM_TITLE' => 'Lista de Relaciones de la Papelera',
-    'LBL_NEW_FORM_TITLE' => 'Nueva Relación de la Papelera',
-    'LNK_LIST' => 'Relaciones de la Papelera',
-
-    // Panels
-    'LBL_RECYCLE_RELATIONSHIP_INFO' => 'Información de la relación',
-    'LBL_RECYCLE_RELATED_RECORD' => 'Registro relacionado',
-    'LBL_RECYCLE_STATUS' => 'Estado',
-
-    // Fields
-    'LBL_STIC_RECYCLE_BIN_ID' => 'ID de Papelera',
-    'LBL_STIC_RECYCLE_BIN' => 'Registro de la Papelera',
-    'LBL_RELATIONSHIP_NAME' => 'Nombre de la relación',
-    'LBL_JOIN_TABLE' => 'Tabla de unión',
-    'LBL_RELATED_MODULE' => 'Módulo relacionado',
-    'LBL_RELATED_RECORD_ID' => 'ID del registro relacionado',
-    'LBL_RELATED_RECORD_NAME' => 'Nombre del registro relacionado',
-    'LBL_RESTORED' => 'Restaurado',
-    'LBL_SKIP_REASON' => 'Motivo de no restauración',
-
-    // Subpanel
-    'LBL_RECYCLE_BIN_RELATIONSHIPS_SUBPANEL_TITLE' => 'Relaciones de la Papelera',
+$mod_strings = array (
+  'LBL_RELATED_RECORD_NAME' => 'Nombre del registro relacionado',
+  'LBL_RELATED_MODULE' => 'Módulo relacionado',
+  'LBL_RELATIONSHIP_NAME' => 'Nombre de la relación',
+  'LBL_JOIN_TABLE' => 'Tabla de unión',
+  'LBL_RESTORED' => 'Restaurado',
+  'LBL_SKIP_REASON' => 'Motivo de no restauración',
 );

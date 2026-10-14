@@ -21,39 +21,11 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
-$mod_strings = array(
-    // Module info
-    'LBL_MODULE_NAME' => 'Recycle Bin Relationships',
-    'LBL_MODULE_TITLE' => 'Recycle Bin Relationships',
-    'LBL_HOMEPAGE_TITLE' => 'Recycle Bin Relationships',
-
-    // General
-    'LBL_SEARCH_FORM_TITLE' => 'Search Recycle Bin Relationships',
-    'LBL_LIST_FORM_TITLE' => 'Recycle Bin Relationships List',
-    'LBL_NEW_FORM_TITLE' => 'New Recycle Bin Relationship',
-    'LNK_LIST' => 'Recycle Bin Relationships',
-
-    // Panels
-    'LBL_RECYCLE_RELATIONSHIP_INFO' => 'Relationship information',
-    'LBL_RECYCLE_RELATED_RECORD' => 'Related record',
-    'LBL_RECYCLE_STATUS' => 'Status',
-
-    // Fields
-    'LBL_STIC_RECYCLE_BIN_ID' => 'Recycle Bin ID',
-    'LBL_STIC_RECYCLE_BIN' => 'Recycle Bin',
-    'LBL_RECYCLE_RECORD_ID' => 'Original record ID',
-    'LBL_RELATIONSHIP_NAME' => 'Relationship name',
-    'LBL_JOIN_TABLE' => 'Join table',
-    'LBL_RELATED_MODULE' => 'Related module',
-    'LBL_RELATED_RECORD_ID' => 'Related record ID',
-    'LBL_RELATED_RECORD_NAME' => 'Related record name',
-    'LBL_RESTORED' => 'Restored',
-    'LBL_SKIP_REASON' => 'Reason not restored',
-
-    // Subpanel
-    'LBL_RECYCLE_BIN_RELATIONSHIPS_SUBPANEL_TITLE' => 'Recycle Bin Relationships',
+$mod_strings = array (
+  'LBL_RELATED_RECORD_NAME' => 'Related record name',
+  'LBL_RELATED_MODULE' => 'Related module',
+  'LBL_RELATIONSHIP_NAME' => 'Relationship name',
+  'LBL_JOIN_TABLE' => 'Join table',
+  'LBL_RESTORED' => 'Restored',
+  'LBL_SKIP_REASON' => 'Reason not restored',
 );

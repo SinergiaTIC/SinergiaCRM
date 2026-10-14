@@ -95,7 +95,7 @@ class stic_Recycle_BinViewList extends ViewList
         global $log;
 
         $alertNoSelected = translate('LBL_LISTVIEW_NO_SELECTED', 'stic_Recycle_Bin');
-        $alertAllAlready = translate('LBL_MASS_RESTORE_ALL_ALREADY_RESTORED', 'stic_Recycle_Bin');
+        $alertAllAlready = translate('LBL_MASS_RESTORE_ALL_ALREADY', 'stic_Recycle_Bin');
         $confirmMixed = translate('LBL_MASS_RESTORE_MIXED_CONFIRM', 'stic_Recycle_Bin');
 
         $restoredMap = array();
@@ -127,7 +127,7 @@ class stic_Recycle_BinViewList extends ViewList
             . 'if(typeof sugarListView==="undefined"||!sugarListView.get_checks()||sugarListView.get_checks_count()<1){alert(' . json_encode($alertNoSelected) . ');return false;}'
             . 'var checked=document.querySelectorAll("input[name=\\"mass[]\\"]:checked");'
             . 'var already=0;for(var i=0;i<checked.length;i++){if(checked[i].getAttribute("data-restored")==="1"){already++;}}'
-            . 'if(already>0&&already===checked.length){alert(' . json_encode($alertAllAlready) . ');return false;}'
+            . 'if(already>0&&already===checked.length){alert(' . json_encode($alertAllAlready) . '.replace("%d",already));return false;}'
             . 'if(already>0&&!window.confirm(' . json_encode($confirmMixed) . ')){return false;}'
             . 'var f=document.createElement("form");f.method="POST";f.action="index.php";'
             . 'var m=document.createElement("input");m.name="module";m.type="hidden";m.value="stic_Recycle_Bin";f.appendChild(m);'

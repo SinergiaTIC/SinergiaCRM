@@ -21,38 +21,11 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
-if (!defined('sugarEntry') || !sugarEntry) {
-    die('Not A Valid Entry Point');
-}
-
-$mod_strings = array(
-    // Module info
-    'LBL_MODULE_NAME' => 'Relacions de la Paperera',
-    'LBL_MODULE_TITLE' => 'Relacions de la Paperera',
-    'LBL_HOMEPAGE_TITLE' => 'Relacions de la Paperera',
-
-    // General
-    'LBL_SEARCH_FORM_TITLE' => 'Cerca Relacions de la Paperera',
-    'LBL_LIST_FORM_TITLE' => 'Llista de Relacions de la Paperera',
-    'LBL_NEW_FORM_TITLE' => 'Nova Relació de la Paperera',
-    'LNK_LIST' => 'Relacions de la Paperera',
-
-    // Panels
-    'LBL_RECYCLE_RELATIONSHIP_INFO' => 'Informació de la relació',
-    'LBL_RECYCLE_RELATED_RECORD' => 'Registre relacionat',
-    'LBL_RECYCLE_STATUS' => 'Estat',
-
-    // Fields
-    'LBL_STIC_RECYCLE_BIN_ID' => 'ID de la Paperera',
-    'LBL_STIC_RECYCLE_BIN' => 'Registre de la Paperera',
-    'LBL_RELATIONSHIP_NAME' => 'Nom de la relació',
-    'LBL_JOIN_TABLE' => "Taula d'unió",
-    'LBL_RELATED_MODULE' => 'Mòdul relacionat',
-    'LBL_RELATED_RECORD_ID' => 'ID del registre relacionat',
-    'LBL_RELATED_RECORD_NAME' => 'Nom del registre relacionat',
-    'LBL_RESTORED' => 'Restaurat',
-    'LBL_SKIP_REASON' => 'Motiu de no restauració',
-
-    // Subpanel
-    'LBL_RECYCLE_BIN_RELATIONSHIPS_SUBPANEL_TITLE' => 'Relacions de la Paperera',
+$mod_strings = array (
+  'LBL_RELATED_RECORD_NAME' => 'Nom del registre relacionat',
+  'LBL_RELATED_MODULE' => 'Mòdul relacionat',
+  'LBL_RELATIONSHIP_NAME' => 'Nom de la relació',
+  'LBL_JOIN_TABLE' => 'Taula d\'unió',
+  'LBL_RESTORED' => 'Restaurat',
+  'LBL_SKIP_REASON' => 'Motiu de no restauració',
 );

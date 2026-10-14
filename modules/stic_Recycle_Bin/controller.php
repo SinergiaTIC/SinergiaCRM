@@ -49,7 +49,7 @@ class stic_Recycle_BinController extends SugarController
 
         if (empty($recordId) || !self::isValidId($recordId)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': missing or invalid record id');
-            SugarApplication::appendErrorMessage(translate('LBL_NO_RECORDS_SELECTED', 'stic_Recycle_Bin'));
+            SugarApplication::appendErrorMessage(translate('LBL_RESTORE_INVALID_ID', 'stic_Recycle_Bin'));
             SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
             return;
         }
@@ -118,7 +118,7 @@ class stic_Recycle_BinController extends SugarController
 
         if (empty($ids)) {
             $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': no valid ids in mass restore request');
-            SugarApplication::appendErrorMessage(translate('LBL_NO_RECORDS_SELECTED', 'stic_Recycle_Bin'));
+            SugarApplication::appendErrorMessage(translate('LBL_LISTVIEW_NO_SELECTED', 'stic_Recycle_Bin'));
             SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
             return;
         }
