@@ -400,12 +400,11 @@ $mod_strings = array (
 
   'LBL_REQUIRED_FIELD_MESSAGE' => 'Cal emplenar aquest camp',
   
-  'LBL_PREVIEW_RIBBON' => 'Previsualització',
+  'LBL_PREVIEW_TEXT' => 'Previsualització',
   'LBL_PREVIEW_LOADING' => 'Carregant...',
   'LBL_PREVIEW_LOAD_ERROR' => 'Error en carregar la previsualització',
   'LBL_PREVIEW_DESC' => 'Visualització real generada pel servidor.',
   'LBL_PREVIEW_MODE_ALERT' => "El formulari està en mode previsualització. L'enviament de dades no està activat.",
-  'LBL_PREVIEW_TOOLBAR' => 'Previsualització',
   'LBL_PREVIEW_ACTIVE_TEXT' => 'Actiu',
   'LBL_PREVIEW_INACTIVE_TEXT' => 'Inactiu',
   'LBL_PREVIEW_IN_NEW_TAB' => 'Previsualitza en una pestanya nova',

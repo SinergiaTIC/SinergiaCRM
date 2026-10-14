@@ -2707,6 +2707,12 @@ class WizardStep4 {
       get layout() { return this.formConfig.layout; },
       get sections() { return this.layout.structure; },
 
+      // Server-rendered preview of the SAVED form (same URL step 5 uses): a
+      // plain link with target="_blank" opens it and RELOADS refresh it.
+      get previewUrl() {
+        return `index.php?module=stic_AWF_Forms&action=renderPreviewForm&record=${this.bean?.id ?? ''}`;
+      },
+
       get availableContainerTypes() {
         // Kept for backward compatibility of callers without a section context:
         // base container types (no 'tab' — it only applies to direct children

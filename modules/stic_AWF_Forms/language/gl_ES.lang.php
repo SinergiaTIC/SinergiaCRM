@@ -400,12 +400,11 @@ $mod_strings = array (
 
   'LBL_REQUIRED_FIELD_MESSAGE' => 'É necesario informar este campo',
   
-  'LBL_PREVIEW_RIBBON' => 'Previsualización',
+  'LBL_PREVIEW_TEXT' => 'Previsualización',
   'LBL_PREVIEW_LOADING' => 'Cargando...',
   'LBL_PREVIEW_LOAD_ERROR' => 'Erro cargando a previsualización',
   'LBL_PREVIEW_DESC' => 'Visualización real xerada polo servidor.',
   'LBL_PREVIEW_MODE_ALERT' => 'O formulario está en modo previsualización. Non está activado o envío de datos.',
-  'LBL_PREVIEW_TOOLBAR' => 'Previsualización',
   'LBL_PREVIEW_ACTIVE_TEXT' => 'Activo',
   'LBL_PREVIEW_INACTIVE_TEXT' => 'Inactivo',
   'LBL_PREVIEW_IN_NEW_TAB' => 'Previsualizar en pestana nova',

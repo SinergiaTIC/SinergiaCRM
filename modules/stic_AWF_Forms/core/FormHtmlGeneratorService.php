@@ -90,7 +90,11 @@ class FormHtmlGeneratorService {
             {
                 $htmlRaw .= "<meta charset='UTF-8'>" .$this->newLine();
                 $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .$this->newLine();
-                $htmlRaw .= "<title>" . htmlspecialchars($config->layout->web_title) . "</title>" .$this->newLine();
+                $title = htmlspecialchars($config->layout->web_title);
+                if ($isPreview) {
+                    $title = "(" . translate('LBL_PREVIEW_TEXT', 'stic_AWF_Forms') . ") " . $title;
+                }
+                $htmlRaw .= "<title>" . $title . "</title>" .$this->newLine();
         
                 // External libraries (Bootstrap + Alpine)
                 $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .$this->newLine();
@@ -358,7 +362,7 @@ class FormHtmlGeneratorService {
             $html .= "<div class='awf-relative-wrapper'>" .$this->newLine('+');
             {
                 if ($isPreview) {
-                    $ribbonText = translate('LBL_PREVIEW_RIBBON', 'stic_AWF_Forms');
+                    $ribbonText = translate('LBL_PREVIEW_TEXT', 'stic_AWF_Forms');
                     $html .= "<div class='awf-preview-ribbon'>{$ribbonText}</div>" .$this->newLine();
 
                     // Floating ToolBar
@@ -368,7 +372,7 @@ class FormHtmlGeneratorService {
                                          "display: flex; align-items: center; gap: 12px;". 
                                          "font-family: system-ui, sans-serif; font-size: 14px;'>" .$this->newLine('+');
                     {
-                        $toolBarText = translate('LBL_PREVIEW_TOOLBAR', 'stic_AWF_Forms');
+                        $toolBarText = translate('LBL_PREVIEW_TEXT', 'stic_AWF_Forms');
                         $activeText = translate('LBL_PREVIEW_ACTIVE_TEXT', 'stic_AWF_Forms');
                         $inactiveText = translate('LBL_PREVIEW_INACTIVE_TEXT', 'stic_AWF_Forms');
                         $html .= "<span style='opacity: 0.8; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;'>{$toolBarText}</span>" .$this->newLine();
