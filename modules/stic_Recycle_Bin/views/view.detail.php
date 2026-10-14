@@ -65,8 +65,14 @@ class stic_Recycle_BinViewDetail extends ViewDetail
     }
 
     /**
-     * Injects a CSS rule to hide "Print as PDF", "Signatures" and "Related Signatures"
-     * dropdown items in the detail view, which are not useful for recycle bin entries.
+     * Injects a CSS rule to hide the generic detail-view actions that make no
+     * sense for a recycle bin entry: "Print as PDF", "Signatures" and "Related
+     * Signatures". These are added to every module's detail view by the
+     * platform, so they are hidden here.
+     *
+     * The edit view is not hidden here: it is blocked server-side by the module
+     * controller (action_editview / action_save), so it cannot be reached, not
+     * even through a direct URL.
      *
      * @param string $html Full rendered detail view HTML
      * @return string HTML with the CSS rule appended

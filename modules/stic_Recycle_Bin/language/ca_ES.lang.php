@@ -77,6 +77,7 @@ $mod_strings = array (
   'LBL_RESTORE_RECORD' => 'Restaura',
   'LBL_RESTORE_CONFIRM' => 'Segur que voleu restaurar aquest registre?',
   'LBL_MASS_RESTORE' => 'Restaura',
+  'LBL_MASS_RESTORE_CONFIRM' => 'Esteu segur que voleu restaurar els registres seleccionats?',
   'LBL_MASS_RESTORE_SUCCESS' => 'S\'ha(n) restaurat %d registre(s) correctament.',
   'LBL_MASS_RESTORE_PARTIAL' => 'S\'ha(n) restaurat %d registre(s) correctament i se n\'ha(n) omès %d no vàlid(s) o ja restaurat(s) anteriorment.',
   'LBL_MASS_RESTORE_ALL_ALREADY' => 'Tots els %d registres seleccionats ja s\'han restaurat.',

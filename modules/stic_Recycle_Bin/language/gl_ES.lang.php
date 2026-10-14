@@ -77,6 +77,7 @@ $mod_strings = array (
   'LBL_RESTORE_RECORD' => 'Restaurar',
   'LBL_RESTORE_CONFIRM' => '¿Seguro que desea recuperar este registro?',
   'LBL_MASS_RESTORE' => 'Restaurar',
+  'LBL_MASS_RESTORE_CONFIRM' => '¿Seguro que desea recuperar los registros seleccionados?',
   'LBL_MASS_RESTORE_SUCCESS' => '%d registros recuperados correctamente.',
   'LBL_MASS_RESTORE_PARTIAL' => '%d registros recuperados correctamente y %d omitidos (no válidos o ya restaurados anteriormente).',
   'LBL_MASS_RESTORE_ALL_ALREADY' => 'Los %d registros seleccionados ya habían sido restaurados.',

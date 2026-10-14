@@ -77,6 +77,7 @@ $mod_strings = array (
   'LBL_RESTORE_RECORD' => 'Restore',
   'LBL_RESTORE_CONFIRM' => 'Are you sure you want to restore this record?',
   'LBL_MASS_RESTORE' => 'Restore',
+  'LBL_MASS_RESTORE_CONFIRM' => 'Are you sure you want to restore the selected records?',
   'LBL_MASS_RESTORE_SUCCESS' => '%d records restored successfully.',
   'LBL_MASS_RESTORE_PARTIAL' => '%d records restored successfully, %d skipped (already restored or invalid).',
   'LBL_MASS_RESTORE_ALL_ALREADY' => 'All %d selected records have already been restored.',

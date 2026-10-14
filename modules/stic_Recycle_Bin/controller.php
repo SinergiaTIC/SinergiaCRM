@@ -152,6 +152,37 @@ class stic_Recycle_BinController extends SugarController
     }
 
     /**
+     * Blocks the edit view. Recycle bin entries are read-only except for the
+     * restore action, so the edit view is not reachable, not even through a
+     * direct URL.
+     *
+     * @return void
+     */
+    public function action_editview()
+    {
+        global $log;
+
+        $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': edit view blocked for recycle bin entry');
+        SugarApplication::appendErrorMessage(translate('LBL_NO_ACCESS', 'stic_Recycle_Bin'));
+        SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
+    }
+
+    /**
+     * Blocks saving a recycle bin entry so the captured snapshot cannot be
+     * altered (covers the edit form as well as list inline edit).
+     *
+     * @return void
+     */
+    public function action_save()
+    {
+        global $log;
+
+        $log->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': save blocked for recycle bin entry');
+        SugarApplication::appendErrorMessage(translate('LBL_NO_ACCESS', 'stic_Recycle_Bin'));
+        SugarApplication::redirect('index.php?module=stic_Recycle_Bin&action=index');
+    }
+
+    /**
      * Validates a SugarCRM-style UUID (36-char with hyphens).
      *
      * @param string $id ID to validate

@@ -85,8 +85,10 @@ class stic_Recycle_BinViewList extends ViewList
      * Echoes a self-contained <script> block that:
      *  - Marks each row's checkbox with data-restored="1" when the row is already
      *    restored, so the bulk action can warn the user.
-     *  - Defines window.sticRecycleBinMassRestore() which validates the selection
-     *    and posts a new form to action=mass_restore with the selected uids.
+     *  - Defines window.sticRecycleBinMassRestore() which validates the selection,
+     *    asks for confirmation (a specific warning when the selection is mixed with
+     *    already-restored records) and then posts a new form to action=mass_restore
+     *    with the selected uids.
      *
      * @return void
      */
@@ -96,6 +98,7 @@ class stic_Recycle_BinViewList extends ViewList
 
         $alertNoSelected = translate('LBL_LISTVIEW_NO_SELECTED', 'stic_Recycle_Bin');
         $alertAllAlready = translate('LBL_MASS_RESTORE_ALL_ALREADY', 'stic_Recycle_Bin');
+        $confirmGeneral = translate('LBL_MASS_RESTORE_CONFIRM', 'stic_Recycle_Bin');
         $confirmMixed = translate('LBL_MASS_RESTORE_MIXED_CONFIRM', 'stic_Recycle_Bin');
 
         $restoredMap = array();
@@ -128,7 +131,8 @@ class stic_Recycle_BinViewList extends ViewList
             . 'var checked=document.querySelectorAll("input[name=\\"mass[]\\"]:checked");'
             . 'var already=0;for(var i=0;i<checked.length;i++){if(checked[i].getAttribute("data-restored")==="1"){already++;}}'
             . 'if(already>0&&already===checked.length){alert(' . json_encode($alertAllAlready) . '.replace("%d",already));return false;}'
-            . 'if(already>0&&!window.confirm(' . json_encode($confirmMixed) . ')){return false;}'
+            . 'if(already>0){if(!window.confirm(' . json_encode($confirmMixed) . ')){return false;}}'
+            . 'else if(!window.confirm(' . json_encode($confirmGeneral) . ')){return false;}'
             . 'var f=document.createElement("form");f.method="POST";f.action="index.php";'
             . 'var m=document.createElement("input");m.name="module";m.type="hidden";m.value="stic_Recycle_Bin";f.appendChild(m);'
             . 'var a=document.createElement("input");a.name="action";a.type="hidden";a.value="mass_restore";f.appendChild(a);'

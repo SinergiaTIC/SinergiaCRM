@@ -29,7 +29,6 @@ $module_name = 'stic_Recycle_Bin';
 
 $metafiles[$module_name] = array(
     'detailviewdefs' => 'modules/' . $module_name . '/metadata/detailviewdefs.php',
-    'editviewdefs' => 'modules/' . $module_name . '/metadata/editviewdefs.php',
     'listviewdefs' => 'modules/' . $module_name . '/metadata/listviewdefs.php',
     'searchdefs' => 'modules/' . $module_name . '/metadata/searchdefs.php',
     'popupdefs' => 'modules/' . $module_name . '/metadata/popupdefs.php',
