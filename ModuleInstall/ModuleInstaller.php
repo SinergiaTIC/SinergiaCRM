@@ -1775,7 +1775,7 @@ class ModuleInstaller
                 $this->uninstall_beans($installed_modules);
                 $this->uninstall_customizations($installed_modules);
                 // STIC-Custom 20261014 ART - Uninstall module labels and images for renamed modules 
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1453
                 $this->uninstall_renamed_module_labels($installed_modules);
                 $this->uninstall_module_images($installed_modules);
                 // END STIC-Custom
@@ -2113,7 +2113,7 @@ class ModuleInstaller
     }
 
     // STIC-Custom 20261014 ART - Uninstall module labels and images for renamed modules 
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1453
     /**
      * Remove moduleList and moduleListSingular entries from custom/include/language/<lang>.lang.php
      * that were added when a module was renamed via "Rename Tabs"
