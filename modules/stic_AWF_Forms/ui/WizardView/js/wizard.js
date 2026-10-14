@@ -94,21 +94,51 @@ function wizardForm() {
         init() {
           this.$watch('$store.htmlEditor.isOpen', (isOpen) => {
             if (isOpen) {
-              this.$nextTick(() => this.initQuill());
-            } else if (this.editor) {
-              this.editor = null;
-              window._quillModalEditor = null;
-              const toolbar = this.$refs.editor.previousElementSibling;
-              if (toolbar && toolbar.classList.contains('ql-toolbar')) {
-                toolbar.remove();
+              if (this.$store.htmlEditor.mode === 'visual') {
+                this.$nextTick(() => this.initQuill());
               }
-              this.$refs.editor.className = '';
-              this.$refs.editor.innerHTML = '';
+            } else {
+              this.destroyQuill();
+            }
+          });
+
+          // Switching to the raw-HTML editor captures the current visual HTML
+          // and tears Quill down; switching back re-initialises it from the
+          // stored HTML. This is what lets the source keep advanced markup
+          // (image sizes, remote src…) that Quill would otherwise normalise away.
+          this.$watch('$store.htmlEditor.mode', (mode) => {
+            if (!this.$store.htmlEditor.isOpen) return;
+            if (mode === 'html') {
+              this.captureQuillContent();
+              this.destroyQuill();
+            } else {
+              this.$nextTick(() => this.initQuill());
             }
           });
         },
 
+        // Pull the current visual HTML into the store before leaving visual mode
+        captureQuillContent() {
+          if (!this.editor) return;
+          let html = this.editor.root.innerHTML;
+          if (html === '<p><br></p>') html = '';
+          this.$store.htmlEditor.content = html;
+        },
+
+        destroyQuill() {
+          if (!this.editor) return;
+          this.editor = null;
+          window._quillModalEditor = null;
+          const toolbar = this.$refs.editor.previousElementSibling;
+          if (toolbar && toolbar.classList.contains('ql-toolbar')) {
+            toolbar.remove();
+          }
+          this.$refs.editor.className = '';
+          this.$refs.editor.innerHTML = '';
+        },
+
         initQuill() {
+          if (this.editor) return;
           if (typeof Quill === 'undefined') {
             console.error("Quill JS not loaded");
             return;
@@ -160,6 +190,7 @@ function wizardForm() {
         Alpine.store('htmlEditor', {
           isOpen: false,
           type: '',
+          mode: 'visual',   // 'visual' (Quill) | 'html' (raw source)
           content: '',
           originalContent: '',
 
@@ -174,19 +205,36 @@ function wizardForm() {
             return window.alpineComponent.formConfig;
           },
 
+          // Label of the button that toggles between the visual editor and the
+          // raw-HTML source editor
+          get modeButtonLabel() {
+            return this.mode === 'html'
+              ? utils.translate('LBL_HTML_EDITOR_EDIT_VISUAL')
+              : utils.translate('LBL_HTML_EDITOR_EDIT_HTML');
+          },
+
           open(type) {
             this.type = type;
             this.content = type === 'header' ? this.formConfig.layout.header_html : this.formConfig.layout.footer_html;
             this.originalContent = this.content;
+            this.mode = 'visual';
             this.isOpen = true;
           },
 
+          toggleMode() {
+            this.mode = this.mode === 'html' ? 'visual' : 'html';
+          },
+
           save() {
-            const quill = window._quillModalEditor;
-            if (quill) {
-              let html = quill.root.innerHTML;
-              if (html === '<p><br></p>') html = '';
-              this.content = html;
+            // In visual mode the source of truth is Quill; in HTML mode it is the
+            // textarea bound to `content`, stored as-is (no normalisation).
+            if (this.mode !== 'html') {
+              const quill = window._quillModalEditor;
+              if (quill) {
+                let html = quill.root.innerHTML;
+                if (html === '<p><br></p>') html = '';
+                this.content = html;
+              }
             }
 
             if (this.type === 'header') {

@@ -847,9 +847,22 @@
                     <button type="button" class="btn-close" @click="$store.htmlEditor.cancel()"></button>
                 </div>
                 <div class="custom-modal-body">
-                    <div x-data="quillEditorModal()">
+                    <div class="d-flex justify-content-end mb-2">
+                        <button type="button" class="btn btn-sm"
+                                :class="$store.htmlEditor.mode === 'html' ? 'btn-primary' : 'btn-outline-secondary'"
+                                :title="$store.htmlEditor.modeButtonLabel"
+                                @click="$store.htmlEditor.toggleMode()">
+                            <span x-text="$store.htmlEditor.modeButtonLabel"></span>
+                        </button>
+                    </div>
+                    <div x-show="$store.htmlEditor.mode === 'visual'" x-data="quillEditorModal()">
                         <div x-ref="editor" style="min-height: 300px;"></div>
                     </div>
+                    <textarea x-show="$store.htmlEditor.mode === 'html'"
+                              x-model="$store.htmlEditor.content"
+                              class="form-control font-monospace"
+                              style="min-height: 300px; font-size: 13px;"
+                              spellcheck="false"></textarea>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="col-2 btn btn-secondary" @click="$store.htmlEditor.cancel()" x-text="utils.translate('LBL_CANCEL_BUTTON_LABEL')"></button>

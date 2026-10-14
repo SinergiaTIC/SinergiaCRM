@@ -301,6 +301,8 @@ $mod_strings = array (
   'LBL_LAYOUT_PREVIEW' => 'Previsualització',
   'LBL_LAYOUT_HEADER' => 'Capçalera',
   'LBL_LAYOUT_FOOTER' => 'Peu',
+  'LBL_HTML_EDITOR_EDIT_HTML' => "Edita l'HTML",
+  'LBL_HTML_EDITOR_EDIT_VISUAL' => 'Editor visual',
 
   // Layout -> Theme
   'LBL_THEME_GENERAL' => 'General',
