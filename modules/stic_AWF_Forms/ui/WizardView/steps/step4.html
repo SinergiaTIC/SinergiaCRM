@@ -408,7 +408,7 @@
                                     <div id="LayoutBody_Body" class="accordion-body"> 
                                         <h3 class="mb-2" x-text="utils.translate('LBL_SECTIONS')"></h3>
                                         <template x-for="section in sections" :key="section.id">
-                                            <div x-data="{ level: 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
+                                            <div x-data="{ level: 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')" style="margin-left: -10px;"></div>
                                         </template>
 
                                         <!-- Reusable Template: SECTION -->
