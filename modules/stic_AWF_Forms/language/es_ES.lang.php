@@ -142,7 +142,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_MODULE' => 'Módulo',
   'LBL_DATABLOCK_NAME' => 'Nombre',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Nombre interno',
-  'LBL_DATABLOCK_DELETE_CONFIRM' => "¿Seguro que quieres eliminar este bloque de datos y todos sus campos? Esta acción no se puede deshacer.",
+  'LBL_DATABLOCK_DELETE_CONFIRM' => "¿Seguro que desea eliminar el bloque de datos y todos sus campos? Esta acción no se puede deshacer.",
 
   // DataBlock Groups
   'LBL_DATABLOCK_GROUP' => 'Grupo de bloques de datos',
@@ -153,11 +153,11 @@ $mod_strings = array (
   'LBL_DATABLOCK_INCLUDE_LABEL_DESC' => 'Texto que aparecerá en el interruptor del formulario para indicar que se deben incluir los datos de este grupo de bloques de datos.',
   'LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT' => 'Incluir',
   'LBL_DATABLOCK_MAX_REPETITIONS' => 'Máximo',
-  'LBL_DATABLOCK_MAX_REPETITIONS_DESC' => 'Número máximo de entradas de este grupo de bloques de datos que se pueden añadir a una respuesta del formulario. Déjalo vacío para un número ilimitado de entradas.',
-  'LBL_DATABLOCK_ADD_LABEL' => 'Texto del botón de añadir', 
+  'LBL_DATABLOCK_MAX_REPETITIONS_DESC' => 'Número máximo de entradas de este grupo de bloques de datos que se pueden añadir a una respuesta del formulario. Dejarlo vacío para no establecer ningún limite.',
+  'LBL_DATABLOCK_ADD_LABEL' => 'Texto del botón para añadir entradas', 
   'LBL_DATABLOCK_ADD_LABEL_DESC' => 'Texto que se mostrará en el botón del formulario para añadir otra entrada de este grupo de bloques de datos.', 
   'LBL_DATABLOCK_ADD_LABEL_DEFAULT' => 'Añadir otro', 
-  'LBL_DATABLOCK_REMOVE_LABEL' => 'Texto del botón de eliminar', 
+  'LBL_DATABLOCK_REMOVE_LABEL' => 'Texto del botón para eliminar entradas', 
   'LBL_DATABLOCK_REMOVE_LABEL_DESC' => 'Texto que se mostrará en el botón del formulario para eliminar una entrada de este grupo de bloques de datos.', 
   'LBL_DATABLOCK_REMOVE_LABEL_DEFAULT' => 'Eliminar',
   'LBL_DATABLOCK_ADD_TO_GROUP' => 'Añadir un bloque de datos al grupo',
@@ -286,7 +286,7 @@ $mod_strings = array (
   'LBL_ACTION_CONDITION_TEXT' => 'Esta acción solo se ejecutará si se cumple la condición.',
   'LBL_ACTION_CONTINUE_ON_ERROR' => 'Continuar en caso de error',
   'LBL_ACTION_CONTINUE_ON_ERROR_DESC' => 'Si se activa, el flujo continuará incluso si la acción falla.',
-  'LBL_ACTION_DELETE_CONFIRM' => '¿Seguro que quieres eliminar esta acción?',
+  'LBL_ACTION_DELETE_CONFIRM' => '¿Seguro que desea eliminar esta acción?',
 
   // Conditions (Datablock field validations & Actions)
   'LBL_CONDITION' => 'Condición para la ejecución',
@@ -372,7 +372,7 @@ $mod_strings = array (
   'LBL_SECTION_ADD' => 'Añadir sección',
   'LBL_SECTION_CONFIG' => 'Configuración de la sección',
   'LBL_SECTION_TEMPLATE_TITLE' => 'Elemento',
-  'LBL_SECTION_GROUP_SINGULAR_NAME' => 'Nombre singular del registro',
+  'LBL_SECTION_GROUP_SINGULAR_NAME' => 'Nombre en singular del registro',
   'LBL_SECTION_GROUP_SINGULAR_NAME_DESC' => 'Nombre en singular de cada registro del grupo (por ejemplo «Menor» o «Participante»).',
   'LBL_SECTION_TITLE' => 'Título',
   'LBL_SECTION_SUBTITLE' => 'Subtítulo',
@@ -392,7 +392,7 @@ $mod_strings = array (
   'LBL_SECTION_EMPTY_DESC' => 'Esta sección está vacía. Mueva bloques aquí desde otras secciones.',
   'LBL_SECTION_MOVE_FORM' => 'Fuera de todas las secciones',
   'LBL_LAYOUT_RESET_SECTIONS' => 'Configuración de secciones por defecto',
-  'LBL_LAYOUT_RESET_SECTIONS_CONFIRM' => '¿Seguro que quieres restaurar las secciones a su configuración por defecto? Se perderán todas las configuraciones hechas en este paso (títulos, distribución, pestañas...). Esta acción no se puede deshacer.',
+  'LBL_LAYOUT_RESET_SECTIONS_CONFIRM' => '¿Seguro que desea restaurar las secciones a su configuración por defecto? Se perderán todas las configuraciones hechas en este paso (títulos, distribución, pestañas...). Esta acción no se puede deshacer.',
 
   // Form generation
   'LBL_CODE_GENERATING' => 'Generando el código...',
