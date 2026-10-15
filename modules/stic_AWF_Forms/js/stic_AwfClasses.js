@@ -3841,7 +3841,7 @@ class stic_AwfConfiguration {
         let rel = {...r};
         rel.datablock = d.id;
         rel.module = rel.module_orig == d.module ? rel.module_dest : rel.module_orig;
-        rel.textExtended = `${rel.text} (${STIC.enabledModules[rel.module]?.text || rel.module})`;
+        rel.textExtended = `${rel.text} (${STIC.enabledModules?.[rel.module]?.text || rel.module})`;
         rel.datablock_orig = "";
         rel.datablock_dest = "";
         allRelationships[d.id].push(rel);
