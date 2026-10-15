@@ -45,6 +45,12 @@ class CustomContactsViewList extends ContactsViewList
         parent::display();
 
         SticViews::display($this);
+
+        // Portal Actions popup (bulk invitation / password reset). Injected
+        // BEFORE SticUtils.js, which creates the list-view action button.
+        require_once 'SticInclude/Portal/PortalPopupUtils.php';
+        PortalPopupUtils::echoPortalActionsPopup('Contacts');
+
         echo getVersionedScript("custom/modules/Contacts/SticUtils.js");
         require_once('modules/stic_Messages/Utils.php');
         stic_MessagesUtils::echoIsMessagesModuleActive();

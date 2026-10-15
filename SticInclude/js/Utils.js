@@ -442,7 +442,9 @@ function getFormName() {
  * Get the view type
  */
 function viewType() {
-  if ($(".listViewBody").length == 1) {
+  // SuiteP variants may omit .listViewBody; the standard mass-update form is
+  // also a reliable marker for list views and keeps module list actions working.
+  if ($(".listViewBody").length == 1 || $("#MassUpdate").length == 1) {
     return "list";
   } else if ($(".sub-panel .quickcreate form").length == 1) {
     return "quickcreate";

@@ -114,6 +114,7 @@ $app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nova notificación por mensaxe elect
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_CONVERSATION_LABEL'] = 'Enviar mensaxe (conversación)';
 
 // Envío masivo de correos
+$app_strings['LBL_PORTAL_INVITATION_LIMIT_ALERT'] = 'Superouse o limite de invitacions.';
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'O envío só se aplicará aos rexistros da páxina actual. Para envíos masivos recoméndase utilizar o módulo Campañas.';
 
 // Campos de filtro en relaciones muchos a muchos
@@ -189,6 +190,7 @@ $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Formularios Web Avanzados';
 $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Procesos en espera de formularios';
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Notificacións externas de formularios';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversacións';
+$app_list_strings['moduleList']['stic_Portal_Login_Audit'] = 'Rexistro de auditoría de accesos ao portal';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persoa';
@@ -254,6 +256,7 @@ $app_list_strings['moduleListSingular']['stic_AWF_Forms'] = 'Formulario Web Avan
 $app_list_strings['moduleListSingular']['stic_AWF_Deferred_Tickets'] = 'Procesos en espera de formularios';
 $app_list_strings['moduleListSingular']['stic_AWF_Incoming_Events'] = 'Notificación externas de formularios';
 $app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversación';
+$app_list_strings['moduleListSingular']['stic_Portal_Login_Audit'] = 'Rexistro de auditoría de accesos ao portal';
 
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizacións';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persoas';

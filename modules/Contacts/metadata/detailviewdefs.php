@@ -496,6 +496,11 @@ array (
           'newTab' => false,
           'panelDefault' => 'expanded',
         ),
+        'LBL_STIC_PANEL_PORTAL_AUTHENTICATION' => 
+        array (
+          'newTab' => true, 
+          'panelDefault' => 'expanded'
+        ),
         'LBL_STIC_PANEL_RECORD_DETAILS' => 
         array (
           'newTab' => true,
@@ -1368,6 +1373,61 @@ array (
             ),
             'name' => 'inc_synchronization_log_c',
             'label' => 'LBL_INC_SYNCHRONIZATION_LOG',
+          ),
+        ),
+      ),
+      'LBL_STIC_PANEL_PORTAL_AUTHENTICATION' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array(
+            'name' => 'stic_portal_enabled_c',
+            'label'=>'LBL_STIC_PORTAL_ENABLED'
+          ),
+          1 => 
+          array(
+            'name'=>'stic_portal_username_c',
+            'label'=>'LBL_STIC_PORTAL_USERNAME'
+          ),
+        ),
+        1 => 
+        array (
+          0 => 
+          array(
+            'name'=>'stic_portal_last_login_c',
+            'label'=>'LBL_STIC_PORTAL_LAST_LOGIN'
+          ),
+          1 => 
+          array(
+            'name'=>'stic_portal_failed_attempts_c',
+            'label'=>'LBL_STIC_PORTAL_FAILED_ATTEMPTS'
+          ),
+        ),
+        2 => 
+        array (
+          0 => 
+          array(
+            'name'=>'stic_portal_locked_until_c',
+            'label'=>'LBL_STIC_PORTAL_LOCKED_UNTIL'
+          ),
+          1 => 
+          array(
+            'name'=>'stic_portal_force_pw_change_c',
+            'label'=>'LBL_STIC_PORTAL_FORCE_PW_CHANGE'
+          ),
+        ),
+        3 => 
+        array (
+          0 => 
+          array(
+            'name'=>'stic_portal_password_changed_c',
+            'label'=>'LBL_STIC_PORTAL_PASSWORD_CHANGED'
+          ),
+          1 => 
+          array(
+            'name'=>'stic_portal_password_expires_c',
+            'label'=>'LBL_STIC_PORTAL_PASSWORD_EXPIRES'
           ),
         ),
       ),

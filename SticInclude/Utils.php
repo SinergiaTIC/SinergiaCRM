@@ -299,7 +299,7 @@ EOQ;
     /**
      * Clean a string of characters that are not valid for NIF or CIF
      * This function is less accurate than cleanNIF since there are characters that are valid for CIF, but not for NIF, such as the letter U
-     * This function should only be used when it is not possible to determine if a CIF or NIF type identifier is being processed
+     * This function should only be used when it is not possible to determine if a CIF or NIF type identifier is being processed
      *
      * @param String NIF o CIF
      * @return String
