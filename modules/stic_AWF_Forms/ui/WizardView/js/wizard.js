@@ -2906,6 +2906,17 @@ class WizardStep4 {
           if (parentIsAccordion && !list.some(c => c.id === 'accordion_item')) list.push({ id: 'accordion_item', text: utils.translate('LBL_SECTION_CONTAINER_ACCORDION_ITEM') });
           return list.filter(c => validIds.includes(c.id));
         }
+        // An OPTIONAL, non-repeatable group whose content is a SINGLE section:
+        // tabs/accordion would render a lone tab/header (pointless), so the
+        // group only offers plain panel/card.
+        if (this.isGroupSection(section)) {
+          const group = this.getGroup(section);
+          const template = this.getGroupTemplate(section);
+          const contentSections = template ? (template.elements || []).filter(el => el.type === 'section') : [];
+          if (group && group.is_optional && !group.is_repeatable && contentSections.length === 1) {
+            return stic_AwfLayoutSection.containerType_in_formList().filter(c => ['panel', 'card'].includes(c.id));
+          }
+        }
         const validCategories = ['panel', 'card', 'card_tabs', 'panel_tabs', 'card_accordion', 'panel_accordion'];
         return stic_AwfLayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
       },

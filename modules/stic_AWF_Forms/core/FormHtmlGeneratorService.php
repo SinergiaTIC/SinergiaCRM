@@ -1381,6 +1381,16 @@ class FormHtmlGeneratorService {
         // Direct children only (subgroup heads will be rendered recursively)
         $children = $config->getGroupChildren($rootBlock);
 
+        // A single-block OPTIONAL, non-repeatable group (spec §1.35): the group
+        // container IS the only box — the internal "element" template card and
+        // the block's host card are suppressed, and the root block's fields
+        // render directly inside the group container.
+        $templateContentSections = ($templateSection !== null)
+            ? array_filter($templateSection->elements, fn ($el) => $el instanceof FormLayoutSection)
+            : [];
+        $singleBlockOptionalGroup = $isOptional && !$isRepeatable
+            && count($children) === 0 && count($templateContentSections) === 1;
+
         // Alpine initialization:
         // - Optional: start inactive with empty instances []
         // - Mandatory (repeatable or simple): start active with one instance [{id:0}]
@@ -1395,7 +1405,7 @@ class FormHtmlGeneratorService {
         // the hidden pane: the form silently refuses to send, with nothing the
         // user can see. Same contract as the regular tabs container: the pane
         // publishes its instance index and the owner of `activeTab` switches.
-        $paneActivation = "@invalid.capture=\"const paneEl = \$event.target.closest('[data-awf-pane]'); if (paneEl) activeTab = +paneEl.dataset.awfPane; const itemEl = \$event.target.closest('[data-awf-item]'); if (itemEl) openItem = +itemEl.dataset.awfItem\" @awf-show-pane=\"activeTab = +\$event.detail\"";
+        $paneActivation = "@invalid.capture=\"const gp = \$event.target.closest('[data-awf-group-pane]'); if (gp && gp.closest('.awf-group-container') === \$el) activeTab = +gp.dataset.awfGroupPane; const gi = \$event.target.closest('[data-awf-group-item]'); if (gi && gi.closest('.awf-group-container') === \$el) openItem = +gi.dataset.awfGroupItem\" @awf-show-group-pane=\"if (\$event.target.closest('.awf-group-container') === \$el) activeTab = +\$event.detail\" @awf-show-group-item=\"if (\$event.target.closest('.awf-group-container') === \$el) openItem = +\$event.detail\"";
         $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0, openItem: 0 }\" {$paneActivation}>" . $this->newLine('+');
         {
             // The group section's header (title/subtitle) is rendered by the
@@ -1471,7 +1481,7 @@ class FormHtmlGeneratorService {
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $tabsHtml .= "<div class='tab-pane' x-data=\"{ {$instanceVar}: index }\" :data-awf-pane='index' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
+                            $tabsHtml .= "<div class='tab-pane' x-data=\"{ {$instanceVar}: index }\" :data-awf-group-pane='index' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
                             {
                                 // The pane content is boxed in the SAME card a
                                 // plain tab pane uses, with the subtitle as the
@@ -1597,7 +1607,7 @@ class FormHtmlGeneratorService {
                     {
                         $accHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $accHtml .= "<div class='awf-accordion-item' :data-awf-item='index'>" . $this->newLine('+');
+                            $accHtml .= "<div class='awf-accordion-item' :data-awf-group-item='index'>" . $this->newLine('+');
                             {
                                 $accHtml .= "<div class='awf-accordion-header' :class=\"openItem === index ? 'is-open' : ''\" @click=\"openItem = (openItem === index ? null : index)\" style='cursor: pointer;'>" . $this->newLine('+');
                                 {
@@ -1765,6 +1775,37 @@ class FormHtmlGeneratorService {
                     $groupShowAttr = $isCollapsibleGroup ? "id='{$groupBodyId}' x-show='open' x-transition" : "";
                     $html .= "<div class='card-body' {$groupShowAttr}>" . $this->newLine('+');
                     {
+                    if ($singleBlockOptionalGroup) {
+                        // Single-block optional group (spec §1.35): the group
+                        // container is the ONLY box for the root block — the
+                        // internal "element" template card and the block's host
+                        // card are suppressed, so the root fields render directly.
+                        // The single content section renders CHROME-LESS (not
+                        // `renderBlockInstanceFields`) so its NESTED subsections
+                        // (user structure inside the host) are still rendered with
+                        // their own chrome instead of being dropped.
+                        //
+                        // The `x-for` + `x-data` bridge is kept (even though the
+                        // group holds a single instance): it HIDES the content
+                        // while the optional group is inactive AND defines the
+                        // instance index variable the fields reference. Dropping
+                        // it left the fields with an undefined idx_lN (Alpine
+                        // "idx_lN is not defined") when the group was nested.
+                        $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
+                        {
+                            $html .= "<div x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                            {
+                                $contentSection = reset($templateContentSections);
+                                if ($contentSection instanceof FormLayoutSection) {
+                                    $html .= $this->renderSectionNode($contentSection, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars, false);
+                                } else {
+                                    $html .= $this->renderBlockInstanceFields($rootBlock, $theme, $instanceVar, $contentOuterVars);
+                                }
+                            }
+                            $html .= "</div>" . $this->newLine('-');
+                        }
+                        $html .= "</template>" . $this->newLine('-');
+                    } else {
                     // Per-instance chrome: the element TEMPLATE's own card IS the
                     // instance card — the header shows the instance title
                     // ("Template #N"), and the template's flavor (panel/card) and
@@ -1888,6 +1929,7 @@ class FormHtmlGeneratorService {
                     }
                     $html .= "</button>" . $this->newLine('-');
                 }
+                    } // end single-block-optional-group else
                     }
                     $html .= "</div>" . $this->newLine('-');
                 }
@@ -2049,6 +2091,11 @@ class FormHtmlGeneratorService {
             if ($el instanceof FormLayoutSection) {
                 if (!self::sectionIsDedicatedBlockHost($el, $blockId)) return false;
             } elseif ($el instanceof FormLayoutElement) {
+                // Unbundled FIELD fragments are not block chrome: a section that
+                // mixes a whole block with loose fields of OTHER blocks still
+                // renders the whole block fields-only (no panel/title/column),
+                // so only a WHOLE block of a different block disqualifies.
+                if ($el->type === 'field') continue;
                 if ($el->ref_id !== $blockId) return false;
             }
         }
@@ -2248,7 +2295,7 @@ class FormHtmlGeneratorService {
                 $fileKeyTemplate = $filePrefix . $field->data_block->name . $idIndexPart . $field->name;
             }
             $fileIdTemplate = $isInstance ? $inputKeyForId : null;
-            return $this->generateFileField($field, $theme, $fileKeyTemplate, $fileIdTemplate) .$this->newLine();
+            return $this->generateFileField($field, $theme, $fileKeyTemplate, $fileIdTemplate, $layoutClasses) .$this->newLine();
         }
 
         // --- COMMON CASES ---
@@ -2409,7 +2456,7 @@ class FormHtmlGeneratorService {
      * @param ?string $instanceIdTemplate Instance DOM-id template (Alpine expression),
      *        null for scalar fields
      */
-    private function generateFileField(FormDataBlockField $field, FormTheme $theme, ?string $instanceKeyTemplate = null, ?string $instanceIdTemplate = null): string {
+    private function generateFileField(FormDataBlockField $field, FormTheme $theme, ?string $instanceKeyTemplate = null, ?string $instanceIdTemplate = null, string $layoutClasses = ''): string {
         $inputName = $field->getKey();
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
@@ -2476,7 +2523,7 @@ class FormHtmlGeneratorService {
             $ariaDescribedBy = "aria-describedby='{$helpId}'";
         }
 
-        $html = "<div class='awf-field' x-data='awfFileField()'>" .$this->newLine('+');
+        $html = "<div class='awf-field {$layoutClasses}' x-data='awfFileField()'>" .$this->newLine('+');
         {
             if (!$isFloating) {
                 $html .= "<label {$fileLabelAttr} class='form-label'>{$label} {$asterisk}</label>" . $this->newLine();
@@ -2942,6 +2989,17 @@ document.addEventListener('alpine:init', () => {
       const paneEl = input.closest('[data-awf-pane]');
       if (paneEl) {
         paneEl.dispatchEvent(new CustomEvent('awf-show-pane', { bubbles: true, detail: paneEl.dataset.awfPane }));
+      }
+      // Group instance pane/item (a repeatable/optional group rendered as
+      // tabs/accordion): a DISTINCT event so an OUTER group does not react to a
+      // nested group's pane — the listener also checks it owns the container.
+      const groupPaneEl = input.closest('[data-awf-group-pane]');
+      if (groupPaneEl) {
+        groupPaneEl.dispatchEvent(new CustomEvent('awf-show-group-pane', { bubbles: true, detail: groupPaneEl.dataset.awfGroupPane }));
+      }
+      const groupItemEl = input.closest('[data-awf-group-item]');
+      if (groupItemEl) {
+        groupItemEl.dispatchEvent(new CustomEvent('awf-show-group-item', { bubbles: true, detail: groupItemEl.dataset.awfGroupItem }));
       }
       if (window.Alpine && window.Alpine.nextTick) {
         window.Alpine.nextTick(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }));
