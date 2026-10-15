@@ -70,6 +70,26 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * A SERVER-DATA OPTIONAL group (spec §1.36): an optional, non-repeatable
+     * group whose whole subtree draws NO input (all its fields are FIXED/hidden
+     * or the data is server-resolved) but which has at least one field. It
+     * renders as a SINGLE activation switch — no section title and no body — so
+     * the user can choose to include the server-side record (e.g. "include
+     * registration to the assembly", whose data is a fixed event plus the
+     * relation to the answer). Never repeatable: N instances of an input-less
+     * group would be indistinguishable.
+     */
+    private static function isServerDataOptionalGroup(FormDataBlock $rootBlock, FormConfig $config): bool {
+        if (!$rootBlock->isOptional() || $rootBlock->isRepeatable()) return false;
+        $groupBlocks = array_merge([$rootBlock], $config->getGroupDescendants($rootBlock));
+        if (self::groupHasRenderableFields($groupBlocks)) return false;
+        foreach ($groupBlocks as $b) {
+            if (!empty($b->fields)) return true;
+        }
+        return false;
+    }
+
+    /**
      * Generates the full HTML document (doctype, head, body).
      * For standalone or iframe views.
      * If you want to generate only the form HTML (for embedding in other pages), use the generateFormHtml method instead, 
@@ -545,7 +565,9 @@ class FormHtmlGeneratorService {
 
         if ($groupRootBlock) {
             $groupBlocks = array_merge([$groupRootBlock], $config->getGroupDescendants($groupRootBlock));
-            if (!self::groupHasRenderableFields($groupBlocks)) return '';
+            // A server-data optional group has no visible field but still
+            // renders (its activation switch): never drop it here.
+            if (!self::groupHasRenderableFields($groupBlocks) && !self::isServerDataOptionalGroup($groupRootBlock, $config)) return '';
         } elseif (!self::sectionHasRenderableContent($section, $config, $currentGroupRootId)) {
             return '';
         }
@@ -1185,7 +1207,7 @@ class FormHtmlGeneratorService {
         if (!empty($blockChildren)) {
             $descendants = $config->getGroupDescendants($block);
             $groupBlocks = array_merge([$block], $descendants);
-            return self::groupHasRenderableFields($groupBlocks);
+            return self::groupHasRenderableFields($groupBlocks) || self::isServerDataOptionalGroup($block, $config);
         }
 
         return self::blockHasRenderableFields($block);
@@ -1217,7 +1239,7 @@ class FormHtmlGeneratorService {
             $rootBlock = self::resolveGroupRootBlock($config, $section->groupRootBlockId);
             if (!$rootBlock) return false;
             $groupBlocks = array_merge([$rootBlock], $config->getGroupDescendants($rootBlock));
-            return self::groupHasRenderableFields($groupBlocks);
+            return self::groupHasRenderableFields($groupBlocks) || self::isServerDataOptionalGroup($rootBlock, $config);
         }
         foreach ($section->elements as $childNode) {
             if ($childNode instanceof FormLayoutSection) {
@@ -1309,6 +1331,126 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * Renders the OPTIONAL group activation switch (a checkbox that posts the
+     * `_toggle_{BlockName}` signal the server reads to decide whether to persist
+     * the block). Inside an enclosing repeatable loop the signal name and the
+     * DOM id/for are indexed by the enclosing loop variables, so each repetition
+     * gets its own switch (a static id would make every label toggle the first
+     * repetition's switch).
+     *
+     * @param FormDataBlock $rootBlock The optional group root block
+     * @param string $toggleLabel The already-escaped switch label
+     * @param array $contentOuterVars Alpine variables of the enclosing loops, outer to inner
+     * @return string The switch HTML
+     */
+    private function renderOptionalToggleSwitch(FormDataBlock $rootBlock, string $toggleLabel, array $contentOuterVars): string {
+        $toggleSignalName = '_toggle_' . $rootBlock->name;
+        if (!empty($contentOuterVars)) {
+            $indexedSignalName = $toggleSignalName;
+            $switchIdExpr = "'switch_{$rootBlock->id}'";
+            foreach ($contentOuterVars as $outerVar) {
+                $indexedSignalName .= "[' + {$outerVar} + ']";
+                $switchIdExpr .= " + '_' + {$outerVar}";
+            }
+            $switchNameAttr = ":name=\"'{$indexedSignalName}'\"";
+            $switchIdAttr = ":id=\"{$switchIdExpr}\"";
+            $switchForAttr = ":for=\"{$switchIdExpr}\"";
+        } else {
+            $switchNameAttr = "name='{$toggleSignalName}'";
+            $switchIdAttr = "id='switch_{$rootBlock->id}'";
+            $switchForAttr = "for='switch_{$rootBlock->id}'";
+        }
+        $html = "<div class='form-check form-switch mb-3'>" . $this->newLine('+');
+        {
+            $html .= "<input class='form-check-input' type='checkbox' role='switch' {$switchIdAttr} {$switchNameAttr} value='1' x-model='active' " .
+                    "@change=\"if (!active) { instances = []; } else if (instances.length === 0) { instances.push({ id: nextInstanceId++ }); }\">" . $this->newLine();
+            $html .= "<label class='form-check-label mb-0' {$switchForAttr}>{$toggleLabel}</label>" . $this->newLine();
+        }
+        $html .= "</div>" . $this->newLine('-');
+        return $html;
+    }
+
+    /**
+     * Renders a SERVER-DATA optional group (spec §1.36) as a SINGLE activation
+     * switch: no section title, no card frame and no body. When the user turns
+     * it on, the server persists the block's server-resolved data (FIXED fields,
+     * relations); when off, nothing is sent.
+     *
+     * @param FormDataBlock $rootBlock The optional group root block
+     * @param ?FormLayoutSection $section The layout section (source of the label)
+     * @param array $contentOuterVars Alpine variables of the enclosing loops, outer to inner
+     * @return string The switch-only HTML
+     */
+    private function renderServerDataOptionalGroup(FormDataBlock $rootBlock, ?FormLayoutSection $section, array $contentOuterVars, FormConfig $config, FormTheme $theme): string {
+        $sectionTitle = ($section && $section->title !== '') ? $section->title : ($rootBlock->group_title ?: $rootBlock->text);
+        $toggleLabel = htmlspecialchars(($section && $section->toggle_label !== '') ? $section->toggle_label : (translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $sectionTitle), ENT_QUOTES, 'UTF-8');
+        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: false, nextInstanceId: 1, instances: [] }\">" . $this->newLine('+');
+        {
+            $html .= $this->renderOptionalToggleSwitch($rootBlock, $toggleLabel, $contentOuterVars);
+            // Instance materialization: the server discovers group instances from
+            // the submitted Block matrix (`resolveInstances`). A server-data group
+            // submits no visible field, so without a hidden input the switch alone
+            // would resolve ZERO instances and nothing would persist. Emit the
+            // block's HIDDEN (non-fixed) fields (their values create the instance)
+            // plus, for FIXED-only groups, a marker. FIXED fields need no input
+            // (resolved from configuration). The single instance uses the static
+            // index 0 at the group's own level (no x-for loop here).
+            $groupBlocks = array_merge([$rootBlock], $config->getGroupDescendants($rootBlock));
+            $hasHidden = false;
+            foreach ($groupBlocks as $b) {
+                foreach ($b->fields as $fieldDef) {
+                    if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+                    if ($fieldDef->type_in_form !== 'hidden') continue;
+                    $hasHidden = true;
+                    $html .= $this->renderServerDataHiddenField($b, $fieldDef, $contentOuterVars);
+                }
+            }
+            if (!$hasHidden) {
+                $html .= $this->renderServerDataMarker($rootBlock, $contentOuterVars);
+            }
+        }
+        $html .= "</div>" . $this->newLine('-');
+        return $html;
+    }
+
+    /**
+     * Renders a HIDDEN (non-fixed) field of a server-data group as a hidden
+     * input, indexed with the static single-instance index 0 at the group's own
+     * level (plus the dynamic enclosing loop variables when nested). Its
+     * submitted value materializes the instance server-side.
+     */
+    private function renderServerDataHiddenField(FormDataBlock $block, FormDataBlockField $field, array $contentOuterVars): string {
+        $val = htmlspecialchars($field->value ?? '', ENT_QUOTES, 'UTF-8');
+        $fieldName = $field->name;
+        if (empty($contentOuterVars)) {
+            $nameAttr = "name='{$block->name}[0][{$fieldName}]'";
+            $idAttr = "id='f_{$block->name}_0_{$fieldName}'";
+        } else {
+            $idxExpr = "'{$block->name}[' + " . implode(" + '][' + ", $contentOuterVars) . " + '][0][{$fieldName}]'";
+            $nameAttr = ":name=\"{$idxExpr}\"";
+            $idExpr = "'f_{$block->name}_' + " . implode(" + '_' + ", $contentOuterVars) . " + '_0_{$fieldName}'";
+            $idAttr = ":id=\"{$idExpr}\"";
+        }
+        return "<input type='hidden' {$nameAttr} {$idAttr} value='{$val}'>" . $this->newLine();
+    }
+
+    /**
+     * Renders the instance marker of a FIXED-only server-data group: a hidden
+     * input that materializes the single instance (index 0) server-side. The
+     * resolver ignores the unknown field; the FIXED data is resolved from
+     * configuration and persisted when the switch is on.
+     */
+    private function renderServerDataMarker(FormDataBlock $rootBlock, array $contentOuterVars): string {
+        if (empty($contentOuterVars)) {
+            $nameAttr = "name='{$rootBlock->name}[0][_awf_server_data]'";
+        } else {
+            $idxExpr = "'{$rootBlock->name}[' + " . implode(" + '][' + ", $contentOuterVars) . " + '][0][_awf_server_data]'";
+            $nameAttr = ":name=\"{$idxExpr}\"";
+        }
+        return "<input type='hidden' {$nameAttr} value='1'>" . $this->newLine();
+    }
+
+    /**
      * Renders a group for a root data block. Handles three group types:
      * - Repeatable (max > 1): x-for loop with add/remove buttons
      * - Optional (min = 0, max = 1): master switch + single instance
@@ -1381,6 +1523,15 @@ class FormHtmlGeneratorService {
         // Direct children only (subgroup heads will be rendered recursively)
         $children = $config->getGroupChildren($rootBlock);
 
+        // A SERVER-DATA optional group (spec §1.36): the whole subtree draws no
+        // input, but the group has server-resolved fields. It renders as a
+        // SINGLE activation switch (no section title, no body); turning it on
+        // persists the server-side record. Checked BEFORE the single-block case
+        // so a lone server-data content section still collapses to the switch.
+        if (self::isServerDataOptionalGroup($rootBlock, $config)) {
+            return $this->renderServerDataOptionalGroup($rootBlock, $section, $contentOuterVars, $config, $theme);
+        }
+
         // A single-block OPTIONAL, non-repeatable group (spec §1.35): the group
         // container IS the only box — the internal "element" template card and
         // the block's host card are suppressed, and the root block's fields
@@ -1417,36 +1568,7 @@ class FormHtmlGeneratorService {
             // scalar for a top-level optional group, indexed by the enclosing loop
             // variables for optional subgroups rendered inside a repeatable loop.
             if ($isOptional) {
-                $toggleSignalName = '_toggle_' . $rootBlock->name;
-                // The switch renders inside the ENCLOSING repeatable loops (for a
-                // depth-2 subgroup: inside the parent group's loop), so the signal
-                // is indexed by the enclosing loop variables ($contentOuterVars).
-                // The DOM id/for must follow the same rule: a STATIC id repeats
-                // once per parent instance and duplicate ids make every label
-                // toggle the FIRST repetition's switch (the browser resolves
-                // `for` to the first matching id in the document).
-                if (!empty($contentOuterVars)) {
-                    $indexedSignalName = $toggleSignalName;
-                    $switchIdExpr = "'switch_{$rootBlock->id}'";
-                    foreach ($contentOuterVars as $outerVar) {
-                        $indexedSignalName .= "[' + {$outerVar} + ']";
-                        $switchIdExpr .= " + '_' + {$outerVar}";
-                    }
-                    $switchNameAttr = ":name=\"'{$indexedSignalName}'\"";
-                    $switchIdAttr = ":id=\"{$switchIdExpr}\"";
-                    $switchForAttr = ":for=\"{$switchIdExpr}\"";
-                } else {
-                    $switchNameAttr = "name='{$toggleSignalName}'";
-                    $switchIdAttr = "id='switch_{$rootBlock->id}'";
-                    $switchForAttr = "for='switch_{$rootBlock->id}'";
-                }
-                $html .= "<div class='form-check form-switch mb-3'>" . $this->newLine('+');
-                {
-                    $html .= "<input class='form-check-input' type='checkbox' role='switch' {$switchIdAttr} {$switchNameAttr} value='1' x-model='active' " .
-                            "@change=\"if (!active) { instances = []; } else if (instances.length === 0) { instances.push({ id: nextInstanceId++ }); }\">" . $this->newLine();
-                    $html .= "<label class='form-check-label mb-0' {$switchForAttr}>{$toggleLabel}</label>" . $this->newLine();
-                }
-                $html .= "</div>" . $this->newLine('-');
+                $html .= $this->renderOptionalToggleSwitch($rootBlock, $toggleLabel, $contentOuterVars);
             }
 
             // 2. Instance Loop (visible if active)

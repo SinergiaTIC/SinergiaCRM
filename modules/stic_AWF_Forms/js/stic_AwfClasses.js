@@ -365,16 +365,32 @@ class stic_AwfDataBlock {
   }
 
   /**
+   * Whether the whole DEPENDENCY TREE has at least one field of ANY kind
+   * (including FIXED/hidden/server-only fields). A block whose fields are all
+   * server-resolved draws no input but still carries data (a fixed event, a
+   * relation to the answer): it can legitimately be OPTIONAL so the form offers
+   * a switch ("include registration to the assembly") that, when on, persists
+   * the server-side record. Never repeatable: N instances of an input-less
+   * group would be indistinguishable.
+   */
+  hasAnyFieldsInTree(allDataBlocks) {
+    if ((this.fields || []).length > 0) return true;
+    const tree = [...this.getDescendants(allDataBlocks), ...this.getRelationalDescendants(allDataBlocks)];
+    return tree.some(b => (b.fields || []).length > 0);
+  }
+
+  /**
    * Checks if this DataBlock can be configured as optional (min_instances = 0).
    * @param {stic_AwfDataBlock[]} allDataBlocks 
    * @returns {boolean}
    */
   canBeOptional(allDataBlocks) {
-    // A block whose whole dependency tree renders NO visible form field can
-    // never be optional: the optional activation model falls back to a real
-    // form field being filled, and a group that draws no input could never
-    // be activated that way
-    if (!this.hasVisibleFormFieldsInTree(allDataBlocks)) return false;
+    // A block whose whole dependency tree draws NO input can be optional only
+    // when it is a SERVER-DATA block (all its fields are FIXED/hidden, or its
+    // data is server-resolved): the explicit activation switch persists the
+    // server-side record. A tree with NO fields at all is not optional: there
+    // would be nothing to persist and nothing to switch on.
+    if (!this.hasVisibleFormFieldsInTree(allDataBlocks) && !this.hasAnyFieldsInTree(allDataBlocks)) return false;
 
     // System required blocks can never be optional
     if (this.required) return false;
@@ -1746,7 +1762,14 @@ class stic_AwfLayout {
     this.structure.forEach(s => repairCycles(s, new Set()));
 
     const hasRenderableFields = (blk) => blk.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
-    const isRenderable = (block) => hasRenderableFields(block) || block.getDescendants(dataBlocks).some(hasRenderableFields);
+    // A SERVER-DATA OPTIONAL block (no visible field anywhere in its tree, but
+    // it has fields and is optional) is kept in the layout: its section hosts
+    // the activation switch and, when on, the server persists the record.
+    const isServerDataOptional = (block) => block.is_optional
+      && (block.fields.length > 0 || block.getDescendants(dataBlocks).some(b => b.fields.length > 0));
+    const isRenderable = (block) => hasRenderableFields(block)
+      || block.getDescendants(dataBlocks).some(hasRenderableFields)
+      || isServerDataOptional(block);
     const isGroupHead = (block) => block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
     // Top-level root of a block, walking the whole group_root chain (order-independent)
     const topRootIdOf = (block, seen = new Set()) => {
@@ -4110,7 +4133,9 @@ class stic_AwfConfiguration {
 
     if (isOptional) {
       // Choke-point guard (the UI disables the switch, but the mutator must
-      // validate too): a block with no visible form field can never be optional
+      // validate too): a block with NO field at all can never be optional. A
+      // SERVER-DATA block (all fields FIXED/hidden) CAN: the switch persists
+      // the server-side record (§1.36).
       if (!block.canBeOptional(this.data_blocks)) return;
       block.min_instances = 0;
 
@@ -4898,6 +4923,26 @@ class stic_AwfConfiguration {
       if (ka === kb) return (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0);
       return ka < kb ? -1 : 1; // empty branch key ('') groups scalar auto-actions first
     });
+
+    // Branch clustering must NEVER break a topological dependency: a
+    // cross-branch Relate (depending on Saves in two branches) would otherwise
+    // run before one of them ("has no ID. Check Action Order"). If the
+    // clustered order violates any requisite edge, keep the pure topological
+    // order (correctness first; contiguity is best-effort).
+    const autoPos = new Map(autoActions.map((a, i) => [a.id, i]));
+    let branchOrderValid = true;
+    for (const a of autoActions) {
+      for (const reqId of (a.requisite_actions || [])) {
+        if (autoPos.has(reqId) && autoPos.get(reqId) > autoPos.get(a.id)) {
+          branchOrderValid = false;
+          break;
+        }
+      }
+      if (!branchOrderValid) break;
+    }
+    if (!branchOrderValid) {
+      autoActions.sort((a, b) => (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0));
+    }
 
     flow.actions = [...preAutoActions, ...autoActions, ...manualActions, ...terminalActions];
 
