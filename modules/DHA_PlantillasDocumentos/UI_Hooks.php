@@ -425,10 +425,17 @@ EOHTML;
       }
       else {
       
-         if ($enabled) {
-            $action_array = MailMergeReports_after_ui_frame_hook_get_action_array ($module_name);
-            remove_logic_hook($module_name, 'after_ui_frame', $action_array);
-         }
+          if ($enabled) {
+             $action_array = MailMergeReports_after_ui_frame_hook_get_action_array ($module_name);
+             remove_logic_hook($module_name, 'after_ui_frame', $action_array);
+             
+             // STIC Custom 20261015 - Force OPcache to serve the regenerated logic_hooks.php immediately
+             // (on hosts where opcache.restrict_api blocks opcache_invalidate, the stale window
+             // would keep serving the old file for ~opcache.revalidate_freq seconds)
+             require_once 'SticInclude/Utils.php';
+             SticUtils::refreshPhpFilesInOpcache("custom/modules/{$module_name}/logic_hooks.php");
+             // END STIC Custom 20261015
+          }
          
          $hook_file = "custom/modules/{$module_name}/DHA_DocumentTemplatesHooks.php";
          if (file_exists($hook_file)) {
@@ -531,11 +538,18 @@ EOHTML;
 
          $OK = sugar_file_put_contents_atomic($hook_file, $code);  // ver tambien write_array_to_file y sugar_file_put_contents
          
-         // Si todo ha ido bien, instalamos el hook
-         if ($OK) {
-            $action_array = MailMergeReports_after_ui_frame_hook_get_action_array ($module_name);
-            check_logic_hook_file($module_name, 'after_ui_frame', $action_array);
-         }
+          // Si todo ha ido bien, instalamos el hook
+          if ($OK) {
+             $action_array = MailMergeReports_after_ui_frame_hook_get_action_array ($module_name);
+             check_logic_hook_file($module_name, 'after_ui_frame', $action_array);
+             
+             // STIC Custom 20261015 - Force OPcache to serve the regenerated logic_hooks.php immediately
+             // (on hosts where opcache.restrict_api blocks opcache_invalidate, the stale window
+             // would keep serving the old file for ~opcache.revalidate_freq seconds)
+             require_once 'SticInclude/Utils.php';
+             SticUtils::refreshPhpFilesInOpcache("custom/modules/{$module_name}/logic_hooks.php");
+             // END STIC Custom 20261015
+          }
       }
       
       if ($repair) {
