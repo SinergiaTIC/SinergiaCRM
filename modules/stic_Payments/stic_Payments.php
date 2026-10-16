@@ -147,7 +147,7 @@ class stic_Payments extends Basic
 
 
         // Call the generic save() function from the SugarBean class
-        parent::save();
+        parent::save($check_notify);
 
 
         if (isset($PCBean) && isset($userDate)) {
