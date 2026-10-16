@@ -70,4 +70,52 @@ class CustomUsersController extends UsersController
             die('Failed to stop impersonation.');
         }
     }
+
+    /**
+    * Action to manually unlock a user account by an admin user
+    * This is used when the automatic unlock period has not yet expired but an admin wants to unlock the user immediately
+    */
+    public function action_unlockuser()
+    {
+        global $current_user;
+        $record = $_REQUEST['record'] ?? '';
+
+        if (!is_admin($current_user) || empty($record)) {
+            SugarApplication::redirect('index.php?module=Users&record=' . $record . '&action=DetailView');
+            return;
+        }
+
+        $user = BeanFactory::newBean('Users');
+        $user->retrieve($record);
+        if (empty($user->id)) {
+            SugarApplication::redirect('index.php?module=Users&action=index');
+            return;
+        }
+
+        $db = DBManagerFactory::getInstance();
+        $userId = $db->quote($user->id);
+
+        // Load existing preferences to preserve non-lockout settings
+        $result = $db->query("SELECT contents FROM user_preferences WHERE assigned_user_id = '{$userId}' AND category = 'global' AND deleted = 0");
+        $row = $db->fetchByAssoc($result);
+        $prefs = $row ? unserialize(base64_decode($row['contents'])) : [];
+
+        // Clear lockout-related keys
+        unset($prefs['user_locked_out'], $prefs['user_locked_out_time'], $prefs['lockout'], $prefs['loginfailed']);
+
+        // Persist updated preferences
+        $encoded = base64_encode(serialize($prefs));
+        $db->query("DELETE FROM user_preferences WHERE assigned_user_id = '{$userId}' AND category = 'global'");
+        $db->query("INSERT INTO user_preferences (id, assigned_user_id, category, contents, deleted) VALUES ('{$userId}-global', '{$userId}', 'global', '{$encoded}', 0)");
+
+        // Clear session cache for this user's preferences
+        $prefKey = $user->user_name . '_PREFERENCES';
+        if (isset($_SESSION[$prefKey]['global'])) {
+            $_SESSION[$prefKey]['global'] = $prefs;
+        }
+
+        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ') ### User ' . $user->user_name . ' unlocked manually ###');
+
+        return;
+    }
 }
