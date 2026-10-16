@@ -49,9 +49,12 @@ if (empty($GLOBALS["SticTabStructure"])) {
                     'id' => 'stic_Accounts_Relationships',
                 ),
                 4 => array(
-                    'id' => 'Leads',
+                    'id' => 'stic_Organizational_Environment',
                 ),
                 5 => array(
+                    'id' => 'Leads',
+                ),
+                6 => array(
                     'id' => 'Project',
                 ),
             ),
