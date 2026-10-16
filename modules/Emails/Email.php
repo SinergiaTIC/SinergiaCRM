@@ -3404,7 +3404,7 @@ class Email extends Basic
 
         if ($return_array) {
             // STIC-Custom 20261016 ART - Map non-db email address fields to emails_text columns
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1458
             // return parent::create_new_list_query(
             $ret_array = parent::create_new_list_query(
             // END STIC-Custom
@@ -3419,7 +3419,7 @@ class Email extends Basic
                 $singleSelect
             );
             // STIC-Custom 20261016 ART - Map non-db email address fields (from_addr_name,to_addrs_names, cc_addrs_names, bcc_addrs_names, reply_to_addr) to their physical emails_text columns so ordering and filtering by them works in list views
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1458
             return $this->mapEmailAddressFieldsInQueryArray($ret_array);
             // END STIC-Custom
         }
@@ -3461,7 +3461,7 @@ class Email extends Basic
         }
 
         // STIC-Custom 20261016 ART - Map non-db email address fields to emails_text columns
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1458
         $query = $this->mapEmailAddressFieldsInQueryString($query);
         // END STIC-Custom
 
@@ -3470,7 +3470,7 @@ class Email extends Basic
 
 
     // STIC-Custom 20261016 ART - Map non-db email address fields (from_addr_name,to_addrs_names, cc_addrs_names, bcc_addrs_names, reply_to_addr) to their physical emails_text columns so ordering and filtering by them works in list views
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1458
     /**
      * Map from Email non-db address fields to their physical emails_text columns
      *
@@ -3716,6 +3716,7 @@ class Email extends Basic
         }
 
         // STIC-Custom 20261016 ART - Map non-db email address fields to emails_text columns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1458
         $query = $this->mapEmailAddressFieldsInQueryString($query);
         // END STIC-Custom
 
