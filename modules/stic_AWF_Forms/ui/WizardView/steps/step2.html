@@ -562,13 +562,12 @@
                                 <label class="form-label" for="toggleInternalValues" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW_NAME')"></label>
                               </div>
                               <div class="d-flex flex-wrap gap-2 mb-2">
-                                <template x-if="!field.isSelectCustomOptions()">
-                                  <button type="button" class="btn btn-sm btn-outline-secondary" @click="setAllVisible(!allVisible)" x-text="allVisible ? utils.translate('LBL_FIELD_VALUE_OPTIONS_HIDE_ALL') : utils.translate('LBL_FIELD_VALUE_OPTIONS_SHOW_ALL')"></button>
-                                </template>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="sortAlphabetically()" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_SORT_AZ')"></button>
-                                <template x-if="!field.isSelectCustomOptions()">
-                                  <button type="button" class="btn btn-sm btn-outline-secondary" @click="moveVisibleToTop()" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_VISIBLE_FIRST')"></button>
-                                </template>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="setAllVisible(true)" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_SHOW_ALL')"></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="setAllVisible(false)" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_HIDE_ALL')"></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="setSubsetVisible(true, true)" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_SHOW_FILTERED')"></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="setSubsetVisible(true, false)" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_HIDE_FILTERED')"></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="setSubsetVisible(false, true)" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_SHOW_UNFILTERED')"></button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="setSubsetVisible(false, false)" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_HIDE_UNFILTERED')"></button>
                               </div>
                               <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
                                 <div class="input-group input-group-sm" style="max-width:320px;">
@@ -578,6 +577,26 @@
                                   </button>
                                 </div>
                                 <span class="text-muted small" x-show="(searchText || '').trim() !== ''" x-text="filteredCount + ' / ' + items.length"></span>
+                              </div>
+                              <div class="d-flex justify-content-end align-items-center gap-1 mb-2" x-show="filteredItems.length > 0">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="page <= 1" @click="goToPage(1)">
+                                  <span class="suitepicon suitepicon-action-first"></span>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="page <= 1" @click="goToPage(page - 1)">
+                                  <span class="suitepicon suitepicon-action-left"></span>
+                                </button>
+                                <span class="small mx-1" x-text="pageInfoText"></span>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="page >= totalPages" @click="goToPage(page + 1)">
+                                  <span class="suitepicon suitepicon-action-right"></span>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="page >= totalPages" @click="goToPage(totalPages)">
+                                  <span class="suitepicon suitepicon-action-last"></span>
+                                </button>
+                                <select class="form-select form-select-sm" style="width:auto;" x-model="pageSize" @change="setPageSize($el.value)">
+                                  <option value="10">10</option>
+                                  <option value="20">20</option>
+                                  <option value="50">50</option>
+                                </select>
                               </div>
                               <table class="table table-bordered table-striped w-auto" id="modalField_ValueOptionsTable">
                                 <thead>
@@ -594,46 +613,46 @@
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <template x-for="(element, index) in items">
-                                    <tr x-show="matchesSearch(element)">
+                                  <template x-for="row in pagedItems" :key="row.option.value + '_' + row.realIndex">
+                                    <tr>
                                       <!-- Value -->
                                       <template x-if="!field.isSelectCustomOptions()">
-                                        <td x-show="showInternalValues" x-html="highlightSearch(element.value)"></td>
+                                        <td x-show="showInternalValues" x-html="highlightSearch(row.option.value)"></td>
                                       </template>
                                       <template x-if="field.isSelectCustomOptions()">
                                         <td x-show="showInternalValues">
-                                          <input class="form-control" type="text" x-model="element.value" :id="`modalField_ValueOptionsValue${index}`" :placeholder="element.text"/>
+                                          <input class="form-control" type="text" x-model="row.option.value" :id="`modalField_ValueOptionsValue${row.realIndex}`" :placeholder="row.option.text"/>
                                         </td>
                                       </template>
                                       <!-- Text original -->
                                       <template x-if="!field.isSelectCustomOptions()">
-                                        <td x-html="highlightSearch(element.text_original)"></td>
+                                        <td x-html="highlightSearch(row.option.text_original)"></td>
                                       </template>
                                       <!-- Is Visible -->
                                       <template x-if="!field.isSelectCustomOptions()">
                                         <td>
                                           <div class="form-switch">
-                                            <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="element.is_visible" :id="`modalField_ValueOptionsInclude${index}`"/>
+                                            <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="row.option.is_visible" :id="`modalField_ValueOptionsInclude${row.realIndex}`"/>
                                           </div>
                                         </td>
                                       </template>
                                       <!-- Text -->
                                       <td>
-                                        <input class="form-control" type="text" x-model="element.text" :id="`modalField_ValueOptionsText${index}`"
-                                              @change="if (field.isSelectCustomOptions() && (!element.value || element.value.trim() === '')) { element.value = element.text; }" />
+                                        <input class="form-control" type="text" x-model="row.option.text" :id="`modalField_ValueOptionsText${row.realIndex}`"
+                                              @change="if (field.isSelectCustomOptions() && (!row.option.value || row.option.value.trim() === '')) { row.option.value = row.option.text; }" />
                                       </td>
                                       <!-- Buttons -->
                                       <td class="d-flex">
                                         <div class="input-group">
-                                          <button type="button" class="btn" :disabled="index === 0" @click="moveUp(index)" :title="utils.translate('LBL_BUTTON_MOVE_UP')">
+                                          <button type="button" class="btn" :disabled="row.realIndex === 0" @click="moveUp(row.realIndex)" :title="utils.translate('LBL_BUTTON_MOVE_UP')">
                                             <span class="suitepicon suitepicon-action-move-up"></span>
                                           </button>
-                                          <button type="button" class="btn" :disabled="index === items.length - 1" @click="moveDown(index)" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
+                                          <button type="button" class="btn" :disabled="row.realIndex === items.length - 1" @click="moveDown(row.realIndex)" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
                                             <span class="suitepicon suitepicon-action-move-down"></span>
                                           </button>
                                         </div>
                                         <template x-if="field.isSelectCustomOptions()">
-                                          <button type="button" class="btn ms-2" @click="field.value_options.splice(index, 1)" :title="utils.translate('LBL_BUTTON_DELETE')">
+                                          <button type="button" class="btn ms-2" @click="items.splice(row.realIndex, 1)" :title="utils.translate('LBL_BUTTON_DELETE')">
                                             <span class="suitepicon suitepicon-action-delete"></span>
                                           </button>
                                         </template>
@@ -642,6 +661,26 @@
                                   </template>
                                 </tbody>
                               </table>
+                              <div class="d-flex justify-content-end align-items-center gap-1 mt-2" x-show="filteredItems.length > 0">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="page <= 1" @click="goToPage(1)">
+                                  <span class="suitepicon suitepicon-action-first"></span>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="page <= 1" @click="goToPage(page - 1)">
+                                  <span class="suitepicon suitepicon-action-left"></span>
+                                </button>
+                                <span class="small mx-1" x-text="pageInfoText"></span>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="page >= totalPages" @click="goToPage(page + 1)">
+                                  <span class="suitepicon suitepicon-action-right"></span>
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="page >= totalPages" @click="goToPage(totalPages)">
+                                  <span class="suitepicon suitepicon-action-last"></span>
+                                </button>
+                                <select class="form-select form-select-sm" style="width:auto;" x-model="pageSize" @change="setPageSize($el.value)">
+                                  <option value="10">10</option>
+                                  <option value="20">20</option>
+                                  <option value="50">50</option>
+                                </select>
+                              </div>
                               <template x-if="field.isSelectCustomOptions()">
                                 <button type="button" class="btn" @click="field.value_options.push(new stic_AwfValueOption());" :title="utils.translate('LBL_BUTTON_ADD')">
                                   <span class="suitepicon suitepicon-action-plus"></span>

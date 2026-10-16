@@ -1150,6 +1150,12 @@ class WizardStep2 {
       sortKey: '',
       sortAsc: true,
       showInternalValues: false,
+      page: 1,
+      pageSize: 10,
+
+      init() {
+        this.$watch('searchText', () => { this.page = 1; });
+      },
 
       moveUp(index) {
         if (index <= 0) return;
@@ -1179,6 +1185,7 @@ class WizardStep2 {
         if (!key || !Array.isArray(this.items)) return;
         this.sortKey = key;
         this.sortAsc = asc !== false;
+        this.page = 1;
         this.items.sort((a, b) => {
           if (key === 'is_visible') {
             // Ascending means visible first for better UX
@@ -1202,40 +1209,12 @@ class WizardStep2 {
         return this.sortAsc ? 'suitepicon suitepicon-action-sorting-descending' : 'suitepicon suitepicon-action-sorting-ascending';
       },
 
-      sortAlphabetically() {
-        this.sortBy('text', true);
-      },
-
-      moveVisibleToTop() {
-        if (!Array.isArray(this.items)) return;
-        const visible = this.items.filter((o) => o.is_visible);
-        const hidden = this.items.filter((o) => !o.is_visible);
-        this.items.splice(0, this.items.length, ...visible, ...hidden);
-      },
-
       setAllVisible(visible) {
         if (!Array.isArray(this.items)) return;
         this.items.forEach((o) => { o.is_visible = visible; });
       },
 
-      get allVisible() {
-        return Array.isArray(this.items) && this.items.length > 0 && this.items.every((o) => o.is_visible);
-      },
-
       searchText: '',
-
-      get isFiltering() {
-        return (this.searchText || '').trim() !== '';
-      },
-
-      subsetVisibility(filtered) {
-        if (!Array.isArray(this.items)) return 'empty';
-        const subset = this.items.filter((o) => this.matchesSearch(o) === filtered);
-        if (subset.length === 0) return 'empty';
-        if (subset.every((o) => o.is_visible)) return 'all';
-        if (subset.every((o) => !o.is_visible)) return 'none';
-        return 'mixed';
-      },
 
       setSubsetVisible(filtered, visible) {
         if (!Array.isArray(this.items)) return;
@@ -1272,6 +1251,58 @@ class WizardStep2 {
         const q = this.normalizeSearchText((this.searchText || '').trim());
         if (q === '') return this.items.length;
         return this.items.filter((o) => this.searchFields(o).some((v) => this.normalizeSearchText(v).includes(q))).length;
+      },
+
+      get filteredItems() {
+        // Matching rows with their real index, so paged actions still
+        // operate on the full array
+        if (!Array.isArray(this.items)) return [];
+        const out = [];
+        this.items.forEach((o, realIndex) => {
+          if (this.matchesSearch(o)) out.push({ option: o, realIndex: realIndex });
+        });
+        return out;
+      },
+
+      get totalPages() {
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length;
+        return Math.max(1, Math.ceil(this.filteredItems.length / Math.max(1, per)));
+      },
+
+      get pagedItems() {
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length || 1;
+        return this.filteredItems.slice((this.currentPage - 1) * per, this.currentPage * per);
+      },
+
+      get currentPage() {
+        return Math.min(Math.max(1, this.page), this.totalPages);
+      },
+
+      get pageStart() {
+        if (this.filteredItems.length === 0) return 0;
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length || 1;
+        return (this.currentPage - 1) * per + 1;
+      },
+
+      get pageEnd() {
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length || 1;
+        return Math.min(this.currentPage * per, this.filteredItems.length);
+      },
+
+      get pageInfoText() {
+        return utils.translate('LBL_FIELD_VALUE_OPTIONS_PAGE_INFO')
+          .replace('{from}', this.pageStart)
+          .replace('{to}', this.pageEnd)
+          .replace('{total}', this.filteredItems.length);
+      },
+
+      goToPage(p) {
+        this.page = Math.min(Math.max(1, p || 1), this.totalPages);
+      },
+
+      setPageSize(n) {
+        this.pageSize = parseInt(n, 10) || 0;
+        this.page = 1;
       },
 
       escapeHtml(text) {
