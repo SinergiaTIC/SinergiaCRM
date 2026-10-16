@@ -64,6 +64,13 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     {
         global $db, $beanList;
 
+        // Optional blocks that were not activated are skipped —
+        // no ghost records from FIXED/server-only data.
+        if (!$block->isActivated()) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Advanced Web Forms: DataBlock '{$block->dataBlock->name}' skipped because it is optional and was not activated.");
+            return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "DataBlock '{$block->dataBlock->name}' was skipped because it is optional and was not activated.");
+        }
+
         $module = $block->dataBlock->module;
         if (!isset($beanList[$module])) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "The configured module '{$module}' is not available on the system.");
@@ -75,127 +82,166 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
         // Duplicate detection logic
         $duplicateRules = $block->dataBlock->duplicate_detections ?? [];
-        foreach ($duplicateRules as $rule) {
-            $scalarFields = [];
-            $emailValues = [];
-            $skipRule = false;
-            $candidateIds = null;
 
-            $foundBean = null;
-            $tempBean = BeanFactory::newBean($module);
-            if (!$tempBean) {
-                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Failed to create a new instance of the module '{$module}'.");
-            }
+        // When a repeatable block submits several instances in the same request, a later
+        // instance may be a duplicate of one created earlier in this same request. Detect it
+        // against the block's indexed reference map (beans registered by previous instances)
+        // and apply the configured duplicate strategy.
+        if ($block->instanceIndex !== null && !empty($duplicateRules)) {
+            $indexedRefs = $block->dataBlock->getIndexedBeanReferences();
+            foreach ($indexedRefs as $otherIndex => $ref) {
+                if ($otherIndex === $block->instanceIndex) continue;
 
-            // Build the search fields for this rule
-            foreach ($rule->fields as $fieldName) {
-                $fieldValue = $block->getFieldValue($fieldName)?->value;
+                $otherBean = BeanFactory::getBean($module, $ref->beanId);
+                if (!$otherBean) continue;
 
-                // If a field in the duplicate rule is empty, do not apply the rule
-                // (Two persons cannot be the same if both have an empty email field)
-                if ($fieldValue === null || $fieldValue === '') {
-                    $skipRule = true;
-                    break; // Move to the next rule
-                }
-                if (stic_AWF_FormsUtils::isEmailField($tempBean->field_defs[$fieldName] ?? null, $fieldName)) {
-                    $emailValues[] = $fieldValue;
-                } else {
-                    $scalarFields[$fieldName] = $fieldValue;
-                }
-            }
-            if ($skipRule) {
-                continue; // Move to the next rule
-            }
+                $matchedRule = self::matchDuplicateRule($block, $otherBean, $duplicateRules);
 
-            // Email duplicate check
-            if (!empty($emailValues)) {
-                // Rule includes emails: JOIN with email table
-                foreach ($emailValues as $email) {
-                    // Query to find IDs that have THIS specific email
-                    $sql = "SELECT DISTINCT ebr.bean_id 
-                            FROM email_addr_bean_rel ebr
-                            INNER JOIN email_addresses ea ON ebr.email_address_id = ea.id
-                            WHERE ebr.bean_module = '{$module}'
-                                AND ebr.deleted = 0 
-                                AND ea.deleted = 0
-                                AND ea.email_address = '" . $db->quote($email) . "'";
-            
-                    $result = $db->query($sql);
-                    $idsFoundForThisEmail = [];
-                    while ($row = $db->fetchByAssoc($result)) {
-                        $idsFoundForThisEmail[] = $row['bean_id'];
-                    }
-                    if ($candidateIds === null) {
-                        // Is the first email checked, the candidates are the ones we found
-                        $candidateIds = $idsFoundForThisEmail;
-                    } else {
-                        // Already had candidates from a previous email.
-                        // Do the INTERSECTION: Only use those that have THE PREVIOUS and THE CURRENT.
-                        $candidateIds = array_intersect($candidateIds, $idsFoundForThisEmail);
-                    }
-                    // If no candidates: break loop
-                    if (empty($candidateIds)) {
-                        break;
-                    }
-                }
-                // If after looking at the emails we have no candidates, this rule has failed
-                if (empty($candidateIds)) {
-                   continue;
-                }
-            }
+                if ($matchedRule !== null) {
+                    $bean = $otherBean;
+                    $onDuplicateAction = $matchedRule->on_duplicate;
 
-            // Scalar duplicate check
-            $foundBean = null;
-
-            if ($candidateIds !== null) {
-                // Found candidates via Email.
-                // Verify if these candidates satisfy the rest of the scalar fields.
-                foreach ($candidateIds as $id) {
-                    $beanToCheck = BeanFactory::getBean($module, $id);
-                    if ($beanToCheck) {
-                        $match = true;
-                        foreach ($scalarFields as $sField => $sValue) {
-                            if (($beanToCheck->$sField ?? null) != $sValue) {
-                                $match = false;
-                                break;
-                            }
-                        }
-                        if ($match) {
-                            $foundBean = $beanToCheck;
-                            break; // Full match found
+                    $fieldLabels = [];
+                    foreach ($matchedRule->fields as $fName) {
+                        $fieldDef = $block->dataBlock->fields[$fName] ?? null;
+                        if ($fieldDef) {
+                            $label = !empty($fieldDef->label) ? $fieldDef->label : (!empty($fieldDef->text_original) ? $fieldDef->text_original : $fName);
+                            $fieldLabels[] = rtrim($label, ': ');
+                        } else {
+                            $fieldLabels[] = $fName;
                         }
                     }
+                    $matchedRuleFields = implode(', ', $fieldLabels);
+                    break;
                 }
-            } else {
-                // The rule did NOT have emails. Only scalar fields.
-                if (!empty($scalarFields)) {
-                    $tempBean = BeanFactory::newBean($module);
-                    $foundBean = $tempBean->retrieve_by_string_fields($scalarFields);
-                }
-            }
-
-            if ($foundBean !== null) {
-                if (!empty($foundBean->id)) {
-                    $foundBean->retrieve($foundBean->id);
-                }
-                $bean = $foundBean; // Duplicate found
-                $onDuplicateAction = $rule->on_duplicate;
-
-                $fieldLabels = [];
-                foreach ($rule->fields as $fName) {
-                    $fieldDef = $block->dataBlock->fields[$fName] ?? null;
-                    if ($fieldDef) {
-                        $label = !empty($fieldDef->label) ? $fieldDef->label : (!empty($fieldDef->text_original) ? $fieldDef->text_original : $fName);
-                        $fieldLabels[] = rtrim($label, ': ');
-                    } else {
-                        $fieldLabels[] = $fName;
-                    }
-                }
-                $matchedRuleFields = implode(', ', $fieldLabels);
-
-                break; // Stop searching, we found one
             }
         }
+
+        if ($bean === null) {
+            foreach ($duplicateRules as $rule) {
+                // A rule with NO fields cannot identify a duplicate: ignore it
+                if (empty($rule->fields)) continue;
+                $scalarFields = [];
+                $emailValues = [];
+                $skipRule = false;
+                $candidateIds = null;
+
+                $foundBean = null;
+                $tempBean = BeanFactory::newBean($module);
+                if (!$tempBean) {
+                    return new ActionResult(ResultStatus::ERROR, $actionConfig, "Failed to create a new instance of the module '{$module}'.");
+                }
+
+                // Build the search fields for this rule
+                foreach ($rule->fields as $fieldName) {
+                    $fieldValue = $block->getFieldValue($fieldName)?->value;
+
+                    // If a field in the duplicate rule is empty, do not apply the rule
+                    // (Two persons cannot be the same if both have an empty email field)
+                    if ($fieldValue === null || $fieldValue === '') {
+                        $skipRule = true;
+                        break; // Move to the next rule
+                    }
+                    if (stic_AWF_FormsUtils::isEmailField($tempBean->field_defs[$fieldName] ?? null, $fieldName)) {
+                        $emailValues[] = $fieldValue;
+                    } else {
+                        $scalarFields[$fieldName] = $fieldValue;
+                    }
+                }
+                if ($skipRule) {
+                    continue; // Move to the next rule
+                }
+
+                // Email duplicate check
+                if (!empty($emailValues)) {
+                    // Rule includes emails: JOIN with email table
+                    foreach ($emailValues as $email) {
+                        // Query to find IDs that have THIS specific email
+                        $sql = "SELECT DISTINCT ebr.bean_id 
+                                FROM email_addr_bean_rel ebr
+                                INNER JOIN email_addresses ea ON ebr.email_address_id = ea.id
+                                WHERE ebr.bean_module = '{$module}'
+                                    AND ebr.deleted = 0 
+                                    AND ea.deleted = 0
+                                    AND ea.email_address = '" . $db->quote($email) . "'";
+                
+                        $result = $db->query($sql);
+                        $idsFoundForThisEmail = [];
+                        while ($row = $db->fetchByAssoc($result)) {
+                            $idsFoundForThisEmail[] = $row['bean_id'];
+                        }
+                        if ($candidateIds === null) {
+                            // Is the first email checked, the candidates are the ones we found
+                            $candidateIds = $idsFoundForThisEmail;
+                        } else {
+                            // Already had candidates from a previous email.
+                            // Do the INTERSECTION: Only use those that have THE PREVIOUS and THE CURRENT.
+                            $candidateIds = array_intersect($candidateIds, $idsFoundForThisEmail);
+                        }
+                        // If no candidates: break loop
+                        if (empty($candidateIds)) {
+                            break;
+                        }
+                    }
+                    // If after looking at the emails we have no candidates, this rule has failed
+                    if (empty($candidateIds)) {
+                    continue;
+                    }
+                }
+
+                // Scalar duplicate check
+                $foundBean = null;
+
+                if ($candidateIds !== null) {
+                    // Found candidates via Email.
+                    // Verify if these candidates satisfy the rest of the scalar fields.
+                    foreach ($candidateIds as $id) {
+                        $beanToCheck = BeanFactory::getBean($module, $id);
+                        if ($beanToCheck) {
+                            $match = true;
+                            foreach ($scalarFields as $sField => $sValue) {
+                                if (($beanToCheck->$sField ?? null) != $sValue) {
+                                    $match = false;
+                                    break;
+                                }
+                            }
+                            if ($match) {
+                                $foundBean = $beanToCheck;
+                                break; // Full match found
+                            }
+                        }
+                    }
+                } else {
+                    // The rule did NOT have emails. Only scalar fields.
+                    if (!empty($scalarFields)) {
+                        $tempBean = BeanFactory::newBean($module);
+                        $foundBean = $tempBean->retrieve_by_string_fields($scalarFields);
+                    }
+                }
+
+                if ($foundBean !== null) {
+                    if (!empty($foundBean->id)) {
+                        $foundBean->retrieve($foundBean->id);
+                    }
+                    $bean = $foundBean; // Duplicate found
+                    $onDuplicateAction = $rule->on_duplicate;
+
+                    $fieldLabels = [];
+                    foreach ($rule->fields as $fName) {
+                        $fieldDef = $block->dataBlock->fields[$fName] ?? null;
+                        if ($fieldDef) {
+                            $label = !empty($fieldDef->label) ? $fieldDef->label : (!empty($fieldDef->text_original) ? $fieldDef->text_original : $fName);
+                            $fieldLabels[] = rtrim($label, ': ');
+                        } else {
+                            $fieldLabels[] = $fName;
+                        }
+                    }
+                    $matchedRuleFields = implode(', ', $fieldLabels);
+
+                    break; // Stop searching, we found one
+                }
+            }
+        } // skip standard DB duplicate detection when intra-POST match was found
 
         // Action Logic (Create or Handle Duplicate) and performed modifications
         $modificationType = null;
@@ -316,7 +362,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                         $idName = $cfg['id_name'] ?? '';
                         $targetBlockId = $cfg['target_block_id'] ?? '';
                         $targetBlock = $context->formConfig->data_blocks[$targetBlockId] ?? null;
-                        $targetBeanRef = $targetBlock?->getBeanReference();
+                        $targetBeanRef = $targetBlock?->getReferenceForContext($context);
                         $targetId = $targetBeanRef?->beanId ?? '';
                         $metadata[] = ['key' => 'injected_fk', 'label' => $idName, 'value' => "{$relName} → {$targetId}"];
                     }
@@ -440,7 +486,11 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 continue;
             }
 
-            $targetBeanRef = $targetBlock->getBeanReference();
+            // Loop-depth-aware bean reference: 
+            // a depth-1 target uses the parent index
+            // a depth-2 target uses the composite "i:j" key.
+            $targetBeanRef = $targetBlock->getReferenceForContext($context);
+
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
                 $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlock->name}' has no bean ID. Check action order.");
                 continue;
@@ -460,6 +510,42 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         }
 
         return $injectedAny;
+    }
+
+    /**
+     * Returns the FIRST duplicate rule that identifies `$otherBean` as a
+     * duplicate of the given instance, or null.
+     *
+     * A rule with NO fields is IGNORED: it cannot identify a duplicate, and an
+     * empty rule would otherwise match EVERY other bean. A block with no form
+     * fields keeps the default EMPTY rule, so without this guard every
+     * repeatable instance would be treated as a duplicate of the first one and
+     * collapsed into it (the reported bug: a group child with no fields created
+     * only for the first instance).
+     *
+     * @param DataBlockResolved $block The instance being saved
+     * @param object $otherBean A bean created earlier in the same request
+     * @param array $rules The block's duplicate detection rules
+     * @return ?object The matched rule, or null
+     */
+    private static function matchDuplicateRule(DataBlockResolved $block, $otherBean, array $rules) {
+        foreach ($rules as $rule) {
+            if (empty($rule->fields)) continue; // empty rule cannot identify duplicates
+            $match = true;
+            foreach ($rule->fields as $fieldName) {
+                $fieldValue = $block->getFieldValue($fieldName)?->value;
+                if ($fieldValue === null || $fieldValue === '') {
+                    $match = false;
+                    break;
+                }
+                if (($otherBean->$fieldName ?? null) != $fieldValue) {
+                    $match = false;
+                    break;
+                }
+            }
+            if ($match) return $rule;
+        }
+        return null;
     }
 
 }

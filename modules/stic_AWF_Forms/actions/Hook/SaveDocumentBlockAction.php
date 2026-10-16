@@ -55,8 +55,15 @@ class SaveDocumentBlockAction extends HookDataBlockActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Document block has no file field.");
         }
 
-        $phpKey = $fileField->getPhpKey();
-        $fileInfo = $context->uploadedFiles[$phpKey] ?? null;
+        // The file key: the flat per-instance key (with the FULL loop-index
+        // stack) when the block sits inside group loops — file inputs post
+        // under that form (see FormHtmlGeneratorService) — or the plain PHP
+        // key for scalar blocks (PHP mangles the dot form of the input name)
+        $loopIndexes = $block->getLoopIndexes();
+        $fileKey = $loopIndexes !== []
+            ? $fileField->getFileKeyForIndexes($loopIndexes)
+            : $fileField->getPhpKey();
+        $fileInfo = $context->uploadedFiles[$fileKey] ?? null;
 
         // The file field is always required for Document blocks: without a file
         // no DocumentRevision can be created, so a missing file is always an error.

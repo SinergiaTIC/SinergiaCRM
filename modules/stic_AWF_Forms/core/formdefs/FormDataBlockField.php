@@ -58,6 +58,8 @@ class FormDataBlockField {
     public array $value_options = [];            // Field options
     /** @var FormFieldValidation[] */
     public array $validations = [];              // Field validations
+    public bool $start_new_row = false;          // Indicates if the field should start a new row in the form
+    public bool $full_width = false;             // Indicates if the field should take full width
 
     /**
      * Creates an instance of FormDataBlockField from a JSON array.
@@ -96,6 +98,9 @@ class FormDataBlockField {
             }
         }
         
+        $dto->start_new_row = $data['start_new_row'] ?? false;
+        $dto->full_width = $data['full_width'] ?? false;
+        
         return $dto;
     }
 
@@ -106,5 +111,73 @@ class FormDataBlockField {
 
     public function getPhpKey(): string {
         return str_replace('.', '_', $this->getKey());
+    }
+
+    public function getKeyForInstance(?int $index = null): string {
+        $prefix = $this->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+        if ($index === null) {
+            return $this->getKey();
+        }
+        return $prefix . $this->data_block->name . '[' . $index . '][' . $this->name . ']';
+    }
+
+    public function getPhpKeyForInstance(?int $index = null): string {
+        return str_replace('.', '_', $this->getKeyForInstance($index));
+    }
+
+    /**
+     * Returns the DOM-id / validation-error key for a field. For instance-aware
+     * fields it uses the "BlockName_{index}_fieldName" format so that the frontend
+     * showServerError() can match the dynamic input id pattern "f_BlockName_0_fieldName".
+     * For detached blocks the '_detached.' prefix is preserved, keeping consistency
+     * with the existing non-repeatable convention.
+     * @param ?int $index The instance index, or null for scalar (non-repeatable) fields
+     * @return string
+     */
+    public function getKeyForId(?int $index = null): string {
+        $prefix = $this->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+        if ($index === null) {
+            return $prefix . $this->data_block->name . '.' . $this->name;
+        }
+        return $prefix . $this->data_block->name . '_' . $index . '_' . $this->name;
+    }
+
+    /**
+     * Multi-dimensional variants. Accept one index per repeatable loop level,
+     * outer to inner (e.g. [i, j] for a block inside a subgroup of a repeatable root).
+     * With a single index they are identical to getKeyForInstance/getPhpKeyForInstance/getKeyForId.
+     * @param array $indexes Loop indexes, outer to inner
+     */
+    public function getKeyForIndexes(array $indexes): string {
+        $prefix = $this->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+        $indexed = $this->data_block->name;
+        foreach ($indexes as $index) {
+            $indexed .= '[' . $index . ']';
+        }
+        return $prefix . $indexed . '[' . $this->name . ']';
+    }
+
+    public function getPhpKeyForIndexes(array $indexes): string {
+        return str_replace('.', '_', $this->getKeyForIndexes($indexes));
+    }
+
+    public function getKeyForIdForIndexes(array $indexes): string {
+        $prefix = $this->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+        $key = $prefix . $this->data_block->name;
+        foreach ($indexes as $index) {
+            $key .= '_' . $index;
+        }
+        return $key . '_' . $this->name;
+    }
+
+    /**
+     * The FILES key for an instance-aware field: the FLAT underscore-joined
+     * form ("_detached_BlockName_i1_i2_fieldName") with every loop index.
+     * File inputs post under this form (NOT the bracket matrix) because PHP
+     * nests bracket-named $_FILES entries, which the flat uploaded-files
+     * parser cannot address.
+     */
+    public function getFileKeyForIndexes(array $indexes): string {
+        return str_replace('.', '_', $this->getKeyForIdForIndexes($indexes));
     }
 }
