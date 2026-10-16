@@ -50,6 +50,7 @@ $dictionary['stic_Organizational_Environment'] = array(
     'options' => 'stic_organizational_environment_relationships_list',
     'studio' => 'visible',
     'dependency' => false,
+    'popupHelp' => 'LBL_RELATIONSHIP_TYPE_INFO',
   ),
   'end_date' => 
   array (
