@@ -539,8 +539,11 @@
                                 </div>
                                 <div class="input-group">
                                   <input id="modalField_ValueOptionsRel_name" type="text" disabled class="form-control" x-model="optionValuesListName"/>
-                                  <button class="btn" type="button" @click="openPopUp('modalField_ValueOptionsRel', false)">
+                                  <button class="btn" type="button" @click="openPopUp('modalField_ValueOptionsRel', false)" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_SELECT_REGS')">
                                     <span class="suitepicon suitepicon-action-select"></span>
+                                  </button>
+                                  <button class="btn" type="button" @click="openPopUp('modalField_ValueOptionsRel', false, 'add')" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_ADD_REGS')">
+                                    <span class="suitepicon suitepicon-action-plus"></span>
                                   </button>
                                 </div>
                               </div>
@@ -554,30 +557,48 @@
                             <!-- Value options configuration Table -->
                             <div class="col-12" x-data="WizardStep2.sortableListxData(field.value_options)">
                               <span class="form-label mt-3" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')" ></span>
-                              <div class="text-muted form-check form-switch small" x-data="{ init() { $data.showInternalValues = false; } }">
+                              <div class="text-muted form-check form-switch small">
                                 <input class="form-check-input" type="checkbox" id="toggleInternalValues" x-model="showInternalValues">
                                 <label class="form-label" for="toggleInternalValues" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW_NAME')"></label>
+                              </div>
+                              <div class="d-flex flex-wrap gap-2 mb-2">
+                                <template x-if="!field.isSelectCustomOptions()">
+                                  <button type="button" class="btn btn-sm btn-outline-secondary" @click="setAllVisible(!allVisible)" x-text="allVisible ? utils.translate('LBL_FIELD_VALUE_OPTIONS_HIDE_ALL') : utils.translate('LBL_FIELD_VALUE_OPTIONS_SHOW_ALL')"></button>
+                                </template>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" @click="sortAlphabetically()" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_SORT_AZ')"></button>
+                                <template x-if="!field.isSelectCustomOptions()">
+                                  <button type="button" class="btn btn-sm btn-outline-secondary" @click="moveVisibleToTop()" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_VISIBLE_FIRST')"></button>
+                                </template>
+                              </div>
+                              <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                                <div class="input-group input-group-sm" style="max-width:320px;">
+                                  <input type="search" class="form-control" x-model="searchText" :placeholder="utils.translate('LBL_FIELD_VALUE_OPTIONS_SEARCH')" />
+                                  <button type="button" class="btn btn-outline-secondary" x-show="searchText !== ''" @click="clearSearch()" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_CLEAR_SEARCH')">
+                                    <span class="suitepicon suitepicon-action-clear"></span>
+                                  </button>
+                                </div>
+                                <span class="text-muted small" x-show="(searchText || '').trim() !== ''" x-text="filteredCount + ' / ' + items.length"></span>
                               </div>
                               <table class="table table-bordered table-striped w-auto" id="modalField_ValueOptionsTable">
                                 <thead>
                                   <tr>
-                                    <th x-show="showInternalValues" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_NAME')"></th>
+                                    <th x-show="showInternalValues" @click="toggleSort('value')" style="cursor:pointer;" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_SORT_AZ')"><span x-text="utils.translate('LBL_FIELD_VALUE_OPTION_NAME')"></span> <span :class="getSortIconClass('value')"></span></th>
                                     <template x-if="!field.isSelectCustomOptions()">
-                                      <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL')"></th>
+                                      <th @click="toggleSort('text_original')" style="cursor:pointer;" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_SORT_AZ')"><span x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL')"></span> <span :class="getSortIconClass('text_original')"></span></th>
                                     </template>
                                     <template x-if="!field.isSelectCustomOptions()">
-                                      <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW')"></th>
+                                      <th @click="toggleSort('is_visible')" style="cursor:pointer;" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_VISIBLE_FIRST')"><span x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW')"></span> <span :class="getSortIconClass('is_visible')"></span></th>
                                     </template>
-                                    <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_LABEL')"></th>
+                                    <th @click="toggleSort('text')" style="cursor:pointer;" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_SORT_AZ')"><span x-text="utils.translate('LBL_FIELD_VALUE_OPTION_LABEL')"></span> <span :class="getSortIconClass('text')"></span></th>
                                     <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ACTIONS')"></th>
                                   </tr>
                                 </thead>
                                 <tbody>
-                                  <template x-for="(element, index) in field.value_options">
-                                    <tr>
+                                  <template x-for="(element, index) in items">
+                                    <tr x-show="matchesSearch(element)">
                                       <!-- Value -->
                                       <template x-if="!field.isSelectCustomOptions()">
-                                        <td x-show="showInternalValues" x-text="element.value"></td>
+                                        <td x-show="showInternalValues" x-html="highlightSearch(element.value)"></td>
                                       </template>
                                       <template x-if="field.isSelectCustomOptions()">
                                         <td x-show="showInternalValues">
@@ -586,7 +607,7 @@
                                       </template>
                                       <!-- Text original -->
                                       <template x-if="!field.isSelectCustomOptions()">
-                                        <td x-text="element.text_original"></td>
+                                        <td x-html="highlightSearch(element.text_original)"></td>
                                       </template>
                                       <!-- Is Visible -->
                                       <template x-if="!field.isSelectCustomOptions()">
@@ -607,7 +628,7 @@
                                           <button type="button" class="btn" :disabled="index === 0" @click="moveUp(index)" :title="utils.translate('LBL_BUTTON_MOVE_UP')">
                                             <span class="suitepicon suitepicon-action-move-up"></span>
                                           </button>
-                                          <button type="button" class="btn" :disabled="index === field.value_options.length - 1" @click="moveDown(index)" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
+                                          <button type="button" class="btn" :disabled="index === items.length - 1" @click="moveDown(index)" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
                                             <span class="suitepicon suitepicon-action-move-down"></span>
                                           </button>
                                         </div>
