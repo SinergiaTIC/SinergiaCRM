@@ -436,6 +436,19 @@ function set_wizard_assigned_user(popup_reply_data) {
 
 
 function handle_open_popup(popup_reply_data) {
+  const appendMode = window.__awfPopupAppend === true;
+  window.__awfPopupAppend = false;
+  const mergeIds = (existingVal, newIds) => {
+    const existing = (existingVal || '').split('|').map((s) => s.trim()).filter((s) => s !== '');
+    const merged = [...existing];
+    (newIds || []).forEach((id) => {
+      const cleanId = (id || '').toString().trim();
+      if (cleanId !== '' && !merged.includes(cleanId)) {
+        merged.push(cleanId);
+      }
+    });
+    return merged.join('|');
+  };
   if (popup_reply_data.name_to_value_array) {
     Object.entries(popup_reply_data.name_to_value_array).forEach(el => {
       let decodedVal = typeof el[1] === 'string' ? utils.decodeHTMLString(el[1]) : el[1];
@@ -445,6 +458,7 @@ function handle_open_popup(popup_reply_data) {
   }
   if (popup_reply_data.selection_list) {
     const idField = popup_reply_data.passthru_data.id;
+    const newIds = Object.values(popup_reply_data.selection_list);
     if (popup_reply_data.select_entire_list == 1 && popup_reply_data.current_query_by_page) {
       $.ajax({
         url: 'index.php',
@@ -456,18 +470,27 @@ function handle_open_popup(popup_reply_data) {
         dataType: 'json',
         async: false,
         success: function(response) {
-          if (response.success && response.ids) {
-            $(`#${idField}`).val(response.ids.join("|"));
+          const fetchedIds = (response.success && response.ids) ? response.ids : newIds;
+          if (appendMode) {
+            $(`#${idField}`).val(mergeIds($(`#${idField}`).val(), fetchedIds));
           } else {
-            $(`#${idField}`).val(Object.values(popup_reply_data.selection_list).join("|"));
+            $(`#${idField}`).val((fetchedIds || []).join("|"));
           }
         },
         error: function() {
-          $(`#${idField}`).val(Object.values(popup_reply_data.selection_list).join("|"));
+          if (appendMode) {
+            $(`#${idField}`).val(mergeIds($(`#${idField}`).val(), newIds));
+          } else {
+            $(`#${idField}`).val(newIds.join("|"));
+          }
         }
       });
     } else {
-      $(`#${idField}`).val(Object.values(popup_reply_data.selection_list).join("|"));
+      if (appendMode) {
+        $(`#${idField}`).val(mergeIds($(`#${idField}`).val(), newIds));
+      } else {
+        $(`#${idField}`).val(newIds.join("|"));
+      }
     }
     $(`#${idField}`)[0].dispatchEvent(new Event('input', { bubbles: true }));
   }
@@ -1124,6 +1147,15 @@ class WizardStep2 {
   static sortableListxData(initial_items) {
     return {
       items: initial_items,
+      sortKey: '',
+      sortAsc: true,
+      showInternalValues: false,
+      page: 1,
+      pageSize: 10,
+
+      init() {
+        this.$watch('searchText', () => { this.page = 1; });
+      },
 
       moveUp(index) {
         if (index <= 0) return;
@@ -1139,6 +1171,167 @@ class WizardStep2 {
         const itemToMove = this.items[index];
         this.items.splice(index, 1);
         this.items.splice(index + 1, 0, itemToMove);
+      },
+
+      getSortValue(item, key) {
+        const val = item?.[key];
+        if (key === 'is_visible') {
+          return val ? 1 : 0;
+        }
+        return (val ?? '').toString();
+      },
+
+      sortBy(key, asc = true) {
+        if (!key || !Array.isArray(this.items)) return;
+        this.sortKey = key;
+        this.sortAsc = asc !== false;
+        this.page = 1;
+        this.items.sort((a, b) => {
+          if (key === 'is_visible') {
+            // Ascending means visible first for better UX
+            return (this.getSortValue(b, key) - this.getSortValue(a, key)) * (this.sortAsc ? 1 : -1);
+          }
+          const dir = this.sortAsc ? 1 : -1;
+          return this.getSortValue(a, key).localeCompare(this.getSortValue(b, key), undefined, { sensitivity: 'base', numeric: true }) * dir;
+        });
+      },
+
+      toggleSort(key) {
+        if (this.sortKey === key) {
+          this.sortBy(key, !this.sortAsc);
+        } else {
+          this.sortBy(key, true);
+        }
+      },
+
+      getSortIconClass(key) {
+        if (this.sortKey !== key) return 'suitepicon suitepicon-action-sorting-none';
+        return this.sortAsc ? 'suitepicon suitepicon-action-sorting-descending' : 'suitepicon suitepicon-action-sorting-ascending';
+      },
+
+      setAllVisible(visible) {
+        if (!Array.isArray(this.items)) return;
+        this.items.forEach((o) => { o.is_visible = visible; });
+      },
+
+      searchText: '',
+
+      setSubsetVisible(filtered, visible) {
+        if (!Array.isArray(this.items)) return;
+        this.items.forEach((o) => { if (this.matchesSearch(o) === filtered) o.is_visible = visible; });
+      },
+
+      searchFields(element) {
+        // Only search over visible columns: internal value is included
+        // only when the internal values column is shown
+        const fields = [element?.text, element?.text_original];
+        if (this.showInternalValues) {
+          fields.push(element?.value);
+        }
+        return fields;
+      },
+
+      normalizeSearchText(text) {
+        // Lowercase + accent-insensitive (ex: "telefon" matches "telèfon")
+        return (text ?? '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      },
+
+      matchesSearch(element) {
+        const q = this.normalizeSearchText((this.searchText || '').trim());
+        if (q === '') return true;
+        return this.searchFields(element).some((v) => this.normalizeSearchText(v).includes(q));
+      },
+
+      clearSearch() {
+        this.searchText = '';
+      },
+
+      get filteredCount() {
+        if (!Array.isArray(this.items)) return 0;
+        const q = this.normalizeSearchText((this.searchText || '').trim());
+        if (q === '') return this.items.length;
+        return this.items.filter((o) => this.searchFields(o).some((v) => this.normalizeSearchText(v).includes(q))).length;
+      },
+
+      get filteredItems() {
+        // Matching rows with their real index, so paged actions still
+        // operate on the full array
+        if (!Array.isArray(this.items)) return [];
+        const out = [];
+        this.items.forEach((o, realIndex) => {
+          if (this.matchesSearch(o)) out.push({ option: o, realIndex: realIndex });
+        });
+        return out;
+      },
+
+      get totalPages() {
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length;
+        return Math.max(1, Math.ceil(this.filteredItems.length / Math.max(1, per)));
+      },
+
+      get pagedItems() {
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length || 1;
+        return this.filteredItems.slice((this.currentPage - 1) * per, this.currentPage * per);
+      },
+
+      get currentPage() {
+        return Math.min(Math.max(1, this.page), this.totalPages);
+      },
+
+      get pageStart() {
+        if (this.filteredItems.length === 0) return 0;
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length || 1;
+        return (this.currentPage - 1) * per + 1;
+      },
+
+      get pageEnd() {
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length || 1;
+        return Math.min(this.currentPage * per, this.filteredItems.length);
+      },
+
+      get pageInfoText() {
+        return utils.translate('LBL_FIELD_VALUE_OPTIONS_PAGE_INFO')
+          .replace('{from}', this.pageStart)
+          .replace('{to}', this.pageEnd)
+          .replace('{total}', this.filteredItems.length);
+      },
+
+      goToPage(p) {
+        this.page = Math.min(Math.max(1, p || 1), this.totalPages);
+      },
+
+      setPageSize(n) {
+        this.pageSize = parseInt(n, 10) || 0;
+        this.page = 1;
+      },
+
+      escapeHtml(text) {
+        return (text ?? '').toString().replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      },
+
+      highlightSearch(text) {
+        const safe = this.escapeHtml(text);
+        const q = (this.searchText || '').trim();
+        if (q === '') return safe;
+        // Accent-insensitive pattern: each base letter also matches its accented variants
+        const accentMap = { a: 'aàáâãäå', e: 'eèéêë', i: 'iìíîï', o: 'oòóôõö', u: 'uùúûü', n: 'nñ', c: 'cç', y: 'yýÿ' };
+        let pattern = '';
+        for (const ch of q) {
+          const lower = ch.toLowerCase();
+          if (accentMap[lower]) {
+            const variants = accentMap[lower];
+            pattern += `[${variants}${variants.toUpperCase()}]`;
+          } else if ('.*+?^${}()|[]\\'.includes(ch)) {
+            pattern += '\\' + ch;
+          } else {
+            pattern += ch;
+          }
+        }
+        try {
+          return safe.replace(new RegExp(`(${pattern})`, 'gi'), '<mark>$1</mark>');
+        } catch (e) {
+          return safe;
+        }
       },
     };
   }
@@ -1497,11 +1690,12 @@ class WizardStep2 {
         }
       },
 
-      openPopUp(idBase, single=true) {
+      openPopUp(idBase, single=true, popupMode='replace') {
         let mode = 'single';
         if (single!=true) {
           mode = 'MultiSelect';
         }
+        window.__awfPopupAppend = (popupMode === 'add');
         let destModule = this.relatedModule;
         let objMap = {'id':`${idBase}_id`, 'name':`${idBase}_name`};
         open_popup(destModule, 600, 400, '', true, false,
