@@ -3403,7 +3403,11 @@ class Email extends Basic
         $where_auto = '';
 
         if ($return_array) {
-            return parent::create_new_list_query(
+            // STIC-Custom 20261016 ART - Map non-db email address fields to emails_text columns
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // return parent::create_new_list_query(
+            $ret_array = parent::create_new_list_query(
+            // END STIC-Custom
                 $order_by,
                 $where,
                 $filter,
@@ -3414,6 +3418,10 @@ class Email extends Basic
                 $parentbean,
                 $singleSelect
             );
+            // STIC-Custom 20261016 ART - Map non-db email address fields (from_addr_name,to_addrs_names, cc_addrs_names, bcc_addrs_names, reply_to_addr) to their physical emails_text columns so ordering and filtering by them works in list views
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            return $this->mapEmailAddressFieldsInQueryArray($ret_array);
+            // END STIC-Custom
         }
         $custom_join = $this->getCustomJoin();
 
@@ -3452,8 +3460,103 @@ class Email extends Basic
             $query .= " ORDER BY date_sent_received DESC";
         }
 
+        // STIC-Custom 20261016 ART - Map non-db email address fields to emails_text columns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        $query = $this->mapEmailAddressFieldsInQueryString($query);
+        // END STIC-Custom
+
         return $query;
     } // fn
+
+
+    // STIC-Custom 20261016 ART - Map non-db email address fields (from_addr_name,to_addrs_names, cc_addrs_names, bcc_addrs_names, reply_to_addr) to their physical emails_text columns so ordering and filtering by them works in list views
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    /**
+     * Map from Email non-db address fields to their physical emails_text columns
+     *
+     * @return array
+     */
+    private function emailAddressFieldMap()
+    {
+        return array(
+            'from_addr_name' => 'emails_text.from_addr',
+            'to_addrs_names' => 'emails_text.to_addrs',
+            'cc_addrs_names' => 'emails_text.cc_addrs',
+            'bcc_addrs_names' => 'emails_text.bcc_addrs',
+            'reply_to_addr' => 'emails_text.reply_to_addr',
+        );
+    }
+
+    /**
+     * Replace non-db email address field references by their emails_text columns
+     *
+     * @param string $subject SQL fragment
+     * @return array The modified fragment and whether any replacement was made
+     */
+    private function replaceEmailAddressFields($subject)
+    {
+        $changed = false;
+        foreach ($this->emailAddressFieldMap() as $field => $column) {
+            // Match the field name optionally prefixed by the emails table, but not when it is already part of a qualified emails_text column or a longer identifier
+            $pattern = '/(?<![\w.])(?:emails\.)?' . preg_quote($field, '/') . '\b/i';
+            if (preg_match($pattern, (string) $subject)) {
+                $subject = preg_replace($pattern, $column, $subject);
+                $changed = true;
+            }
+        }
+
+        return array($subject, $changed);
+    }
+
+    /**
+     * Apply the address field map to a create_new_list_query() array result and add the emails_text join when needed
+     *
+     * @param array $ret_array
+     * @return array
+     */
+    private function mapEmailAddressFieldsInQueryArray($ret_array)
+    {
+        $needsJoin = false;
+        foreach (array('order_by', 'where') as $key) {
+            if (!empty($ret_array[$key])) {
+                list($ret_array[$key], $changed) = $this->replaceEmailAddressFields($ret_array[$key]);
+                $needsJoin = $needsJoin || $changed || strpos($ret_array[$key], 'emails_text.') !== false;
+            }
+        }
+
+        if ($needsJoin) {
+            $join = ' LEFT JOIN emails_text ON emails_text.email_id = emails.id ';
+            foreach (array('from', 'from_min', 'secondary_from') as $key) {
+                if (!empty($ret_array[$key]) && strpos($ret_array[$key], 'emails_text') === false) {
+                    $ret_array[$key] .= $join;
+                }
+            }
+        }
+
+        return $ret_array;
+    }
+
+    /**
+     * Apply the address field map to a create_new_list_query() string result and add the emails_text join when needed
+     *
+     * @param string $query
+     * @return string
+     */
+    private function mapEmailAddressFieldsInQueryString($query)
+    {
+        list($query, $changed) = $this->replaceEmailAddressFields($query);
+        if (($changed || strpos($query, 'emails_text.') !== false) && strpos($query, 'JOIN emails_text') === false) {
+            $query = preg_replace(
+                '/\bFROM\s+emails\b/i',
+                'FROM emails LEFT JOIN emails_text ON emails_text.email_id = emails.id ',
+                $query,
+                1
+            );
+        }
+
+        return $query;
+    }
+    // END STIC-Custom
 
     /**
      * @global $timedate
@@ -3611,6 +3714,10 @@ class Email extends Basic
         } else {
             $query .= " ORDER BY emails.name";
         }
+
+        // STIC-Custom 20261016 ART - Map non-db email address fields to emails_text columns
+        $query = $this->mapEmailAddressFieldsInQueryString($query);
+        // END STIC-Custom
 
         return $query;
     }
