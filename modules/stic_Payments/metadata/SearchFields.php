@@ -79,6 +79,30 @@ $searchFields['stic_Payments'] = array(
         'query_type' => 'default',
         'enable_range_search' => true,
     ),
+    'range_justified_percentage' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'start_range_justified_percentage' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'end_range_justified_percentage' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'range_allocated_percentage' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'start_range_allocated_percentage' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'end_range_allocated_percentage' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
     'range_rejection_date' => array(
         'query_type' => 'default',
         'enable_range_search' => true,

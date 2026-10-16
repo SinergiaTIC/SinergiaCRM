@@ -62,6 +62,21 @@ $layout_defs["stic_Payment_Commitments"]["subpanel_setup"]['stic_payment_commitm
     ),
 );
 
+$layout_defs["stic_Payment_Commitments"]["subpanel_setup"]['stic_payment_commitments_stic_allocation_proposals'] = array(
+    'order' => 100,
+    'module' => 'stic_Allocation_Proposals',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'name',
+    'title_key' => 'LBL_STIC_PAYMENT_COMMITMENTS_STIC_ALLOCATION_PROPOSALS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE',
+    'get_subpanel_data' => 'stic_allocation_proposals',
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+    ),
+);
+
 $layout_defs['stic_Payment_Commitments']['subpanel_setup']['securitygroups'] = array(
     'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect'),),
     'order' => 900,

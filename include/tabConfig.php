@@ -220,6 +220,16 @@ $GLOBALS['tabStructure'] = array(
             6 => 'AOS_PDF_Templates',
         ),
     ),
+    'LBL_GROUPTAB_ALLOCATIONS' => array(
+        'label' => 'LBL_GROUPTAB_ALLOCATIONS',
+        'modules' => array(
+            0 => 'stic_Ledger_Accounts',
+            1 => 'stic_Allocation_Proposals',
+            2 => 'stic_Allocations',
+            3 => 'stic_Justification_Conditions',
+            4 => 'stic_Justifications',
+        ),
+    ),
 );
 // END STIC-Custom
 

@@ -1,0 +1,289 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+$dictionary['stic_Justifications'] = array(
+    'table' => 'stic_justifications',
+    'audited' => true,
+    'fields' => array(
+        'status' => array(
+            'name' => 'status',
+            'type' => 'enum',
+            'options' => 'stic_justifications_status_list',
+            'len' => 100,
+            'vname' => 'LBL_STATUS',
+            'required' => true,
+            'audited' => true,
+        ),
+        'blocked' => array(
+            'name' => 'blocked',
+            'type' => 'bool',
+            'default' => 0,
+            'vname' => 'LBL_BLOCKED',
+            'audited' => true,
+        ),
+        'reference' => array(
+            'name' => 'reference',
+            'type' => 'varchar',
+            'len' => 255,
+            'vname' => 'LBL_REFERENCE',
+            'audited' => true,
+        ),
+        'amount' => array(
+            'name' => 'amount',
+            'type' => 'decimal',
+            'len' => 26,
+            'precision' => 2,
+            'vname' => 'LBL_AMOUNT',
+            'required' => true,
+            'inline_edit' => false,
+        ),
+        'hours' => array(
+            'name' => 'hours',
+            'type' => 'int',
+            'vname' => 'LBL_HOURS',
+            'inline_edit' => false,
+        ),
+        'allocation_type' => array(
+            'name' => 'allocation_type',
+            'type' => 'enum',
+            'options' => 'stic_allocations_types_list',
+            'len' => 100,
+            'vname' => 'LBL_ALLOCATION_TYPE',
+            'required' => true,
+            'inline_edit' => false,
+        ),
+        'max_allocable_percentage' => array(
+            'name' => 'max_allocable_percentage',
+            'type' => 'int',
+            'vname' => 'LBL_MAX_ALLOCABLE_PERCENTAGE',
+            'audited' => true,
+        ),
+        'justified_amount' => array(
+            'name' => 'justified_amount',
+            'type' => 'decimal',
+            'len' => 26,
+            'precision' => 2,
+            'vname' => 'LBL_JUSTIFIED_AMOUNT',
+            'inline_edit' => false,
+        ),
+        'justified_hours' => array(
+            'name' => 'justified_hours',
+            'type' => 'int',
+            'vname' => 'LBL_JUSTIFIED_HOURS',
+            'inline_edit' => false,
+        ),
+        'stic_justification_conditions_stic_justifications' => array(
+            'name' => 'stic_justification_conditions_stic_justifications',
+            'type' => 'link',
+            'relationship' => 'stic_justification_conditions_stic_justifications',
+            'source' => 'non-db',
+            'module' => 'stic_Justification_Conditions',
+            'bean_name' => 'stic_Justification_Conditions',
+            'side' => 'right',
+            'vname' => 'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE',
+        ),
+        'stic_justi13ccditions_ida' => array(
+            'name' => 'stic_justi13ccditions_ida',
+            'type' => 'id',
+            'source' => 'non-db',
+            'vname' => 'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE_ID',
+            'id_name' => 'stic_justi13ccditions_ida',
+            'link' => 'stic_justification_conditions_stic_justifications',
+            'table' => 'stic_justification_conditions',
+            'module' => 'stic_Justification_Conditions',
+            'rname' => 'name',
+            'massupdate' => 0,
+        ),
+        'stic_justification_conditions_stic_justifications_name' => array(
+            'name' => 'stic_justification_conditions_stic_justifications_name',
+            'type' => 'relate',
+            'source' => 'non-db',
+            'vname' => 'LBL_STIC_JUSTIFICATION_CONDITIONS_STIC_JUSTIFICATIONS_FROM_STIC_JUSTIFICATION_CONDITIONS_TITLE',
+            'save' => true,
+            'id_name' => 'stic_justi13ccditions_ida',
+            'link' => 'stic_justification_conditions_stic_justifications',
+            'table' => 'stic_justification_conditions',
+            'module' => 'stic_Justification_Conditions',
+            'rname' => 'name',
+            'required' => true,
+            'inline_edit' => 0,
+        ),
+        'stic_allocations_stic_justifications' => array(
+            'name' => 'stic_allocations_stic_justifications',
+            'type' => 'link',
+            'relationship' => 'stic_allocations_stic_justifications',
+            'source' => 'non-db',
+            'module' => 'stic_Allocations',
+            'bean_name' => 'stic_Allocations',
+            'side' => 'right',
+            'vname' => 'LBL_STIC_ALLOCATIONS_STIC_JUSTIFICATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+        ),
+        'stic_alloc8c71cations_ida' => array(
+            'name' => 'stic_alloc8c71cations_ida',
+            'type' => 'id',
+            'source' => 'non-db',
+            'vname' => 'LBL_STIC_ALLOCATIONS_STIC_JUSTIFICATIONS_FROM_STIC_ALLOCATIONS_TITLE_ID',
+            'id_name' => 'stic_alloc8c71cations_ida',
+            'link' => 'stic_allocations_stic_justifications',
+            'table' => 'stic_allocations',
+            'module' => 'stic_Allocations',
+            'rname' => 'name',
+            'massupdate' => 0,
+        ),
+        'stic_allocations_stic_justifications_name' => array(
+            'name' => 'stic_allocations_stic_justifications_name',
+            'type' => 'relate',
+            'source' => 'non-db',
+            'vname' => 'LBL_STIC_ALLOCATIONS_STIC_JUSTIFICATIONS_FROM_STIC_ALLOCATIONS_TITLE',
+            'save' => true,
+            'id_name' => 'stic_alloc8c71cations_ida',
+            'link' => 'stic_allocations_stic_justifications',
+            'table' => 'stic_allocations',
+            'module' => 'stic_Allocations',
+            'rname' => 'name',
+            'required' => true,
+            'inline_edit' => 0,
+        ),
+        'opportunities_stic_justifications' => array(
+            'name' => 'opportunities_stic_justifications',
+            'type' => 'link',
+            'relationship' => 'opportunities_stic_justifications',
+            'source' => 'non-db',
+            'module' => 'Opportunities',
+            'bean_name' => 'Opportunity',
+            'side' => 'right',
+            'vname' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_FROM_OPPORTUNITIES_TITLE',
+        ),
+        'opportunit01eunities_ida' => array(
+            'name' => 'opportunit01eunities_ida',
+            'type' => 'id',
+            'source' => 'non-db',
+            'vname' => 'LBL_OPPORTUNIT01EUNITIES_IDA',
+            'id_name' => 'opportunit01eunities_ida',
+            'link' => 'opportunities_stic_justifications',
+            'table' => 'opportunities',
+            'module' => 'Opportunities',
+            'rname' => 'name',
+            'massupdate' => 0,
+        ),
+        'opportunities_stic_justifications_name' => array(
+            'name' => 'opportunities_stic_justifications_name',
+            'type' => 'relate',
+            'source' => 'non-db',
+            'vname' => 'LBL_OPPORTUNITIES_STIC_JUSTIFICATIONS_NAME',
+            'save' => true,
+            'id_name' => 'opportunit01eunities_ida',
+            'link' => 'opportunities_stic_justifications',
+            'table' => 'opportunities',
+            'module' => 'Opportunities',
+            'rname' => 'name',
+            'required' => true,
+            'inline_edit' => 0,
+        ),
+        'ledger_group' => array(
+            'name' => 'ledger_group',
+            'vname' => 'LBL_GROUP',
+            'type' => 'enum',
+            'options' => 'stic_ledger_groups_list',
+            'len' => 100,
+            'required' => true,
+            'reportable' => true,
+            'audited' => true,
+            'importable' => true,
+            'massupdate' => false,
+            'inline_edit' => false,
+            'unified_search' => false,
+            'merge_filter' => 'enabled',
+            'studio' => 'visible',
+        ),
+        'subgroup' => array(
+            'name' => 'subgroup',
+            'vname' => 'LBL_SUBGROUP',
+            'type' => 'dynamicenum',
+            'dbtype' => 'enum',
+            'options' => 'stic_ledger_subgroups_list',
+            'parentenum' => 'ledger_group',
+            'len' => 100,
+            'required' => false,
+            'reportable' => true,
+            'audited' => true,
+            'importable' => true,
+            'massupdate' => false,
+            'inline_edit' => false,
+            'unified_search' => false,
+            'merge_filter' => 'enabled',
+            'studio' => 'visible',
+        ),
+        'account' => array(
+            'name' => 'account',
+            'vname' => 'LBL_ACCOUNT',
+            'type' => 'dynamicenum',
+            'dbtype' => 'enum',
+            'options' => 'stic_ledger_accounts_list',
+            'parentenum' => 'subgroup',
+            'len' => 100,
+            'required' => false,
+            'reportable' => true,
+            'audited' => true,
+            'importable' => true,
+            'massupdate' => false,
+            'inline_edit' => false,
+            'unified_search' => false,
+            'merge_filter' => 'enabled',
+            'studio' => 'visible',
+        ),
+        'subaccount' => array(
+            'name' => 'subaccount',
+            'vname' => 'LBL_SUBACCOUNT',
+            'type' => 'dynamicenum',
+            'dbtype' => 'enum',
+            'options' => 'stic_ledger_subaccounts_list',
+            'parentenum' => 'account',
+            'len' => 100,
+            'required' => false,
+            'reportable' => true,
+            'audited' => true,
+            'importable' => true,
+            'massupdate' => false,
+            'inline_edit' => false,
+            'unified_search' => false,
+            'merge_filter' => 'enabled',
+            'studio' => 'visible',
+        ),
+    ),
+    'relationships' => array(
+    ),
+    'optimistic_locking' => 1,
+    'unified_search' => true,
+    'unified_search_default_enabled' => true,
+);
+
+if (!class_exists('VardefManager')) {
+    require_once 'include/SugarObjects/VardefManager.php';
+}
+VardefManager::createVardef('stic_Justifications', 'stic_Justifications', array('basic', 'assignable', 'security_groups'));
+
+// Set special values for SuiteCRM base fields
+$dictionary['stic_Justifications']['fields']['name']['required'] = '0'; // Name is not required in this module
+$dictionary['stic_Justifications']['fields']['name']['importable'] = true; // Name is importable but not required in this module
+$dictionary['stic_Justifications']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
