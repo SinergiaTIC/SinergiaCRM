@@ -292,7 +292,7 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-section-panel { border: none; background: transparent; box-shadow: none; height: var(--awf-section-height); }
 #{$wrapperId} .awf-section-title-panel { font-size: 1.25em; margin-bottom: 0; padding-bottom: 0.5rem; border-bottom: 1px solid var(--bs-border-color); }
 #{$wrapperId} .awf-section-title-card { font-weight: 700; margin: 0; }
-#{$wrapperId} .awf-section-subtitle { font-size: 0.9em; margin-top: -0.15rem; margin-left: 0.25rem; }
+#{$wrapperId} .awf-section-subtitle { font-size: 0.9em; margin-top: -0.15rem; margin-left: 0.25rem; white-space: pre-line; }
 #{$wrapperId} .awf-footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--bs-border-color); font-size: 0.875em; color: #6c757d; text-align: center; }
 #{$wrapperId} .awf-required { color: #dc3545; font-weight: bold; }
 #{$wrapperId} label, #{$wrapperId} .form-label, #{$wrapperId} .form-check-label { font-weight: var(--awf-label-weight); }

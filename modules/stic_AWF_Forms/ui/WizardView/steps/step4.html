@@ -444,7 +444,7 @@
                                                         <!-- Section Title (+ subtitle shown when set) -->
                                                         <div class="flex-grow-1 d-flex flex-column justify-content-center">
                                                             <h3 class="mb-0" :id="`sectionTitleEdit-${section.id}`" data-model="section.title" data-change="section.is_custom_title = true" x-init="sticControls.editableText($el);"></h3>
-                                                            <span class="text-muted" style="font-size: 0.85em;" x-show="section.subtitle" x-text="section.subtitle"></span>
+                                                            <span class="text-muted" style="font-size: 0.85em; white-space: pre-line;" x-show="section.subtitle" x-text="section.subtitle"></span>
                                                         </div>
 
                                                         <!-- Buttons -->
@@ -554,7 +554,7 @@
                                                                     <!-- Subtitle -->
                                                                     <div class="col-9">
                                                                         <label :for="`section${section.id}_subtitle`" class="form-label" x-text="utils.translateForFieldLabel('LBL_SECTION_SUBTITLE')"></label>
-                                                                        <input :id="`section${section.id}_subtitle`" type="text" class="form-control" autocomplete="off" x-model="section.subtitle"/>
+                                                                        <textarea :id="`section${section.id}_subtitle`" class="form-control" rows="2" x-model="section.subtitle"></textarea>
                                                                     </div>
                                                                 </div>
                                                             </template>
