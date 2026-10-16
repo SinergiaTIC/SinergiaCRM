@@ -64,6 +64,7 @@ $mod_strings = array (
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_SUBPANEL_TITLE' => 'Entorno Organizacional',
   'LBL_NEW_FORM_TITLE' => 'Nueva Relación de Entorno Organizacional',
   'LBL_RELATIONSHIP_TYPE' => 'Tipo de relación',
+  'LBL_RELATIONSHIP_TYPE_INFO' => 'El tipo de relación es dependiente de la organización o persona del entorno seleccionada. Al seleccionar una opción, se reseteará y filtrará automáticamente este campo para ofrecer solo las opciones correspondientes al entorno seleccionado.',
   'LBL_START_DATE' => 'Fecha de alta',
   'LBL_END_DATE' => 'Fecha de baja',
   'LBL_REFERENCE_ACCOUNT' => 'Organización de referencia',
