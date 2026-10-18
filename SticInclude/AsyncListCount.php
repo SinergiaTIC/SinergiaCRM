@@ -27,6 +27,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once 'include/EditView/SugarVCR.php';
 
+session_write_close();
+
 function outputJson($success, $data = null, $error = null) {
     @ob_end_clean();
     ob_start();
