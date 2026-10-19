@@ -42,6 +42,11 @@ class ImpersonateLogicHooks
             return;
         }
 
+        // Avoid injecting UI in AJAX/body-only responses (dashlets, inline edits, searches, calendar, popups)
+        if (!empty($_REQUEST['to_pdf']) || !empty($_REQUEST['sugar_body_only'])) {
+            return;
+        }
+
         require_once('custom/modules/Users/SticImpersonate/Impersonate.php');
         $impersonate = new Impersonate();
         
