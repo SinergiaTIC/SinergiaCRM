@@ -122,33 +122,194 @@ class CustomAdministrationController extends AdministrationController
         if (empty($sdaEnabled) || !$sdaEnabled) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "SinergiaDA is disabled");
             die("Sinergia Data Analytics is disabled.");
-            return;
         }
 
         global $current_user, $mod_strings;
-        if (is_admin($current_user)) {
-            require_once 'SticInclude/SinergiaDARebuild.php';
-            $res = SinergiaDARebuild::rebuild(true, $_REQUEST['rebuild_filter'] ?? 'all');
-
-            if ($res != 'ok') {
-                $tx = "<script>$(window).on('load', function() {
-                    $('#rebuild-feedback').html('<div class=\"container alert alert-danger\"> <div class=\"col-md-1\"><span style=\"font-size:xx-large\" class=\"col-md-1 glyphicon glyphicon-minus-sign center\"></span></div> <strong>{$mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG']}:</strong><p>{$res}</p></div>');
-                });</script>";
-            } else {
-                $tx = "<script>$(window).on('load', function() {
-                    $('#rebuild-feedback').html('<div class=\"container alert alert-success\"> <div class=\"col-md-1\"><span style=\"font-size:xx-large\" class=\"col-md-1 glyphicon glyphicon-check center\"></span></div><div class=\"col-md-11\"><strong>{$mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG']}</strong></div></div>');
-                });</script>";
-            }
-
-            SugarApplication::appendSuccessMessage($tx);
-            SugarApplication::redirect("index.php?module=Administration&action=sticmanagesdaintegration");
-
-            die();
-        } else {
+        if (!is_admin($current_user)) {
             die('<h1>Operación restringida a administradores</h1>');
-
         }
 
+        require_once 'SticInclude/SinergiaDARebuild.php';
+
+        // -----------------------------------------------------------------
+        // Polling endpoints used by the Rebuild button (debug panel) and by
+        // the waiting page shown when the rebuild runs in background.
+        // -----------------------------------------------------------------
+        if (!empty($_REQUEST['check_status'])) {
+            $this->sticRespondJson(SdaRebuildStatus::statusForClient());
+            exit();
+        }
+
+        if (!empty($_REQUEST['fetch_debug'])) {
+            header('Content-Type: text/html; charset=utf-8');
+            header('Cache-Control: no-store, no-cache, must-revalidate');
+            echo SdaRebuildStatus::readDebug();
+            exit();
+        }
+
+        $filter = $_REQUEST['rebuild_filter'] ?? 'all';
+        if (!in_array($filter, ['all', 'tables', 'views'], true)) {
+            $filter = 'all';
+        }
+        $isDebug = !empty($_REQUEST['print_debug']);
+
+        // -----------------------------------------------------------------
+        // Async launch: answer with JSON immediately and run the rebuild in
+        // background (CLI subprocess when possible, otherwise this worker after
+        // closing the HTTP response), so no gateway/proxy timeout can abort it.
+        // -----------------------------------------------------------------
+        if (!empty($_REQUEST['async'])) {
+            $this->sticLaunchAsyncRebuild($isDebug, $filter);
+            return;
+        }
+
+        // -----------------------------------------------------------------
+        // Synchronous execution (legacy manual URL behaviour)
+        // -----------------------------------------------------------------
+        require_once 'SticInclude/SinergiaDARebuild.php';
+        $res = SinergiaDARebuild::rebuild(true, $filter);
+
+        if ($res === 'busy') {
+            $alert = '<div class="container alert alert-warning"> <div class="col-md-1"><span style="font-size:xx-large" class="col-md-1 glyphicon glyphicon-time center"></span></div> <strong>' . ($mod_strings['LBL_STIC_RUN_SDA_BUSY_MSG'] ?? 'Busy') . '</strong></div>';
+        } elseif ($res != 'ok') {
+            $alert = '<div class="container alert alert-danger"> <div class="col-md-1"><span style="font-size:xx-large" class="col-md-1 glyphicon glyphicon-minus-sign center"></span></div> <strong>' . $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] . ':</strong><p>' . $res . '</p></div>';
+        } else {
+            $alert = '<div class="container alert alert-success"> <div class="col-md-1"><span style="font-size:xx-large" class="col-md-1 glyphicon glyphicon-check center"></span></div><div class="col-md-11"><strong>' . $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] . '</strong></div></div>';
+        }
+
+        // Debug panel mode (Rebuild button with "Enable debug mode" checked): the debug
+        // output has already been echoed by createViews() when print_debug=1, so the
+        // result must be appended inline and returned as-is. Redirecting here would
+        // emit a SUGAR.ajaxUI.loadContent() script that replaces the page content and
+        // wipes the debug panel, and the $(window).on('load') message would never run.
+        if (!empty($_REQUEST['ajax_debug'])) {
+            echo $alert;
+            exit();
+        }
+
+        $tx = '<script>$(window).on(\'load\', function() {
+                    $(\'#rebuild-feedback\').html(' . (json_encode($alert) ?: '""') . ');
+                });</script>';
+
+        SugarApplication::appendSuccessMessage($tx);
+        SugarApplication::redirect("index.php?module=Administration&action=sticmanagesdaintegration");
+
+        die();
+    }
+
+    /**
+     * Launches a rebuild in background and answers with JSON immediately:
+     *  1. CLI subprocess (SticRebuildSDA.php) - same conditions as the nightly cron
+     *  2. this FPM worker, after closing the HTTP response (fastcgi_finish_request)
+     *
+     * @param bool   $isDebug whether to pass --debug (capture the debug report)
+     * @param string $filter  all|tables|views
+     * @return void
+     */
+    private function sticLaunchAsyncRebuild($isDebug, $filter)
+    {
+        if (SdaRebuildStatus::isBusy()) {
+            $this->sticRespondJson(['state' => 'busy']);
+            exit();
+        }
+
+        // Cover the gap between the launch and the moment the runner takes the lock
+        SdaRebuildStatus::markRunning();
+
+        $phpCli = SdaRebuildStatus::findPhpCli();
+        if ($phpCli !== null && (function_exists('exec') || function_exists('popen') || function_exists('shell_exec'))) {
+            if ($this->sticSpawnCliRebuild($phpCli, $isDebug, $filter)) {
+                $this->sticRespondJson(['state' => 'running']);
+                exit();
+            }
+            if ((SdaRebuildStatus::read()['state'] ?? '') === 'finished') {
+                // Rebuild finished while still launching (very small instance)
+                $this->sticRespondJson(SdaRebuildStatus::statusForClient());
+                exit();
+            }
+        }
+
+        // Fallback: run inside this worker, but only after answering the client,
+        // so no gateway/proxy timeout can abort the rebuild
+        set_time_limit(0);
+        ignore_user_abort(true);
+        $this->sticRespondJson(['state' => 'running']);
+        while (ob_get_level() > 0) {
+            @ob_end_flush();
+        }
+        @flush();
+        if (function_exists('session_write_close')) {
+            @session_write_close();
+        }
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        }
+
+        require_once 'SticInclude/SinergiaDARebuild.php';
+        SinergiaDARebuild::rebuild(true, $filter, ['capture' => true]);
+        exit();
+    }
+
+    /**
+     * Spawns SticRebuildSDA.php in background and verifies it booted.
+     *
+     * @param string $phpCli  path to a PHP CLI binary
+     * @param bool   $isDebug whether to pass --debug (capture the debug report)
+     * @param string $filter  all|tables|views
+     * @return bool false when the process died before starting (caller falls back to FPM)
+     */
+    private function sticSpawnCliRebuild($phpCli, $isDebug, $filter)
+    {
+        $cmd = escapeshellarg($phpCli) . ' -f ' . escapeshellarg(SdaRebuildStatus::root() . '/SticRebuildSDA.php')
+            . ' --' // PHP eats script args starting with "-" unless separated
+            . ' --filter=' . escapeshellarg($filter)
+            . ($isDebug ? ' --debug' : '')
+            . ' >> ' . escapeshellarg(SdaRebuildStatus::root() . '/cache/sda_rebuild_cli.log') . ' 2>&1';
+
+        $pid = 0;
+        if (function_exists('exec')) {
+            $out = [];
+            $rc = 0;
+            exec($cmd . ' & echo $!', $out, $rc);
+            if ($rc === 0 && !empty($out)) {
+                $pid = (int) end($out);
+            }
+        } elseif (function_exists('popen')) {
+            $handle = popen($cmd . ' &', 'r');
+            if (!is_resource($handle)) {
+                return true;
+            }
+            pclose($handle);
+        } else {
+            shell_exec($cmd . ' &');
+        }
+
+        if ($pid <= 0) {
+            // No pid available: trust the launch and let the polling detect problems
+            return true;
+        }
+        // Give the process a moment to boot; if it dies immediately (bad binary,
+        // fatal on startup...) the caller falls back to running inside this worker
+        sleep(1);
+        if (is_dir('/proc') && !file_exists('/proc/' . $pid)) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': CLI rebuild process ' . $pid . ' died before starting, falling back to FPM worker');
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Emits a JSON response (headers only; the caller exits or continues in background).
+     *
+     * @param array $payload
+     * @return void
+     */
+    private function sticRespondJson(array $payload)
+    {
+        header('Content-Type: application/json; charset=utf-8');
+        header('Cache-Control: no-store, no-cache, must-revalidate');
+        header('Pragma: no-cache');
+        echo json_encode($payload, JSON_INVALID_UTF8_SUBSTITUTE | JSON_UNESCAPED_UNICODE);
     }
 
 
