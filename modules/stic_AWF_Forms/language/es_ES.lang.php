@@ -63,6 +63,8 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
+  'LBL_LISTVIEW_OPTION_INVERT_SELECTION' => 'Invertir selección',
+
   // -- MODULE FIELDS --
   'LBL_STATUS' => 'Estado',
   'LBL_START_DATE' => 'Fecha de inicio',
@@ -125,6 +127,7 @@ $mod_strings = array (
   // General editors
   'LBL_SELECT_PLACEHOLDER' => 'Seleccione un elemento...',
   'LBL_SELECT_WRITE_TO_SEARCH' => 'Escriba para filtrar la lista...',
+  'LBL_SELECT_SEARCH_CLEAN' => 'Limpiar búsqueda',
   'LBL_SELECT_NO_RESULTS' => 'No existen coincidencias',
 
   // DataBlocks
@@ -184,20 +187,13 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_TYPE' => 'Tipo de valor',
   'LBL_FIELD_VALUE_OPTIONS_LIST' => 'Lista asociada',
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE' => 'Personalizar opciones',
-  'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modificado)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Seleccionar registros',
   'LBL_FIELD_VALUE_OPTIONS_ADD_REGS' => 'Añadir registros',
-  'LBL_FIELD_VALUE_OPTIONS_SHOW_ALL' => 'Mostrar todos',
-  'LBL_FIELD_VALUE_OPTIONS_HIDE_ALL' => 'Ocultar todos',
-  'LBL_FIELD_VALUE_OPTIONS_SORT_AZ' => 'Ordenar A-Z',
-  'LBL_FIELD_VALUE_OPTIONS_VISIBLE_FIRST' => 'Visibles primero',
-  'LBL_FIELD_VALUE_OPTIONS_SEARCH' => 'Buscar...',
-  'LBL_FIELD_VALUE_OPTIONS_CLEAR_SEARCH' => 'Limpiar búsqueda',
-  'LBL_FIELD_VALUE_OPTIONS_SHOW_FILTERED' => 'Mostrar filtrados',
-  'LBL_FIELD_VALUE_OPTIONS_HIDE_FILTERED' => 'Ocultar filtrados',
-  'LBL_FIELD_VALUE_OPTIONS_SHOW_UNFILTERED' => 'Mostrar no filtrados',
-  'LBL_FIELD_VALUE_OPTIONS_HIDE_UNFILTERED' => 'Ocultar no filtrados',
   'LBL_FIELD_VALUE_OPTIONS_PAGE_INFO' => '({from} - {to} de {total})',
+  'LBL_FIELD_VALUE_OPTIONS_RELOAD_LIST' => 'Recargar lista',
+  'LBL_FIELD_VALUE_OPTIONS_REMOVE_STALE' => 'Limpiar valores obsoletos',
+  'LBL_FIELD_VALUE_OPTIONS_PAGE_SIZE' => 'Registros por página',
+  'LBL_FIELD_VALUE_OPTION_HIDE' => 'Ocultar',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
   'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostrar valores internos',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Valor interno',

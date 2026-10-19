@@ -1144,9 +1144,10 @@ class WizardStep2 {
     };
   }
 
-  static sortableListxData(initial_items) {
+  static sortableListxData(initial_items, context = {}) {
     return {
       items: initial_items,
+      context: context,
       sortKey: '',
       sortAsc: true,
       showInternalValues: false,
@@ -1209,16 +1210,113 @@ class WizardStep2 {
         return this.sortAsc ? 'suitepicon suitepicon-action-sorting-descending' : 'suitepicon suitepicon-action-sorting-ascending';
       },
 
-      setAllVisible(visible) {
-        if (!Array.isArray(this.items)) return;
-        this.items.forEach((o) => { o.is_visible = visible; });
-      },
-
       searchText: '',
 
-      setSubsetVisible(filtered, visible) {
-        if (!Array.isArray(this.items)) return;
-        this.items.forEach((o) => { if (this.matchesSearch(o) === filtered) o.is_visible = visible; });
+      get originalOptions() {
+        if (typeof this.context?.getOriginalOptions !== 'function') return [];
+        return this.context.getOriginalOptions() || [];
+      },
+
+      get hasOriginalList() {
+        return this.originalOptions.length > 0;
+      },
+
+      reloadOriginalList() {
+        const original = this.originalOptions;
+        if (original.length === 0) return;
+        const existing = new Set(this.items.map((o) => String(o.value)));
+        original.forEach((op) => {
+          if (existing.has(String(op.id))) return;
+          this.items.push(new stic_AwfValueOption({
+            value: op.id,
+            is_visible: true,
+            text_original: op.text,
+            text: op.text,
+          }));
+        });
+        const pageBefore = this.page;
+        if (this.sortKey) this.sortBy(this.sortKey, this.sortAsc);
+        this.goToPage(pageBefore);
+      },
+
+      removeNotInOriginalList() {
+        const original = this.originalOptions;
+        if (original.length === 0) return;
+        const valid = new Set(original.map((op) => String(op.id)));
+        for (let i = this.items.length - 1; i >= 0; i--) {
+          if (!valid.has(String(this.items[i].value))) this.items.splice(i, 1);
+        }
+        this.goToPage(this.page);
+      },
+
+      isSel(option) {
+        if (!option || typeof option !== 'object') return false;
+        if (!Object.prototype.hasOwnProperty.call(option, '__sel')) {
+          // Non-enumerable flag: survives re-renders/component re-inits and is
+          // skipped by JSON.stringify when the form is saved. Created lazily on
+          // first read (defineProperty itself does not trigger reactivity), so
+          // later assignments go through the proxy setter and do trigger it.
+          Object.defineProperty(option, '__sel', {
+            value: false,
+            enumerable: false,
+            writable: true,
+            configurable: true,
+          });
+        }
+        return !!option.__sel;
+      },
+
+      setSel(option, value) {
+        if (!option || typeof option !== 'object') return;
+        this.isSel(option);
+        option.__sel = !!value;
+      },
+
+      toggleSelect(option) {
+        this.setSel(option, !this.isSel(option));
+      },
+
+      selectPage() {
+        this.pagedItems.forEach((row) => this.setSel(row.option, true));
+      },
+
+      deselectPage() {
+        this.pagedItems.forEach((row) => this.setSel(row.option, false));
+      },
+
+      selectAllFiltered() {
+        this.filteredItems.forEach((row) => this.setSel(row.option, true));
+      },
+
+      selectInverted() {
+        this.filteredItems.forEach((row) => this.setSel(row.option, !this.isSel(row.option)));
+      },
+
+      clearSelection() {
+        if (Array.isArray(this.items)) this.items.forEach((o) => this.setSel(o, false));
+      },
+
+      get pageAllSelected() {
+        return this.pagedItems.length > 0 && this.pagedItems.every((row) => this.isSel(row.option));
+      },
+
+      get pageSomeSelected() {
+        return this.pagedItems.some((row) => this.isSel(row.option));
+      },
+
+      get selectedCount() {
+        return this.items.filter((o) => this.isSel(o)).length;
+      },
+
+      massSetVisible(visible) {
+        this.items.forEach((o) => { if (this.isSel(o)) o.is_visible = visible; });
+      },
+
+      massDelete() {
+        for (let i = this.items.length - 1; i >= 0; i--) {
+          if (this.isSel(this.items[i])) this.items.splice(i, 1);
+        }
+        this.goToPage(this.page);
       },
 
       searchFields(element) {
