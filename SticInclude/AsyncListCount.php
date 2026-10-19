@@ -64,6 +64,15 @@ if (!$bean->ACLAccess('ListView')) {
     return;
 }
 
+// Release the PHP session lock as early as possible so this long-running
+// request does not block other requests from the same user (e.g. navigation).
+if (session_status() === PHP_SESSION_ACTIVE) {
+    session_write_close();
+}
+
+// Stop processing if the client has already gone away (e.g. user navigated).
+ignore_user_abort(false);
+
 // The main query stored by ListViewData.php includes all filter joins (inner_join, custom_from, etc.)
 // that are needed for WHERE clauses referencing joined tables (e.g., jt6.name)
 $storedQuery = SugarVCR::retrieve($module);
@@ -83,5 +92,9 @@ $db = DBManagerFactory::getInstance();
 $result = $db->query($countQuery);
 $row = $db->fetchByAssoc($result);
 $total = intval($row['c'] ?? $row['count'] ?? 0);
+
+if (connection_aborted()) {
+    return;
+}
 
 outputJson(true, ['total' => $total]);
