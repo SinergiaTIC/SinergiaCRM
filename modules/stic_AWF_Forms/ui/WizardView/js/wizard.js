@@ -1164,6 +1164,8 @@ class WizardStep2 {
         const itemToMove = this.items[index];
         this.items.splice(index, 1);
         this.items.splice(index - 1, 0, itemToMove);
+        // Manual reordering cancels any active column sort mark
+        this.sortKey = '';
       },
 
       moveDown(index) {
@@ -1172,6 +1174,8 @@ class WizardStep2 {
         const itemToMove = this.items[index];
         this.items.splice(index, 1);
         this.items.splice(index + 1, 0, itemToMove);
+        // Manual reordering cancels any active column sort mark
+        this.sortKey = '';
       },
 
       getSortValue(item, key) {

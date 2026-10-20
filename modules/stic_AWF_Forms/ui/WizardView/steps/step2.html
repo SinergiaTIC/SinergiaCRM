@@ -739,12 +739,12 @@
                                             <td class="text-end pe-3 text-nowrap">
                                               <div class="d-inline-flex align-items-center gap-2">
                                                 <div class="input-group" role="group">
-                                                  <button type="button" class="btn" :disabled="row.realIndex === 0 || sortKey !== '' || searchText !== ''"
+                                                  <button type="button" class="btn" :disabled="row.realIndex === 0 || searchText !== ''"
                                                           @click="moveUp(row.realIndex)" :title="utils.translate('LBL_BUTTON_MOVE_UP')">
                                                     <i class="suitepicon suitepicon-action-move-up"></i>
                                                   </button>
 
-                                                  <button type="button" class="btn" :disabled="row.realIndex === items.length - 1 || sortKey !== '' || searchText !== ''"
+                                                  <button type="button" class="btn" :disabled="row.realIndex === items.length - 1 || searchText !== ''"
                                                           @click="moveDown(row.realIndex)" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
                                                     <i class="suitepicon suitepicon-action-move-down"></i>
                                                   </button>

@@ -127,7 +127,7 @@ $mod_strings = array (
   // General editors
   'LBL_SELECT_PLACEHOLDER' => 'Seleccione un elemento...',
   'LBL_SELECT_WRITE_TO_SEARCH' => 'Escriba para filtrar la lista...',
-  'LBL_SELECT_SEARCH_CLEAN' => 'Limpiar búsqueda',
+  'LBL_SELECT_SEARCH_CLEAN' => 'Limpiar filtro',
   'LBL_SELECT_NO_RESULTS' => 'No existen coincidencias',
 
   // DataBlocks
