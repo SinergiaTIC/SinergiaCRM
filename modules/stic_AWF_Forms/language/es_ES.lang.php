@@ -142,7 +142,7 @@ $mod_strings = array (
   'LBL_DATABLOCK_MODULE' => 'Módulo',
   'LBL_DATABLOCK_NAME' => 'Nombre',
   'LBL_DATABLOCK_INTERNAL_NAME' => 'Nombre interno',
-  'LBL_DATABLOCK_DELETE_CONFIRM' => "¿Seguro que desea eliminar el bloque de datos y todos sus campos? Esta acción no se puede deshacer.",
+  'LBL_DATABLOCK_DELETE_CONFIRM' => '¿Seguro que desea eliminar el bloque de datos y todos sus campos? Esta acción no se puede deshacer.',
 
   // DataBlock Groups
   'LBL_DATABLOCK_GROUP' => 'Grupo de bloques de datos',
