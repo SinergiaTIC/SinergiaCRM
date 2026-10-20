@@ -239,7 +239,7 @@ function initOEEditView() {
   syncEnvironmentRelates();
 }
 
-// The relate that must not be filled should not look editable. The double click keeps working, this only removes the misleading icon and classes.
+// The relate that must not be filled should not look editable and should not respond to double clicks.
 const hideBlockedRelatePencil = () => {
   const [accountField, contactField] = Object.values(environmentFields).map(
     ({ name }) => name,
@@ -272,6 +272,7 @@ const hideBlockedRelatePencil = () => {
       editableRelateField.classList.remove("inlineEdit");
       editableRelateField.style.cursor = "default";
       editableRelateField.querySelector(".inlineEditIcon")?.remove();
+      $(editableRelateField).off("dblclick");
     }
   }
 };
