@@ -926,38 +926,63 @@ EOQ;
      * elapses, causing stale behaviour for every FPM worker during that window.
      *
      * This method removes that stale window:
-     * 1. If the OPcache API is not path-restricted, it calls opcache_invalidate() directly.
-     * 2. Otherwise it applies the "self-refresh" pattern: temporarily set
-     *    opcache.revalidate_freq=0 and opcache.file_update_protection=0 for the current
-     *    process and include() each file, which forces this worker to recompile the fresh
-     *    content and update the shared OPcache entry, so all other workers immediately
-     *    serve the new version.
+     * 1. If the OPcache API is not path-restricted, it calls opcache_invalidate() directly
+     *    on every file (invalidating never re-executes anything, so it is safe for any file).
+     * 2. Otherwise it applies the "self-refresh" pattern for re-executable files: temporarily
+     *    set opcache.validate_timestamps=1, opcache.revalidate_freq=0 and
+     *    opcache.file_update_protection=0 for the current process and include() each file,
+     *    which forces this worker to recompile the fresh content and update the shared
+     *    OPcache entry, so all other workers immediately serve the new version.
+     *    OPcache validates changes comparing mtimes with 1-second resolution, so each
+     *    file's mtime is forced to time()+1 before including it: a file rewritten twice
+     *    within the same second (e.g. remove+add flows) would otherwise validate as
+     *    "unchanged" and the stale entry would be served indefinitely, not just for
+     *    revalidate_freq.
      *
-     * IMPORTANT: only pass files that are safe to re-execute within the current request
-     * (files that only set variables/arrays, like logic_hooks.php or language files).
-     * Never pass files declaring classes/functions, as re-including them would cause a
-     * fatal "cannot redeclare" error.
+     * IMPORTANT: $files must only contain files that are safe to re-execute within the
+     * current request (files that only set variables/arrays, like logic_hooks.php or
+     * language files). Files declaring classes/functions MUST be passed through
+     * $invalidateOnlyFiles: they are only refreshed via the native API (never
+     * re-included), and on restricted hosts they cannot be refreshed (logged as error).
      *
-     * @param string|array $files Path(s) of the regenerated PHP files (absolute or CRM-root relative)
-     * @return bool True if the refresh was performed or nothing was needed; false otherwise
+     * Failures are logged (LoggerManager) and reflected in the return value, so callers
+     * can detect hosts where OPcache entries cannot be refreshed from PHP at all
+     * (php_admin_value locks, opcache.validate_timestamps=0 with restricted API, etc.).
+     *
+     * @param string|array $files Path(s) of regenerated PHP files safe to re-execute (variables/arrays only)
+     * @param string|array $invalidateOnlyFiles Optional path(s) of regenerated PHP files that must NOT be re-executed (classes/functions)
+     * @return bool True if every requested file was refreshed (or nothing was needed); false otherwise
      */
-    public static function refreshPhpFilesInOpcache($files)
+    public static function refreshPhpFilesInOpcache($files, $invalidateOnlyFiles = array())
     {
         if (!is_array($files)) {
             $files = array($files);
         }
+        if (!is_array($invalidateOnlyFiles)) {
+            $invalidateOnlyFiles = array($invalidateOnlyFiles);
+        }
 
-        // Nothing to do without Zend OPcache
+        // Resolve to real paths and drop nonexistent files
+        $files = array_values(array_unique(array_filter(array_map('realpath', $files), 'is_file')));
+        $invalidateOnlyFiles = array_values(array_unique(array_filter(array_map('realpath', $invalidateOnlyFiles), 'is_file')));
+        if (empty($files) && empty($invalidateOnlyFiles)) {
+            return true; // nothing to do
+        }
+
+        // Nothing can be done without Zend OPcache
         if (!extension_loaded('Zend OPcache') || !function_exists('opcache_invalidate')) {
+            LoggerManager::getLogger()->error('SticUtils::refreshPhpFilesInOpcache: Zend OPcache is not loaded; regenerated PHP files may be served stale');
             return false;
         }
 
-        // First try the native API, when it is not restricted by opcache.restrict_api
+        // First try the native API, when it is not restricted by opcache.restrict_api.
+        // Invalidating never re-executes anything, so it is safe for every file.
         $restrictApi = ini_get('opcache.restrict_api');
-        if (!$restrictApi || strpos(__FILE__, $restrictApi) === 0) {
+        $apiAvailable = !$restrictApi || strpos(__FILE__, $restrictApi) === 0;
+        if ($apiAvailable) {
             $allInvalidated = true;
-            foreach ($files as $file) {
-                if (is_file($file) && !@opcache_invalidate($file, true)) {
+            foreach (array_merge($files, $invalidateOnlyFiles) as $file) {
+                if (!@opcache_invalidate($file, true)) {
                     $allInvalidated = false;
                 }
             }
@@ -966,17 +991,40 @@ EOQ;
             }
         }
 
-        // Fallback: "self-refresh" pattern (include is not blocked by opcache.restrict_api)
+        // Fallback: "self-refresh" pattern (include is not blocked by opcache.restrict_api).
+        // Only valid for the re-executable files: class/function-declaring files cannot be
+        // refreshed this way (re-including them would be a fatal "cannot redeclare").
+        if (!empty($invalidateOnlyFiles)) {
+            LoggerManager::getLogger()->error(
+                'SticUtils::refreshPhpFilesInOpcache: cannot refresh class/function-declaring files when opcache.restrict_api blocks the API: '
+                . implode(', ', $invalidateOnlyFiles)
+            );
+        }
+        if (empty($files)) {
+            return false;
+        }
+
+        // Without timestamp validation OPcache never re-checks files, so the fallback is
+        // useless. NOTE: this directive cannot be enabled at runtime (ini_set changes the
+        // ini value but not the behaviour, unlike revalidate_freq), verified empirically.
+        if (!(bool)ini_get('opcache.validate_timestamps')) {
+            LoggerManager::getLogger()->error('SticUtils::refreshPhpFilesInOpcache: opcache.validate_timestamps=0 and the OPcache API is blocked; entries can only be refreshed with opcache_reset/FPM restart or host configuration');
+            return false;
+        }
         $oldFreq = @ini_set('opcache.revalidate_freq', '0');
         if ($oldFreq === false) {
+            LoggerManager::getLogger()->error("SticUtils::refreshPhpFilesInOpcache: ini_set('opcache.revalidate_freq') is blocked (php_admin_value?); OPcache entries cannot be refreshed from PHP");
             return false;
         }
         $oldProtection = @ini_set('opcache.file_update_protection', '0');
         try {
             foreach ($files as $file) {
-                if (is_file($file)) {
-                    include $file;
-                }
+                // Force a mtime different from the currently cached entry timestamp: OPcache
+                // validates changes with 1-second mtime resolution, so a file rewritten within
+                // the same second its previous version was cached would validate as "unchanged"
+                // and the stale entry would be served indefinitely
+                @touch($file, time() + 1);
+                include $file;
             }
         } finally {
             @ini_set('opcache.revalidate_freq', $oldFreq);
@@ -984,6 +1032,6 @@ EOQ;
                 @ini_set('opcache.file_update_protection', $oldProtection);
             }
         }
-        return true;
+        return empty($invalidateOnlyFiles);
     }
 }
