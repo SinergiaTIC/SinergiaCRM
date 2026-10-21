@@ -168,7 +168,7 @@ class FormDataBlock {
 
     /**
      * Loop-depth-aware bean reference lookup for the ACTIVE execution context
-     * (B-4 / n-dimensional POST matrix): the reference key is the first
+     * (n-dimensional POST matrix): the reference key is the first
      * d indexes of the context's active index stack (d = this block's loop
      * depth) — a shallower target read through a deeper action uses the outer
      * indexes. Returns null when the active stack is shallower than this

@@ -48,7 +48,9 @@ class ParameterResolverService {
         foreach ($paramDefinitions as $paramDef) {
             $paramName = $paramDef->name;
             $paramConfig = $paramConfigMap[$paramName] ?? null;
-            $resolvedValue = $this->resolveSingleParam($paramDef, $paramConfig, $context);
+
+            $resolvedValue = $this->resolveSingleParam($paramDef, $paramConfig, $context, $actionConfig);
+
             if ($paramDef->required && $resolvedValue === null) {
                 throw new RequiredParameterException($paramName, $actionConfig->name);
             }
@@ -63,9 +65,10 @@ class ParameterResolverService {
      * @param ActionParameterDefinition $def The parameter definition
      * @param ?FormActionParameter $config The parameter configuration (can be null)
      * @param ExecutionContext $context The execution context
+     * @param FormAction $actionConfig The owning action configuration
      * @return mixed The resolved value, or null if it can not be resolved
      */
-    private function resolveSingleParam(ActionParameterDefinition $def, ?FormActionParameter $config, ExecutionContext $context): mixed {
+    private function resolveSingleParam(ActionParameterDefinition $def, ?FormActionParameter $config, ExecutionContext $context, FormAction $actionConfig): mixed {
         // Handle missing parameter configuration
         $value = $config?->value;
         switch ($def->type) {
@@ -75,7 +78,7 @@ class ParameterResolverService {
 
             case ActionParameterType::DATA_BLOCK:
                 // The parameter is a Data Block. Value contains the block id
-                return $this->resolveDataBlock($def, $value, $context);
+                return $this->resolveDataBlock($def, $value, $context, $actionConfig);
                 
             case ActionParameterType::FIELD:
                 // The parameter is a form field. Value contains the field name
@@ -93,7 +96,7 @@ class ParameterResolverService {
             case ActionParameterType::OPTION_SELECTOR:
                 // The parameter is a selector; 'selectedOption' contains the selection
                 $selectedOption = $config?->selectedOption;
-                return $this->resolveOptionSelector($def, $selectedOption, $value, $context);
+                return $this->resolveOptionSelector($def, $selectedOption, $value, $context, $actionConfig);
         }
 
         // No resolution has been returned
@@ -163,9 +166,11 @@ class ParameterResolverService {
      * @param ActionParameterDefinition $def The parameter definition
      * @param ?string $value The parameter value from configuration (can be null)
      * @param ExecutionContext $context The execution context
+     * @param FormAction $actionConfig The owning action configuration
      * @return ?DataBlockResolved The resolved Data Block, or null if it can not be resolved
+     * @throws UnactivatedOptionalBlockException
      */
-    private function resolveDataBlock(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?DataBlockResolved {
+    private function resolveDataBlock(ActionParameterDefinition $def, ?string $value, ExecutionContext $context, FormAction $actionConfig): ?DataBlockResolved {
         $dataBlockId = $value !== null ? $value : $def->defaultValue;
         if ($dataBlockId === null) {
             return null;
@@ -177,9 +182,25 @@ class ParameterResolverService {
             return null;
         }
 
-        // Loop-depth-aware instance resolution: picks the correct instance indexes 
-        // from the context for the block's own depth.
-        return DataBlockResolved::resolveForBlock($dataBlockConfig, $context->formData, $context);
+        // Loop-depth-aware instance resolution
+        $resolvedBlock = DataBlockResolved::resolveForBlock($dataBlockConfig, $context->formData, $context);
+
+        // Check whether the block has optional cardinality (min_instances === 0)
+        $isOptional = (isset($dataBlockConfig->min_instances) && (int)$dataBlockConfig->min_instances === 0) || !empty($dataBlockConfig->isOptional());
+
+        // Determine if the instance was activated by the submitter
+        $isActivated = $resolvedBlock !== null && (!method_exists($resolvedBlock, 'isActivated') || $resolvedBlock->isActivated());
+
+        if ($isOptional && !$isActivated) {
+            if ($def->required) {
+                // If the action strictly requires this block, interrupt via specific control exception
+                throw new UnactivatedOptionalBlockException($def->name, $dataBlockConfig->name, $actionConfig->name);
+            }
+            // If the parameter is optional, resolve cleanly to null
+            return null;
+        }
+
+        return $resolvedBlock;
     }
 
     private function resolveBean(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?BeanReference {
@@ -282,9 +303,10 @@ class ParameterResolverService {
      * @param ?string $selectedOption The selected option name (can be null)
      * @param ?string $value The parameter value from configuration (can be null)
      * @param ExecutionContext $context The execution context (used to access form data and configuration)
+     * @param FormAction $actionConfig The owning action configuration
      * @return ?OptionSelectorResolved The resolved option, or null if it can not be
      */
-    private function resolveOptionSelector(ActionParameterDefinition $def, ?string $selectedOption, ?string $value, ExecutionContext $context): ?OptionSelectorResolved {
+    private function resolveOptionSelector(ActionParameterDefinition $def, ?string $selectedOption, ?string $value, ExecutionContext $context, FormAction $actionConfig): ?OptionSelectorResolved {
         if ($selectedOption === null) {
             $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Selected option is null");
             return null;
@@ -314,7 +336,7 @@ class ParameterResolverService {
 
             case ActionParameterType::DATA_BLOCK:
                 // The parameter is a Data Block. Value contains the block id
-                $resolvedValue = $this->resolveDataBlock($def, $value, $context);
+                $resolvedValue = $this->resolveDataBlock($def, $value, $context, $actionConfig);
                 break;
                 
             case ActionParameterType::FIELD:

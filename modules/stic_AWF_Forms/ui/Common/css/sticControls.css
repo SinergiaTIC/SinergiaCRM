@@ -588,8 +588,7 @@ h4 {
   transform: rotate(180deg);
 }
 
-/* Gear icons (wizard settings toggles): reusable CSS classes instead of inline
-   SVGs. The mask keeps the currentColor of the parent button. */
+/* Gear icons (wizard settings toggles) */
 .awf-icon-gear,
 .awf-icon-gear-fill {
   display: inline-block;
@@ -627,4 +626,18 @@ h4 {
 
 .awf-card-highlight {
   animation: awfCardGlow 1.2s ease-in-out;
+}
+
+.switch-empty {
+  display: inline-block;
+  cursor: not-allowed;
+}
+
+.switch-empty .form-check-input {
+  background-image: none !important;
+  pointer-events: none;
+}
+.switch-empty .form-check-label {
+  opacity: 0.5;
+  pointer-events: none;
 }

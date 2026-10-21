@@ -64,13 +64,6 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     {
         global $db, $beanList;
 
-        // Optional blocks that were not activated are skipped —
-        // no ghost records from FIXED/server-only data.
-        if (!$block->isActivated()) {
-            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Advanced Web Forms: DataBlock '{$block->dataBlock->name}' skipped because it is optional and was not activated.");
-            return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "DataBlock '{$block->dataBlock->name}' was skipped because it is optional and was not activated.");
-        }
-
         $module = $block->dataBlock->module;
         if (!isset($beanList[$module])) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "The configured module '{$module}' is not available on the system.");
@@ -492,6 +485,12 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $targetBeanRef = $targetBlock->getReferenceForContext($context);
 
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
+                // Target is optional and was not created: skip FK injection gracefully
+                if ($targetBlock->isOptional() || (isset($targetBlock->min_instances) && (int)$targetBlock->min_instances === 0)) {
+                    $GLOBALS['log']->info("SaveRecordAction: Skipped FK injection for '{$idName}' because optional target block '{$targetBlock->name}' was not created.");
+                    continue;
+                }
+
                 $GLOBALS['log']->warn("SaveRecordAction: Target block '{$targetBlock->name}' has no bean ID. Check action order.");
                 continue;
             }

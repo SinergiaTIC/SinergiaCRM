@@ -133,8 +133,6 @@ class SendEmailToAssignedAction extends HookActionDefinition {
 
             } else if ($selector->selectedOptionName === 'opt_datablock') {
                 // Option C: A Data Block (ex: The assigned of the created Contact)
-                // Loop-depth-aware: uses the resolved instance's reference key
-                // (composite "i:j" for depth-2 instances)
                 /** @var DataBlockResolved $block */
                 $block = $selector->resolvedValue;
                 $sourceBean = $block->getInstanceBeanReference()?->getBean();

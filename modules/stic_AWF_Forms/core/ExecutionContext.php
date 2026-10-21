@@ -84,7 +84,7 @@ class ExecutionContext {
 
     /**
      * Adds an action result to the execution context.
-     * Per-instance executions (B-4) store one result per instance:
+     * Per-instance executions store one result per instance:
      *  - instance index 0 keeps the plain action id (backward compatible);
      *  - later indexes use "{$actionId}_{index}";
      *  - depth-2 executions use "{$actionId}_{outer}_{inner}".
@@ -136,7 +136,7 @@ class ExecutionContext {
     }
 
     /**
-     * Gets the result of an action for a specific instance (B-4/B-6), with
+     * Gets the result of an action for a specific instance, with
      * fallback: exact "{$actionId}_{index}" key first, then the plain
      * "{$actionId}" key (instance 0 keeps the plain key for backward
      * compatibility). With no index, behaves like getActionResultById().

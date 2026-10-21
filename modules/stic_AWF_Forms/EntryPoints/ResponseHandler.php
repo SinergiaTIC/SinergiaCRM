@@ -491,7 +491,7 @@ class ResponseHandler
         global $app_list_strings;
 
         // Consolidate links: a single link for each affected bean AND instance
-        // (B-7): repeatable groups create the same bean module ids per instance,
+        // Repeatable groups create the same bean module ids per instance,
         // so the instance addressing ("i" or "i:j") is part of the key, giving
         // one independent stic_AWF_Links record per (beanId, instance).
         $consolidatedBeans = [];
@@ -627,7 +627,7 @@ class ResponseHandler
             // Simple groups (mandatory, max=1) with children keep the scalar path: the root
             // is validated as a normal block, and children are validated individually (they
             // use static field names). This preserves backward compatibility with non-expandable
-            // actions until generic unrolling (B-4) lands.
+            // actions until generic unrolling lands.
             if ($block->isRepeatable() || $block->isOptional()) {
                 $context = new ExecutionContext('', '', $data, $config, null, '', null, '');
                 $instances = DataBlockResolved::resolveInstances($block, $data, $context);

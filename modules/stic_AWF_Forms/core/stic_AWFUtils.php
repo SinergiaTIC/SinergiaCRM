@@ -1169,59 +1169,132 @@ class stic_AWFUtils {
 
     /**
      * Evaluates an array of conditions against the provided form data.
-     * Assumes an implicit AND between all conditions.
-     * @param array|null $conditions Array of condition DTOs (field_name, operator, value)
-     * @param array $formData The submitted form data
+     * Pure and context-free: used by standalone validations and scalar checks.
+     * 
+     * @param FormCondition[]|null $conditions Array of condition DTOs (field_name, operator, value)
+     * @param array $formData Raw submitted form data
+     * @param string $logicalOperator 'AND' or 'OR'
      * @return bool True if all conditions are met or if no conditions exist, false otherwise
      */
-    public static function evaluateConditions(?array $conditions, array $formData): bool {
+    public static function evaluateConditions(?array $conditions, array $formData, string $logicalOperator = 'AND'): bool {
         if (empty($conditions)) {
             return true;
         }
+
+        $results = [];
 
         foreach ($conditions as $cond) {
             if (empty($cond->field_name)) {
                 continue; // Prevent errors if an empty condition slipped through
             }
 
-            $fieldKey = $cond->field_name; // Ex: "Contact0.newsletter"
-            $phpKey = str_replace('.', '_', $fieldKey); // Convert field name to PHP key format
-            $expectedValue = $cond->value;
-            $submittedValue = $formData[$phpKey] ?? null;
+            $submittedValue = self::extractScalarFieldValue($cond->field_name, $formData);
+            $results[] = self::compareConditionValue($cond, $submittedValue);
+        }
 
-            if (!self::compareConditionValue($cond, $submittedValue)) {
-                return false;
+        if (empty($results)) {
+            return true;
+        }
+
+        return ($logicalOperator === 'OR') ? in_array(true, $results, true) : !in_array(false, $results, true);
+    }
+
+    /**
+     * Evaluates a single condition against a submitted value.
+     * Strictly enforces Three-Valued Logic: null represents a non-existent field
+     * (e.g. from an unactivated optional block or out-of-bounds instance).
+     *
+     * @param FormCondition $cond
+     * @param mixed $submittedValue Value from form data or null if non-existent
+     * @return bool
+     */
+    private static function compareConditionValue($cond, $submittedValue): bool {
+        $operator = $cond->operator ?? 'Equal_To';
+        $expectedValue = $cond->value ?? '';
+        $fieldExists = ($submittedValue !== null);
+
+        // 1. Non-existent field guard (unactivated optional block or missing key)
+        if (!$fieldExists) {
+            // Only explicit emptiness assertions can evaluate to true on absent fields
+            if ($operator === 'Is_Empty' || $operator === 'Empty') {
+                return true;
+            }
+            // Content assertions (Equal_To, Not_Equal_To, >, <, Contains, Not_Empty) MUST fail
+            return false;
+        }
+
+        // 2. Multiselect / Array handling
+        if (is_array($submittedValue)) {
+            switch ($operator) {
+                case 'Equal_To':
+                case 'Contains':
+                    return in_array($expectedValue, $submittedValue);
+                case 'Not_Equal_To':
+                case 'Not_Contains':
+                    return !in_array($expectedValue, $submittedValue);
+                case 'Is_Empty':
+                case 'Empty':
+                    return empty($submittedValue);
+                case 'Not_Empty':
+                    return !empty($submittedValue);
+                default:
+                    return false;
             }
         }
 
-        return true; // All conditions passed
-    }
+        // 3. Scalar comparisons
+        $strActual = (string)$submittedValue;
+        $strExpected = (string)$expectedValue;
 
-    /**
-     * Evaluates a condition against a submitted value using the condition's operator.
-     * Unknown operators fail safely (false).
-     */
-    private static function compareConditionValue($cond, $submittedValue): bool {
-        $expectedValue = $cond->value;
-        $isMatch = is_array($submittedValue)
-            ? in_array($expectedValue, $submittedValue)
-            : ($submittedValue == $expectedValue);
-
-        switch ($cond->operator) {
+        switch ($operator) {
             case 'Equal_To':
-                return $isMatch;
+                return $strActual === $strExpected;
+
             case 'Not_Equal_To':
-                return !$isMatch;
-            // Future operators (>, <, IN, etc.) go here
+                return $strActual !== $strExpected;
+
+            case 'Greater_Than':
+                return is_numeric($submittedValue) && is_numeric($expectedValue) 
+                    && ((float)$submittedValue > (float)$expectedValue);
+
+            case 'Less_Than':
+                return is_numeric($submittedValue) && is_numeric($expectedValue) 
+                    && ((float)$submittedValue < (float)$expectedValue);
+
+            case 'Greater_Than_Or_Equal_To':
+                return is_numeric($submittedValue) && is_numeric($expectedValue) 
+                    && ((float)$submittedValue >= (float)$expectedValue);
+
+            case 'Less_Than_Or_Equal_To':
+                return is_numeric($submittedValue) && is_numeric($expectedValue) 
+                    && ((float)$submittedValue <= (float)$expectedValue);
+
+            case 'Contains':
+                return $strExpected !== '' && str_contains($strActual, $strExpected);
+
+            case 'Not_Contains':
+                return $strExpected !== '' && !str_contains($strActual, $strExpected);
+
+            case 'Starts_With':
+                return $strExpected !== '' && str_starts_with($strActual, $strExpected);
+
+            case 'Ends_With':
+                return $strExpected !== '' && str_ends_with($strActual, $strExpected);
+
+            case 'Is_Empty':
+            case 'Empty':
+                return $strActual === '';
+
+            case 'Not_Empty':
+                return $strActual !== '';
+
             default:
-                return false; // Unknown operator fails safely
+                return false;
         }
     }
 
     /**
-     * True when any condition references a field of a repeatable/optional group
-     * (loop-depth >= 1). Those conditions cannot be evaluated once with scalar
-     * keys: they must be evaluated per instance inside the unrolling loop (B-5).
+     * True when any condition references a field of a repeatable/optional group (loop-depth >= 1).
      */
     public static function hasInstanceBoundConditions(?array $conditions, FormConfig $formConfig): bool {
         if (empty($conditions)) {
@@ -1239,56 +1312,81 @@ class stic_AWFUtils {
 
     /**
      * Evaluates the SCALAR part of the conditions (fields outside any
-     * repeatable/optional group). Used before the unrolling loop when the
-     * action mixes scalar and instance-bound conditions: the scalar part gates
-     * the whole action, the instance part is evaluated per instance (B-5).
+     * repeatable/optional group).
+     *
+     * @param FormCondition[]|null $conditions
+     * @param FormConfig $formConfig
+     * @param array $formData
+     * @param string $logicalOperator 'AND' or 'OR'
+     * @return bool
      */
-    public static function evaluateScalarConditions(?array $conditions, FormConfig $formConfig, array $formData): bool {
+    public static function evaluateScalarConditions(?array $conditions, FormConfig $formConfig, array $formData, string $logicalOperator = 'AND'): bool {
         if (empty($conditions)) {
             return true;
         }
+
+        $results = [];
+
         foreach ($conditions as $cond) {
             if (empty($cond->field_name)) continue;
             $block = self::resolveConditionBlock($cond->field_name, $formConfig);
-            if ($block !== null && $block->getLoopDepth() >= 1) continue; // Instance-bound: evaluated per instance
-            $phpKey = str_replace('.', '_', $cond->field_name);
-            if (!self::compareConditionValue($cond, $formData[$phpKey] ?? null)) {
-                return false;
+            
+            // Skip instance-bound conditions: they are gated per instance
+            if ($block !== null && $block->getLoopDepth() >= 1) {
+                continue;
             }
+
+            $submittedValue = self::extractScalarFieldValue($cond->field_name, $formData);
+            $results[] = self::compareConditionValue($cond, $submittedValue);
         }
-        return true;
+
+        // If all conditions are instance-bound, the scalar gate is satisfied
+        if (empty($results)) {
+            return true;
+        }
+
+        return ($logicalOperator === 'OR') ? in_array(true, $results, true) : !in_array(false, $results, true);
     }
 
     /**
-     * Evaluates the INSTANCE-BOUND part of the conditions for a specific
-     * instance (B-5). Fields of group blocks are read from the indexed POST
-     * matrix using the active loop-index stack: a field at loop depth d reads
-     * Block[i1]...[id][field] (the first d indexes of the stack). Scalar
-     * conditions are re-evaluated too (cheap and keeps semantics: the action
-     * only runs when ALL its conditions hold for this instance).
+     * Evaluates conditions for a specific instance index vector.
+     * Group fields are navigated in the POST matrix; scalar fields are read from global data.
+     *
+     * @param FormCondition[]|null $conditions
+     * @param FormConfig $formConfig
+     * @param array $formData
+     * @param array $instanceIndexes Current loop index stack ([i1, i2])
+     * @param string $logicalOperator 'AND' or 'OR'
+     * @return bool
      */
-    public static function evaluateConditionsForInstance(?array $conditions, FormConfig $formConfig, array $formData, array $instanceIndexes = []): bool {
+    public static function evaluateConditionsForInstance(?array $conditions, FormConfig $formConfig, array $formData, array $instanceIndexes = [], string $logicalOperator = 'AND'): bool {
         if (empty($conditions)) {
             return true;
         }
+
+        $results = [];
+
         foreach ($conditions as $cond) {
             if (empty($cond->field_name)) continue;
             $submittedValue = self::resolveConditionFieldValue($cond, $formConfig, $formData, $instanceIndexes);
-            if (!self::compareConditionValue($cond, $submittedValue)) {
-                return false;
-            }
+            $results[] = self::compareConditionValue($cond, $submittedValue);
         }
-        return true;
+
+        if (empty($results)) {
+            return true;
+        }
+
+        return ($logicalOperator === 'OR') ? in_array(true, $results, true) : !in_array(false, $results, true);
     }
 
     /**
-     * Resolves the block referenced by a condition field name ("Block.field").
-     * Returns null when the name is malformed or the block does not exist.
+     * Resolves the block referenced by a condition field name ("Block.field" or "_detached.Block.field").
      */
     private static function resolveConditionBlock(string $fieldName, FormConfig $formConfig): ?FormDataBlock {
-        $dotPos = strpos($fieldName, '.');
+        $clean = str_starts_with($fieldName, '_detached.') ? substr($fieldName, 10) : $fieldName;
+        $dotPos = strpos($clean, '.');
         if ($dotPos === false) return null;
-        $blockName = substr($fieldName, 0, $dotPos);
+        $blockName = substr($clean, 0, $dotPos);
         foreach ($formConfig->data_blocks as $block) {
             if ($block->name === $blockName) return $block;
         }
@@ -1296,36 +1394,72 @@ class stic_AWFUtils {
     }
 
     /**
-     * Reads the submitted value of a condition field, resolving instance-aware
-     * POST paths for fields inside groups: the first d indexes of the active
-     * stack (d = the block's loop depth) navigate the matrix.
+     * Safely extracts a scalar value from formData supporting dot and underscore formats,
+     * including unlinked (_detached) fields. Returns null if key does not exist.
      */
-    private static function resolveConditionFieldValue($cond, FormConfig $formConfig, array $formData, array $instanceIndexes = []) {
+    private static function extractScalarFieldValue(string $fieldName, array $formData): mixed {
+        $phpKey = str_replace('.', '_', $fieldName);
+
+        if (array_key_exists($phpKey, $formData)) {
+            return $formData[$phpKey];
+        }
+        if (array_key_exists($fieldName, $formData)) {
+            return $formData[$fieldName];
+        }
+
+        // If field was defined without _detached. prefix but stored with it
+        $detachedKey = '_detached_' . $phpKey;
+        if (array_key_exists($detachedKey, $formData)) {
+            return $formData[$detachedKey];
+        }
+
+        return null;
+    }
+
+    /**
+     * Reads the submitted value of a condition field, resolving instance-aware
+     * POST paths for fields inside groups (Block[i1]...[field]).
+     */
+    private static function resolveConditionFieldValue(FormCondition $cond, FormConfig $formConfig, array $formData, array $instanceIndexes = []) {
         $block = self::resolveConditionBlock($cond->field_name, $formConfig);
-        $phpKey = str_replace('.', '_', $cond->field_name);
+
+        // Scalar block: read directly from flat formData
         if ($block === null || $block->getLoopDepth() === 0) {
-            return $formData[$phpKey] ?? null;
+            return self::extractScalarFieldValue($cond->field_name, $formData);
         }
 
         $depth = $block->getLoopDepth();
-        // Missing levels default to 0 (same rule as
-        // DataBlockResolved::resolveForBlock): a GLOBAL/terminal action resolves
-        // instance 0 instead of reading a flat key that does not exist.
         $indexes = array_slice($instanceIndexes, 0, $depth);
         while (count($indexes) < $depth) {
             $indexes[] = 0;
         }
+        
+        $rawField = str_starts_with($cond->field_name, '_detached.') 
+            ? substr($cond->field_name, 10) 
+            : $cond->field_name;
+        $fieldName = substr($rawField, strpos($rawField, '.') + 1);
 
-        $fieldDef = $block->fields[substr($cond->field_name, strpos($cond->field_name, '.') + 1)] ?? null;
-        $blockKey = ($fieldDef !== null && $fieldDef->type_field === DataBlockFieldType::UNLINKED ? '_detached_' : '') . $block->name;
+        $fieldDef = $block->fields[$fieldName] ?? null;
+        $isDetached = ($fieldDef !== null && $fieldDef->type_field === DataBlockFieldType::UNLINKED);
+        $blockKey = ($isDetached ? '_detached_' : '') . $block->name;
 
-        $node = $formData[$blockKey] ?? null;
-        foreach ($indexes as $index) {
-            if (!is_array($node)) return null;
-            $node = $node[$index] ?? null;
+        if (!isset($formData[$blockKey]) || !is_array($formData[$blockKey])) {
+            return null;
         }
-        if (!is_array($node)) return null;
-        return $node[substr($cond->field_name, strpos($cond->field_name, '.') + 1)] ?? null;
+
+        $node = $formData[$blockKey];
+        foreach ($indexes as $index) {
+            if (!is_array($node) || !array_key_exists($index, $node)) {
+                return null;
+            }
+            $node = $node[$index];
+        }
+
+        if (!is_array($node) || !array_key_exists($fieldName, $node)) {
+            return null;
+        }
+
+        return $node[$fieldName];
     }
 
     /**

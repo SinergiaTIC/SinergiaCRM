@@ -125,8 +125,8 @@
                       </template>
 
                       <!-- Remove from Group Button -->
-                      <template x-if="item.isManualGroupMemberOutsideTree(data_blocks)">
-                        <button class="btn" :title="utils.translate('LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE')" style="margin-left:-10px; margin-top:-10px;"
+                      <template x-if="item.canLeaveGroup(data_blocks)">
+                        <button class="btn text-danger" :title="utils.translate('LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE')" style="margin-left:-10px; margin-top:-10px;"
                                 @click="formConfig.removeChildFromGroup(item.id)">
                           <span class="suitepicon suitepicon-action-clear"></span>
                         </button>
@@ -140,27 +140,21 @@
                 <!-- Options (hidden for group DataBlocks) -->
                 <template x-if="!item.isGroupHead(data_blocks)">
                   <div class="d-flex align-items-center gap-4 me-3">
-                    <!-- Optional Switch: shown whenever the block's tree has ANY field
-                         (visible or server-data); DISABLED (not hidden) when another
-                         rule forbids it -->
-                    <template x-if="item.hasAnyFieldsInTree(data_blocks)">
-                      <div class="form-check form-switch d-flex align-items-center mb-0">
-                        <label class="form-check-label small me-2" :for="'opt_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
-                        <input class="form-check-input" type="checkbox" role="switch" :id="'opt_switch_' + item.id" :checked="item.is_optional"
-                               :disabled="!item.canBeOptional(data_blocks)"
-                               @change="toggleOptional(item, $event.target.checked)">
-                      </div>
-                    </template>
+                    <!-- Optional Switch -->
+                    <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.canBeOptional(data_blocks) ? 'switch-empty' : ''" 
+                         :title="item.getOptionalDisabledReasonTranslated(data_blocks)">
+                      <label class="form-check-label small me-2" :for="'opt_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
+                      <input class="form-check-input" type="checkbox" role="switch" :id="'opt_switch_' + item.id" :checked="item.is_optional" 
+                             @change="toggleOptional(item, $event.target.checked)" :disabled="!item.canBeOptional(data_blocks)">
+                    </div>
 
-                    <!-- Repeatable Switch: same render/disable split -->
-                    <template x-if="item.hasVisibleFormFieldsInTree(data_blocks)">
-                      <div class="form-check form-switch d-flex align-items-center mb-0">
-                        <label class="form-check-label small me-2" :for="'rep_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
-                        <input class="form-check-input" type="checkbox" role="switch" :id="'rep_switch_' + item.id" :checked="item.is_repeatable"
-                               :disabled="!item.canBeRepeatable(data_blocks)"
-                               @change="toggleRepeatable(item, $event.target.checked)">
-                      </div>
-                    </template>
+                    <!-- Repeatable Switch -->
+                    <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.canBeRepeatable(data_blocks) ? 'switch-empty' : ''" 
+                         :title="item.getRepeatableDisabledReasonTranslated(data_blocks)">
+                      <label class="form-check-label small me-2" :for="'rep_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
+                      <input class="form-check-input" type="checkbox" role="switch" :id="'rep_switch_' + item.id" :checked="item.is_repeatable" 
+                             @change="toggleRepeatable(item, $event.target.checked)" :disabled="!item.canBeRepeatable(data_blocks)">
+                    </div>
                   </div>
                 </template>
               </div>
@@ -516,25 +510,21 @@
                 </div>
               </div>
               <div class="d-flex align-items-center gap-4 me-3">
-                <!-- Optional Switch (also for server-data blocks: any field counts) -->
-                <template x-if="item.hasAnyFieldsInTree(data_blocks) || item.is_optional">
-                  <div class="form-check form-switch d-flex align-items-center mb-0">
-                    <label class="form-check-label small me-2" :for="`groupOptSwitch_${item.id}`" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
-                    <input class="form-check-input" type="checkbox" role="switch" :id="`groupOptSwitch_${item.id}`"
-                           :checked="item.is_optional" :disabled="item.is_optional ? false : !item.canBeOptional(data_blocks)"
-                           @change="toggleOptional(item, $el.checked, false)">
-                  </div>
-                </template>
+                <!-- Optional Switch -->
+                <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.canBeOptional(data_blocks) ? 'switch-empty' : ''" 
+                      :title="item.getOptionalDisabledReasonTranslated(data_blocks)">
+                  <label class="form-check-label small me-2" :for="'opt_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
+                  <input class="form-check-input" type="checkbox" role="switch" :id="'opt_switch_' + item.id" :checked="item.is_optional" 
+                          @change="toggleOptional(item, $event.target.checked)" :disabled="!item.canBeOptional(data_blocks)">
+                </div>
 
                 <!-- Repeatable Switch -->
-                <template x-if="item.hasVisibleFormFieldsInTree(data_blocks) || item.is_repeatable">
-                  <div class="form-check form-switch d-flex align-items-center mb-0">
-                    <label class="form-check-label small me-2" :for="`groupRepSwitch_${item.id}`" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
-                    <input class="form-check-input" type="checkbox" role="switch" :id="`groupRepSwitch_${item.id}`"
-                           :checked="item.is_repeatable" :disabled="item.is_repeatable ? false : !item.canBeRepeatable(data_blocks)"
-                           @change="toggleRepeatable(item, $el.checked, false)">
-                  </div>
-                </template>
+                <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.canBeRepeatable(data_blocks) ? 'switch-empty' : ''" 
+                      :title="item.getRepeatableDisabledReasonTranslated(data_blocks)">
+                  <label class="form-check-label small me-2" :for="'rep_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
+                  <input class="form-check-input" type="checkbox" role="switch" :id="'rep_switch_' + item.id" :checked="item.is_repeatable" 
+                          @change="toggleRepeatable(item, $event.target.checked)" :disabled="!item.canBeRepeatable(data_blocks)">
+                </div>
               </div>
             </div>
 

@@ -1174,7 +1174,7 @@ class WizardStep2 {
         const oldRoot = block.getGroupHeadBlock(this.data_blocks);
         block.group_root = newRootId || '';
 
-        if (block.is_child && !block.canBeOptional(this.data_blocks)) {
+        if (block.is_child && block.getOptionalDisabledReason(this.data_blocks) != null) {
           block.min_instances = 1;
         }
 

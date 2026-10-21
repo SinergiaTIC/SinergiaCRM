@@ -44,7 +44,7 @@ class BeanModified extends BeanReference {
     public array $submittedData;
 
     /**
-     * Instance addressing of the modification (B-7): null for scalar flows,
+     * Instance addressing of the modification: null for scalar flows,
      * "i" for depth-1 instances or "i:j" for depth-2 instances.
      * One stic_AWF_Links record is generated per (beanId, instanceIndex).
      */

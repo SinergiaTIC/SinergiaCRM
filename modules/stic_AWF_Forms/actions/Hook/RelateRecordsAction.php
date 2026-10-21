@@ -121,8 +121,7 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         // instead of the link name (e.g., cached module info without link_name).
         if (!empty($linkName) && !isset($bean->field_defs[$linkName])) {
             foreach ($bean->field_defs as $fieldName => $def) {
-                if (isset($def['type']) && $def['type'] === 'link'
-                    && isset($def['relationship']) && $def['relationship'] === $linkName) {
+                if (isset($def['type']) && $def['type'] === 'link' && isset($def['relationship']) && $def['relationship'] === $linkName) {
                     $GLOBALS['log']->debug("RelateRecordsAction: Resolved relationship name '{$linkName}' to link field '{$fieldName}'.");
                     $linkName = $fieldName;
                     break;
@@ -149,17 +148,14 @@ class RelateRecordsAction extends HookBeanActionDefinition {
             if (!$targetDataBlock || !($targetDataBlock instanceof DataBlockResolved)) {
                 return new ActionResult(ResultStatus::ERROR, $actionConfig, "Invalid value in target_object parameter as datablock: is not a valid DataBlockResolved.");
             }
-            // The target DataBlockResolved carries the instance indexes (null for
-            // scalar blocks, "i"/"i:j" for depth-1/depth-2), so the per-instance
-            // bean reference is read loop-depth-aware.
             $targetBeanRef = $targetDataBlock->getInstanceBeanReference();
             if ($targetBeanRef === null || empty($targetBeanRef->beanId)) {
-                // An optional target that was not activated has no bean —
-                // the relationship is skipped (not an error).
-                if (!$targetDataBlock->isActivated()) {
-                    $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Advanced Web Forms: Relationship target DataBlock '{$targetDataBlock->dataBlock->name}' skipped because it is optional and was not activated.");
-                    return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "DataBlock '{$targetDataBlock->dataBlock->name}' was skipped because it is optional and was not activated.");
+                // If the target data block is optional and was not activated/saved, skip relationship cleanly
+                if ($targetDataBlock->dataBlock->isOptional() || (isset($targetDataBlock->dataBlock->min_instances) && (int)$targetDataBlock->dataBlock->min_instances === 0)) {
+                    $GLOBALS['log']->info("RelateRecordsAction: Skipped relationship '{$linkName}' because optional destination DataBlock '{$targetDataBlock->dataBlock->name}' was not created.");
+                    return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Destination DataBlock '{$targetDataBlock->dataBlock->name}' is optional and was not created.");
                 }
+
                 return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetDataBlock->dataBlock->name}' has no ID. Check Action Order.");
             }
             $targetBeanId = $targetBeanRef->beanId;
