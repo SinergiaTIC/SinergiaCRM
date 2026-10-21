@@ -44,7 +44,62 @@ class CustomUsersViewDetail extends UsersViewDetail
 
     public function display()
     {
-        echo '<script> editACL = '. ACLController::checkAccess('stic_Work_Calendar', 'edit', true) .' </script>';            
+        global $current_user, $sugar_config;
+
+        echo '<script> editACL = '. ACLController::checkAccess('stic_Work_Calendar', 'edit', true) .' </script>';
+        
+        // Show lockout status with countdown timer or unlock message for admins
+        if (is_admin($current_user) || $current_user->isAdminForModule('Users')) {
+            // Check if user is locked out and calculate remaining time
+            $lockoutPref = $this->bean->getPreference('user_locked_out');
+            $isLockedOut = !empty($lockoutPref) && $lockoutPref !== '0' && $lockoutPref !== 0 && $lockoutPref !== false;
+
+            $lockoutTime = (int) $this->bean->getPreference('user_locked_out_time');
+            $unlockMinutes = (int) ($sugar_config['userlockout']['automaticunlocktime'] ?? 0);
+            $autoUnlockEnabled = $unlockMinutes > 0;
+            $timeRemaining = 0;
+
+            if ($isLockedOut && $autoUnlockEnabled && $lockoutTime > 0) {
+                $timeRemaining = (($lockoutTime + ($unlockMinutes * 60)) - time());
+            }
+
+            // Auto-unlock when unlock period expires
+            if ($isLockedOut && $autoUnlockEnabled && $timeRemaining <= 5) {
+                $this->bean->setPreference('user_locked_out', '0');
+                $this->bean->setPreference('user_locked_out_time', '');
+                $this->bean->setPreference('lockout', '');
+                $this->bean->setPreference('loginfailed', '0');
+                $this->bean->savePreferencesToDB();
+                SugarApplication::redirect('index.php?module=Users&action=DetailView&record=' . $this->bean->id);
+            }
+
+            // Render lockout message with countdown timer
+            if ($isLockedOut) {
+                $showUnlockButton = (is_admin($current_user) || $current_user->isAdminForModule('Users')) ? 1 : 0;
+
+                if ($autoUnlockEnabled && $timeRemaining > 0) {
+                    $timeRemaining = (int) $timeRemaining;
+                    $minutes = floor($timeRemaining / 60);
+                    $seconds = $timeRemaining % 60;
+                    $countdownTpl = translate('LBL_USER_LOCKOUT_COUNTDOWN', 'Users');
+                    $countdownText = str_replace(
+                        ['{minutes}', '{seconds}'],
+                        [(string) $minutes, str_pad((string) $seconds, 2, '0', STR_PAD_LEFT)],
+                        $countdownTpl
+                    );
+                    echo '<p class="error">' .
+                        '<span id="stic-user-lockout-countdown">' . $countdownText . '</span>' .
+                        '<span id="stic-user-lockout-state" data-show-unlock-button="' . $showUnlockButton . '" data-remaining-seconds="' . $timeRemaining . '" style="display:none"></span>' .
+                        '</p>';
+                } else {
+                    echo '<p class="error">' .
+                        '⛔ ' . translate('ERR_USER_IS_LOCKED_OUT_DETAILVIEW', 'Users') .
+                        '<span id="stic-user-lockout-state" data-show-unlock-button="' . $showUnlockButton . '" data-remaining-seconds="0" style="display:none"></span>' .
+                        '</p>';
+                }
+            }
+        }
+
         parent::display();
 
         SticViews::display($this);

@@ -105,3 +105,12 @@ $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' with ID ';
 $mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Issuing of Modelo 182';
 $mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Indicates for which organizations the user will be able to generate the Modelo 182. The list is dynamically generated from the <a href="index.php?module=stic_Settings" target="_blank">configuration parameters</a>.';
 
+// User lockout
+$mod_strings['LBL_UNLOCK_USER'] = 'Unlock user';
+$mod_strings['LBL_USER_UNLOCKED_MSG'] = 'User unlocked';
+$mod_strings['LBL_USER_LOCKOUT_COUNTDOWN'] = '⛔ User locked out. It will be automatically unlocked in {minutes} min {seconds} sec.';
+$mod_strings['LBL_USER_LOCKOUT_FINISHED_REFRESHING'] = '✅ Lockout period finished. Refreshing...';
+$mod_strings['LBL_USER_UNLOCKED_REFRESHING'] = '✅ User unlocked. Refreshing...';
+$mod_strings['ERR_USER_IS_LOCKED_OUT'] = 'This user has been locked out and cannot log in using their current password. If you want to be unlocked, please contact the administrator.';
+$mod_strings['ERR_USER_IS_LOCKED_OUT_DETAILVIEW'] = 'This user has been locked out due to multiple failed login attempts. You can unlock them using the "Unlock user" action.';
+
