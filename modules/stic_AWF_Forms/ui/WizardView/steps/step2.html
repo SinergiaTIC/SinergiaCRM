@@ -586,7 +586,8 @@
                                           <li class="dropdown-item" @click.prevent="massSetVisible(true)" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW')"></li>
                                           <li class="dropdown-item" @click.prevent="massSetVisible(false)" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_HIDE')"></li>
                                           <li><hr class="dropdown-divider"></li>
-                                          <li class="dropdown-item text-danger" @click.prevent="massDelete()" x-text="utils.translate('LBL_BUTTON_DELETE')"></li>
+                                          <li class="dropdown-item text-danger" x-text="utils.translate('LBL_BUTTON_DELETE')"
+                                              @click.prevent="massDelete(); bootstrap.Dropdown.getOrCreateInstance($el.closest('.dropdown').querySelector('[data-bs-toggle=dropdown]')).hide();"></li>
                                         </ul>
                                       </div>
                                       
