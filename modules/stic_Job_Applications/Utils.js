@@ -83,6 +83,56 @@ switch (viewType()) {
     
     setAutofill(["name"]);
 
+    // On new records, prefill assigned user from the selected offer so UI and saved value match
+    if (typeof STIC !== "undefined" && STIC.record && !STIC.record.id) {
+      const offerIdField = "stic_job_applications_stic_job_offersstic_job_offers_ida";
+      const assignedUserIdField = "assigned_user_id";
+      const assignedUserNameField = "assigned_user_name";
+      let assignedUserManuallyChanged = false;
+
+      function getOfferAssignedUser(offerId, callbackFunction) {
+        $.ajax({
+          url: "index.php?module=stic_Job_Applications&action=getOfferAssignedUser",
+          type: "post",
+          dataType: "json",
+          data: { offerId: offerId },
+          success: function (result) {
+            if (result && result.code == "OK" && result.data) {
+              callbackFunction(result.data);
+            }
+          },
+        });
+      }
+
+      function prefillAssignedUserFromOffer() {
+        const offerId = $("#" + offerIdField).val();
+        if (!offerId) {
+          return;
+        }
+        getOfferAssignedUser(offerId, function (data) {
+          if (
+            data &&
+            data.assigned_user_id &&
+            !assignedUserManuallyChanged &&
+            $("#" + offerIdField).val() === offerId
+          ) {
+            $("#" + assignedUserIdField).val(data.assigned_user_id);
+            $("#" + assignedUserNameField).val(data.assigned_user_name);
+          }
+        });
+      }
+
+      // Any change to the assigned user field is considered a manual change
+      YAHOO.util.Event.addListener(assignedUserIdField, "change", function () {
+        assignedUserManuallyChanged = true;
+      });
+
+      YAHOO.util.Event.addListener(offerIdField, "change", prefillAssignedUserFromOffer);
+
+      // If the offer is already set (e.g. new record created from an offer subpanel), prefill on load
+      prefillAssignedUserFromOffer();
+    }
+
     break;
   case "detail":
     break;
