@@ -36,7 +36,7 @@ $subpanel_layout = array(
         'name' => array(
             'vname' => 'LBL_NAME',
             'widget_class' => 'SubPanelDetailViewLink',
-            'width' => '35%',
+            'width' => '25%',
             'default' => true,
         ),
         'stic_organizational_environment_contacts_name' => array(
@@ -72,6 +72,12 @@ $subpanel_layout = array(
         'end_date' => array(
             'type' => 'date',
             'vname' => 'LBL_END_DATE',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'active' => array(
+            'type' => 'bool',
+            'vname' => 'LBL_ACTIVE',
             'width' => '10%',
             'default' => true,
         ),
