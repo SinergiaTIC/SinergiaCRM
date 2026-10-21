@@ -64,4 +64,45 @@ class stic_Organizational_Environment extends Basic
         return false;
     }
 	
+    public function save($check_notify = false)
+    {
+        if (!empty($this->name)) {
+            return;
+        }
+
+        global $app_list_strings;
+        include_once 'SticInclude/Utils.php';
+
+        // Environment contact or organization (1st part).
+        $environment = '';
+        if (!empty($this->stic_organizational_environment_accountsaccounts_ida)) {
+            $related = SticUtils::getRelatedBeanObject($this, 'stic_organizational_environment_accounts');
+            if ($related) {
+                $environment = $related->name;
+            }
+        } elseif (!empty($this->stic_organizational_environment_contactscontacts_ida)) {
+            $related = SticUtils::getRelatedBeanObject($this, 'stic_organizational_environment_contacts');
+            if ($related) {
+                $environment = trim($related->first_name . ' ' . $related->last_name);
+            }
+        }
+
+        // Base organization.
+        $base = '';
+        if (!empty($this->stic_organizational_environment_accounts_1accounts_ida)) {
+            $related = SticUtils::getRelatedBeanObject($this, 'stic_organizational_environment_accounts_1');
+            if ($related) {
+                $base = $related->name;
+            }
+        }
+
+        // Relationship type.
+        $list  = 'stic_organizational_environment_relationships_list';
+        $type  = $app_list_strings[$list][$this->relationship_type] ?? '';
+
+        $this->name = $environment . " - " . $type . " - " . $base;
+        
+        // Save the bean
+        parent::save($check_notify);
+    }
 }
