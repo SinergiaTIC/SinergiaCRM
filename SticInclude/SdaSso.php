@@ -131,6 +131,73 @@ class SticSdaSso
     }
 
     /**
+     * Invalidates the SinergiaDA sessions of the user logging out of SinergiaCRM.
+     *
+     * Fired from the Users module before_logout hook. Failures are logged and
+     * never block the CRM logout.
+     *
+     * @param SugarBean $bean      User bean being logged out.
+     * @param string    $event     Hook event (unused).
+     * @param array     $arguments Hook arguments (unused).
+     * @return void
+     */
+    public static function notifyLogout(&$bean, $event = null, $arguments = null)
+    {
+        if (!self::isReady() || empty($bean->user_name)) {
+            return;
+        }
+
+        if (self::getAllowed($bean->id) === false) {
+            return;
+        }
+
+        $token = self::mint($bean->user_name, 1);
+        $url = self::getApiUrl('sso/logout');
+        if ($token === null || $url === '') {
+            return;
+        }
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode(array('token' => $token)));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+
+        curl_exec($ch);
+        $status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($status !== 200) {
+            $GLOBALS['log']->error(
+                'Line ' . __LINE__ . ': ' . __METHOD__ . ': SinergiaDA SSO logout failed for user ['
+                . $bean->user_name . ']: ' . ($error !== '' ? $error : 'HTTP ' . $status)
+            );
+        }
+    }
+
+    /**
+     * SinergiaDA API base URL (the public URL serves the API under /edapi).
+     *
+     * @param string $path Endpoint path.
+     * @return string Full URL, or '' when the integration is not configured.
+     */
+    private static function getApiUrl($path)
+    {
+        global $sugar_config;
+
+        $base = trim($sugar_config['stic_sinergiada']['sso_api_url'] ?? '');
+        if ($base === '') {
+            $public = trim($sugar_config['stic_sinergiada_public']['url'] ?? '');
+            $base = $public === '' ? '' : rtrim($public, '/') . '/edapi';
+        }
+
+        return $base === '' ? '' : rtrim($base, '/') . '/' . ltrim($path, '/');
+    }
+
+    /**
      * Sanitize the "return" route echoed back to SinergiaDA.
      * Only relative, single-token paths are accepted (open-redirect protection).
      *
