@@ -90,6 +90,7 @@ class ViewSticManageSdaIntegration extends SugarView
         $this->ss->assign('SDA_EXTRA_CONFIG', $extraConfig);
         $this->ss->assign('SDA_CONFIG', $sdaConfig);
         $this->ss->assign('SDA_PUBLIC_URL', $sugar_config['stic_sinergiada_public']['url'] ?? '');
+        $this->ss->assign('SDA_SSO_SECRET_SET', trim($sugar_config['stic_sinergiada']['sso_secret'] ?? '') !== '');
 
         // Build module list for publish_as_table selector, replicating SinergiaDA module filtering
         include_once 'modules/MySettings/TabController.php';
