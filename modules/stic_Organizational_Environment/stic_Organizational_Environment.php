@@ -67,6 +67,7 @@ class stic_Organizational_Environment extends Basic
     public function save($check_notify = false)
     {
          $this->fillName();
+         $this->setActiveStatus();
          return parent::save($check_notify);
     }
 
@@ -105,5 +106,39 @@ class stic_Organizational_Environment extends Basic
         $type  = $app_list_strings[$list][$this->relationship_type] ?? '';
 
         $this->name = $environment . " - " . $type . " - " . $base;
+    }
+
+    /**
+     * Set the active status from the start and end dates.
+     *
+     * A record is active when the start date is today or earlier (or empty)
+     * and the end date is empty or later than today.
+     *
+     * @return void
+     */
+    protected function setActiveStatus()
+    {
+        global $timedate, $current_user;
+
+        $start = $this->start_date;
+        $end = $this->end_date;
+
+        // Dates can arrive in the user format or already in DB format,
+        // so normalise them before comparing. A failed conversion returns
+        // false and the original value is kept.
+        $startDate = $timedate->fromUserDate($start, false, $current_user);
+        if ($startDate) {
+            $start = $startDate->asDBDate();
+        }
+
+        $endDate = $timedate->fromUserDate($end, false, $current_user);
+        if ($endDate) {
+            $end = $endDate->asDBDate();
+        }
+
+        $today = date('Y-m-d');
+
+        $this->active = (empty($start) || $start <= $today)
+            && (empty($end) || $end > $today);
     }
 }

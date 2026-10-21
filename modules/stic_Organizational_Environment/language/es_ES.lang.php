@@ -69,6 +69,7 @@ $mod_strings = array (
   'LBL_END_DATE' => 'Fecha de baja',
   'LBL_REFERENCE_ACCOUNT' => 'Organización de referencia',
   'LBL_ACTIVE' => 'Activa',
+  'LBL_ACTIVE_HELP' => 'El CRM gestiona automáticamente este campo. Se aplicará la marca de registro activo cuando la fecha de alta sea igual o anterior al día de hoy o esté vacía y, al mismo tiempo, la fecha de baja sea futura o esté vacía. En cualquier otro caso la casilla estará desmarcada.',
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE' => 'Organización base',
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_FROM_ACCOUNTS_TITLE' => 'Organización del entorno',
   'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona del entorno',

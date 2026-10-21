@@ -115,15 +115,6 @@ array (
         array (
           0 => 
           array (
-            'name' => 'active',
-            'label' => 'LBL_ACTIVE',
-          ),
-          1 => '',
-        ),
-        6 => 
-        array (
-          0 => 
-          array (
             'name' => 'description',
             'comment' => 'Full text of the note',
             'label' => 'LBL_DESCRIPTION',
