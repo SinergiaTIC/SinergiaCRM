@@ -66,7 +66,7 @@ $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3'] = 'No hay más re
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_IN_PROGRESS'] = 'En curso';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_HOURS'] = 'horas';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_MINUTES'] = 'minutos';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Aceptar';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Onartu';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancelar';
 
 // Aviso de actualización de SinergiaCRM
@@ -406,6 +406,7 @@ $app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Fir
 $app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Candidaturas';
 $app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertas laborales';
 $app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Conversaciones';
+$app_list_strings['parent_type_display_notifications']['stic_Messages'] = 'Mensajes';
 
 // Categorías para la creación dinamica de Listas de público objetivo
 $app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
@@ -3683,7 +3684,7 @@ $app_list_strings['stic_messages_type_list']['private_area'] = 'Área Privada';
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
 $app_list_strings['stic_messages_direction_list']['outbound'] = 'Salida';
 
-// Mezuak: Egoerak
+// Mensajes: Estados
 $app_list_strings['stic_messages_status_list']['draft'] = 'Borrador';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviado';
 $app_list_strings['stic_messages_status_list']['received'] = 'Recibido';
