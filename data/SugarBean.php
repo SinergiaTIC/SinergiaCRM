@@ -3924,6 +3924,15 @@ class SugarBean
                         $localTable .= '_cstm';
                     }
                     global $beanFiles, $beanList;
+                    // STIC-Custom 20261021 PCS - Fix fatal error when the parent module name contains underscores (e.g. stic_Sessions):
+                    // the regex above splits at the first underscore,
+                    // so move words from the table to the module until it matches a module in $beanList
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/XXXX
+                    while (!isset($beanList[$joinModule]) && ($pos = strpos($joinTable, '_')) !== false) {
+                        $joinModule .= '_' . substr($joinTable, 0, $pos);
+                        $joinTable = substr($joinTable, $pos + 1);
+                    }
+                    // END STIC-Custom (PCS 20261021)
                     // STIC Custom 20250401 JBL - Fix Fatal error when class or file is not defined
                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                     // require_once($beanFiles[$beanList[$joinModule]]);
@@ -3935,7 +3944,11 @@ class SugarBean
                         $GLOBALS['log']->fatal("Unable to load module $joinModule");
                     }
                     // END STIC Custom
-                    $rel_mod = new $beanList[$joinModule]();
+                    // STIC-Custom 20261021 PCS - Avoid fatal error (blank page) when the module class cannot be instantiated
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/XXXX
+                    // $rel_mod = new $beanList[$joinModule]();
+                    $rel_mod = isset($beanList[$joinModule]) && class_exists($beanList[$joinModule]) ? new $beanList[$joinModule]() : null;
+                    // END STIC-Custom (PCS 20261021)
                     $nameField = "$joinTableAlias.name";
                     if (isset($rel_mod->field_defs['name'])) {
                         $name_field_def = $rel_mod->field_defs['name'];
