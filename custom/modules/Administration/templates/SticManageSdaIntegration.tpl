@@ -102,6 +102,16 @@
 	</tr>
 	<tr>
 		<td width="25%" scope="row" valign="middle">
+			{$MOD.LBL_STIC_SINERGIADA_SSO_SECRET_LABEL}
+			<i class="inline-help glyphicon glyphicon-info-sign"></i>
+			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_SSO_SECRET_HELP}</div>
+		</td>
+		<td width="75%" colspan="3" valign="middle">
+			<input type="password" name="sso_secret" value="" size="50" autocomplete="new-password" placeholder="{if $SDA_SSO_SECRET_SET}{$MOD.LBL_STIC_SINERGIADA_SSO_SECRET_SET}{/if}">
+		</td>
+	</tr>
+	<tr>
+		<td width="25%" scope="row" valign="middle">
 			{$MOD.LBL_STIC_SINERGIADA_MAX_USERS_LABEL}
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
 			<div class="inline-help-content">{$MOD.LBL_STIC_SINERGIADA_MAX_USERS_HELP}</div>

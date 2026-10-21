@@ -22,24 +22,37 @@
  */
 
 require_once 'modules/Home/controller.php';
+require_once 'SticInclude/SdaSso.php';
 class CustomHomeController extends HomeController
 {
     /**
      * Redirects the user to SinergiaDA if they have permission, otherwise log an error message.
+     *
+     * When SSO is configured, a short-lived token is appended so SinergiaDA
+     * opens the session without asking for credentials. An optional "return"
+     * route (relative path only) is forwarded to SinergiaDA.
      */
     public function action_sdaRedirect()
     {
         global $sugar_config, $current_user, $mod_strings;
-        $db = DBManagerFactory::getInstance();
-        $q = "SELECT sda_allowed_c FROM users_cstm WHERE id_c='" . $current_user->id . "'";
-        $r = $db->query($q);
-        $a = $db->fetchByAssoc($r);
+        $allowed = SticSdaSso::getAllowed($current_user->id);
         $currentDomain = $_SERVER['HTTP_HOST'];
-        if ($a['sda_allowed_c'] == 1) {
-            $lang = explode('_', $sugar_config['default_language'])[0];
-            $sdaUrl = $sugar_config['stic_sinergiada_public']['url'] ?? "https://" . str_replace("sinergiacrm", "sinergiada", $currentDomain);
-            $sdaUrl .= "/{$lang}/#";
-            SugarApplication::redirect($sdaUrl);
+        $lang = explode('_', $sugar_config['default_language'])[0];
+        $sdaUrl = $sugar_config['stic_sinergiada_public']['url'] ?? "https://" . str_replace("sinergiacrm", "sinergiada", $currentDomain);
+
+        if ($allowed !== false) {
+            $return = SticSdaSso::sanitizeReturn($_GET['return'] ?? '');
+            $token = SticSdaSso::isReady() ? SticSdaSso::mint($current_user->user_name, $allowed) : null;
+
+            if ($token !== null) {
+                $ssoUrl = rtrim($sdaUrl, '/') . '/?t=' . rawurlencode($token)
+                        . ($return !== '' ? '#' . $return : '#/home');
+                SugarApplication::redirect($ssoUrl);
+                die();
+            }
+
+            // SSO not configured: plain redirect (legacy behaviour)
+            SugarApplication::redirect($sdaUrl . "/{$lang}/#");
             die();
         } else {
             SugarApplication::appendErrorMessage("<p class='msg-fatal-lock'>{$mod_strings['LBL_STIC_SINERGIADA_NOT_ALLOWED']}");
