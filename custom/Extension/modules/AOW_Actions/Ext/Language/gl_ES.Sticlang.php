@@ -26,3 +26,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings ['LBL_SENDMESSAGE'] = 'Enviar mensaje';
+$mod_strings ['LBL_SENDTOSIGN'] = 'Enviar a sinatura';
+$mod_strings ['LBL_SENDTOSIGN_SIGNATURE'] = 'Proceso de sinatura';
+$mod_strings ['LBL_SENDTOSIGN_ACTION_TYPE'] = 'Tipo de acción';
+$mod_strings ['LBL_SENDTOSIGN_ADD_ONLY'] = 'Engadir ao proceso de sinatura';
+$mod_strings ['LBL_SENDTOSIGN_ADD_AND_EMAIL'] = 'Engadir ao proceso de sinatura e enviar correo';
