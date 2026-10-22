@@ -1,0 +1,5 @@
+SticUpdates/Languages/es/20261021_feature_stic_Organizational_Environment.sql
+SticUpdates/Languages/en/20261021_feature_stic_Organizational_Environment.sql
+SticUpdates/Languages/ca/20261021_feature_stic_Organizational_Environment.sql
+SticUpdates/Languages/eu/20261021_feature_stic_Organizational_Environment.sql
+SticUpdates/Languages/gl/20261021_feature_stic_Organizational_Environment.sql
