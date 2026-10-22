@@ -57,9 +57,10 @@ class SticViews {
 
         // We encode the text type fields to JSON
         $parsedValuesTextToJS = json_encode($parsedValuesTextToJS);
+        $parsedValuesTextToJS = str_replace("\\", "\\\\", $parsedValuesTextToJS);
 
         //  We encode the rest of the fields to JSON
-        $parsedValuesTextToJS = str_replace("\\", "\\\\", $parsedValuesTextToJS);
+        $parsedValuesToJS = json_encode($parsedValuesToJS);
 
         // Pass the following PHP variables to use in JS
         $recordId = $view->bean->id;
