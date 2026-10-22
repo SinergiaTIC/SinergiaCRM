@@ -117,7 +117,7 @@
                 <div class="d-flex flex-column">
                   <!-- Group Badge & Remove Button -->
                     <div class="d-flex">
-                      <!-- Group Badge (shown on every block of a group, including the group root) -->
+                      <!-- Group Badge -->
                       <template x-if="item.is_child || item.isGroupHead(data_blocks)">
                         <span class="badge bg-transparent text-dark datablock-group-badge"
                               :title="utils.translateForFieldLabel('LBL_DATABLOCK_IN_GROUP_TITLE') + ' ' + (item.isGroupHead(data_blocks) ? (item.group_title || item.text) : item.getGroupTitle(data_blocks))"
@@ -125,7 +125,7 @@
                       </template>
 
                       <!-- Remove from Group Button -->
-                      <template x-if="item.canLeaveGroup(data_blocks)">
+                      <template x-if="item.canLeaveGroup(data_blocks) && !item.isGroupHead(data_blocks)">
                         <button class="btn text-danger" :title="utils.translate('LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE')" style="margin-left:-10px; margin-top:-10px;"
                                 @click="formConfig.removeChildFromGroup(item.id)">
                           <span class="suitepicon suitepicon-action-clear"></span>
@@ -495,12 +495,21 @@
             <!-- Group Info -->
             <div class="d-flex justify-content-between align-items-center mb-0">
               <div class="d-flex flex-column">
-                <!-- Group Badge -->
+                <!-- Group Badge & Remove Button -->
                 <div class="d-flex">
+                  <!-- Group Badge -->
                   <template x-if="item.group_root">
                     <span class="badge bg-transparent text-dark datablock-group-badge" x-text="'📦 ' + item.getGroupTitle(data_blocks)"></span>
                   </template>
+                  <!-- Remove from Group Button -->
+                  <template x-if="item.canLeaveGroup(data_blocks)">
+                    <button class="btn text-danger" :title="utils.translate('LBL_DATABLOCK_REMOVE_FROM_GROUP_TITLE')" style="margin-left:-10px; margin-top:-10px;"
+                            @click="formConfig.removeChildFromGroup(item.id)">
+                      <span class="suitepicon suitepicon-action-clear"></span>
+                    </button>
+                  </template>
                 </div>
+
                 <!-- Optional and Repeatable Badges -->
                 <div class="d-flex justify-content-start">
                   <!-- Optional Badge -->
