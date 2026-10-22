@@ -41,16 +41,12 @@ class SticViews {
         // Link basic stic css and JS files
         echo getVersionedScript("SticInclude/js/Utils.js");
 
-        // Enable bean values to JS: values come from the DB layer HTML-entity encoded
-        // (e.g. &quot;), which breaks JS consumers that JSON.parse them (e.g. the
-        // stic_AWF_Forms wizard configuration). Decode entities so the JS always
-        // receives pure data. JSON.stringify/parse on the JS side handles line
-        // breaks correctly, so no additional escaping is required.
+        // Enable bean values to
         $parsedValuesToJS = array();
         $parsedValuesTextToJS = array();
         foreach ($view->bean as $key => $value) {
             if (is_string($value)) {
-                $value = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+                // We separate the TextArea fields because they can contain line breaks. These produce an error when encoding them to JSON from PHP and decoding them from javascript. 
                 if (isset($view->bean->field_name_map[$key]["type"]) && $view->bean->field_name_map[$key]["type"] == 'text') {
                     $parsedValuesTextToJS[$key] = $value;
                 } else {
@@ -63,7 +59,7 @@ class SticViews {
         $parsedValuesTextToJS = json_encode($parsedValuesTextToJS);
 
         //  We encode the rest of the fields to JSON
-        $parsedValuesToJS = json_encode($parsedValuesToJS);
+        $parsedValuesTextToJS = str_replace("\\", "\\\\", $parsedValuesTextToJS);
 
         // Pass the following PHP variables to use in JS
         $recordId = $view->bean->id;
