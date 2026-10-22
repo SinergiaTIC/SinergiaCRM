@@ -37,9 +37,15 @@ abstract class ServerBeanActionDefinition extends ServerDataBlockActionDefinitio
 
     final public function executeWithBlock(ExecutionContext $context, FormAction $actionConfig, DataBlockResolved $block): ActionResult
     {
-        // Get the Bean reference saved for the Data Block 
-        $beanRef = $block->dataBlock->getBeanReference();
+        // Get the Bean reference saved for the resolved instance
+        $beanRef = $block->getInstanceBeanReference();
         if ($beanRef === null) {
+            // If the data block itself is optional, skip the action gracefully
+            if ($block->dataBlock->isOptional() || (isset($block->dataBlock->min_instances) && (int)$block->dataBlock->min_instances === 0)) {
+                $GLOBALS['log']->info("ServerBeanAction: Skipped action '{$actionConfig->name}' because optional DataBlock '{$block->dataBlock->name}' was not created.");
+                return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "DataBlock '{$block->dataBlock->name}' is optional and was not created.");
+            }
+
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "There is no saved Bean for DataBlock {$block->dataBlock->name}.");
         }
         

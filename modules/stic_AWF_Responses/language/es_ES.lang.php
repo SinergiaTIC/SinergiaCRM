@@ -113,6 +113,8 @@ $mod_strings = array (
   'LBL_ERROR_ENUM_FIELD' => 'Opción no válida para el desplegable.',
   'LBL_ERROR_EMAIL_FIELD' => 'El valor debe ser una dirección de correo válida.',
   'LBL_ERROR_VALUE_FIELD' => 'El valor no es válido para el campo.',
+  'LBL_ERROR_REPEATABLE_MAX_INSTANCES' => 'Se ha superado el número máximo de entradas.',
+  'LBL_ERROR_REPEATABLE_MIN_INSTANCES' => 'Este campo requiere un número mínimo de entradas.',
   
   // Subpanels
   'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_LINKS_TITLE' => 'Vínculos de la respuesta al formulario',

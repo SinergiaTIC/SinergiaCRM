@@ -68,7 +68,13 @@ class stic_AWF_FormsViewDetail extends ViewDetail
             }
         }
         $this->ss->assign('beanJson', json_encode($beanArray));
-        
+
+        // The config load (stic_AwfConfiguration.fromJSON -> _migrateLegacyRelationships)
+        // resolves module information, which needs STIC.enabledModules. Without it
+        // utils.getModuleInformation() throws and the whole config falls back to empty.
+        require_once "modules/stic_AWF_Forms/Utils.php";
+        $this->ss->assign('enabledModules', json_encode(stic_AWF_FormsUtils::getEnabledModules()));
+
         // DetailView: Custom Details 
         echo $this->ss->fetch('modules/stic_AWF_Forms/ui/DetailView/tpl/details.tpl');
     }

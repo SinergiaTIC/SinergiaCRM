@@ -85,15 +85,20 @@ JS;
     }
 
     public function validateBackend(mixed $value, array $params): bool {
-        if (empty($_FILES)) {
-            return true;
+        // Prefer the explicit file descriptor passed by the caller
+        // Fall back to scanning $_FILES for backward compatibility.
+        $files = [];
+        if (is_array($value) && array_key_exists('error', $value)) {
+            $files = [$value];
+        } elseif (!empty($_FILES)) {
+            $files = $_FILES;
         }
         
         $maxMb = (int)($params['max_size_mb'] ?? 2);
         
-        foreach ($_FILES as $file) {
-            if (is_array($file) && $file['error'] === UPLOAD_ERR_OK) {
-                if ($file['size'] > $maxMb * 1024 * 1024) {
+        foreach ($files as $file) {
+            if (is_array($file) && ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+                if (($file['size'] ?? 0) > $maxMb * 1024 * 1024) {
                     return false; // File size bypass detected on backend
                 }
             }

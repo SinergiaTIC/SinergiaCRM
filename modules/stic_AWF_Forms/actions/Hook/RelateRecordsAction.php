@@ -121,8 +121,7 @@ class RelateRecordsAction extends HookBeanActionDefinition {
         // instead of the link name (e.g., cached module info without link_name).
         if (!empty($linkName) && !isset($bean->field_defs[$linkName])) {
             foreach ($bean->field_defs as $fieldName => $def) {
-                if (isset($def['type']) && $def['type'] === 'link'
-                    && isset($def['relationship']) && $def['relationship'] === $linkName) {
+                if (isset($def['type']) && $def['type'] === 'link' && isset($def['relationship']) && $def['relationship'] === $linkName) {
                     $GLOBALS['log']->debug("RelateRecordsAction: Resolved relationship name '{$linkName}' to link field '{$fieldName}'.");
                     $linkName = $fieldName;
                     break;
@@ -149,8 +148,20 @@ class RelateRecordsAction extends HookBeanActionDefinition {
             if (!$targetDataBlock || !($targetDataBlock instanceof DataBlockResolved)) {
                 return new ActionResult(ResultStatus::ERROR, $actionConfig, "Invalid value in target_object parameter as datablock: is not a valid DataBlockResolved.");
             }
-            $targetBeanRef = $targetDataBlock->dataBlock->getBeanReference();
+            $targetBeanRef = $targetDataBlock->getInstanceBeanReference();
+            // If it fails and we know that the target block is not repeatable: Force a read from the base
+            if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
+                if (!$targetDataBlock->dataBlock->isRepeatable()) {
+                    $targetBeanRef = $targetDataBlock->dataBlock->getBeanReference(); // Retrieve the unique parent record
+                }
+            }
             if ($targetBeanRef === null || empty($targetBeanRef->beanId)) {
+                // If the target data block is optional and was not activated/saved, skip relationship cleanly
+                if ($targetDataBlock->dataBlock->isOptional() || (isset($targetDataBlock->dataBlock->min_instances) && (int)$targetDataBlock->dataBlock->min_instances === 0)) {
+                    $GLOBALS['log']->info("RelateRecordsAction: Skipped relationship '{$linkName}' because optional destination DataBlock '{$targetDataBlock->dataBlock->name}' was not created.");
+                    return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Destination DataBlock '{$targetDataBlock->dataBlock->name}' is optional and was not created.");
+                }
+
                 return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetDataBlock->dataBlock->name}' has no ID. Check Action Order.");
             }
             $targetBeanId = $targetBeanRef->beanId;

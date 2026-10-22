@@ -107,10 +107,12 @@ class ActionResult {
             throw new \LogicException("Error in registerBeanModificationFromBlock: Bean module ('{$bean->module_name}') is different from block module ('{$blockModule}').");
         }
 
-        $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $submittedData);
+        $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $submittedData, $block->getInstanceIndexKey());
         $this->addModifiedBean($modifiedBean);
 
-        $block->dataBlock->setBeanReference($bean->id);
+        // The resolved block carries the instance indexes (null for scalar
+        // blocks, "i" for depth-1, "i:j" for depth-2),
+        $block->dataBlock->setBeanReference($bean->id, $block->getInstanceIndexKey());
     }
 
     /**

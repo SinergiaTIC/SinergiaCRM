@@ -86,15 +86,20 @@ JS;
     }
 
     public function validateBackend(mixed $value, array $params): bool {
-        if (empty($_FILES)) {
-            return true; 
+        // Prefer the explicit file descriptor passed by the caller
+        // Fall back to scanning $_FILES for backward compatibility.
+        $files = [];
+        if (is_array($value) && array_key_exists('name', $value)) {
+            $files = [$value];
+        } elseif (!empty($_FILES)) {
+            $files = $_FILES;
         }
-        
+
         $allowed = array_map('trim', explode(',', strtolower($params['extensions'] ?? 'pdf,jpg,png,jpeg,gif')));
         
-        foreach ($_FILES as $file) {
-            if (is_array($file) && $file['error'] === UPLOAD_ERR_OK) {
-                $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        foreach ($files as $file) {
+            if (is_array($file) && ($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_OK) {
+                $ext = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
                 if (!in_array($ext, $allowed, true)) {
                     return false; // Extension bypass detected on backend
                 }
