@@ -26,29 +26,29 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormDataBlock {
-    public FormConfig $form_config;       // The configuration of the form it belongs to
+    public FormConfig $form_config;               // The configuration of the form it belongs to
 
-    public string $id;                    // ID of the data block
-    public string $name;                  // Internal name (UI identifier) of the data block
-    public string $text;                  // Text to display for the data block
-    public string $module;                // Module name
+    public string $id;                            // ID of the data block
+    public string $name;                          // Internal name (UI identifier) of the data block
+    public string $text;                          // Text to display for the data block
+    public string $module;                        // Module name
     /** @var FormDataBlockField[] */
-    public array $fields;                 // Fields of the data block
+    public array $fields;                         // Fields of the data block
     /** @var FormDuplicateRule[] */
-    public array $duplicate_detections;   // Definition of duplicate detection
-    public bool $is_document_block = false; // Whether this is a Document upload block
+    public array $duplicate_detections;           // Definition of duplicate detection
+    public bool $is_document_block = false;       // Whether this is a Document upload block
 
-    public int $min_instances = 1;           // Minimum required instances (0 = optional)
-    public ?int $max_instances = 1;          // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
-    public string $group_title = '';         // Visual title for the repeat group
-    public bool $is_custom_group_title = false; // Flag to track manual title overrides
-    public string $group_root = '';  // ID of the repeatable root this block belongs to
-    public string $element_singular_name = ''; // Singular name for repeatable elements (for UI)
+    public int $min_instances = 1;                // Minimum required instances (0 = optional)
+    public ?int $max_instances = 1;               // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
+    public string $group_title = '';              // Visual title for the repeat group
+    public bool $is_custom_group_title = false;   // Flag to track manual title overrides
+    public string $group_root = '';               // ID of the repeatable root this block belongs to
+    public string $element_singular_name = '';    // Singular name for repeatable elements (for UI)
 
     private ?BeanReference $beanReference = null; // Bean where the data block has been saved
 
-    /** @var array<int, BeanReference> */
-    private array $beanReferences = [];
+    /** @var array<string, BeanReference> */
+    private array $indexedBeanReferences = [];
 
     /**
      * Creates an instance of FormDataBlock from a JSON array.
@@ -60,23 +60,36 @@ class FormDataBlock {
         $dto = new self();
         $dto->form_config = $form;
 
-        $dto->id = $data['id'];
-        $dto->name = $data['name'];
-        $dto->text = $data['text'];
-        $dto->module = $data['module'];
+        $dto->id = $data['id'] ?? '';
+        $dto->name = $data['name'] ?? '';
+        $dto->text = $data['text'] ?? '';
+        $dto->module = $data['module'] ?? '';
+
         $dto->is_document_block = $data['is_document_block'] ?? false;
 
         // Map repeatable data block fields
-        $dto->min_instances = isset($data['min_instances']) ? (int)$data['min_instances'] : 1;
-        $dto->max_instances = isset($data['max_instances']) && $data['max_instances'] !== '' && $data['max_instances'] !== null ? (int)$data['max_instances'] : null;
+
+        // If 'min_instances' is absent (legacy form), default is 1 (mandatory).
+        $dto->min_instances = 1; // Legacy default: mandatory block
+        if (array_key_exists('min_instances', $data)) {
+            // If present in JSON: 0 = optional, 1 = mandatory.
+            $dto->min_instances = ($data['min_instances'] !== null && $data['min_instances'] !== '') ? (int)$data['min_instances'] : 1;
+        } 
+
+        // If 'max_instances' is absent (legacy form), default is 1 (scalar).
+        $dto->max_instances = 1; // Legacy default: simple scalar block
+        if (array_key_exists('max_instances', $data)) {
+            // If present in JSON: null or empty string means UNLIMITED repeatable (null), otherwise integer.
+            $dto->max_instances = ($data['max_instances'] !== null && $data['max_instances'] !== '') ? (int)$data['max_instances'] : null;
+        }
+
+        $dto->group_root = $data['group_root'] ?? '';
         $dto->group_title = $data['group_title'] ?? '';
+        $dto->element_singular_name = $data['element_singular_name'] ?? '';
         $dto->is_custom_group_title = isset($data['is_custom_group_title']) ? (bool)$data['is_custom_group_title'] : false;
         
-        $dto->group_root = $data['group_root'] ?? '';
-        $dto->element_singular_name = $data['element_singular_name'] ?? '';
-
         $dto->fields = [];
-        if (isset($data['fields'])) {
+        if (isset($data['fields']) && is_array($data['fields'])) {
             foreach ($data['fields'] as $fieldData) {
                 $formDataBlockField = FormDataBlockField::fromJsonArray($dto, $fieldData);
                 $dto->fields[$formDataBlockField->name] = $formDataBlockField;
@@ -84,7 +97,7 @@ class FormDataBlock {
         }
 
         $dto->duplicate_detections = [];
-        if (isset($data['duplicate_detections'])) {
+        if (isset($data['duplicate_detections']) && is_array($data['duplicate_detections'])) {
             foreach ($data['duplicate_detections'] as $dupData) {
                 $dto->duplicate_detections[] = FormDuplicateRule::fromJsonArray($dto, $dupData);
             }
@@ -104,96 +117,130 @@ class FormDataBlock {
      * Check if the block is optional 
      */
     public function isOptional(): bool {
-        return $this->min_instances == 0;
+        return ($this->min_instances ?? 1) == 0;
     }
 
     /**
-     * Number of repeatable loop variables needed to address this block's
-     * instances in the POST matrix:
-     *  - 0: scalar block (static field names).
-     *  - 1: block living inside one repeatable loop (the top-level group root
-     *       or any direct child of it).
-     *  - 2: block living inside two nested repeatable loops (a descendant of
-     *       a subgroup head, e.g. Adult[i] -> Menor[i][j]).
-     * The count walks the group_root chain: every repeatable/optional ancestor
-     * adds a loop variable; a repeatable/optional ROOT block adds its own.
+     * Calculates the depth of the block within the chain of group roots. 
+     * Called directly by ResponseHandler to decide whether to evaluate sub-loops at level >= 2.
      */
     public function getLoopDepth(): int {
-        // The loop depth counts every GROUP HEAD in the chain from THIS block
-        // up to its root, INCLUDING this block: repeatable, optional AND
-        // simple (max=1 with children) heads all render an x-for loop and add
-        // one loop level. Repeatable levels are capped at 2 by the model
-        // (canBeRepeatable); optional levels are UNLIMITED (N optional levels).
-        // Examples: scalar block -> 0; repeatable root or its simple child -> 1;
-        // subgroup head or its descendants -> 2; third optional level -> 3...
+        // Number of x-for loops that address this block's instances, i.e. the
+        // number of REPEATABLE/OPTIONAL heads in the chain INCLUDING this block
+        // (a repeatable root renders its own loop: depth 1). SIMPLE heads
+        // (max=1 with children) render inline with STATIC names, so they add
+        // no level (unlike the old count that included them).
         $depth = 0;
         $current = $this;
         $visited = [$current->id => true];
         while (true) {
-            if ($current->isGroupHead()) $depth++;
-            if (empty($current->group_root)) break;
-            $parent = $this->form_config->data_blocks[$current->group_root] ?? null;
-            if ($parent === null || isset($visited[$parent->id])) break; // Missing parent or cycle guard
-            $visited[$parent->id] = true;
+            if ($current->isRepeatable() || $current->isOptional()) {
+                $depth++;
+            }
+            if (empty($current->group_root)) {
+                break;
+            }
+            $parentId = $current->group_root;
+            if (isset($visited[$parentId]) || $parentId === $current->id) {
+                break;
+            }
+            $visited[$parentId] = true;
+            $parent = $this->form_config->data_blocks[$parentId] ?? null;
+            if (!$parent) {
+                break;
+            }
             $current = $parent;
         }
         return $depth;
     }
 
     /**
-     * True when this block renders its own x-for loop (a group head):
-     * repeatable, optional, or a simple block with children.
+     * Sets the bean reference for this data block, optionally for a specific instance index.
+     * @param string $beanId The ID of the bean
+     * @param string|null $instanceIndex Optional instance index (e.g., "i" for depth-1, "i:j" for depth-2)
+     */
+    public function setBeanReference(string $beanId, ?string $instanceIndex = null): void {
+        $ref = new BeanReference($this->module, $beanId);
+        $this->beanReference = $ref;
+        if ($instanceIndex !== null) {
+            $this->indexedBeanReferences[(string)$instanceIndex] = $ref;
+        }
+    }
+
+    /**
+     * Gets the bean reference for this data block, optionally for a specific instance index.
+     * @param string|null $instanceIndex Optional instance index (e.g., "i" for depth-1, "i:j" for depth-2)
+     * @return BeanReference|null The bean reference or null if not set
+     */
+    public function getBeanReference(?string $instanceIndex = null): ?BeanReference {
+        if ($instanceIndex !== null && isset($this->indexedBeanReferences[(string)$instanceIndex])) {
+            return $this->indexedBeanReferences[(string)$instanceIndex];
+        }
+        return $this->beanReference;
+    }
+
+    /**
+     * Gets all indexed bean references for this data block.
+     * @return array<string, BeanReference> An associative array of instance index to BeanReference
+     */
+    public function getIndexedBeanReferences(): array {
+        return $this->indexedBeanReferences;
+    }
+
+    /**
+     * Gets the bean reference for a specific instance index.
+     * @param string|int $index The instance index (e.g., "i" for depth-1, "i:j" for depth-2)
+     * @return BeanReference|null The bean reference or null if not set
+     */
+    public function getIndexedBeanReference(string|int $index): ?BeanReference {
+        return $this->indexedBeanReferences[(string)$index] ?? null;
+    }
+
+
+    /**
+     * True when this block is a group head: repeatable, optional, or a simple block with children.
      */
     public function isGroupHead(): bool {
         return $this->isRepeatable() || $this->isOptional()
             || count($this->form_config->getGroupChildren($this)) > 0;
     }
 
-    public function setBeanReference(string $beanId, int|string|null $index = null): void {
-        if ($index === null) {
-            $this->beanReference = new BeanReference($this->module, $beanId);
-            return;
-        }
-        // Depth-1 instances use int indexes; depth-2 instances use the
-        // composite string key "outer:inner" so both levels are addressed.
-        $this->beanReferences[$index] = new BeanReference($this->module, $beanId);
-    }
-
-    public function getBeanReference(int|string|null $index = null): ?BeanReference {
-        if ($index === null) {
-            return $this->beanReference;
-        }
-        return $this->beanReferences[$index] ?? null;
-    }
-
     /**
-     * Loop-depth-aware bean reference lookup for the ACTIVE execution context
-     * (n-dimensional POST matrix): the reference key is the first
-     * d indexes of the context's active index stack (d = this block's loop
-     * depth) — a shallower target read through a deeper action uses the outer
-     * indexes. Returns null when the active stack is shallower than this
-     * block's depth (the deeper instance is not addressed by this execution).
+     * Resolves the reference for this block within the current execution context. 
+     * This is the key to N:1 resolution: If this block is scalar (non-repeatable),
+     * it must ALWAYS return the unique root instance, ignoring the index from the child context.
+     * 
+     * @param ExecutionContext $context The execution context
+     * @param string|null $instanceKey Optional instance key (e.g., "i" for depth-1, "i:j" for depth-2)
+     * @return BeanReference|null The bean reference or null if not set
      */
-    public function getReferenceForContext(ExecutionContext $context): ?BeanReference {
+    public function getReferenceForContext(ExecutionContext $context, ?string $instanceKey = null): ?BeanReference {
         $depth = $this->getLoopDepth();
+
+        // Scalar block (no loop): a single global reference
         if ($depth === 0) {
             return $this->getBeanReference();
         }
+
+        // Explicit instance key wins (e.g. a group head resolving its own instance)
+        if ($instanceKey !== null) {
+            return $this->getBeanReference($instanceKey);
+        }
+
+        // N:1 — a NON-repeatable target (e.g. an optional 0..1 group shared by
+        // every child) has a single instance, so the global reference is
+        // authoritative regardless of the child's loop indexes.
+        if (!$this->isRepeatable()) {
+            return $this->getBeanReference();
+        }
+
+        // Repeatable target: address THIS instance via the first d indexes of
+        // the active context stack; if the stack is shallower the deeper
+        // instance is not addressed by this execution (null).
         $stack = $context->getInstanceIndexes();
         if (count($stack) < $depth) {
             return null;
         }
-        $index = implode(':', array_slice($stack, 0, $depth));
-        return $this->getBeanReference($index);
-    }
-
-    /**
-     * Returns the bean references already registered for repeatable instances
-     * during the current request execution. Keys are int indexes (depth-1) or
-     * composite "outer:inner" strings (depth-2).
-     * @return array<int|string, BeanReference>
-     */
-    public function getIndexedBeanReferences(): array {
-        return $this->beanReferences;
+        return $this->getBeanReference(implode(':', array_slice($stack, 0, $depth)));
     }
 }

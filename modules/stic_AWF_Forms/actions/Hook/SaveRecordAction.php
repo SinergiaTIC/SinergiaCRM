@@ -484,6 +484,14 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             // a depth-2 target uses the composite "i:j" key.
             $targetBeanRef = $targetBlock->getReferenceForContext($context);
 
+            // If it fails and we know that the target block is not repeatable: Force a read from the base
+            if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
+                if (!$targetBlock->isRepeatable()) {
+                    $targetBeanRef = $targetBlock->getBeanReference(); // Retrieve the unique parent record
+                }
+            }
+            
+
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
                 // Target is optional and was not created: skip FK injection gracefully
                 if ($targetBlock->isOptional() || (isset($targetBlock->min_instances) && (int)$targetBlock->min_instances === 0)) {

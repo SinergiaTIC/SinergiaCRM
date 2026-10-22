@@ -149,6 +149,12 @@ class RelateRecordsAction extends HookBeanActionDefinition {
                 return new ActionResult(ResultStatus::ERROR, $actionConfig, "Invalid value in target_object parameter as datablock: is not a valid DataBlockResolved.");
             }
             $targetBeanRef = $targetDataBlock->getInstanceBeanReference();
+            // If it fails and we know that the target block is not repeatable: Force a read from the base
+            if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
+                if (!$targetDataBlock->dataBlock->isRepeatable()) {
+                    $targetBeanRef = $targetDataBlock->dataBlock->getBeanReference(); // Retrieve the unique parent record
+                }
+            }
             if ($targetBeanRef === null || empty($targetBeanRef->beanId)) {
                 // If the target data block is optional and was not activated/saved, skip relationship cleanly
                 if ($targetDataBlock->dataBlock->isOptional() || (isset($targetDataBlock->dataBlock->min_instances) && (int)$targetDataBlock->dataBlock->min_instances === 0)) {

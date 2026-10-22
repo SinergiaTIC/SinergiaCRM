@@ -38,7 +38,7 @@ enum DataBlockFieldValueType: string {
 }
 
 class FormDataBlockField {
-    public FormDataBlock $data_block;             // The data block it belongs to
+    public FormDataBlock $data_block;            // The data block it belongs to
 
     public string $name;                         // Field name
     public string $text_original;                // Original text of the field

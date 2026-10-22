@@ -361,14 +361,26 @@ class DataBlockResolved {
     }
 
     /**
-     * Bean reference of THIS resolved instance, using the same composite key
-     * convention used at registration time (registerBeanModificationFromBlock).
+     * Returns the BeanReference for this instance, if any. For scalar blocks,
+     * returns the global reference; for repeatable blocks, returns the
+     * per-instance reference (if set).
      */
     public function getInstanceBeanReference(): ?BeanReference {
-        if ($this->instanceIndex === null) {
+        // If the underlying block is scalar (1..1 or 0..1), it has a single global reference.
+        if (!$this->dataBlock->isRepeatable() && empty($this->dataBlock->group_root)) {
             return $this->dataBlock->getBeanReference();
         }
-        return $this->dataBlock->getBeanReference($this->getInstanceIndexKey());
+
+        // If it's repeatable, search by instance key
+        $indexKey = $this->getInstanceIndexKey();
+        if ($indexKey !== null) {
+            $ref = $this->dataBlock->getIndexedBeanReference($indexKey);
+            if ($ref !== null) {
+                return $ref;
+            }
+        }
+
+        return $this->dataBlock->getBeanReference();
     }
 
     /**
