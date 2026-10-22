@@ -4366,6 +4366,7 @@ class stic_AwfConfiguration {
   removeChildFromGroup(childBlockId) {
     const child = this.data_blocks.find(b => b.id === childBlockId);
     if (!child) return;
+    if (!child.canLeaveGroup(this.data_blocks)) return;
 
     // The group root they are being unlinked from
     const currentGroupRootId = child.group_root;

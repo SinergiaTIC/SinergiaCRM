@@ -1419,8 +1419,12 @@ class stic_AWFUtils {
     /**
      * Reads the submitted value of a condition field, resolving instance-aware
      * POST paths for fields inside groups (Block[i1]...[field]).
+     * Duck-typed like compareConditionValue(): conditions may be FormCondition
+     * DTOs (production) or plain objects (tests), and a strict type hint here
+     * would make the caller fatally fail and - since executeFlow catches
+     * \Throwable - turn into a silent form error instead of a skip.
      */
-    private static function resolveConditionFieldValue(FormCondition $cond, FormConfig $formConfig, array $formData, array $instanceIndexes = []) {
+    private static function resolveConditionFieldValue($cond, FormConfig $formConfig, array $formData, array $instanceIndexes = []) {
         $block = self::resolveConditionBlock($cond->field_name, $formConfig);
 
         // Scalar block: read directly from flat formData
