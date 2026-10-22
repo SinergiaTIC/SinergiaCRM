@@ -127,10 +127,10 @@ class stic_AttendancesLogicHooks
 
         // Set session counters in case of attendance creation or status change
         if (empty($bean->fetched_row) || $bean->status != $bean->fetched_row['status'] || empty($bean->fetched_row['id'])) {
-            require_once 'modules/stic_Sessions/Utils.php';
+            require_once 'modules/stic_Attendances/Utils.php';
             if ($sessionId = $this->getSessionIdFromAttendanceId($bean->id)) {
                 if ($session = BeanFactory::getBean('stic_Sessions', $sessionId)) {
-                    stic_SessionsUtils::setSessionAttendancesCounters($session->id);
+                    stic_AttendancesUtils::updateSessionCounters($session->id);
                     // Related with STIC#744 
                     $session->retrieve();
                 } else {
@@ -166,14 +166,14 @@ class stic_AttendancesLogicHooks
                     break;
             }
         } elseif ($arguments['related_module'] == 'stic_Sessions') {
-            require_once 'modules/stic_Sessions/Utils.php';
+            require_once 'modules/stic_Attendances/Utils.php';
             switch ($event) {
                 case 'after_relationship_delete':
                 case 'after_relationship_add':   
                     if ($sessionId = $arguments['related_id']) {
                         if ($session = BeanFactory::getBean($arguments['related_module'], $sessionId)) {
                             $GLOBALS['log']->debug(__METHOD__ . ' ' . $event . ' | ' . $arguments['related_module'] . '--' . $arguments['related_id']);                 
-                            stic_SessionsUtils::setSessionAttendancesCounters($session->id);
+                            stic_AttendancesUtils::updateSessionCounters($session->id);
                             // Related with STIC#744                     
                             $session->retrieve();
                         } else {
