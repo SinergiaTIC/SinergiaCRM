@@ -942,19 +942,19 @@ class ResponseHandler
                 // For document blocks, store the uploaded file name as the detail record.
                 if ($field->type_in_form === 'file') {
                     if ($block->is_document_block) {
-                        $currentOrder = $orderCounter++;
+                        $instanceSuffix = $instanceIndexes !== [] ? '[' . implode('][', $instanceIndexes) . ']' : '';
                         $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
                         $detailBean->stic_awf_responses_id_c = $responseBean->id;
                         $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
                         $detailBean->assigned_user_id = $responseBean->assigned_user_id;
-                        $detailBean->question_key = $block->name . '.' . $field->name;
+                        $detailBean->question_key = $block->name . $instanceSuffix . '.' . $field->name;
                         $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
                         $detailBean->question_label = rtrim($detailBean->question_label, ' :');
                         $detailBean->question_section = $block->text;
                         $detailBean->question_sort_order = $currentOrder;
 
-                        $phpKey = $field->getPhpKey();
-                        $fileName = $uploadedFiles[$phpKey]['name'] ?? '';
+                        $fileKey = $instanceIndexes !== [] ? $field->getFileKeyForIndexes($instanceIndexes) : $field->getPhpKey();
+                        $fileName = $uploadedFiles[$fileKey]['name'] ?? '';
                         $detailBean->answer_value = $fileName;
                         $detailBean->answer_text = $fileName;
                         $detailBean->answer_type = 'file';
@@ -1015,7 +1015,6 @@ class ResponseHandler
             }
 
             // Create analytical response bean
-            $currentOrder = $orderCounter++;
             $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
             $detailBean->stic_awf_responses_id_c = $responseBean->id;
             $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';

@@ -66,6 +66,27 @@ class SaveDocumentBlockAction extends HookDataBlockActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Required file not uploaded.");
         }
 
+        // BACKEND validation of the file field's validators. 
+        // The submit-time AJAX validation SKIPS file fields
+        // (their value lives in $_FILES, not in the POST matrix)
+        if (!empty($fileField->validations)) {
+            $validatorDefs = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
+            foreach ($fileField->validations as $valConfig) {
+                if (!empty($valConfig->conditions) && !stic_AWFUtils::evaluateConditions($valConfig->conditions, $context->formData)) {
+                    continue; // Conditions not met: skip this validation
+                }
+                foreach ($validatorDefs as $def) {
+                    if ($def->getName() === $valConfig->validator && $def instanceof ValidatorActionDefinition) {
+                        if (!$def->validateBackend($fileInfo, (array)($valConfig->params ?? []))) {
+                            $errorMsg = !empty($valConfig->message) ? $valConfig->message : $def->getDefaultErrorMessage();
+                            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Advanced Web Forms: file field '{$fileField->name}' rejected by validator '{$valConfig->validator}': {$errorMsg}");
+                            return new ActionResult(ResultStatus::ERROR, $actionConfig, $errorMsg);
+                        }
+                    }
+                }
+            }
+        }
+
         $document = BeanFactory::newBean('Documents');
 
         $modifications = stic_AWF_FormsUtils::populateBeanFromBlock($document, $block);

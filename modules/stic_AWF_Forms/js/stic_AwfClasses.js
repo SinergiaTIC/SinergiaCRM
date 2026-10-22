@@ -474,8 +474,8 @@ class stic_AwfDataBlock {
   }
 
   countRepeatableLevel(allDataBlocks) {
-    // Count repeatable ancestors (group_root chain walk)
-    let repeatableCount = 0;
+    // Repeatable ANCESTORS (single chain upward: at most one parent per level)
+    let repeatableAncestors = 0;
     let currentParentId = this.group_root;
     const visited = new Set([this.id]);
 
@@ -486,21 +486,37 @@ class stic_AwfDataBlock {
       const parentBlock = allDataBlocks.find(b => b.id === currentParentId);
       if (!parentBlock) break;
 
-      if (parentBlock.is_repeatable) repeatableCount++;
+      if (parentBlock.is_repeatable) repeatableAncestors++;
 
       currentParentId = parentBlock.group_root;
     }
 
-    // Count repeatable descendants in the SAME group (relational descendants).
-    const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
-    const descendants = this.getRelationalDescendants(allDataBlocks);
-    for (const d of descendants) {
-      if (d.id === this.id) continue;
-      const inSameGroup = d.group_root === this.id || (myGroupRoot && d.group_root === myGroupRoot);
-      if (inSameGroup && d.is_repeatable) repeatableCount++;
-    }
+    // Longest repeatable CHAIN below this block (the branch depth), NOT the
+    // SUM of parallel branches: two independent repeatable children are two
+    // depth-2 branches (this → child), never a depth-3 one. Summing them
+    // wrongly refused a valid configuration with MAX_DEPTH.
+    // Counts `this` itself as the first level (the block being evaluated as
+    // repeatable) + the deepest repeatable descendant chain.
+    return repeatableAncestors + 1 + this.longestRepeatableDescendantChain(allDataBlocks);
+  }
 
-    return repeatableCount + 1;
+  /**
+   * Deepest chain of repeatable descendants through this block's group tree
+   * (children by group_root). Each repeatable child adds one level; a path is
+   * followed to its deepest repeatable node. Cycle-safe.
+   * @returns {number}
+   */
+  longestRepeatableDescendantChain(allDataBlocks, seen = new Set()) {
+    let best = 0;
+    for (const child of allDataBlocks) {
+      if (child.id === this.id || child.group_root !== this.id) continue;
+      if (seen.has(child.id)) continue;
+      seen.add(child.id);
+      const chain = (child.is_repeatable ? 1 : 0) + child.longestRepeatableDescendantChain(allDataBlocks, seen);
+      if (chain > best) best = chain;
+      seen.delete(child.id);
+    }
+    return best;
   }
 
   /**
@@ -2218,7 +2234,7 @@ class stic_AwfLayout {
       s.remove_button_label = '';
       const template = (s.elements || []).find(el => el.type === 'section' && el.groupTemplate === true);
       const released = template
-        ? [...s.elements.filter(el => el !== template), ...template.elements]
+        ? [...s.elements.filter(el => el.id !== template.id), ...template.elements]
         : [...(s.elements || [])];
       // The released content is spliced into the PARENT level, which must hold
       // sections only: a raw element (datablock reference / unbundled field
@@ -2234,13 +2250,13 @@ class stic_AwfLayout {
         wrapper.elements.push(el);
       });
       const replaceIn = (arr) => {
-        const i = arr.indexOf(s);
+        const i = arr.findIndex(item => item && item.id === s.id);
         if (i >= 0) { arr.splice(i, 1, ...lifted); return true; }
         return false;
       };
       if (replaceIn(this.structure)) return;
       const walk = (sec) => {
-        const i = (sec.elements || []).indexOf(s);
+        const i = (sec.elements || []).findIndex(el => el && el.id === s.id);
         if (i >= 0) { sec.elements.splice(i, 1, ...lifted); return true; }
         return (sec.elements || []).some(el => el.type === 'section' && walk(el));
       };
@@ -2288,7 +2304,7 @@ class stic_AwfLayout {
       let found = false;
       const walk = (sec, insideTemplate) => {
         if (found) return;
-        if (sec === target) { found = insideTemplate; return; }
+        if (sec.id === target.id) { found = insideTemplate; return; }
         sec.elements.forEach(el => {
           if (found || el.type !== 'section') return;
           walk(el, insideTemplate || el.groupTemplate === true);
@@ -2464,11 +2480,11 @@ class stic_AwfLayout {
     // level), keeping its own subtree intact
     const detachSection = (section) => {
       if (!section) return;
-      this.structure = this.structure.filter(s => s !== section);
+      this.structure = this.structure.filter(s => s && s.id !== section.id);
       const dropFrom = (parent, seen) => {
-        if (!parent || !parent.elements || seen.has(parent)) return false;
-        seen.add(parent);
-        const idx = parent.elements.indexOf(section);
+        if (!parent || !parent.elements || seen.has(parent.id)) return false;
+        seen.add(parent.id);
+        const idx = parent.elements.findIndex(el => el && el.id === section.id);
         if (idx >= 0) { parent.elements.splice(idx, 1); return true; }
         return parent.elements.some(el => el.type === 'section' && dropFrom(el, seen));
       };
@@ -2943,12 +2959,18 @@ class stic_AwfLayout {
   ensureUniqueSectionIds() {
     const seenRefs = new Set();
     const seenIds = new Set();
-    this.structure = this.structure.filter(section => {
-      if (!section) return false;
-      if (seenRefs.has(section)) return false;
+
+    const visit = (section) => {
+      if (!section || seenRefs.has(section)) return;
       seenRefs.add(section);
       if (section.id == null || seenIds.has(section.id)) section.id = utils.newId('sect');
       seenIds.add(section.id);
+      (section.elements || []).forEach(el => { if (el && el.type === 'section') visit(el); });
+    };
+    this.structure = this.structure.filter(section => {
+      if (!section) return false;
+      if (seenRefs.has(section)) return false;
+      visit(section);
       return true;
     });
   }

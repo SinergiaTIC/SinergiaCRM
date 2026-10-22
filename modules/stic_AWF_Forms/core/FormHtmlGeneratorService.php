@@ -626,7 +626,7 @@ class FormHtmlGeneratorService {
         }
 
         $containerClass = ($section->containerType === 'card') ? 'awf-section-card' : 'awf-section-panel';
-        $sectionPanelId = "awf_sect_" . md5($section->title ?? uniqid());
+        $sectionPanelId = "awf_sect_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $section->id ?? '') . '_' . substr(md5($section->id ?? uniqid()), 0, 8);
 
         // Collapsible logic
         $isCollapsible = !empty($section->isCollapsible);
@@ -1431,7 +1431,8 @@ class FormHtmlGeneratorService {
             $idExpr = "'f_{$block->name}_' + " . implode(" + '_' + ", $contentOuterVars) . " + '_0_{$fieldName}'";
             $idAttr = ":id=\"{$idExpr}\"";
         }
-        return "<input type='hidden' {$nameAttr} {$idAttr} value='{$val}'>" . $this->newLine();
+        // Disable while the group switch is off to avoid materializing the instance when the user does not want it.
+        return "<input type='hidden' {$nameAttr} {$idAttr} value='{$val}' :disabled=\"!active\">" . $this->newLine();
     }
 
     /**
@@ -1447,7 +1448,8 @@ class FormHtmlGeneratorService {
             $idxExpr = "'{$rootBlock->name}[' + " . implode(" + '][' + ", $contentOuterVars) . " + '][0][_awf_server_data]'";
             $nameAttr = ":name=\"{$idxExpr}\"";
         }
-        return "<input type='hidden' {$nameAttr} value='1'>" . $this->newLine();
+        // Disable while the switch is off to avoid materializing the instance when the user does not want it
+        return "<input type='hidden' {$nameAttr} value='1' :disabled=\"!active\">" . $this->newLine();
     }
 
     /**
@@ -2012,7 +2014,7 @@ class FormHtmlGeneratorService {
                             $instShowAttr = $tCollapsible ? "x-show='open' x-transition" : "";
                             $html .= "<div class='card-body' {$instShowAttr}>" . $this->newLine('+');
                             {
-                                $html .= $this->renderGroupInstanceContent($rootBlock, $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
+                                $html .= $this->renderGroupInstanceContent($rootBlock, $templateSection ?? $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
                             }
                             $html .= "</div>" . $this->newLine('-');
                         } else {
@@ -2032,7 +2034,7 @@ class FormHtmlGeneratorService {
                             $html .= "</div>" . $this->newLine('-');
                             $html .= "<div class='card-body'>" . $this->newLine('+');
                             {
-                                $html .= $this->renderGroupInstanceContent($rootBlock, $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
+                                $html .= $this->renderGroupInstanceContent($rootBlock, $templateSection ?? $section, $children, $config, $theme, $instanceVar, $contentOuterVars);
                             }
                             $html .= "</div>" . $this->newLine('-');
                         }
@@ -2399,7 +2401,7 @@ class FormHtmlGeneratorService {
         // --- SPECIAL CASES (ratings) ---
 
         if ($field->type_in_form === 'rating') {
-            return $this->generateRatingField($field) .$this->newLine();
+            return $this->generateRatingField($field, $instanceIndexVar, $outerIndexVars) .$this->newLine();
         }
 
         // --- SPECIAL CASES (File Upload - Compact Bootstrap 5 File Input) ---
@@ -2469,8 +2471,8 @@ class FormHtmlGeneratorService {
 
                                 $controlHtml .= "<div class='form-check'>" .$this->newLine('+');
                                 {
-                                    $idAttr = $isInstance ? ":id={$optIdTemplate}" : "id='{$optId}'";
-                                    $forAttr = $isInstance ? ":for={$optIdTemplate}" : "for='{$optId}'";
+                                    $idAttr = $isInstance ? ":id=\"{$optIdTemplate}\"" : "id='{$optId}'";
+                                    $forAttr = $isInstance ? ":for=\"{$optIdTemplate}\"" : "for='{$optId}'";
                                     $controlHtml .= "<input {$validationsAttr} type='{$inputType}' {$nameAttr} {$idAttr} value='{$val}' class='form-check-input' {$req}>" .$this->newLine();
                                     $controlHtml .= "<label class='form-check-label' {$forAttr}>{$txt}</label>" .$this->newLine();
                                 }
@@ -2704,18 +2706,46 @@ class FormHtmlGeneratorService {
      * @param FormDataBlockField $field The rating field to be rendered, containing all necessary information about its label, description, subtype, and validation requirements
      * @return string The generated HTML for the rating field as a string, including the interactive controls and any associated labels and descriptions
      */
-    private function generateRatingField(FormDataBlockField $field): string {
-        $inputName = $field->getKey();
+    private function generateRatingField(FormDataBlockField $field, ?string $instanceIndexVar = null, array $outerIndexVars = []): string {
+        // Instance-aware: inside a repeatable loop every repetition must post to
+        // its OWN indexed name/id (Alpine :name/:id), exactly like the other
+        // controls. Without this, all repetitions shared one static name and
+        // overwrote each other on submit.
+        $isInstance = $instanceIndexVar !== null;
+        $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
+        $inputNameTemplate = $inputName;
+        $inputKeyForId = $isInstance ? $field->data_block->name : $field->getKeyForId();
+        if ($isInstance) {
+            $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+            $allVars = array_merge($outerIndexVars, [$instanceIndexVar]);
+            $indexPart = '';
+            $idIndexPart = '';
+            foreach ($allVars as $varIndex => $var) {
+                $indexPart .= "[' + {$var} + ']";
+                $idIndexPart .= ($varIndex === 0 ? "_' + {$var} + '_" : "' + {$var} + '_");
+            }
+            $inputNameTemplate = $namePrefix . $field->data_block->name . $indexPart . "[" . $field->name . "]";
+            $inputKeyForId = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $field->data_block->name . $idIndexPart . $field->name;
+        }
         $name = htmlspecialchars($inputName);
         $label = htmlspecialchars($field->label ?? '');
+        $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$name}'";
+        $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$name}'";
+        $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$name}'";
         $description = "";
         $ariaDescribedBy = "";
         
         if (!empty($field->description)) {
             $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
-            $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
-            $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
-            $ariaDescribedBy = "aria-describedby='{$helpId}'";
+            if ($isInstance) {
+                $helpIdDynamic = "'help_' + '{$inputKeyForId}'";
+                $description = "<div :id=\"{$helpIdDynamic}\" class='form-text awf-help-text'>{$parsedDesc}</div>";
+                $ariaDescribedBy = ":aria-describedby=\"{$helpIdDynamic}\"";
+            } else {
+                $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
+                $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
+                $ariaDescribedBy = "aria-describedby='{$helpId}'";
+            }
         }
 
         $subtype = !empty($field->subtype_in_form) ? $field->subtype_in_form : 'rating_stars';
@@ -2733,7 +2763,7 @@ class FormHtmlGeneratorService {
         {
             // Label
             if ($label) {
-                $html .= "<label for='f_{$name}' class='form-label'>" . $this->newLine('+');
+                $html .= "<label {$forAttr} class='form-label'>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -2746,7 +2776,7 @@ class FormHtmlGeneratorService {
             // Phantom input for HTML5 validation
             $errorMsg = translate('LBL_REQUIRED_FIELD_MESSAGE', 'stic_AWF_Forms');
             $requiredAttr = $isRequired ? 'required' : '';
-            $html .= "<input type='text' x-ref=\"input\" name='{$name}' id='f_{$name}' :value=\"val\" {$ariaDescribedBy} {$requiredAttr} tabindex='-1'" .
+            $html .= "<input type='text' x-ref=\"input\" {$nameAttr} {$idAttr} :value=\"val\" {$ariaDescribedBy} {$requiredAttr} tabindex='-1'" .
                     "style='opacity:0; width:100%; height:1px; position:absolute; bottom:0; left:0; z-index:-1; pointer-events:none;'" .
                     "oninvalid=\"this.setCustomValidity('{$errorMsg}')\" oninput=\"this.setCustomValidity('')\"> " . $this->newLine();
 
@@ -3097,7 +3127,7 @@ document.addEventListener('alpine:init', () => {
 
     showServerError(fieldId, message) {
       const input = document.getElementById('f_'+fieldId);
-      if (!input) return;
+      if (!input) return false;
       input.classList.add('is-invalid');
       const parent = input.parentElement;
       let feedback = parent.querySelector('.invalid-feedback') || document.createElement('div');
@@ -3128,12 +3158,37 @@ document.addEventListener('alpine:init', () => {
       } else {
         input.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
+      return true;
+    },
+
+    // Global fallback for server errors that cannot be attached to a field
+    // (e.g. repeatable min/max instance errors, keyed by the block name).
+    showGlobalServerErrors(messages) {
+      const form = this.$refs.form || document.querySelector('form');
+      if (!form || !messages || messages.length === 0) return;
+      let box = form.querySelector('.awf-server-errors');
+      if (!box) {
+        box = document.createElement('div');
+        box.className = 'alert alert-danger awf-server-errors';
+        box.setAttribute('role', 'alert');
+        form.insertBefore(box, form.firstChild);
+      }
+      box.innerHTML = '';
+      messages.forEach(message => {
+        const line = document.createElement('div');
+        line.textContent = message;
+        box.appendChild(line);
+      });
+      box.scrollIntoView({ behavior: 'smooth', block: 'center' });
     },
 
     submitForm(formElement) {
       if (this.submitting) return;
       let formValid = true;
       this.serverErrors = {};
+      // Clear the global server-error banner from a previous attempt.
+      const existingGlobalBox = formElement.querySelector('.awf-server-errors');
+      if (existingGlobalBox) existingGlobalBox.remove();
 
       formElement.querySelectorAll('input, select, textarea').forEach(input => {
         if (input.willValidate && !this.validateInput(input)) formValid = false;
@@ -3180,7 +3235,13 @@ document.addEventListener('alpine:init', () => {
             this.serverErrors = data.errors || {};
             const errorIds = Object.keys(this.serverErrors);
             if (errorIds.length > 0) {
-              errorIds.forEach(id => this.showServerError(id, this.serverErrors[id]));
+              const unassigned = [];
+              errorIds.forEach(id => {
+                if (!this.showServerError(id, this.serverErrors[id])) unassigned.push(this.serverErrors[id]);
+              });
+              // Errors with no owning field (block min/max instances) are shown
+              // globally so the form never blocks silently.
+              if (unassigned.length > 0) this.showGlobalServerErrors(unassigned);
             } else {
               formElement.submit();
             }
@@ -3248,18 +3309,13 @@ JS;
     updateFileInfo() {
       const file = this.$refs.fileInput.files[0];
       this.fileName = file ? file.name : '';
-      
-      // Remove the $nextTick with dispatchEvent and call the core directly
-      this.validateInput(this.$refs.fileInput);
+      this.$refs.fileInput.dispatchEvent(new Event('input', { bubbles: true }));
     },
     
     clear() {
       this.fileName = '';
       this.$refs.fileInput.value = '';
-      
-      // Clear the error and force immediate re-evaluation
-      this.resetError(this.$refs.fileInput);
-      this.validateInput(this.$refs.fileInput);
+      this.$refs.fileInput.dispatchEvent(new Event('input', { bubbles: true }));
     }
   }));
 JS;
