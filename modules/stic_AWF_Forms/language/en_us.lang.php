@@ -127,8 +127,8 @@ $mod_strings = array (
   // General editors
   'LBL_SELECT_PLACEHOLDER' => 'Select an item...',
   'LBL_SELECT_WRITE_TO_SEARCH' => 'Type to filter the list...',
-  'LBL_SELECT_NO_RESULTS' => 'No matches found',
   'LBL_SELECT_SEARCH_CLEAN' => 'Clear filter',
+  'LBL_SELECT_NO_RESULTS' => 'No matches found',
 
   // DataBlocks
   'LBL_DATABLOCK' => 'Data block',
