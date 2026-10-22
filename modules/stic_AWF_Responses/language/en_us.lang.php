@@ -106,6 +106,8 @@ $mod_strings = array (
 
   // User-facing validation errors
   'LBL_ERROR_REQUIRED_FIELD' => 'The field is required.',
+  'LBL_ERROR_REPEATABLE_MAX_INSTANCES' => 'The maximum number of entries has been exceeded.',
+  'LBL_ERROR_REPEATABLE_MIN_INSTANCES' => 'This field requires a minimum number of entries.',
   'LBL_ERROR_INTEGER_FIELD' => 'Value must be an integer.',
   'LBL_ERROR_NUMERIC_FIELD' => 'Value must be numeric.',
   'LBL_ERROR_DATE_FIELD' => 'Value must be a valid date.',

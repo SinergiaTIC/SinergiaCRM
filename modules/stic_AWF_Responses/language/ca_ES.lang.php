@@ -107,6 +107,8 @@ $mod_strings = array (
 
   // User-facing validation errors
   'LBL_ERROR_REQUIRED_FIELD' => 'És un camp obligatori.',
+  'LBL_ERROR_REPEATABLE_MAX_INSTANCES' => "S'ha superat el nombre màxim d'entrades.",
+  'LBL_ERROR_REPEATABLE_MIN_INSTANCES' => "Aquest camp requereix un nombre mínim d'entrades.",
   'LBL_ERROR_INTEGER_FIELD' => 'El valor ha de ser un nombre sencer.',
   'LBL_ERROR_NUMERIC_FIELD' => 'El valor ha de ser numèric.',
   'LBL_ERROR_DATE_FIELD' => 'El valor ha de ser una data vàlida.',
