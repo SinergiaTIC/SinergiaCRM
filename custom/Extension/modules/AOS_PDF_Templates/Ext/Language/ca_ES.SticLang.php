@@ -21,6 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+$mod_strings['LBL_ACCOUNT_SAMPLE'] = "Exemple d'organització";
+$mod_strings['LBL_CONTACT_SAMPLE'] = 'Exemple de persona';
+$mod_strings['LBL_LEAD_SAMPLE'] = "Exemple d'interessat";
 $mod_strings['LBL_BODY_DESCRIPTION_PDF_URL'] = 'Feu servir aquest enllaç per descarregar el fitxer PDF:<br>';
 $mod_strings['LBL_AUTHORIZED_SIGNER'] = 'Firmant autoritzat';
 $mod_strings['LBL_AUTHORIZED_SIGNERS'] = 'Firmants autoritzats';

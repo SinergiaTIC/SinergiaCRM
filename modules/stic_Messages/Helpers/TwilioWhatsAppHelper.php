@@ -297,7 +297,7 @@ class TwilioWhatsAppHelper extends stic_MessagesHelper {
         if (strlen($digits) === 9) {
             return '+34' . $digits;
         }
-        if (strlen($digits) === 10 && substr($digits, 0, 2) === '34') {
+        if (strlen($digits) === 11 && substr($digits, 0, 2) === '34') {
             return '+' . $digits;
         }
         return '';

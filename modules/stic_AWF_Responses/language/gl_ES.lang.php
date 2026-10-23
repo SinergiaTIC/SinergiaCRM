@@ -118,4 +118,5 @@ $mod_strings = array (
   'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_LINKS_TITLE' => 'Vínculos da resposta ao formulario',
   'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_FORMS_TITLE' => 'Formulario Web Avanzado',
   'LBL_ANSWERS_SUBPANEL_TITLE' => 'Detalles da resposta',
+  'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_DOCUMENTS_TITLE' => 'Documentos',
 );

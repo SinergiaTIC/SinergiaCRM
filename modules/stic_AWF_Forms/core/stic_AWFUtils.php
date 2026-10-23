@@ -177,6 +177,11 @@ class stic_AWFUtils {
                     $value = $formData[$formKey] ?? '';
                     $isHtmlValue = false; // Flag to indicate if the value contains HTML (for proper escaping)
 
+                    // For file fields, get the filename from the uploaded files data
+                    if ($fieldDef->type_in_form === 'file' && isset($context->uploadedFiles[$formKey]['name'])) {
+                        $value = $context->uploadedFiles[$formKey]['name'];
+                    }
+
                     // Render rating fields with icons
                     if ($fieldDef->type_in_form === 'rating') { 
                         $rawNum = (int)$value;
@@ -880,6 +885,10 @@ class stic_AWFUtils {
     public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
         foreach ($formConfig->data_blocks as $dataBlock) {
             foreach ($dataBlock->fields as $field) {
+                if ($field->type_field === DataBlockFieldType::FIXED) {
+                    continue;
+                }
+
                 if ($field->type === 'bool' || $field->type === 'checkbox' || in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) {
                     $phpKey = $field->getPhpKey();
                     if (!isset($formData[$phpKey])) {

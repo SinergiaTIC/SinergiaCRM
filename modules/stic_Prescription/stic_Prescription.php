@@ -140,19 +140,20 @@ class stic_Prescription extends Basic
     // Create medication logs if creation date > start_date
     protected function createMedicationLogs()
     {
+        require_once 'SticInclude/Utils.php';
         // Logs are created only if periodicity is not "punctual" and the record is being created
         if ($this->frequency == 'daily' && $this->fetched_row == false) {
             list($startDate, $stopGeneratingDate) = $this->getStartAndStopDates();
 
             // Logs are only generated if the prescription started before creation date
             $currentDate = date('Y-m-d');
-            if ($startDate < $currentDate) {
+            if ($startDate <= $currentDate) {
                 $scheduleList = explode('^,^', trim($this->schedule, '^'));
                 $iterationDate = strtotime($startDate);
                 $stopGeneratingDate = strtotime($stopGeneratingDate);
 
                 if ($this->stic_prescription_contactscontacts_ida instanceof Link2) {
-                    $contactBean = SticUtils::getRelatedBeanObject($this, 'stic_prescription_stic_medication');
+                    $contactBean = SticUtils::getRelatedBeanObject($this, 'stic_prescription_contacts');
                     if ($contactBean) {
                         $contactId = $contactBean->id;
                     }
