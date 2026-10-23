@@ -34,6 +34,25 @@ array (
         'default' => true,
         'width' => '10%',
       ),
+      'stic_organizational_environment_accounts_1_name' => 
+      array (
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
+        'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1ACCOUNTS_IDA',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'stic_organizational_environment_accounts_1_name',
+      ),
+      'relationship_type' => 
+      array (
+        'type' => 'enum',
+        'studio' => 'visible',
+        'label' => 'LBL_RELATIONSHIP_TYPE',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'relationship_type',
+      ),
       'stic_organizational_environment_accounts_name' => 
       array (
         'type' => 'relate',
@@ -54,33 +73,6 @@ array (
         'default' => true,
         'name' => 'stic_organizational_environment_contacts_name',
       ),
-      'relationship_type' => 
-      array (
-        'type' => 'enum',
-        'studio' => 'visible',
-        'label' => 'LBL_RELATIONSHIP_TYPE',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'relationship_type',
-      ),
-      'stic_organizational_environment_accounts_1_name' => 
-      array (
-        'type' => 'relate',
-        'link' => true,
-        'label' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
-        'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1ACCOUNTS_IDA',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'stic_organizational_environment_accounts_1_name',
-      ),
-      'reference_account' => 
-      array (
-        'type' => 'bool',
-        'default' => true,
-        'label' => 'LBL_REFERENCE_ACCOUNT',
-        'width' => '10%',
-        'name' => 'reference_account',
-      ),
       'start_date' => 
       array (
         'type' => 'date',
@@ -96,6 +88,14 @@ array (
         'width' => '10%',
         'default' => true,
         'name' => 'end_date',
+      ),
+      'reference_account' => 
+      array (
+        'type' => 'bool',
+        'default' => true,
+        'label' => 'LBL_REFERENCE_ACCOUNT',
+        'width' => '10%',
+        'name' => 'reference_account',
       ),
       'active' => 
       array (
@@ -122,6 +122,25 @@ array (
         'default' => true,
         'width' => '10%',
       ),
+      'stic_organizational_environment_accounts_1_name' => 
+      array (
+        'type' => 'relate',
+        'link' => true,
+        'label' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
+        'width' => '10%',
+        'default' => true,
+        'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1ACCOUNTS_IDA',
+        'name' => 'stic_organizational_environment_accounts_1_name',
+      ),
+      'relationship_type' => 
+      array (
+        'type' => 'enum',
+        'studio' => 'visible',
+        'label' => 'LBL_RELATIONSHIP_TYPE',
+        'width' => '10%',
+        'default' => true,
+        'name' => 'relationship_type',
+      ),
       'stic_organizational_environment_accounts_name' => 
       array (
         'type' => 'relate',
@@ -142,33 +161,6 @@ array (
         'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTSCONTACTS_IDA',
         'name' => 'stic_organizational_environment_contacts_name',
       ),
-      'relationship_type' => 
-      array (
-        'type' => 'enum',
-        'studio' => 'visible',
-        'label' => 'LBL_RELATIONSHIP_TYPE',
-        'width' => '10%',
-        'default' => true,
-        'name' => 'relationship_type',
-      ),
-      'stic_organizational_environment_accounts_1_name' => 
-      array (
-        'type' => 'relate',
-        'link' => true,
-        'label' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
-        'width' => '10%',
-        'default' => true,
-        'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1ACCOUNTS_IDA',
-        'name' => 'stic_organizational_environment_accounts_1_name',
-      ),
-      'reference_account' => 
-      array (
-        'type' => 'bool',
-        'default' => true,
-        'label' => 'LBL_REFERENCE_ACCOUNT',
-        'width' => '10%',
-        'name' => 'reference_account',
-      ),
       'start_date' => 
       array (
         'type' => 'date',
@@ -184,6 +176,14 @@ array (
         'width' => '10%',
         'default' => true,
         'name' => 'end_date',
+      ),
+      'reference_account' => 
+      array (
+        'type' => 'bool',
+        'default' => true,
+        'label' => 'LBL_REFERENCE_ACCOUNT',
+        'width' => '10%',
+        'name' => 'reference_account',
       ),
       'active' => 
       array (
