@@ -49,31 +49,48 @@ $popupMeta = array (
 ),
     'searchInputs' => array (
   1 => 'name',
+  2 => 'stic_organizational_environment_accounts_1_name',
+  3 => 'relationship_type',
   4 => 'stic_organizational_environment_accounts_name',
   5 => 'stic_organizational_environment_contacts_name',
-  6 => 'relationship_type',
-  7 => 'stic_organizational_environment_accounts_1_name',
+  6 => 'start_date',
+  7 => 'end_date',
   8 => 'reference_account',
-  9 => 'start_date',
-  10 => 'end_date',
-  11 => 'active',
-  12 => 'description',
-  13 => 'created_by',
-  14 => 'created_by_name',
-  15 => 'date_entered',
-  16 => 'date_modified',
-  17 => 'modified_user_id',
-  18 => 'modified_by_name',
-  19 => 'assigned_user_name',
-  20 => 'current_user_only',
-  21 => 'securitygroups_name',
-  22 => 'assigned_user_id',
+  9 => 'active',
+  10 => 'description',
+  11 => 'created_by',
+  12 => 'created_by_name',
+  13 => 'date_entered',
+  14 => 'date_modified',
+  15 => 'modified_user_id',
+  16 => 'modified_by_name',
+  17 => 'assigned_user_name',
+  18 => 'current_user_only',
+  19 => 'securitygroups_name',
+  20 => 'assigned_user_id',
 ),
     'searchdefs' => array (
   'name' => 
   array (
     'name' => 'name',
     'width' => '10%',
+  ),
+  'stic_organizational_environment_accounts_1_name' => 
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
+    'width' => '10%',
+    'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1ACCOUNTS_IDA',
+    'name' => 'stic_organizational_environment_accounts_1_name',
+  ),
+  'relationship_type' => 
+  array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_RELATIONSHIP_TYPE',
+    'width' => '10%',
+    'name' => 'relationship_type',
   ),
   'stic_organizational_environment_accounts_name' => 
   array (
@@ -93,30 +110,6 @@ $popupMeta = array (
     'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_CONTACTSCONTACTS_IDA',
     'name' => 'stic_organizational_environment_contacts_name',
   ),
-  'relationship_type' => 
-  array (
-    'type' => 'enum',
-    'studio' => 'visible',
-    'label' => 'LBL_RELATIONSHIP_TYPE',
-    'width' => '10%',
-    'name' => 'relationship_type',
-  ),
-  'stic_organizational_environment_accounts_1_name' => 
-  array (
-    'type' => 'relate',
-    'link' => true,
-    'label' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
-    'width' => '10%',
-    'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1ACCOUNTS_IDA',
-    'name' => 'stic_organizational_environment_accounts_1_name',
-  ),
-  'reference_account' => 
-  array (
-    'type' => 'bool',
-    'label' => 'LBL_REFERENCE_ACCOUNT',
-    'width' => '10%',
-    'name' => 'reference_account',
-  ),
   'start_date' => 
   array (
     'type' => 'date',
@@ -130,6 +123,13 @@ $popupMeta = array (
     'label' => 'LBL_END_DATE',
     'width' => '10%',
     'name' => 'end_date',
+  ),
+  'reference_account' => 
+  array (
+    'type' => 'bool',
+    'label' => 'LBL_REFERENCE_ACCOUNT',
+    'width' => '10%',
+    'name' => 'reference_account',
   ),
   'active' => 
   array (

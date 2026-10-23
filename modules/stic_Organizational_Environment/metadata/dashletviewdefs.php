@@ -64,6 +64,25 @@ $dashletData['stic_Organizational_EnvironmentDashlet']['columns'] = array (
     'default' => true,
     'name' => 'name',
   ),
+  'stic_organizational_environment_accounts_1_name' => 
+  array (
+    'type' => 'relate',
+    'link' => true,
+    'label' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
+    'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1ACCOUNTS_IDA',
+    'width' => '10%',
+    'default' => true,
+    'name' => 'stic_organizational_environment_accounts_1_name',
+  ),
+  'relationship_type' => 
+  array (
+    'type' => 'enum',
+    'studio' => 'visible',
+    'label' => 'LBL_RELATIONSHIP_TYPE',
+    'width' => '10%',
+    'default' => true,
+    'name' => 'relationship_type',
+  ),
   'stic_organizational_environment_accounts_name' => 
   array (
     'type' => 'relate',
@@ -84,24 +103,19 @@ $dashletData['stic_Organizational_EnvironmentDashlet']['columns'] = array (
     'default' => true,
     'name' => 'stic_organizational_environment_contacts_name',
   ),
-  'relationship_type' => 
+  'start_date' => 
   array (
-    'type' => 'enum',
-    'studio' => 'visible',
-    'label' => 'LBL_RELATIONSHIP_TYPE',
+    'type' => 'date',
+    'label' => 'LBL_START_DATE',
     'width' => '10%',
-    'default' => true,
-    'name' => 'relationship_type',
+    'default' => false,
   ),
-  'stic_organizational_environment_accounts_1_name' => 
+  'end_date' => 
   array (
-    'type' => 'relate',
-    'link' => true,
-    'label' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
-    'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1ACCOUNTS_IDA',
+    'type' => 'date',
+    'label' => 'LBL_END_DATE',
     'width' => '10%',
-    'default' => true,
-    'name' => 'stic_organizational_environment_accounts_1_name',
+    'default' => false,
   ),
   'reference_account' => 
   array (
@@ -118,18 +132,11 @@ $dashletData['stic_Organizational_EnvironmentDashlet']['columns'] = array (
     'label' => 'LBL_ACTIVE',
     'width' => '10%',
   ),
-  'start_date' => 
+  'assigned_user_name' => 
   array (
-    'type' => 'date',
-    'label' => 'LBL_START_DATE',
     'width' => '10%',
-    'default' => false,
-  ),
-  'end_date' => 
-  array (
-    'type' => 'date',
-    'label' => 'LBL_END_DATE',
-    'width' => '10%',
+    'label' => 'LBL_LIST_ASSIGNED_USER',
+    'name' => 'assigned_user_name',
     'default' => false,
   ),
   'description' => 
@@ -178,12 +185,5 @@ $dashletData['stic_Organizational_EnvironmentDashlet']['columns'] = array (
     'label' => 'LBL_DATE_ENTERED',
     'default' => false,
     'name' => 'date_entered',
-  ),
-  'assigned_user_name' => 
-  array (
-    'width' => '10%',
-    'label' => 'LBL_LIST_ASSIGNED_USER',
-    'name' => 'assigned_user_name',
-    'default' => false,
   ),
 );

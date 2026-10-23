@@ -39,6 +39,24 @@ $subpanel_layout = array(
             'width' => '25%',
             'default' => true,
         ),
+        'stic_organizational_environment_accounts_1_name' => array(
+            'type' => 'relate',
+            'link' => true,
+            'vname' => 'LBL_STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1_FROM_ACCOUNTS_TITLE',
+            'id' => 'STIC_ORGANIZATIONAL_ENVIRONMENT_ACCOUNTS_1ACCOUNTS_IDA',
+            'width' => '10%',
+            'default' => true,
+            'widget_class' => 'SubPanelDetailViewLink',
+            'target_module' => 'Accounts',
+            'target_record_key' => 'stic_organizational_environment_accounts_1accounts_ida',
+        ),
+        'relationship_type' => array(
+            'type' => 'enum',
+            'studio' => 'visible',
+            'vname' => 'LBL_RELATIONSHIP_TYPE',
+            'width' => '10%',
+            'default' => true,
+        ),
         'stic_organizational_environment_contacts_name' => array(
             'type' => 'relate',
             'link' => true,
@@ -50,19 +68,6 @@ $subpanel_layout = array(
             'target_module' => 'Contacts',
             'target_record_key' => 'stic_organizational_environment_contactscontacts_ida',
         ),
-        'relationship_type' => array(
-            'type' => 'enum',
-            'studio' => 'visible',
-            'vname' => 'LBL_RELATIONSHIP_TYPE',
-            'width' => '10%',
-            'default' => true,
-        ),
-        'reference_account' => array(
-            'type' => 'bool',
-            'vname' => 'LBL_REFERENCE_ACCOUNT',
-            'width' => '10%',
-            'default' => true,
-        ),
         'start_date' => array(
             'type' => 'date',
             'vname' => 'LBL_START_DATE',
@@ -72,6 +77,12 @@ $subpanel_layout = array(
         'end_date' => array(
             'type' => 'date',
             'vname' => 'LBL_END_DATE',
+            'width' => '10%',
+            'default' => true,
+        ),
+        'reference_account' => array(
+            'type' => 'bool',
+            'vname' => 'LBL_REFERENCE_ACCOUNT',
             'width' => '10%',
             'default' => true,
         ),
