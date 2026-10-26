@@ -21,6 +21,10 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+if (!defined('sugarEntry') || !sugarEntry) {  
+    die('Not A Valid Entry Point');  
+}
+
 /**
  * This file contains functions used for PDF generation and electronic signature processes.
  * These functions are kept separate from SticGeneratePdf.php to allow for reuse in other contexts.
