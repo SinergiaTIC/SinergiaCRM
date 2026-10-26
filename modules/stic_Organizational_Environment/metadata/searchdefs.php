@@ -113,6 +113,14 @@ array (
         'default' => true,
         'width' => '10%',
       ),
+      'favorites_only' =>
+      array (
+        'name' => 'favorites_only',
+        'label' => 'LBL_FAVORITES_FILTER',
+        'type' => 'bool',
+        'default' => true,
+        'width' => '10%',
+      ),
     ),
     'advanced_search' => 
     array (
@@ -241,6 +249,14 @@ array (
         'default' => true,
         'width' => '10%',
         'name' => 'current_user_only',
+      ),
+      'favorites_only' =>
+      array (
+        'name' => 'favorites_only',
+        'label' => 'LBL_FAVORITES_FILTER',
+        'type' => 'bool',
+        'default' => true,
+        'width' => '10%',
       ),
       'securitygroups_name' => 
       array (
