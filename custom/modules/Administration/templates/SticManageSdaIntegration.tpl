@@ -66,16 +66,14 @@
 			<button id="rebuild-link" type="button" class="button">
 				<span class="glyphicon glyphicon-flash text-success"></span> {$MOD.LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE}
 			</button>
-			<i class="inline-help glyphicon glyphicon-info-sign"></i>
-			<div class="inline-help-content">{$MOD.LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION}</div>
-			{if $CURRENT_USER_ID eq '2'}
-				<label style="margin-left:16px"><input type="checkbox" id="debug-check" checked=""> {$MOD.LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL}</label>
-			{/if}
+			<span style="display:inline-block"><i class="inline-help glyphicon glyphicon-info-sign"></i>
+			<div class="inline-help-content">{$MOD.LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION}</div></span>
+			<label style="margin-left:16px"><input type="checkbox" id="debug-check" checked=""> {$MOD.LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL}</label>
 			<button id="sda-link" type="button" class="button" style="margin-left:24px">
 				<span class="glyphicon glyphicon-link text-success"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}
 			</button>
-			<i class="inline-help glyphicon glyphicon-info-sign"></i>
-			<div class="inline-help-content">{$MOD.LBL_STIC_GO_TO_SDA_DESCRIPTION|default:'Abre la instancia de SinergiaDA en una nueva pestaña.'}</div>
+			<span style="display:inline-block"><i class="inline-help glyphicon glyphicon-info-sign"></i>
+			<div class="inline-help-content">{$MOD.LBL_STIC_GO_TO_SDA_DESCRIPTION|default:'Abre la instancia de SinergiaDA en una nueva pestaña.'}</div></span>
 		</td>
 	</tr>
 
@@ -229,54 +227,189 @@ var SDA_DEBUG_TITLE = '{$MOD.LBL_STIC_DA_DEBUG_TITLE|escape:'javascript'}';
 var SDA_DEBUG_HIDE = '{$MOD.LBL_STIC_DA_DEBUG_HIDE|escape:'javascript'}';
 var SDA_DEBUG_SHOW = '{$MOD.LBL_STIC_DA_DEBUG_SHOW|escape:'javascript'}';
 var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
+var SDA_ERROR_MSG = '{$MOD.LBL_STIC_RUN_SDA_ERROR_MSG|escape:'javascript'}';
+var SDA_SUCCESS_MSG = '{$MOD.LBL_STIC_RUN_SDA_SUCCESS_MSG|default:'Rebuild completed successfully.'|escape:'javascript'}';
+var SDA_BUSY_MSG = '{$MOD.LBL_STIC_RUN_SDA_BUSY_MSG|default:'A rebuild is already running.'|escape:'javascript'}';
+var SDA_STALLED_MSG = '{$MOD.LBL_STIC_RUN_SDA_STALLED_MSG|default:'The rebuild was interrupted before finishing.'|escape:'javascript'}';
+var SDA_RUNNING_MSG = '{$MOD.LBL_STIC_RUN_SDA_RUNNING_MSG|default:'The rebuild is running in background...'|escape:'javascript'}';
 {literal}
 (function() {
 	var currentDomain = window.location.hostname;
-	var lang = (SUGAR.language.languages && SUGAR.language.languages.app_list_strings && SUGAR.language.languages.app_list_strings.language_pack_name) ? SUGAR.language.languages.app_list_strings.language_pack_name.split(" ").pop().split("_")[0] : "es";
-	var sdaUrl = (SUGAR && SUGAR.config && SUGAR.config.stic_sinergiada_public && SUGAR.config.stic_sinergiada_public.url) ? SUGAR.config.stic_sinergiada_public.url : ("https://" + currentDomain.replace("sinergiacrm", "sinergiada") + "/" + lang + "/#");
-	document.getElementById("sda-link").addEventListener("click", function() {
-		window.open(sdaUrl, '_blank');
-	});
+	var lang = (typeof SUGAR !== 'undefined' && SUGAR.language && SUGAR.language.languages && SUGAR.language.languages.app_list_strings && SUGAR.language.languages.app_list_strings.language_pack_name) ? SUGAR.language.languages.app_list_strings.language_pack_name.split(" ").pop().split("_")[0] : "es";
+	var sdaUrl = (typeof SUGAR !== 'undefined' && SUGAR.config && SUGAR.config.stic_sinergiada_public && SUGAR.config.stic_sinergiada_public.url) ? SUGAR.config.stic_sinergiada_public.url : ("https://" + currentDomain.replace("sinergiacrm", "sinergiada") + "/" + lang + "/#");
+	var sdaLink = document.getElementById("sda-link");
+	if (sdaLink) {
+		sdaLink.addEventListener("click", function() {
+			window.open(sdaUrl, '_blank');
+		});
+	}
 
 	var debugCheck = document.getElementById("debug-check");
-	if (debugCheck) {
-		var rebuildUrl = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1";
-		function toggleDebug() {
-			if (debugCheck.checked) {
-				rebuildUrl = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1";
-			} else {
-				rebuildUrl = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&update_model=1";
-			}
+	var rebuildLink = document.getElementById("rebuild-link");
+	var pollTimer = null;
+	var debugMode = false;
+
+	var STATUS_URL = "index.php?module=Administration&action=createReportingMySQLViews&check_status=1";
+	var DEBUG_HTML_URL = "index.php?module=Administration&action=createReportingMySQLViews&fetch_debug=1";
+	var LAUNCH_URL = "index.php?module=Administration&action=createReportingMySQLViews&async=1";
+
+	function isDebugEnabled() {
+		return !!debugCheck && debugCheck.checked;
+	}
+
+	function showResult(html) {
+		var el = document.getElementById(debugMode ? "debug-content" : "rebuild-feedback");
+		if (el) {
+			// jQuery .html() (unlike raw innerHTML) executes the <script> tags the
+			// report embeds, which bind the expand/collapse handlers of SinergiaDA.js
+			jQuery(el).html(html);
 		}
-		debugCheck.addEventListener("change", toggleDebug);
-		toggleDebug();
+	}
 
-		document.getElementById("rebuild-link").addEventListener("click", function(e) {
-			if (debugCheck.checked) {
-				var box = '<div id="debug-output" style="margin-top:16px;border:2px solid #b5bc31;border-radius:8px;overflow:hidden;background:#fff;">'
-					+ '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f6f7d9;border-bottom:1px solid #b5bc31;">'
-					+ '<strong style="font-size:14px;color:#333;"><span class="glyphicon glyphicon-console" style="margin-right:6px;"></span>' + SDA_DEBUG_TITLE + '</strong>'
-					+ '<button type="button" class="btn btn-default btn-xs" id="debug-toggle">' + SDA_DEBUG_HIDE + '</button>'
-					+ '</div>'
-					+ '<div id="debug-content" style="max-height:500px;overflow:auto;"></div>'
-					+ '</div>';
-				document.getElementById("rebuild-feedback").innerHTML = box;
-				document.getElementById("debug-content").innerHTML = '<div class="alert alert-info" style="margin:16px;"><span class="glyphicon glyphicon-hourglass" style="margin-right:8px;"></span>' + SDA_DEBUG_LOADING + '</div>';
-				jQuery.get(rebuildUrl, function(data) {
-					jQuery("#debug-content").html(data);
+	function alertHtml(cls, glyphicon, text) {
+		return '<div class="alert ' + cls + '" style="margin:16px;"><span class="glyphicon ' + glyphicon + '" style="margin-right:8px;"></span>' + text + '</div>';
+	}
+
+	function alertBox(cls, glyphicon, text) {
+		showResult(alertHtml(cls, glyphicon, text));
+	}
+
+	function stopPolling() {
+		if (pollTimer) {
+			clearInterval(pollTimer);
+			pollTimer = null;
+		}
+	}
+
+	function showFinished(s) {
+		if (s.state === "busy") {
+			alertBox("alert-warning", "glyphicon-time", SDA_BUSY_MSG);
+		} else if (s.state === "finished" && s.result === "ok" && debugMode) {
+			jQuery.get(DEBUG_HTML_URL)
+				.done(function(html) {
+					if (html && html.length) {
+						showResult(html);
+					} else {
+						alertBox("alert-success", "glyphicon-check", SDA_SUCCESS_MSG);
+					}
+				})
+				.fail(function() {
+					alertBox("alert-success", "glyphicon-check", SDA_SUCCESS_MSG);
 				});
-			} else {
-				window.location.href = rebuildUrl;
-			}
-		});
+		} else if (s.state === "finished" && s.result === "ok") {
+			alertBox("alert-success", "glyphicon-check", SDA_SUCCESS_MSG);
+		} else if (s.state === "finished" && debugMode) {
+			// Finished with error: still show the debug report below the alert,
+			// it contains the failure details (the run completed, the file is fresh)
+			var failAlert = alertHtml("alert-danger", "glyphicon-minus-sign", SDA_ERROR_MSG + (s.message ? "<br>" + s.message : ""));
+			jQuery.get(DEBUG_HTML_URL)
+				.done(function(html) {
+					showResult(failAlert + (html || ""));
+				})
+				.fail(function() {
+					showResult(failAlert);
+				});
+		} else if (s.state === "finished") {
+			alertBox("alert-danger", "glyphicon-minus-sign", SDA_ERROR_MSG + (s.message ? "<br>" + s.message : ""));
+		} else {
+			// stalled / idle: the runner died before finishing
+			alertBox("alert-danger", "glyphicon-warning-sign", SDA_STALLED_MSG);
+		}
+		if (rebuildLink) {
+			rebuildLink.disabled = false;
+		}
+	}
 
-		document.addEventListener("click", function(e) {
-			if (e.target.id === "debug-toggle") {
-				jQuery("#debug-content").slideToggle();
-				e.target.textContent = jQuery("#debug-content").is(":visible") ? SDA_DEBUG_HIDE : SDA_DEBUG_SHOW;
+	function handleStatus(s) {
+		if (!s || !s.state || s.state === "running") {
+			return;
+		}
+		stopPolling();
+		showFinished(s);
+	}
+
+	function startPolling() {
+		stopPolling();
+		pollTimer = setInterval(function() {
+			jQuery.get(STATUS_URL)
+				.done(function(s) {
+					if (typeof s === "string") {
+						try { s = JSON.parse(s); } catch (e) { s = null; }
+					}
+					if (s) {
+						if (s.state === "running" && !debugMode) {
+							var elapsed = s.started_at ? Math.max(0, Math.round(Date.now() / 1000 - s.started_at)) : 0;
+							alertBox("alert-info", "glyphicon-hourglass", SDA_RUNNING_MSG + " (" + elapsed + "s)");
+						} else {
+							handleStatus(s);
+						}
+					}
+				})
+				.fail(function() { /* keep trying on transient errors */ });
+		}, 2500);
+	}
+
+	if (rebuildLink) {
+		rebuildLink.addEventListener("click", function() {
+			debugMode = isDebugEnabled();
+			try {
+				var feedback = document.getElementById("rebuild-feedback");
+				if (!feedback) {
+					throw new Error("#rebuild-feedback not found");
+				}
+				if (debugMode) {
+					var box = '<div id="debug-output" style="margin-top:16px;border:2px solid #b5bc31;border-radius:8px;overflow:hidden;background:#fff;">'
+						+ '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#f6f7d9;border-bottom:1px solid #b5bc31;">'
+						+ '<strong style="font-size:14px;color:#333;"><span class="glyphicon glyphicon-console" style="margin-right:6px;"></span>' + SDA_DEBUG_TITLE + '</strong>'
+						+ '<button type="button" class="btn btn-default btn-xs" id="debug-toggle">' + SDA_DEBUG_HIDE + '</button>'
+						+ '</div>'
+						+ '<div id="debug-content" style="max-height:500px;overflow:auto;"></div>'
+						+ '</div>';
+					feedback.innerHTML = box;
+					alertBox("alert-info", "glyphicon-hourglass", SDA_DEBUG_LOADING);
+				} else {
+					feedback.innerHTML = "";
+					alertBox("alert-info", "glyphicon-hourglass", SDA_RUNNING_MSG);
+				}
+				rebuildLink.disabled = true;
+				stopPolling();
+				jQuery.get(LAUNCH_URL + (debugMode ? "&print_debug=1" : ""))
+					.done(function(s) {
+						if (typeof s === "string") {
+							try { s = JSON.parse(s); } catch (e) { s = null; }
+						}
+						if (s && s.state === "running") {
+							var elapsed = s.started_at ? Math.max(0, Math.round(Date.now() / 1000 - s.started_at)) : 0;
+							if (!debugMode) {
+								alertBox("alert-info", "glyphicon-hourglass", SDA_RUNNING_MSG + " (" + elapsed + "s)");
+							}
+							startPolling();
+						} else if (s) {
+							handleStatus(s);
+						} else {
+							// Unreadable response: rely on the polling
+							startPolling();
+						}
+					})
+					.fail(function(xhr, status) {
+						var detail = (xhr && xhr.status) ? xhr.status : status;
+						alertBox("alert-danger", "glyphicon-remove-sign", SDA_ERROR_MSG + " (" + detail + ")");
+						if (rebuildLink) {
+							rebuildLink.disabled = false;
+						}
+					});
+			} catch (err) {
+				window.location.href = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&update_model=1";
 			}
 		});
 	}
+
+	document.addEventListener("click", function(e) {
+		if (e.target.id === "debug-toggle") {
+			jQuery("#debug-content").slideToggle();
+			e.target.textContent = jQuery("#debug-content").is(":visible") ? SDA_DEBUG_HIDE : SDA_DEBUG_SHOW;
+		}
+	});
 
 	function toggleDependents(checkbox) {
 		if (checkbox.name === 'cache_enabled') {

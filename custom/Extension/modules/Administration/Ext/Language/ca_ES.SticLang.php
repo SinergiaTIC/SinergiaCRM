@@ -70,6 +70,9 @@ $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Ves a Sinergia Data Analytics';
 $mod_strings['LBL_STIC_GO_TO_SDA_DESCRIPTION'] = "Obre la instància de SinergiaDA en una nova pestanya.";
 $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'La reconstrucció de Sinergia Data Analytics ha acabat correctament.';
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = "Durant la reconstrucció de Sinergia Data Analytics s'han trobat els següents errors. Contacteu amb el suport tècnic de SinergiaTIC si ho considereu necessari.";
+$mod_strings['LBL_STIC_RUN_SDA_RUNNING_MSG'] = 'La reconstrucció de Sinergia Data Analytics està en marxa. Aquesta pàgina s\'actualitzarà automàticament fins que finalitzi.';
+$mod_strings['LBL_STIC_RUN_SDA_BUSY_MSG'] = 'Ja hi ha una reconstrucció de Sinergia Data Analytics en curs. Espereu que finalitzi i torneu-ho a provar.';
+$mod_strings['LBL_STIC_RUN_SDA_STALLED_MSG'] = 'La reconstrucció es va interrompre abans de finalitzar. Reviseu els logs (log/sugarcrm.log i cache/sda_rebuild_cli.log) o torneu-ho a provar.';
 
 // Menú principal avançat
 $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configuració del menú principal';
