@@ -70,6 +70,9 @@ $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Go to Sinergia Data Analytics';
 $mod_strings['LBL_STIC_GO_TO_SDA_DESCRIPTION'] = 'Opens the SinergiaDA instance in a new tab.';
 $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'Rebuild of Sinergia Data Analytics has been successfully completed.';
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'The following errors have been found in the rebuild of Sinergia Data Analytics. Please contact SinergiaTIC technical support if needed.';
+$mod_strings['LBL_STIC_RUN_SDA_RUNNING_MSG'] = 'The Sinergia Data Analytics rebuild is running. This page will refresh automatically until it finishes.';
+$mod_strings['LBL_STIC_RUN_SDA_BUSY_MSG'] = 'A Sinergia Data Analytics rebuild is already in progress. Please wait for it to finish and try again.';
+$mod_strings['LBL_STIC_RUN_SDA_STALLED_MSG'] = 'The rebuild was interrupted before finishing. Check the logs (log/sugarcrm.log and cache/sda_rebuild_cli.log) or try again.';
 
 // Advanced main menu
 $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Main menu settings';
