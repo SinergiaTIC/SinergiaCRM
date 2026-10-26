@@ -337,7 +337,12 @@ var SDA_RUNNING_MSG = '{$MOD.LBL_STIC_RUN_SDA_RUNNING_MSG|default:'The rebuild i
 						try { s = JSON.parse(s); } catch (e) { s = null; }
 					}
 					if (s) {
-						handleStatus(s);
+						if (s.state === "running" && !debugMode) {
+							var elapsed = s.started_at ? Math.max(0, Math.round(Date.now() / 1000 - s.started_at)) : 0;
+							alertBox("alert-info", "glyphicon-hourglass", SDA_RUNNING_MSG + " (" + elapsed + "s)");
+						} else {
+							handleStatus(s);
+						}
 					}
 				})
 				.fail(function() { /* keep trying on transient errors */ });
@@ -374,6 +379,10 @@ var SDA_RUNNING_MSG = '{$MOD.LBL_STIC_RUN_SDA_RUNNING_MSG|default:'The rebuild i
 							try { s = JSON.parse(s); } catch (e) { s = null; }
 						}
 						if (s && s.state === "running") {
+							var elapsed = s.started_at ? Math.max(0, Math.round(Date.now() / 1000 - s.started_at)) : 0;
+							if (!debugMode) {
+								alertBox("alert-info", "glyphicon-hourglass", SDA_RUNNING_MSG + " (" + elapsed + "s)");
+							}
 							startPolling();
 						} else if (s) {
 							handleStatus(s);
