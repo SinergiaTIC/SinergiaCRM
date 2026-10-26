@@ -251,11 +251,7 @@ array(
                     0 => 'name',
                     1 => array(
                         'name' => 'assigned_user_name',
-                        // STIC-Custom 20261016 ART - Changed the label of the assigned user field to show the name instead of the ID in the detail view of a project task
-                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1459
-                        // 'label' => 'LBL_ASSIGNED_USER_ID',
                         'label' => 'LBL_ASSIGNED_USER_NAME',
-                        // END STIC-Custom
                     ),
                 ),
                 1 => array(
