@@ -129,7 +129,7 @@ $mod_strings = array (
 
   // DataBlocks
   'LBL_DATABLOCK' => 'Bloque de datos',
-  'LBL_DATABLOCKS' => 'Bloques de datos',
+  'LBL_DATABLOCKS' => 'Bloque de datos',
   'LBL_DATABLOCK_DETACHED' => 'Datos non enlazados',
   'LBL_DATABLOCK_ADD' => 'Engadir un bloque de datos',
   'LBL_DATABLOCK_ADD_TITLE' => 'Configurar un bloque de datos relacionado cun módulo do sistema',
@@ -459,7 +459,7 @@ $mod_strings = array (
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RESPONSE_TEXT' => 'Resposta do formulario',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RECORD_TEXT' => 'Rexistro fixo',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RELATE_TEXT' => 'Campo relacionado',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RELATE_TEXT' => 'Campo Relacionado',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
   
   // RedirectAction
@@ -522,7 +522,7 @@ $mod_strings = array (
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correo confirmado',
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Erro',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
-  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'A plantilla de correo electrónico deberá ter a variable {::confirmation_url::} no corpo da mensaxe para que se xere o enlace de confirmación.',
 
