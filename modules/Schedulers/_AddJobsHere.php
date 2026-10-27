@@ -535,28 +535,35 @@ function removeDocumentsFromFS()
         $bean = BeanFactory::getBean($module);
 
         if (!$bean || !($bean instanceof SugarBean)) {
-            // Module no longer exists or is invalid
+            // Module no longer exists or is invalid: the record cannot be retrieved, so its deleted files can be removed
             $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Invalid or non-existent module ' . $module . '. Removing associated filesystem data for entry ID: ' . $entryId);
-    
+
             // Create a new bean with the beanId to generate directory path
-            $bean = new SugarBean(); 
+            $bean = new SugarBean();
             $bean->id = $beanId;
-            // Construct the path
-            $directory = $bean->deleteFileDirectory();
-    
         } else {
             $bean->retrieve($beanId, true, false);
 
-            if (empty($bean->id)) {
-                // Bean not found, but module exists — update timestamp for retry
-                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Bean not found for ID: ' . $beanId . '. Updating timestamp for future retry.');
+            if (!empty($bean->id)) {
+                // The DB record still exists (even if soft-deleted), so the files must be kept in case the record is restored
+                // Retry in a future scheduler run
+                $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Bean still exists for ID: ' . $beanId . '. Updating timestamp for future retry.');
 
                 $db->query('UPDATE ' . $tableName . ' SET date_modified=' . $db->convert($db->quoted(TimeDate::getInstance()->nowDb()), 'datetime') . ' WHERE id=' . $db->quoted($entryId));
-
-                $bean->id = $beanId;
+                continue;
             }
-    
-            $directory = $bean->deleteFileDirectory();
+
+            // Bean not found: the record has been permanently deleted
+            $bean->id = $beanId;
+        }
+
+        $directory = $bean->deleteFileDirectory();
+
+        // Never operate on an empty directory: it would resolve to upload://deleted/ and remove every deleted file in the instance
+        if (empty($directory)) {
+            $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.': Empty directory for entry ID: ' . $entryId . '. Removing orphan entry without touching the filesystem.');
+            $db->query('DELETE FROM ' . $tableName . ' WHERE id=' . $db->quoted($entryId));
+            continue;
         }
 
         // Build full path and handle file/directory removal
