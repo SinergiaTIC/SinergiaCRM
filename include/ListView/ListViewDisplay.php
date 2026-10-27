@@ -742,14 +742,8 @@ class ListViewDisplay
         // STIC-Custom 20260223 EPS - Fixing quotes in query_by_page
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/999
         // $current_query_by_page = htmlentities(json_encode($_REQUEST));
-        $decoded_request = $_REQUEST;
-        array_walk_recursive($decoded_request, function(&$value) {
-            if (is_string($value)) {
-                $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-            }
-        });
-        $query = json_encode($decoded_request, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG); 
-        $current_query_by_page = htmlentities($query);
+        require_once 'SticInclude/Utils.php';
+        $current_query_by_page = htmlentities(SticUtils::encodeCurrentQueryByPage());
         // END STIC-Custom
 
         $js = <<<EOF
