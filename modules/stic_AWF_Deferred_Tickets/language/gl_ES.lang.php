@@ -68,10 +68,10 @@ $mod_strings = array (
   'LBL_CONTEXT_DATA' => 'Datos de contexto',
   'LBL_EXPIRATION_DATE' => 'Data de expiración',
   'LBL_RETRY_COUNT' => 'Reintentos',
-  'LBL_LAST_ERROR_MESSAGE' => 'Último error',
+  'LBL_LAST_ERROR_MESSAGE' => 'Último erro',
 
-  'LBL_ERROR_TOKEN_MSG' => 'No se ha proporcionado un token válido en la URL.',
+  'LBL_ERROR_TOKEN_MSG' => 'Non se proporcionou un token válido na URL.',
 
   'LBL_PROCESSING_TITLE' => 'Procesando',
-  'LBL_PROCESSING_MSG' => 'La solicitud está siendo procesada. Esto puede tardar unos instantes.',
+  'LBL_PROCESSING_MSG' => 'A solicitude está sendo procesada. Isto pode tardar uns instantes.',
 );
