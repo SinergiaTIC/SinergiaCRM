@@ -39,6 +39,13 @@
           <i class="suitepicon suitepicon-module-surveys me-2"></i>
           <span x-text="utils.translate('LBL_DATABLOCK_ADD_UNLINKED')"></span>
         </button>
+        <!-- Button: Add Document Datablock -->
+        <!-- 
+        <button type="button" class="btn w-auto" @click="handleAddDocumentDatablock();" :title="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS_TITLE')">
+          <i class="suitepicon suitepicon-module-documents me-2"></i>
+          <span x-text="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS')"></span>
+        </button>
+        -->
       </div>
     </div>
 
@@ -62,7 +69,7 @@
                 <h3 class="mb-0 me-3" :id="`dataBlockTitleEdit-${item.id}`" data-model="item.text" data-condition="item.editable_text" x-init="sticControls.editableText($el);"></h3>
                 <div>
                   <template x-for="(rel, index) in $store.dataBlockRelationships.usedDatablockRelationships(item.id)">
-                    <div class="text-muted" x-text="$store.dataBlockRelationships.getRelText(item.id, rel.name);"></div>
+                    <div class="text-muted" x-text="$store.dataBlockRelationships.getRelText(item.id, rel);"></div>
                   </template>
                 </div>
                 <!-- Buttons -->
@@ -209,6 +216,7 @@
                               <td x-show="canShowFieldColumn('required_in_form')">
                                 <div class="form-switch" x-show="field.type_in_form != 'hidden'">
                                   <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="field.required_in_form" 
+                                        :disabled="field.type_in_form == 'file'"
                                         :id="`dataBlockFieldReqForm-${item.id}-${field.name}`"/>
                                 </div>
                               </td>
@@ -220,7 +228,7 @@
                                           :title="utils.translate('LBL_BUTTON_EDIT')">
                                     <span class="suitepicon suitepicon-action-edit"></span>
                                   </button>
-                                  <template x-if="field.type_field === 'unlinked'">
+                                  <template x-if="field.type_field === 'unlinked' && field.type_in_form !== 'file'">
                                     <button type="button" class="btn" @click="duplicateField(field);" 
                                             :title="utils.translate('LBL_BUTTON_DUPLICATE')">
                                       <span>X2</span>
@@ -254,7 +262,7 @@
               </div>
               </div>
               <!-- Duplicate Definition -->
-              <template x-if="item && item.module">
+              <template x-if="item && item.module && !item.is_document_block">
                 <div :id="`dataBlockDuplicates${item.id}`">
                   <table class="table table-bordered table-striped w-auto">
                     <thead>
@@ -288,7 +296,7 @@
                           </td>
                           <!-- Duplicate Action -->
                           <td class="col-3">
-                            <select :id="`duplicateAction${item.id}${index}`" class="form-select" x-model="dupli.on_duplicate">
+                            <select :id="`duplicateAction${item.id}${index}`" class="form-select" x-model="dupli.on_duplicate" x-init="$nextTick(() => $el.value = dupli.on_duplicate)">
                               <template x-for="action in stic_AwfDuplicateDetection.on_duplicateList()" :key="action.id">
                                 <option :value="action.id" x-text="action.text"></option>
                               </template>
@@ -322,8 +330,9 @@
                     <thead>
                       <tr>
                         <th x-text="utils.translate('LBL_RELATIONSHIP')"></th>
-                        <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_ORIG')"></th>
-                        <th x-text="utils.translate('LBL_RELATIONSHIP_DATABLOCK_DEST')"></th>
+                        <th x-text="utils.translate('LBL_RELATIONSHIP_INVOLVED_BLOCKS')"></th>
+                        <th x-text="utils.translate('LBL_RELATIONSHIP_TYPE')"></th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -331,10 +340,20 @@
                         <tr>
                           <!-- Relationship -->
                           <td x-text="rel.text"></td>
-                          <!-- DataBlock Orig -->
-                          <td x-text="getDataBlockText(rel.datablock_orig)"></td>
-                          <!-- DataBlock Dest -->
-                          <td x-text="getDataBlockText(rel.datablock_dest)"></td>
+                          <!-- Involved DataBlocks -->
+                          <td x-text="$store.dataBlockRelationships.getInvolvedBlocksText(item.id, rel)"></td>
+                          <!-- Type -->
+                          <td>
+                            <span class="badge rounded-pill bg-secondary" x-text="$store.dataBlockRelationships.getRelationshipTypeLabel(item.id, rel.name, rel.datablock_dest, rel.initiator_id)"></span>
+                          </td>
+                          <!-- Delete button -->
+                          <td>
+                            <button type="button" class="btn"
+                                    @click="$store.dataBlockRelationships.deleteRelationship(rel.datablock_orig, rel.name, rel.datablock_dest);"
+                                    :title="utils.translate('LBL_BUTTON_DELETE')">
+                              <span class="suitepicon suitepicon-action-delete"></span>
+                            </button>
+                          </td>
                         </tr>
                       </template>
                     </tbody>
@@ -349,7 +368,10 @@
                       ]);" x-init="sticControls.accordion($el)"></div>
               </template>
               <template x-if="item.module">
-                <div :id="`dataDef_${item.id}`" :data-sections="JSON.stringify([
+                <div :id="`dataDef_${item.id}`" :data-sections="JSON.stringify(item.is_document_block ? [
+                        {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
+                        {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
+                      ] : [
                         {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
                         {headerText:`utils.translate('LBL_DUPLICATE_CHECK')`, selected:false, contentId:'dataBlockDuplicates'+item.id},
                         {headerText:`utils.translate('LBL_RELATIONSHIPS')`, selected:false, contentId:'dataBlockRels'+item.id},
@@ -374,6 +396,13 @@
             <i class="suitepicon suitepicon-module-surveys me-2"></i>
             <span x-text="utils.translate('LBL_DATABLOCK_ADD_UNLINKED')"></span>
           </button>
+          <!-- Button: Add Document Datablock -->
+          <!--
+          <button type="button" class="btn w-auto" @click="handleAddDocumentDatablock();" :title="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS_TITLE')">
+            <i class="suitepicon suitepicon-module-documents me-2"></i>
+            <span x-text="utils.translate('LBL_DATABLOCK_ADD_DOCUMENTS')"></span>
+          </button>
+          -->
         </div>
       </div>
 
@@ -417,262 +446,453 @@
                   </template>
                 </div>
                 <!-- Definition -->
-                <div class="card">
-                  <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION')"></div>
-                  <div class="card-body">
-                    <div class="row align-items-end">
-                      <!-- Name (Text)-->
-                      <template x-if="field && field.type_field == 'unlinked'">
-                        <!-- Text -->
-                        <div class="col-3">
-                          <label for="modalField_Text" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_NAME')"></label>
-                          <input id="modalField_Text" type="text" class="form-control" autocomplete="off" x-model="field.text_original"/>
-                        </div>
-                      </template>
-                      <!-- Name (Internal)-->
-                      <template x-if="field && field.type_field == 'unlinked'">
-                        <!-- Name -->
-                        <div class="col-3">
-                          <label for="modalField_Name" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_INTERNAL_NAME')"></label>
-                          <input id="modalField_Name" type="text" disabled class="form-control" autocomplete="off" x-model="field.name"/>
-                        </div>
-                      </template>
-                      <!-- Field (Name)-->
-                      <template x-if="isEdit && field && field.type_field != 'unlinked'">
-                        <div class="col-3">
-                          <label for="modalField_fieldName" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
-                          <input id="modalField_fieldName" type="text" disabled class="form-control" autocomplete="off" x-model="field.text_original"/>
-                        </div>
-                      </template>
-                      <!-- Field (Selector)-->
-                      <template x-if="!isEdit && field && field.type_field != 'unlinked'">
-                        <div class="col-3">
-                          <label for="modalField_field" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
-                          <!-- Show all fields -->
-                          <div class="text-muted form-check form-switch small" x-init="utils.setInlineHelpQtip()">
-                            <label for="modalField_field_allcheck" class="form-label" x-text="utils.translate('LBL_FIELDS_SHOW_ALL')"></label>
-                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
-                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_FIELDS_SHOW_ALL_DESC')"></div>
-                            <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_field_allcheck" x-model="showAllFields"/>
+                <template x-if="field && field.type_in_form != 'file'">
+                  <div class="card">
+                    <div class="card-header" x-text="utils.translate('LBL_FIELD_DEFINITION')"></div>
+                    <div class="card-body">
+                      <div class="row align-items-end">
+                        <!-- Name (Text)-->
+                        <template x-if="field && field.type_field == 'unlinked'">
+                          <!-- Text -->
+                          <div class="col-3">
+                            <label for="modalField_Text" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_NAME')"></label>
+                            <input id="modalField_Text" type="text" class="form-control" autocomplete="off" x-model="field.text_original"/>
                           </div>
-                          <stic-select options="availableFieldsForSelect" model="field.name"></stic-select>
-                        </div>
-                      </template>
-                      <!-- Type in form -->
-                      <template x-if="field && field.type_field != 'fixed'">
-                        <div class="col-3">
-                          <label for="modalField_TypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_TYPE_IN_FORM')"></label>
-                          <select id="modalField_TypeInForm" x-bind:disabled="availableTypesInForm.length<=1;" class="form-select" x-model="field.type_in_form">
-                            <template x-for="type in availableTypesInForm" :key="type.id">
-                              <option :value="type.id" x-text="type.text"></option>
-                            </template>
-                          </select>
-                        </div>
-                      </template>
-                      <!-- Subtype in form -->
-                      <template x-if="field && field.type_field != 'fixed' && field.type_in_form != 'hidden'">
-                        <div class="col-3">
-                          <label for="modalField_SubtypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_SUBTYPE_IN_FORM')"></label>
-                          <select id="modalField_SubtypeInForm" x-bind:disabled="availableSubtypesInForm.length<=1;" class="form-select" x-model="field.subtype_in_form">
-                            <template x-for="type in availableSubtypesInForm" :key="type.id">
-                              <option :value="type.id" x-text="type.text"></option>
-                            </template>
-                          </select>
-                        </div>
-                      </template>
-                      <!-- Value options list name -->
-                      <template x-if="field && isInFormSelectableValues && field.type_field != 'unlinked' && optionValuesListName != ''">
-                        <div class="col-3">
-                          <label for="modalField_ValueOptionsDesc" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS_LIST')"></label>
-                          <!-- Value options configuration Check -->
-                          <div class="text-muted form-check form-switch small">
-                            <label for="modalField_ValueOptionsConf" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE')"></label>
-                            <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValueOptionsConf" x-model="configValueOptions"/>
+                        </template>
+                        <!-- Name (Internal)-->
+                        <template x-if="field && field.type_field == 'unlinked'">
+                          <!-- Name -->
+                          <div class="col-3">
+                            <label for="modalField_Name" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_INTERNAL_NAME')"></label>
+                            <input id="modalField_Name" type="text" disabled class="form-control" autocomplete="off" x-model="field.name"/>
                           </div>
-                          <input id="modalField_ValueOptionsDesc" type="text" disabled class="form-control" x-model="optionValuesListName"/>
-                        </div>
-                      </template>
-                      <!-- Value options of related -->
-                      <template x-if="isInFormSelectableRelation">
-                        <div class="col-3">
-                          <label for="modalField_ValueOptionsRel_name" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS_LIST')"></label>
-                          <template x-if="optionValuesRelated==''">
-                            <!-- Select Records -->
-                            <button class="btn form-control" type="button" @click="openPopUp('modalField_ValueOptionsRel', false)" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_SELECT_REGS')"></button>
-                          </template>
-                          <template x-if="optionValuesRelated!=''">
-                            <div>
-                              <!-- Value options configuration Check -->
-                              <div class="text-muted form-check form-switch small">
-                                <label for="modalField_ValueOptionsRelConf" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE')"></label>
-                                <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValueOptionsRelConf" x-model="configValueOptions"/>
-                              </div>
-                              <div class="input-group">
-                                <input id="modalField_ValueOptionsRel_name" type="text" disabled class="form-control" x-model="optionValuesListName"/>
-                                <button class="btn" type="button" @click="openPopUp('modalField_ValueOptionsRel', false)">
-                                  <span class="suitepicon suitepicon-action-select"></span>
-                                </button>
-                              </div>
+                        </template>
+                        <!-- Field (Name)-->
+                        <template x-if="isEdit && field && field.type_field != 'unlinked'">
+                          <div class="col-3">
+                            <label for="modalField_fieldName" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
+                            <input id="modalField_fieldName" type="text" disabled class="form-control" autocomplete="off" x-model="field.text_original"/>
+                          </div>
+                        </template>
+                        <!-- Field (Selector)-->
+                        <template x-if="!isEdit && field && field.type_field != 'unlinked'">
+                          <div class="col-3">
+                            <label for="modalField_field" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD')"></label>
+                            <!-- Show all fields -->
+                            <div class="text-muted form-check form-switch small" x-init="utils.setInlineHelpQtip()">
+                              <label for="modalField_field_allcheck" class="form-label" x-text="utils.translate('LBL_FIELDS_SHOW_ALL')"></label>
+                              <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                              <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_FIELDS_SHOW_ALL_DESC')"></div>
+                              <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_field_allcheck" x-model="showAllFields"/>
                             </div>
-                          </template>
-                          <input type="hidden" id="modalField_ValueOptionsRel_id" x-model="optionValuesRelated" />
-                        </div>
-                      </template>
-                      <!-- Value options edition -->
-                      <template x-if="field && configValueOptions">
-                        <div class="row">
-                          <!-- Value options configuration Table -->
-                          <div class="col-12" x-data="WizardStep2.sortableListxData(field.value_options)">
-                            <span class="form-label mt-3" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS')" ></span>
-                            <table class="table table-bordered table-striped w-auto" id="modalField_ValueOptionsTable">
-                              <thead>
-                                <tr>
-                                  <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_NAME')"></th>
-                                  <template x-if="!field.isSelectCustomOptions()">
-                                    <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL')"></th>
-                                  </template>
-                                  <template x-if="!field.isSelectCustomOptions()">
-                                    <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW')"></th>
-                                  </template>
-                                  <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_LABEL')"></th>
-                                  <th x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ACTIONS')"></th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <template x-for="(element, index) in field.value_options">
-                                  <tr>
-                                    <!-- Value -->
-                                    <template x-if="!field.isSelectCustomOptions()">
-                                      <td x-text="element.value"></td>
-                                    </template>
-                                    <template x-if="field.isSelectCustomOptions()">
-                                      <td>
-                                        <input class="form-control" type="text" x-model="element.value" :id="`modalField_ValueOptionsValue${index}`"/>
-                                      </td>
-                                    </template>
-                                    <!-- Text original -->
-                                    <template x-if="!field.isSelectCustomOptions()">
-                                      <td x-text="element.text_original"></td>
-                                    </template>
-                                    <!-- Is Visible -->
-                                    <template x-if="!field.isSelectCustomOptions()">
-                                      <td>
-                                        <div class="form-switch">
-                                          <input class="form-check-input form-switch" type="checkbox" role="switch" x-model="element.is_visible" :id="`modalField_ValueOptionsInclude${index}`"/>
-                                        </div>
-                                      </td>
-                                    </template>
-                                    <!-- Text -->
-                                    <td>
-                                      <input class="form-control" type="text" x-model="element.text" :id="`modalField_ValueOptionsText${index}`"/>
-                                    </td>
-                                    <!-- Buttons -->
-                                    <td class="d-flex">
-                                      <div class="input-group">
-                                        <button type="button" class="btn" :disabled="index === 0" @click="moveUp(index)" :title="utils.translate('LBL_BUTTON_MOVE_UP')">
-                                          <span class="suitepicon suitepicon-action-move-up"></span>
-                                        </button>
-                                        <button type="button" class="btn" :disabled="index === field.value_options.length - 1" @click="moveDown(index)" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
-                                          <span class="suitepicon suitepicon-action-move-down"></span>
-                                        </button>
-                                      </div>
-                                      <template x-if="field.isSelectCustomOptions()">
-                                        <button type="button" class="btn ms-2" @click="field.value_options.splice(index, 1)" :title="utils.translate('LBL_BUTTON_DELETE')">
-                                          <span class="suitepicon suitepicon-action-delete"></span>
-                                        </button>
-                                      </template>
-                                    </td>
-                                  </tr>
-                                </template>
-                              </tbody>
-                            </table>
-                            <template x-if="field.isSelectCustomOptions()">
-                              <button type="button" class="btn" @click="field.value_options.push(new stic_AwfValueOption());" :title="utils.translate('LBL_BUTTON_ADD')">
-                                <span class="suitepicon suitepicon-action-plus"></span>
-                              </button>
-                            </template>
+                            <stic-select options="availableFieldsForSelect" model="field.name"></stic-select>
                           </div>
-                        </div>
-                      </template>
-                      <!-- Value type -->
-                      <template x-if="field && field.type_field == 'fixed'">
-                        <div class="col-3">
-                          <label for="modalField_ValueType" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TYPE')"></label>
-                          <select id="modalField_ValueType" x-bind:disabled="availableValueTypes.length<=1;" class="form-select" x-model="field.value_type">
-                            <template x-for="type in availableValueTypes" :key="type.id">
-                              <option :value="type.id" x-text="type.text"></option>
-                            </template>
-                          </select>
-                        </div>
-                      </template>
-                      <!-- Value (fixed value of enum) -->
-                      <template x-if="field && isFixedValueOfEnum && !isFixedValueOfRelated">
-                        <div class="col-3">
-                          <label for="modalField_ValFixOptions" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                          <select id="modalField_ValFixOptions" x-bind:disabled="field.value_options.length<=1;" class="form-select" x-model="field.value">
-                            <template x-for="option in field.value_options" :key="option.value">
-                              <option :value="option.value" x-text="option.text"></option>
-                            </template>
-                          </select>
-                        </div>
-                      </template>
-                      <!-- Value (fixed value of related) -->
-                      <template x-if="field && isFixedValueOfRelated">
-                        <div class="col-3">
-                          <label for="modalField_ValFixRel_name" class="form-label" x-text="utils.toFieldLabelText(selectedFieldInfo?.text??'')" ></label>
-                          <div class="input-group">
-                            <input class="form-control" type="text" id="modalField_ValFixRel_name" x-model="field.value_text" readonly style="background-color: rgb(255, 255, 255)"/>
-                            <input type="hidden" id="modalField_ValFixRel_id" x-model="field.value" />
-                            <button class="btn" type="button" @click="openPopUp('modalField_ValFixRel')">
-                              <span class="suitepicon suitepicon-action-select"></span>
-                            </button>
-                            <button class="btn" type="button" @click="field.value='';field.value_text='';">
-                              <span class="suitepicon suitepicon-action-clear"></span>
-                            </button>
-                          </div>
-                        </div>
-                      </template>
-                      <!-- Value (fixed value of date) -->
-                      <template x-if="field && isFixedValueOfDate">
-                        <div class="col-3">
-                          <label for="modalField_ValFixDate" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')" ></label>
-                          <div class="form-switch form-check text-muted small" x-init="utils.setInlineHelpQtip()">
-                            <label for="modalField_ValFixDate_Relative" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_RELATIVE_DATE_OPTION')" ></label>
-                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
-                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_FIELD_VALUE_RELATIVE_DATE_OPTION_DESC')"></div>
-                            <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValFixDate_Relative" x-model="showRelativeDateSelector" />
-                          </div>
-                          <!-- Fixed date -->
-                          <input x-show="!showRelativeDateSelector" id="modalField_ValFixDate" type="date" class="form-control" autocomplete="off" x-model="field.value"/>
-                          <!-- Relative date selector -->
-                          <div x-show="showRelativeDateSelector" class="mt-2">
-                            <select id="modalField_RelativeDateSelector" class="form-select" x-model="relativeDateSelected">
-                              <template x-for="relDate in availableRelativeDates" :key="relDate.id">
-                                <option :value="relDate.id" x-text="relDate.text"></option>
+                        </template>
+                        <!-- Type in form -->
+                        <template x-if="field && field.type_field != 'fixed'">
+                          <div class="col-3">
+                            <label for="modalField_TypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_TYPE_IN_FORM')"></label>
+                            <select id="modalField_TypeInForm" x-bind:disabled="availableTypesInForm.length<=1;" class="form-select" x-model="field.type_in_form">
+                              <template x-for="type in availableTypesInForm" :key="type.id">
+                                <option :value="type.id" x-text="type.text"></option>
                               </template>
                             </select>
                           </div>
-                        </div>
-                      </template>
-                      <template x-if="field && isFixedValueOfDate && showRelativeDateSelector && relativeDateSelected == 'custom'">
-                        <!-- Relative date text -->
-                        <div class="col-3" x-init="utils.setInlineHelpQtip()">
-                          <label for="modalField_ValFixDateCustom" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_RELATIVE_DATE_CUSTOM')" ></label>
-                          <i class="inline-help glyphicon glyphicon-info-sign"></i>
-                          <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_FIELD_VALUE_RELATIVE_DATE_CUSTOM_DESC')"></div>
-                          <input id="modalField_ValFixDateCustom" type="text" class="form-control mt-2" x-model="field.value">
-                        </div>
-                      </template>
-                      <!-- Value (fixed value of default) -->
-                      <template x-if="field && isFixedValueOfDefault">
-                        <div class="col-3">
-                          <label for="modalField_ValFixText" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
-                          <input id="modalField_ValFixText" type="text" class="form-control" autocomplete="off" x-model="field.value"/>
-                        </div>
-                      </template>
+                        </template>
+                        <!-- Subtype in form -->
+                        <template x-if="field && field.type_field != 'fixed' && field.type_in_form != 'hidden'">
+                          <div class="col-3">
+                            <label for="modalField_SubtypeInForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_SUBTYPE_IN_FORM')"></label>
+                            <select id="modalField_SubtypeInForm" x-bind:disabled="availableSubtypesInForm.length<=1;" class="form-select" x-model="field.subtype_in_form">
+                              <template x-for="type in availableSubtypesInForm" :key="type.id">
+                                <option :value="type.id" x-text="type.text"></option>
+                              </template>
+                            </select>
+                          </div>
+                        </template>
+                        <!-- Value options list name -->
+                        <template x-if="field && isInFormSelectableValues && field.type_field != 'unlinked' && optionValuesListName != ''">
+                          <div class="col-3">
+                            <label for="modalField_ValueOptionsDesc" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS_LIST')"></label>
+                            <!-- Value options configuration Check -->
+                            <div class="text-muted form-check form-switch small">
+                              <label for="modalField_ValueOptionsConf" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE')"></label>
+                              <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValueOptionsConf" x-model="configValueOptions"/>
+                            </div>
+                            <input id="modalField_ValueOptionsDesc" type="text" disabled class="form-control" x-model="optionValuesListName"/>
+                          </div>
+                        </template>
+                        <!-- Value options of related -->
+                        <template x-if="isInFormSelectableRelation">
+                          <div class="col-3">
+                            <label for="modalField_ValueOptionsRel_name" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_OPTIONS_LIST')"></label>
+                            <template x-if="optionValuesRelated==''">
+                              <!-- Select Records -->
+                              <button class="btn form-control" type="button" @click="openPopUp('modalField_ValueOptionsRel', false)" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_SELECT_REGS')"></button>
+                            </template>
+                            <template x-if="optionValuesRelated!=''">
+                              <div>
+                                <!-- Value options configuration Check -->
+                                <div class="text-muted form-check form-switch small">
+                                  <label for="modalField_ValueOptionsRelConf" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE')"></label>
+                                  <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValueOptionsRelConf" x-model="configValueOptions"/>
+                                </div>
+                                <div class="input-group">
+                                  <input id="modalField_ValueOptionsRel_name" type="text" disabled class="form-control" x-model="optionValuesListName"/>
+                                  <button class="btn" type="button" @click="openPopUp('modalField_ValueOptionsRel', false)" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_SELECT_REGS')">
+                                    <span class="suitepicon suitepicon-action-select"></span>
+                                  </button>
+                                  <button class="btn" type="button" @click="openPopUp('modalField_ValueOptionsRel', false, 'add')" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_ADD_REGS')">
+                                    <span class="suitepicon suitepicon-action-plus"></span>
+                                  </button>
+                                </div>
+                              </div>
+                            </template>
+                            <input type="hidden" id="modalField_ValueOptionsRel_id" x-model="optionValuesRelated" />
+                          </div>
+                        </template>
+
+                        <!-- Value options edition -->
+                        <template x-if="field && configValueOptions">
+                          <div class="row mt-4">
+                            <div class="w-auto" x-data="WizardStep2.sortableListxData(field.value_options, { getOriginalOptions: () => utils.getFieldOptions(selectedFieldInfo) })">
+                              <div class="card shadow-sm border">
+                                <div class="card-header" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS')"> </div>
+
+                                <div class="card-body p-0">
+                                  <!-- Reload List / Clean old items -->
+                                  <template x-if="hasOriginalList && !field.isSelectCustomOptions()">
+                                    <div class="p-3 d-flex flex-wrap gap-2 align-items-center">
+                                      <!-- Reload List items -->
+                                      <button type="button" class="btn btn-outline-primary" @click="reloadOriginalList()" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_RELOAD_LIST')"></button>
+                                      <!-- Clean old list items -->
+                                      <button type="button" class="btn btn-outline-danger" @click="removeNotInOriginalList()" x-text="utils.translate('LBL_FIELD_VALUE_OPTIONS_REMOVE_STALE')"></button>
+                                    </div>
+                                  </template>
+
+                                  <!-- Table -->
+                                  <div class="table-responsive p-2" style="width: fit-content; max-width: 100%;">
+                                    <!-- Show internal values -->
+                                    <div class="text-muted form-check form-switch small mt-2 mb-0 w-auto">
+                                      <input class="form-check-input" type="checkbox" id="toggleInternalValues" x-model="showInternalValues">
+                                      <label class="form-label" for="toggleInternalValues" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW_NAME')"></label>
+                                    </div>
+                                    <div class="d-flex flex-wrap gap-3 mb-2 align-items-center">
+                                      <!-- Massive actions -->
+                                      <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" x-bind:disabled="selectedCount==0"
+                                                x-text="utils.translate('LBL_LISTVIEW_SELECTED_OBJECTS') + selectedCount"></button>
+                                        <ul class="dropdown-menu">
+                                          <li class="dropdown-item" @click.prevent="massSetVisible(true)" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW')"></li>
+                                          <li class="dropdown-item" @click.prevent="massSetVisible(false)" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_HIDE')"></li>
+                                          <li><hr class="dropdown-divider"></li>
+                                          <li class="dropdown-item text-danger" x-text="utils.translate('LBL_BUTTON_DELETE')"
+                                              @click.prevent="massDelete(); bootstrap.Dropdown.getOrCreateInstance($el.closest('.dropdown').querySelector('[data-bs-toggle=dropdown]')).hide();"></li>
+                                        </ul>
+                                      </div>
+                                      
+                                      <!-- Filter -->
+                                      <div class="input-group small ms-auto" style="width: 300px; max-width: 100%;">
+                                        <span class="input-group-text" style="height: 34px;">
+                                          <i class="suitepicon suitepicon-action-search"></i>
+                                        </span>
+                                        <input type="text" class="form-control" x-model.debounce.300ms="searchText" :placeholder="utils.translate('LBL_SELECT_WRITE_TO_SEARCH')">
+                                        <span class="input-group-text" style="height: 34px;" x-show="searchText !== ''" @click="clearSearch()" :title="utils.translate('LBL_SELECT_SEARCH_CLEAN')">
+                                          <i class="suitepicon suitepicon-action-clear" style="cursor: pointer;"></i>
+                                        </span>
+                                      </div>
+                                      <!-- Page navigation -->
+                                      <div class="d-flex flex-wrap align-items-center justify-content-end gap-2 ms-auto">
+                                        <div>
+                                          <!-- Page size -->
+                                          <select class="form-select form-select-sm w-auto" x-model.number="pageSize" @change="setPageSize(pageSize)" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_PAGE_SIZE')"  style="min-width: 65px;">
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                            <option value="0" x-text="utils.translate('LBL_LINK_ALL')"></option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <!-- Pagination -->
+                                          <span class="small text-muted" x-text="pageInfoText" style="width: fit-content;"></span>
+                                          <nav x-show="totalPages > 1">
+                                            <ul class="pagination pagination-sm mb-0">
+                                              <li class="page-item" :class="{'disabled': currentPage === 1}">
+                                                <a class="page-link" href="javascript:void(0)" @click.prevent="goToPage(currentPage - 1)">
+                                                  <span class="suitepicon suitepicon-action-left"></span>
+                                                </a>
+                                              </li>
+                                              <template x-for="p in totalPages" :key="'top_p_' + p">
+                                                <li class="page-item" :class="{'active': currentPage === p}">
+                                                  <a class="page-link" href="javascript:void(0)" @click.prevent="goToPage(p)" x-text="p"></a>
+                                                </li>
+                                              </template>
+                                              <li class="page-item" :class="{'disabled': currentPage === totalPages}">
+                                                <a class="page-link" href="javascript:void(0)" @click.prevent="goToPage(currentPage + 1)">
+                                                  <span class="suitepicon suitepicon-action-right"></span>
+                                                </a>
+                                              </li>
+                                            </ul>
+                                          </nav>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <table class="table table-bordered w-autotable table-hover table-striped align-middle mb-0 w-auto" id="modalField_ValueOptionsTable">
+                                      <thead class="table-light">
+                                        <tr>
+                                          <!-- Selection column -->
+                                          <th style="width: 1%; white-space: nowrap;" class="ps-3">
+                                            <div class="d-flex align-items-center gap-1">
+                                              <input type="checkbox" class="form-check-input m-0" :title="utils.translate('LBL_SELECT_ALL_TITLE')"
+                                                    x-effect="$el.checked = pageAllSelected; $el.indeterminate = !pageAllSelected && pageSomeSelected"
+                                                    @change="$event.target.checked ? selectPage() : deselectPage()" />
+                                              <div class="dropdown" x-data="{ selectOpen: false }">
+                                                <button class="btn p-0" @click.prevent.stop="selectOpen = !selectOpen" :title="utils.translate('LBL_SELECT_ALL_TITLE')" style="height: 22px !important;min-width: 0 !important;width: 16px;">
+                                                  <span class="suitepicon suitepicon-action-caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu shadow-sm" :class="{ show: selectOpen }" x-show="selectOpen" x-transition @click.outside="selectOpen = false">
+                                                  <li class="dropdown-item" @click="clearSelection();selectPage(); selectOpen = false" x-text="utils.translate('LBL_LISTVIEW_OPTION_CURRENT') + ' (' + pagedItems.length + ')'"></li>
+                                                  <li class="dropdown-item" @click="selectAllFiltered(); selectOpen = false" x-text="utils.translate('LBL_LISTVIEW_OPTION_ENTIRE') + ' (' + filteredItems.length + ')'"></li>
+                                                  <li class="dropdown-item" @click="selectInverted(); selectOpen = false" x-text="utils.translate('LBL_LISTVIEW_OPTION_INVERT_SELECTION') + ' (' + (filteredItems.length - selectedCount) + ')'"></li>
+                                                  <li class="dropdown-item" @click="clearSelection(); selectOpen = false" x-text="utils.translate('LBL_LISTVIEW_NONE')"></li>
+                                                </ul>
+                                              </div>
+                                            </div>
+                                          </th>
+
+                                          <!-- Internal value (optional) -->
+                                          <th x-show="showInternalValues" class="cursor-pointer" @click="toggleSort('value')" style="cursor: pointer; min-width: 140px;">
+                                            <span x-text="utils.translate('LBL_FIELD_VALUE_OPTION_NAME')"></span>
+                                            <i :class="getSortIconClass('value')"></i>
+                                          </th>
+
+                                          <!-- CRM label -->
+                                          <template x-if="!field.isSelectCustomOptions()">
+                                            <th class="cursor-pointer" @click="toggleSort('text_original')" style="cursor: pointer; min-width: 180px;">
+                                              <span x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL')"></span>
+                                              <i :class="getSortIconClass('text_original')"></i>
+                                            </th>
+                                          </template>
+
+                                          <!-- Show / Hide -->
+                                          <th class="text-center cursor-pointer" @click="toggleSort('is_visible')" style="cursor: pointer; width: 90px;">
+                                            <span x-text="utils.translate('LBL_FIELD_VALUE_OPTION_SHOW')"></span>
+                                            <i :class="getSortIconClass('is_visible')"></i>
+                                          </th>
+
+                                          <!-- Visible label -->
+                                          <th class="cursor-pointer" @click="toggleSort('text')" style="cursor: pointer; min-width: 260px;">
+                                            <span x-text="utils.translate('LBL_FIELD_VALUE_OPTION_LABEL')"></span>
+                                            <i :class="getSortIconClass('text')"></i>
+                                          </th>
+
+                                          <!-- Actions -->
+                                          <th class="text-end pe-3" x-text="utils.translate('LBL_FIELD_VALUE_OPTION_ACTIONS')" style="min-width: 124px;"></th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <template x-if="filteredItems.length === 0">
+                                          <tr>
+                                            <td colspan="6" class="text-center py-4 text-muted fst-italic">
+                                              <i class="suitepicon suitepicon-action-info fs-4 d-block mb-2"></i>
+                                              <span x-text="utils.translate('LBL_SELECT_NO_RESULTS')"></span>
+                                            </td>
+                                          </tr>
+                                        </template>
+                                        
+                                        <template x-for="(row, index) in pagedItems" :key="row.option.value + '_' + row.realIndex">
+                                          <tr :class="{'table-primary': isSel(row.option)}">
+                                            <!-- Row Checkbox -->
+                                            <td class="text-center ps-3">
+                                              <input class="form-check-input" type="checkbox" :checked="isSel(row.option)" @change="toggleSelect(row.option)">
+                                            </td>
+
+                                            <!-- Internal value -->
+                                            <template x-if="!field.isSelectCustomOptions()">
+                                              <td x-show="showInternalValues" class="font-monospace small text-muted" x-html="highlightSearch(row.option.value)"></td>
+                                            </template>
+                                            <template x-if="field.isSelectCustomOptions()">
+                                              <td x-show="showInternalValues">
+                                                <input class="form-control form-control-sm font-monospace" type="text" x-model="row.option.value" :id="`modalField_ValueOptionsValue${row.realIndex}`" :placeholder="row.option.text"/>
+                                              </td>
+                                            </template>
+
+                                            <!-- Original label -->
+                                            <template x-if="!field.isSelectCustomOptions()">
+                                              <td x-html="highlightSearch(row.option.text_original)"></td>
+                                            </template>
+
+                                            <!-- Show / Hide -->
+                                            <td class="text-center">
+                                              <div class="form-check form-switch d-inline-block mb-0">
+                                                <input class="form-check-input" type="checkbox" role="switch" x-model="row.option.is_visible" :id="`modalField_ValueOptionsInclude${row.realIndex}`"/>
+                                              </div>
+                                            </td>
+
+                                            <!-- Visible label -->
+                                            <td>
+                                              <input class="form-control form-control-sm" type="text" x-model="row.option.text" :id="`modalField_ValueOptionsText${row.realIndex}`"
+                                                    @change="if (field.isSelectCustomOptions() && (!row.option.value || row.option.value.trim() === '')) { row.option.value = row.option.text; }" />
+                                            </td>
+
+                                            <!-- Action buttons per row -->
+                                            <td class="text-end pe-3 text-nowrap">
+                                              <div class="d-inline-flex align-items-center gap-2">
+                                                <div class="input-group" role="group">
+                                                  <button type="button" class="btn" :disabled="row.realIndex === 0 || searchText !== ''"
+                                                          @click="moveUp(row.realIndex)" :title="utils.translate('LBL_BUTTON_MOVE_UP')">
+                                                    <i class="suitepicon suitepicon-action-move-up"></i>
+                                                  </button>
+
+                                                  <button type="button" class="btn" :disabled="row.realIndex === items.length - 1 || searchText !== ''"
+                                                          @click="moveDown(row.realIndex)" :title="utils.translate('LBL_BUTTON_MOVE_DOWN')">
+                                                    <i class="suitepicon suitepicon-action-move-down"></i>
+                                                  </button>
+                                                </div>
+
+                                                <button type="button" class="btn" @click="items.splice(row.realIndex, 1)" :title="utils.translate('LBL_BUTTON_DELETE')">
+                                                  <i class="suitepicon suitepicon-action-delete"></i>
+                                                </button>
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        </template>
+                                      </tbody>
+                                    </table>
+
+                                    <!-- Foot: Add new item + Pagination -->
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                      <!-- Add new item to list -->
+                                      <template x-if="field.isSelectCustomOptions()">
+                                        <button type="button" class="btn btn-sm btn-primary" @click="field.value_options.push(new stic_AwfValueOption()); goToPage(totalPages);" :title="utils.translate('LBL_BUTTON_ADD')">
+                                          <i class="suitepicon suitepicon-action-plus me-1"></i> 
+                                          <span x-text="utils.translate('LBL_BUTTON_ADD')"></span>
+                                        </button>
+                                      </template>
+                                      <!-- Page navigation -->
+                                      <div class="d-flex flex-wrap align-items-center justify-content-end gap-2 ms-auto">
+                                        <div>
+                                          <!-- Page size -->
+                                          <select class="form-select form-select-sm w-auto" x-model.number="pageSize" @change="setPageSize(pageSize)" :title="utils.translate('LBL_FIELD_VALUE_OPTIONS_PAGE_SIZE')"  style="min-width: 65px;">
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                            <option value="0" x-text="utils.translate('LBL_LINK_ALL')"></option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <!-- Pagination -->
+                                          <span class="small text-muted" x-text="pageInfoText" style="width: fit-content;"></span>
+                                          <nav x-show="totalPages > 1">
+                                            <ul class="pagination pagination-sm mb-0">
+                                              <li class="page-item" :class="{'disabled': currentPage === 1}">
+                                                <a class="page-link" href="javascript:void(0)" @click.prevent="goToPage(currentPage - 1)">
+                                                  <span class="suitepicon suitepicon-action-left"></span>
+                                                </a>
+                                              </li>
+                                              <template x-for="p in totalPages" :key="'top_p_' + p">
+                                                <li class="page-item" :class="{'active': currentPage === p}">
+                                                  <a class="page-link" href="javascript:void(0)" @click.prevent="goToPage(p)" x-text="p"></a>
+                                                </li>
+                                              </template>
+                                              <li class="page-item" :class="{'disabled': currentPage === totalPages}">
+                                                <a class="page-link" href="javascript:void(0)" @click.prevent="goToPage(currentPage + 1)">
+                                                  <span class="suitepicon suitepicon-action-right"></span>
+                                                </a>
+                                              </li>
+                                            </ul>
+                                          </nav>
+                                        </div>
+                                      </div>              
+                                    </div>            
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+
+                        <!-- Value type -->
+                        <template x-if="field && field.type_field == 'fixed'">
+                          <div class="col-3">
+                            <label for="modalField_ValueType" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_TYPE')"></label>
+                            <select id="modalField_ValueType" x-bind:disabled="availableValueTypes.length<=1;" class="form-select" x-model="field.value_type">
+                              <template x-for="type in availableValueTypes" :key="type.id">
+                                <option :value="type.id" x-text="type.text"></option>
+                              </template>
+                            </select>
+                          </div>
+                        </template>
+                        <!-- Value (fixed value of enum) -->
+                        <template x-if="field && isFixedValueOfEnum && !isFixedValueOfRelated">
+                          <div class="col-3">
+                            <label for="modalField_ValFixOptions" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                            <select id="modalField_ValFixOptions" x-bind:disabled="field.value_options.length<=1;" class="form-select" x-model="field.value">
+                              <template x-for="option in field.value_options" :key="option.value">
+                                <option :value="option.value" x-text="option.text"></option>
+                              </template>
+                            </select>
+                          </div>
+                        </template>
+                        <!-- Value (fixed value of related) -->
+                        <template x-if="field && isFixedValueOfRelated">
+                          <div class="col-3">
+                            <label for="modalField_ValFixRel_name" class="form-label" x-text="utils.toFieldLabelText(selectedFieldInfo?.text??'')" ></label>
+                            <div class="input-group">
+                              <input class="form-control" type="text" id="modalField_ValFixRel_name" x-model="field.value_text" readonly style="background-color: rgb(255, 255, 255)"/>
+                              <input type="hidden" id="modalField_ValFixRel_id" x-model="field.value" />
+                              <button class="btn" type="button" @click="openPopUp('modalField_ValFixRel')">
+                                <span class="suitepicon suitepicon-action-select"></span>
+                              </button>
+                              <button class="btn" type="button" @click="field.value='';field.value_text='';">
+                                <span class="suitepicon suitepicon-action-clear"></span>
+                              </button>
+                            </div>
+                          </div>
+                        </template>
+                        <!-- Value (fixed value of date) -->
+                        <template x-if="field && isFixedValueOfDate">
+                          <div class="col-3">
+                            <label for="modalField_ValFixDate" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')" ></label>
+                            <div class="form-switch form-check text-muted small" x-init="utils.setInlineHelpQtip()">
+                              <label for="modalField_ValFixDate_Relative" class="form-label" x-text="utils.translate('LBL_FIELD_VALUE_RELATIVE_DATE_OPTION')" ></label>
+                              <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                              <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_FIELD_VALUE_RELATIVE_DATE_OPTION_DESC')"></div>
+                              <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ValFixDate_Relative" x-model="showRelativeDateSelector" />
+                            </div>
+                            <!-- Fixed date -->
+                            <input x-show="!showRelativeDateSelector" id="modalField_ValFixDate" type="date" class="form-control" autocomplete="off" x-model="field.value"/>
+                            <!-- Relative date selector -->
+                            <div x-show="showRelativeDateSelector" class="mt-2">
+                              <select id="modalField_RelativeDateSelector" class="form-select" x-model="relativeDateSelected">
+                                <template x-for="relDate in availableRelativeDates" :key="relDate.id">
+                                  <option :value="relDate.id" x-text="relDate.text"></option>
+                                </template>
+                              </select>
+                            </div>
+                          </div>
+                        </template>
+                        <template x-if="field && isFixedValueOfDate && showRelativeDateSelector && relativeDateSelected == 'custom'">
+                          <!-- Relative date text -->
+                          <div class="col-3" x-init="utils.setInlineHelpQtip()">
+                            <label for="modalField_ValFixDateCustom" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE_RELATIVE_DATE_CUSTOM')" ></label>
+                            <i class="inline-help glyphicon glyphicon-info-sign"></i>
+                            <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_FIELD_VALUE_RELATIVE_DATE_CUSTOM_DESC')"></div>
+                            <input id="modalField_ValFixDateCustom" type="text" class="form-control mt-2" x-model="field.value">
+                          </div>
+                        </template>
+                        <!-- Value (fixed value of default) -->
+                        <template x-if="field && isFixedValueOfDefault">
+                          <div class="col-3">
+                            <label for="modalField_ValFixText" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_VALUE')"></label>
+                            <input id="modalField_ValFixText" type="text" class="form-control" autocomplete="off" x-model="field.value"/>
+                          </div>
+                        </template>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </template>
                 <!-- In form representation -->
                 <template x-if="field && field.isFieldInForm() && field.type_in_form != 'hidden'">
                   <div class="card">
@@ -693,7 +913,7 @@
                           </div>
                         </template>
                         <!-- Description -->
-                        <div class="col-3">
+                        <div class="col-6">
                           <div class="d-flex justify-content-between align-items-end mb-1">
                             <label for="modalField_Description" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_DESCRIPTION')"></label>
                             <!-- Add link to description -->
@@ -717,7 +937,8 @@
                         <!-- Required in form -->
                         <div class="col-3 form-switch">
                           <label for="modalField_ReqForm" class="form-label" x-text="utils.translateForFieldLabel('LBL_FIELD_REQUIRED_IN_FORM')"></label>
-                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ReqForm" x-model="field.required_in_form"/>
+                          <input class="form-check-input form-switch" type="checkbox" role="switch" id="modalField_ReqForm" x-model="field.required_in_form" 
+                                 :disabled="field.type_in_form == 'file'"/>
                         </div>
                       </div>
                       <!-- Add Validation Button -->

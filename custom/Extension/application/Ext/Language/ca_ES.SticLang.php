@@ -31,6 +31,7 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "La validació d
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Afegeix Organitzacions i Persones a una llista de públic objectiu';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronització amb Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Envia PDF per correu';
+$app_strings['LBL_WHATSAPP_CONVERSATION_BUTTON'] = 'Mostra la conversa de WhatsApp';
 $app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Afegeix al procés de firma';
 $app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccioneu un procés de firma';
 $app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Mostra les firmes relacionades';
@@ -44,6 +45,9 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Deslucrativitzat per SinergiaCR
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM ha estat desenvolupat per l\'Associació SinergiaTIC. El programari es proporciona TAL COM ÉS, sense cap garantia. Sota llicència AGPLv3. Per a més informació, visiteu el <a href="https://www.sinergiacrm.org">web de SinergiaCRM</a>.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Aquest programa és programari lliure. Podeu redistribuir-lo i/o modificar-lo segons els termes de la Llicència Pública General Affero de GNU versió 3, publicada per la Free Software Foundation, incloent-hi qualsevol permís addicional indicat a la capçalera del codi font.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = "Tots els noms d'altres empreses i productes esmentats poden ser marques registrades de les empreses amb les quals s'associen.";
+$app_strings['ERR_OPT_IN_RELATION_INCORRECT'] = 'Per autoritzar cal que el correu estigui relacionat amb una Organització/Persona/Interessat/Públic Objectiu';
+$app_strings['LBL_CONFIRM_OPT_IN_ONLY_FOR_PERSON'] = "Enviament de correu de confirmació d'autorització només per a Organitzacions/Persones/Interessats/Públic Objectiu";
+$app_strings['LBL_LIST_ACCOUNT_NAME'] = 'Organització';
 
 // Creació de registre horari via capçalera
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crea un registre';
@@ -185,6 +189,8 @@ $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Formularis Web Avançats';
 $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Processos en espera de formularis';
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Notificacions externes de formularis';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Converses';
+$app_list_strings['moduleList']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
+$app_list_strings['moduleList']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
@@ -250,6 +256,8 @@ $app_list_strings['moduleListSingular']['stic_AWF_Forms'] = 'Formulari Web Avan�
 $app_list_strings['moduleListSingular']['stic_AWF_Deferred_Tickets'] = 'Procés en espera de formulari';
 $app_list_strings['moduleListSingular']['stic_AWF_Incoming_Events'] = 'Notificació externa de formulari';
 $app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversa';
+$app_list_strings['moduleListSingular']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
+$app_list_strings['moduleListSingular']['stic_Recycle_Bin_Relationships'] = 'Relació de la paperera';
 
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
@@ -297,6 +305,8 @@ $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productes financers';
 $app_list_strings['parent_type_display']['stic_Assets'] = 'Actius';
 $app_list_strings['parent_type_display']['stic_Conversations'] = 'Converses';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
@@ -346,6 +356,8 @@ $app_list_strings['record_type_display']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productes financers';
 $app_list_strings['record_type_display']['stic_Assets'] = 'Actius';
 $app_list_strings['record_type_display']['stic_Conversations'] = 'Converses';
+$app_list_strings['record_type_display']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
+$app_list_strings['record_type_display']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
@@ -395,6 +407,8 @@ $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacci
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productes financers';
 $app_list_strings['record_type_display_notes']['stic_Assets'] = 'Actius';
 $app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Converses';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';
@@ -3671,8 +3685,9 @@ $app_list_strings['stic_skills_evaluation_stages_list']['intermediate'] = 'Inter
 $app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
 
 // Missatges: Tipus
-$app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
-$app_list_strings['stic_messages_type_list']['WhatsAppWeb'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['sms'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['whatsapp_web'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['whatsapp'] = 'WhatsApp';
 $app_list_strings['stic_messages_type_list']['private_area'] = 'Àrea privada';
 
 // Missatges: Direcció
@@ -3682,13 +3697,20 @@ $app_list_strings['stic_messages_direction_list']['outbound'] = 'Sortida';
 // Missatges: Estats
 $app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviat';
+$app_list_strings['stic_messages_status_list']['received'] = 'Rebut';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
+$app_list_strings['stic_messages_status_list']['redirected'] = 'Redirigit';
 
 // Missatges: Tipus de registres pare
 $app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Interessats';
 $app_list_strings['stic_messages_parent_type_display']['Employees'] = 'Empleats';
+
+// Converses: Tipus
+$app_list_strings['stic_conversations_types_list'][''] = '';
+$app_list_strings['stic_conversations_types_list']['type1'] = 'Tipus 1';
+$app_list_strings['stic_conversations_types_list']['type2'] = 'Tipus 2';
 
 // Vistes personalitzades: Tipus d'usuari
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuari regular';
@@ -3948,6 +3970,10 @@ $app_list_strings['stic_awf_forms_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_awf_forms_status_list']['public'] = 'Públic';
 $app_list_strings['stic_awf_forms_status_list']['closed'] = 'Tancat';
 
+// Advanced Web Forms: types
+$app_list_strings['stic_awf_forms_types_list']['web'] = 'Formulari web';
+$app_list_strings['stic_awf_forms_types_list']['crm'] = "Formulari del CRM";
+
 // Advanced Web Forms: configuration->data_block->duplicate_detection->on_duplicate
 $app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['enrich'] = 'Amplia';
 $app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['update'] = 'Actualitza';
@@ -3968,6 +3994,7 @@ $app_list_strings['stic_awf_forms_field_type_in_form_list']['date'] = '🗓️ T
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['select'] = '▼ Opcions predeterminades';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['rating'] = '🏅 Valoració';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['hidden'] = '🕵️ Oculta';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['file'] = '📄 Fitxer';
 
 // Advanced Web Forms: configuration->data_block->field->subtype_in_form
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text'] = '🔤 Text simple';
@@ -3991,6 +4018,7 @@ $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_emoji'] =
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_lights'] = '🚦 Semàfor';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_thumbs'] = '👍 Polzes';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 Escala 0-10';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['file_upload'] = '📎 Fitxer adjunt';
 
 // Advanced Web Forms: configuration->data_block->field->value_type
 $app_list_strings['stic_awf_forms_field_value_type_list']['editable'] = 'Editable';
@@ -4063,10 +4091,32 @@ $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Ignorat';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Tractat';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sense canvis';
 
-// Converses: Tipus
-$app_list_strings['stic_conversations_types_list'][''] = '';
-$app_list_strings['stic_conversations_types_list']['type1'] = 'Tipus 1';
-$app_list_strings['stic_conversations_types_list']['type2'] = 'Tipus 2';
+// Advanced Web Forms Deferred Tickets: status
+$app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
+$app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pendent';
+$app_list_strings['stic_awf_deferred_tickets_status']['processing'] = 'Processant';
+$app_list_strings['stic_awf_deferred_tickets_status']['resolved'] = 'Resolt';
+$app_list_strings['stic_awf_deferred_tickets_status']['failed'] = 'Fallit';
+$app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancel·lat';
+
+// Advanced Web Forms Incoming Events: status
+$app_list_strings['stic_awf_incoming_events_status'][''] = '';
+$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pendent';
+$app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Processat';
+$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Fallit';
+$app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignorat';
+
+// Paperera de reciclatge: Motius de no restauració de relacions de la paperera
+$app_list_strings['stic_recycle_skip_reason_list'][''] = '';
+$app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Registre relacionat eliminat';
+$app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Registre relacionat reassignat';
+
+// Paperera de reciclatge: Origen de l'eliminació
+$app_list_strings['stic_recycle_deletion_source_list'][''] = '';
+$app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Vista de detall';
+$app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acció massiva';
+$app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinació de registres';
+$app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acció externa';
 
 // Modificacions del core de SuiteCRM
 
@@ -4175,6 +4225,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correu ele
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list_no_workflow']['whatsapp'] = 'WhatsApp';
 
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
@@ -4183,6 +4234,20 @@ $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificació';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Correu electrònic';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list']['whatsapp'] = 'WhatsApp';
+
+// Plantilles de Correu electrònic: Tipus de categoria WhatsApp
+$app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Màrqueting';
+$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utilitat';
+$app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Autenticació';
+
+// Plantilles de Correu electrònic: Tipus d'estat d'aprovació WhatsApp
+$app_list_strings['stic_whatsapp_status_list'][''] = '';
+$app_list_strings['stic_whatsapp_status_list']['draft'] = 'Esborrany';
+$app_list_strings['stic_whatsapp_status_list']['pending'] = "Pendent d'aprovació";
+$app_list_strings['stic_whatsapp_status_list']['approved'] = 'Aprovada';
+$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rebutjada';
+$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Creada sense enviar';
 
 // Elements afegits a l'Historial
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tasques';
