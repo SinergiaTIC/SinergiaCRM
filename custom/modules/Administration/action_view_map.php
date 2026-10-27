@@ -25,3 +25,6 @@
 $action_view_map['sticmanagesdaintegration'] = 'SticManageSdaIntegration';
 $action_view_map['sticmanagetestdata'] = 'SticManageTestData';
 $action_view_map['sticmanagemainmenu'] = 'SticManageMainMenu';
+// STIC-Custom 20261023 DEV - Related records panel administration screen
+// See stic-ai-handbook: output/features/related-records-panel
+$action_view_map['sticrelatedpanel'] = 'SticRelatedPanel';

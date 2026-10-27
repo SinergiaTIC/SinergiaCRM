@@ -1,0 +1,774 @@
+// This file is part of SinergiaCRM.
+// SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+// Copyright (C) 2013 - 2026 SinergiaTIC Association
+//
+// This program is free software; you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License version 3 as published by
+// the Free Software Foundation.
+//
+// STIC-Custom 20261023 DEV - Related records panel (right side bar)
+//
+// Styles for the collapsible right-hand panel that shows the related records of a
+// DetailView record (sections per subpanel rendered as a chronology), aligned
+// with the SuiteP design language (panels, badges, list-view rows).
+// Imported from SticCustom.scss so BOTH subthemes (Stic and SticCustom) get it,
+// and so the configurable base color ($stic-base / GENERAL_CUSTOM_THEME_COLOR)
+// is honored at compile time.
+//
+// See stic-ai-handbook: output/features/related-records-panel
+
+$rrp-width: 330px;
+$rrp-gap: 16px;
+$rrp-bg: #ffffff;
+$rrp-border: rgba($stic-text, 0.15);
+$rrp-border-light: rgba($stic-text, 0.08);
+$rrp-meta: rgba($stic-text, 0.55);
+$rrp-shadow: -3px 0 14px rgba(0, 0, 0, 0.12);
+$rrp-radius: 8px;
+$rrp-z-index: 1000;
+
+// --------------------------------------------------------------------------
+// Panel shell (SuiteP panel look)
+// --------------------------------------------------------------------------
+
+#stic-related-panel {
+  position: fixed;
+  top: $navbar-height + $rrp-gap;
+  right: 0;
+  bottom: $rrp-gap;
+  width: $rrp-width;
+  max-width: 92vw;
+  display: flex;
+  flex-direction: column;
+  background: $rrp-bg;
+  border: 1px solid $rrp-border;
+  border-right: none;
+  border-radius: $rrp-radius 0 0 $rrp-radius;
+  box-shadow: $rrp-shadow;
+  z-index: $rrp-z-index;
+  transform: translateX(100%);
+  transition: transform 0.2s ease;
+
+  &.is-open {
+    transform: translateX(0);
+  }
+}
+
+.stic-rrp-body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0; // allow the content to shrink and scroll
+}
+
+.stic-rrp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 6px 6px 14px;
+  background: $stic-sidebar;
+  color: $stic-sidebar-text;
+  border-radius: $rrp-radius 0 0 0;
+
+  .stic-rrp-title {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// ---------------------------------------------------------------------
+// Header toolbar (user preferences: pin / shrink detail view)
+// ---------------------------------------------------------------------
+
+.stic-rrp-header-tools {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 0 0 auto;
+}
+
+.stic-rrp-tool,
+.stic-rrp-close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+
+  .suitepicon {
+    display: block;
+    line-height: 28px;
+    font-size: 14px;
+  }
+
+  &:hover,
+  &:focus {
+    background: rgba($stic-sidebar-text, 0.15);
+    color: $stic-base;
+    outline: none;
+  }
+}
+
+.stic-rrp-tool.is-active {
+  background: rgba($stic-sidebar-text, 0.12);
+
+  // Active preference: the accent color wins over the hover rule
+  &,
+  &:hover {
+    color: $stic-base;
+  }
+}
+
+// CSS-drawn padlock (suitepicon has no lock glyph)
+.stic-rrp-lock {
+  position: relative;
+  display: inline-block;
+  width: 12px;
+  height: 9px;
+  margin-top: 9px;
+  border-radius: 2px;
+  background: currentColor;
+
+  &:before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: -6px;
+    width: 7px;
+    height: 6px;
+    margin-left: -3.5px;
+    border: 2px solid currentColor;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+  }
+
+  &:after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 2px;
+    width: 3px;
+    height: 4px;
+    margin-left: -1.5px;
+    border-radius: 1px;
+    background: $stic-sidebar;
+  }
+}
+
+.stic-rrp-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px 12px 4px;
+}
+
+// --------------------------------------------------------------------------
+// Toggle button (outside the sliding panel, like the left sidebar toggle)
+// --------------------------------------------------------------------------
+
+#stic-rrp-toggle {
+  position: fixed;
+  top: $navbar-height + $rrp-gap;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 6px 0 0 6px;
+  background: $stic-base;
+  color: bw($stic-base);
+  cursor: pointer;
+  z-index: $rrp-z-index + 1;
+  transition: right 0.2s ease, background-color 0.15s ease;
+
+  .suitepicon {
+    display: block;
+    line-height: 30px;
+    font-size: 16px;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    background: $stic-dark;
+  }
+
+  &:focus {
+    outline: 2px solid $stic-complement;
+    outline-offset: -2px;
+  }
+
+  &.stic-rrp-hidden {
+    display: none !important;
+  }
+}
+
+body.stic-rrp-open #stic-rrp-toggle .suitepicon {
+  transform: rotate(180deg);
+}
+
+// --------------------------------------------------------------------------
+// Status messages (loading / empty / error)
+// --------------------------------------------------------------------------
+
+.stic-rrp-status {
+  padding: 28px 8px;
+  text-align: center;
+  color: $rrp-meta;
+  font-size: 13px;
+}
+
+.stic-rrp-status-error {
+  color: $stic-complement;
+}
+
+.stic-rrp-retry {
+  display: block;
+  margin: 8px auto 0;
+  padding: 4px 14px;
+  border: 1px solid $rrp-border;
+  border-radius: 4px;
+  background: $stic-base;
+  color: bw($stic-base);
+  cursor: pointer;
+  font-size: 12px;
+
+  &:hover {
+    background: $stic-dark;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Sections (SuiteP panel / panel-heading look)
+// --------------------------------------------------------------------------
+
+.stic-rrp-section {
+  margin-bottom: 10px;
+  background: $rrp-bg;
+  border: 1px solid $rrp-border;
+  border-radius: 6px;
+  overflow: hidden;
+
+  &.is-empty {
+    border-style: dashed;
+    border-color: $rrp-border-light;
+
+    .stic-rrp-section-head .stic-rrp-section-title {
+      color: $rrp-meta;
+      font-weight: 400;
+    }
+  }
+
+  &.is-dragging {
+    opacity: 0.45;
+  }
+
+  &.is-drop-target {
+    outline: 2px dashed $stic-base;
+    outline-offset: -2px;
+  }
+}
+
+.stic-rrp-section-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 10px;
+  background: $stic-main-bg;
+  border: none;
+  border-bottom: 1px solid $rrp-border-light;
+  cursor: pointer;
+  text-align: left;
+  font-size: 13px;
+  color: $stic-text;
+
+  &:hover {
+    background: rgba($stic-base, 0.08);
+  }
+
+  .stic-rrp-section-handle {
+    color: rgba($stic-text, 0.35);
+    font-size: 12px;
+    cursor: grab;
+  }
+
+  .stic-rrp-icon {
+    color: $stic-base;
+    font-size: 15px;
+  }
+
+  .stic-rrp-section-title {
+    flex: 1 1 auto;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .stic-rrp-section-count {
+    background: $stic-base;
+    color: bw($stic-base);
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 11px;
+    font-weight: 600;
+
+    &.stic-rrp-count-empty {
+      background: rgba($stic-text, 0.35);
+    }
+  }
+
+  .stic-rrp-section-caret {
+    color: $rrp-meta;
+    font-size: 12px;
+    transition: transform 0.15s ease;
+  }
+}
+
+.stic-rrp-section.is-collapsed {
+  .stic-rrp-entries,
+  .stic-rrp-more {
+    display: none;
+  }
+
+  .stic-rrp-section-caret {
+    transform: rotate(-90deg);
+  }
+}
+
+.stic-rrp-more {
+  display: block;
+  padding: 6px 10px;
+  border-top: 1px dashed $rrp-border-light;
+  font-size: 12px;
+  color: $stic-base;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Entries (SuiteP list-view rows + timeline marks)
+// --------------------------------------------------------------------------
+
+.stic-rrp-entries {
+  position: relative;
+  list-style: none;
+  margin: 0;
+  padding: 4px 8px 8px 28px;
+
+  // Vertical timeline line
+  &:before {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 14px;
+    bottom: 14px;
+    width: 2px;
+    background: rgba($stic-base, 0.3);
+  }
+}
+
+.stic-rrp-entry {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid $rrp-border-light;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  // Timeline node
+  &:before {
+    content: '';
+    position: absolute;
+    left: -15px;
+    top: 16px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $stic-base;
+    border: 2px solid $rrp-bg;
+  }
+
+  &:hover {
+    background: rgba($stic-base, 0.04);
+  }
+}
+
+.stic-rrp-entry .stic-rrp-icon {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  text-align: center;
+  font-size: 14px;
+  color: $stic-complement;
+  background: rgba($stic-base, 0.14);
+  border-radius: 50%;
+}
+
+.stic-rrp-entry-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.stic-rrp-entry-title {
+  display: block;
+  font-weight: 600;
+  color: $stic-text;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover,
+  &:focus {
+    color: $stic-base;
+    text-decoration: underline;
+  }
+}
+
+.stic-rrp-entry-subtitle {
+  font-size: 11px;
+  color: $rrp-meta;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stic-rrp-entry-date {
+  flex: 0 0 auto;
+  font-size: 11px;
+  color: $rrp-meta;
+  white-space: nowrap;
+  padding-top: 3px;
+}
+
+.stic-rrp-entry-empty {
+  justify-content: center;
+  color: $rrp-meta;
+  font-size: 12px;
+  font-style: italic;
+  padding: 10px 0;
+
+  &:before {
+    display: none; // no timeline node for the "no records" placeholder
+  }
+}
+
+// --------------------------------------------------------------------------
+// User order tools
+// --------------------------------------------------------------------------
+
+.stic-rrp-tools {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 2px;
+  padding: 8px 4px 6px;
+  border-top: 1px dashed $rrp-border-light;
+
+  .stic-rrp-drag-hint {
+    font-size: 10px;
+    color: rgba($stic-text, 0.4);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .stic-rrp-reset-order {
+    font-size: 11px;
+    color: $stic-base;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Pinned mode: the panel lives beside the detail panels only
+// --------------------------------------------------------------------------
+
+@media (min-width: 1200px) {
+  body.stic-rrp-open.stic-rrp-pinned {
+    #stic-rrp-toggle {
+      right: $rrp-width;
+    }
+
+    // The fields area moves left ONLY when the user wants the detail view
+    // narrower ("shrink" preference, on by default); the bottom subpanels
+    // always keep the full width
+    &.stic-rrp-shrink .detail-view {
+      margin-right: $rrp-width + $rrp-gap;
+      transition: margin-right 0.2s ease;
+    }
+  }
+
+  #stic-rrp-toggle {
+    transition: right 0.2s ease, background-color 0.15s ease;
+  }
+
+  body.stic-rrp-open:not(.stic-rrp-pinned) #bootstrap-container {
+    margin-right: $rrp-width;
+    transition: margin-right 0.2s ease;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Administration configuration screen
+// --------------------------------------------------------------------------
+
+.stic-rrp-admin {
+  max-width: 960px;
+
+  .stic-rrp-admin-desc {
+    color: $rrp-meta;
+    font-size: 12px;
+    margin: 2px 0 4px 22px;
+  }
+
+  .stic-rrp-admin-option {
+    margin-bottom: 12px;
+
+    .stic-rrp-admin-check {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
+
+  .stic-rrp-admin-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .stic-rrp-admin-tree-desc {
+    margin: 0 0 12px;
+  }
+}
+
+.stic-rrp-admin-module {
+  border: 1px solid $rrp-border;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  background: #fff;
+
+  &.is-disabled {
+    .stic-rrp-admin-module-head {
+      opacity: 0.65;
+    }
+  }
+
+  .stic-rrp-admin-module-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: $stic-main-bg;
+    border-bottom: 1px solid $rrp-border-light;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba($stic-base, 0.08);
+    }
+
+    .suitepicon-module {
+      & + .stic-rrp-admin-module-label,
+      ~ .stic-rrp-admin-module-label {
+        color: $stic-base;
+      }
+    }
+
+    .stic-rrp-admin-module-label {
+      flex: 1 1 auto;
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .stic-rrp-admin-count {
+      background: rgba($stic-text, 0.35);
+      color: #fff;
+      border-radius: 10px;
+      padding: 1px 8px;
+      font-size: 11px;
+    }
+
+    .stic-rrp-admin-caret {
+      color: $rrp-meta;
+      transition: transform 0.15s ease;
+    }
+  }
+
+  &.is-collapsed {
+    .stic-rrp-admin-module-body {
+      display: none;
+    }
+
+    .stic-rrp-admin-caret {
+      transform: rotate(-90deg);
+    }
+  }
+
+  .stic-rrp-admin-module-body {
+    padding: 6px 8px;
+  }
+}
+
+.stic-rrp-admin-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: #fff;
+
+  &:hover {
+    background: rgba($stic-base, 0.05);
+  }
+
+  &.is-dragging {
+    opacity: 0.45;
+  }
+
+  &.is-drop-target {
+    outline: 2px dashed $stic-base;
+    outline-offset: -2px;
+  }
+
+  .stic-rrp-admin-handle {
+    color: rgba($stic-text, 0.35);
+    cursor: grab;
+    font-size: 12px;
+  }
+
+  .stic-rrp-admin-row-title {
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .stic-rrp-admin-row-key {
+    font-size: 11px;
+    color: $rrp-meta;
+    font-family: monospace;
+  }
+
+  .stic-rrp-admin-expand {
+    margin-left: auto;
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: $rrp-meta;
+    cursor: pointer;
+    padding: 0;
+
+    .suitepicon {
+      line-height: 28px;
+    }
+
+    &:hover {
+      background: rgba($stic-base, 0.12);
+      color: $stic-base;
+    }
+  }
+
+  .stic-rrp-admin-config {
+    display: none;
+    flex: 1 1 100%;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 10px 8px 4px 28px;
+    border-top: 1px dashed $rrp-border-light;
+    margin-top: 6px;
+  }
+
+  &.is-config-open .stic-rrp-admin-config {
+    display: flex;
+  }
+
+  .stic-rrp-admin-field {
+    flex: 0 1 auto;
+    min-width: 180px;
+
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: $rrp-meta;
+      margin-bottom: 2px;
+    }
+
+    select {
+      width: 100%;
+      max-width: 240px;
+    }
+  }
+}
+
+.stic-rrp-admin-actions {
+  margin-top: 14px;
+
+  .button {
+    margin-right: 6px;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Accessibility / print
+// --------------------------------------------------------------------------
+
+@media (prefers-reduced-motion: reduce) {
+  #stic-related-panel,
+  #stic-rrp-toggle,
+  #stic-rrp-toggle .suitepicon,
+  body.stic-rrp-open.stic-rrp-pinned .detail-view,
+  body.stic-rrp-open:not(.stic-rrp-pinned) #bootstrap-container {
+    transition: none;
+  }
+}
+
+@media print {
+  #stic-related-panel,
+  #stic-rrp-toggle,
+  #stic-rrp-container {
+    display: none !important;
+  }
+
+  body.stic-rrp-open.stic-rrp-pinned.stic-rrp-shrink .detail-view {
+    margin-right: 0;
+  }
+
+  body.stic-rrp-open:not(.stic-rrp-pinned) #bootstrap-container {
+    margin-right: 0;
+  }
+}

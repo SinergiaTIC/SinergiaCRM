@@ -371,6 +371,44 @@
             <script type="text/javascript" src="include/InlineEditing/inlineEditing.js"></script>
             <script type="text/javascript" src="modules/Favorites/favorites.js"></script>
 
+            {* STIC-Custom 20261022 DEV - Related records panel (right side bar)
+               Shell only: content is rendered by relatedRecordsPanel.js via the
+               sticRelatedPanel entry point (lazy load on first open).
+               See stic-ai-handbook: output/features/related-records-panel *}
+            {if !isset($smarty.request.print) && !isset($smarty.request.to_pdf)}
+            <div id="stic-rrp-container" class="stic-rrp-container">
+                <button type="button" id="stic-rrp-toggle" class="stic-rrp-toggle"
+                        aria-controls="stic-related-panel" aria-expanded="false"
+                        title="{$APP.LBL_RRP_OPEN}" data-title-open="{$APP.LBL_RRP_OPEN}" data-title-close="{$APP.LBL_RRP_CLOSE}">
+                    <span class="suitepicon suitepicon-action-forward"></span>
+                </button>
+                <aside id="stic-related-panel" class="stic-rrp" aria-hidden="true">
+                    <div class="stic-rrp-body" role="complementary" aria-label="{$APP.LBL_RRP_TITLE}">
+                        <header class="stic-rrp-header">
+                            <h3 class="stic-rrp-title">{$APP.LBL_RRP_TITLE}</h3>
+                            <div class="stic-rrp-header-tools">
+                                {* STIC-Custom 20261023 DEV - user preferences (pin / shrink) *}
+                                <button type="button" class="stic-rrp-tool stic-rrp-tool-pin" aria-pressed="false"
+                                        title="{$APP.LBL_RRP_PIN_TITLE}" data-title-on="{$APP.LBL_RRP_PIN_ON}" data-title-off="{$APP.LBL_RRP_PIN_OFF}">
+                                    <span class="stic-rrp-lock" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="stic-rrp-tool stic-rrp-tool-shrink" aria-pressed="false"
+                                        title="{$APP.LBL_RRP_SHRINK_TITLE}" data-title-on="{$APP.LBL_RRP_SHRINK_ON}" data-title-off="{$APP.LBL_RRP_SHRINK_OFF}">
+                                    <span class="suitepicon suitepicon-action-move-left" aria-hidden="true"></span>
+                                </button>
+                                <button type="button" class="stic-rrp-close"
+                                        aria-label="{$APP.LBL_RRP_CLOSE}" title="{$APP.LBL_RRP_CLOSE}">
+                                    <span class="suitepicon suitepicon-action-clear"></span>
+                                </button>
+                            </div>
+                        </header>
+                        <div class="stic-rrp-content" data-state="idle"></div>
+                    </div>
+                </aside>
+            </div>
+            {sugar_getscript file='custom/themes/SuiteP/js/relatedRecordsPanel.js'}
+            {/if}
+
             {literal}
 
                 <script type="text/javascript">

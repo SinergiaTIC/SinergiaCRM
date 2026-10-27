@@ -1563,3 +1563,7 @@ table.edit.view .selectize-control.single .selectize-input.focus { outline: none
   .sda-subsection { font-size: 12px; font-weight: 600; color: #37474f; padding: 6px 12px; background: #eceff1; border-left: 3px solid #78909c; margin: 12px 0 6px; .count { background: #78909c; color: #fff; font-size: 10px; padding: 1px 6px; border-radius: 8px; } }
   .sda-detail { font-size: 11px; color: #757575; padding: 4px 10px; background: #fafafa; border-radius: 3px; margin: 3px 0; }
 } 
+
+// STIC-Custom 20261022 DEV - Related records panel (right side bar)
+// See stic-ai-handbook: output/features/related-records-panel
+@import "SticRelatedPanel";
