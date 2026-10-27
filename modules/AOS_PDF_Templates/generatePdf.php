@@ -48,7 +48,10 @@ if (!isset($_REQUEST['uid']) || empty($_REQUEST['uid']) || !isset($_REQUEST['tem
 require_once('modules/AOS_PDF_Templates/templateParser.php');
 require_once('modules/AOS_PDF_Templates/sendEmail.php');
 require_once('modules/AOS_PDF_Templates/AOS_PDF_Templates.php');
+// STIC-Custom 20260813 ART - Repeated Headers in PDF Templates with Invoices
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1381
 require_once('custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php');
+// END STIC-Custom
 
 global $mod_strings, $sugar_config;
 
@@ -131,7 +134,10 @@ $text = str_replace("\$tax_amount", "\$" . $variableName . "_tax_amount", $text)
 $text = str_replace("\$shipping_amount", "\$" . $variableName . "_shipping_amount", $text);
 $text = str_replace("\$total_amount", "\$" . $variableName . "_total_amount", $text);
 
+// STIC-Custom 20260813 ART - Repeated Headers in PDF Templates with Invoices
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1381
 $text = stic_populate_group_lines($text, $lineItemsGroups, $lineItems);
+// END STIC-Custom
 
 $converted = templateParser::parse_template($text, $object_arr);
 $header = templateParser::parse_template($header, $object_arr);
@@ -181,6 +187,9 @@ if ($task === 'pdf' || $task === 'emailpdf') {
 
 // STIC-Custom 20260813 ART - Repeated Headers in PDF Templates with Invoices
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/1381
+// The functions below were moved to custom/modules/AOS_PDF_Templates/SticGeneratePdfFunctions.php
+// and renamed to stic_populate_group_lines(), stic_populate_product_lines() and
+// stic_populate_service_lines().
 // function populate_group_lines($text, $lineItemsGroups, $lineItems, $element = 'table')
 // {
     // $firstValue = '';
