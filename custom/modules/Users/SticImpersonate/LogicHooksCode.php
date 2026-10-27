@@ -40,7 +40,7 @@ class ImpersonateLogicHooks
         // STIC 2026-05-19 - Skip injection during AJAX requests (to_pdf=true)
         // to_pdf=true is used by KReports and other modules for AJAX calls,
         // and injecting HTML script tags would corrupt the JSON response
-        if (isset($_REQUEST['to_pdf']) && $_REQUEST['to_pdf'] == 'true') {
+        if (isset($_REQUEST['to_pdf']) && $_REQUEST['to_pdf'] == 'true'|| isset($_REQUEST['sugar_body_only']) && $_REQUEST['sugar_body_only']) {
             return;
         }
         
