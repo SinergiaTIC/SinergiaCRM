@@ -68,9 +68,7 @@
 			</button>
 			<i class="inline-help glyphicon glyphicon-info-sign"></i>
 			<div class="inline-help-content">{$MOD.LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION}</div>
-			{if $CURRENT_USER_ID eq '2'}
-				<label style="margin-left:16px"><input type="checkbox" id="debug-check" checked=""> {$MOD.LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL}</label>
-			{/if}
+			<label style="margin-left:16px"><input type="checkbox" id="debug-check" checked=""> {$MOD.LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL}</label>
 			<button id="sda-link" type="button" class="button" style="margin-left:24px">
 				<span class="glyphicon glyphicon-link text-success"></span> {$MOD.LBL_STIC_GO_TO_SDA_LINK_TITLE}
 			</button>
@@ -249,8 +247,7 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 	});
 
 	var debugCheck = document.getElementById("debug-check");
-	if (debugCheck) {
-		var rebuildUrl = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1";
+	var rebuildUrl = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1";
 		function toggleDebug() {
 			if (debugCheck.checked) {
 				rebuildUrl = "index.php?module=Administration&action=createReportingMySQLViews&debug=1&print_debug=1";
@@ -286,7 +283,6 @@ var SDA_DEBUG_LOADING = '{$MOD.LBL_STIC_DA_DEBUG_LOADING|escape:'javascript'}';
 				e.target.textContent = jQuery("#debug-content").is(":visible") ? SDA_DEBUG_HIDE : SDA_DEBUG_SHOW;
 			}
 		});
-	}
 
 	function toggleDependents(checkbox) {
 		if (checkbox.name === 'cache_enabled') {

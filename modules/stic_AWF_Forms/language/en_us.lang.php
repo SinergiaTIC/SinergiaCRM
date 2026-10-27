@@ -63,6 +63,8 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Overview',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
 
+  'LBL_LISTVIEW_OPTION_INVERT_SELECTION' => 'Invert selection',
+
   // -- MODULE FIELDS --
   'LBL_STATUS' => 'Status',
   'LBL_START_DATE' => 'Start date',
@@ -125,6 +127,7 @@ $mod_strings = array (
   // General editors
   'LBL_SELECT_PLACEHOLDER' => 'Select an item...',
   'LBL_SELECT_WRITE_TO_SEARCH' => 'Type to filter the list...',
+  'LBL_SELECT_SEARCH_CLEAN' => 'Clear filter',
   'LBL_SELECT_NO_RESULTS' => 'No matches found',
 
   // DataBlocks
@@ -184,8 +187,13 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_TYPE' => 'Value type',
   'LBL_FIELD_VALUE_OPTIONS_LIST' => 'Related list',
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE' => 'Customize options',
-  'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modified)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Select records',
+  'LBL_FIELD_VALUE_OPTIONS_ADD_REGS' => 'Add records',
+  'LBL_FIELD_VALUE_OPTIONS_PAGE_INFO' => '({from} - {to} of {total})',
+  'LBL_FIELD_VALUE_OPTIONS_RELOAD_LIST' => 'Reload list',
+  'LBL_FIELD_VALUE_OPTIONS_REMOVE_STALE' => 'Clear stale values',
+  'LBL_FIELD_VALUE_OPTIONS_PAGE_SIZE' => 'Records per page',
+  'LBL_FIELD_VALUE_OPTION_HIDE' => 'Hide',
   'LBL_FIELD_VALUE_OPTIONS' => 'Possible values',
   'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Show internal values',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Internal value',
