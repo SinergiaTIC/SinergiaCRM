@@ -47,12 +47,22 @@ class CustomHomeController extends HomeController
             if ($token !== null) {
                 $ssoUrl = rtrim($sdaUrl, '/') . '/?t=' . rawurlencode($token)
                         . ($return !== '' ? '#' . $return : '#/home');
-                SugarApplication::redirect($ssoUrl);
+                // 302 (no 301) + no-cache: un 301 se cachea en el navegador y
+                // dejaba a los usuarios atascados en una URL antigua sin token.
+                header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+                header('Pragma: no-cache');
+                header('Expires: Thu, 19 Nov 1981 08:52:00 GMT');
+                header('HTTP/1.1 302 Found');
+                header('Location: ' . $ssoUrl);
                 die();
             }
 
             // SSO not configured: plain redirect (legacy behaviour)
-            SugarApplication::redirect($sdaUrl . "/{$lang}/#");
+            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+            header('Pragma: no-cache');
+            header('Expires: Thu, 19 Nov 1981 08:52:00 GMT');
+            header('HTTP/1.1 302 Found');
+            header('Location: ' . $sdaUrl . "/{$lang}/#");
             die();
         } else {
             SugarApplication::appendErrorMessage("<p class='msg-fatal-lock'>{$mod_strings['LBL_STIC_SINERGIADA_NOT_ALLOWED']}");

@@ -78,7 +78,12 @@ if ($sdaEnabled) {
     if (!empty($a['sda_allowed_c']) && in_array((int) $a['sda_allowed_c'], [1, 2], true)) {
         $sinergiaDA = array(
             'sda_link' => array(
-                'linkinfo' => array($app_strings['LBL_STIC_SINERGIADA'] => "javascript:void(window.open('index.php?module=Home&action=sdaRedirect'))"),
+                // Abrir SinergiaDA en una pestaña nueva (target explícito: no todas
+                // las rutas de renderizado del menú respetan el target por defecto).
+                'linkinfo' => array(
+                    $app_strings['LBL_STIC_SINERGIADA'] => "index.php?module=Home&action=sdaRedirect",
+                    'target' => '_blank',
+                ),
                 'submenu' => '',
             ),
         );
