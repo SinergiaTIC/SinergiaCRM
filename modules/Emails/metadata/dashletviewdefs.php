@@ -118,6 +118,20 @@ $dashletData['EmailsDashlet']['searchFields'] = array (
       'width' => '10%',
       'default' => true,
       'name' => 'subject',
+      // STIC-Custom 20260409 ART - Add related fields to the Emails Dashlet to be able to use them in the displaySubjectField function
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/1045
+      'related_fields' =>
+      array (
+        0 => 'id',
+        1 => 'name',
+        2 => 'status',
+        3 => 'folder',
+        4 => 'folder_type',
+        5 => 'inbound_email_record',
+        6 => 'uid',
+        7 => 'msgno',
+      ),
+      // END STIC-Custom
     ),
     'date_sent_received' => 
     array (
@@ -153,7 +167,11 @@ $dashletData['EmailsDashlet']['searchFields'] = array (
     'from_addr_name' => 
     array (
       'type' => 'varchar',
-      'label' => 'from_addr_name',
+      // STIC-Custom 20260409 ART - Get the label correctly
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+      // 'label' => 'from_addr_name',
+      'label' => 'LBL_LIST_FROM_ADDR',
+      // END STIC-Custom
       'width' => '10%',
       'default' => false,
       'name' => 'from_addr_name',
@@ -161,7 +179,11 @@ $dashletData['EmailsDashlet']['searchFields'] = array (
     'reply_to_addr' => 
     array (
       'type' => 'varchar',
-      'label' => 'reply_to_addr',
+      // STIC-Custom 20260409 ART - Get the label correctly
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/1045
+      // 'label' => 'reply_to_addr',
+      'label' => 'LBL_REPLY_TO_ADDRESS',
+      // END STIC-Custom
       'width' => '10%',
       'default' => false,
       'name' => 'reply_to_addr',
@@ -169,7 +191,11 @@ $dashletData['EmailsDashlet']['searchFields'] = array (
     'to_addrs_names' => 
     array (
       'type' => 'varchar',
-      'label' => 'to_addrs_names',
+      // STIC-Custom 20260409 ART - Get the label correctly
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/1045
+      // 'label' => 'to_addrs_names',
+      'label' => 'LBL_TO_ADDRS',
+      // END STIC-Custom
       'width' => '10%',
       'default' => false,
       'name' => 'to_addrs_names',
@@ -268,7 +294,11 @@ $dashletData['EmailsDashlet']['searchFields'] = array (
     'description' => 
     array (
       'type' => 'text',
-      'label' => 'description',
+      // STIC-Custom 20260409 ART - Get the label correctly
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/1045
+      // 'label' => 'description',
+      'label' => 'LBL_DESCRIPTION',
+      // END STIC-Custom
       'sortable' => false,
       'width' => '10%',
       'default' => false,

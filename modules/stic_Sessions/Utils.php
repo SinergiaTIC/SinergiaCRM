@@ -76,9 +76,10 @@ class stic_SessionsUtils
             $sessionOriginalStartDate = $timeDate->to_display_date_time($sessionBean->fetched_row['start_date'], true, true, $current_user);
         }
         $sessionOriginalName = "{$eventName} | {$sessionOriginalStartDate}h";
+        $sessionOriginalName = html_entity_decode($sessionOriginalName, ENT_QUOTES, 'UTF-8');
 
         // If session name is empty or it has not been customized, (re)built it
-        if ($sessionOriginalName == $sessionBean->name || empty($sessionBean->name)) {
+        if ($sessionOriginalName == html_entity_decode($sessionBean->name, ENT_QUOTES, 'UTF-8') || empty($sessionBean->name)) {
             $sessionCurrentStartDate = $timeDate->to_display_date_time($sessionBean->start_date, true, true, $current_user);
             $sessionBean->name = "{$eventName} | {$sessionCurrentStartDate}h";
         }

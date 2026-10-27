@@ -21,7 +21,7 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $func_strings = array(
-    'NAME' => 'Documentos - Actualizar el estado de documentos relacionados con el voluntariado', // Esta etiqueta es obligatoria. Indica el nombre de la función
-    'NO_ROWS' => 'No se han encontrado documentos de voluntariado activos de personas que han dejado de ser voluntarias.',
-    'LOG' => 'Se ha actualizado el estado del documento validado a',
+    'NAME' => 'Documentos - Actualizar o estado de documentos relacionados co voluntariado', // Esta etiqueta es obligatoria. Indica el nombre de la función
+    'NO_ROWS' => 'Non se encontraron documentos de voluntariado activos de persoas que deixaran de ser voluntarias.',
+    'LOG' => 'Actualizouse o estado do documento validado a',
 );

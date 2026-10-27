@@ -102,6 +102,7 @@ $mod_strings['LBL_PROJECTS_TEMPLATES_RESOURCES'] = 'Recursos de plantillas de pr
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Generar Candidaturas';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Seleccione una oferta laboral en la ventana emergente';
 $mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Centro';
+$mod_strings['LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE'] = 'Activos';
 
 // Cadenas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -246,3 +247,13 @@ $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Proyecto actual';
 
 // Productos financieros
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productos financieros';
+
+// Cadenas Área Privada
+$mod_strings['LBL_STIC_PA_USERNAME'] = 'Usuario área privada';
+$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Contraseña área privada';
+$mod_strings['LBL_STIC_PA_ENABLE'] = 'Activar área privada';
+$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'Para que la persona pueda acceder al área privada es necesario que este campo esté marcado. Si no lo está, no se podrá acceder a ella aunque se disponga de nombre de usuario y contraseña. Al marcar este campo, si el parámetro de configuración <a href="index.php?module=stic_Settings&action=DetailView&record=f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11" target="_blank">PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE</a> está activado, se enviarán automáticamente a la persona las credenciales de acceso. En caso contrario, será necesario hacerlo de forma manual.';
+$mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'Para editar la contraseña es necesario que el campo "Activar área privada" esté marcado.';
+
+// Conversaciones
+$mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Conversaciones';

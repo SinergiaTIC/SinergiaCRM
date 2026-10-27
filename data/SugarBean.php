@@ -2539,12 +2539,20 @@ class SugarBean
                 // STIC-Custom 20241218 EPS - Avoid using property "key" if it is not setted
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/470
                 // if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && !is_null($this->$key)) {
-                if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && property_exists($this, $key) && !empty($this->$key)) {
+                // STIC-Custom 20260122 PCS - 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/957
+                // if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && property_exists($this, $key) && !empty($this->$key)) {
+                if (isset($def['type']) && in_array($def['type'], ['name', 'varchar']) && property_exists($this, $key) && !empty($this->$key) && empty($this->in_workflow)) {
+                // END STIC-Custom (PCS 20260122)
                 // END STIC-Custom (EPS 20241218)
                     $this->$key = trim($this->$key);
                 }
 
-                if (isset($def['type']) && ($def['type'] == 'html' || $def['type'] == 'longhtml')) {
+                // STIC-Custom 20260901 JCH - Avoid using property "key" if it is not set for html/longhtml fields
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1399
+                // if (isset($def['type']) && ($def['type'] == 'html' || $def['type'] == 'longhtml')) {
+                if (isset($def['type']) && ($def['type'] == 'html' || $def['type'] == 'longhtml') && property_exists($this, $key)) {
+                // END STIC-Custom (JCH 20260901)
                     $this->$key = purify_html($this->$key, ['HTML.ForbiddenElements' => ['iframe' => true]]);
                 // STIC-Custom 20210326 jchg: Avoid cleaning html in email templates body to preserve content pasted from external sources
                 // STIC#607
@@ -3892,11 +3900,21 @@ class SugarBean
             //Parent Field
             if ($data['type'] == 'parent') {
                 //See if we need to join anything by inspecting the where clause
+                // STIC-Custom 20260504 JBL - Fix regex to support table names with underscores (e.g. project_task)
+                // ttps://github.com/SinergiaTIC/SinergiaCRM/pull/1100
+                // Old regex only allowed one optional underscore, causing ProjectTask_project_task
+                // to be parsed as module=ProjectTask_project, table=task (wrong)
+                // $match = preg_match(
+                //     '/(^|[\s(])parent_([a-zA-Z]+_?[a-zA-Z]+)_([a-zA-Z]+_?[a-zA-Z]+)\.name/',
+                //     $where,
+                //     $matches
+                // );
                 $match = preg_match(
-                    '/(^|[\s(])parent_([a-zA-Z]+_?[a-zA-Z]+)_([a-zA-Z]+_?[a-zA-Z]+)\.name/',
+                    '/(^|[\s(])parent_([a-zA-Z]+?)_([a-zA-Z]+(?:_[a-zA-Z]+)*)\.name/',
                     $where,
                     $matches
                 );
+                // END STIC-Custom
                 if ($match) {
                     $joinTableAlias = 'jt' . $jtcount;
                     $joinModule = $matches[2];

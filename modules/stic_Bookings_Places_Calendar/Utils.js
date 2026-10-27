@@ -170,6 +170,9 @@ function initializeCalendar() {
           }
         }
       }
+      if (body.trim() === "") {
+        return;
+      }
       $(info.el).qtip({
         content: {
           title: title,
@@ -215,7 +218,7 @@ function initializeCalendar() {
     selectMirror: true,
     select: function (arg) {
       window.location.assign(
-        "index.php?module=stic_Bookings&action=EditView&return_action=index&return_module=stic_Bookings_Calendar&start=" +
+        "index.php?module=stic_Bookings&action=EditView&return_action=index&return_module=stic_Bookings_Places_Calendar&start=" +
           arg.startStr +
           "&end=" +
           arg.endStr +

@@ -83,4 +83,55 @@ class stic_ResourcesController extends SugarController
                 sugar_cleanup(true); 
         exit(); 
     }
+
+    public function action_massupdate()
+    {
+        if (!empty($_REQUEST['massupdate']) && $_REQUEST['massupdate'] == 'true' && (!empty($_REQUEST['uid']) || !empty($_REQUEST['entire']))) {
+            if (!empty($_REQUEST['Delete']) && $_REQUEST['Delete'] == 'true' && !$this->bean->ACLAccess('delete')
+                || (empty($_REQUEST['Delete']) || $_REQUEST['Delete'] != 'true') && !$this->bean->ACLAccess('save')
+            ) {
+                ACLController::displayNoAccess(true);
+                sugar_cleanup(true);
+            }
+
+            set_time_limit(0);//I'm wondering if we will set it never goes timeout here.
+            // until we have more efficient way of handling MU, we have to disable the limit
+            DBManagerFactory::getInstance()->setQueryLimit(0);
+            require_once("include/MassUpdate.php");
+            require_once('modules/MySettings/StoreQuery.php');
+            $seed = loadBean($_REQUEST['module']);
+            $mass = new MassUpdate();
+            $mass->setSugarBean($seed);
+            if (isset($_REQUEST['entire']) && empty($_POST['mass'])) {
+                $mass->generateSearchWhere($_REQUEST['module'], $_REQUEST['current_query_by_page']);
+            }
+            // This line is added to process custom query added to discrinate between places and resources in mass update. without this, the custom where is not added to mass update query and all the resources are updated instead of only places or non-places.
+            $mass->where_clauses .= html_entity_decode($_REQUEST['custom_where'] ?? '');
+            $mass->handleMassUpdate();
+            $storeQuery = new StoreQuery();//restore the current search. to solve bug 24722 for multi tabs massupdate.
+            $temp_req = array(
+                'current_query_by_page' => $_REQUEST['current_query_by_page'],
+                'return_module' => $_REQUEST['return_module'],
+                'return_action' => $_REQUEST['return_action']
+            );
+            if ($_REQUEST['return_module'] == 'Emails') {
+                if (!empty($_REQUEST['type']) && !empty($_REQUEST['ie_assigned_user_id'])) {
+                    $this->req_for_email = array(
+                        'type' => $_REQUEST['type'],
+                        'ie_assigned_user_id' => $_REQUEST['ie_assigned_user_id']
+                    ); // Specifically for My Achieves
+                }
+            }
+            $_REQUEST = array();
+            $_REQUEST = json_decode(html_entity_decode($temp_req['current_query_by_page']), true);
+            unset($_REQUEST[$seed->module_dir . '2_' . strtoupper($seed->object_name) . '_offset']);//after massupdate, the page should redirect to no offset page
+            $storeQuery->saveFromRequest($_REQUEST['module']);
+            $_REQUEST = array(
+                'return_module' => $temp_req['return_module'],
+                'return_action' => $temp_req['return_action']
+            );//for post_massupdate, to go back to original page.
+        } else {
+            sugar_die("You must massupdate at least one record");
+        }
+    }
 }

@@ -1,4 +1,25 @@
 <?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 #[\AllowDynamicProperties]
 class SticUtils
 {
@@ -869,6 +890,31 @@ EOQ;
 
         // 12. Return the parsed and cleaned array
         return $parsedTemplate;
+    }
+
+    /**
+     * Output a JSON response with proper HTTP headers and buffer cleanup.
+     *
+     * Ensures clean output by ending and clearing any existing output buffers
+     * before sending the JSON response.
+     *
+     * @param string $status Status of the operation ('success' or 'error')
+     * @param array  $errors Array of error messages
+     * @param array  $infos  Array of information/success messages
+     *
+     * @return void
+     */
+    public static function outputJsonResponse($status, $errors, $infos) {
+        @ob_end_clean();
+        ob_start();
+        ob_clean();
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => $status,
+            'errors' => $errors,
+            'infos' => $infos,
+        ]);
+        ob_flush();
     }
 
 }

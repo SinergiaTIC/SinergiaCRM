@@ -34,16 +34,41 @@ class templateParser
     {
         foreach ($bean_arr as $bean_name => $bean_id) {
             $focus = BeanFactory::getBean($bean_name, $bean_id);
+
+            // STIC-Custom 20260420 ART - Avoid "Attempt to read property 'field_defs' on null" when bean is not found
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1059
+            if (!is_object($focus) || empty($focus->field_defs)) {
+                continue;
+            }
+            // END STIC Custom
+
             $string = templateParser::parse_template_bean($string, $focus->table_name, $focus);
 
             foreach ($focus->field_defs as $focus_name => $focus_arr) {
-                if ($focus_arr['type'] == 'relate') {
-                    if (isset($focus_arr['module']) && $focus_arr['module'] != '' && $focus_arr['module'] != 'EmailAddress') {
-                        $idName = $focus_arr['id_name'];
-                        $relate_focus = BeanFactory::getBean($focus_arr['module'], $focus->$idName);
+                // STIC-Custom 20260420 ART - Avoid "Attempt to read property 'id_name' on null" when field definition is not correct
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1059
+                // if ($focus_arr['type'] == 'relate') {
+                //     if (isset($focus_arr['module']) && $focus_arr['module'] != '' && $focus_arr['module'] != 'EmailAddress') {
+                //         $idName = $focus_arr['id_name'];
+                //         $relate_focus = BeanFactory::getBean($focus_arr['module'], $focus->$idName);
 
-                        $string = templateParser::parse_template_bean($string, $focus_arr['name'], $relate_focus);
+                //         $string = templateParser::parse_template_bean($string, $focus_arr['name'], $relate_focus);
+                //     }
+                if (isset($focus_arr['type']) && $focus_arr['type'] == 'relate') {
+                    if (isset($focus_arr['module']) && $focus_arr['module'] != '' && $focus_arr['module'] != 'EmailAddress') {
+                        $idName = $focus_arr['id_name'] ?? '';
+
+                        if ($idName === '' || !isset($focus->{$idName})) {
+                            continue;
+                        }
+
+                        $relate_focus = BeanFactory::getBean($focus_arr['module'], $focus->{$idName});
+
+                        if (!empty($focus_arr['name'])) {
+                            $string = templateParser::parse_template_bean($string, $focus_arr['name'], $relate_focus);
+                        }
                     }
+                    // END STIC Custom
                 }
             }
         }
@@ -101,6 +126,14 @@ class templateParser
                         $translatedVals = array();
 
                         foreach ($mVals as $mVal) {
+                            // STIC-Custom 20260420 ART - Avoid translating full multienum list when value is empty
+                            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1059
+                            // If $mVal is empty, translate() can return the full options array
+                            if ($mVal === '' || $mVal === null) {
+                                continue;
+                            }
+                            // END STIC Custom
+
                             // STIC Custom 20250312 JBL - Avoid Warning: Array to string conversion
                             // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                             // $translatedVals[] = translate($field_def['options'], $focus->module_dir, $mVal);

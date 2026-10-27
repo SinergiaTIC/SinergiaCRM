@@ -1,0 +1,110 @@
+<?php
+/**
+ *
+ * SugarCRM Community Edition is a customer relationship management program developed by
+ * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
+ *
+ * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
+ * Copyright (C) 2011 - 2018 SalesAgility Ltd.
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation with the addition of the following permission added
+ * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
+ * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
+ * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
+ * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
+ *
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License version 3.
+ *
+ * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
+ * these Appropriate Legal Notices must retain the display of the "Powered by
+ * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
+ * reasonably feasible for technical reasons, the Appropriate Legal Notices must
+ * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
+ */
+
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
+$module_name = 'stic_AWF_Links';
+$listViewDefs[$module_name] = array(
+    'NAME' => array(
+        'label' => 'LBL_NAME',
+        'default' => true,
+        'link' => true
+    ),
+    'STIC_C271_LINKS_NAME' => array(
+        'label' => 'LBL_RESPONSE',
+        'module' => 'stic_AWF_Responses',
+        'id' => 'STIC_AWF_RESPONSES_STIC_AWF_LINKSRESPONSES_IDA',
+        'link' => true,
+        'default' => true
+    ),
+    'SEQUENCE_NUMBER' => array(
+        'width' => '5',
+        'label' => 'LBL_SEQUENCE_NUMBER',
+        'default' => false,
+    ),
+    'RECORD_ACTION' => array(
+        'label' => 'LBL_RECORD_ACTION',
+        'default' => true,
+    ),
+    'PARENT_TYPE_TRANSLATED' => array(
+        'width' => '15%',
+        'label' => 'LBL_PARENT_TYPE',
+        'default' => true,
+        'sortable' => false,
+        'related_fields' => array('parent_type'), 
+    ),
+    'PARENT_NAME' => array(
+        'type' => 'parent',
+        'studio' => 'visible',
+        'label' => 'LBL_FLEX_RELATE',
+        'link' => true,
+        'sortable' => false,
+        'ACLTag' => 'PARENT',
+        'dynamic_module' => 'PARENT_TYPE',
+        'id' => 'PARENT_ID',
+        'related_fields' => array(
+            0 => 'parent_id',
+            1 => 'parent_type',
+        ),
+        'width' => '10%',
+        'default' => true,
+    ),
+    'SUBMITTED_DATA' => array(
+        'width' => '30',
+        'label' => 'LBL_SUBMITTED_DATA',
+        'default' => false,
+    ),
+    'DATE_ENTERED' => array(
+        'type' => 'datetime',
+        'label' => 'LBL_DATE_ENTERED',
+        'width' => '10%',
+        'default' => true,
+    ),
+    'ASSIGNED_USER_NAME' => array(
+        'width' => '9',
+        'label' => 'LBL_ASSIGNED_TO_NAME',
+        'module' => 'Employees',
+        'id' => 'ASSIGNED_USER_ID',
+        'default' => true
+    ),
+
+);

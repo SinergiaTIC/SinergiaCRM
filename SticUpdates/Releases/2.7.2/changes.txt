@@ -1,0 +1,8 @@
+M	SticUpdate.php
+M	config.php
+M	themes/SuiteP/css/Dawn/style.css
+M	themes/SuiteP/css/Day/style.css
+M	themes/SuiteP/css/Dusk/style.css
+M	themes/SuiteP/css/Night/style.css
+M	themes/SuiteP/css/Noon/style.css
+M	themes/SuiteP/css/Stic/style.css

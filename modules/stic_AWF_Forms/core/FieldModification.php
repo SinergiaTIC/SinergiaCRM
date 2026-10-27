@@ -1,0 +1,62 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+// Prevents directly accessing this file from a web browser
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
+
+enum FieldModificationStatus: string
+{
+    case APPLIED = 'applied';
+    case UNCHANGED = 'unchanged';
+    case IGNORED_ENRICH = 'ignored_enrich';
+    case SKIPPED_DUPLICATE = 'skipped_duplicate';
+}
+
+/**
+ * Class representing field modification as result of an action.
+ */
+class FieldModification
+{
+    public string $fieldName;
+    public FieldModificationStatus $status;
+    public mixed $value;
+    public mixed $oldValue;
+    public ?string $label;
+    public ?string $actionName;
+
+    public function __construct(string $fieldName, FieldModificationStatus $status, mixed $value, mixed $oldValue = null, ?string $label = null, ?string $actionName = null)
+    {
+        $this->fieldName = $fieldName;
+        $this->status = $status;
+        $this->value = $value;
+        $this->oldValue = $oldValue;
+        $this->label = $label;
+        $this->actionName = $actionName;
+    }
+
+    public function wasApplied(): bool
+    {
+        return $this->status === FieldModificationStatus::APPLIED;
+    }
+}

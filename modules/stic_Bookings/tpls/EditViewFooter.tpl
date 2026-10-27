@@ -25,7 +25,7 @@
 
 <div class="right-aligned-container">
   <div id="repeat_options" style="display: none;">
-    <h2 id="resourcesTitle">{$MOD.LBL_PERIODIC_BOOKING}</h2>
+    <h2 id="repeatTitle">{$MOD.LBL_PERIODIC_BOOKING}</h2>
     <table class="BookingRepeatForm" width="100%" border="0" cellpadding="0" cellspacing="0">
         <tr>
             <td width="12.5%" valign="top" scope="row">{$MOD.LBL_REPEAT_TYPE}:</td>
@@ -99,7 +99,7 @@
   </div>
 </div>
 
-<h2 id="resourcesTitle">{$MOD.LBL_RESOURCES}  <button id="openCenterPopup" type="button" class="button">{$MOD.LBL_CENTERS_BUTTON}</button></h2>
+<h2 id="resourcesTitle">{$RESOURCES_MOD.LBL_MODULE_NAME}  <button id="openCenterPopup" type="button" class="button">{$RESOURCES_MOD.LBL_CENTERS_BUTTON}</button></h2>
 <div class="filter-box">
     <div id="resourceSearchFields" class="filter-content">
         <div id="selectedCentersContainer">
@@ -108,31 +108,31 @@
         
         <div class="filter-row">
             <div class="filter-item">
-                <label for="resourcePlaceUserType">{$MOD.LBL_RESOURCES_USER_TYPE}</label>
+                <label for="resourcePlaceUserType">{$RESOURCES_MOD.LBL_USER_TYPE}</label>
                 <select id="resourcePlaceUserType" name="resourcePlaceUserType" multiple></select>
             </div>
             
             <div class="filter-item">
-                <label for="resourcePlaceType">{$MOD.LBL_RESOURCES_PLACE_TYPE}</label>
+                <label for="resourcePlaceType">{$RESOURCES_MOD.LBL_PLACE_TYPE}</label>
                 <select id="resourcePlaceType" name="resourcePlaceType" multiple></select>
             </div>
         </div>
         
         <div class="filter-row">
             <div class="filter-item">
-                <label for="resourceGender">{$MOD.LBL_RESOURCES_GENDER}</label>
+                <label for="resourceGender">{$RESOURCES_MOD.LBL_GENDER}</label>
                 <select id="resourceGender" name="resourceGender" multiple></select>
             </div>
             
             <div class="filter-item">
-                <label for="resourceName">{$MOD.LBL_RESOURCES_NAME}</label>
+                <label for="resourceName">{$RESOURCES_MOD.LBL_NAME}</label>
                 <input type="text" id="resourceName" name="resourceName">
             </div>
         </div>
         
         <div class="filter-row">
             <div class="filter-item">
-                <label for="numberOfPlaces">{$MOD.LBL_NUMBER_OF_PLACES}</label>
+                <label for="numberOfPlaces">{$RESOURCES_MOD.LBL_NUMBER_OF_PLACES}</label>
                 <input type="number" id="numberOfPlaces" name="numberOfPlaces">
             </div>
         </div>

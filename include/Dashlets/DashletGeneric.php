@@ -419,6 +419,29 @@ class DashletGeneric extends Dashlet
             }
 
             $this->columns = $dashletData[$this->seedBean->module_dir.'Dashlet']['columns'];
+
+            // STIC-Custom 20260424 ART - Ensure Emails dashlet subject column has required related_fields if the custom metadata is missing
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1045
+            if ($this->seedBean->module_dir === 'Emails' && isset($this->columns['subject'])) {
+                $requiredRelatedFields = [
+                    'id',
+                    'name',
+                    'status',
+                    'folder',
+                    'folder_type',
+                    'inbound_email_record',
+                    'uid',
+                    'msgno',
+                ];
+
+                $existingRelatedFields = $this->columns['subject']['related_fields'] ?? [];
+                if (!is_array($existingRelatedFields)) {
+                    $existingRelatedFields = [];
+                }
+                $mergedFields = array_merge($existingRelatedFields, $requiredRelatedFields);
+                $this->columns['subject']['related_fields'] = array_values(array_unique($mergedFields));
+            }
+            // END STIC-Custom
         }
     }
 

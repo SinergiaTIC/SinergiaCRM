@@ -261,6 +261,15 @@ array(
                 'default' => true,
                 'name' => 'color',
             ),
+            'stic_assets_stic_followups_name' => array(
+                'type' => 'relate',
+                'link' => true,
+                'label' => 'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_ASSETS_TITLE',
+                'id' => 'STIC_ASSETS_STIC_FOLLOWUPSSTIC_ASSETS_IDA',
+                'width' => '10%',
+                'default' => true,
+                'name' => 'stic_assets_stic_followups_name',
+            ),
             'description' => array(
                 'type' => 'text',
                 'label' => 'LBL_DESCRIPTION',
@@ -322,5 +331,3 @@ array(
         ),
     ),
 );
-
-?>

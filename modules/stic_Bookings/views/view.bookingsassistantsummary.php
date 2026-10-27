@@ -41,9 +41,17 @@ class stic_BookingsViewBookingsAssistantSummary extends SugarView
         if (isset($_SESSION['summary']) && isset($_SESSION['consolidated_summary'])) {
             $this->ss->assign('DATA', $_SESSION['summary']['global']);
             $this->ss->assign('CONSOLIDATED_SUMMARY', json_encode($_SESSION['consolidated_summary']));
+            // is_all_day is needed in the template to know if we need to apply the logic of removing hours and minutes to the dates or not, as the summary can be shown both for all day events and for events with specific hours. This value is obtained from the first booking in the list of bookings to confirm, but it could be obtained from any of them as they should all have the same value for all_day.
+            $isAllDay = false;
+            if (!empty($_SESSION['bookings_to_confirm']) && is_array($_SESSION['bookings_to_confirm'])) {
+                $firstBooking = reset($_SESSION['bookings_to_confirm']);
+                $isAllDay = !empty($firstBooking['all_day']) && $firstBooking['all_day'] == '1';
+            }
+            $this->ss->assign('IS_ALL_DAY', $isAllDay ? 'true' : 'false');
         } else {
             $this->ss->assign('DATA', ['totalRecordsProcessed' => 0, 'totalRecordsCreated' => 0, 'totalRecordsNotCreated' => 0]);
             $this->ss->assign('CONSOLIDATED_SUMMARY', json_encode([]));
+            $this->ss->assign('IS_ALL_DAY', 'false');
         }
         
         $this->ss->assign('RECORDS_PER_PAGE', $sugar_config['list_max_entries_per_page']);

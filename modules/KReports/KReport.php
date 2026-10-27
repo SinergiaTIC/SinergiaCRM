@@ -1434,6 +1434,12 @@ class KReport extends SugarBean {
             //2013-01-22 changed to rawurldecode
             //$formulaRaw = urldecode(base64_decode($thisListEntry ['formulavalue'], true));
             $formulaRaw = rawurldecode(base64_decode($thisListEntry ['formulavalue'], true));
+            // STIC-Custom 20260318 EPS - Special characters in formulas are not properly handled - convert to UTF-8
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1030
+            if (!mb_check_encoding($formulaRaw, 'UTF-8')) {
+               $formulaRaw = mb_convert_encoding($formulaRaw, 'UTF-8', 'ISO-8859-1');
+            }
+            // END STIC
 
             // if the value is not base 64
             if (!$formulaRaw)

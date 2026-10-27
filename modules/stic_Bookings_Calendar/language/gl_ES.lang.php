@@ -32,7 +32,7 @@ $mod_strings = array(
     'LBL_AVAILABILITY_MODE_BUTTON_HELP' => 'Para mostrar a dispoñibilidade debe seleccionarse polo menos un recurso.',
     'LBL_MOBILE_BUTTON' => 'Móbil',
 
-    'LBL_TODAY' => 'Hoy',
+    'LBL_TODAY' => 'Hoxe',
     'LBL_MONTH' => 'Mes',
     'LBL_WEEK' => 'Semana',
     'LBL_DAY' =>  'Día',
