@@ -22,6 +22,7 @@
  */
 
 require_once 'modules/Users/controller.php';
+require_once 'custom/modules/Users/SticUserLockoutUtils.php';
 class CustomUsersController extends UsersController
 {
     /**
@@ -69,5 +70,34 @@ class CustomUsersController extends UsersController
             $GLOBALS['log']->fatal(__METHOD__.__LINE__.'Failed to stop impersonation.');
             die('Failed to stop impersonation.');
         }
+    }
+
+    /**
+    * Action to manually unlock a user account by an admin user
+    * This is used when the automatic unlock period has not yet expired but an admin wants to unlock the user immediately
+    */
+    public function action_unlockuser()
+    {
+        global $current_user;
+        $record = $_REQUEST['record'] ?? '';
+
+        if (!is_admin($current_user) || empty($record)) {
+            SugarApplication::redirect('index.php?module=Users&record=' . $record . '&action=DetailView');
+            return;
+        }
+
+        $user = BeanFactory::newBean('Users');
+        $user->retrieve($record);
+        if (empty($user->id)) {
+            SugarApplication::redirect('index.php?module=Users&action=index');
+            return;
+        }
+
+        // An admin can unlock any user, including another admin
+        SticUserLockoutUtils::clearLockoutPreferencesAndSession($user->id, $user->user_name);
+
+        $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ') ### User ' . $user->user_name . ' unlocked manually ###');
+
+        return;
     }
 }
