@@ -111,6 +111,7 @@ $mod_strings['LBL_USER_UNLOCKED_MSG'] = 'User unlocked';
 $mod_strings['LBL_USER_LOCKOUT_COUNTDOWN'] = '⛔ User locked out. It will be automatically unlocked in {minutes} min {seconds} sec.';
 $mod_strings['LBL_USER_LOCKOUT_FINISHED_REFRESHING'] = '✅ Lockout period finished. Refreshing...';
 $mod_strings['LBL_USER_UNLOCKED_REFRESHING'] = '✅ User unlocked. Refreshing...';
-$mod_strings['ERR_USER_IS_LOCKED_OUT'] = 'This user has been locked out and cannot log in using their current password. If you want to be unlocked, please contact the administrator.';
-$mod_strings['ERR_USER_IS_LOCKED_OUT_DETAILVIEW'] = 'This user has been locked out due to multiple failed login attempts. You can unlock them using the "Unlock user" action.';
+$mod_strings['ERR_USER_IS_LOCKED_OUT'] = '⛔ This user has been locked out and cannot log in using their current password. If you want to be unlocked, please contact the administrator.';
+$mod_strings['ERR_USER_IS_LOCKED_OUT_DETAILVIEW'] = '⛔ This user has been locked out due to multiple failed login attempts. You can unlock them using the "Unlock user" action.';
+$mod_strings['ERR_INVALID_PASSWORD_OR_USER_LOCKED_OUT'] = 'You must specify a valid username and password. If you have exceeded the maximum number of failed login attempts, your account may be locked.';
 
