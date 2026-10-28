@@ -92,21 +92,7 @@ class CustomUsersController extends UsersController
             return;
         }
 
-        $db = DBManagerFactory::getInstance();
-        $userId = $db->quote($user->id);
-
-        // Load existing preferences to preserve non-lockout settings
-        $result = $db->query("SELECT contents FROM user_preferences WHERE assigned_user_id = '{$userId}' AND category = 'global' AND deleted = 0");
-        $row = $db->fetchByAssoc($result);
-        $prefs = $row ? unserialize(base64_decode($row['contents'])) : [];
-
-        // Clear lockout-related keys
-        unset($prefs['user_locked_out'], $prefs['user_locked_out_time'], $prefs['lockout'], $prefs['loginfailed']);
-
-        // Persist updated preferences
-        $encoded = base64_encode(serialize($prefs));
-        $db->query("DELETE FROM user_preferences WHERE assigned_user_id = '{$userId}' AND category = 'global'");
-        $db->query("INSERT INTO user_preferences (id, assigned_user_id, category, contents, deleted) VALUES ('{$userId}-global', '{$userId}', 'global', '{$encoded}', 0)");
+        $prefs = self::clearLockoutPreferences($user->id);
 
         // Clear session cache for this user's preferences
         $prefKey = $user->user_name . '_PREFERENCES';
@@ -117,5 +103,45 @@ class CustomUsersController extends UsersController
         $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ') ### User ' . $user->user_name . ' unlocked manually ###');
 
         return;
+    }
+
+    /**
+     * Removes the lockout related preferences of a user directly in the database,
+     * preserving the rest of their preferences.
+     *
+     * The bean preference API must not be used for a user other than the current one:
+     * their preferences are not loaded into the session, so saving would overwrite the
+     * whole preferences set with only the modified keys. This would wipe preferences
+     * such as 'ut' and make the user wizard appear again on the next login.
+     *
+     * @param string $userId
+     * @return array The updated preferences
+     */
+    public static function clearLockoutPreferences($userId)
+    {
+        $db = DBManagerFactory::getInstance();
+        $userId = $db->quote($userId);
+
+        // Load existing preferences to preserve non-lockout settings
+        $result = $db->query("SELECT contents FROM user_preferences WHERE assigned_user_id = '{$userId}' AND category = 'global' AND deleted = 0");
+        $row = $db->fetchByAssoc($result);
+        $prefs = ($row && !empty($row['contents'])) ? unserialize(base64_decode($row['contents'])) : array();
+        if (!is_array($prefs)) {
+            $prefs = array();
+        }
+
+        // Clear lockout-related keys
+        unset($prefs['user_locked_out'], $prefs['user_locked_out_time'], $prefs['lockout'], $prefs['loginfailed']);
+
+        // Persist updated preferences, keeping the rest of them untouched
+        $encoded = $db->quote(base64_encode(serialize($prefs)));
+        if ($row) {
+            $db->query("UPDATE user_preferences SET contents = '{$encoded}' WHERE assigned_user_id = '{$userId}' AND category = 'global' AND deleted = 0");
+        } else {
+            $id = $db->quote(create_guid());
+            $db->query("INSERT INTO user_preferences (id, assigned_user_id, category, contents, deleted) VALUES ('{$id}', '{$userId}', 'global', '{$encoded}', 0)");
+        }
+
+        return $prefs;
     }
 }
