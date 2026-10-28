@@ -154,8 +154,19 @@ class SugarAuthenticate
 
         // STIC-Custom 20260612 ART - User Lockout Settings 
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+        $userLockoutEnabled = !empty($sugar_config['userlockout']['enabled']);
+
+        // When the lockout feature is disabled, clear any stale lockout state so that
+        // re-enabling it starts from scratch instead of reusing old counters
+        if (!$userLockoutEnabled && $usr->status === 'Active'
+            && ($usr->getPreference('user_locked_out') || $usr->getPreference('loginfailed'))
+        ) {
+            require_once 'custom/modules/Users/SticUserLockoutUtils.php';
+            SticUserLockoutUtils::clearLockoutPreferencesAndSession($usr->id, $usr->user_name);
+        }
+
         // Check if user lockout feature is enabled. Only active users are subject to lockout.
-        if (!empty($sugar_config['userlockout']['enabled']) && $usr->status === 'Active') {
+        if ($userLockoutEnabled && $usr->status === 'Active') {
             if ($this->isUserLockedOut($usr)) {
                 $_SESSION['login_error'] = $this->getLoginErrorMessage();
                 return false;
@@ -196,17 +207,16 @@ class SugarAuthenticate
                 //     $usr->setPreference('loginfailed', $logout+1);
                 // }
                 // $usr->savePreferencesToDB();
-                // Track failed logins and lockout only for active users, so the lockout system does not apply to inactive users (which cannot log in anyway)
-                if ($usr->status === 'Active') {
+                // Track failed logins and lockout only when the feature is enabled and the user is active
+                if ($userLockoutEnabled && $usr->status === 'Active') {
                     if (($logout=$usr->getPreference('loginfailed'))=='') {
                         $usr->setPreference('loginfailed', '1');
                     } else {
                         $usr->setPreference('loginfailed', $logout+1);
                     }
 
-                    // Only apply lockout logic if feature is enabled
-                    if (!empty($sugar_config['userlockout']['enabled']) &&
-                        !empty($sugar_config['userlockout']['maxfailedlogins']) &&
+                    // Apply lockout logic only if a maximum has been configured
+                    if (!empty($sugar_config['userlockout']['maxfailedlogins']) &&
                         ($logout + 1) >= $sugar_config['userlockout']['maxfailedlogins']
                     ) {
                         $usr->setPreference('user_locked_out', true);
