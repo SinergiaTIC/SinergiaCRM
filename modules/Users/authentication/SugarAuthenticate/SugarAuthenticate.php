@@ -160,6 +160,13 @@ class SugarAuthenticate
                 $_SESSION['login_error'] = $this->getLoginErrorMessage();
                 return false;
             }
+
+            // Reset the lockout once the automatic unlock period has elapsed
+            // Clear the counter as well, so a wrong password does not lock the account again immediately
+            if ($usr->getPreference('user_locked_out') && !empty($sugar_config['userlockout']['automaticunlocktime'])) {
+                require_once 'custom/modules/Users/SticUserLockoutUtils.php';
+                SticUserLockoutUtils::clearLockoutPreferencesAndSession($usr->id, $usr->user_name);
+            }
         }
         // END STIC-Custom
         if ($this->userAuthenticate->loadUserOnLogin($username, $password, $fallback, $PARAMS)) {
