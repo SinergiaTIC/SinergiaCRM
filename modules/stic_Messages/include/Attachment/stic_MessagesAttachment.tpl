@@ -1,5 +1,4 @@
-<?php
-/**
+{*
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
  * Copyright (C) 2013 - 2023 SinergiaTIC Association
@@ -19,12 +18,7 @@
  * 02110-1301 USA.
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
-
-$lblAttach = htmlspecialchars($mod_strings['LBL_ATTACHMENT'] ?? 'LBL_ATTACHMENT');
-$lblRemove = htmlspecialchars($mod_strings['LBL_ATTACHMENT_REMOVE'] ?? 'LBL_ATTACHMENT_REMOVE');
-$lblUploading = htmlspecialchars($mod_strings['LBL_CONVERSATION_UPLOADING'] ?? 'LBL_CONVERSATION_UPLOADING');
-?>
+ *}
 <div id="stic_attachment_widget" style="display:none;">
     <input type="hidden" id="media_note_id" name="media_note_id" value="">
 
@@ -42,10 +36,10 @@ $lblUploading = htmlspecialchars($mod_strings['LBL_CONVERSATION_UPLOADING'] ?? '
     <div id="stic_attach_btn_row" style="display:flex;align-items:center;gap:10px;">
         <button type="button" class="button" id="stic_attach_btn"
                 onclick="document.getElementById('stic_media_file').click();">
-            📎 <?= $lblAttach ?>
+            📎 {$MOD.LBL_ATTACHMENT|escape:'html':'UTF-8'}
         </button>
         <span id="stic_attach_uploading" style="display:none;font-size:11px;color:#888;">
-            ⏳ <?= $lblUploading ?>
+            ⏳ {$MOD.LBL_CONVERSATION_UPLOADING|escape:'html':'UTF-8'}
         </span>
     </div>
 
@@ -58,6 +52,6 @@ $lblUploading = htmlspecialchars($mod_strings['LBL_CONVERSATION_UPLOADING'] ?? '
         <span id="stic_attach_name" style="flex:1;"></span>
         <a href="#" id="stic_attach_remove"
            style="color:#e53935;font-size:13px;text-decoration:none;"
-           onclick="sticRemoveAttachment();return false;">✕ <?= $lblRemove ?></a>
+           onclick="sticRemoveAttachment();return false;">✕ {$MOD.LBL_ATTACHMENT_REMOVE|escape:'html':'UTF-8'}</a>
     </div>
 </div>
