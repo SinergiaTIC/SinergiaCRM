@@ -2527,7 +2527,7 @@ DROP TABLE IF EXISTS `cron_remove_documents`;
 CREATE TABLE IF NOT EXISTS `cron_remove_documents` (
   `id` varchar(36) NOT NULL,
   `bean_id` varchar(36) DEFAULT NULL,
-  `module` varchar(25) DEFAULT NULL,
+  `module` varchar(100) DEFAULT NULL,
   `date_modified` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
