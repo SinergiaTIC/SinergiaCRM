@@ -92,6 +92,45 @@ if (!empty($_POST['saveConfig'])) {
         $valid_public_key = substr($buffer, 1, 4) == 'var ' ? true : false;
     }
     if ($valid_public_key) {
+        // STIC-Custom 20261027 ART - Validate user lockout settings before saving
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+        $userLockoutEnabled = !empty($_POST['userlockout_enabled']);
+        $maxFailedLoginsRaw = $_POST['userlockout_maxfailedlogins'] ?? '';
+        $maxFailedLogins = ctype_digit((string) $maxFailedLoginsRaw) ? (int) $maxFailedLoginsRaw : 0;
+        $autoUnlockEnabled = $userLockoutEnabled && !empty($_POST['userlockout_automaticunlock']);
+        $autoUnlockTimeRaw = $_POST['userlockout_automaticunlocktime'] ?? '';
+        $autoUnlockTime = ctype_digit((string) $autoUnlockTimeRaw) ? (int) $autoUnlockTimeRaw : 0;
+
+        $userLockoutError = '';
+        $userLockoutErrorField = '';
+        if ($userLockoutEnabled && $maxFailedLogins < 1) {
+            $userLockoutError = $mod_strings['ERR_MAX_FAILED_LOGINS']
+                ?? 'Please specify a valid value for the number of max failed logins.';
+            $userLockoutErrorField = 'userlockout_maxfailedlogins';
+        } elseif ($autoUnlockEnabled && $autoUnlockTime < 1) {
+            $userLockoutError = $mod_strings['ERR_AUTOMATIC_UNLOCK_TIME']
+                ?? 'Please specify a valid value for the automatic unlock time.';
+            $userLockoutErrorField = 'userlockout_automaticunlocktime';
+        }
+
+        if (!$autoUnlockEnabled) {
+            $autoUnlockTime = 0;
+        }
+
+        // Normalize the values used by the login and by the form after a validation error
+        $_POST['userlockout_enabled'] = $userLockoutEnabled ? 1 : 0;
+        $_POST['userlockout_maxfailedlogins'] = $maxFailedLogins;
+        $_POST['userlockout_automaticunlocktime'] = $autoUnlockTime;
+
+        $configurator->config['userlockout']['enabled'] = $userLockoutEnabled ? 1 : 0;
+        $configurator->config['userlockout']['maxfailedlogins'] = $maxFailedLogins;
+        $configurator->config['userlockout']['automaticunlocktime'] = $autoUnlockTime;
+
+        if ($userLockoutError !== '') {
+            $configurator->errors[$userLockoutErrorField] = $userLockoutError;
+        }
+        // END STIC-Custom
+
         if (isset($_REQUEST['system_ldap_enabled']) && $_REQUEST['system_ldap_enabled'] == 'on') {
             $_POST['system_ldap_enabled'] = 1;
             clearPasswordSettings();
@@ -135,11 +174,19 @@ if (!empty($_POST['saveConfig'])) {
         $configurator->config['passwordsetting']['onespecial'] = $_POST['passwordsetting_onespecial'];
 		$configurator->config['passwordsetting']['minpwdlength'] = $_POST['passwordsetting_minpwdlength'];
 
-        $configurator->saveConfig();
+        // STIC-Custom 20261027 ART - Do not save or redirect if user lockout validation failed
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+        // $configurator->saveConfig();
+        // $focus->saveConfig();
+        // header('Location: index.php?module=Administration&action=index');
+        if ($userLockoutError === '') {
+            $configurator->saveConfig();
 
-        $focus->saveConfig();
+            $focus->saveConfig();
 
-        header('Location: index.php?module=Administration&action=index');
+            header('Location: index.php?module=Administration&action=index');
+        }
+        // END STIC-Custom
     }
 }
 

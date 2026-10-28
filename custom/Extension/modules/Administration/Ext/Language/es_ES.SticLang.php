@@ -162,7 +162,6 @@ $mod_strings['LBL_AUTO_UNLOCK_TIME_HELP'] = 'El número de minutos que tarda en 
 $mod_strings['LBL_AUTO_UNLOCK_TIME_UNITS'] = 'minutos';
 $mod_strings['ERR_MAX_FAILED_LOGINS'] = 'Por favor, especifique un valor válido para el número máximo de intentos fallidos de inicio de sesión';
 $mod_strings['ERR_AUTOMATIC_UNLOCK_TIME'] = 'Por favor, especifique un valor válido para el tiempo de desbloqueo automático';
-$mod_strings['LBL_ENABLE_MAX_FAILED_LOGINS'] = 'Bloquear usuarios después de un número de intentos fallidos de inicio de sesión';
 $mod_strings['LBL_AUTO_UNLOCK'] = 'Desbloquear automáticamente a los usuarios bloqueados';
 $mod_strings['LBL_AUTO_UNLOCK_HELP'] = 'Desbloquear a los usuarios bloqueados después de un tiempo configurable';
 $mod_strings['LBL_ENABLE_USER_LOCKOUT'] = 'Activar bloqueo de usuario';

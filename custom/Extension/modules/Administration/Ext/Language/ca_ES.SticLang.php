@@ -162,7 +162,6 @@ $mod_strings['LBL_AUTO_UNLOCK_TIME_HELP'] = 'El nombre de minuts que triga un co
 $mod_strings['LBL_AUTO_UNLOCK_TIME_UNITS'] = 'minuts';
 $mod_strings['ERR_MAX_FAILED_LOGINS'] = 'Si us plau, especifiqueu un valor vàlid per al nombre màxim d\'intents fallits';
 $mod_strings['ERR_AUTOMATIC_UNLOCK_TIME'] = 'Si us plau, especifiqueu un valor vàlid per al temps de desbloqueig automàtic';
-$mod_strings['LBL_ENABLE_MAX_FAILED_LOGINS'] = 'Bloquejar usuaris després d\'un nombre d\'intents fallits';
 $mod_strings['LBL_AUTO_UNLOCK'] = 'Desbloquejar automàticament els usuaris bloquejats';
 $mod_strings['LBL_AUTO_UNLOCK_HELP'] = 'Desbloquejar els usuaris bloquejats després d\'un temps configurable';
 $mod_strings['LBL_ENABLE_USER_LOCKOUT'] = 'Habilitar bloqueig d\'usuaris';

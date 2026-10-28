@@ -41,7 +41,11 @@
 
 
 *}
-<form name="ConfigurePasswordSettings" method="POST" action="index.php" >
+{* STIC-Custom 20260612 ART - User Lockout Settings
+https://github.com/SinergiaTIC/SinergiaCRM/pull/1242 *}
+{* <form name="ConfigurePasswordSettings" method="POST" action="index.php" > *}
+<form name="ConfigurePasswordSettings" method="POST" action="index.php" onsubmit="addcheck(this); return check_form('ConfigurePasswordSettings');">
+{* END STIC-Custom *}
 <input type='hidden' name='action' value='PasswordManager'/>
 <input type='hidden' name='module' value='Administration'/>
 <input type='hidden' name='saveConfig' value='1'/>
@@ -50,7 +54,11 @@
 	<tr>
 
 		<td style="padding-bottom: 2px;" >
-			<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id="btn_save" type="submit" onclick="addcheck(form);return check_form('ConfigurePasswordSettings');"  name="save" value="{$APP.LBL_SAVE_BUTTON_LABEL}" >
+			{* STIC-Custom 20260612 ART - User Lockout Settings
+			https://github.com/SinergiaTIC/SinergiaCRM/pull/1242 *}
+			{* <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id="btn_save" type="submit" onclick="addcheck(form);return check_form('ConfigurePasswordSettings');"  name="save" value="{$APP.LBL_SAVE_BUTTON_LABEL}" > *}
+			<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" id="btn_save" type="submit"  name="save" value="{$APP.LBL_SAVE_BUTTON_LABEL}" >
+			{* END STIC-Custom *}
 			&nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}" id="btn_cancel" onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" >
 		</td>
 	</tr>
@@ -278,36 +286,35 @@
 										<tr id="userLockoutSettingsRow">
 											<td colspan="4">
 												<table width="100%" border="0" cellspacing="1" cellpadding="0" style="display:{if $config.userlockout.enabled}block{else}none{/if}" id="userLockoutSettings">
-													<tr>
-														<td width="25%" scope="row">{$MOD.LBL_ENABLE_MAX_FAILED_LOGINS}:</td>
-														<td scope="row" width="25%" >
-															<input type='checkbox' id="maxFailedLogin" {if $config.userlockout.maxfailedlogins}checked="checked"{/if}>&nbsp;
-														</td>
-														<td></td>
-														<td></td>
-													</tr>
-										<tr id="maxFailedLoginsRow">
-											<td width="25%" scope="row">{$MOD.LBL_MAX_FAILED_LOGINS}:&nbsp{sugar_help text=$MOD.LBL_MAX_FAILED_LOGINS_HELP WIDTH=400}</td>
-											<td scope="row" width="25%">
-												<input type='text' maxlength="3" style="width:2em" id='userlockout_maxfailedlogins' name='userlockout_maxfailedlogins'  value='{$config.userlockout.maxfailedlogins}'>
-											</td>
-											<td></td>
-											<td></td>
-										</tr>
-										<tr>
-											<td width="25%" scope="row">{$MOD.LBL_AUTO_UNLOCK}:&nbsp{sugar_help text=$MOD.LBL_AUTO_UNLOCK_HELP WIDTH=400}</td>
-											<td scope="row" width="25%" >
-												<input type='checkbox' id="autoUnlock" {if $config.userlockout.automaticunlocktime}checked="checked"{/if}>&nbsp;
-											</td>
-											<td>&nbsp;</td><td>&nbsp;</td>
-										</tr>
-										<tr id="autoUnlockRow">
-											<td width="25%" scope="row">{$MOD.LBL_AUTO_UNLOCK_TIME}:&nbsp{sugar_help text=$MOD.LBL_AUTO_UNLOCK_TIME_HELP WIDTH=400}</td>
-											<td scope="row" width="25%" >
-												<input type='text' maxlength="10" style="width:5em" id='userlockout_automaticunlocktime' name='userlockout_automaticunlocktime'  value='{$config.userlockout.automaticunlocktime}'>&nbsp;<span>{$MOD.LBL_AUTO_UNLOCK_TIME_UNITS}</span>
-											</td>
-											<td>&nbsp;</td><td>&nbsp;</td>
-										</tr>
+												<tr id="maxFailedLoginsRow">
+													<td width="25%" scope="row">{$MOD.LBL_MAX_FAILED_LOGINS}:&nbsp{sugar_help text=$MOD.LBL_MAX_FAILED_LOGINS_HELP WIDTH=400}</td>
+													<td scope="row" width="25%">
+														<input type='text' maxlength="3" style="width:2em" id='userlockout_maxfailedlogins' name='userlockout_maxfailedlogins'  value='{$config.userlockout.maxfailedlogins}'>
+														{if $error.userlockout_maxfailedlogins}
+															<div class="required validation-message">{$error.userlockout_maxfailedlogins}</div>
+														{/if}
+													</td>
+													<td></td>
+													<td></td>
+												</tr>
+												<tr>
+													<td width="25%" scope="row">{$MOD.LBL_AUTO_UNLOCK}:&nbsp{sugar_help text=$MOD.LBL_AUTO_UNLOCK_HELP WIDTH=400}</td>
+													<td scope="row" width="25%" >
+														<input type='hidden' name='userlockout_automaticunlock' value='0'>
+														<input type='checkbox' id="autoUnlock" name='userlockout_automaticunlock' value='1' {if $config.userlockout.automaticunlocktime}checked="checked"{/if}>&nbsp;
+													</td>
+													<td>&nbsp;</td><td>&nbsp;</td>
+												</tr>
+												<tr id="autoUnlockRow">
+													<td width="25%" scope="row">{$MOD.LBL_AUTO_UNLOCK_TIME}:&nbsp{sugar_help text=$MOD.LBL_AUTO_UNLOCK_TIME_HELP WIDTH=400}</td>
+													<td scope="row" width="25%" >
+														<input type='text' maxlength="10" style="width:5em" id='userlockout_automaticunlocktime' name='userlockout_automaticunlocktime'  value='{$config.userlockout.automaticunlocktime}'>&nbsp;<span>{$MOD.LBL_AUTO_UNLOCK_TIME_UNITS}</span>
+														{if $error.userlockout_automaticunlocktime}
+															<div id="userlockout_automaticunlocktime_error" class="required validation-message">{$error.userlockout_automaticunlocktime}</div>
+														{/if}
+													</td>
+													<td>&nbsp;</td><td>&nbsp;</td>
+												</tr>
 												</table>
 											</td>
 										</tr>
@@ -637,7 +644,11 @@
 			{/literal}
 			{* END STIC-Custom *}
 			<div style="padding-top: 2px;">
-                     <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" id="btn_save" type="submit" onclick="addcheck(form);return check_form('ConfigurePasswordSettings');" name="save" value="{$APP.LBL_SAVE_BUTTON_LABEL}" />
+					 {* STIC-Custom 20261028 ART - User Lockout Settings *}
+					 {* https://github.com/SinergiaTIC/SinergiaCRM/pull/1242 *}
+                     {* <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" id="btn_save" type="submit" onclick="addcheck(form);return check_form('ConfigurePasswordSettings');" name="save" value="{$APP.LBL_SAVE_BUTTON_LABEL}" /> *}
+                     <input title="{$APP.LBL_SAVE_BUTTON_TITLE}" class="button primary" id="btn_save" type="submit" name="save" value="{$APP.LBL_SAVE_BUTTON_LABEL}" />
+					 {* END STIC-Custom *}
                      &nbsp;<input title="{$MOD.LBL_CANCEL_BUTTON_TITLE}"  onclick="document.location.href='index.php?module=Administration&action=index'" class="button"  type="button" name="cancel" value="{$APP.LBL_CANCEL_BUTTON_LABEL}" />
                   </div>
 		</td>
@@ -676,15 +687,15 @@ function toggleLockoutRow(checkboxSelector, rowSelector, inputSelector) {
 
 // Function to initialize lockout settings on page load
 function initUserLockoutSettings() {
-	$('#maxFailedLogin').change(function() {
-		toggleLockoutRow('#maxFailedLogin', '#maxFailedLoginsRow', '#userlockout_maxfailedlogins');
-	});
+	// Keep the automatic unlock row visible when the server returned an error for it
+	if ($('#userlockout_automaticunlocktime_error').length) {
+		$('#autoUnlock').prop('checked', true);
+	}
 
 	$('#autoUnlock').change(function() {
 		toggleLockoutRow('#autoUnlock', '#autoUnlockRow', '#userlockout_automaticunlocktime');
 	});
 
-	toggleLockoutRow('#maxFailedLogin', '#maxFailedLoginsRow', '#userlockout_maxfailedlogins');
 	toggleLockoutRow('#autoUnlock', '#autoUnlockRow', '#userlockout_automaticunlocktime');
 }
 
@@ -697,14 +708,35 @@ function toggleUserLockoutSettings(checkbox) {
     settingsDiv.style.display = 'block';
   } else {
     settingsDiv.style.display = 'none';
-    // Reset all lockout settings when disabled
-    document.getElementById('maxFailedLogin').checked = false;
-    document.getElementById('userlockout_maxfailedlogins').value = 0;
+    // Disable automatic unlock when the whole lockout system is disabled
     document.getElementById('autoUnlock').checked = false;
     document.getElementById('userlockout_automaticunlocktime').value = 0;
-    $('#maxFailedLoginsRow').hide();
     $('#autoUnlockRow').hide();
   }
+}
+
+// STIC-Custom 20261027 ART - User lockout field validation
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+function validateUserLockoutMaxFailedLogins(formname, fieldname) {
+    if (!document.getElementById('enableUserLockout').checked) {
+        return true;
+    }
+    var value = $.trim(document.forms[formname][fieldname].value);
+    if (value === '') {
+        return true; // The required validation shows the missing field message
+    }
+    return /^[0-9]+$/.test(value) && parseInt(value, 10) >= 1;
+}
+
+function validateUserLockoutAutoUnlockTime(formname, fieldname) {
+    if (!document.getElementById('autoUnlock').checked) {
+        return true;
+    }
+    var value = $.trim(document.forms[formname][fieldname].value);
+    if (value === '') {
+        return true;
+    }
+    return /^[0-9]+$/.test(value) && parseInt(value, 10) >= 1;
 }
 // END STIC-Custom
 
@@ -723,12 +755,13 @@ function addcheck(form){{/literal}
 	// STIC#737
 	addToValidate('ConfigurePasswordSettings', 'passwordsetting_generatepasswordtmpl', 'string', form.generatepasswordtmpl.value == '',"{$MOD.ERR_SYS_GEN_PWD_TPL_NOT_SELECTED}" );
 	// END STIC-Custom
+   {literal}}{/literal}
+
 	// STIC-Custom 20260612 ART - User Lockout Settings
 	// https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
-	addToValidate('ConfigurePasswordSettings', 'userlockout_maxfailedlogins', 'int', false,"{$MOD.ERR_MAX_FAILED_LOGINS} ");
-  	addToValidate('ConfigurePasswordSettings', 'userlockout_automaticunlocktime', 'int', false,"{$MOD.ERR_AUTOMATIC_UNLOCK_TIME} ");
+	addToValidateCallback('ConfigurePasswordSettings', 'userlockout_maxfailedlogins', 'int', document.getElementById('enableUserLockout').checked, "{$MOD.ERR_MAX_FAILED_LOGINS} ", validateUserLockoutMaxFailedLogins);
+	addToValidateCallback('ConfigurePasswordSettings', 'userlockout_automaticunlocktime', 'int', document.getElementById('autoUnlock').checked, "{$MOD.ERR_AUTOMATIC_UNLOCK_TIME} ", validateUserLockoutAutoUnlockTime);
 	// END STIC-Custom
-   {literal}}{/literal}
 
 
 {literal}	}
