@@ -77,6 +77,7 @@ $moduleList[] = 'stic_AWF_Forms';
 $moduleList[] = 'stic_Conversations';
 $moduleList[] = 'stic_Recycle_Bin';
 $moduleList[] = 'stic_Recycle_Bin_Relationships';
+$moduleList[] = 'stic_Organizational_Environment';
 
 // Bean names for custom modules
 // Although they should be singular ModuleBuilder outputs them in plural and we keep them this way
@@ -144,6 +145,7 @@ $beanList['stic_AWF_Incoming_Events'] = 'stic_AWF_Incoming_Events';
 $beanList['stic_Conversations'] = 'stic_Conversations';
 $beanList['stic_Recycle_Bin'] = 'stic_Recycle_Bin';
 $beanList['stic_Recycle_Bin_Relationships'] = 'stic_Recycle_Bin_Relationships';
+$beanList['stic_Organizational_Environment'] = 'stic_Organizational_Environment';
 
 // Location of custom modules main class files
 $beanFiles['stic_Accounts_Relationships'] = 'modules/stic_Accounts_Relationships/stic_Accounts_Relationships.php';
@@ -210,6 +212,7 @@ $beanFiles['stic_AWF_Incoming_Events'] = 'modules/stic_AWF_Incoming_Events/stic_
 $beanFiles['stic_Conversations'] = 'modules/stic_Conversations/stic_Conversations.php';
 $beanFiles['stic_Recycle_Bin'] = 'modules/stic_Recycle_Bin/stic_Recycle_Bin.php';
 $beanFiles['stic_Recycle_Bin_Relationships'] = 'modules/stic_Recycle_Bin_Relationships/stic_Recycle_Bin_Relationships.php';
+$beanFiles['stic_Organizational_Environment'] = 'modules/stic_Organizational_Environment/stic_Organizational_Environment.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
 $modInvisList[] = 'stic_Settings';

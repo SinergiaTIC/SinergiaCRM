@@ -188,6 +188,7 @@ $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Form External Not
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversations';
 $app_list_strings['moduleList']['stic_Recycle_Bin'] = 'Recycle Bin';
 $app_list_strings['moduleList']['stic_Recycle_Bin_Relationships'] = 'Recycle Bin Relationships';
+$app_list_strings['moduleList']['stic_Organizational_Environment'] = 'Organizational environment';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
