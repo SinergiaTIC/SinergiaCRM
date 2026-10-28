@@ -23,6 +23,7 @@
 
 require_once 'modules/Users/views/view.detail.php';
 require_once 'SticInclude/Views.php';
+require_once 'custom/modules/Users/SticUserLockoutUtils.php';
 
 class CustomUsersViewDetail extends UsersViewDetail
 {
@@ -49,8 +50,8 @@ class CustomUsersViewDetail extends UsersViewDetail
         echo '<script> editACL = '. ACLController::checkAccess('stic_Work_Calendar', 'edit', true) .' </script>';
         
         // Show lockout status with countdown timer or unlock message for admins.
-        // The lockout/unlock system only applies to active users
-        if ((is_admin($current_user) || $current_user->isAdminForModule('Users')) && $this->bean->status === 'Active') {
+        // The lockout/unlock system only applies to active users and to the enabled feature
+        if (is_admin($current_user) && $this->bean->status === 'Active' && !empty($sugar_config['userlockout']['enabled'])) {
             // Check if user is locked out and calculate remaining time
             $lockoutPref = $this->bean->getPreference('user_locked_out');
             $isLockedOut = !empty($lockoutPref) && $lockoutPref !== '0' && $lockoutPref !== 0 && $lockoutPref !== false;
@@ -64,24 +65,19 @@ class CustomUsersViewDetail extends UsersViewDetail
                 $timeRemaining = (($lockoutTime + ($unlockMinutes * 60)) - time());
 
                 // Automatic unlock: once the period has expired, clear the lockout preferences
-                // They are cleared directly in the database (see the controller helper) because
+                // They are cleared directly in the database (see SticUserLockoutUtils) because
                 // using the bean preference API for a user other than the current one would
                 // overwrite the rest of their preferences (e.g. 'ut'), making the user wizard
                 // appear again on the next login
                 if ($timeRemaining <= 0) {
-                    require_once 'custom/modules/Users/controller.php';
-                    $prefs = CustomUsersController::clearLockoutPreferences($this->bean->id);
-                    $prefKey = $this->bean->user_name . '_PREFERENCES';
-                    if (isset($_SESSION[$prefKey]['global'])) {
-                        $_SESSION[$prefKey]['global'] = $prefs;
-                    }
+                    SticUserLockoutUtils::clearLockoutPreferencesAndSession($this->bean->id, $this->bean->user_name);
                     $isLockedOut = false;
                 }
             }
 
             // Render lockout message with countdown timer
             if ($isLockedOut) {
-                $showUnlockButton = (is_admin($current_user) || $current_user->isAdminForModule('Users')) ? 1 : 0;
+                $showUnlockButton = 1;
 
                 if ($autoUnlockEnabled && $timeRemaining > 0) {
                     $timeRemaining = (int) $timeRemaining;
