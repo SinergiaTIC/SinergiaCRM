@@ -286,12 +286,12 @@ https://github.com/SinergiaTIC/SinergiaCRM/pull/1242 *}
 										<tr id="userLockoutSettingsRow">
 											<td colspan="4">
 												<table width="100%" border="0" cellspacing="1" cellpadding="0" style="display:{if $config.userlockout.enabled}block{else}none{/if}" id="userLockoutSettings">
-												<tr id="maxFailedLoginsRow">
+												<tr>
 													<td width="25%" scope="row">{$MOD.LBL_MAX_FAILED_LOGINS}:&nbsp{sugar_help text=$MOD.LBL_MAX_FAILED_LOGINS_HELP WIDTH=400}</td>
 													<td scope="row" width="25%">
 														<input type='text' maxlength="3" style="width:2em" id='userlockout_maxfailedlogins' name='userlockout_maxfailedlogins'  value='{$config.userlockout.maxfailedlogins}'>
 														{if $error.userlockout_maxfailedlogins}
-															<div class="required validation-message">{$error.userlockout_maxfailedlogins}</div>
+															<div id="userlockout_maxfailedlogins_error" class="required validation-message">{$error.userlockout_maxfailedlogins}</div>
 														{/if}
 													</td>
 													<td></td>

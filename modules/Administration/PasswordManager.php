@@ -95,11 +95,11 @@ if (!empty($_POST['saveConfig'])) {
         // STIC-Custom 20261027 ART - Validate user lockout settings before saving
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
         $userLockoutEnabled = !empty($_POST['userlockout_enabled']);
-        $maxFailedLoginsRaw = $_POST['userlockout_maxfailedlogins'] ?? '';
-        $maxFailedLogins = ctype_digit((string) $maxFailedLoginsRaw) ? (int) $maxFailedLoginsRaw : 0;
+        $maxFailedLoginsRaw = trim((string) ($_POST['userlockout_maxfailedlogins'] ?? ''));
+        $maxFailedLogins = ctype_digit($maxFailedLoginsRaw) ? (int) $maxFailedLoginsRaw : 0;
         $autoUnlockEnabled = $userLockoutEnabled && !empty($_POST['userlockout_automaticunlock']);
-        $autoUnlockTimeRaw = $_POST['userlockout_automaticunlocktime'] ?? '';
-        $autoUnlockTime = ctype_digit((string) $autoUnlockTimeRaw) ? (int) $autoUnlockTimeRaw : 0;
+        $autoUnlockTimeRaw = trim((string) ($_POST['userlockout_automaticunlocktime'] ?? ''));
+        $autoUnlockTime = ctype_digit($autoUnlockTimeRaw) ? (int) $autoUnlockTimeRaw : 0;
 
         $userLockoutError = '';
         $userLockoutErrorField = '';
@@ -117,14 +117,22 @@ if (!empty($_POST['saveConfig'])) {
             $autoUnlockTime = 0;
         }
 
-        // Normalize the values used by the login and by the form after a validation error
+        // Keep the values entered by the user when there is a validation error, so the form
+        // can show them again instead of replacing them with 0
+        $maxFailedLoginsForConfig = ($userLockoutError !== '') ? htmlspecialchars($maxFailedLoginsRaw, ENT_QUOTES, 'UTF-8') : $maxFailedLogins;
+        $autoUnlockTimeForConfig = ($userLockoutError !== '') ? htmlspecialchars($autoUnlockTimeRaw, ENT_QUOTES, 'UTF-8') : $autoUnlockTime;
+        if (!$autoUnlockEnabled) {
+            $autoUnlockTimeForConfig = 0;
+        }
+
+        // Normalize the values used by the login and by the form
         $_POST['userlockout_enabled'] = $userLockoutEnabled ? 1 : 0;
-        $_POST['userlockout_maxfailedlogins'] = $maxFailedLogins;
-        $_POST['userlockout_automaticunlocktime'] = $autoUnlockTime;
+        $_POST['userlockout_maxfailedlogins'] = $maxFailedLoginsForConfig;
+        $_POST['userlockout_automaticunlocktime'] = $autoUnlockTimeForConfig;
 
         $configurator->config['userlockout']['enabled'] = $userLockoutEnabled ? 1 : 0;
-        $configurator->config['userlockout']['maxfailedlogins'] = $maxFailedLogins;
-        $configurator->config['userlockout']['automaticunlocktime'] = $autoUnlockTime;
+        $configurator->config['userlockout']['maxfailedlogins'] = $maxFailedLoginsForConfig;
+        $configurator->config['userlockout']['automaticunlocktime'] = $autoUnlockTimeForConfig;
 
         if ($userLockoutError !== '') {
             $configurator->errors[$userLockoutErrorField] = $userLockoutError;
