@@ -80,6 +80,25 @@
     </td>
     <td width="25%" valign="middle"><input type="number" name="PORTAL_LOGO_WIDTH" value="{$SETTINGS.PORTAL_LOGO_WIDTH|default:'212'}" min="0" class="portal-input-narrow"></td>
 </tr>
+<tr>
+    <td width="25%" scope="row" valign="middle">
+        {$MOD.LBL_STIC_PORTAL_USERNAME_FIELD_CONTACTS}
+        <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="15" aria-describedby="qtip-15"></i>
+<script>$(this).prev("i.inline-help").removeAttr("data-hasqtip");setInlineHelpQtip();</script>
+        <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_USERNAME_FIELD_HELP}</div>
+    </td>
+    <td width="25%" valign="middle">
+        <select name="PORTAL_USERNAME_FIELD_CONTACTS">
+            {html_options options=$USERNAME_FIELDS_CONTACTS selected=$SETTINGS.PORTAL_USERNAME_FIELD_CONTACTS|default:'email'}
+        </select>
+    </td>
+    <td width="25%" scope="row" valign="middle">{$MOD.LBL_STIC_PORTAL_USERNAME_FIELD_ACCOUNTS}</td>
+    <td width="25%" valign="middle">
+        <select name="PORTAL_USERNAME_FIELD_ACCOUNTS">
+            {html_options options=$USERNAME_FIELDS_ACCOUNTS selected=$SETTINGS.PORTAL_USERNAME_FIELD_ACCOUNTS|default:'email'}
+        </select>
+    </td>
+</tr>
 </table>
 
 <!-- PASSWORD POLICIES -->

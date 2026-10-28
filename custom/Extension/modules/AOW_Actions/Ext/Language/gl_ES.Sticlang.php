@@ -26,3 +26,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings ['LBL_SENDMESSAGE'] = 'Enviar mensaje';
+
+// STIC-Custom 20260927 AAM - Portal Actions workflow action labels
+$mod_strings['LBL_PORTALACTIONS'] = 'Accións do portal';
+$mod_strings['LBL_PORTAL_ACTIONS_TYPE'] = 'Acción';
+$mod_strings['LBL_PORTAL_ACTIONS_TARGET_APP'] = 'Aplicativo de destino para a redirección';
+$mod_strings['LBL_PORTAL_ACTIONS_GENERIC_APP'] = 'Xenérica (sen aplicativo específico)';
+$mod_strings['LBL_PORTAL_ACTIONS_INVITATION'] = 'Enviar invitación';
+$mod_strings['LBL_PORTAL_ACTIONS_RESET'] = 'Enviar restablecemento de contrasinal';
+$mod_strings['LBL_PORTAL_ACTIONS_MODULES_HELP'] = 'Esta acción só se aplica a fluxos de traballo sobre os módulos Persoas e Organizacións.';
+$mod_strings['LBL_PORTAL_ACTIONS_TEMPLATE_DEFAULT'] = 'Predeterminada (da Configuración do portal)';

@@ -97,7 +97,8 @@ if (isset($_GET['error']) && $_GET['error'] === 'invalid_link') $error = 'Invali
 if (isset($_GET['error']) && $_GET['error'] === 'session_expired') $error = 'Session expired. Please log in again.';
 if (isset($_GET['logged_in'])) $message = 'You are now logged in.';
 
-$loggedIn = SticPortalAuthUtils::validatePortalSession() !== null;
+$sessionBean = SticPortalAuthUtils::validatePortalSession();
+$loggedIn = $sessionBean !== null;
 
 // Remember-me auto-login: if not logged in and a valid remember cookie exists,
 // restore the portal session and redirect to the portal home.
@@ -106,6 +107,10 @@ if (!$loggedIn && $_SERVER['REQUEST_METHOD'] !== 'POST' && !empty($_COOKIE['port
     if ($remembered) {
         SticPortalAuthUtils::recordLoginAudit($remembered['bean'], $remembered['type'], $remembered['bean']->stic_portal_username_c, $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'remember');
         SticPortalAuthUtils::createPortalSession($remembered['bean'], $remembered['type']);
+        // Cached credentials (remember-me) continue an OAuth authorization with
+        // the authorization code instead of sending the user to the portal home,
+        // so returning popup users skip the login form entirely.
+        if ($isOAuth) SticPortalAuthCodeGenerator::generateAndRedirect($remembered['bean']->id, $remembered['type'], $oauthClientId, $oauthRedirectUri, $oauthState);
         $redirect = SticPortalConfigUtils::get('PORTAL_HOME_URL', '');
         // Empty/absent PORTAL_HOME_URL (or pointing back at the login page)
         // falls back to the login page with a success flag
@@ -113,6 +118,14 @@ if (!$loggedIn && $_SERVER['REQUEST_METHOD'] !== 'POST' && !empty($_COOKIE['port
         header('Location: ' . $redirect);
         exit;
     }
+}
+
+// Active portal session + valid OAuth client: the user is already
+// authenticated (e.g. the app opened the login popup again), so skip the login
+// form and continue the authorization flow directly.
+if ($loggedIn && $_SERVER['REQUEST_METHOD'] !== 'POST' && $isOAuth) {
+    $sessionType = $_SESSION['portal_user_type'] ?? (($sessionBean->module_dir === 'Accounts') ? 'Account' : 'Contact');
+    SticPortalAuthCodeGenerator::generateAndRedirect($sessionBean->id, $sessionType, $oauthClientId, $oauthRedirectUri, $oauthState);
 }
 
 $ss = new Sugar_Smarty();

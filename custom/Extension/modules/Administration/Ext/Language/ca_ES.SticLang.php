@@ -154,6 +154,10 @@ $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = "Activa l'autenticació OAuth";
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = "Si activeu aquesta opció, els usuaris podran autenticar-se mitjançant OAuth 2.0, a més de poder fer-ho amb usuari i contrasenya. Després d'activar aquesta opció s'haurà de configurar, com a mínim, un dels proveïdors externs. Per a més informació, consulteu la <a href='https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth' target='_blank'>documentació</a>.";
 
 // Portal Login Audit Log - etiquetes de visualització
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_CONTACTS'] = 'Usuari del portal per defecte (Persones)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_ACCOUNTS'] = 'Usuari del portal per defecte (Organitzacions)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_HELP'] = 'Camp utilitzat per assignar l\'usuari del portal quan s\'envia una invitació o un restabliment de contrasenya i el registre encara no té usuari. Per defecte s\'utilitza el correu electrònic principal.';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_EMAIL'] = 'Correu electrònic (adreça principal)';
 $mod_strings['LBL_STIC_PORTAL_BACK_CONFIG'] = 'Torna a la configuració del portal';
 $mod_strings['LBL_STIC_PORTAL_LOGIN_AUDIT'] = 'Registre d\'auditoria d\'inici de sessió';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_DATE'] = 'Data';

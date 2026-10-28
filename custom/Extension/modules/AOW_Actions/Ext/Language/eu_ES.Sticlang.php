@@ -26,3 +26,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings ['LBL_SENDMESSAGE'] = 'Enviar mensaje';
+
+// STIC-Custom 20260927 AAM - Portal Actions workflow action labels
+$mod_strings['LBL_PORTALACTIONS'] = 'Atariaren ekintzak';
+$mod_strings['LBL_PORTAL_ACTIONS_TYPE'] = 'Ekintza';
+$mod_strings['LBL_PORTAL_ACTIONS_TARGET_APP'] = 'Birbideratzeko helburuko aplikazioa';
+$mod_strings['LBL_PORTAL_ACTIONS_GENERIC_APP'] = 'Orokorra (aplikazio espezifikorik gabe)';
+$mod_strings['LBL_PORTAL_ACTIONS_INVITATION'] = 'Gonbidapena bidali';
+$mod_strings['LBL_PORTAL_ACTIONS_RESET'] = 'Pasahitza berrezartzea bidali';
+$mod_strings['LBL_PORTAL_ACTIONS_MODULES_HELP'] = 'Ekintza honek Pertsonak eta Erakundeak moduluetako lan-fluxuei aplikatzen zaie bakarrik.';
+$mod_strings['LBL_PORTAL_ACTIONS_TEMPLATE_DEFAULT'] = 'Lehenetsia (Atariaren konfiguraziotik)';

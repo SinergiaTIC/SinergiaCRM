@@ -62,6 +62,8 @@ class SticPortalConfigUtils
         'PORTAL_NOTIFY_NEW_LOGIN'        => '1',
         'PORTAL_NOTIFY_ACCOUNT_LOCKED'   => '1',
         'PORTAL_NOTIFY_RESET_REQUESTED'  => '1',
+        'PORTAL_USERNAME_FIELD_CONTACTS'   => 'email',
+        'PORTAL_USERNAME_FIELD_ACCOUNTS'    => 'email',
     );
 
     /**

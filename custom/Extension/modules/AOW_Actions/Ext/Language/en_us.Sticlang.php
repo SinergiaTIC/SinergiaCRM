@@ -26,3 +26,13 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 $mod_strings ['LBL_SENDMESSAGE'] = 'Send message';
+
+// STIC-Custom 20260927 AAM - Portal Actions workflow action labels
+$mod_strings['LBL_PORTALACTIONS'] = 'Portal Actions';
+$mod_strings['LBL_PORTAL_ACTIONS_TYPE'] = 'Action';
+$mod_strings['LBL_PORTAL_ACTIONS_TARGET_APP'] = 'Target App for Redirect';
+$mod_strings['LBL_PORTAL_ACTIONS_GENERIC_APP'] = 'Generic (no specific app)';
+$mod_strings['LBL_PORTAL_ACTIONS_INVITATION'] = 'Send Invitation Email';
+$mod_strings['LBL_PORTAL_ACTIONS_RESET'] = 'Send Password Reset';
+$mod_strings['LBL_PORTAL_ACTIONS_MODULES_HELP'] = 'This action only applies to workflows on the Contacts and Accounts modules.';
+$mod_strings['LBL_PORTAL_ACTIONS_TEMPLATE_DEFAULT'] = 'Default (from Portal Configuration)';

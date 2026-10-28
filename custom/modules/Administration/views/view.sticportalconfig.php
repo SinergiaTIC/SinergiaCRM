@@ -49,6 +49,8 @@ class AdministrationViewSticportalconfig extends SugarView
         $this->ss->assign('SETTINGS', $settings);
         $this->ss->assign('LOGO_URL', $logoUrl);
         $this->ss->assign('EMAIL_TEMPLATES', $emailTemplates);
+        $this->ss->assign('USERNAME_FIELDS_CONTACTS', $this->getUsernameFieldOptions('Contacts'));
+        $this->ss->assign('USERNAME_FIELDS_ACCOUNTS', $this->getUsernameFieldOptions('Accounts'));
 
         echo $this->ss->fetch('custom/modules/Administration/templates/SticPortalConfig.tpl');
     }
@@ -62,5 +64,34 @@ class AdministrationViewSticportalconfig extends SugarView
             $templates[$row['id']] = $row['name'];
         }
         return $templates;
+    }
+
+    /**
+     * Selectable sources for the default portal username: the primary email
+     * plus every DB-backed varchar/text field of the module (the portal
+     * infrastructure fields themselves are excluded).
+     *
+     * @param string $module Contacts or Accounts.
+     * @return array field name => translated label.
+     */
+    protected function getUsernameFieldOptions($module)
+    {
+        $emailLabel = translate('LBL_STIC_PORTAL_USERNAME_FIELD_EMAIL', 'Administration');
+        $bean = BeanFactory::newBean($module);
+        if (!$bean) {
+            return array('email' => $emailLabel);
+        }
+        $options = array();
+        foreach ($bean->field_defs as $name => $def) {
+            if (!in_array($def['type'] ?? '', array('varchar', 'text'), true)) continue;
+            if (strpos($name, 'stic_portal_') === 0) continue;
+            if (isset($def['source']) && $def['source'] === 'non-db') continue;
+            if (in_array($name, array('id', 'deleted', 'created_by', 'modified_user_id', 'assigned_user_id'), true)) continue;
+            if (isset($def['dbType']) && in_array($def['dbType'], array('id'), true)) continue;
+            $label = isset($def['vname']) && $def['vname'] !== '' ? rtrim(translate($def['vname'], $module), ':') : $name;
+            $options[$name] = $label !== '' ? $label : $name;
+        }
+        asort($options);
+        return array('email' => $emailLabel) + $options;
     }
 }

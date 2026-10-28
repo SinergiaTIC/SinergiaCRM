@@ -216,6 +216,10 @@ $mod_strings['LBL_STIC_PORTAL_CONFIRM_CLEAR_LOCKOUTS'] = 'Are you sure you want 
 $mod_strings['LBL_STIC_PORTAL_CONFIRM_CLEAR_SESSIONS'] = 'Are you sure you want to clear all portal sessions?';
 $mod_strings['LBL_STIC_PORTAL_TITLE_HELP'] = 'Portal name shown on login page and emails.';
 $mod_strings['LBL_STIC_PORTAL_HOME_URL_HELP'] = 'Redirect users here after login. Leave empty to show welcome page.';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_CONTACTS'] = 'Default portal username (Contacts)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_ACCOUNTS'] = 'Default portal username (Accounts)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_HELP'] = 'Field used to fill the portal username when an invitation or password reset is sent and the record has no username yet. Defaults to the primary email address.';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_EMAIL'] = 'Email (primary address)';
 $mod_strings['LBL_STIC_PORTAL_LOGO_WIDTH_HELP'] = 'Maximum width in pixels for the logo on the portal login page.';
 $mod_strings['LBL_STIC_PORTAL_PASSWORD_MIN_LENGTH_HELP'] = 'Minimum number of characters required for portal passwords.';
 $mod_strings['LBL_STIC_PORTAL_PASSWORD_HISTORY_HELP'] = 'Prevent reuse of the last N passwords. Set to 0 to disable.';
@@ -257,6 +261,10 @@ $mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_SUBJECT'] = '$portal_title - Password
 $mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_BODY'] = 'Reset requested at $notification_time from IP $notification_ip. Contact support if not you.';
 
 // Portal Login Audit Log display labels
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_CONTACTS'] = 'Default portal username (Contacts)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_ACCOUNTS'] = 'Default portal username (Accounts)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_HELP'] = 'Field used to fill the portal username when an invitation or password reset is sent and the record has no username yet. Defaults to the primary email address.';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_EMAIL'] = 'Email (primary address)';
 $mod_strings['LBL_STIC_PORTAL_BACK_CONFIG'] = 'Back to Portal Configuration';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_DATE'] = 'Date';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_USERNAME'] = 'Username';

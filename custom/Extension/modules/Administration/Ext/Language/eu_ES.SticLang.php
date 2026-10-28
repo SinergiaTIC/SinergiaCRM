@@ -154,6 +154,10 @@ $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Erabiltzailearekin eta pasahitzarekin batera, aukera hori aktibatzean, erabiltzaileak OAuth 2.0 bidez ere autentifikatu ahal izango dira. Aktibatu ondoren, gutxienez kanpoko hornitzaileetako bat konfiguratu beharko da. Informazio gehiago nahi izanez gero, kontsultatu.';
 
 // Portal Login Audit Log - bistaratze etiketak
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_CONTACTS'] = 'Atarako erabiltzaile lehenetsia (Pertsonak)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_ACCOUNTS'] = 'Atarako erabiltzaile lehenetsia (Erakundeak)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_HELP'] = 'Gonbidapena edo pasahitza berrezartzea bidali eta erregistroak oraindik erabiltzailerik ez duenerako atarako erabiltzailea betetzeko erabiltzen den eremua. Modu lehenetsian helbide elektroniko nagusia erabiltzen da.';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_EMAIL'] = 'Helbide elektronikoa (helbide nagusia)';
 $mod_strings['LBL_STIC_PORTAL_BACK_CONFIG'] = 'Itzuli portalaren konfiguraziora';
 $mod_strings['LBL_STIC_PORTAL_LOGIN_AUDIT'] = 'Saioaren hasieraren auditoria-erregistroa';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_DATE'] = 'Data';
