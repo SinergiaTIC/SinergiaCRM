@@ -181,9 +181,9 @@ function loadCalendar() {
     select: function (arg) {
       window.location.assign(
         "index.php?module=stic_Bookings&action=EditView&return_action=index&return_module=stic_Bookings_Calendar&start=" +
-          arg.startStr +
+          encodeURIComponent(arg.startStr) +
           "&end=" +
-          arg.endStr +
+          encodeURIComponent(arg.endStr) +
           "&allDay=" +
           arg.allDay
       );
