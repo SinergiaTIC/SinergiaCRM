@@ -71,6 +71,44 @@ class SticUserLockoutUtils
     }
 
     /**
+     * Removes the lockout related preferences of every user
+     *
+     * This is used when the lockout feature is enabled or disabled, so the failed
+     * login counter always starts from zero when the feature is turned on and is
+     * reset again when it is turned off
+     */
+    public static function clearAllLockoutPreferences()
+    {
+        $db = DBManagerFactory::getInstance();
+
+        $result = $db->query("SELECT assigned_user_id, contents FROM user_preferences WHERE category = 'global' AND deleted = 0");
+        while ($row = $db->fetchByAssoc($result)) {
+            if (empty($row['contents'])) {
+                continue;
+            }
+
+            $prefs = unserialize(base64_decode($row['contents']));
+            if (!is_array($prefs)) {
+                continue;
+            }
+
+            if (!isset($prefs['user_locked_out'])
+                && !isset($prefs['user_locked_out_time'])
+                && !isset($prefs['lockout'])
+                && !isset($prefs['loginfailed'])
+            ) {
+                continue;
+            }
+
+            unset($prefs['user_locked_out'], $prefs['user_locked_out_time'], $prefs['lockout'], $prefs['loginfailed']);
+
+            $encoded = $db->quote(base64_encode(serialize($prefs)));
+            $userId = $db->quote($row['assigned_user_id']);
+            $db->query("UPDATE user_preferences SET contents = '{$encoded}' WHERE assigned_user_id = '{$userId}' AND category = 'global' AND deleted = 0");
+        }
+    }
+
+    /**
      * Removes the lockout related preferences of a user and refreshes the session
      * cache for that user when it is already loaded
      *

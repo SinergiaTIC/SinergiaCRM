@@ -94,7 +94,9 @@ if (!empty($_POST['saveConfig'])) {
     if ($valid_public_key) {
         // STIC-Custom 20261027 ART - Validate user lockout settings before saving
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+        $previousUserLockoutEnabled = !empty($configurator->config['userlockout']['enabled']);
         $userLockoutEnabled = !empty($_POST['userlockout_enabled']);
+        $userLockoutEnabledChanged = ($userLockoutEnabled !== $previousUserLockoutEnabled);
         $maxFailedLoginsRaw = trim((string) ($_POST['userlockout_maxfailedlogins'] ?? ''));
         $maxFailedLogins = ctype_digit($maxFailedLoginsRaw) ? (int) $maxFailedLoginsRaw : 0;
         $autoUnlockEnabled = $userLockoutEnabled && !empty($_POST['userlockout_automaticunlock']);
@@ -191,6 +193,13 @@ if (!empty($_POST['saveConfig'])) {
             $configurator->saveConfig();
 
             $focus->saveConfig();
+
+            // Reset the lockout counters when the feature is enabled or disabled,
+            // so counting always starts from zero when the feature is turned on and returns to zero when it is turned off
+            if ($userLockoutEnabledChanged) {
+                require_once 'custom/modules/Users/SticUserLockoutUtils.php';
+                SticUserLockoutUtils::clearAllLockoutPreferences();
+            }
 
             header('Location: index.php?module=Administration&action=index');
         }
