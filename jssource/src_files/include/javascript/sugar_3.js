@@ -5173,11 +5173,6 @@ function cancelAsyncListCounts() {
 
 window.addEventListener('beforeunload', cancelAsyncListCounts);
 window.addEventListener('pagehide', cancelAsyncListCounts);
-document.addEventListener('visibilitychange', function() {
-    if (document.visibilityState === 'hidden') {
-        cancelAsyncListCounts();
-    }
-});
 
 function loadAsyncListCount() {
     var asyncCountElements = document.querySelectorAll('.async-count-loading');
