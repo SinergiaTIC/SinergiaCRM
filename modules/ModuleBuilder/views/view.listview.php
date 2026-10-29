@@ -256,7 +256,12 @@ class ViewListView extends SugarView
             $smarty->assign('view_package', $_REQUEST [ 'view_package' ]) ;
             $mb = new ModuleBuilder() ;
             $module = & $mb->getPackageModule($_REQUEST [ 'view_package' ], $this->editModule) ;
-            $smarty->assign('current_mod_strings', $module->getModStrings());
+            // STIC-Custom 20261029 ART - Use current language so labels are shown in the configured language, not only English
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // $smarty->assign('current_mod_strings', $module->getModStrings());
+            $current_lang = $GLOBALS['current_language'] ?? 'en_us';
+            $smarty->assign('current_mod_strings', $module->getModStrings($current_lang));
+            // END STIC-Custom
             if ($this->subpanel) {
                 if (isset($_REQUEST [ 'local' ])) {
                     $smarty->assign('local', '1') ;
