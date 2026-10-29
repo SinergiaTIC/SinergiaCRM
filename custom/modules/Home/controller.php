@@ -37,15 +37,37 @@ class CustomHomeController extends HomeController
         global $sugar_config, $current_user, $mod_strings;
         $allowed = SticSdaSso::getAllowed($current_user->id);
         $currentDomain = $_SERVER['HTTP_HOST'];
-        $lang = explode('_', $sugar_config['default_language'])[0];
         $sdaUrl = $sugar_config['stic_sinergiada_public']['url'] ?? "https://" . str_replace("sinergiacrm", "sinergiada", $currentDomain);
+
+        // Idioma de la URL de SDA: preferencia del usuario; si no, el idioma actual
+        // de la sesión; y en último término, el idioma por defecto del CRM.
+        $userLang = $current_user->getPreference('language') ?: ($GLOBALS['current_language'] ?? '');
+        $lang = explode('_', $userLang ?: $sugar_config['default_language'])[0];
+
+        // SinergiaDA puede publicarse en la raíz o bajo una carpeta de idioma
+        // ({sda}/{lang}/). El build localizado (el habitual) usa carpetas de
+        // idioma; para un despliegue servido en la raíz, definir
+        //   $sugar_config['stic_sinergiada']['sso_locale_path'] = false;
+        // (en dev también vale true: el servidor de desarrollo sirve la app en
+        // cualquier ruta y el router usa el hash).
+        $sdaBase = rtrim($sdaUrl, '/');
+        $localePath = $sugar_config['stic_sinergiada']['sso_locale_path'] ?? true;
+        if ($localePath) {
+            // Solo se usan idiomas realmente publicados por SDA (carpetas /xx/);
+            // si el del usuario no está, se usa el primero de la lista.
+            $sdaLanguages = $sugar_config['stic_sinergiada']['sso_locale_languages'] ?? ['es', 'ca', 'en', 'gl'];
+            if (!in_array($lang, $sdaLanguages, true)) {
+                $lang = $sdaLanguages[0] ?? 'es';
+            }
+            $sdaBase .= '/' . $lang;
+        }
 
         if ($allowed !== false) {
             $return = SticSdaSso::sanitizeReturn($_GET['return'] ?? '');
             $token = SticSdaSso::isReady() ? SticSdaSso::mint($current_user->user_name, $allowed) : null;
 
             if ($token !== null) {
-                $ssoUrl = rtrim($sdaUrl, '/') . '/?t=' . rawurlencode($token)
+                $ssoUrl = $sdaBase . '/?t=' . rawurlencode($token)
                         . ($return !== '' ? '#' . $return : '#/home');
                 // 302 (no 301) + no-cache: un 301 se cachea en el navegador y
                 // dejaba a los usuarios atascados en una URL antigua sin token.
@@ -62,7 +84,7 @@ class CustomHomeController extends HomeController
             header('Pragma: no-cache');
             header('Expires: Thu, 19 Nov 1981 08:52:00 GMT');
             header('HTTP/1.1 302 Found');
-            header('Location: ' . $sdaUrl . "/{$lang}/#");
+            header('Location: ' . $sdaBase . '/#');
             die();
         } else {
             SugarApplication::appendErrorMessage("<p class='msg-fatal-lock'>{$mod_strings['LBL_STIC_SINERGIADA_NOT_ALLOWED']}");
