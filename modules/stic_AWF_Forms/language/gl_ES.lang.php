@@ -127,7 +127,7 @@ $mod_strings = array (
   // General editors
   'LBL_SELECT_PLACEHOLDER' => 'Seleccione un elemento',
   'LBL_SELECT_WRITE_TO_SEARCH' => 'Escriba para filtrar a lista...',
-  'LBL_SELECT_SEARCH_CLEAN' => 'Limpiar filtro',
+  'LBL_SELECT_SEARCH_CLEAN' => 'Limpar filtro',
   'LBL_SELECT_NO_RESULTS' => 'Non existen coincidencias',
 
   // DataBlocks
@@ -188,11 +188,11 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTIONS_LIST' => 'Lista asociada',
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE' => 'Personalizar opcións',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Seleccionar rexistros',
-  'LBL_FIELD_VALUE_OPTIONS_ADD_REGS' => 'Añadir registros',
+  'LBL_FIELD_VALUE_OPTIONS_ADD_REGS' => 'Engadir rexistros',
   'LBL_FIELD_VALUE_OPTIONS_PAGE_INFO' => '({from} - {to} de {total})',
   'LBL_FIELD_VALUE_OPTIONS_RELOAD_LIST' => 'Recargar lista',
-  'LBL_FIELD_VALUE_OPTIONS_REMOVE_STALE' => 'Limpiar valores obsoletos',
-  'LBL_FIELD_VALUE_OPTIONS_PAGE_SIZE' => 'Registros por página',
+  'LBL_FIELD_VALUE_OPTIONS_REMOVE_STALE' => 'Limpar valores obsoletos',
+  'LBL_FIELD_VALUE_OPTIONS_PAGE_SIZE' => 'Rexistros por páxina',
   'LBL_FIELD_VALUE_OPTION_HIDE' => 'Ocultar',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
   'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostrar valores internos',
