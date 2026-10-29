@@ -293,7 +293,7 @@ class ViewLayoutView extends SugarView
             $mb = new ModuleBuilder() ;
             $module = & $mb->getPackageModule($this->package, $this->editModule) ;
             // STIC-Custom 20261029 ART - Use current language so panel/field labels are shown in the configured language, not only English
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1485
             // $smarty->assign('current_mod_strings', $module->getModStrings());
             $current_lang = $GLOBALS['current_language'] ?? 'en_us';
             $smarty->assign('current_mod_strings', $module->getModStrings($current_lang));

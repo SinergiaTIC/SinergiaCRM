@@ -109,7 +109,7 @@ class ParserLabel
         if (!empty($this->packageName)) {
             //we are in Module builder
             // STIC-Custom 20261029 ART - Ensure new labels exist in the other language files so they don't show the internal key when switching language
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1485
             // return self::addLabels($language, $labels, $this->moduleName, "custom/modulebuilder/packages/{$this->packageName}/modules/{$this->moduleName}/language");
             $basepath = "custom/modulebuilder/packages/{$this->packageName}/modules/{$this->moduleName}/language";
             $result = self::addLabels($language, $labels, $this->moduleName, $basepath);
@@ -123,7 +123,7 @@ class ParserLabel
     }
 
     // STIC-Custom 20261029 ART - Ensure new labels exist in the other language files so they don't show the internal key when switching language
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1485
     /**
      * Propagate newly created labels to the rest of language files in a ModuleBuilder
      * package when they are missing, preserving existing translations
