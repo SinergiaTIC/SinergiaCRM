@@ -75,16 +75,15 @@ if ($sdaEnabled) {
     $r = $db->query($q);
     $a = $db->fetchByAssoc($r);
 
-    if (!empty($a['sda_allowed_c']) && $a['sda_allowed_c'] == 1) {
-        // Generate sdaUrl
-        $currentDomain = $_SERVER['HTTP_HOST'];
-        $lang = explode('_', $sugar_config['default_language'])[0];
-        $sdaUrl = $sugar_config['stic_sinergiada_public']['url'] ?? "https://" . str_replace("sinergiacrm", "sinergiada", $currentDomain);
-        $sdaUrl .= "/{$lang}/#";
-
+    if (!empty($a['sda_allowed_c']) && in_array((int) $a['sda_allowed_c'], [1, 2], true)) {
         $sinergiaDA = array(
             'sda_link' => array(
-                'linkinfo' => array($app_strings['LBL_STIC_SINERGIADA'] => "javascript:void(window.open('{$sdaUrl}'))"),
+                // Abrir SinergiaDA en una pestaña nueva (target explícito: no todas
+                // las rutas de renderizado del menú respetan el target por defecto).
+                'linkinfo' => array(
+                    $app_strings['LBL_STIC_SINERGIADA'] => "index.php?module=Home&action=sdaRedirect",
+                    'target' => '_blank',
+                ),
                 'submenu' => '',
             ),
         );

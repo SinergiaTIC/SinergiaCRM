@@ -22,24 +22,69 @@
  */
 
 require_once 'modules/Home/controller.php';
+require_once 'SticInclude/SdaSso.php';
 class CustomHomeController extends HomeController
 {
     /**
      * Redirects the user to SinergiaDA if they have permission, otherwise log an error message.
+     *
+     * When SSO is configured, a short-lived token is appended so SinergiaDA
+     * opens the session without asking for credentials. An optional "return"
+     * route (relative path only) is forwarded to SinergiaDA.
      */
     public function action_sdaRedirect()
     {
         global $sugar_config, $current_user, $mod_strings;
-        $db = DBManagerFactory::getInstance();
-        $q = "SELECT sda_allowed_c FROM users_cstm WHERE id_c='" . $current_user->id . "'";
-        $r = $db->query($q);
-        $a = $db->fetchByAssoc($r);
+        $allowed = SticSdaSso::getAllowed($current_user->id);
         $currentDomain = $_SERVER['HTTP_HOST'];
-        if ($a['sda_allowed_c'] == 1) {
-            $lang = explode('_', $sugar_config['default_language'])[0];
-            $sdaUrl = $sugar_config['stic_sinergiada_public']['url'] ?? "https://" . str_replace("sinergiacrm", "sinergiada", $currentDomain);
-            $sdaUrl .= "/{$lang}/#";
-            SugarApplication::redirect($sdaUrl);
+        $sdaUrl = $sugar_config['stic_sinergiada_public']['url'] ?? "https://" . str_replace("sinergiacrm", "sinergiada", $currentDomain);
+
+        // Idioma de la URL de SDA: preferencia del usuario; si no, el idioma actual
+        // de la sesión; y en último término, el idioma por defecto del CRM.
+        $userLang = $current_user->getPreference('language') ?: ($GLOBALS['current_language'] ?? '');
+        $lang = explode('_', $userLang ?: $sugar_config['default_language'])[0];
+
+        // SinergiaDA puede publicarse en la raíz o bajo una carpeta de idioma
+        // ({sda}/{lang}/). El build localizado (el habitual) usa carpetas de
+        // idioma; para un despliegue servido en la raíz, definir
+        //   $sugar_config['stic_sinergiada']['sso_locale_path'] = false;
+        // (en dev también vale true: el servidor de desarrollo sirve la app en
+        // cualquier ruta y el router usa el hash).
+        $sdaBase = rtrim($sdaUrl, '/');
+        $localePath = $sugar_config['stic_sinergiada']['sso_locale_path'] ?? true;
+        if ($localePath) {
+            // Solo se usan idiomas realmente publicados por SDA (carpetas /xx/);
+            // si el del usuario no está, se usa el primero de la lista.
+            $sdaLanguages = $sugar_config['stic_sinergiada']['sso_locale_languages'] ?? ['es', 'ca', 'en', 'gl'];
+            if (!in_array($lang, $sdaLanguages, true)) {
+                $lang = $sdaLanguages[0] ?? 'es';
+            }
+            $sdaBase .= '/' . $lang;
+        }
+
+        if ($allowed !== false) {
+            $return = SticSdaSso::sanitizeReturn($_GET['return'] ?? '');
+            $token = SticSdaSso::isReady() ? SticSdaSso::mint($current_user->user_name, $allowed) : null;
+
+            if ($token !== null) {
+                $ssoUrl = $sdaBase . '/?t=' . rawurlencode($token)
+                        . ($return !== '' ? '#' . $return : '#/home');
+                // 302 (no 301) + no-cache: un 301 se cachea en el navegador y
+                // dejaba a los usuarios atascados en una URL antigua sin token.
+                header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+                header('Pragma: no-cache');
+                header('Expires: Thu, 19 Nov 1981 08:52:00 GMT');
+                header('HTTP/1.1 302 Found');
+                header('Location: ' . $ssoUrl);
+                die();
+            }
+
+            // SSO not configured: plain redirect (legacy behaviour)
+            header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+            header('Pragma: no-cache');
+            header('Expires: Thu, 19 Nov 1981 08:52:00 GMT');
+            header('HTTP/1.1 302 Found');
+            header('Location: ' . $sdaBase . '/#');
             die();
         } else {
             SugarApplication::appendErrorMessage("<p class='msg-fatal-lock'>{$mod_strings['LBL_STIC_SINERGIADA_NOT_ALLOWED']}");
