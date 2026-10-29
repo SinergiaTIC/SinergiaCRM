@@ -145,7 +145,12 @@ class ViewDashlet extends ViewListView
         if ($this->fromModuleBuilder) {
             $mb = new ModuleBuilder() ;
             $module = & $mb->getPackageModule($this->editPackage, $this->editModule) ;
-            $smarty->assign('current_mod_strings', $module->getModStrings());
+            // STIC-Custom 20261029 ART - Use current language so labels are shown in the configured language, not only English
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1485
+            // $smarty->assign('current_mod_strings', $module->getModStrings());
+            $current_lang = $GLOBALS['current_language'] ?? 'en_us';
+            $smarty->assign('current_mod_strings', $module->getModStrings($current_lang));
+            // END STIC-Custom
         }
         $smarty->assign('title', $this->_constructTitle()) ;
         $groups = array( ) ;
