@@ -238,6 +238,14 @@ class ModuleInstaller
             sugar_cache_clear($cache_key);
             sugar_cache_reset();
 
+            // STIC-Custom 20261029 ART - Clear theme template cache after module install so new layouts are visible without a manual Quick Repair and Rebuild
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            require_once 'include/TemplateHandler/TemplateHandler.php';
+            foreach ($this->installed_modules as $installedModule) {
+                TemplateHandler::clearCache($installedModule);
+            }
+            // END STIC-Custom
+
             //clear the unified_search_module.php file
             require_once('modules/Home/UnifiedSearchAdvanced.php');
             UnifiedSearchAdvanced::unlinkUnifiedSearchModulesFile();
