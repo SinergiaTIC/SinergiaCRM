@@ -22,10 +22,10 @@
  */
 
 $mod_strings = array (
-  'LBL_RELATED_RECORD_NAME' => 'Nombre del registro relacionado',
-  'LBL_RELATED_MODULE' => 'Módulo relacionado',
-  'LBL_RELATIONSHIP_NAME' => 'Nombre de la relación',
-  'LBL_JOIN_TABLE' => 'Tabla de unión',
+  'LBL_RELATED_RECORD_NAME' => 'Nome do rexistro relacionado',
+  'LBL_RELATED_MODULE' => 'Módulo Relacionado',
+  'LBL_RELATIONSHIP_NAME' => 'Nome da Relación',
+  'LBL_JOIN_TABLE' => 'Táboa de unión',
   'LBL_RESTORED' => 'Restaurado',
-  'LBL_SKIP_REASON' => 'Motivo de no restauración',
+  'LBL_SKIP_REASON' => 'Motivo de non participación',
 );
