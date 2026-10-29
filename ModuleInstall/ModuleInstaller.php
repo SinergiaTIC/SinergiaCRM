@@ -239,7 +239,7 @@ class ModuleInstaller
             sugar_cache_reset();
 
             // STIC-Custom 20261029 ART - Clear theme template cache after module install so new layouts are visible without a manual Quick Repair and Rebuild
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1487
             require_once 'include/TemplateHandler/TemplateHandler.php';
             foreach ($this->installed_modules as $installedModule) {
                 TemplateHandler::clearCache($installedModule);
