@@ -5232,6 +5232,12 @@ function loadAsyncListCount() {
                     var response = JSON.parse(xhr.responseText);
                     if (response.success) {
                         processResponse(group.elements, response);
+                    } else {
+                        // STIC-Custom AAM - 20261029 - Async count disabled (e.g. disable_count_query)
+                        group.elements.forEach(function(el) {
+                            el.innerHTML = '?';
+                            el.classList.remove('async-count-loading', 'async-spinner');
+                        });
                     }
                 } catch (e) {
                     console.error('Error parsing async count response:', e);

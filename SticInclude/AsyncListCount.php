@@ -53,6 +53,15 @@ if (empty($module)) {
     return;
 }
 
+// STIC-Custom AAM - 20261029 - Respect disable_count_query: when it is active, no
+// total count (neither SuiteCRM nor STIC async) must be performed at all.
+// Also guard against stale cached pages still firing the async request.
+if (empty($GLOBALS['sugar_config']['stic_async_list_count'])
+    || !empty($GLOBALS['sugar_config']['disable_count_query'])) {
+    outputJson(false, null, 'Async count disabled');
+    return;
+}
+
 $bean = BeanFactory::getBean($module);
 if (!$bean) {
     outputJson(false, null, 'Invalid module');
