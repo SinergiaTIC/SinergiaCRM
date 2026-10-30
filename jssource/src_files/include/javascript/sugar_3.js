@@ -5156,10 +5156,24 @@ $(document).ready(function(){
 })
 // END STIC
 
-// STIC-Custom OC - 20260309 - Async count loading for list views
+// STIC-Custom AAM - 20260309 - Async count loading for list views
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
 // STIC-Custom AAM - 20260508 - Deduplicate async count requests
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/1104
+// STIC-Custom AAM - 20261019 - Track pending async count requests so they can be
+// cancelled when the user leaves the page.
+var asyncListCountXhrs = [];
+
+function cancelAsyncListCounts() {
+    asyncListCountXhrs.forEach(function(xhr) {
+        try { xhr.abort(); } catch (e) {}
+    });
+    asyncListCountXhrs = [];
+}
+
+window.addEventListener('beforeunload', cancelAsyncListCounts);
+window.addEventListener('pagehide', cancelAsyncListCounts);
+
 function loadAsyncListCount() {
     var asyncCountElements = document.querySelectorAll('.async-count-loading');
     if (!asyncCountElements.length) return;
@@ -5206,13 +5220,24 @@ function loadAsyncListCount() {
         }
 
         var xhr = new XMLHttpRequest();
+        asyncListCountXhrs.push(xhr);
         xhr.open('GET', url, true);
         xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4) {
+                var idx = asyncListCountXhrs.indexOf(xhr);
+                if (idx !== -1) asyncListCountXhrs.splice(idx, 1);
+            }
             if (xhr.readyState === 4 && xhr.status === 200) {
                 try {
                     var response = JSON.parse(xhr.responseText);
                     if (response.success) {
                         processResponse(group.elements, response);
+                    } else {
+                        // STIC-Custom AAM - 20261029 - Async count disabled (e.g. disable_count_query)
+                        group.elements.forEach(function(el) {
+                            el.innerHTML = '?';
+                            el.classList.remove('async-count-loading', 'async-spinner');
+                        });
                     }
                 } catch (e) {
                     console.error('Error parsing async count response:', e);
@@ -5254,4 +5279,5 @@ document.addEventListener('click', function(e) {
     }
 });
 // END STIC-Custom AAM
-// END STIC-Custom OC
+// END STIC-Custom AAM
+// END STIC-Custom AAM
