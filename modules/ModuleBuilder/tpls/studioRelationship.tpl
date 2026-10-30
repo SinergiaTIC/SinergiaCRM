@@ -219,7 +219,7 @@ ModuleBuilder.deleteRel = function()
 		    if (confirm == 'yes') {
 		        document.forms.relform.action.value="DeleteRelationship";
 		        // STIC-Custom 20261030 ART - Keep the relationship editor open until the request finishes
-				// https://github.com/SinergiaTIC/SinergiaCRM/pull/
+				// https://github.com/SinergiaTIC/SinergiaCRM/pull/1492
 				// Defer submit until the confirm dialog is hidden so its hide() does not close the progress dialog opened by submitForm
 			    // ModuleBuilder.submitForm("relform");
 			    // ModuleBuilder.tabPanel.removeTab(ModuleBuilder.findTabById("relEditor"));
