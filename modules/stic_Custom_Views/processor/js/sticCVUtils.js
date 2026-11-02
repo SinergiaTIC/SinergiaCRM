@@ -559,6 +559,14 @@ var sticCVUtils = class sticCVUtils {
   static change($elem) {
     $elem.each(function() {
       $(this).change();
+      // STIC-Custom 20260504 - Also dispatch native DOM change event
+      // https://github.com/SinergiaTIC/SinergiaCRM/pull/1103
+      // jQuery .change() only triggers jQuery event handlers, not native addEventListener
+      // listeners. Dynamicenum fields register their change handlers via addEventListener(),
+      // so they never receive notification when Custom Views changes the parent field value.
+      // Dispatching a native change event ensures both jQuery and native listeners are notified.
+      this.dispatchEvent(new Event('change', {bubbles: true}));
+      // END STIC-Custom
     });
     return $elem.length > 0;
   }
