@@ -257,7 +257,8 @@ class FormHtmlGeneratorService {
         $jsConfig = json_encode([
             'checkUrl' => $isPreview ? '' : $checkUrl,
             'closedFormText' => $closedFormText,
-            'isPreview' => $isPreview
+            'isPreview' => $isPreview,
+            'requiredFieldMessage' => translate('LBL_REQUIRED_FIELD_MESSAGE', 'stic_AWF_Forms')
         ]);
         $safeConfig = htmlspecialchars($jsConfig, ENT_QUOTES, 'UTF-8');
 
@@ -1272,7 +1273,7 @@ document.addEventListener('alpine:init', () => {
               feedback.className = 'invalid-feedback';
               parent.appendChild(feedback);
             }
-            feedback.textContent = group.dataset.requiredMessage || 'This field is required.';
+            feedback.textContent = group.dataset.requiredMessage || config.requiredFieldMessage;
             feedback.style.display = 'block';
           }
         }
