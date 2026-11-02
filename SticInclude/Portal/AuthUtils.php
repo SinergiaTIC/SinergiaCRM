@@ -381,14 +381,43 @@ class SticPortalAuthUtils
     }
 
     // ── Magic link ────────────────────────────────────
-    public static function generateMagicLinkToken($bean)
+    /**
+     * Query string (client_id / redirect_uri / state) to embed in a magic
+     * link when the request came from an OAuth app. The pair is validated
+     * exactly like the login page does: the client must be a portal client
+     * and the redirect must match its registered URL; anything else returns
+     * an empty string (plain magic link, no app redirect).
+     *
+     * @param string $clientId OAuth2 client id.
+     * @param string $redirectUri Redirect URI presented by the app.
+     * @param string $state OAuth state to preserve.
+     * @return string Query string ('' when the context is not valid).
+     */
+    private static function validatedMagicLinkOauthQuery($clientId, $redirectUri, $state)
+    {
+        if ((string)$clientId === '' || (string)$redirectUri === '') return '';
+        $client = BeanFactory::getBean('OAuth2Clients', $clientId);
+        $registeredUrl = $client->redirect_url ?? '';
+        $valid = $client && $client->id && $client->deleted != 1
+            && $client->allowed_grant_type === 'portal_authorization_code'
+            && !empty($registeredUrl) && strpos($redirectUri, $registeredUrl) === 0;
+        if (!$valid) {
+            $GLOBALS['log']->warning(__METHOD__ . ' - Magic link requested with invalid OAuth context; generating a plain one');
+            return '';
+        }
+        $query = 'client_id=' . urlencode($clientId) . '&redirect_uri=' . urlencode($redirectUri);
+        if ((string)$state !== '') $query .= '&state=' . urlencode($state);
+        return $query;
+    }
+
+    public static function generateMagicLinkToken($bean, $oauthClientId = '', $oauthRedirectUri = '', $oauthState = '')
     {
         $rawToken = bin2hex(random_bytes(32));
         $bean->stic_portal_magic_token_c = hash('sha256', $rawToken);
         $mins = (int)SticPortalConfigUtils::get('PORTAL_MAGIC_LINK_EXP_MIN', 15);
         $bean->stic_portal_magic_expires_c = self::futureDb($mins * 60);
         $bean->save();
-        self::sendMagicLinkEmail($bean, $rawToken);
+        self::sendMagicLinkEmail($bean, $rawToken, $oauthClientId, $oauthRedirectUri, $oauthState);
         return $rawToken;
     }
 
@@ -478,7 +507,7 @@ class SticPortalAuthUtils
         return str_replace(array_keys($portalVars), array_values($portalVars), $string);
     }
 
-    public static function sendMagicLinkEmail($bean, $rawToken)
+    public static function sendMagicLinkEmail($bean, $rawToken, $oauthClientId = '', $oauthRedirectUri = '', $oauthState = '')
     {
         $templateId = SticPortalConfigUtils::get('PORTAL_TMPL_MAGIC', '');
         if (empty($templateId)) return false;
@@ -490,6 +519,12 @@ class SticPortalAuthUtils
         $link = rtrim(SticPortalConfigUtils::get('PORTAL_HOME_URL', ''), '/');
         if (empty($link)) $link = 'http://localhost:8000/sinergiacrm';
         $link .= '/index.php?entryPoint=sticPortalMagicLogin&token=' . urlencode($rawToken) . '&id=' . urlencode($bean->id);
+        // A magic link requested from an OAuth app carries the app context, so
+        // clicking it continues the authorization back to that app (same
+        // behavior as password and remember-me logins). Only validated
+        // contexts (portal client + registered redirect) are embedded.
+        $oauthQuery = self::validatedMagicLinkOauthQuery($oauthClientId, $oauthRedirectUri, $oauthState);
+        if ($oauthQuery !== '') $link .= '&' . $oauthQuery;
         // Portal variables are parsed manually; record variables go through the
         // SinergiaCRM template parser (see parsePortalTemplate()).
         $portalVars = array(

@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $message = 'If the account exists, a magic link has been sent to your email.';
             } else {
                 $result = SticPortalAuthUtils::getPortalUserByUsername($username);
-                if ($result) SticPortalAuthUtils::generateMagicLinkToken($result['bean']);
+                if ($result) SticPortalAuthUtils::generateMagicLinkToken($result['bean'], $isOAuth ? $oauthClientId : '', $isOAuth ? $oauthRedirectUri : '', $isOAuth ? $oauthState : '');
                 $message = 'If the account exists, a magic link has been sent to your email.';
             }
         } else {

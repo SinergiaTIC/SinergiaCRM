@@ -26,9 +26,14 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once 'SticInclude/Portal/AuthUtils.php';
 require_once 'SticInclude/Portal/ConfigUtils.php';
+require_once 'SticInclude/Portal/OAuthRepository.php';
 
 $token = $_GET['token'] ?? '';
 $id    = $_GET['id'] ?? '';
+// OAuth context embedded in the link when it was requested from an app
+$oauthClientId     = $_GET['client_id'] ?? '';
+$oauthRedirectUri  = $_GET['redirect_uri'] ?? '';
+$oauthState        = $_GET['state'] ?? '';
 $result = SticPortalAuthUtils::validateMagicLinkToken($token, $id);
 
 if (!$result) {
@@ -63,6 +68,21 @@ SticPortalAuthUtils::resetFailedAttempts($bean);
 SticPortalAuthUtils::recordLoginAudit($bean, $type, $bean->stic_portal_username_c, $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'magic_link');
 SticPortalAuthUtils::sendSecurityNotification($bean, 'new_login');
 SticPortalAuthUtils::createPortalSession($bean, $type);
+
+// Magic link requested from an OAuth app: continue the authorization back to
+// that app instead of going to the portal home (same behavior as password and
+// remember-me logins). The context is validated again here — the emailed link
+// must never be able to redirect an authorization code to an arbitrary URL.
+if ($oauthClientId !== '' && $oauthRedirectUri !== '') {
+    $oauthClient = BeanFactory::getBean('OAuth2Clients', $oauthClientId);
+    $registeredUrl = $oauthClient->redirect_url ?? '';
+    $validClient = $oauthClient && $oauthClient->id && $oauthClient->deleted != 1
+        && $oauthClient->allowed_grant_type === 'portal_authorization_code'
+        && !empty($registeredUrl) && strpos($oauthRedirectUri, $registeredUrl) === 0;
+    if ($validClient) {
+        SticPortalAuthCodeGenerator::generateAndRedirect($bean->id, $type, $oauthClientId, $oauthRedirectUri, $oauthState);
+    }
+}
 
 $home = SticPortalConfigUtils::get('PORTAL_HOME_URL', '');
 if ($bean->stic_portal_force_pw_change_c || SticPortalAuthUtils::isPasswordExpired($bean)) {
