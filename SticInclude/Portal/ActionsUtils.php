@@ -374,10 +374,20 @@ class SticPortalActionsUtils
             $outboundEmail = $outboundEmail->getMailerByName($user, $mailerName);
         }
 
+        $log = __CLASS__ . '::' . __METHOD__;
         $mailer = new SugarPHPMailer();
         $mailer->Mailer = 'smtp';
         $mailer->Host = $outboundEmail->mail_smtpserver;
         $mailer->Port = $outboundEmail->mail_smtpport;
+        // Diagnostics for "SMTP Error: data not accepted" issues: send
+        // parameters at debug level, SMTP conversation and mailer error at
+        // failure time (below). The conversation of every send is captured in
+        // the mailer's fullSmtpLog by SugarPHPMailer::send().
+        $GLOBALS['log']->debug($log . " - mailer: host={$outboundEmail->mail_smtpserver} port={$outboundEmail->mail_smtpport} ssl={$outboundEmail->mail_smtpssl} auth=" . (int)$outboundEmail->mail_smtpauth_req . ' account=' . $outboundEmail->name . ' type=' . $outboundEmail->type);
+        $mailer->SMTPDebug = 3;
+        $mailer->Debugoutput = static function ($str, $level) {
+            $GLOBALS['log']->fatal('SMTPDEBUG: ' . $str);
+        };
         if ($outboundEmail->mail_smtpssl == 1) {
             $mailer->SMTPSecure = 'ssl';
         }
@@ -400,6 +410,8 @@ class SticPortalActionsUtils
         $mailer->Body     = $bodyHtml;
         $mailer->AltBody  = $bodyText;
         $mailer->isHTML(true);
+        $GLOBALS['log']->debug($log . ' - From="' . $mailer->From . '" FromName="' . $mailer->FromName . '" To=[' . implode(',', $toList) . '] Cc=[' . implode(',', $ccList) . '] Bcc=[' . implode(',', $bccList) . '] ReplyTo="' . $replyTo . '" Subject="' . $subject . '"');
+        $GLOBALS['log']->debug($log . ' - bodyLen=' . strlen($bodyHtml) . ' altLen=' . strlen($bodyText) . ' mailerClass=' . get_class($mailer));
 
         foreach ($toList as $to) {
             $mailer->addAddress($to);
@@ -415,7 +427,19 @@ class SticPortalActionsUtils
             $mailer->addReplyTo($replyTo, (string) ($options['reply_to_name'] ?? ''));
         }
 
-        return $mailer->Send();
+        $result = $mailer->Send();
+        if (!$result) {
+            // SugarPHPMailer captures the full SMTP conversation (with the AUTH
+            // exchange obfuscated) in fullSmtpLog via its own Debugoutput
+            // callback — dump it on failure to see the raw server response to
+            // the DATA phase ("SMTP Error: data not accepted").
+            $smtpLog = (string) ($mailer->fullSmtpLog ?? '');
+            $GLOBALS['log']->fatal($log . ' - Send FAILED: ' . $mailer->ErrorInfo);
+            if ($smtpLog !== '') {
+                $GLOBALS['log']->fatal($log . " - SMTP full log:\n" . $smtpLog);
+            }
+        }
+        return $result;
     }
 
     /**
