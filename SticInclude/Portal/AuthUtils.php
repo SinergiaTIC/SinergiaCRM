@@ -451,8 +451,8 @@ class SticPortalAuthUtils
      *   parser cannot resolve them) are replaced manually, right after the
      *   parser runs. They must be listed in the $portalVars map passed by every
      *   caller:
-     *     $portal_title, $portal_address, $portal_login_url, $portal_reset_link,
-     *     $portal_magic_link, $notification_time, $notification_ip,
+     *     $portal_title, $portal_app_name, $portal_address, $portal_login_url,
+     *     $portal_reset_link, $portal_magic_link, $notification_time, $notification_ip,
      *     $notification_ua, $notification_event
      *   Record variables already include the natural name fields resolved by the
      *   parser itself: $contact_full_name (Contacts) and $account_name (Accounts).
@@ -630,6 +630,10 @@ class SticPortalAuthUtils
      * If the value is already a bcrypt hash, skips re-hashing (guards against
      * double-hash when processBeforeSave fires multiple times).
      *
+     * On every real password change, ends the user's open sessions and
+     * remember-me token (invalidatePortalSessions) so they must log in again
+     * with the new password.
+     *
      * @param SugarBean $bean
      * @throws RuntimeException If policy or history validation fails.
      */
@@ -651,6 +655,13 @@ class SticPortalAuthUtils
                 self::setPasswordExpiration($bean);
                 $bean->stic_portal_reset_token_c = '';
                 $bean->stic_portal_reset_expires_c = '';
+                // Real change (e.g., an admin pasted a hash) vs. the login
+                // re-hash and follow-up saves, which resubmit the value just
+                // persisted (fetched_row is not refreshed by save()): only
+                // the former ends the user's open sessions.
+                if (self::storedHashDiffers($bean, $submitted)) {
+                    self::invalidatePortalSessions($bean);
+                }
                 return;
             }
             $GLOBALS['log']->debug($logPrefix . "plaintext (len=" . strlen($plain) . ") — validating and hashing");
@@ -665,7 +676,50 @@ class SticPortalAuthUtils
             self::setPasswordExpiration($bean);
             $bean->stic_portal_reset_token_c = '';
             $bean->stic_portal_reset_expires_c = '';
+            // Real password change: end the user's open sessions and
+            // remember-me so they must log in again with the new password.
+            self::invalidatePortalSessions($bean);
         }
+    }
+
+    /**
+     * Force re-authentication of a portal user: clears the stored portal
+     * session id (single-session enforcement rejects every active session on
+     * its next request) and the remember-me token (cached credentials stop
+     * working), so the user has to log in again. Called on every real
+     * password change (processBeforeSave) — the fields are persisted by the
+     * save that triggered the change, so no save is done here.
+     *
+     * @param SugarBean|null $bean Contact or Account whose sessions to end.
+     * @return void
+     */
+    public static function invalidatePortalSessions($bean = null)
+    {
+        if (!$bean || empty($bean->id)) return;
+        $GLOBALS['log']->info(__METHOD__ . " - Password changed: ending open sessions and remember-me for {$bean->module_name}:{$bean->id}");
+        $bean->stic_portal_session_id_c = '';
+        $bean->stic_portal_remember_token_c = '';
+        if (!headers_sent()) {
+            setcookie('portal_remember', '', time() - 3600, '/');
+        }
+    }
+
+    /**
+     * Whether a submitted (already hashed) password differs from the hash
+     * currently persisted in the DB. fetched_row is not refreshed by save(),
+     * so follow-up saves of the same bean in one request (remember-me token,
+     * portal session id) resubmit the just-persisted hash: comparing against
+     * the stored value distinguishes a real change from those re-saves.
+     *
+     * @param SugarBean $bean Contact or Account.
+     * @param string $submittedHash Submitted bcrypt hash.
+     * @return bool True when the submitted hash is a new one.
+     */
+    private static function storedHashDiffers($bean, $submittedHash)
+    {
+        global $db;
+        $stored = $db->getOne("SELECT stic_portal_hashed_c FROM {$bean->table_name}_cstm WHERE id_c=" . $db->quoted($bean->id));
+        return $stored !== $submittedHash;
     }
 
     // ── Security notifications ───────────────────────
@@ -731,6 +785,11 @@ class SticPortalAuthUtils
         global $db;
         $id = create_guid();
         $now = self::nowDb();
+        // Canonical module names for parent_type (some callers pass the
+        // singular bean type), so the audit ListView filter and the flex
+        // relate links work with the standard parent_type_display list.
+        $typeMap = array('Contact' => 'Contacts', 'Account' => 'Accounts');
+        if (isset($typeMap[$type])) $type = $typeMap[$type];
         // Clamp free-text input to the column widths (usernames come from POST)
         $username = substr((string)$username, 0, 100);
         $failureReason = substr((string)$failureReason, 0, 32);

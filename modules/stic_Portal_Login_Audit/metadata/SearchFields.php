@@ -4,6 +4,12 @@ $searchFields['stic_Portal_Login_Audit'] = array(
     'username' => array(
         'query_type' => 'default',
     ),
+    'parent_type' => array(
+        'query_type' => 'default',
+    ),
+    'user_agent' => array(
+        'query_type' => 'default',
+    ),
     'ip_address' => array(
         'query_type' => 'default',
     ),

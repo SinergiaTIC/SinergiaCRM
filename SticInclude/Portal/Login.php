@@ -96,6 +96,7 @@ $csrfToken = $_SESSION['portal_csrf_token'];
 if (isset($_GET['error']) && $_GET['error'] === 'invalid_link') $error = 'Invalid or expired link. Please request a new one.';
 if (isset($_GET['error']) && $_GET['error'] === 'session_expired') $error = 'Session expired. Please log in again.';
 if (isset($_GET['logged_in'])) $message = 'You are now logged in.';
+if (isset($_GET['info']) && $_GET['info'] === 'password_changed') $message = 'Your password has been changed. Please sign in with your new password.';
 
 $sessionBean = SticPortalAuthUtils::validatePortalSession();
 $loggedIn = $sessionBean !== null;

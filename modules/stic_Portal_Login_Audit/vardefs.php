@@ -64,6 +64,7 @@ $dictionary['stic_Portal_Login_Audit'] = array(
             'name' => 'parent_type',
             'vname' => 'LBL_PARENT_TYPE',
             'type' => 'parent_type',
+            'options' => 'stic_portal_audit_parent_types',
             'massupdate' => 0,
             'no_default' => false,
             'comments' => '',

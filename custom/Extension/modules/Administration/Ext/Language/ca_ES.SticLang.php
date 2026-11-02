@@ -181,3 +181,4 @@ $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_PASSWORD'] = 'Contrasenya';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_INVITATION'] = 'Invitació';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_MAGIC_LINK'] = 'Enllaç màgic';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_ADMIN_RESET'] = 'Restabliment per administrador';
+$mod_strings['LBL_STIC_PORTAL_HOME_URL_HELP'] = 'On arriben els usuaris després d\'iniciar la sessió directament al portal (sense aplicació OAuth). Els inicis de sessió des d\'una aplicació OAuth tornen sempre a la URL de callback d\'aquesta aplicació. Si es deixa buit, es mostra la pàgina de benvinguda.';

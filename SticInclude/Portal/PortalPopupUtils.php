@@ -51,9 +51,24 @@ class PortalPopupUtils
         $clients = array();
         $r = $db->query("SELECT id, name, redirect_url FROM oauth2clients WHERE allowed_grant_type='portal_authorization_code' AND deleted=0 ORDER BY name");
         while ($row = $db->fetchByAssoc($r)) {
-            $clients[] = array('name' => $row['name'], 'url' => $row['redirect_url']);
+            $clients[] = array('id' => $row['id'], 'name' => $row['name'], 'url' => $row['redirect_url']);
         }
         echo '<script>STIC.portalClients = ' . json_encode($clients) . "</script>\n";
+
+        // Inject the selectable email templates and the default template per
+        // action (the same one the Portal Configuration settings use). The
+        // invitation default depends on the module the popup runs on.
+        $templates = array();
+        $r = $db->query("SELECT id, name FROM email_templates WHERE type='email' AND deleted=0 ORDER BY name");
+        while ($row = $db->fetchByAssoc($r)) {
+            $templates[] = array('id' => $row['id'], 'name' => $row['name']);
+        }
+        echo '<script>STIC.portalTemplates = ' . json_encode($templates) . "</script>\n";
+        $templateDefaults = array(
+            'invitation' => SticPortalConfigUtils::get(($module === 'Accounts') ? 'PORTAL_TMPL_CRED_ACCOUNTS' : 'PORTAL_TMPL_CRED_CONTACTS', ''),
+            'pwreset' => SticPortalConfigUtils::get('PORTAL_TMPL_RESET', ''),
+        );
+        echo '<script>STIC.portalTemplateDefaults = ' . json_encode($templateDefaults) . "</script>\n";
         echo '<script>function getPortalInvitationLimit() {return ' . (int)SticPortalConfigUtils::get('PORTAL_INVITATION_LIMIT', 100) . ';}</script>' . "\n";
         echo getVersionedScript('SticInclude/Portal/PortalActions.js') . "\n";
 
@@ -78,7 +93,7 @@ class PortalPopupUtils
             <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="2" aria-describedby="qtip-2"></i>
             <div class="inline-help-content" style="display:none;">' . $actionHelp . '</div>
         </label>
-        <select id="portalActionType" class="form-control" style="width:100%">
+        <select id="portalActionType" class="form-control" style="width:100%" onchange="portalActionSyncTemplateSelect()">
             <option value="invitation">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_INVITATION'] ?? 'Send Invitation Email') . '</option>
             <option value="pwreset">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_RESET'] ?? 'Send Password Reset') . '</option>
         </select>
@@ -90,6 +105,14 @@ class PortalPopupUtils
             <div class="inline-help-content" style="display:none;">' . $appHelp . '</div>
         </label>
         <select id="portalAppSelect" class="form-control" style="width:100%"></select>
+    </div>
+    <div class="pap-field">
+        <label class="pap-label">
+            ' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_TEMPLATE'] ?? 'Email Template') . '
+            <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="4" aria-describedby="qtip-4"></i>
+            <div class="inline-help-content" style="display:none;">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_TEMPLATE_HELP'] ?? 'Defaults to the template selected in Portal Configuration (per action type). Choose another template to override it for this send.') . '</div>
+        </label>
+        <select id="portalTemplateSelect" class="form-control" style="width:100%"></select>
     </div>
     <div class="pap-actions">
         <button onclick="closePortalActionsPopup()" class="pap-btn-cancel">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_CANCEL'] ?? 'Cancel') . '</button>

@@ -307,8 +307,7 @@ class actionSendEmail extends actionBase
     // STIC-Custom 20240307 EPS - Improve send mail action
     // https://github.com/SinergiaTIC/SinergiaCRM/issues/117
 
-    // STIC-Custom 20261028 AAM - private → protected so the Portal Actions workflow action can reuse it
-    protected function getSelectedSMTPData($emailsList, $selectedSmtp) {
+    private function getSelectedSMTPData($emailsList, $selectedSmtp) {
         $selectedData = array();
         foreach($emailsList as $id => $props) {
             if ($selectedSmtp == $props['name']) {
@@ -322,8 +321,7 @@ class actionSendEmail extends actionBase
         $selectedData = array(null, null);
         return $selectedData;
     }
-    // STIC-Custom 20261028 AAM - private → protected so the Portal Actions workflow action can reuse it
-    protected function get_output_smtps_options($emailsList, $selectedSmtp) {
+    private function get_output_smtps_options($emailsList, $selectedSmtp) {
         $selectedSmtp = $selectedSmtp == '' ? 'system' : $selectedSmtp;
         $optionString = "";
         foreach($emailsList as $id => $props) {
@@ -334,8 +332,7 @@ class actionSendEmail extends actionBase
         return $optionString;
     }
 
-    // STIC-Custom 20261028 AAM - private → protected so the Portal Actions workflow action can reuse it
-    protected function get_output_smtps() {
+    private function get_output_smtps() {
         $emailsList = array();
         $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list('', "(type = 'system' OR type = 'group')"); // Personal and overrides are ignored, as this will be a system based email
         foreach ($oeaList as $oea) {

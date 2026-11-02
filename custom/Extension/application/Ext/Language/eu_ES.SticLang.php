@@ -4239,3 +4239,9 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
 
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+
+// Options for the portal login audit parent_type filter
+$app_list_strings['stic_portal_audit_parent_types'] = array(
+    'Contacts' => 'Pertsonak (Contacts)',
+    'Accounts' => 'Erakundeak (Accounts)',
+);

@@ -181,3 +181,4 @@ $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_PASSWORD'] = 'Contrasinal';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_INVITATION'] = 'Invitación';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_MAGIC_LINK'] = 'Ligazón máxica';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_ADMIN_RESET'] = 'Restablecemento por administrador';
+$mod_strings['LBL_STIC_PORTAL_HOME_URL_HELP'] = 'A onde chegan os usuarios despois de iniciar sesión directamente no portal (sen aplicativo OAuth). Os inicios de sesión desde un aplicativo OAuth volven sempre á URL de callback dese aplicativo. Se se deixa baleiro, móstrase a páxina de benvida.';

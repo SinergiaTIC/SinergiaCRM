@@ -45,7 +45,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $confirm = $_POST['confirm_password'] ?? '';
         $changeResult = SticPortalAuthUtils::changePassword($bean, $current, $new, $confirm);
         if ($changeResult['success']) {
-            $success = true;
+            // The change ended every session of this user (processBeforeSave):
+            // close the current one too and send the user to the login to use
+            // the new password.
+            SticPortalAuthUtils::destroyPortalSession();
+            if (session_status() === PHP_SESSION_NONE) {
+                session_start();
+            }
+            header('Location: index.php?entryPoint=sticPortalLogin&info=password_changed');
+            exit;
         } else {
             $error = $changeResult['error'];
         }

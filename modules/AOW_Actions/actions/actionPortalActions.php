@@ -89,14 +89,18 @@ class actionPortalActions extends actionSendEmail
         $html = '<input type="hidden" name="aow_email_type_list" id="aow_email_type_list" value="' . get_select_options_with_id($app_list_strings['aow_email_type_list'], '') . '">'
             . '<input type="hidden" name="aow_email_to_list" id="aow_email_to_list" value="' . get_select_options_with_id($app_list_strings['aow_email_to_list'], '') . '">';
 
+        // Explicit widths on EVERY cell of every row so the browser keeps the
+        // same 4-column grid across rows, as in the Send Email action:
+        // label / field / label / field, with the right-hand pair starting at
+        // the 50% boundary and the selects filling their cells (right-aligned).
         $html .= "<table border='0' cellpadding='0' cellspacing='0' width='100%' data-workflow-action='portal-actions'>";
 
-        // Row 1: Action + Target App (full-width selects so long names are readable)
+        // Row 1: Action + Target App (selects fill their cells)
         $html .= '<tr>';
-        $html .= '<td id="portal_action_label' . $line . '" scope="row" valign="top"><label>' . translate('LBL_PORTAL_ACTIONS_TYPE', 'AOW_Actions') . ':</label></td>';
+        $html .= '<td id="portal_action_label' . $line . '" scope="row" valign="top" style="width:15%"><label>' . translate('LBL_PORTAL_ACTIONS_TYPE', 'AOW_Actions') . ':<i class="inline-help glyphicon glyphicon-info-sign"></i><div class="inline-help-content" style="display:none;">' . translate('LBL_PORTAL_ACTIONS_TYPE_HELP', 'AOW_Actions') . '</div></label></td>';
         $html .= '<td valign="top" style="width:35%"><select style="width:100%" name="aow_actions_param[' . $line . '][portal_action]" id="aow_actions_param_portal_action' . $line . '" onchange="portalActionsSyncTemplate(' . $line . ');">'
             . get_select_options_with_id($actionOptions, $actionType) . '</select></td>';
-        $html .= '<td id="portal_app_label' . $line . '" scope="row" valign="top"><label>' . translate('LBL_PORTAL_ACTIONS_TARGET_APP', 'AOW_Actions') . ':</label></td>';
+        $html .= '<td id="portal_app_label' . $line . '" scope="row" valign="top" style="width:15%"><label>' . translate('LBL_PORTAL_ACTIONS_TARGET_APP', 'AOW_Actions') . ':<i class="inline-help glyphicon glyphicon-info-sign"></i><div class="inline-help-content" style="display:none;">' . translate('LBL_PORTAL_ACTIONS_TARGET_APP_HELP', 'AOW_Actions') . '</div></label></td>';
         $html .= '<td valign="top" style="width:35%"><select style="width:100%" name="aow_actions_param[' . $line . '][portal_app]" id="aow_actions_param_portal_app' . $line . '">'
             . get_select_options_with_id($appOptions, $appId) . '</select></td>';
         $html .= '</tr>';
@@ -107,8 +111,8 @@ class actionPortalActions extends actionSendEmail
             $checked = 'CHECKED';
         }
         $html .= '<tr>';
-        $html .= '<td id="relate_label' . $line . '" scope="row" valign="top"><label>' . translate('LBL_INDIVIDUAL_EMAILS', 'AOW_Actions') . ':</label></td>';
-        $html .= '<td valign="top">';
+        $html .= '<td id="relate_label' . $line . '" scope="row" valign="top" style="width:15%"><label>' . translate('LBL_INDIVIDUAL_EMAILS', 'AOW_Actions') . ':<i class="inline-help glyphicon glyphicon-info-sign"></i><div class="inline-help-content" style="display:none;">' . translate('LBL_PORTAL_ACTIONS_INDIVIDUAL_HELP', 'AOW_Actions') . '</div></label></td>';
+        $html .= '<td valign="top" style="width:35%">';
         $html .= "<input type='hidden' name='aow_actions_param[" . $line . "][individual_email]' value='0' >";
         $html .= "<input type='checkbox' id='aow_actions_param[" . $line . "][individual_email]' name='aow_actions_param[" . $line . "][individual_email]' value='1' $checked></td>";
 
@@ -116,22 +120,22 @@ class actionPortalActions extends actionSendEmail
         if ($selectedTemplate != '') {
             $hidden = "";
         }
-        $html .= '<td id="name_label' . $line . '" scope="row" valign="top"><label>' . translate('LBL_EMAIL_TEMPLATE', 'AOW_Actions') . ':</label></td>';
-        $html .= '<td valign="top" style="text-align:right; white-space:nowrap;">';
-        $html .= "&nbsp;<a href='javascript:open_email_template_form(" . $line . ")' >" . translate('LBL_CREATE_EMAIL_TEMPLATE', 'AOW_Actions') . "</a>";
-        $html .= "&nbsp;<span name='edit_template' id='aow_actions_edit_template_link" . $line . "' $hidden><a href='javascript:edit_email_template_form(" . $line . ")' >" . translate('LBL_EDIT_EMAIL_TEMPLATE', 'AOW_Actions') . "</a></span>";
-        $html .= "&nbsp;<select style='width:65%;' name='aow_actions_param[" . $line . "][email_template]' id='aow_actions_param_email_template" . $line . "' onchange='show_edit_template_link(this," . $line . ");'"
+        $html .= '<td id="name_label' . $line . '" scope="row" valign="top" style="width:15%"><label>' . translate('LBL_EMAIL_TEMPLATE', 'AOW_Actions') . ':<i class="inline-help glyphicon glyphicon-info-sign"></i><div class="inline-help-content" style="display:none;">' . translate('LBL_PORTAL_ACTIONS_TEMPLATE_HELP', 'AOW_Actions') . '</div></label></td>';
+        $html .= '<td valign="top" style="width:35%">';
+        $html .= "<select style='width:100%' name='aow_actions_param[" . $line . "][email_template]' id='aow_actions_param_email_template" . $line . "' onchange='show_edit_template_link(this," . $line . ");'"
             . " data-default-invitation='" . htmlspecialchars((string) $defaultTemplates['invitation'], ENT_QUOTES) . "'"
             . " data-default-pwreset='" . htmlspecialchars((string) $defaultTemplates['pwreset'], ENT_QUOTES) . "'>"
             . get_select_options_with_id($templateOptions, $selectedTemplate) . "</select>";
+        $html .= "&nbsp;<a href='javascript:open_email_template_form(" . $line . ")' >" . translate('LBL_CREATE_EMAIL_TEMPLATE', 'AOW_Actions') . "</a>";
+        $html .= "&nbsp;<span name='edit_template' id='aow_actions_edit_template_link" . $line . "' $hidden><a href='javascript:edit_email_template_form(" . $line . ")' >" . translate('LBL_EDIT_EMAIL_TEMPLATE', 'AOW_Actions') . "</a></span>";
         $html .= '</td>';
         $html .= '</tr>';
 
         // Advanced options section (outbound account + sender identity), as in
         // the Send Email action
         $html .= "<tr style='margin-top:20px;' >";
-        $html .= '<td id="relate_label_2_' . $line . '" scope="row" valign="top" style="width:20%;" > <a href="javascript:void($(\'.advancedOptions\').toggle());">' . translate('LBL_SHOW_ADVANCED', 'AOW_Actions')
-            . '<span class="inline-help glyphicon glyphicon-triangle-bottom"></span> <span id="info-availability-portal' . $line . '" class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="1" aria-describedby="qtip-1"></span></a> ';
+        $html .= '<td id="relate_label_2_' . $line . '" scope="row" valign="top" style="width:15%;" > <a href="javascript:void($(\'.advancedOptions\').toggle());">' . translate('LBL_SHOW_ADVANCED', 'AOW_Actions')
+            . '<span class="inline-help glyphicon glyphicon-triangle-bottom"></span></a> ';
         $html .= '</td>';
         $html .= '</tr>';
 
@@ -139,9 +143,9 @@ class actionPortalActions extends actionSendEmail
         list($fromName, $fromAddress) = $this->getSelectedSMTPData($emailsList, $params['output_smtp'] ?? '');
 
         $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none;' class='advancedOptions'>";
-        $html .= '<td id="relate_label_5_' . $line . '" scope="row" valign="top" style="width:20%;"><label>' . translate('LBL_OUTPUT_SMTP', 'AOW_Actions') . ':</label>';
+        $html .= '<td id="relate_label_5_' . $line . '" scope="row" valign="top" style="width:15%;"><label>' . translate('LBL_OUTPUT_SMTP', 'AOW_Actions') . ':</label>';
         $html .= '</td>';
-        $html .= "<td valign='top' style='width:20%; margin-bottom:20px;'>";
+        $html .= "<td valign='top' style='width:35%; margin-bottom:20px;'>";
         $html .= "<select name='aow_actions_param[" . $line . "][output_smtp]' id='aow_actions_param[" . $line . "][output_smtp]' >" . $this->get_output_smtps_options($emailsList, $params['output_smtp'] ?? '') . "</select>";
         $html .= '</td>';
         $html .= '</tr>';
@@ -152,9 +156,9 @@ class actionPortalActions extends actionSendEmail
             $from_name = $fromName;
         }
         $html .= "<tr style='margin-top:20px; display:none;' class='advancedOptions'>";
-        $html .= '<td id="relate_label_3_' . $line . '" scope="row" valign="top" style="width:20%;"><label>' . translate('LBL_FROM_NAME', 'AOW_Actions') . ':</label>';
+        $html .= '<td id="relate_label_3_' . $line . '" scope="row" valign="top" style="width:15%;"><label>' . translate('LBL_FROM_NAME', 'AOW_Actions') . ':</label>';
         $html .= '</td>';
-        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<td valign='top' style='width:35% !important;'>";
         $html .= "<input type='hidden' name='aow_actions_param[" . $line . "][from_email_name]' value='0' >";
         $html .= "<input type='text' id='aow_actions_param[" . $line . "][from_email_name]' name='aow_actions_param[" . $line . "][from_email_name]' value='{$from_name}' ></td>";
 
@@ -163,9 +167,9 @@ class actionPortalActions extends actionSendEmail
         } else {
             $from = $fromAddress;
         }
-        $html .= '<td id="relate_label_2_' . $line . '" scope="row" valign="top" style="width:20%;"> <label>' . translate('LBL_FROM_EMAIL', 'AOW_Actions') . ':</label>';
+        $html .= '<td id="relate_label_2_' . $line . '" scope="row" valign="top" style="width:15%;"> <label>' . translate('LBL_FROM_EMAIL', 'AOW_Actions') . ':</label>';
         $html .= '</td>';
-        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<td valign='top' style='width:35% !important;'>";
         $html .= "<input type='hidden' name='aow_actions_param[" . $line . "][from_email_address]' value='' >";
         $html .= "<input type='text' id='aow_actions_param[" . $line . "][from_email_address]' name='aow_actions_param[" . $line . "][from_email_address]' value='{$from}' ></td>";
         $html .= '</tr>';
@@ -176,9 +180,9 @@ class actionPortalActions extends actionSendEmail
             $reply_to_name = '';
         }
         $html .= "<tr style='margin-top:20px; margin-bottom:20px; display:none' class='advancedOptions'>";
-        $html .= '<td id="relate_label_4_' . $line . '" scope="row" valign="top" style="width:20%;"><label>' . translate('LBL_REPLY_TO_NAME', 'AOW_Actions') . ':</label>';
+        $html .= '<td id="relate_label_4_' . $line . '" scope="row" valign="top" style="width:15%;"><label>' . translate('LBL_REPLY_TO_NAME', 'AOW_Actions') . ':</label>';
         $html .= '</td>';
-        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<td valign='top' style='width:35% !important;'>";
         $html .= "<input type='hidden' name='aow_actions_param[" . $line . "][reply_to_name]' value='0' >";
         $html .= "<input type='text' id='aow_actions_param[" . $line . "][reply_to_name'] name='aow_actions_param[" . $line . "][reply_to_name]' value='{$reply_to_name}' ></td>";
         $html .= '</td>';
@@ -188,23 +192,23 @@ class actionPortalActions extends actionSendEmail
         } else {
             $reply_to = '';
         }
-        $html .= '<td id="relate_label_4_' . $line . '" scope="row" valign="top" style="width:20%;"><label>' . translate('LBL_REPLY_TO_EMAIL', 'AOW_Actions') . ':</label>';
+        $html .= '<td id="relate_label_4_' . $line . '" scope="row" valign="top" style="width:15%;"><label>' . translate('LBL_REPLY_TO_EMAIL', 'AOW_Actions') . ':</label>';
         $html .= '</td>';
-        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<td valign='top' style='width:35% !important;'>";
         $html .= "<input type='hidden' name='aow_actions_param[" . $line . "][reply_to]' value='0' >";
         $html .= "<input type='text' id='aow_actions_param[" . $line . "][reply_to'] name='aow_actions_param[" . $line . "][reply_to]' value='{$reply_to}' ></td>";
         $html .= '</td>';
         $html .= '</tr>';
 
         $html .= "<tr style='margin-top:20px;' >";
-        $html .= "<td valign='top' style='width:20% !important;'>";
+        $html .= "<td valign='top' style='width:15% !important;'>";
         $html .= '</td>';
         $html .= '</tr>';
 
         // Row 3: recipient lines (same UI as the Send Email action)
         $html .= '<tr>';
-        $html .= '<td id="email_label' . $line . '" scope="row" valign="top"><label>' . translate('LBL_EMAIL', 'AOW_Actions') . ':</label></td>';
-        $html .= '<td valign="top" scope="row">';
+        $html .= '<td id="email_label' . $line . '" scope="row" valign="top" style="width:15%"><label>' . translate('LBL_EMAIL', 'AOW_Actions') . ':</label></td>';
+        $html .= '<td valign="top" scope="row" style="width:85%">';
         $html .= '<button type="button" onclick="add_emailLine(' . $line . ')"><img src="' . SugarThemeRegistry::current()->getImageURL('id-ff-add.png') . '"></button>';
         $html .= '<table id="emailLine' . $line . '_table" width="100%" class="email-line"></table>';
         $html .= '</td>';
@@ -259,17 +263,9 @@ class actionPortalActions extends actionSendEmail
             }
         }
 
-        $('#info-availability-portal" . $line . "').qtip({
-            content: {
-              text: '" . translate('LBL_ADVANCED_TOOLTIP_BODY', 'AOW_Actions') . "',
-              title: {
-                text: '" . translate('LBL_ADVANCED_TOOLTIP_HEADER', 'AOW_Actions') . "',
-              },
-              style: {
-                classes: 'qtip-inline-help'
-              }
-            },
-        });
+        // Bind the inline-help icons of this form (it is loaded via AJAX,
+        // after the page's initial binding pass).
+        setInlineHelpQtip();
 
         var selection = document.getElementById('aow_actions_param[" . $line . "][output_smtp]');
         selection.onchange = function(event){
@@ -286,6 +282,49 @@ class actionPortalActions extends actionSendEmail
 
         return $html;
     }
+
+    // STIC-Custom 20261028 AAM - Outbound account helpers, copied from
+    // actionSendEmail (kept private there to avoid touching that file in this branch)
+
+    private function getSelectedSMTPData($emailsList, $selectedSmtp) {
+        $selectedData = array();
+        foreach($emailsList as $id => $props) {
+            if ($selectedSmtp == $props['name']) {
+                $selectedData = array(
+                    $props['smtp_from_name'],
+                    $props['smtp_from_addr'],
+                );
+                return $selectedData;
+            }
+        }
+        $selectedData = array(null, null);
+        return $selectedData;
+    }
+
+    private function get_output_smtps_options($emailsList, $selectedSmtp) {
+        $selectedSmtp = $selectedSmtp == '' ? 'system' : $selectedSmtp;
+        $optionString = "";
+        foreach($emailsList as $id => $props) {
+            $selected = $props['name'] == $selectedSmtp ? 'selected' : '';
+            $optionString .= "<option value='{$props['name']}' {$selected} data-from='{$props['smtp_from_name']}' data-address='{$props['smtp_from_addr']}'>{$props['name']}</option> ";
+        }
+
+        return $optionString;
+    }
+
+    private function get_output_smtps() {
+        $emailsList = array();
+        $oeaList = BeanFactory::getBean('OutboundEmailAccounts')->get_full_list('', "(type = 'system' OR type = 'group')"); // Personal and overrides are ignored, as this will be a system based email
+        foreach ($oeaList as $oea) {
+            $emailsList[$oea->id] = array(
+                'name' => $oea->name,
+                'smtp_from_name' => $oea->smtp_from_name,
+                'smtp_from_addr' => $oea->smtp_from_addr
+            );
+        }
+        return $emailsList;
+    }
+    // END STIC-Custom
 
     /**
      * Run the configured portal action on the workflow bean through the shared

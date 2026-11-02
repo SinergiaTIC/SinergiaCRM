@@ -181,3 +181,4 @@ $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_PASSWORD'] = 'Pasahitza';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_INVITATION'] = 'Gonbidapena';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_MAGIC_LINK'] = 'Esteka magikoa';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_ADMIN_RESET'] = 'Administratzailearen berrezarpena';
+$mod_strings['LBL_STIC_PORTAL_HOME_URL_HELP'] = 'Erabiltzaileak portalean zuzenean saioa hasi ostean bertara iristen dira (OAuth aplikaziorik inplikatu gabe). OAuth aplikazio batetik hasitako saioak beti itzultzen dira aplikazio horren callback URLra. Hutsik uzten bada, ongietorriko orria bistaratzen da.';

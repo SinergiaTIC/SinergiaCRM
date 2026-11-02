@@ -50,7 +50,7 @@ foreach ($idList as $id) {
     $bean = BeanFactory::getBean($module, $id);
     if (!$bean || !$bean->id) { $errors[] = "$id: not found"; continue; }
 
-    $result = SticPortalActionsUtils::sendInvitation($bean, $redirectUri);
+    $result = SticPortalActionsUtils::send('invitation', $bean, $_REQUEST['app_id'] ?? '', array('template_id' => $_REQUEST['template'] ?? '', 'redirect_uri' => $redirectUri));
     if ($result['success']) {
         $sentCount++;
     } else {

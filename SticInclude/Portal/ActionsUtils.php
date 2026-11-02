@@ -179,10 +179,13 @@ class SticPortalActionsUtils
         //     (see SticPortalAuthUtils::parsePortalTemplate for the full manual list used
         //     by every portal email; the record name fields are native parser variables:
         //     $contact_full_name / $account_name).
+        // $portal_app_name: the OAuth2 app the invitation points to; falls back
+        // to the portal title when no app is selected (generic invitation).
         $portalVars = array(
             '$portal_address'      => $appUrl,
             '$portal_login_url'    => $loginUrl,
             '$portal_title'        => $portalTitle,
+            '$portal_app_name'     => ($oauthClientName !== '') ? $oauthClientName : $portalTitle,
             '$portal_reset_link'   => $resetLink,
         );
         $subject  = SticPortalAuthUtils::parsePortalTemplate($subject, $bean, $portalVars);
@@ -249,7 +252,7 @@ class SticPortalActionsUtils
         $subject     = ($hasTemplate && !empty($tmpl->subject)) ? html_entity_decode($tmpl->subject, ENT_QUOTES) : 'Password Reset';
         $bodyHtml    = $hasTemplate ? SticPortalAuthUtils::getTemplateBodyHtml($tmpl) : '';
         if ($bodyHtml === '') {
-            $bodyHtml = '<p>A password reset link has been generated for your account.</p><p>Click here to reset your password: <a href="$portal_reset_link">Reset Password</a></p><p>This link expires in 24 hours.</p>';
+            $bodyHtml = '<p>A password reset link has been generated for your account.</p><p>Application: $portal_app_name</p><p>Click here to reset your password: <a href="$portal_reset_link">Reset Password</a></p><p>This link expires in 24 hours.</p>';
         }
 
         $token = bin2hex(random_bytes(32));
@@ -267,6 +270,7 @@ class SticPortalActionsUtils
             '$portal_reset_link' => $link,
             '$portal_address'    => $portalUrl,
             '$portal_title'      => $portalTitle,
+            '$portal_app_name'   => ($oauthClientName !== '') ? $oauthClientName : $portalTitle,
         );
         $subjectParsed  = SticPortalAuthUtils::parsePortalTemplate($subject, $bean, $portalVars);
         $bodyHtmlParsed = SticPortalAuthUtils::parsePortalTemplate($bodyHtml, $bean, $portalVars);
@@ -319,6 +323,10 @@ class SticPortalActionsUtils
                 $oauthClientId = (string) $client->id;
                 $oauthClientName = (string) $client->name;
             }
+        } elseif (!empty($options['redirect_uri'])) {
+            // No app selected: an explicit redirect_uri may still be provided
+            // (e.g. the Portal Actions popup of the CRM UI).
+            $redirectUri = (string) $options['redirect_uri'];
         }
         if ($action === 'pwreset') {
             return self::sendPasswordReset($bean, $redirectUri, $oauthClientId, $oauthClientName, $options);

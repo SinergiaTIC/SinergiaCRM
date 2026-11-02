@@ -52,7 +52,38 @@ function openPortalActionsPopup() {
             sel.appendChild(opt);
         });
     }
+    portalActionSyncTemplateSelect();
     document.getElementById("portalActionsPopup").style.display = "flex";
+}
+
+// Populate the template select (default option + every email template) and
+// preselect the default for the current action type — the same template the
+// Portal Configuration settings use. When the action type changes, the
+// selection follows the new default unless a custom template was picked.
+function portalActionSyncTemplateSelect() {
+    var tplSel = document.getElementById("portalTemplateSelect");
+    if (!tplSel) return;
+    var previous = tplSel.value;
+    var defaults = STIC.portalTemplateDefaults || {};
+    tplSel.innerHTML = "";
+    var defOpt = document.createElement("option");
+    defOpt.value = "";
+    defOpt.textContent = SUGAR.language.get("Administration", "LBL_PORTAL_ACTIONS_TEMPLATE_DEFAULT") || "Default (Portal Configuration)";
+    tplSel.appendChild(defOpt);
+    (STIC.portalTemplates || []).forEach(function(t) {
+        var opt = document.createElement("option");
+        opt.value = t.id;
+        opt.textContent = t.name;
+        tplSel.appendChild(opt);
+    });
+    var action = document.getElementById("portalActionType").value;
+    var defaultId = defaults[action] || "";
+    // Follow the action's default unless the user picked a custom template
+    if (previous === "" || previous === defaults.invitation || previous === defaults.pwreset) {
+        tplSel.value = defaultId;
+    } else {
+        tplSel.value = previous;
+    }
 }
 
 function closePortalActionsPopup() {
@@ -69,10 +100,19 @@ function executePortalAction() {
     }
     // Detail view returns to the record, list view back to the (filtered) list
     var returnAction = portalActionsIsListView() ? "index" : "DetailView";
+    var templateId = document.getElementById("portalTemplateSelect") ? document.getElementById("portalTemplateSelect").value : "";
+    // Resolve the selected app's client id (for the audit log and the app name
+    // variable in the email templates)
+    var appId = "";
+    (STIC.portalClients || []).forEach(function(c) {
+        if (c.url === redirectUri) appId = c.id;
+    });
     var params = "id=" + ids.join(",")
         + "&return_module=" + module
         + "&return_action=" + returnAction
-        + "&redirect_uri=" + encodeURIComponent(redirectUri);
+        + "&redirect_uri=" + encodeURIComponent(redirectUri)
+        + "&app_id=" + encodeURIComponent(appId)
+        + "&template=" + encodeURIComponent(templateId);
     closePortalActionsPopup();
     if (action === "invitation") {
         location.href = "index.php?entryPoint=sticPortalInvitation&" + params;
