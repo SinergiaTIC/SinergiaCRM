@@ -141,14 +141,20 @@ WHERE
     AND spspcc.deleted = 0
     AND sp.id IN ($includePaymentIds)
     AND sa.deleted = 0
-    AND sa.start_date < DATE_FORMAT(curdate(),'%Y-%m-01')
-    AND CASE
-            WHEN spc.periodicity = 'monthly' THEN sa.start_date >= subdate(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 1 MONTH)
-            WHEN spc.periodicity = 'bimonthly' THEN sa.start_date >= subdate(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 2 MONTH)
-            WHEN spc.periodicity = 'quarterly' THEN sa.start_date >= subdate(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 3 MONTH)
-            WHEN spc.periodicity = 'four_monthly' THEN sa.start_date >= subdate(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 4 MONTH)
-            WHEN spc.periodicity = 'half_yearly' THEN sa.start_date >= subdate(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 6 MONTH)
-            WHEN spc.periodicity = 'yearly' THEN sa.start_date >= subdate(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 12 MONTH)
+    AND sa.start_date < CONVERT_TZ(CONCAT(DATE_FORMAT(curdate(), '%Y-%m-01'), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+    AND sa.start_date >= CASE
+            WHEN spc.periodicity = 'monthly' THEN 
+                CONVERT_TZ(CONCAT(DATE_FORMAT(SUBDATE(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 1 MONTH), '%Y-%m-01'), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+            WHEN spc.periodicity = 'bimonthly' THEN 
+                CONVERT_TZ(CONCAT(DATE_FORMAT(SUBDATE(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 2 MONTH), '%Y-%m-01'), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+            WHEN spc.periodicity = 'quarterly' THEN 
+                CONVERT_TZ(CONCAT(DATE_FORMAT(SUBDATE(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 3 MONTH), '%Y-%m-01'), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+            WHEN spc.periodicity = 'four_monthly' THEN 
+                CONVERT_TZ(CONCAT(DATE_FORMAT(SUBDATE(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 4 MONTH), '%Y-%m-01'), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+            WHEN spc.periodicity = 'half_yearly' THEN 
+                CONVERT_TZ(CONCAT(DATE_FORMAT(SUBDATE(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 6 MONTH), '%Y-%m-01'), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+            WHEN spc.periodicity = 'yearly' THEN 
+                CONVERT_TZ(CONCAT(DATE_FORMAT(SUBDATE(DATE_FORMAT(curdate(),'%Y-%m-01'), INTERVAL 12 MONTH), '%Y-%m-01'), ' 00:00:00'), 'Europe/Madrid', '+00:00')
         END
     AND (sa.payment_exception IS NULL OR sa.payment_exception = '')
     AND (sa.status IS NULL OR sa.status = '')
@@ -242,14 +248,24 @@ WHERE
     AND spspcc.deleted = 0
     AND sp.id IN ($includePaymentIds)
     AND sa.deleted = 0
-    AND sa.start_date < subdate(curdate(), (day(curdate())-1))
-    AND CASE
-            WHEN spc.periodicity = 'monthly' THEN sa.start_date >= subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 1 MONTH)
-            WHEN spc.periodicity = 'bimonthly' THEN sa.start_date >= subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 2 MONTH)
-            WHEN spc.periodicity = 'quarterly' THEN sa.start_date >= subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 3 MONTH)
-            WHEN spc.periodicity = 'four_monthly' THEN sa.start_date >= subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 4 MONTH)
-            WHEN spc.periodicity = 'half_yearly' THEN sa.start_date >= subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 6 MONTH)
-            WHEN spc.periodicity = 'yearly' THEN sa.start_date >= subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 12 MONTH)
+    AND sa.start_date < CONVERT_TZ(
+        CONCAT(subdate(curdate(), (day(curdate())-1)), ' 00:00:00'), 
+        'Europe/Madrid', 
+        '+00:00'
+    )
+    AND sa.start_date >= CASE
+            WHEN spc.periodicity = 'monthly' THEN 
+                CONVERT_TZ(CONCAT(subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 1 MONTH), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+            WHEN spc.periodicity = 'bimonthly' THEN 
+                CONVERT_TZ(CONCAT(subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 2 MONTH), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+            WHEN spc.periodicity = 'quarterly' THEN 
+                CONVERT_TZ(CONCAT(subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 3 MONTH), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+            WHEN spc.periodicity = 'four_monthly' THEN 
+                CONVERT_TZ(CONCAT(subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 4 MONTH), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+            WHEN spc.periodicity = 'half_yearly' THEN 
+                CONVERT_TZ(CONCAT(subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 6 MONTH), ' 00:00:00'), 'Europe/Madrid', '+00:00')
+            WHEN spc.periodicity = 'yearly' THEN 
+                CONVERT_TZ(CONCAT(subdate(subdate(curdate(), (day(curdate())-1)), INTERVAL 12 MONTH), ' 00:00:00'), 'Europe/Madrid', '+00:00')
         END
     AND (sa.payment_exception IS NULL
         OR sa.payment_exception != 'exclude')

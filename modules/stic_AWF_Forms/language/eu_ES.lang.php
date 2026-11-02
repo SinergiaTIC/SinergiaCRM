@@ -63,6 +63,8 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
+  'LBL_LISTVIEW_OPTION_INVERT_SELECTION' => 'Invertir selección',
+
   // -- MODULE FIELDS --
   'LBL_STATUS' => 'Estado',
   'LBL_START_DATE' => 'Fecha de inicio',
@@ -102,7 +104,7 @@ $mod_strings = array (
   'LBL_WIZARD_DESC_STEP1' => 'Definición de las propiedades generales del formulario.',
   'LBL_WIZARD_TITLE_STEP2' => 'Estructura y campos',
   'LBL_WIZARD_DESC_STEP2' => 'Definición del contenido del formulario. Los bloques de datos pueden vincularse a módulos de SinergiaCRM o funcionar de forma independiente. Además, es posible configurar validaciones de datos, detección de duplicados, etc.',
-  'LBL_WIZARD_TITLE_STEP2_START' => 'Empezar a construir el formulario',
+  'LBL_WIZARD_TITLE_STEP2_START' => 'Empiece a construir el formulario',
   'LBL_WIZARD_TITLE_STEP3' => 'Lógica y automatismos',
   'LBL_WIZARD_DESC_STEP3' => 'Definición de las acciones que se ejecutarán cuando se reciba una respuesta: crear o actualizar registros, enviar correos electrónicos, redireccionar a páginas web, etc.',
   'LBL_WIZARD_TITLE_STEP4' => 'Maquetación',
@@ -125,6 +127,7 @@ $mod_strings = array (
   // General editors
   'LBL_SELECT_PLACEHOLDER' => 'Seleccione un elemento...',
   'LBL_SELECT_WRITE_TO_SEARCH' => 'Escriba para filtrar la lista...',
+  'LBL_SELECT_SEARCH_CLEAN' => 'Limpiar filtro',
   'LBL_SELECT_NO_RESULTS' => 'No existen coincidencias',
 
   // DataBlocks
@@ -184,8 +187,13 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_TYPE' => 'Tipo de valor',
   'LBL_FIELD_VALUE_OPTIONS_LIST' => 'Lista asociada',
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE' => 'Personalizar opciones',
-  'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modificado)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Seleccionar registros',
+  'LBL_FIELD_VALUE_OPTIONS_ADD_REGS' => 'Añadir registros',
+  'LBL_FIELD_VALUE_OPTIONS_PAGE_INFO' => '({from} - {to} de {total})',
+  'LBL_FIELD_VALUE_OPTIONS_RELOAD_LIST' => 'Recargar lista',
+  'LBL_FIELD_VALUE_OPTIONS_REMOVE_STALE' => 'Limpiar valores obsoletos',
+  'LBL_FIELD_VALUE_OPTIONS_PAGE_SIZE' => 'Registros por página',
+  'LBL_FIELD_VALUE_OPTION_HIDE' => 'Ocultar',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
   'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostrar valores internos',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Valor interno',
@@ -287,7 +295,7 @@ $mod_strings = array (
   'LBL_THEME_PRIMARY_COLOR' => 'Principal',
   'LBL_THEME_PAGE_BG_COLOR' => 'Fondo de página',
   'LBL_THEME_FORM_BG_COLOR' => 'Fondo del formulario',
-  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Formato del texto',
+  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Tipografía y texto',
   'LBL_THEME_FONT_FAMILY' => 'Fuente',
   'LBL_THEME_FONT_SIZE' => 'Tamaño',
   'LBL_THEME_TEXT_COLOR' => 'Color',
@@ -414,7 +422,7 @@ $mod_strings = array (
   'LBL_SAVE_RECORD_ACTION_RELATION_CONFIGS_TEXT' => 'Campos de relación',
 
   // RelateRecordsAction
-  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Crear relación',
+  'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea una relación entre dos registros.',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino de la relación',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'El bloque de datos o registro destino de la relación a guardar.',
@@ -522,7 +530,7 @@ $mod_strings = array (
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correo confirmado',
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
-  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'La plantilla de correo electrónico deberá tener la variable {::confirmation_url::} en el cuerpo del mensaje para que se genere el enlace de confirmación.',
 
