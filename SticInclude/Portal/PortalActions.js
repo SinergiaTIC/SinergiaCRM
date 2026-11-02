@@ -40,10 +40,8 @@ function openPortalActionsPopup() {
 
     var sel = document.getElementById("portalAppSelect");
     sel.innerHTML = "";
-    var genOpt = document.createElement("option");
-    genOpt.value = "";
-    genOpt.textContent = "Generic (no specific app)";
-    sel.appendChild(genOpt);
+    // Apps first (alphabetical, as delivered by portalClients); the "Generic"
+    // option always goes last so it stays at the bottom of the list.
     if (STIC.portalClients) {
         STIC.portalClients.forEach(function(c) {
             var opt = document.createElement("option");
@@ -52,6 +50,13 @@ function openPortalActionsPopup() {
             sel.appendChild(opt);
         });
     }
+    var genOpt = document.createElement("option");
+    genOpt.value = "";
+    genOpt.textContent = "Generic (no specific app)";
+    sel.appendChild(genOpt);
+    // Default to the first option: the first app; Generic is only preselected
+    // when it is the sole option (no specific apps defined).
+    sel.selectedIndex = 0;
     portalActionSyncTemplateSelect();
     document.getElementById("portalActionsPopup").style.display = "flex";
 }
