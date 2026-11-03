@@ -135,8 +135,8 @@ function loadDynamicEnum(field, subfield) {
             // field), so the global lookup may return a field of a different module (e.g. the parent
             // module detail view hidden input) and the quickcreate options are never filtered. Resolve the
             // child field from the same form as the already resolved parent field, falling back to the
-            // global lookup otherwise. Similar to the parent field fix in
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1217
+            // global lookup otherwise. Similar to the parent field fix in https://github.com/SinergiaTIC/SinergiaCRM/pull/1217
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
             var scopedSubfieldElement = null;
             var resolvedParentForm = el ? (el.form || $(el).closest('form')[0]) : null;
             if (resolvedParentForm && resolvedParentForm.elements && resolvedParentForm.elements[subfield]) {
@@ -158,22 +158,26 @@ function loadDynamicEnum(field, subfield) {
             if (el.addEventListener) {
                 el.addEventListener("change", function () {
                     // STIC-Custom 20261103 EPS - pass the scoped child element (duplicated IDs in quickcreate subpanels)
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
                     // updateDynamicEnum(el, subfield)
                     updateDynamicEnum(el, subfield, subfieldElement)
                     // END STIC-Custom
                 }, false);
                 // STIC-Custom 20261103 EPS - pass the scoped child element (duplicated IDs in quickcreate subpanels)
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
                 // updateDynamicEnum(el, subfield)
                 updateDynamicEnum(el, subfield, subfieldElement)
                 // END STIC-Custom
             } else if (el.attachEvent) {
                 el.attachEvent("onchange", function () {
                     // STIC-Custom 20261103 EPS - pass the scoped child element (duplicated IDs in quickcreate subpanels)
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
                     // updateDynamicEnum(el, subfield)
                     updateDynamicEnum(el, subfield, subfieldElement)
                     // END STIC-Custom
                 });
                 // STIC-Custom 20261103 EPS - pass the scoped child element (duplicated IDs in quickcreate subpanels)
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
                 // updateDynamicEnum(el, subfield)
                 updateDynamicEnum(el, subfield, subfieldElement)
                 // END STIC-Custom
@@ -189,6 +193,7 @@ function loadDynamicEnum(field, subfield) {
 // scoped to its form (duplicated IDs in the page, same technical field name in the parent module and
 // the subpanel module), it is passed here to filter the correct select element.
 // Extends the parent field fix of https://github.com/SinergiaTIC/SinergiaCRM/pull/1217
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
 // function updateDynamicEnum(field, subfield) {
 function updateDynamicEnum(field, subfield, subfieldElement) {
     // END STIC-Custom
@@ -198,6 +203,7 @@ function updateDynamicEnum(field, subfield, subfieldElement) {
     // field), so the global lookup may return a field of a different module (e.g. the parent module
     // detail view hidden input) and the quickcreate options would never be filtered. Use the scoped
     // element resolved by loadDynamicEnum when provided, falling back to the global lookup otherwise.
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
     // var selector = document.getElementById(subfield);
     var selector = (typeof subfieldElement !== 'undefined' && subfieldElement != null) ? subfieldElement : document.getElementById(subfield);
     // END STIC-Custom
@@ -206,6 +212,7 @@ function updateDynamicEnum(field, subfield, subfieldElement) {
         // STIC-Custom 20261103 EPS - qualify the de_entries cache key with the form scope so same-named
         // fields of different modules (e.g. stic_FollowUps and INT_Daily_LivingActivities "int_type_c",
         // which use different dropdown lists) do not share their cached options
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
         var deEntriesKey = subfield;
         if (selector.form && selector.form.id) {
             deEntriesKey = subfield + '|' + selector.form.id;
@@ -232,6 +239,7 @@ function updateDynamicEnum(field, subfield, subfieldElement) {
 
 
         // STIC-Custom 20261103 EPS - use the form qualified cache key
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
         // if (de_entries[subfield] == null) {
         //     de_entries[subfield] = [];
         //     for (var j = 0; j < selector.options.length; j++) {
@@ -247,11 +255,13 @@ function updateDynamicEnum(field, subfield, subfieldElement) {
         // END STIC-Custom
 
         // STIC-Custom 20261103 EPS - rebuild the resolved selector instead of the global lookup
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
         // document.getElementById(subfield).innerHTML = '';
         selector.innerHTML = '';
         // END STIC-Custom
 
         // STIC-Custom 20261103 EPS - use the form qualified cache key
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
         // for (var key in de_entries[subfield]) {
         for (var key in de_entries[deEntriesKey]) {
         // END STIC-Custom
@@ -261,6 +271,7 @@ function updateDynamicEnum(field, subfield, subfieldElement) {
             if (key.indexOf(de_key + '_') == 0 || key == '' || key == '__SugarMassUpdateClearField__') {
             // END STIC-Custom
                 // STIC-Custom 20261103 EPS - use the form qualified cache key
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
                 // selector.options[selector.options.length] = new Option(de_entries[subfield][key], key);
                 selector.options[selector.options.length] = new Option(de_entries[deEntriesKey][key], key);
                 // END STIC-Custom
@@ -276,6 +287,7 @@ function updateDynamicEnum(field, subfield, subfieldElement) {
 
         // STIC-Custom 20261103 EPS - dispatch the change event only when a valid select has been
         // resolved and rebuilt (previously it could be reached with an unresolved selector)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
         // }
         // END STIC-Custom
         if ("createEvent" in document) {
@@ -286,6 +298,7 @@ function updateDynamicEnum(field, subfield, subfieldElement) {
         else
             selector.fireEvent("onchange");
     // STIC-Custom 20261103 EPS - dispatch the change event only when a valid select has been
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1499
     }
     // END STIC-Custom
 }
