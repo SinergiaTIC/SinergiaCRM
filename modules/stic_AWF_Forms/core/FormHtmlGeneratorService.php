@@ -158,7 +158,7 @@ class FormHtmlGeneratorService {
             // Styles and Content
             $htmlRaw .= $this->generateCss($config, $wrapperId);
             $htmlRaw .= $this->generateBody($config, $wrapperId, $actionUrl, $isPreview);
-            $htmlRaw .= $this->generateJs($config, $formId);
+            $htmlRaw .= $this->generateJs($config, $formId, $wrapperId);
         }
         $htmlRaw .= "</div>" .$this->newLine('-');
 
@@ -1605,7 +1605,7 @@ class FormHtmlGeneratorService {
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $tabsHtml .= "<div class='tab-pane' x-data=\"{ {$instanceVar}: index }\" :data-awf-group-pane='index' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
+                            $tabsHtml .= "<div class='tab-pane awf-instance-card' :data-awf-instance=\"{$instanceVar}\" x-data=\"{ {$instanceVar}: index }\" :data-awf-group-pane='index' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
                             {
                                 // The pane content is boxed in the SAME card a
                                 // plain tab pane uses, with the subtitle as the
@@ -1748,7 +1748,7 @@ class FormHtmlGeneratorService {
                                     $accHtml .= "</span>" . $this->newLine();
                                 }
                                 $accHtml .= "</div>" . $this->newLine('-');
-                                $accHtml .= "<div class='awf-accordion-body' x-show='openItem === index' x-transition x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                                $accHtml .= "<div class='awf-accordion-body awf-instance-card' :data-awf-instance=\"{$instanceVar}\" x-show='openItem === index' x-transition x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
                                 {
                                     if ($accSubtitle !== '') $accHtml .= "<div class='awf-section-subtitle text-muted mb-2' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$accSubtitle}</div>" . $this->newLine();
                                     $accHtml .= $this->renderGroupInstanceContent($rootBlock, $templateSection, $children, $config, $theme, $instanceVar, $contentOuterVars) . $this->newLine();
@@ -1917,7 +1917,7 @@ class FormHtmlGeneratorService {
                         // "idx_lN is not defined") when the group was nested.
                         $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $html .= "<div x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                            $html .= "<div class='awf-instance-card' :data-awf-instance=\"{$instanceVar}\" x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
                             {
                                 $contentSection = reset($templateContentSections);
                                 if ($contentSection instanceof FormLayoutSection) {
@@ -1950,7 +1950,7 @@ class FormHtmlGeneratorService {
                     $instanceTitle = $isRepeatable ? "{$instanceTitleExpression} + ' #' + ({$instanceVar} + 1)" : $instanceTitleExpression;
                 $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                 {
-                    $html .= "<div class='card " . ($tIsCard ? 'awf-section-card' : 'awf-section-panel') . " mb-3' {$instanceXData}{$instanceStyleAttr}>" . $this->newLine('+');
+                    $html .= "<div class='card " . ($tIsCard ? 'awf-section-card' : 'awf-section-panel') . " awf-instance-card mb-3' :data-awf-instance=\"{$instanceVar}\" {$instanceXData}{$instanceStyleAttr}>" . $this->newLine('+');
                     {
                         if ($templateSection !== null) {
                             // Template chrome as the instance chrome
@@ -2875,7 +2875,7 @@ class FormHtmlGeneratorService {
         return $html;
     }
 
-    private function generateJs(FormConfig $config, string $formId): string {
+    private function generateJs(FormConfig $config, string $formId, string $wrapperId = ''): string {
         $js = "";
 
         // == VALIDATORS ==
@@ -2945,11 +2945,20 @@ class FormHtmlGeneratorService {
         // == ALPINE CORE COMPONENTS ==
         $js .= "<script>\n" . $this->getAlpineComponentsJs($hasRating, $hasFile).$this->newLine()."</script>" . $this->newLine();
 
+        // == AWF CLIENT HELPERS (window.AWF) ==
+        // Emitted BEFORE custom_js so it can use AWF.getValue/setValue/onChange.
+        $js .= "<script>\n" . $this->getAwfHelperJs($wrapperId, $formId) . $this->newLine() . "</script>" . $this->newLine();
+
         // == CUSTOM JS ==
         // Add custom JS from layout
         $customJs = $this->decode($config->layout->custom_js);
         if (!empty($customJs)) {
-            $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});".$this->newLine()."</script>" .$this->newLine();
+            // Expose THIS form's scoped helper as a local `AWF` inside custom_js,
+            // so multiple AWF forms on the same page do not clobber each other.
+            $safeFormId = json_encode((string)$formId, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+            $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n"
+                 . "var AWF = (window.AWF && window.AWF.for) ? (window.AWF.for({$safeFormId}) || window.AWF) : window.AWF;\n"
+                 . "{$customJs}\n});".$this->newLine()."</script>" .$this->newLine();
         }
         return $js;
     }
@@ -3323,7 +3332,344 @@ JS;
 
         $js .= "\n});";
         return $js;
-    }    
+    }
+
+    /**
+     * Client-side helper exposed as `window.AWF` for custom_js / frontend
+     * actions. Resolves fields across scalar AND repeatable/optional blocks
+     * without hand-building DOM selectors, and keeps Alpine's reactivity in
+     * sync (setValue dispatches native input+change events).
+     *
+     * v1 scope: resolve / getValue / setValue / onChange. The visibility/
+     * required/read-only helpers (setVisible / setRequired / setReadOnly) are
+     * intentionally NOT included yet (issue #1495, later phase).
+     */
+    private function getAwfHelperJs(string $wrapperId = '', string $formId = ''): string {
+        $js = <<<'JS'
+// --- AWF CLIENT HELPERS (window.AWF) ---
+// Read/write fields of scalar AND repeatable/optional blocks from custom_js.
+// Form-scoped: everything resolves inside THIS form's wrapper div, so several
+// AWF forms can coexist on one page (see the window.AWF facade below).
+(function () {
+  'use strict';
+
+  var FORM_ID = __AWF_FORM_ID__;
+  var WRAPPER_ID = __AWF_WRAPPER_ID__;
+  var INSTANCE_SELECTOR = '.awf-instance-card';
+
+  function getWrapper() {
+    return WRAPPER_ID ? document.getElementById(WRAPPER_ID) : null;
+  }
+  function getForm() {
+    var wrapper = getWrapper();
+    if (wrapper) {
+      var f = wrapper.querySelector('form');
+      if (f) return f;
+    }
+    return null;
+  }
+
+  // Parse a control name into { detached, block, indexes, field, multi }.
+  // "Block.field" | "field" | "Block[0][field]" | "Block[0][1][field]"
+  // | "_detached.Block..." | "...[]" (checkbox group / multi select).
+  function parseFieldName(name) {
+    if (name == null) return null;
+    var n = String(name);
+    if (n === '') return null;
+    var multi = false;
+    if (n.slice(-2) === '[]') { multi = true; n = n.slice(0, -2); }
+    var detached = false;
+    if (n.indexOf('_detached.') === 0) { detached = true; n = n.slice(10); }
+    var m = n.match(/^([^\[\].]+)((?:\[\d+\])+)\[(.*)\]$/);
+    if (m) {
+      return { detached: detached, block: m[1], indexes: (m[2].match(/\d+/g) || []).map(Number), field: m[3], multi: multi };
+    }
+    var dot = n.indexOf('.');
+    if (dot >= 0) {
+      return { detached: detached, block: n.slice(0, dot), indexes: [], field: n.slice(dot + 1), multi: multi };
+    }
+    return { detached: detached, block: null, indexes: [], field: n, multi: multi };
+  }
+
+  // Match specificity: 2 = explicit "Block.field"; 1 = bare "field"; 0 = no
+  // match. When the target carries EXPLICIT indexes (e.g. "Block[1][field]"),
+  // they must match the DOM element's indexes exactly, otherwise a lookup such
+  // as AWF.getValue('Participantes[1][nom]') would silently return instance 0.
+  function getMatchSpecificity(parsed, targetName) {
+    var t = parseFieldName(targetName);
+    if (!parsed || !t) return 0;
+    if (parsed.field !== t.field) return 0;
+    if (t.block && parsed.block !== t.block) return 0;
+    if (t.indexes.length > 0) {
+      if (parsed.indexes.length !== t.indexes.length) return 0;
+      for (var i = 0; i < t.indexes.length; i++) {
+        if (parsed.indexes[i] !== t.indexes[i]) return 0;
+      }
+    }
+    return t.block ? 2 : 1;
+  }
+
+  function controls(scope) {
+    var root = scope || getForm();
+    if (!root) return [];
+    return Array.prototype.slice.call(root.querySelectorAll('input[name], select[name], textarea[name]'));
+  }
+
+  function matches(parsed, target, options) {
+    if (!parsed) return 0;
+    var specificity = 1;
+    if (target && target !== '*') {
+      specificity = getMatchSpecificity(parsed, target);
+      if (specificity === 0) return 0;
+    }
+    if (options && options.instanceIndex != null) {
+      var idx = parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null;
+      if (String(idx) !== String(options.instanceIndex)) return 0;
+    }
+    return specificity;
+  }
+
+  // target: string | HTMLElement | { card, element, name, instanceIndex }
+  function resolve(target, options) {
+    options = options || {};
+    var scope = options.card || options.scope || null;
+    if (target && target.nodeType === 1) {
+      return { elements: [target], element: target, card: target.closest(INSTANCE_SELECTOR), parsed: parseFieldName(target.name) };
+    }
+    if (target && typeof target === 'object') {
+      if (target.element) {
+        return { elements: [target.element], element: target.element, card: target.element.closest(INSTANCE_SELECTOR), parsed: parseFieldName(target.element.name) };
+      }
+      var name = target.name;
+      var card = target.card || scope;
+      var els = controls(card).filter(function (el) { return matches(parseFieldName(el.name), name, target) > 0; });
+      return { elements: els, element: els[0] || null, card: card || (els[0] ? els[0].closest(INSTANCE_SELECTOR) : null), parsed: parseFieldName(name) };
+    }
+    var elements = controls(scope).filter(function (el) { return matches(parseFieldName(el.name), String(target), options) > 0; });
+    return { elements: elements, element: elements[0] || null, card: scope || (elements[0] ? elements[0].closest(INSTANCE_SELECTOR) : null), parsed: parseFieldName(target) };
+  }
+
+  function valueOf(elements) {
+    if (!elements || elements.length === 0) return null;
+    var first = elements[0];
+    var tag = first.tagName.toLowerCase();
+    var type = (first.type || '').toLowerCase();
+    var multi = String(first.name).slice(-2) === '[]';
+    if (type === 'checkbox') {
+      if (multi || elements.length > 1) {
+        return elements.filter(function (el) { return el.checked; }).map(function (el) { return el.value; });
+      }
+      return !!first.checked;
+    }
+    if (type === 'radio') {
+      var checked = elements.filter(function (el) { return el.checked; })[0];
+      return checked ? checked.value : '';
+    }
+    if (tag === 'select') {
+      if (first.multiple) return Array.prototype.slice.call(first.selectedOptions).map(function (o) { return o.value; });
+      return first.value;
+    }
+    return first.value;
+  }
+
+  function fire(el) {
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function setValueOn(elements, value) {
+    if (!elements || elements.length === 0) return false;
+    var first = elements[0];
+    var tag = first.tagName.toLowerCase();
+    var type = (first.type || '').toLowerCase();
+    var multi = String(first.name).slice(-2) === '[]';
+    
+    if (type === 'checkbox') {
+      if (multi || elements.length > 1) {
+        var arr = Array.isArray(value) ? value.map(String) : [String(value)];
+        elements.forEach(function (el) { el.checked = arr.indexOf(String(el.value)) !== -1; });
+        fire(first); // Un sol dispar per a tot el grup
+      } else {
+        first.checked = !!value;
+        fire(first);
+      }
+      return true;
+    }
+    if (type === 'radio') {
+      var v = (value == null) ? '' : String(value);
+      var fired = false;
+      elements.forEach(function (el) { 
+        el.checked = (String(el.value) === v); 
+        if (el.checked && !fired) { fire(el); fired = true; }
+      });
+      if (!fired) fire(first); // Disparar si s'ha netejat la selecció
+      return true;
+    }
+    if (tag === 'select') {
+      if (first.multiple) {
+        var arrSel = Array.isArray(value) ? value.map(String) : [String(value)];
+        Array.prototype.slice.call(first.options).forEach(function (o) { o.selected = arrSel.indexOf(String(o.value)) !== -1; });
+      } else {
+        first.value = value == null ? '' : String(value);
+      }
+      fire(first);
+      return true;
+    }
+    first.value = value == null ? '' : String(value);
+    fire(first);
+    return true;
+  }
+
+  var listeners = [];
+  var delegatedForm = null;
+
+  function buildInfo(el, card, parsed) {
+    var scope = card || null;
+    return {
+      element: el,
+      card: card,
+      block: parsed ? parsed.block : null,
+      field: parsed ? parsed.field : null,
+      instanceIndexes: parsed ? parsed.indexes : [],
+      instanceIndex: parsed && parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null,
+      getValue: function (name) {
+        var n = name || (parsed ? (parsed.block ? parsed.block + '.' + parsed.field : parsed.field) : null);
+        var res = resolve(n, { card: scope });
+        if (scope && res.elements.length === 0) {
+          res = resolve(n, { card: null });
+        }
+        return valueOf(res.elements);
+      },
+      setValue: function (name, val) {
+        var res = resolve(name, { card: scope });
+        if (scope && res.elements.length === 0) {
+          res = resolve(name, { card: null });
+        }
+        return setValueOn(res.elements, val);
+      }
+    };
+  }
+
+  function ensureDelegation() {
+    var form = getForm();
+    if (!form || delegatedForm === form) return;
+    delegatedForm = form;
+    var handler = function (event) {
+      var el = event.target;
+      if (!el || !el.name) return;
+      var parsed = parseFieldName(el.name);
+      if (!parsed) return;
+      var card = el.closest(INSTANCE_SELECTOR);
+      var canonical = parsed.block ? parsed.block + '.' + parsed.field : parsed.field;
+      listeners.slice().forEach(function (listener) {
+        if (matches(parsed, listener.fieldName, listener.options) === 0) return;
+        var groupEls = controls(card).filter(function (e) { return matches(parseFieldName(e.name), canonical, listener.options) > 0; });
+        var value = valueOf(groupEls.length ? groupEls : [el]);
+        try { listener.callback(value, buildInfo(el, card, parsed)); }
+        catch (err) { console.error('AWF.onChange callback error', err); }
+      });
+    };
+    // Listen ONLY to 'change': setValueOn() dispatches input+change, so
+    // listening to both would run every callback twice for a single change.
+    form.addEventListener('change', handler);
+  }
+
+  var api = {
+    form: getForm(),
+    wrapper: getWrapper(),
+    parseFieldName: parseFieldName,
+    resolve: function (target, options) { return resolve(target, options); },
+    getValue: function (target, options) { return valueOf(resolve(target, options).elements); },
+    setValue: function (target, value, options) { return setValueOn(resolve(target, options).elements, value); },
+    onChange: function (fieldName, callback, options) {
+      if (typeof callback !== 'function') return function () {};
+      var opts = options || {};
+      var listener = { fieldName: fieldName, callback: callback, options: opts };
+      listeners.push(listener);
+      ensureDelegation();
+
+      if (opts.immediate) {
+        var initial = resolve(fieldName, opts);
+        if (initial.element) {
+          var initVal = valueOf(initial.elements);
+          try { callback(initVal, buildInfo(initial.element, initial.card, initial.parsed)); }
+          catch (err) { console.error('AWF.onChange immediate error', err); }
+        }
+      }
+
+      return function off() {
+        var i = listeners.indexOf(listener);
+        if (i >= 0) listeners.splice(i, 1);
+      };
+    }
+  };
+
+  // Register this form's API (several AWF forms can coexist on one page).
+  window.AWF_FORMS = window.AWF_FORMS || {};
+  window.AWF_LIST = window.AWF_LIST || [];
+  window.AWF_FORMS[FORM_ID] = api;
+  if (WRAPPER_ID) window.AWF_FORMS[WRAPPER_ID] = api;
+  if (window.AWF_LIST.indexOf(api) < 0) window.AWF_LIST.push(api);
+  if (api.wrapper) api.wrapper.AWF = api;
+
+  function findApi(target) {
+    if (target == null) {
+      return window.AWF_LIST.length === 1 ? window.AWF_LIST[0] : null;
+    }
+    if (typeof target === 'string') {
+      return window.AWF_FORMS[target] || null;
+    }
+    if (target.nodeType === 1) {
+      if (target.tagName && target.tagName.toLowerCase() === 'form') {
+        for (var i = 0; i < window.AWF_LIST.length; i++) if (window.AWF_LIST[i].form === target) return window.AWF_LIST[i];
+      }
+      var f = target.closest ? target.closest('form') : null;
+      if (f) { for (var j = 0; j < window.AWF_LIST.length; j++) if (window.AWF_LIST[j].form === f) return window.AWF_LIST[j]; }
+      var w = target.closest ? target.closest('[id^="stic-awf-"]') : null;
+      if (w && window.AWF_FORMS[w.id]) return window.AWF_FORMS[w.id];
+    }
+    return null;
+  }
+
+  function scoped(method, args) {
+    var options = args.length ? args[args.length - 1] : null;
+    var resolved = findApi(options && options.form);
+    if (!resolved) {
+      console.error('AWF: no form resolved. With several AWF forms on a page pass options.form (or use AWF.for(formId)).');
+      return null;
+    }
+    return resolved[method].apply(resolved, args);
+  }
+
+  if (!window.AWF) {
+    window.AWF = {
+      forms: window.AWF_FORMS,
+      list: window.AWF_LIST,
+      for: function (target) { return findApi(target); },
+      resolve: function (target, options) { return scoped('resolve', [target, options]); },
+      getValue: function (target, options) { return scoped('getValue', [target, options]); },
+      setValue: function (target, value, options) { return scoped('setValue', [target, value, options]); },
+      onChange: function (fieldName, callback, options) { return scoped('onChange', [fieldName, callback, options]); },
+      parseFieldName: parseFieldName
+    };
+  } else {
+    window.AWF.forms = window.AWF_FORMS;
+    window.AWF.list = window.AWF_LIST;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ensureDelegation);
+  } else {
+    ensureDelegation();
+  }
+})();
+JS;
+        return str_replace(
+            ['__AWF_FORM_ID__', '__AWF_WRAPPER_ID__'],
+            [json_encode((string)$formId), json_encode((string)$wrapperId)],
+            $js
+        );
+    }
 
     /**
      * Helper to decode Base64 safely
