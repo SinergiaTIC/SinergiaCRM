@@ -100,3 +100,8 @@ $js_groupings[] = $newGrouping = array(
     'SticInclude/vendor/smartmenus/dist/jquery.smartmenus.min.js' => 'include/javascript/sugar_grp1.js',
     'SticInclude/js/SticSmartmenus.js' => 'include/javascript/sugar_grp1.js',
 );
+
+// SinergiaDA SSO: parent side of the iframe postMessage handshake
+$js_groupings[] = $newGrouping = array(
+    'SticInclude/js/SticSdaSsoParent.js' => 'include/javascript/sugar_grp1.js',
+);
