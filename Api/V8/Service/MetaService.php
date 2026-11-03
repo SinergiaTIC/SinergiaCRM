@@ -214,7 +214,8 @@ class MetaService
      */
     private function checkIfFieldHasEnumType(array $def): bool
     {
-        return $def['type'] === 'enum' || $def['type'] === 'multienum';
+        $type = $def['type'] ?? '';
+        return $type === 'enum' || $type === 'multienum';
     }
 
     /**

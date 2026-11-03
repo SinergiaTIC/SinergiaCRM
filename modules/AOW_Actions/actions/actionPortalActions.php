@@ -59,9 +59,9 @@ class actionPortalActions extends actionSendEmail
         // shows them) with the generic option ALWAYS last. Selection is still
         // resolved by $appId, so saved actions keep their app selected.
         $appOptions = array();
-        $r = $db->query("SELECT id, name FROM oauth2clients WHERE allowed_grant_type='portal_authorization_code' AND deleted=0 ORDER BY name");
-        while ($row = $db->fetchByAssoc($r)) {
-            $appOptions[$row['id']] = $row['name'];
+        $clientBean = BeanFactory::getBean('OAuth2Clients')->get_full_list('name', "allowed_grant_type='portal_authorization_code' AND deleted=0");
+        foreach ((array) $clientBean as $client) {
+            $appOptions[$client->id] = $client->name;
         }
         $appOptions[''] = translate('LBL_PORTAL_ACTIONS_GENERIC_APP', 'AOW_Actions');
 

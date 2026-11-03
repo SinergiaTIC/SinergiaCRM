@@ -201,7 +201,9 @@ class SticPortalConfigUtils
             $GLOBALS['log']->error(__METHOD__ . " - Invalid file upload");
             return false;
         }
-        $allowed = array('image/png' => 'png', 'image/jpeg' => 'jpg', 'image/svg+xml' => 'svg');
+        // Raster formats only: SVG served same-origin is an XSS vector
+        // (scripts can be embedded in SVG files).
+        $allowed = array('image/png' => 'png', 'image/jpeg' => 'jpg');
         $finfo   = function_exists('mime_content_type') ? mime_content_type($fileField['tmp_name']) : $fileField['type'];
         if (!isset($allowed[$finfo])) {
             $GLOBALS['log']->error(__METHOD__ . " - Unsupported file type: $finfo");
@@ -261,6 +263,11 @@ class SticPortalConfigUtils
         $days = (int) self::get('PORTAL_AUDIT_RETENTION_DAYS', 365);
         if ($days <= 0) return 0;
         $db->query("DELETE FROM stic_portal_login_audit WHERE date_entered < DATE_SUB(NOW(), INTERVAL $days DAY)");
-        $GLOBALS['log']->info(__METHOD__ . " - Purged audit older than $days days");
+        // Short-lived infra tables: drop anything older than a day so they
+        // cannot grow without bound. Triggered when the portal audit list is
+        // opened and after each successful portal login (see Login.php).
+        $db->query("DELETE FROM stic_portal_login_attempts WHERE last_attempt < DATE_SUB(NOW(), INTERVAL 1 DAY)");
+        $db->query("DELETE FROM stic_portal_magic_rate_limit WHERE window_start < DATE_SUB(NOW(), INTERVAL 1 DAY)");
+        $GLOBALS['log']->info(__METHOD__ . " - Purged portal audit/track tables");
     }
 }

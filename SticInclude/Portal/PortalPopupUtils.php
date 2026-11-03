@@ -29,7 +29,7 @@ require_once 'SticInclude/Portal/ConfigUtils.php';
  * Portal Actions popup utilities for Contacts and Accounts detail views.
  * Injects OAuth2 client list and popup HTML into the Contacts/Accounts views.
  */
-class PortalPopupUtils
+class SticPortalPopupUtils
 {
     /**
      * Echo the Portal Actions popup HTML and inject the OAuth2 client list for
@@ -53,7 +53,7 @@ class PortalPopupUtils
         while ($row = $db->fetchByAssoc($r)) {
             $clients[] = array('id' => $row['id'], 'name' => $row['name'], 'url' => $row['redirect_url']);
         }
-        echo '<script>STIC.portalClients = ' . json_encode($clients) . "</script>\n";
+        echo '<script>STIC.portalClients = ' . json_encode($clients, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . "</script>\n";
 
         // Inject the selectable email templates and the default template per
         // action (the same one the Portal Configuration settings use). The
@@ -63,14 +63,20 @@ class PortalPopupUtils
         while ($row = $db->fetchByAssoc($r)) {
             $templates[] = array('id' => $row['id'], 'name' => $row['name']);
         }
-        echo '<script>STIC.portalTemplates = ' . json_encode($templates) . "</script>\n";
+        echo '<script>STIC.portalTemplates = ' . json_encode($templates, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . "</script>\n";
         $templateDefaults = array(
             'invitation' => SticPortalConfigUtils::get(($module === 'Accounts') ? 'PORTAL_TMPL_CRED_ACCOUNTS' : 'PORTAL_TMPL_CRED_CONTACTS', ''),
             'pwreset' => SticPortalConfigUtils::get('PORTAL_TMPL_RESET', ''),
         );
-        echo '<script>STIC.portalTemplateDefaults = ' . json_encode($templateDefaults) . "</script>\n";
+        echo '<script>STIC.portalTemplateDefaults = ' . json_encode($templateDefaults, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . "</script>\n";
         echo '<script>function getPortalInvitationLimit() {return ' . (int)SticPortalConfigUtils::get('PORTAL_INVITATION_LIMIT', 100) . ';}</script>' . "\n";
         echo getVersionedScript('SticInclude/Portal/PortalActions.js') . "\n";
+
+        // One-time CSRF token for the navigation-based portal actions entry points.
+        if (empty($_SESSION['stic_portal_actions_token'])) {
+            $_SESSION['stic_portal_actions_token'] = bin2hex(random_bytes(16));
+        }
+        $portalToken = $_SESSION['stic_portal_actions_token'];
 
         $titleHelp = $mod_strings['LBL_STIC_PORTAL_ACTIONS_HELP'] ?? 'Send an invitation or password reset.';
         $actionHelp = $mod_strings['LBL_STIC_PORTAL_ACTION_TYPE_HELP'] ?? 'Invitation vs Password Reset.';
@@ -78,7 +84,10 @@ class PortalPopupUtils
         $actionHelp = str_replace('%PORTAL_ENABLED_LABEL%', $enabledLabel, $actionHelp);
         $appHelp = $mod_strings['LBL_STIC_PORTAL_TARGET_APP_HELP'] ?? 'Redirect after password setup.';
 
-        // Portal Actions popup HTML
+        // Portal Actions popup HTML — the .pap-* rules are inlined so the
+        // popup renders correctly in every SuiteP theme variant (only the
+        // Stic theme compiles them in its stylesheet).
+        echo '<style>.pap-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99999;justify-content:center;align-items:center}.pap-overlay .inline-help-content{display:none !important}.pap-dialog{background:#fff;border-radius:8px;padding:30px;max-width:480px;width:90%;box-shadow:0 4px 20px rgba(0,0,0,.3)}.pap-dialog h3{margin:0 0 15px 0;font-size:16px}.pap-dialog h3 .inline-help{font-size:13px;margin-left:4px;color:#888;cursor:help}.pap-field{margin-bottom:15px}.pap-label{display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:#555}.pap-label .inline-help{font-size:12px;margin-left:4px;color:#999;cursor:help;vertical-align:middle}.pap-actions{margin-top:20px;text-align:right}.pap-btn-cancel{padding:8px 16px;border:1px solid #ddd;background:#f5f5f5;border-radius:4px;cursor:pointer;margin-right:8px;font-size:13px}.pap-btn-execute{padding:8px 16px;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px}</style>' . "\n";
         echo '
 <div id="portalActionsPopup" class="pap-overlay">
 <div class="pap-dialog">
@@ -120,6 +129,7 @@ class PortalPopupUtils
     </div>
 </div></div>
 <script>
+STIC.portalCsrf = ' . json_encode($portalToken) . ';
 $("#portalActionsPopup .inline-help").removeAttr("data-hasqtip");
 setInlineHelpQtip();
 // Force qtips above the overlay — inline style from qtip plugin wins over CSS

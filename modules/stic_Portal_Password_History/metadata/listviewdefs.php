@@ -14,10 +14,4 @@ array (
         'width' => '15%',
         'default' => true,
     ),
-    'PASSWORD_HASH' => array(
-        'type' => 'varchar',
-        'label' => 'LBL_PASSWORD_HASH',
-        'width' => '12%',
-        'default' => true,
-    ),
 );

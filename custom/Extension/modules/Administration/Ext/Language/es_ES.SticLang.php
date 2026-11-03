@@ -185,4 +185,5 @@ $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_PASSWORD'] = 'Contraseña';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_INVITATION'] = 'Invitación';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_MAGIC_LINK'] = 'Enlace mágico';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_ADMIN_RESET'] = 'Restablecimiento por administrador';
+$mod_strings['LBL_STIC_PORTAL_ACTION_LIMIT'] = 'Demasiados registros seleccionados: el máximo es 100 registros por petición.';
 $mod_strings['LBL_STIC_PORTAL_HOME_URL_HELP'] = 'A donde llegan los usuarios tras iniciar sesión directamente en el portal (sin aplicación OAuth). Los inicios de sesión desde una aplicación OAuth vuelven siempre a la URL de callback de esa aplicación. Si se deja vacío, se muestra la página de bienvenida.';

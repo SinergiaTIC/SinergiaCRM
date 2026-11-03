@@ -39,6 +39,7 @@
 {/if}
 
 <form method="post" action="index.php?module=Administration&action=sticportalconfig_save" enctype="multipart/form-data">
+    <input type="hidden" name="portal_config_token" value="{$PORTAL_CONFIG_TOKEN}">
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="actionsContainer">
 <tr><td>
@@ -373,7 +374,7 @@
         <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_CLEAR_LOCKOUTS_HELP}</div>
     </td>
     <td width="25%" valign="middle">
-        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CLEAR_LOCKOUTS|escape}" onclick="if(confirm('{$MOD.LBL_STIC_PORTAL_CONFIRM_CLEAR_LOCKOUTS|escape}')) document.location.href='index.php?module=Administration&action=sticportalconfig_clearlockouts';">
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CLEAR_LOCKOUTS|escape}" onclick="if(confirm('{$MOD.LBL_STIC_PORTAL_CONFIRM_CLEAR_LOCKOUTS|escape}')) document.location.href='index.php?module=Administration&action=sticportalconfig_clearlockouts&token={$PORTAL_CONFIG_TOKEN}';">
     </td>
     <td width="25%" scope="row" valign="middle">
         {$MOD.LBL_STIC_PORTAL_CLEAR_SESSIONS}
@@ -382,7 +383,7 @@
         <div class="inline-help-content">{$MOD.LBL_STIC_PORTAL_CLEAR_SESSIONS_HELP}</div>
     </td>
     <td width="25%" valign="middle">
-        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CLEAR_SESSIONS|escape}" onclick="if(confirm('{$MOD.LBL_STIC_PORTAL_CONFIRM_CLEAR_SESSIONS|escape}')) document.location.href='index.php?module=Administration&action=sticportalconfig_clearsessions';">
+        <input type="button" class="button" value="{$MOD.LBL_STIC_PORTAL_CLEAR_SESSIONS|escape}" onclick="if(confirm('{$MOD.LBL_STIC_PORTAL_CONFIRM_CLEAR_SESSIONS|escape}')) document.location.href='index.php?module=Administration&action=sticportalconfig_clearsessions&token={$PORTAL_CONFIG_TOKEN}';">
     </td>
 </tr>
 </table>

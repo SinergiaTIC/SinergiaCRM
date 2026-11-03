@@ -94,7 +94,7 @@ class SticPortalAuthUtils
         global $db;
         $GLOBALS['log']->debug(__METHOD__ . " - Looking up portal user by username: $username");
         $uname = $db->quoted($username);
-        $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.deleted=0 AND cc.stic_portal_enabled_c=1 AND cc.stic_portal_username_c=$uname", 0, 1);
+        $result = $db->limitQuery("SELECT c.id FROM contacts c JOIN contacts_cstm cc ON cc.id_c = c.id WHERE c.deleted=0 AND cc.stic_portal_enabled_c=1 AND cc.stic_portal_username_c=$uname ORDER BY c.date_entered ASC", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
             $bean = BeanFactory::getBean('Contacts', $row['id']);
@@ -104,7 +104,7 @@ class SticPortalAuthUtils
                 return array('bean' => $bean, 'type' => 'Contact');
             }
         }
-        $result = $db->limitQuery("SELECT a.id FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id WHERE a.deleted=0 AND ac.stic_portal_enabled_c=1 AND ac.stic_portal_username_c=$uname", 0, 1);
+        $result = $db->limitQuery("SELECT a.id FROM accounts a JOIN accounts_cstm ac ON ac.id_c = a.id WHERE a.deleted=0 AND ac.stic_portal_enabled_c=1 AND ac.stic_portal_username_c=$uname ORDER BY a.date_entered ASC", 0, 1);
         $row = $db->fetchByAssoc($result);
         if ($row) {
             $bean = BeanFactory::getBean('Accounts', $row['id']);
@@ -301,8 +301,18 @@ class SticPortalAuthUtils
         $id = create_guid();
         $now = self::nowDb();
         $db->query("INSERT INTO stic_portal_password_history (id, parent_id, parent_type, password_hash, date_entered, date_modified, deleted) VALUES (" . $db->quoted($id) . ", " . $db->quoted($bean->id) . ", " . $db->quoted($bean->module_name) . ", " . $db->quoted($oldHash) . ", " . $db->quoted($now) . ", " . $db->quoted($now) . ", 0)");
+        // MySQL/MariaDB do not support OFFSET in DELETE — keep the newest $keep
+        // hashes (subquery) and remove any older row not in that set.
         $keep = max(0, $count);
-        $db->query("DELETE FROM stic_portal_password_history WHERE parent_id=" . $db->quoted($bean->id) . " AND parent_type=" . $db->quoted($bean->module_name) . " AND deleted=0 ORDER BY date_entered ASC LIMIT 9999 OFFSET $keep");
+        $db->query(
+            "DELETE h FROM stic_portal_password_history h"
+            . " LEFT JOIN (SELECT id FROM stic_portal_password_history WHERE parent_id=" . $db->quoted($bean->id)
+            . " AND parent_type=" . $db->quoted($bean->module_name) . " AND deleted=0"
+            . " ORDER BY date_entered DESC LIMIT $keep) keep_rows ON keep_rows.id = h.id"
+            . " WHERE h.parent_id=" . $db->quoted($bean->id)
+            . " AND h.parent_type=" . $db->quoted($bean->module_name)
+            . " AND h.deleted=0 AND keep_rows.id IS NULL"
+        );
     }
 
     public static function isPasswordInHistory($bean, $plainPassword)
@@ -400,7 +410,7 @@ class SticPortalAuthUtils
         $registeredUrl = $client->redirect_url ?? '';
         $valid = $client && $client->id && $client->deleted != 1
             && $client->allowed_grant_type === 'portal_authorization_code'
-            && !empty($registeredUrl) && strpos($redirectUri, $registeredUrl) === 0;
+            && !empty($registeredUrl) && $redirectUri === $registeredUrl;
         if (!$valid) {
             $GLOBALS['log']->warning(__METHOD__ . ' - Magic link requested with invalid OAuth context; generating a plain one');
             return '';
@@ -539,8 +549,10 @@ class SticPortalAuthUtils
         $tpl->body_html  = self::parsePortalTemplate($tpl->body_html, $bean, $portalVars);
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
-        $mail->From = 'noreply@sinergiacrm.org';
-        $mail->FromName = SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal');
+        $emailObj = new Email();
+        $sender = $emailObj->getSystemDefaultEmail();
+        $mail->From = !empty($sender['email']) ? $sender['email'] : 'noreply@sinergiacrm.org';
+        $mail->FromName = !empty($sender['name']) ? $sender['name'] : SticPortalConfigUtils::get('PORTAL_TITLE', 'SinergiaCRM Portal');
         $mail->addAddress($to, self::getRecipientName($bean));
         $mail->Subject = $tpl->subject;
         $mail->Body = !empty($tpl->body_html) ? $tpl->body_html : $tpl->body;
@@ -566,6 +578,10 @@ class SticPortalAuthUtils
         $bean->stic_portal_session_id_c = session_id();
         $bean->stic_portal_last_login_c = self::nowDb();
         $bean->save();
+        // Housekeeping: expire audit/attempts/magic-window rows whenever a
+        // portal session is created (cheap, date-indexed deletes).
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        SticPortalConfigUtils::purgeOldAudit();
     }
 
     public static function destroyPortalSession($bean = null)
@@ -633,13 +649,13 @@ class SticPortalAuthUtils
             return array('success' => false, 'error_code' => 'ip_locked', 'error' => 'Too many attempts. Try again later');
         }
         if (!self::verifyPassword($password, $bean->stic_portal_hashed_c)) {
-            $GLOBALS['log']->error(__METHOD__ . " - Password verification FAILED for: $username, stored hash=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40) . "...");
+            $GLOBALS['log']->error(__METHOD__ . " - Password verification FAILED for: $username, stored hash length=" . strlen($bean->stic_portal_hashed_c ?? ''));
             self::recordFailedAttempt($bean, $ipAddress);
             self::recordLoginAudit($bean, $type, $username, $ipAddress, $_SERVER['HTTP_USER_AGENT'] ?? '', false, 'invalid_credentials', 'password', $oauthClientId, $oauthClientName);
             $GLOBALS['log']->info(__METHOD__ . " - Invalid password for: $username");
             return array('success' => false, 'error_code' => 'invalid_credentials', 'error' => 'Invalid credentials');
         }
-        $GLOBALS['log']->info(__METHOD__ . " - Password verification PASSED for: $username, stored hash=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40) . "...");
+        $GLOBALS['log']->info(__METHOD__ . " - Password verification PASSED for: $username");
         if (self::needsRehash($bean->stic_portal_hashed_c)) {
             $bean->stic_portal_hashed_c = self::hashPassword($password);
             $bean->save();
@@ -675,7 +691,7 @@ class SticPortalAuthUtils
     public static function processBeforeSave($bean)
     {
         $logPrefix = __METHOD__ . "({$bean->module_dir}:{$bean->id}): ";
-        $GLOBALS['log']->debug($logPrefix . "entered, hashed_c=" . (empty($bean->stic_portal_hashed_c) ? 'empty' : substr($bean->stic_portal_hashed_c, 0, 30) . '...') . ", fetched_hashed=" . ($bean->fetched_row['stic_portal_hashed_c'] ?? 'null'));
+        $GLOBALS['log']->debug($logPrefix . 'entered, hash present=' . (!empty($bean->stic_portal_hashed_c) ? 'yes(' . strlen($bean->stic_portal_hashed_c) . ')' : 'no'));
 
         if (empty($bean->stic_portal_hashed_c)) return;
         $submitted = $bean->stic_portal_hashed_c;
@@ -804,8 +820,10 @@ class SticPortalAuthUtils
 
         $mail = new SugarPHPMailer();
         $mail->setMailerForSystem();
-        $mail->From = 'noreply@sinergiacrm.org';
-        $mail->FromName = $title;
+        $emailObj = new Email();
+        $sender = $emailObj->getSystemDefaultEmail();
+        $mail->From = !empty($sender['email']) ? $sender['email'] : 'noreply@sinergiacrm.org';
+        $mail->FromName = !empty($sender['name']) ? $sender['name'] : $title;
         $mail->addAddress($to, self::getRecipientName($bean));
         $mail->Subject  = $subject;
         $mail->Body     = $bodyHtml;
@@ -903,11 +921,11 @@ class SticPortalAuthUtils
         $identifierType = substr((string)$identifierType, 0, 10);
         $ident = $db->quoted($identifier);
         $idType = $db->quoted($identifierType);
-        $result = $db->query("SELECT COUNT(*) c FROM stic_portal_magic_rate_limit WHERE identifier=$ident AND identifier_type=$idType AND window_start > DATE_SUB(NOW(), INTERVAL 60 SECOND) AND deleted=0");
+        $result = $db->query("SET STATEMENT max_statement_time=5 FOR SELECT COUNT(*) c FROM stic_portal_magic_rate_limit WHERE identifier=$ident AND identifier_type=$idType AND window_start > DATE_SUB(NOW(), INTERVAL 60 SECOND) AND deleted=0");
         $row = $db->fetchByAssoc($result);
         if ($row && (int)$row['c'] >= $maxPerMin) return true;
         if ($identifierType === 'ip') {
-            $result = $db->query("SELECT COUNT(*) c FROM stic_portal_magic_rate_limit WHERE identifier=$ident AND identifier_type='ip' AND window_start > DATE_SUB(NOW(), INTERVAL 1 HOUR) AND deleted=0");
+            $result = $db->query("SET STATEMENT max_statement_time=5 FOR SELECT COUNT(*) c FROM stic_portal_magic_rate_limit WHERE identifier=$ident AND identifier_type='ip' AND window_start > DATE_SUB(NOW(), INTERVAL 1 HOUR) AND deleted=0");
             $row = $db->fetchByAssoc($result);
             if ($row && (int)$row['c'] >= $maxPerHr) return true;
         }
@@ -928,7 +946,7 @@ class SticPortalAuthUtils
         $bean->stic_portal_force_pw_change_c = 0;
         self::archivePasswordHistory($bean, $bean->fetched_row['stic_portal_hashed_c'] ?? null);
         $bean->save();
-        $GLOBALS['log']->debug(__METHOD__ . " - save done for {$bean->id}, hashed=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40));
+        $GLOBALS['log']->debug(__METHOD__ . " - save done for {$bean->id}");
         self::sendSecurityNotification($bean, 'password_changed');
         return array('success' => true);
     }

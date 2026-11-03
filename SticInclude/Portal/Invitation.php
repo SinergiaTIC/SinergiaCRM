@@ -31,8 +31,26 @@ $module       = $_REQUEST['return_module'] ?? 'Contacts';
 $returnAction = $_REQUEST['return_action'] ?? 'DetailView';
 $redirectUri  = $_REQUEST['redirect_uri'] ?? '';
 
+// Entry point hardening: CSRF token (set by the Portal Actions popup),
+// module whitelist and a server-side record cap (the JS limit is not trusted).
+if (empty($_SESSION['stic_portal_actions_token'])
+    || empty($_REQUEST['portal_token'])
+    || !hash_equals($_SESSION['stic_portal_actions_token'], (string) $_REQUEST['portal_token'])) {
+    sugar_die('Invalid portal action request. Reload the page and try again.');
+}
+$allowedModules = array('Contacts', 'Accounts');
+if (!in_array($module, $allowedModules, true)) {
+    sugar_die('Portal actions only apply to Contacts (Personas) and Accounts (Organizaciones).');
+}
+
 // Accepts a single id (detail view) or a comma-separated list (list view bulk action)
 $idList = array_filter(array_map('trim', explode(',', $idRaw)));
+if (count($idList) > 100) {
+    $message = translate('LBL_STIC_PORTAL_ACTION_LIMIT', 'Administration');
+    SugarApplication::appendErrorMessage("<p class='msg-error'><strong>"
+        . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</strong></p>');
+    SugarApplication::redirect('index.php?module=' . urlencode($module) . '&action=' . urlencode($returnAction));
+}
 
 if (empty($idList)) {
     $message = translate('LBL_STIC_PORTAL_ACTION_ERROR_ONE', 'Administration');
@@ -49,6 +67,7 @@ foreach ($idList as $id) {
 
     $bean = BeanFactory::getBean($module, $id);
     if (!$bean || !$bean->id) { $errors[] = "$id: not found"; continue; }
+    if (!$bean->ACLAccess('edit')) { $errors[] = "$id: no permission"; continue; }
 
     $result = SticPortalActionsUtils::send('invitation', $bean, $_REQUEST['app_id'] ?? '', array('template_id' => $_REQUEST['template'] ?? '', 'redirect_uri' => $redirectUri));
     if ($result['success']) {

@@ -66,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $bean->stic_portal_reset_expires_c = '';
                 $bean->stic_portal_failed_attempts_c = 0;
                 $bean->stic_portal_locked_until_c = '';
-                $GLOBALS['log']->debug("ResetConfirm: about to save (single) with hashed_c=" . substr($newPassword, 0, 20) . "...");
+                $GLOBALS['log']->debug("ResetConfirm: about to save (single), new password length=" . strlen($newPassword));
                 $bean->save();
-                $GLOBALS['log']->info("ResetConfirm: save done, hashed=" . substr($bean->stic_portal_hashed_c ?? '', 0, 40));
+                $GLOBALS['log']->info('ResetConfirm: save done, stored hash length=' . strlen($bean->stic_portal_hashed_c ?? ''));
                 SticPortalAuthUtils::sendSecurityNotification($bean, 'password_changed');
                 $success = true;
             }

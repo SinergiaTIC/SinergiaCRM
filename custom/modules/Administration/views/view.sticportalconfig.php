@@ -34,6 +34,11 @@ class AdministrationViewSticportalconfig extends SugarView
         }
         $this->ss->assign('RETURN_MODULE', 'Administration');
         $this->ss->assign('RETURN_ACTION', 'index');
+        // One-time token for the config forms (save / clear lockouts / clear sessions)
+        if (empty($_SESSION['stic_portal_config_token'])) {
+            $_SESSION['stic_portal_config_token'] = bin2hex(random_bytes(16));
+        }
+        $this->ss->assign('PORTAL_CONFIG_TOKEN', $_SESSION['stic_portal_config_token']);
     }
 
     public function display()

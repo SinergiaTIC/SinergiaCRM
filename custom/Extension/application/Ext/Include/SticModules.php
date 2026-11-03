@@ -254,6 +254,12 @@ $modules_exempt_from_availability_check['stic_AWF_Response_Details'] = 'stic_AWF
 $report_include_modules['stic_AWF_Response_Details'] = 'stic_AWF_Response_Details';
 
 // Modules that should be accessed only by administrators through the Admin page
+// Portal infrastructure tables: hidden AND admin-only (they carry security data,
+// e.g. bcrypt password hashes in stic_Portal_Password_History).
+$adminOnlyList['stic_Portal_Login_Audit'] = array('all' => 1);
+$adminOnlyList['stic_Portal_Password_History'] = array('all' => 1);
+$adminOnlyList['stic_Portal_Login_Attempts'] = array('all' => 1);
+$adminOnlyList['stic_Portal_Magic_Rate_Limit'] = array('all' => 1);
 $adminOnlyList['stic_Settings'] = array('all' => 1);
 $adminOnlyList['stic_Validation_Actions'] = array('all' => 1);
 $adminOnlyList['stic_Security_Groups_Rules'] = array('all' => 1);

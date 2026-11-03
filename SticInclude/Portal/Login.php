@@ -40,7 +40,7 @@ if ($isOAuth) {
     $validClient = $oauthClient && $oauthClient->id
         && $oauthClient->deleted != 1
         && $oauthClient->allowed_grant_type === 'portal_authorization_code'
-        && !empty($registeredUrl) && strpos($oauthRedirectUri, $registeredUrl) === 0;
+        && !empty($registeredUrl) && $oauthRedirectUri === $registeredUrl;
     if (!$validClient) {
         $error = 'Invalid OAuth client or redirect URI.'; $isOAuth = false;
     } else {

@@ -49,7 +49,7 @@ class CustomContactsViewDetail extends ContactsViewDetail
 
         SticViews::display($this);
         require_once 'SticInclude/Portal/PortalPopupUtils.php';
-        PortalPopupUtils::echoPortalActionsPopup('Contacts');
+        SticPortalPopupUtils::echoPortalActionsPopup('Contacts');
         
         echo getVersionedScript("custom/modules/Contacts/SticUtils.js");
 

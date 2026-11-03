@@ -30,10 +30,19 @@ $GLOBALS['log']->debug("PortalOAuthToken - " . $_SERVER['REQUEST_METHOD']);
 global $db;
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    // Introspection is protected: it carries no auth by itself, so it may
+    // only be used by a registered portal client (client_id), and only
+    // reports on Bearer tokens — unexchanged authorization codes are never
+    // reported as valid.
+    $clientId = $_GET['client_id'] ?? '';
+    $client = BeanFactory::getBean('OAuth2Clients', $clientId);
+    if (!$client || !$client->id || $client->deleted == 1 || $client->allowed_grant_type !== 'portal_authorization_code') {
+        http_response_code(401); echo json_encode(['error' => 'invalid_client']); exit;
+    }
     $tokenVal = $_GET['access_token'] ?? '';
     $t = BeanFactory::newBean('OAuth2Tokens');
     $t->retrieve_by_string_fields(['access_token' => $tokenVal]);
-    if (!$t->id || $t->token_is_revoked == '1') { http_response_code(401); echo json_encode(['error' => 'invalid_token']); exit; }
+    if (!$t->id || $t->token_type !== 'Bearer' || $t->token_is_revoked == '1') { http_response_code(401); echo json_encode(['error' => 'invalid_token']); exit; }
     if (!empty($t->access_token_expires) && strtotime($t->access_token_expires) < time()) {
         http_response_code(401); echo json_encode(['error' => 'token_expired']); exit;
     }

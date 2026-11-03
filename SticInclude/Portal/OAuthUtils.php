@@ -50,13 +50,13 @@ class SticPortalOAuthUtils
             $registered = $client->redirect_url ?? '';
             // A registered redirect_url must exist and the supplied URI must start with it,
             // otherwise any redirect_uri would be accepted (open-redirect / code-capture vector).
-            if (empty($registered) || strpos($redirectUri, $registered) !== 0) {
+            if (empty($registered) || $redirectUri !== $registered) {
                 $GLOBALS['log']->debug(__METHOD__ . " - Redirect URI mismatch: $redirectUri vs registered " . ($registered ?: '(none)'));
                 return null;
             }
         }
         // Confidential clients (those with a stored secret) must authenticate with client_secret.
-        if (!empty($client->secret) && hash('sha256', (string)$clientSecret) !== $client->secret) {
+        if (!empty($client->secret) && !hash_equals((string)$client->secret, hash('sha256', (string)$clientSecret))) {
             $GLOBALS['log']->debug(__METHOD__ . " - Client secret mismatch for: $clientId");
             return null;
         }

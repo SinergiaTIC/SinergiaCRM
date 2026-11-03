@@ -289,7 +289,7 @@ class SticPortalActionsUtils
             return array('success' => false, 'error' => 'email failed');
         }
 
-        SticPortalAuthUtils::recordLoginAudit($bean, 'RESET_SENT', $bean->stic_portal_username_c,
+        SticPortalAuthUtils::recordLoginAudit($bean, $bean->module_name, $bean->stic_portal_username_c,
             $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'admin_reset', $oauthClientId, $oauthClientName);
         SticPortalAuthUtils::sendSecurityNotification($bean, 'reset_requested');
         return array('success' => true, 'error' => '');
@@ -311,6 +311,28 @@ class SticPortalActionsUtils
      *                      so the user lands on that app after setting the password.
      * @return array array('success' => bool, 'error' => string)
      */
+    /**
+     * Validate a redirect_uri presented by an external caller against the set
+     * of registered portal OAuth2 clients. Unmatched URIs are dropped: only
+     * registered callbacks may appear in links built by the portal emails.
+     *
+     * @return string The validated URI, or '' when it is not registered.
+     */
+    public static function validateRedirectUri($redirectUri)
+    {
+        global $db;
+        $redirectUri = trim((string) $redirectUri);
+        if ($redirectUri === '') return '';
+        $r = $db->query("SELECT redirect_url FROM oauth2clients WHERE allowed_grant_type='portal_authorization_code' AND deleted=0");
+        while ($row = $db->fetchByAssoc($r)) {
+            if (!empty($row['redirect_url']) && $row['redirect_url'] === $redirectUri) {
+                return $redirectUri;
+            }
+        }
+        $GLOBALS['log']->warning(__METHOD__ . ' - Dropped unregistered redirect_uri');
+        return '';
+    }
+
     public static function send($action, $bean, $appId = '', array $options = array())
     {
         $redirectUri = '';
@@ -325,8 +347,9 @@ class SticPortalActionsUtils
             }
         } elseif (!empty($options['redirect_uri'])) {
             // No app selected: an explicit redirect_uri may still be provided
-            // (e.g. the Portal Actions popup of the CRM UI).
-            $redirectUri = (string) $options['redirect_uri'];
+            // (e.g. the Portal Actions popup of the CRM UI) — but only
+            // registered callbacks are honored, to prevent phishing links.
+            $redirectUri = self::validateRedirectUri($options['redirect_uri']);
         }
         if ($action === 'pwreset') {
             return self::sendPasswordReset($bean, $redirectUri, $oauthClientId, $oauthClientName, $options);
@@ -384,10 +407,8 @@ class SticPortalActionsUtils
         // failure time (below). The conversation of every send is captured in
         // the mailer's fullSmtpLog by SugarPHPMailer::send().
         $GLOBALS['log']->debug($log . " - mailer: host={$outboundEmail->mail_smtpserver} port={$outboundEmail->mail_smtpport} ssl={$outboundEmail->mail_smtpssl} auth=" . (int)$outboundEmail->mail_smtpauth_req . ' account=' . $outboundEmail->name . ' type=' . $outboundEmail->type);
-        $mailer->SMTPDebug = 3;
-        $mailer->Debugoutput = static function ($str, $level) {
-            $GLOBALS['log']->fatal('SMTPDEBUG: ' . $str);
-        };
+        // The SMTP conversation is captured by SugarPHPMailer::send() into
+        // fullSmtpLog (see the failure dump below); no Debugoutput needed.
         if ($outboundEmail->mail_smtpssl == 1) {
             $mailer->SMTPSecure = 'ssl';
         }
@@ -410,7 +431,7 @@ class SticPortalActionsUtils
         $mailer->Body     = $bodyHtml;
         $mailer->AltBody  = $bodyText;
         $mailer->isHTML(true);
-        $GLOBALS['log']->debug($log . ' - From="' . $mailer->From . '" FromName="' . $mailer->FromName . '" To=[' . implode(',', $toList) . '] Cc=[' . implode(',', $ccList) . '] Bcc=[' . implode(',', $bccList) . '] ReplyTo="' . $replyTo . '" Subject="' . $subject . '"');
+        $GLOBALS['log']->debug($log . ' - From="' . $mailer->From . '" FromName="' . $mailer->FromName . '" To=[' . implode(',', $toList) . '] Cc=[' . implode(',', $ccList) . '] Bcc=[' . implode(',', $bccList) . '] ReplyTo="' . ($options['reply_to'] ?? '') . '" Subject="' . $subject . '"');
         $GLOBALS['log']->debug($log . ' - bodyLen=' . strlen($bodyHtml) . ' altLen=' . strlen($bodyText) . ' mailerClass=' . get_class($mailer));
 
         foreach ($toList as $to) {

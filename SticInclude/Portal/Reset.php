@@ -36,6 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Invalid request. Please try again.';
     } else {
         $username = $_POST['username'] ?? '';
+        // Same anti-abuse throttle as the magic-link endpoint: per-username and
+        // shared per-IP budget (prevents email bombing of known users).
+        if (SticPortalAuthUtils::isMagicLinkRateLimited($username, 'username')
+            || SticPortalAuthUtils::isMagicLinkRateLimited($_SERVER['REMOTE_ADDR'] ?? '', 'ip')) {
+            $message = 'If the account exists, a reset link has been sent to your email.';
+        } else
         $result = SticPortalAuthUtils::getPortalUserByUsername($username);
         if ($result) {
             $bean = $result['bean'];
