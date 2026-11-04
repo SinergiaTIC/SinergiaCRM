@@ -48,6 +48,10 @@ $sticElements = array(
         'linkinfo' => array($app_strings['LBL_STIC_FORUMS_LINK'] => "javascript:void(window.open('https://forums.sinergiacrm.org/'))"),
         'submenu' => '',
     ),
+    'stic_guia' => array(
+        'linkinfo' => array($app_strings['LBL_STIC_GUIA_LINK'] => "javascript:void(window.open('https://guia.sinergiacrm.org/'))"),
+        'submenu' => '',
+    ),
 );
 
 
