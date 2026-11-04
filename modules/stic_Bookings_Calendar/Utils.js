@@ -176,7 +176,7 @@ function loadCalendar() {
     dayMaxEvents: true, // allow "more" link when too many events,
     // viewWillUnmount: () => code,
     selectable: true,
-    selectMirror: true,
+    selectMirror: false,
     // This is used for the click in an empty space of the calendar
     select: function (arg) {
       window.location.assign(
@@ -185,7 +185,7 @@ function loadCalendar() {
           "&end=" +
           encodeURIComponent(arg.endStr) +
           "&allDay=" +
-          arg.allDay
+          (arg.allDay ? "true" : "false")
       );
     },
     // This loads the popup of each event/booking
