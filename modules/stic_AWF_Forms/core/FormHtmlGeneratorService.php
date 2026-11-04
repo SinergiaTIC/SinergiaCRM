@@ -3696,6 +3696,12 @@ JS;
     return true;
   }
 
+  function parseScoreValue(val) {
+    if (val === null || val === undefined || val === '') return null;
+    var num = parseFloat(val);
+    return isNaN(num) ? null : num;
+  }
+
   function getAttributeOn(elements, attr) {
     if (!elements || elements.length === 0 || !attr) return null;
     var first = elements[0];
@@ -3722,29 +3728,27 @@ JS;
       if (first.tagName.toLowerCase() === 'select') {
         if (first.multiple) {
           return Array.prototype.slice.call(first.selectedOptions).map(function (opt) {
-            var s = opt.getAttribute('data-score');
-            return s !== null ? parseFloat(s) : 0;
+            return parseScoreValue(opt.getAttribute('data-score') || opt.getAttribute('score'));
           });
         }
         var selOpt = first.selectedOptions[0];
         if (!selOpt) return null;
-        var scoreVal = selOpt.getAttribute('data-score');
-        return scoreVal !== null ? parseFloat(scoreVal) : null;
+        return parseScoreValue(selOpt.getAttribute('data-score') || selOpt.getAttribute('score'));
       }
+
       if (first.type === 'radio') {
         var checkedRadio = elements.filter(function (el) { return el.checked; })[0];
         if (!checkedRadio) return null;
-        var rScore = checkedRadio.getAttribute('data-score');
-        return rScore !== null ? parseFloat(rScore) : null;
+        return parseScoreValue(checkedRadio.getAttribute('data-score') || checkedRadio.getAttribute('score'));
       }
+
       if (first.type === 'checkbox' && String(first.name).slice(-2) === '[]') {
         return elements.filter(function (el) { return el.checked; }).map(function (el) {
-          var cScore = el.getAttribute('data-score');
-          return cScore !== null ? parseFloat(cScore) : 0;
+          return parseScoreValue(el.getAttribute('data-score') || el.getAttribute('score'));
         });
       }
-      var rawScore = first.getAttribute('data-score');
-      return rawScore !== null ? parseFloat(rawScore) : null;
+
+      return parseScoreValue(first.getAttribute('data-score') || first.getAttribute('score'));
     }
 
     return first.getAttribute(attr);
@@ -3796,6 +3800,38 @@ JS;
         first.removeAttribute('aria-required');
         updateAsterisk(first, false);
       }
+      return true;
+    }
+
+    // Special case for score / data-score (bidirectional symmetry)
+    if (attrLower === 'data-score' || attrLower === 'score') {
+      var validatedScore = parseScoreValue(value);
+      var scoreStr = validatedScore !== null ? String(validatedScore) : null;
+
+      var setScoreAttr = function(targetEl) {
+        if (scoreStr !== null) { targetEl.setAttribute('data-score', scoreStr);
+        } else { targetEl.removeAttribute('data-score');
+        } targetEl.removeAttribute('score');
+      };
+
+      if (first.tagName.toLowerCase() === 'select') {
+        var optsToUpdate = first.multiple ? Array.prototype.slice.call(first.selectedOptions) : [first.selectedOptions[0]];
+        optsToUpdate.forEach(function(opt) { if (opt) setScoreAttr(opt); });
+        return true;
+      }
+
+      if (first.type === 'radio') {
+        var activeRadio = elements.filter(function(el) { return el.checked; })[0];
+        if (activeRadio) setScoreAttr(activeRadio);
+        return true;
+      }
+
+      if (first.type === 'checkbox' && multi) {
+        elements.filter(function(el) { return el.checked; }).forEach(function(chk) { setScoreAttr(chk); });
+        return true;
+      }
+
+      elements.forEach(function(el) { setScoreAttr(el); });
       return true;
     }
 
