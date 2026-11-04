@@ -425,10 +425,17 @@ EOHTML;
       }
       else {
       
-         if ($enabled) {
-            $action_array = MailMergeReports_after_ui_frame_hook_get_action_array ($module_name);
-            remove_logic_hook($module_name, 'after_ui_frame', $action_array);
-         }
+          if ($enabled) {
+             $action_array = MailMergeReports_after_ui_frame_hook_get_action_array ($module_name);
+             remove_logic_hook($module_name, 'after_ui_frame', $action_array);
+             
+             // STIC Custom 20261015 - Force OPcache to serve the regenerated logic_hooks.php immediately
+             // (on hosts where opcache.restrict_api blocks opcache_invalidate, the stale window
+             // would keep serving the old file for ~opcache.revalidate_freq seconds)
+             require_once 'SticInclude/Utils.php';
+             SticUtils::refreshPhpFilesInOpcache("custom/modules/{$module_name}/logic_hooks.php");
+             // END STIC Custom 20261015
+          }
          
          $hook_file = "custom/modules/{$module_name}/DHA_DocumentTemplatesHooks.php";
          if (file_exists($hook_file)) {
@@ -450,9 +457,15 @@ EOHTML;
       require_once('include/utils/file_utils.php');
       require_once('include/utils/sugar_file_utils.php');
       
+      // STIC-Custom 20261020 AAM - Do not call module_remove() from here any more.
+      // The old remove()+add() flow rewrote logic_hooks.php twice within the same second,
+      // which made OPcache (1-second mtime resolution) validate the second write as
+      // "unchanged" and serve the hookless version indefinitely. The hook entry is now
+      // removed and re-added in memory with a single file write: see
       // Antes de instalar, intentamos quitar el hook que ya estuviera instalado y reinstalamos despues, por si hay cambios en el codigo.
       // La función de eliminación ya se encargará de comprobar si existía o no previamente el hook
-      MailMergeReports_after_ui_frame_hook_module_remove ($module_name, false);      
+      // MailMergeReports_after_ui_frame_hook_module_rewrite() in the BWC branch below.
+      // END STIC-Custom
       
       if (MailMergeReports_Sugar7Module($module_name)) {
       
@@ -487,7 +500,7 @@ EOHTML;
 EOHTML;
 
          $OK = sugar_file_put_contents_atomic($hook_file, $code);  // ver tambien write_array_to_file y sugar_file_put_contents         
-         
+
       }
       else {
 
@@ -531,17 +544,70 @@ EOHTML;
 
          $OK = sugar_file_put_contents_atomic($hook_file, $code);  // ver tambien write_array_to_file y sugar_file_put_contents
          
-         // Si todo ha ido bien, instalamos el hook
-         if ($OK) {
-            $action_array = MailMergeReports_after_ui_frame_hook_get_action_array ($module_name);
-            check_logic_hook_file($module_name, 'after_ui_frame', $action_array);
-         }
+          // Si todo ha ido bien, instalamos el hook
+          if ($OK) {
+             // STIC-Custom 20261020 AAM - Single logic_hooks.php write per request:
+             // in-memory remove+add of the hook entry (the old remove()+add() flow rewrote
+             // the file twice within the same second and OPcache kept serving the stale
+             // version indefinitely), followed by ONE OPcache refresh covering both
+             // regenerated files (logic_hooks.php is safe to re-execute; the DHA class
+             // file is only refreshed through the native API).
+             require_once 'SticInclude/Utils.php';
+             MailMergeReports_after_ui_frame_hook_module_rewrite ($module_name);
+             SticUtils::refreshPhpFilesInOpcache(
+                "custom/modules/{$module_name}/logic_hooks.php",
+                "custom/modules/{$module_name}/DHA_DocumentTemplatesHooks.php"
+             );
+             // END STIC-Custom
+          }
       }
       
       if ($repair) {
          MailMergeReports_repairAndClear($module_name);
       }
    } 
+
+   ///////////////////////////////////////////////////////////////////////////////////////////////////
+   // STIC-Custom 20261020 AAM - Rewrites custom/modules/<module>/logic_hooks.php ONCE per request
+   // (removes the DHA after_ui_frame hook entry and re-adds it in memory, mirroring the
+   // remove_logic_hook() + check_logic_hook_file() semantics). Avoids the double same-second
+   // write of the old remove()+add() flow, which made OPcache (1-second mtime resolution)
+   // keep serving the stale hookless version indefinitely. The OPcache refresh is NOT done
+   // here: the caller performs a single refresh after all files are regenerated.
+   function MailMergeReports_after_ui_frame_hook_module_rewrite ($module_name) {
+      
+      require_once('include/utils/logic_utils.php');
+      
+      $action_array = MailMergeReports_after_ui_frame_hook_get_action_array ($module_name);
+      $hook_array = get_hook_array($module_name);
+      if (!is_array($hook_array)) {
+         $hook_array = array();
+      }
+      
+      // Remove the existing DHA entry in memory (same comparison as check_existing_element)
+      if (isset($hook_array['after_ui_frame'])) {
+         foreach ($hook_array['after_ui_frame'] as $i => $hook) {
+            if ($hook[1] == $action_array[1]) {
+               unset($hook_array['after_ui_frame'][$i]);
+            }
+         }
+      }
+      
+      // Re-add it with the same semantics as check_logic_hook_file()
+      if ($action_array[0] == '') {
+         $logic_count = 0;
+         if (!empty($hook_array['after_ui_frame'])) {
+            $logic_count = is_countable($hook_array['after_ui_frame']) ? count($hook_array['after_ui_frame']) : 0;
+         }
+         $action_array[0] = $logic_count + 1;
+      }
+      $hook_array['after_ui_frame'][] = $action_array;
+      
+      // Single file write
+      $new_contents = replace_or_add_logic_type($hook_array);
+      return write_logic_file($module_name, $new_contents) !== false;
+   }
+   // END STIC-Custom
 
    ///////////////////////////////////////////////////////////////////////////////////////////////////
    function MailMergeReports_after_ui_frame_hook_install_all_modules() {
