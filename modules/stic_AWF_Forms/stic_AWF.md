@@ -382,15 +382,27 @@ Obtiene el valor actual de un control:
 * Botones de radio o selects simples: valor de la opción seleccionada.
 * Campos de texto/textarea: cadena con el valor actual.
 * Si el campo no existe: retorna `null`.
+```javascript
+var email = AWF.getValue('Contacts0.email1');
+var acepta = AWF.getValue('_detached.Contacts0.terminos');
+```
 
 #### `AWF.setValue(target, value, [options])`
 Asigna reactivamente un valor sobre el campo emitiendo los eventos nativos `input` y `change`, lo que mantiene sincronizado el estado interno de Alpine.js y recalcula las validaciones. En casillas individuales o booleanos, normaliza valores equivalentes (`true`, `false`, `'1'`, `'0'`, `'true'`, `'false'`).
+```javascript
+AWF.setValue('Contacts0.first_name', 'Marta');
+AWF.setValue('_detached.Contacts0.terminos', true);
+```
 
 #### `AWF.getAttribute(target, attributeName, [options])`
 *(Alias: `AWF.getAttributeValue`)*
 Lee el valor o estado de un atributo HTML:
 * Atributos booleanos (`disabled`, `readonly`, `required`, `checked`): retorna booleano (`true`/`false`).
 * Atributos de texto (`placeholder`, `min`, `max`, `pattern`, `style`): retorna la cadena o `null` si no está definido.
+```javascript
+var esObligatorio = AWF.getAttribute('Contacts0.email1', 'required');
+var placeholder = AWF.getAttribute('Contacts0.phone_mobile', 'placeholder');
+```
 
 #### `AWF.setAttribute(target, attributeName, value, [options])`
 *(Alias: `AWF.setAttributeValue`)*
@@ -398,11 +410,29 @@ Asigna o retira un atributo en el control:
 * **Atributos booleanos**: Si se pasa un valor falso (`false`, `null`, `0`, `'false'`, `'0'`, `''`), el atributo y la propiedad se retiran; en caso afirmativo, se añaden.
 * **Control de obligatoriedad (`required`)**: Sincroniza `aria-required` y actualiza automáticamente el asterisco visual (`*`) en la etiqueta del campo.
 * **Listas de casillas múltiples (`select_checkbox_list`)**: Por compatibilidad con la validación de HTML5, en grupos múltiples no se inyecta el atributo `required` nativo por casilla (lo cual forzaría a marcar todas las casillas), sino que se aplica `aria-required="true"` y se actualiza el asterisco visual del grupo.
+```javascript
+// Deshabilitar un campo
+AWF.setAttribute('Contacts0.phone_mobile', 'disabled', true);
+
+// Hacer obligatorio un campo y mostrar el asterisco automáticamente
+AWF.setAttribute('Contacts0.description', 'required', true);
+
+// Modificar un placeholder o atributo HTML5
+AWF.setAttribute('Contacts0.age', 'min', '18');
+```
 
 #### `AWF.onChange(target, callback, [options])`
 Registra un observador mediante delegación en el formulario (`form`). Detecta cambios tanto en campos iniciales como en filas que el usuario añada posteriormente en grupos repetibles.
 * **Firma del callback**: `function(value, scope)`
 * **Opciones**: `{ immediate: true }` para forzar la ejecución del callback tras registrarse con el valor inicial. Retorna la función `off()` para desuscribirse.
+```javascript
+var stop = AWF.onChange('Contacts0.tipo_documento', function(valor, scope) {
+    if (valor === 'pasaporte') {
+        scope.setAttribute('Contacts0.dni', 'required', false);
+        scope.setAttribute('Contacts0.pasaporte', 'required', true);
+    }
+});
+```
 
 ---
 
@@ -416,6 +446,20 @@ El segundo parámetro recibido en el callback de `onChange` proporciona el conte
 * `scope.setValue([target], value)`: Modifica el campo en la tarjeta actual (o en el ámbito global si no existe en la tarjeta).
 * `scope.getAttribute([target], attribute)` y `scope.setAttribute([target], attribute, value)`: Gestionan atributos con el mismo mecanismo de resolución contextual y fallback.
 
+#### Ejemplo de uso en bloque repetible (Tutor del menor):
+```javascript
+AWF.onChange('Contacts0.edad', function(edad, scope) {
+    var esMenor = parseInt(edad, 10) < 18;
+    
+    // Hace obligatorio el campo de tutor solo en la misma fila del participante menor
+    scope.setAttribute('Contacts0.nombre_tutor', 'required', esMenor);
+    scope.setAttribute('Contacts0.nombre_tutor', 'disabled', !esMenor);
+    
+    if (!esMenor) {
+        scope.setValue('Contacts0.nombre_tutor', '');
+    }
+});
+```
 ---
 
 ### 4. Soporte multiformulario y opciones avanzadas
@@ -425,6 +469,10 @@ Cuando varios formularios AWF conviven en una misma página (por ejemplo mediant
 * **Parámetro `options.instanceIndex`**: Permite discriminar la búsqueda a una instancia concreta de un bloque repetible:
 ```javascript
 AWF.getValue('Participantes0.nombre', { instanceIndex: 1 });
+```
+* **Métodos auxiliares:**
+  * `AWF.resolve(target, [options])`: Devuelve `{ elements, element, card, parsed }` para inspección técnica del DOM.
+  * `AWF.parseFieldName(name)`: Desglosa un nombre de control en sus componentes `{ detached, block, indexes, field, multi }`.
 
 ## Análisis y Métricas de Rendimiento
 Además de capturar datos, el formulario web es una herramienta de medición de impacto. Desde la vista de detalle del formulario, se centraliza toda la información estadística y de rendimiento de la campaña:

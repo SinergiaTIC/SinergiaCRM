@@ -3369,7 +3369,7 @@ JS;
     if (name == null) return null;
     var n = String(name).trim();
     if (n === '') return null;
-    if (parseCache[n]) return parseCache[n];
+    if (n in parseCache) return parseCache[n];
 
     var multi = false;
     var raw = n;
@@ -3380,36 +3380,36 @@ JS;
     // Matches indexed group: Block[0][field] or Block[0][1][field]
     var m = raw.match(/^([^\[\].]+)((?:\[\d+\])+)\[(.*)\]$/);
     if (m) {
-      return parseCache[n] = {
+      return (parseCache[n] = {
         detached: detached,
         block: m[1],
         indexes: (m[2].match(/\d+/g) || []).map(Number),
         field: m[3],
         multi: multi
-      };
+      });
     }
 
     // Matches dot notation: Block.field
     var dot = raw.indexOf('.');
     if (dot >= 0) {
-      return parseCache[n] = {
+      return (parseCache[n] = {
         detached: detached,
         block: raw.slice(0, dot),
         indexes: [],
         field: raw.slice(dot + 1),
         multi: multi
-      };
+      });
     }
 
     // Bare field names without block are strictly rejected
-    return parseCache[n] = null;
+    return (parseCache[n] = null);
   }
 
   // Specificity match: 2 = exact match; 0 = no match.
   function getMatchSpecificity(parsed, targetName) {
     var t = parseFieldName(targetName);
     if (!parsed || !t) return 0;
-    if (!t.block) return 0; // Strict requirement: target must have block defined
+    if (!t.block) return 0;
     if (parsed.detached !== t.detached) return 0;
     if (parsed.block !== t.block) return 0;
     if (parsed.field !== t.field) return 0;
@@ -3481,6 +3481,70 @@ JS;
     };
   }
 
+  // Resolves contextual fields for scope/info preserving hierarchical instance safety
+  function resolveForInfo(target, card, parsedCurrent) {
+    var t = parseFieldName(target);
+    if (!t) return { elements: [], element: null, card: null, parsed: null };
+
+    // 1. Explicit indexes: resolve globally with exact index matching
+    if (t.indexes.length > 0) {
+      return resolve(target, { card: null });
+    }
+
+    // 2. Target in the same block: strictly confined to this card
+    if (parsedCurrent && t.block === parsedCurrent.block && t.detached === parsedCurrent.detached) {
+      if (card) {
+        var local = resolve(target, { card: card });
+        if (local.elements.length > 0) return local;
+      }
+      // If field was optional and not rendered in this row, do NOT fallback to row 0
+      return { elements: [], element: null, card: card, parsed: t };
+    }
+
+    // 3. Target in another block: check if it exists in a nested child card inside this card's subtree
+    if (card) {
+      var allDescendants = Array.prototype.slice.call(card.querySelectorAll('input[name], select[name], textarea[name]'));
+      var matchedInSubtree = allDescendants.filter(function (el) {
+        var p = parseFieldName(el.name);
+        if (!p || matches(p, target) === 0) return false;
+        // Verify that the child element's indexes branch from current row's indexes
+        if (parsedCurrent && parsedCurrent.indexes.length > 0) {
+          for (var i = 0; i < parsedCurrent.indexes.length; i++) {
+            if (p.indexes[i] !== parsedCurrent.indexes[i]) return false;
+          }
+        }
+        return true;
+      });
+
+      if (matchedInSubtree.length > 0) {
+        return {
+          elements: matchedInSubtree,
+          element: matchedInSubtree[0],
+          card: matchedInSubtree[0].closest(INSTANCE_SELECTOR),
+          parsed: t
+        };
+      }
+    }
+
+    // 4. Fallback to global scope ONLY IF target is a SCALAR (unindexed) field
+    var globalRes = resolve(target, { card: null });
+    var scalarElements = globalRes.elements.filter(function (el) {
+      var p = parseFieldName(el.name);
+      return p && p.indexes.length === 0;
+    });
+
+    if (scalarElements.length > 0) {
+      return {
+        elements: scalarElements,
+        element: scalarElements[0],
+        card: null,
+        parsed: t
+      };
+    }
+
+    return { elements: [], element: null, card: null, parsed: t };
+  }
+
   function valueOf(elements) {
     if (!elements || elements.length === 0) return null;
     var first = elements[0];
@@ -3530,7 +3594,7 @@ JS;
       if (multi) {
         var arr = Array.isArray(value) ? value.map(String) : [String(value)];
         elements.forEach(function (el) { el.checked = arr.indexOf(String(el.value)) !== -1; });
-        fire(first); // Single event dispatch for the whole multi-checkbox group
+        fire(first);
       } else {
         var boolVal = isTruthyBool(value);
         elements.forEach(function (el) {
@@ -3575,8 +3639,14 @@ JS;
     var first = elements[0];
     var attrLower = String(attr).toLowerCase();
 
-    if (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required') {
+    if (attrLower === 'disabled' || attrLower === 'readonly') {
       return Boolean(first[attrLower] !== undefined ? first[attrLower] : first.hasAttribute(attrLower));
+    }
+    if (attrLower === 'required') {
+      if (first.getAttribute('aria-required') === 'true') {
+        return true;
+      }
+      return Boolean(first.required || first.hasAttribute('required'));
     }
     if (attrLower === 'checked' && (first.type === 'checkbox' || first.type === 'radio')) {
       return Boolean(first.checked);
@@ -3597,12 +3667,22 @@ JS;
       return setValueOn(elements, value);
     }
 
-    var isBoolAttr = (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required' || attrLower === 'checked');
+    var isBoolAttr = (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required');
     var isTruthy = isTruthyBool(value);
     var multi = String(first.name).slice(-2) === '[]';
 
     // Special case for checked attribute
     if (attrLower === 'checked') {
+      if (first.type === 'radio') {
+        var radioVal = isTruthy ? String(value) : null;
+        elements.forEach(function (el) {
+          el.checked = (radioVal !== null && (value === true ? true : String(el.value) === radioVal));
+          if (el.checked) el.setAttribute('checked', 'checked');
+          else el.removeAttribute('checked');
+          fire(el);
+        });
+        return true;
+      }
       elements.forEach(function (el) {
         el.checked = isTruthy;
         if (isTruthy) {
@@ -3627,8 +3707,7 @@ JS;
       return true;
     }
 
-    // Forbidden properties that should never be overridden directly
-    var forbiddenProps = ['id', 'name', 'type', 'form', 'tagname'];
+    var forbiddenProps = ['id', 'name', 'type', 'form', 'tagname', 'value'];
 
     elements.forEach(function (el) {
       if (isBoolAttr) {
@@ -3687,48 +3766,39 @@ JS;
 
   function buildInfo(el, card, parsed) {
     var currentCanonical = parsed ? ((parsed.detached ? '_detached.' : '') + parsed.block + '.' + parsed.field) : null;
+    var rawIndex = (card && card.dataset && card.dataset.awfInstance !== undefined)
+      ? Number(card.dataset.awfInstance)
+      : (parsed && parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null);
+
     return {
       element: el,
       card: card,
       block: parsed ? parsed.block : null,
       field: parsed ? parsed.field : null,
       detached: parsed ? parsed.detached : false,
-      instanceIndexes: parsed ? parsed.indexes : [],
-      instanceIndex: parsed && parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null,
+      instanceIndexes: parsed && parsed.indexes ? parsed.indexes.slice() : [],
+      instanceIndex: rawIndex,
       getValue: function (target) {
-        var t = target || currentCanonical;
-        var res = resolve(t, { card: card });
-        if (card && res.elements.length === 0) {
-          res = resolve(t, { card: null });
-        }
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
         return valueOf(res.elements);
       },
       setValue: function (target, val) {
         var t = (arguments.length === 1) ? currentCanonical : target;
         var v = (arguments.length === 1) ? target : val;
-        var res = resolve(t, { card: card });
-        if (card && res.elements.length === 0) {
-          res = resolve(t, { card: null });
-        }
+        var res = resolveForInfo(t, card, parsed);
         return setValueOn(res.elements, v);
       },
       getAttribute: function (target, attr) {
         var t = (arguments.length === 1) ? currentCanonical : target;
         var a = (arguments.length === 1) ? target : attr;
-        var res = resolve(t, { card: card });
-        if (card && res.elements.length === 0) {
-          res = resolve(t, { card: null });
-        }
+        var res = resolveForInfo(t, card, parsed);
         return getAttributeOn(res.elements, a);
       },
       setAttribute: function (target, attr, val) {
         var t = (arguments.length === 2) ? currentCanonical : target;
         var a = (arguments.length === 2) ? target : attr;
         var v = (arguments.length === 2) ? attr : val;
-        var res = resolve(t, { card: card });
-        if (card && res.elements.length === 0) {
-          res = resolve(t, { card: null });
-        }
+        var res = resolveForInfo(t, card, parsed);
         return setAttributeOn(res.elements, a, v);
       },
       getAttributeValue: function (target, attr) {
