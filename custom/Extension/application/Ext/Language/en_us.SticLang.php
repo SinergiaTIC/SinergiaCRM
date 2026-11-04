@@ -96,10 +96,10 @@ $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC_CUSTOM'] = 'SticCustom';
 
 // SinergiaCRM global links
-$app_strings['LBL_STIC_FORUMS_LINK'] = 'SinergiaTIC forums';
-$app_strings['LBL_STIC_GUIA_LINK'] = 'SinergiaCRM guIA';
-$app_strings['LBL_STIC_WIKI_LINK'] = 'SinergiaTIC wiki';
-$app_strings['LBL_STIC_VIDEOS_LINK'] = 'SinergiaCRM videos';
+$app_strings['LBL_STIC_FORUMS_LINK'] = 'Forums';
+$app_strings['LBL_STIC_GUIA_LINK'] = 'GuIA (global AI powered guide)';
+$app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki';
+$app_strings['LBL_STIC_VIDEOS_LINK'] = 'Videos';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
 // Messages: actions in recipient modules
