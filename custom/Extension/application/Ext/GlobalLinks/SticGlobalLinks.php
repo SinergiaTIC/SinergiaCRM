@@ -49,7 +49,7 @@ $sticElements = array(
         'submenu' => '',
     ),
     'stic_guia' => array(
-        'linkinfo' => array($app_strings['LBL_STIC_GUIA_LINK'] => "javascript:void(window.open('https://guia.sinergiacrm.org/'))"),
+        'linkinfo' => array($app_strings['LBL_STIC_GUIA_LINK'] => "javascript:void(window.open('https://guia.sinergiatic.org/'))"),
         'submenu' => '',
     ),
 );
