@@ -399,23 +399,32 @@ AWF.setValue('_detached.Contacts0.terminos', true);
 #### `AWF.getAttribute(target, attributeName, [options])`
 *(Alias: `AWF.getAttributeValue`)*
 Lee el valor o estado de un atributo HTML:
-* Atributos booleanos (`disabled`, `readonly`, `required`, `checked`): retorna booleano (`true`/`false`).
-* Para `required` en listas de selección múltiple por casillas (`select_checkbox_list`), devuelve true si el grupo tiene asignada obligatoriedad visual o de accesibilidad (`aria-required="true"`).
-* Atributo `data-score` o `score`: devuelve el valor numérico (float/int) asociado a la opción actualmente seleccionada en desplegables o radios, o un array de puntuaciones en selecciones múltiples.
-* Atributos de texto (`placeholder`, `min`, `max`, `pattern`, `style`): retorna la cadena o `null` si no está definido.
+* **Atributos booleanos (`disabled`, `readonly`, `checked`)**: retorna booleano (`true`/`false`).
+* **Atributo `required`**: retorna `true` si el control tiene el atributo nativo `required` o si tiene `aria-required="true"` (caso de listas de selección múltiple por casillas).
+* **Puntuación (`score` o `data-score`)**: resuelve de forma simétrica el valor numérico de la opción actualmente seleccionada:
+  * En `<select>` simple o `<input type="radio">`: retorna el valor numérico (`float`/`int`) del `data-score` de la opción marcada, o `null` si la opción no tiene puntuación definida o no es convertible a número (evita `NaN`).
+  * En controles múltiples (`select multiple` o `select_checkbox_list`): retorna un array con las puntuaciones de las opciones seleccionadas (ej. `[10, null, 25]`). Si una opción no tiene puntuación, su posición en el array es `null` (nunca `0` por defecto).
+* **Otros atributos de texto (`placeholder`, `min`, `max`, `style`, etc.)**: retorna la cadena con el valor o `null` si no está definido.
 
 ```javascript
 var esObligatorio = AWF.getAttribute('Contacts0.email1', 'required');
 var placeholder = AWF.getAttribute('Contacts0.phone_mobile', 'placeholder');
+// Lectura de puntuación en radio o select
+var puntos = AWF.getAttribute('Encuesta0.satisfaccion', 'score'); // Retorna número o null
 ```
 
 #### `AWF.setAttribute(target, attributeName, value, [options])`
 *(Alias: `AWF.setAttributeValue`)*
 Asigna o retira un atributo en el control:
 * **Atributos booleanos**: Si se pasa un valor falso (`false`, `null`, `0`, `'false'`, `'0'`, `''`), el atributo y la propiedad se retiran; en caso afirmativo, se añaden.
-* **Control de obligatoriedad (`required`)**: Sincroniza `aria-required` y actualiza automáticamente el asterisco visual (`*`) en la etiqueta del campo.
-* **Listas de casillas múltiples (`select_checkbox_list`)**: Por compatibilidad con la validación de HTML5, en grupos múltiples no se inyecta el atributo `required` nativo por casilla (lo cual forzaría a marcar todas las casillas), sino que se aplica `aria-required="true"` y se actualiza el asterisco visual del grupo.
-* **Botones de radio (`checked`)**: Al fijar `checked` sobre un grupo de radios, selecciona exclusivamente la opción coincidente con el valor indicado o desmarca todas si es un valor falso.
+* **Selección en radios y checkboxes (`checked`):**
+  * En casillas individuales conmuta el estado booleano.
+  * En grupos de botones de radio, si se pasa un valor concreto (ej. `AWF.setAttribute('Encuesta0.opcion', 'checked', 'B')`), marca exclusivamente la opción que coincide con dicho valor y desmarca el resto.
+* **Control de obligatoriedad (`required`)**: Sincroniza la propiedad nativa, el atributo `aria-required` y el asterisco visual (`*`). En listas múltiples (`select_checkbox_list`) omite el `required` nativo de HTML5 para no bloquear el envío y aplica únicamente `aria-required="true"` y el asterisco del grupo.
+* **Puntuación (`score` o `data-score`):** Asigna dinámicamente la puntuación garantizando simetría con `getAttribute`:
+  * Tanto si se indica `'score'` como `'data-score'`, el valor se valida numéricamente y se escribe en el atributo canónico data-score del elemento u opción activa (la opción seleccionada en `<select>` o el radio activo en grupos de radiobuttons).
+  * Si el valor es nulo, vacío o no numérico, se retira el atributo `data-score` de la opción activa.
+  * Limpia automáticamente cualquier atributo no estándar `score` residual en el contenedor raíz para evitar divergencias en el DOM.
 
 ```javascript
 // Deshabilitar un campo
@@ -426,6 +435,10 @@ AWF.setAttribute('Contacts0.description', 'required', true);
 
 // Modificar un placeholder o atributo HTML5
 AWF.setAttribute('Contacts0.age', 'min', '18');
+
+// Asignación simétrica de puntuación
+AWF.setAttribute('Encuesta0.satisfaccion', 'score', 50);
+console.log(AWF.getAttribute('Encuesta0.satisfaccion', 'score')); // Retorna 50
 ```
 
 #### `AWF.onChange(target, callback, [options])`
