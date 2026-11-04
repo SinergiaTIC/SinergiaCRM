@@ -780,6 +780,18 @@ class AOW_WorkFlow extends Basic
                 // $field = $condition_bean->$field;
                 $field = $condition_bean->$field ?? null;
                 // END STIC Custom
+
+                // STIC-Custom 20260604 PCS - Load relationship if relate field ID is empty
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1232
+                if (empty($field) && $data['type'] === 'relate' && isset($data['link'])) {
+                    if ($condition_bean->load_relationship($data['link'])) {
+                        $relatedIds = $condition_bean->{$data['link']}->get();
+                        if (!empty($relatedIds)) {
+                            $field = reset($relatedIds);
+                        }
+                    }
+                }
+                // END STIC-Custom
                 
                 if (in_array($data['type'], $dateFields)) {
                     $field = strtotime($field);
