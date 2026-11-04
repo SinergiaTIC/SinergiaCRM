@@ -358,6 +358,110 @@ Este es el último paso del asistente, destinado a revisar el resultado final, e
   
   * **Descargar código**: Permite descargar el código HTML generado para realizar inserciones manuales o integraciones más específicas en plataformas externas.
 
+## API JavaScript de Cliente (window.AWF) ##
+El motor de formularios genera de forma nativa la librería de cliente `window.AWF`, disponible en el contexto global y optimizada para su uso dentro del bloque de **JS Personalizado** (`custom_js`) en el Paso 4 (Maquetación).
+
+Esta API permite manipular valores y atributos HTML sin lidiar con los selectores variables del DOM (`#f_...`), garantizando compatibilidad con grupos repetibles y opcionales (#1365).
+
+### 1. Nombres canónicos obligatorios
+El acceso a los campos está restringido a sus nombres internos canónicos tal y como aparecen definidos en el asistente (Paso 2):
+* **Campos enlazados a CRM**: `NombreBloque.nombre_campo` (ej: `Contacts0.last_name`).
+* **Campos no enlazados (virtuales)**: `_detached.NombreBloque.nombre_campo` (ej: `_detached.Contacts0.consentimiento`).
+* **Instancias específicas en bloques repetibles**: `NombreBloque[indice][nombre_campo]` (ej: `Participantes0[1][first_name]`).
+
+> **Nota de integridad**: No se permite el uso de nombres cortos sin bloque (ej. `'last_name'`). Esto garantiza que nunca se produzcan colisiones accidentales entre distintos bloques.
+
+---
+
+### 2. Métodos principales
+
+#### `AWF.getValue(target, [options])`
+Obtiene el valor actual de un campo:
+* Devuelve un booleano (`true`/`false`) para casillas de verificación individuales.
+* Devuelve un array de strings para listas de selección múltiple (`select_multiple` o `select_checkbox_list`).
+* Devuelve el valor seleccionado para botones de radio o selects simples.
+* Devuelve `null` si el campo no existe.
+
+```javascript
+var email = AWF.getValue('Contacts0.email1');
+var acepta = AWF.getValue('_detached.Contacts0.terminos');
+```
+
+#### `AWF.setValue(target, value, [options])`
+Asigna un valor al campo de forma reactiva, sincronizando el modelo interno de Alpine.js y disparando los eventos nativos `input` y `change`:
+```javascript
+AWF.setValue('Contacts0.first_name', 'Marta');
+AWF.setValue('_detached.Contacts0.terminos', true);
+```
+
+#### `AWF.getAttribute(target, attributeName, [options])`
+(Álias: `AWF.getAttributeValue`)
+Obtiene el valor de cualquier atributo del elemento HTML del campo (`placeholder`, `min`, `max`, `pattern`, `style`, `class`, `disabled`, `readonly`, `required`, etc.):
+- Para atributos booleanos (`disabled`, `readonly`, `required`, `checked`), devuelve `true` o `false`.
+- Para atributos de texto, devuelve el valor del atributo o `null` si no está presente.
+```javascript
+var esObligatorio = AWF.getAttribute('Contacts0.email1', 'required');
+var placeholder = AWF.getAttribute('Contacts0.phone_mobile', 'placeholder');
+```
+
+#### `AWF.setAttribute(target, attributeName, value, [options])`
+(Álias: `AWF.setAttributeValue`)
+Asigna o elimina un atributo en el control HTML:
+- Atributos booleanos (`disabled`, `readonly`, `required`): Si se pasa un valor booleano o falsy (`false`, `null`, `0`, `""`), el atributo se retira. Si es truthy (`true`, `1`), se añade.
+- Control de obligatoriedad (`required`): Al activar o desactivar required, el sistema sincroniza automáticamente el atributo de accesibilidad `aria-required` e inserta o retira el asterisco visual (`*`) de la etiqueta del campo.
+- Si se pasa `value = null`, el atributo se elimina mediante `removeAttribute`.
+```javascript
+// Deshabilitar un campo
+AWF.setAttribute('Contacts0.phone_mobile', 'disabled', true);
+
+// Hacer obligatorio un campo y mostrar el asterisco automáticamente
+AWF.setAttribute('Contacts0.description', 'required', true);
+
+// Modificar un placeholder o atributo HTML5
+AWF.setAttribute('Contacts0.age', 'min', '18');
+```
+
+#### `AWF.onChange(target, callback, [options])`
+Registra un observador mediante delegación centralizada de eventos en el formulario. Se activa automáticamente tanto para campos iniciales como para nuevas filas creadas dinámicamente en grupos repetibles.
+- Firma del callback: `function(value, scope)`
+- Opciones admitidas: `{ immediate: true }` (ejecuta el callback una vez durante el registro con el valor inicial).
+- Retorno: Función `off()` para cancelar la suscripción.
+```javascript
+var stop = AWF.onChange('Contacts0.tipo_documento', function(valor, scope) {
+    if (valor === 'pasaporte') {
+        scope.setAttribute('Contacts0.dni', 'required', false);
+        scope.setAttribute('Contacts0.pasaporte', 'required', true);
+    }
+});
+```
+
+### 3. El objeto contextual `scope`
+Dentro de la función callback de `onChange`, el segundo argumento (`scope`) contiene información de la instancia que disparó el evento y expone atajos acotados a su propia tarjeta contenedora (`card`):
+- `scope.block`: Nombre del bloque de datos (ej: `'Contacts0'`).
+- `scope.field`: Nombre del campo (ej: `'last_name'`).
+- `scope.detached`: `true` si es un campo virtual desvinculado; `false` si pertenece al CRM.
+- `scope.instanceIndex`: Índice numérico de la fila si el campo está en un grupo repetible.
+- `scope.card`: Elemento DOM de la tarjeta de la instancia (`.awf-instance-card`).
+- `scope.getValue([target])`: Lee el valor. Si se omite el argumento, lee el valor del propio campo que disparó el cambio. Si se indica un campo hermano, lo busca prioritariamente dentro de su misma fila.
+- `scope.setValue([target], value)`: Modifica el valor dentro de la misma fila repetible.
+- `scope.getAttribute([target], attributeName)`: Lee un atributo en la fila actual.
+- `scope.setAttribute([target], attributeName, value)`: Modifica un atributo en la fila actual.
+
+#### Ejemplo en grupo repetible:
+```javascript
+AWF.onChange('Participantes0.edad', function(edad, scope) {
+    var esMenor = parseInt(edad, 10) < 18;
+    
+    // Hace obligatorio el campo de tutor solo en la misma fila del participante menor
+    scope.setAttribute('Participantes0.nombre_tutor', 'required', esMenor);
+    scope.setAttribute('Participantes0.nombre_tutor', 'disabled', !esMenor);
+    
+    if (!esMenor) {
+        scope.setValue('Participantes0.nombre_tutor', '');
+    }
+});
+```
+
 ## Análisis y Métricas de Rendimiento
 Además de capturar datos, el formulario web es una herramienta de medición de impacto. Desde la vista de detalle del formulario, se centraliza toda la información estadística y de rendimiento de la campaña:
 

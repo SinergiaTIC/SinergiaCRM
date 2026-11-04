@@ -3335,21 +3335,14 @@ JS;
     }
 
     /**
-     * Client-side helper exposed as `window.AWF` for custom_js / frontend
-     * actions. Resolves fields across scalar AND repeatable/optional blocks
-     * without hand-building DOM selectors, and keeps Alpine's reactivity in
-     * sync (setValue dispatches native input+change events).
-     *
-     * v1 scope: resolve / getValue / setValue / onChange. The visibility/
-     * required/read-only helpers (setVisible / setRequired / setReadOnly) are
-     * intentionally NOT included yet (issue #1495, later phase).
+     * Client-side helper exposed as `window.AWF` for custom_js / frontend actions.
+     * Resolves fields using strictly canonical internal names across scalar and repeatable blocks.
      */
     private function getAwfHelperJs(string $wrapperId = '', string $formId = ''): string {
         $js = <<<'JS'
 // --- AWF CLIENT HELPERS (window.AWF) ---
-// Read/write fields of scalar AND repeatable/optional blocks from custom_js.
-// Form-scoped: everything resolves inside THIS form's wrapper div, so several
-// AWF forms can coexist on one page (see the window.AWF facade below).
+// Read/write fields and attributes of scalar and repeatable/optional blocks from custom_js.
+// Strictly scoped to canonical internal names: 'Block.field' and '_detached.Block.field'.
 (function () {
   'use strict';
 
@@ -3362,66 +3355,86 @@ JS;
   }
   function getForm() {
     var wrapper = getWrapper();
-    if (wrapper) {
-      var f = wrapper.querySelector('form');
-      if (f) return f;
-    }
-    return null;
+    return wrapper ? wrapper.querySelector('form') : null;
   }
 
   // Parse a control name into { detached, block, indexes, field, multi }.
-  // "Block.field" | "field" | "Block[0][field]" | "Block[0][1][field]"
-  // | "_detached.Block..." | "...[]" (checkbox group / multi select).
+  // Strictly requires canonical formats:
+  // "Block.field" | "Block[0][field]" | "Block[0][1][field]"
+  // "_detached.Block.field" | "_detached.Block[0][field]"
   function parseFieldName(name) {
     if (name == null) return null;
-    var n = String(name);
+    var n = String(name).trim();
     if (n === '') return null;
     var multi = false;
     if (n.slice(-2) === '[]') { multi = true; n = n.slice(0, -2); }
     var detached = false;
     if (n.indexOf('_detached.') === 0) { detached = true; n = n.slice(10); }
+
+    // Matches indexed group: Block[0][field] or Block[0][1][field]
     var m = n.match(/^([^\[\].]+)((?:\[\d+\])+)\[(.*)\]$/);
     if (m) {
-      return { detached: detached, block: m[1], indexes: (m[2].match(/\d+/g) || []).map(Number), field: m[3], multi: multi };
+      return {
+        detached: detached,
+        block: m[1],
+        indexes: (m[2].match(/\d+/g) || []).map(Number),
+        field: m[3],
+        multi: multi
+      };
     }
+
+    // Matches dot notation: Block.field
     var dot = n.indexOf('.');
     if (dot >= 0) {
-      return { detached: detached, block: n.slice(0, dot), indexes: [], field: n.slice(dot + 1), multi: multi };
+      return {
+        detached: detached,
+        block: n.slice(0, dot),
+        indexes: [],
+        field: n.slice(dot + 1),
+        multi: multi
+      };
     }
-    return { detached: detached, block: null, indexes: [], field: n, multi: multi };
+
+    // Bare field names without block are strictly rejected
+    return null;
   }
 
-  // Match specificity: 2 = explicit "Block.field"; 1 = bare "field"; 0 = no
-  // match. When the target carries EXPLICIT indexes (e.g. "Block[1][field]"),
-  // they must match the DOM element's indexes exactly, otherwise a lookup such
-  // as AWF.getValue('Participantes[1][nom]') would silently return instance 0.
+  // Specificity match: 2 = exact match; 0 = no match.
   function getMatchSpecificity(parsed, targetName) {
     var t = parseFieldName(targetName);
     if (!parsed || !t) return 0;
+    if (!t.block) return 0; // Strict requirement: target must have block defined
+    if (parsed.detached !== t.detached) return 0;
+    if (parsed.block !== t.block) return 0;
     if (parsed.field !== t.field) return 0;
-    if (t.block && parsed.block !== t.block) return 0;
+
     if (t.indexes.length > 0) {
       if (parsed.indexes.length !== t.indexes.length) return 0;
       for (var i = 0; i < t.indexes.length; i++) {
         if (parsed.indexes[i] !== t.indexes[i]) return 0;
       }
     }
-    return t.block ? 2 : 1;
+    return 2;
   }
 
   function controls(scope) {
     var root = scope || getForm();
     if (!root) return [];
-    return Array.prototype.slice.call(root.querySelectorAll('input[name], select[name], textarea[name]'));
+    var all = Array.prototype.slice.call(root.querySelectorAll('input[name], select[name], textarea[name]'));
+    if (scope) {
+      // Isolate instance cards: exclude controls belonging to deeper nested instance cards
+      return all.filter(function (el) {
+        return el.closest(INSTANCE_SELECTOR) === scope;
+      });
+    }
+    return all;
   }
 
   function matches(parsed, target, options) {
     if (!parsed) return 0;
-    var specificity = 1;
-    if (target && target !== '*') {
-      specificity = getMatchSpecificity(parsed, target);
-      if (specificity === 0) return 0;
-    }
+    var specificity = getMatchSpecificity(parsed, target);
+    if (specificity === 0) return 0;
+
     if (options && options.instanceIndex != null) {
       var idx = parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null;
       if (String(idx) !== String(options.instanceIndex)) return 0;
@@ -3429,24 +3442,37 @@ JS;
     return specificity;
   }
 
-  // target: string | HTMLElement | { card, element, name, instanceIndex }
   function resolve(target, options) {
     options = options || {};
     var scope = options.card || options.scope || null;
     if (target && target.nodeType === 1) {
-      return { elements: [target], element: target, card: target.closest(INSTANCE_SELECTOR), parsed: parseFieldName(target.name) };
+      return {
+        elements: [target],
+        element: target,
+        card: target.closest(INSTANCE_SELECTOR),
+        parsed: parseFieldName(target.name)
+      };
     }
-    if (target && typeof target === 'object') {
-      if (target.element) {
-        return { elements: [target.element], element: target.element, card: target.element.closest(INSTANCE_SELECTOR), parsed: parseFieldName(target.element.name) };
-      }
-      var name = target.name;
-      var card = target.card || scope;
-      var els = controls(card).filter(function (el) { return matches(parseFieldName(el.name), name, target) > 0; });
-      return { elements: els, element: els[0] || null, card: card || (els[0] ? els[0].closest(INSTANCE_SELECTOR) : null), parsed: parseFieldName(name) };
+    if (target && typeof target === 'object' && target.element) {
+      return {
+        elements: [target.element],
+        element: target.element,
+        card: target.element.closest(INSTANCE_SELECTOR),
+        parsed: parseFieldName(target.element.name)
+      };
     }
-    var elements = controls(scope).filter(function (el) { return matches(parseFieldName(el.name), String(target), options) > 0; });
-    return { elements: elements, element: elements[0] || null, card: scope || (elements[0] ? elements[0].closest(INSTANCE_SELECTOR) : null), parsed: parseFieldName(target) };
+
+    var targetStr = String(target || '');
+    var elements = controls(scope).filter(function (el) {
+      return matches(parseFieldName(el.name), targetStr, options) > 0;
+    });
+
+    return {
+      elements: elements,
+      element: elements[0] || null,
+      card: scope || (elements[0] ? elements[0].closest(INSTANCE_SELECTOR) : null),
+      parsed: parseFieldName(targetStr)
+    };
   }
 
   function valueOf(elements) {
@@ -3455,8 +3481,10 @@ JS;
     var tag = first.tagName.toLowerCase();
     var type = (first.type || '').toLowerCase();
     var multi = String(first.name).slice(-2) === '[]';
+
     if (type === 'checkbox') {
-      if (multi || elements.length > 1) {
+      // Only multi-value checkbox lists (e.g. name="field[]") return arrays
+      if (multi) {
         return elements.filter(function (el) { return el.checked; }).map(function (el) { return el.value; });
       }
       return !!first.checked;
@@ -3466,7 +3494,9 @@ JS;
       return checked ? checked.value : '';
     }
     if (tag === 'select') {
-      if (first.multiple) return Array.prototype.slice.call(first.selectedOptions).map(function (o) { return o.value; });
+      if (first.multiple) {
+        return Array.prototype.slice.call(first.selectedOptions).map(function (o) { return o.value; });
+      }
       return first.value;
     }
     return first.value;
@@ -3483,69 +3513,169 @@ JS;
     var tag = first.tagName.toLowerCase();
     var type = (first.type || '').toLowerCase();
     var multi = String(first.name).slice(-2) === '[]';
-    
+
     if (type === 'checkbox') {
-      if (multi || elements.length > 1) {
+      if (multi) {
         var arr = Array.isArray(value) ? value.map(String) : [String(value)];
         elements.forEach(function (el) { el.checked = arr.indexOf(String(el.value)) !== -1; });
-        fire(first); // Un sol dispar per a tot el grup
+        fire(first); // Single event dispatch for the whole multi-checkbox group
       } else {
-        first.checked = !!value;
-        fire(first);
+        var boolVal = (value === true || value === 'true' || value === 1 || value === '1');
+        elements.forEach(function (el) {
+          el.checked = boolVal;
+          fire(el);
+        });
       }
       return true;
     }
     if (type === 'radio') {
       var v = (value == null) ? '' : String(value);
       var fired = false;
-      elements.forEach(function (el) { 
-        el.checked = (String(el.value) === v); 
+      elements.forEach(function (el) {
+        el.checked = (String(el.value) === v);
         if (el.checked && !fired) { fire(el); fired = true; }
       });
-      if (!fired) fire(first); // Disparar si s'ha netejat la selecció
+      if (!fired) fire(first); // Dispatch change event if selection was cleared
       return true;
     }
     if (tag === 'select') {
       if (first.multiple) {
         var arrSel = Array.isArray(value) ? value.map(String) : [String(value)];
-        Array.prototype.slice.call(first.options).forEach(function (o) { o.selected = arrSel.indexOf(String(o.value)) !== -1; });
+        Array.prototype.slice.call(first.options).forEach(function (o) {
+          o.selected = arrSel.indexOf(String(o.value)) !== -1;
+        });
       } else {
         first.value = value == null ? '' : String(value);
       }
       fire(first);
       return true;
     }
-    first.value = value == null ? '' : String(value);
-    fire(first);
+
+    elements.forEach(function (el) {
+      el.value = value == null ? '' : String(value);
+      fire(el);
+    });
     return true;
+  }
+
+  function getAttributeOn(elements, attr) {
+    if (!elements || elements.length === 0 || !attr) return null;
+    var first = elements[0];
+    var attrLower = String(attr).toLowerCase();
+
+    // Standard boolean DOM attributes/properties
+    if (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required') {
+      return Boolean(first[attrLower] !== undefined ? first[attrLower] : first.hasAttribute(attrLower));
+    }
+    if (attrLower === 'checked' && (first.type === 'checkbox' || first.type === 'radio')) {
+      return Boolean(first.checked);
+    }
+    if (attrLower === 'value') {
+      return valueOf(elements);
+    }
+
+    return first.getAttribute(attr);
+  }
+
+  function setAttributeOn(elements, attr, value) {
+    if (!elements || elements.length === 0 || !attr) return false;
+    var attrLower = String(attr).toLowerCase();
+
+    if (attrLower === 'value') {
+      return setValueOn(elements, value);
+    }
+
+    var isBoolAttr = (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required');
+
+    elements.forEach(function (el) {
+      if (isBoolAttr) {
+        var isTruthy = !(value === false || value === null || value === undefined || value === 0 || value === '0' || value === '');
+        if (isTruthy) {
+          el.setAttribute(attrLower, attrLower);
+          if (attrLower in el) el[attrLower] = true;
+          if (attrLower === 'required') {
+            el.setAttribute('aria-required', 'true');
+            updateAsterisk(el, true);
+          }
+        } else {
+          el.removeAttribute(attrLower);
+          if (attrLower in el) el[attrLower] = false;
+          if (attrLower === 'required') {
+            el.removeAttribute('aria-required');
+            updateAsterisk(el, false);
+          }
+        }
+      } else {
+        if (value === null || value === undefined) {
+          el.removeAttribute(attr);
+        } else {
+          el.setAttribute(attr, String(value));
+          if (attr in el && typeof el[attr] !== 'function') {
+            try { el[attr] = String(value); } catch (e) {}
+          }
+        }
+      }
+    });
+
+    return true;
+  }
+
+  function updateAsterisk(el, isRequired) {
+    var label = document.querySelector('label[for="' + el.id + '"]') || (el.closest('.awf-field') ? el.closest('.awf-field').querySelector('label') : null);
+    if (!label) return;
+    var asterisk = label.querySelector('.awf-required');
+    if (isRequired) {
+      if (!asterisk) {
+        var span = document.createElement('span');
+        span.className = 'awf-required ms-1';
+        span.setAttribute('aria-hidden', 'true');
+        span.textContent = '*';
+        label.appendChild(span);
+      }
+    } else if (asterisk) {
+      asterisk.remove();
+    }
   }
 
   var listeners = [];
   var delegatedForm = null;
 
   function buildInfo(el, card, parsed) {
-    var scope = card || null;
+    var currentCanonical = (parsed.detached ? '_detached.' : '') + parsed.block + '.' + parsed.field;
     return {
       element: el,
       card: card,
       block: parsed ? parsed.block : null,
       field: parsed ? parsed.field : null,
+      detached: parsed ? parsed.detached : false,
       instanceIndexes: parsed ? parsed.indexes : [],
       instanceIndex: parsed && parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null,
-      getValue: function (name) {
-        var n = name || (parsed ? (parsed.block ? parsed.block + '.' + parsed.field : parsed.field) : null);
-        var res = resolve(n, { card: scope });
-        if (scope && res.elements.length === 0) {
-          res = resolve(n, { card: null });
-        }
-        return valueOf(res.elements);
+      getValue: function (target) {
+        return api.getValue(target || currentCanonical, { card: card });
       },
-      setValue: function (name, val) {
-        var res = resolve(name, { card: scope });
-        if (scope && res.elements.length === 0) {
-          res = resolve(name, { card: null });
+      setValue: function (target, val) {
+        if (arguments.length === 1) {
+          return api.setValue(currentCanonical, target, { card: card });
         }
-        return setValueOn(res.elements, val);
+        return api.setValue(target, val, { card: card });
+      },
+      getAttribute: function (target, attr) {
+        if (arguments.length === 1) {
+          return api.getAttribute(currentCanonical, target, { card: card });
+        }
+        return api.getAttribute(target, attr, { card: card });
+      },
+      setAttribute: function (target, attr, val) {
+        if (arguments.length === 2) {
+          return api.setAttribute(currentCanonical, target, attr, { card: card });
+        }
+        return api.setAttribute(target, attr, val, { card: card });
+      },
+      getAttributeValue: function (target, attr) {
+        return this.getAttribute.apply(this, arguments);
+      },
+      setAttributeValue: function (target, attr, val) {
+        return this.setAttribute.apply(this, arguments);
       }
     };
   }
@@ -3560,17 +3690,17 @@ JS;
       var parsed = parseFieldName(el.name);
       if (!parsed) return;
       var card = el.closest(INSTANCE_SELECTOR);
-      var canonical = parsed.block ? parsed.block + '.' + parsed.field : parsed.field;
+      var canonical = (parsed.detached ? '_detached.' : '') + parsed.block + '.' + parsed.field;
       listeners.slice().forEach(function (listener) {
         if (matches(parsed, listener.fieldName, listener.options) === 0) return;
-        var groupEls = controls(card).filter(function (e) { return matches(parseFieldName(e.name), canonical, listener.options) > 0; });
+        var groupEls = controls(card).filter(function (e) {
+          return matches(parseFieldName(e.name), canonical, listener.options) > 0;
+        });
         var value = valueOf(groupEls.length ? groupEls : [el]);
         try { listener.callback(value, buildInfo(el, card, parsed)); }
         catch (err) { console.error('AWF.onChange callback error', err); }
       });
     };
-    // Listen ONLY to 'change': setValueOn() dispatches input+change, so
-    // listening to both would run every callback twice for a single change.
     form.addEventListener('change', handler);
   }
 
@@ -3581,6 +3711,10 @@ JS;
     resolve: function (target, options) { return resolve(target, options); },
     getValue: function (target, options) { return valueOf(resolve(target, options).elements); },
     setValue: function (target, value, options) { return setValueOn(resolve(target, options).elements, value); },
+    getAttribute: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
+    setAttribute: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
+    getAttributeValue: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
+    setAttributeValue: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
     onChange: function (fieldName, callback, options) {
       if (typeof callback !== 'function') return function () {};
       var opts = options || {};
@@ -3604,7 +3738,7 @@ JS;
     }
   };
 
-  // Register this form's API (several AWF forms can coexist on one page).
+  // Register form-scoped API instance
   window.AWF_FORMS = window.AWF_FORMS || {};
   window.AWF_LIST = window.AWF_LIST || [];
   window.AWF_FORMS[FORM_ID] = api;
@@ -3620,20 +3754,21 @@ JS;
       return window.AWF_FORMS[target] || null;
     }
     if (target.nodeType === 1) {
-      if (target.tagName && target.tagName.toLowerCase() === 'form') {
-        for (var i = 0; i < window.AWF_LIST.length; i++) if (window.AWF_LIST[i].form === target) return window.AWF_LIST[i];
-      }
       var f = target.closest ? target.closest('form') : null;
-      if (f) { for (var j = 0; j < window.AWF_LIST.length; j++) if (window.AWF_LIST[j].form === f) return window.AWF_LIST[j]; }
+      if (f) {
+        for (var i = 0; i < window.AWF_LIST.length; i++) {
+          if (window.AWF_LIST[i].form === f) return window.AWF_LIST[i];
+        }
+      }
       var w = target.closest ? target.closest('[id^="stic-awf-"]') : null;
       if (w && window.AWF_FORMS[w.id]) return window.AWF_FORMS[w.id];
     }
     return null;
   }
 
-  function scoped(method, args) {
-    var options = args.length ? args[args.length - 1] : null;
-    var resolved = findApi(options && options.form);
+  function scoped(method, args, options) {
+    var formTarget = options && typeof options === 'object' ? options.form : null;
+    var resolved = findApi(formTarget);
     if (!resolved) {
       console.error('AWF: no form resolved. With several AWF forms on a page pass options.form (or use AWF.for(formId)).');
       return null;
@@ -3646,10 +3781,14 @@ JS;
       forms: window.AWF_FORMS,
       list: window.AWF_LIST,
       for: function (target) { return findApi(target); },
-      resolve: function (target, options) { return scoped('resolve', [target, options]); },
-      getValue: function (target, options) { return scoped('getValue', [target, options]); },
-      setValue: function (target, value, options) { return scoped('setValue', [target, value, options]); },
-      onChange: function (fieldName, callback, options) { return scoped('onChange', [fieldName, callback, options]); },
+      resolve: function (target, options) { return scoped('resolve', [target, options], options); },
+      getValue: function (target, options) { return scoped('getValue', [target, options], options); },
+      setValue: function (target, value, options) { return scoped('setValue', [target, value, options], options); },
+      getAttribute: function (target, attr, options) { return scoped('getAttribute', [target, attr, options], options); },
+      setAttribute: function (target, attr, value, options) { return scoped('setAttribute', [target, attr, value, options], options); },
+      getAttributeValue: function (target, attr, options) { return scoped('getAttributeValue', [target, attr, options], options); },
+      setAttributeValue: function (target, attr, value, options) { return scoped('setAttributeValue', [target, attr, value, options], options); },
+      onChange: function (fieldName, callback, options) { return scoped('onChange', [fieldName, callback, options], options); },
       parseFieldName: parseFieldName
     };
   } else {
@@ -3666,7 +3805,10 @@ JS;
 JS;
         return str_replace(
             ['__AWF_FORM_ID__', '__AWF_WRAPPER_ID__'],
-            [json_encode((string)$formId), json_encode((string)$wrapperId)],
+            [
+                json_encode((string)$formId, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP),
+                json_encode((string)$wrapperId, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
+            ],
             $js
         );
     }
