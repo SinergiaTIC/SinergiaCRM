@@ -3607,6 +3607,11 @@ JS;
     return { elements: [], element: null, card: null, parsed: t };
   }
 
+  function containerOf(elements) {
+    if (!elements || elements.length === 0) return null;
+    return elements[0].closest('.awf-field') || elements[0].closest('.form-check') || elements[0].parentElement;
+  }
+
   function valueOf(elements) {
     if (!elements || elements.length === 0) return null;
     var first = elements[0];
@@ -3633,6 +3638,47 @@ JS;
     return first.value;
   }
 
+  function textOf(elements) {
+    if (!elements || elements.length === 0) return '';
+    var first = elements[0];
+    var tag = first.tagName.toLowerCase();
+    var type = (first.type || '').toLowerCase();
+    var multi = String(first.name).slice(-2) === '[]';
+
+    if (tag === 'select') {
+      if (first.multiple) {
+        return Array.prototype.slice.call(first.selectedOptions).map(function (opt) {
+          return opt.text.trim();
+        });
+      }
+      var sel = first.selectedOptions[0];
+      return sel ? sel.text.trim() : '';
+    }
+
+    if (type === 'radio') {
+      var checked = elements.filter(function (el) { return el.checked; })[0];
+      if (!checked) return '';
+      var lbl = checked.id ? document.querySelector('label[for="' + checked.id + '"]') : null;
+      if (!lbl) lbl = checked.closest('.form-check') ? checked.closest('.form-check').querySelector('label') : null;
+      return lbl ? lbl.textContent.trim() : checked.value;
+    }
+
+    if (type === 'checkbox') {
+      if (multi) {
+        return elements.filter(function (el) { return el.checked; }).map(function (el) {
+          var elLbl = el.id ? document.querySelector('label[for="' + el.id + '"]') : null;
+          if (!elLbl) elLbl = el.closest('.form-check') ? el.closest('.form-check').querySelector('label') : null;
+          return elLbl ? elLbl.textContent.trim() : el.value;
+        });
+      }
+      var singleLbl = first.id ? document.querySelector('label[for="' + first.id + '"]') : null;
+      if (!singleLbl) singleLbl = first.closest('.form-check') ? first.closest('.form-check').querySelector('label') : null;
+      return singleLbl ? singleLbl.textContent.trim() : (first.checked ? 'true' : 'false');
+    }
+
+    return first.value;
+  }
+
   function fire(el) {
     el.dispatchEvent(new Event('input', { bubbles: true }));
     el.dispatchEvent(new Event('change', { bubbles: true }));
@@ -3643,6 +3689,12 @@ JS;
       return false;
     }
     return true;
+  }
+
+  function parseScoreValue(val) {
+    if (val === null || val === undefined || val === '') return null;
+    var num = parseFloat(val);
+    return isNaN(num) ? null : num;
   }
 
   function setValueOn(elements, value) {
@@ -3694,12 +3746,6 @@ JS;
       fire(el);
     });
     return true;
-  }
-
-  function parseScoreValue(val) {
-    if (val === null || val === undefined || val === '') return null;
-    var num = parseFloat(val);
-    return isNaN(num) ? null : num;
   }
 
   function getAttributeOn(elements, attr) {
@@ -3809,9 +3855,12 @@ JS;
       var scoreStr = validatedScore !== null ? String(validatedScore) : null;
 
       var setScoreAttr = function(targetEl) {
-        if (scoreStr !== null) { targetEl.setAttribute('data-score', scoreStr);
-        } else { targetEl.removeAttribute('data-score');
-        } targetEl.removeAttribute('score');
+        if (scoreStr !== null) {
+          targetEl.setAttribute('data-score', scoreStr);
+        } else {
+          targetEl.removeAttribute('data-score');
+        }
+        targetEl.removeAttribute('score');
       };
 
       if (first.tagName.toLowerCase() === 'select') {
@@ -3901,11 +3950,16 @@ JS;
     return {
       element: el,
       card: card,
+      fieldContainer: containerOf([el]),
       block: parsed ? parsed.block : null,
       field: parsed ? parsed.field : null,
       detached: parsed ? parsed.detached : false,
       instanceIndexes: parsed && parsed.indexes ? parsed.indexes.slice() : [],
       instanceIndex: rawIndex,
+      getFieldContainer: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return containerOf(res.elements);
+      },      
       getValue: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
         return valueOf(res.elements);
@@ -3915,6 +3969,40 @@ JS;
         var v = (arguments.length === 1) ? target : val;
         var res = resolveForInfo(t, card, parsed);
         return setValueOn(res.elements, v);
+      },
+      getLabel: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        var container = containerOf(res.elements);
+        if (!container) return '';
+        var lbl = container.querySelector('label.form-label') || container.querySelector('label');
+        if (!lbl) return '';
+        var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
+          return n.nodeType === Node.TEXT_NODE;
+        })[0];
+        return textNode ? textNode.nodeValue.trim() : lbl.textContent.trim();
+      },
+      setLabel: function (target, text) {
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var val = (arguments.length === 1) ? target : text;
+        var res = resolveForInfo(t, card, parsed);
+        var container = containerOf(res.elements);
+        if (!container) return false;
+        var lbl = container.querySelector('label.form-label') || container.querySelector('label');
+        if (!lbl) return false;
+
+        var formatted = String(val).trim() + ' ';
+        var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
+            return n.nodeType === Node.TEXT_NODE;
+        })[0];
+
+        if (textNode) { textNode.nodeValue = formatted;} 
+        else { lbl.insertBefore(document.createTextNode(formatted), lbl.firstChild); }
+
+        return true;
+      },
+      getText: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return textOf(res.elements);
       },
       getAttribute: function (target, attr) {
         var t = (arguments.length === 1) ? currentCanonical : target;
@@ -3936,6 +4024,127 @@ JS;
         return this.setAttribute.apply(this, arguments);
       }
     };
+  }
+
+  // Multi-instance immediate evaluation runner
+  function triggerListenerImmediate(listener, targetCard) {
+    var form = getForm();
+    if (!form) return;
+
+    var parsedTarget = parseFieldName(listener.fieldName);
+    if (!parsedTarget) return;
+
+    // Single target instance evaluation (new instance created at runtime)
+    if (targetCard) {
+      var cardControls = controls(targetCard).filter(function (el) {
+        return matches(parseFieldName(el.name), listener.fieldName, listener.options) > 0;
+      });
+      if (cardControls.length > 0) {
+        var firstEl = cardControls[0];
+        var cardParsed = parseFieldName(firstEl.name);
+        var val = valueOf(cardControls);
+        try {
+          listener.callback(val, buildInfo(firstEl, targetCard, cardParsed));
+        } catch (err) {
+          console.error('AWF.onChange immediate instance error', err);
+        }
+      }
+      return;
+    }
+
+    // Global evaluation across all pre-existing instances
+    var cards = Array.prototype.slice.call(form.querySelectorAll(INSTANCE_SELECTOR));
+    var executedOnAnyCard = false;
+
+    if (cards.length > 0) {
+      cards.forEach(function (card) {
+        var cardControls = controls(card).filter(function (el) {
+          return matches(parseFieldName(el.name), listener.fieldName, listener.options) > 0;
+        });
+        if (cardControls.length > 0) {
+          executedOnAnyCard = true;
+          var firstEl = cardControls[0];
+          var cardParsed = parseFieldName(firstEl.name);
+          var val = valueOf(cardControls);
+          try {
+            listener.callback(val, buildInfo(firstEl, card, cardParsed));
+          } catch (err) {
+            console.error('AWF.onChange immediate card error', err);
+          }
+        }
+      });
+    }
+
+    // Scalar fallback if no cards matched (scalar form or unindexed control)
+    if (!executedOnAnyCard) {
+      var resolved = resolve(listener.fieldName, listener.options);
+      if (resolved.element) {
+        var val = valueOf(resolved.elements);
+        try {
+          listener.callback(val, buildInfo(resolved.element, resolved.card, resolved.parsed));
+        } catch (err) {
+          console.error('AWF.onChange immediate scalar error', err);
+        }
+      }
+    }
+  }
+
+  // Reactive DOM observer to catch newly added repeatable instances
+  function initMutationObserver(form) {
+    if (typeof MutationObserver === 'undefined' || form._awfObserverInitialized) return;
+    form._awfObserverInitialized = true;
+
+    var observer = new MutationObserver(function (mutations) {
+      var addedCards = [];
+
+      mutations.forEach(function (mutation) {
+        if (!mutation.addedNodes || mutation.addedNodes.length === 0) return;
+        Array.prototype.slice.call(mutation.addedNodes).forEach(function (node) {
+          if (node.nodeType !== 1) return;
+          if (node.matches && node.matches(INSTANCE_SELECTOR)) {
+            addedCards.push(node);
+          } else if (node.querySelectorAll) {
+            var sub = node.querySelectorAll(INSTANCE_SELECTOR);
+            if (sub.length > 0) {
+              addedCards.push.apply(addedCards, Array.prototype.slice.call(sub));
+            }
+          }
+        });
+      });
+
+      if (addedCards.length > 0) {
+        var uniqueCards = addedCards.filter(function (c, idx, arr) {
+          return arr.indexOf(c) === idx;
+        });
+
+        // Defer to next tick to ensure Alpine bindings, defaults and attributes are fully hydrated
+        setTimeout(function () {
+          uniqueCards.forEach(function (card) {
+            listeners.forEach(function (listener) {
+              if (listener.options && listener.options.immediate) {
+                triggerListenerImmediate(listener, card);
+              }
+            });
+          });
+        }, 0);
+      }
+    });
+
+    observer.observe(form, { childList: true, subtree: true });
+
+    // Explicit event support
+    form.addEventListener('awf:instance-added', function (ev) {
+      var card = ev.detail && ev.detail.card ? ev.detail.card : ev.target;
+      if (card && card.nodeType === 1) {
+        setTimeout(function () {
+          listeners.forEach(function (listener) {
+            if (listener.options && listener.options.immediate) {
+              triggerListenerImmediate(listener, card);
+            }
+          });
+        }, 0);
+      }
+    });
   }
 
   function ensureDelegation() {
@@ -3960,6 +4169,7 @@ JS;
       });
     };
     form.addEventListener('change', handler);
+    initMutationObserver(form);
   }
 
   var api = {
@@ -3967,8 +4177,10 @@ JS;
     wrapper: getWrapper(),
     parseFieldName: parseFieldName,
     resolve: function (target, options) { return resolve(target, options); },
+    getFieldContainer: function (target, options) { return containerOf(resolve(target, options).elements); },
     getValue: function (target, options) { return valueOf(resolve(target, options).elements); },
     setValue: function (target, value, options) { return setValueOn(resolve(target, options).elements, value); },
+    getText: function (target, options) { return textOf(resolve(target, options).elements); },
     getAttribute: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
     setAttribute: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
     getAttributeValue: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
@@ -3981,12 +4193,7 @@ JS;
       ensureDelegation();
 
       if (opts.immediate) {
-        var initial = resolve(fieldName, opts);
-        if (initial.element) {
-          var initVal = valueOf(initial.elements);
-          try { callback(initVal, buildInfo(initial.element, initial.card, initial.parsed)); }
-          catch (err) { console.error('AWF.onChange immediate error', err); }
-        }
+        triggerListenerImmediate(listener);
       }
 
       return function off() {
@@ -4040,12 +4247,14 @@ JS;
       list: window.AWF_LIST,
       for: function (target) { return findApi(target); },
       resolve: function (target, options) { return scoped('resolve', [target, options], options); },
+      getFieldContainer: function (target, options) { return scoped('getFieldContainer', [target, options], options); },
       getValue: function (target, options) { return scoped('getValue', [target, options], options); },
       setValue: function (target, value, options) { return scoped('setValue', [target, value, options], options); },
-      getAttribute: function (target, attr, options) { return scoped('getAttribute', [target, attr, options], options); },
-      setAttribute: function (target, attr, value, options) { return scoped('setAttribute', [target, attr, value, options], options); },
-      getAttributeValue: function (target, attr, options) { return scoped('getAttributeValue', [target, attr, options], options); },
-      setAttributeValue: function (target, attr, value, options) { return scoped('setAttributeValue', [target, attr, value, options], options); },
+      getText: function (target, options) { return scoped('getText', [target, options], options); },
+      getAttribute: function (target, attr, options) { return scoped('getAttribute', [target, attr], options); },
+      setAttribute: function (target, attr, value, options) { return scoped('setAttribute', [target, attr, value], options); },
+      getAttributeValue: function (target, attr, options) { return scoped('getAttributeValue', [target, attr], options); },
+      setAttributeValue: function (target, attr, value, options) { return scoped('setAttributeValue', [target, attr, value], options); },
       onChange: function (fieldName, callback, options) { return scoped('onChange', [fieldName, callback, options], options); },
       parseFieldName: parseFieldName
     };
