@@ -3483,6 +3483,10 @@ JS;
 
   // Resolves contextual fields for scope/info preserving hierarchical instance safety
   function resolveForInfo(target, card, parsedCurrent) {
+    if (target && target.nodeType === 1) {
+      return resolve(target);
+    }
+
     var t = parseFieldName(target);
     if (!t) return { elements: [], element: null, card: null, parsed: null };
 
@@ -3491,23 +3495,66 @@ JS;
       return resolve(target, { card: null });
     }
 
-    // 2. Target in the same block: strictly confined to this card
+    // 2. Target in the same block
     if (parsedCurrent && t.block === parsedCurrent.block && t.detached === parsedCurrent.detached) {
       if (card) {
         var local = resolve(target, { card: card });
         if (local.elements.length > 0) return local;
+        // If field was optional and not rendered in this row, do NOT fallback to row 0
+        return { elements: [], element: null, card: card, parsed: t };
       }
-      // If field was optional and not rendered in this row, do NOT fallback to row 0
-      return { elements: [], element: null, card: card, parsed: t };
+
+      // Scalar form without card wrapper: resolve against unindexed controls
+      var scalarSameBlock = resolve(target, { card: null }).elements.filter(function (el) {
+        var p = parseFieldName(el.name);
+        return p && p.indexes.length === 0;
+      });
+      return {
+        elements: scalarSameBlock,
+        element: scalarSameBlock[0] || null,
+        card: null,
+        parsed: t
+      };
     }
 
-    // 3. Target in another block: check if it exists in a nested child card inside this card's subtree
+    // 3. Target in an ancestor card (e.g. child row reading parent row data)
+    if (card) {
+      var ancestorCard = card.parentElement ? card.parentElement.closest(INSTANCE_SELECTOR) : null;
+      while (ancestorCard) {
+        var ancestorMatches = controls(ancestorCard).filter(function (el) {
+          return matches(parseFieldName(el.name), target) > 0;
+        });
+
+        if (ancestorMatches.length > 0) {
+          var firstP = parseFieldName(ancestorMatches[0].name);
+          var prefixOk = true;
+          if (parsedCurrent && firstP && firstP.indexes.length > 0) {
+            for (var k = 0; k < firstP.indexes.length; k++) {
+              if (firstP.indexes[k] !== parsedCurrent.indexes[k]) {
+                prefixOk = false;
+                break;
+              }
+            }
+          }
+          if (prefixOk) {
+            return {
+              elements: ancestorMatches,
+              element: ancestorMatches[0],
+              card: ancestorCard,
+              parsed: t
+            };
+          }
+        }
+        ancestorCard = ancestorCard.parentElement ? ancestorCard.parentElement.closest(INSTANCE_SELECTOR) : null;
+      }
+    }
+
+    // 4. Target in a nested child card inside this card's subtree
     if (card) {
       var allDescendants = Array.prototype.slice.call(card.querySelectorAll('input[name], select[name], textarea[name]'));
       var matchedInSubtree = allDescendants.filter(function (el) {
         var p = parseFieldName(el.name);
         if (!p || matches(p, target) === 0) return false;
-        // Verify that the child element's indexes branch from current row's indexes
         if (parsedCurrent && parsedCurrent.indexes.length > 0) {
           for (var i = 0; i < parsedCurrent.indexes.length; i++) {
             if (p.indexes[i] !== parsedCurrent.indexes[i]) return false;
@@ -3517,16 +3564,31 @@ JS;
       });
 
       if (matchedInSubtree.length > 0) {
+        // Guard against ambiguous fan-out across multiple nested instance cards
+        var firstCard = matchedInSubtree[0].closest(INSTANCE_SELECTOR);
+        var firstBaseName = matchedInSubtree[0].name.replace(/\[\]$/, '');
+        var isAmbiguous = false;
+        for (var m = 1; m < matchedInSubtree.length; m++) {
+          var curBaseName = matchedInSubtree[m].name.replace(/\[\]$/, '');
+          if (curBaseName !== firstBaseName || matchedInSubtree[m].closest(INSTANCE_SELECTOR) !== firstCard) {
+            isAmbiguous = true;
+            break;
+          }
+        }
+        if (isAmbiguous) {
+          console.warn('AWF: Ambiguous resolution for "' + target + '" across multiple nested instances. Specify instance index.');
+          return { elements: [], element: null, card: null, parsed: t };
+        }
         return {
           elements: matchedInSubtree,
           element: matchedInSubtree[0],
-          card: matchedInSubtree[0].closest(INSTANCE_SELECTOR),
+          card: firstCard,
           parsed: t
         };
       }
     }
 
-    // 4. Fallback to global scope ONLY IF target is a SCALAR (unindexed) field
+    // 5. Fallback to global scope ONLY IF target is a SCALAR (unindexed) field
     var globalRes = resolve(target, { card: null });
     var scalarElements = globalRes.elements.filter(function (el) {
       var p = parseFieldName(el.name);
@@ -3655,6 +3717,36 @@ JS;
       return valueOf(elements);
     }
 
+    // Special resolution for data-score / score
+    if (attrLower === 'data-score' || attrLower === 'score') {
+      if (first.tagName.toLowerCase() === 'select') {
+        if (first.multiple) {
+          return Array.prototype.slice.call(first.selectedOptions).map(function (opt) {
+            var s = opt.getAttribute('data-score');
+            return s !== null ? parseFloat(s) : 0;
+          });
+        }
+        var selOpt = first.selectedOptions[0];
+        if (!selOpt) return null;
+        var scoreVal = selOpt.getAttribute('data-score');
+        return scoreVal !== null ? parseFloat(scoreVal) : null;
+      }
+      if (first.type === 'radio') {
+        var checkedRadio = elements.filter(function (el) { return el.checked; })[0];
+        if (!checkedRadio) return null;
+        var rScore = checkedRadio.getAttribute('data-score');
+        return rScore !== null ? parseFloat(rScore) : null;
+      }
+      if (first.type === 'checkbox' && String(first.name).slice(-2) === '[]') {
+        return elements.filter(function (el) { return el.checked; }).map(function (el) {
+          var cScore = el.getAttribute('data-score');
+          return cScore !== null ? parseFloat(cScore) : 0;
+        });
+      }
+      var rawScore = first.getAttribute('data-score');
+      return rawScore !== null ? parseFloat(rawScore) : null;
+    }
+
     return first.getAttribute(attr);
   }
 
@@ -3674,10 +3766,10 @@ JS;
     // Special case for checked attribute
     if (attrLower === 'checked') {
       if (first.type === 'radio') {
-        var radioVal = isTruthy ? String(value) : null;
         elements.forEach(function (el) {
-          el.checked = (radioVal !== null && (value === true ? true : String(el.value) === radioVal));
-          if (el.checked) el.setAttribute('checked', 'checked');
+          var shouldCheck = isTruthy && (value === true ? el === first : String(el.value) === String(value));
+          el.checked = shouldCheck;
+          if (shouldCheck) el.setAttribute('checked', 'checked');
           else el.removeAttribute('checked');
           fire(el);
         });
@@ -3707,7 +3799,7 @@ JS;
       return true;
     }
 
-    var forbiddenProps = ['id', 'name', 'type', 'form', 'tagname', 'value'];
+    var forbiddenProps = ['id', 'name', 'type', 'form', 'tagname'];
 
     elements.forEach(function (el) {
       if (isBoolAttr) {

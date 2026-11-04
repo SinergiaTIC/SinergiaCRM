@@ -359,7 +359,7 @@ Este es el último paso del asistente, destinado a revisar el resultado final, e
   * **Descargar código**: Permite descargar el código HTML generado para realizar inserciones manuales o integraciones más específicas en plataformas externas.
 
 ## API JavaScript de Cliente (window.AWF) ##
-El motor de formularios inyecta de forma nativa la librería de cliente `window.AWF`, disponible en el contexto global y lista para su uso en el bloque de **JS Personalizado** (`custom_js`) en el Paso 4 (Maquetación).
+El motor de formularios genera de forma nativa la librería de cliente `window.AWF`, disponible en el ámbito global y lista para su uso en el bloque de **JS Personalizado** (`custom_js`) en el Paso 4 (Maquetación).
 
 Esta API permite manipular valores y atributos HTML sin depender de selectores frágiles del DOM (`#f_...`), garantizando compatibilidad con bloques escalares, repetibles y opcionales (#1365).
 
@@ -382,6 +382,7 @@ Obtiene el valor actual de un control:
 * Botones de radio o selects simples: valor de la opción seleccionada.
 * Campos de texto/textarea: cadena con el valor actual.
 * Si el campo no existe: retorna `null`.
+
 ```javascript
 var email = AWF.getValue('Contacts0.email1');
 var acepta = AWF.getValue('_detached.Contacts0.terminos');
@@ -389,6 +390,7 @@ var acepta = AWF.getValue('_detached.Contacts0.terminos');
 
 #### `AWF.setValue(target, value, [options])`
 Asigna reactivamente un valor sobre el campo emitiendo los eventos nativos `input` y `change`, lo que mantiene sincronizado el estado interno de Alpine.js y recalcula las validaciones. En casillas individuales o booleanos, normaliza valores equivalentes (`true`, `false`, `'1'`, `'0'`, `'true'`, `'false'`).
+
 ```javascript
 AWF.setValue('Contacts0.first_name', 'Marta');
 AWF.setValue('_detached.Contacts0.terminos', true);
@@ -398,7 +400,10 @@ AWF.setValue('_detached.Contacts0.terminos', true);
 *(Alias: `AWF.getAttributeValue`)*
 Lee el valor o estado de un atributo HTML:
 * Atributos booleanos (`disabled`, `readonly`, `required`, `checked`): retorna booleano (`true`/`false`).
+* Para `required` en listas de selección múltiple por casillas (`select_checkbox_list`), devuelve true si el grupo tiene asignada obligatoriedad visual o de accesibilidad (`aria-required="true"`).
+* Atributo `data-score` o `score`: devuelve el valor numérico (float/int) asociado a la opción actualmente seleccionada en desplegables o radios, o un array de puntuaciones en selecciones múltiples.
 * Atributos de texto (`placeholder`, `min`, `max`, `pattern`, `style`): retorna la cadena o `null` si no está definido.
+
 ```javascript
 var esObligatorio = AWF.getAttribute('Contacts0.email1', 'required');
 var placeholder = AWF.getAttribute('Contacts0.phone_mobile', 'placeholder');
@@ -410,6 +415,8 @@ Asigna o retira un atributo en el control:
 * **Atributos booleanos**: Si se pasa un valor falso (`false`, `null`, `0`, `'false'`, `'0'`, `''`), el atributo y la propiedad se retiran; en caso afirmativo, se añaden.
 * **Control de obligatoriedad (`required`)**: Sincroniza `aria-required` y actualiza automáticamente el asterisco visual (`*`) en la etiqueta del campo.
 * **Listas de casillas múltiples (`select_checkbox_list`)**: Por compatibilidad con la validación de HTML5, en grupos múltiples no se inyecta el atributo `required` nativo por casilla (lo cual forzaría a marcar todas las casillas), sino que se aplica `aria-required="true"` y se actualiza el asterisco visual del grupo.
+* **Botones de radio (`checked`)**: Al fijar `checked` sobre un grupo de radios, selecciona exclusivamente la opción coincidente con el valor indicado o desmarca todas si es un valor falso.
+
 ```javascript
 // Deshabilitar un campo
 AWF.setAttribute('Contacts0.phone_mobile', 'disabled', true);
@@ -425,6 +432,7 @@ AWF.setAttribute('Contacts0.age', 'min', '18');
 Registra un observador mediante delegación en el formulario (`form`). Detecta cambios tanto en campos iniciales como en filas que el usuario añada posteriormente en grupos repetibles.
 * **Firma del callback**: `function(value, scope)`
 * **Opciones**: `{ immediate: true }` para forzar la ejecución del callback tras registrarse con el valor inicial. Retorna la función `off()` para desuscribirse.
+
 ```javascript
 var stop = AWF.onChange('Contacts0.tipo_documento', function(valor, scope) {
     if (valor === 'pasaporte') {
@@ -438,13 +446,34 @@ var stop = AWF.onChange('Contacts0.tipo_documento', function(valor, scope) {
 
 ### 3. El objeto de contexto `scope`
 El segundo parámetro recibido en el callback de `onChange` proporciona el contexto exacto de la instancia que originó el cambio:
-* `scope.block`: Nombre del bloque de datos (ej: `'Participantes0'`).
+* `scope.block`: Nombre del bloque de datos (ej: `'Contacts0'`).
 * `scope.field`: Nombre del campo (ej: `'edad'`).
+* `scope.detached`: Booleano que indica si el campo que disparó el evento es virtual/desvinculado.
+* `scope.instanceIndexes`: Array inmutable con la jerarquía completa de índices numéricos de repetición (ej: `[1, 0]` en bloques anidados).
 * `scope.instanceIndex`: Índice numérico de la fila en repetibles (o `null` si es escalar).
 * `scope.card`: Elemento DOM contenedor de la instancia (`.awf-instance-card`).
-* `scope.getValue([target])`: Lee el valor. Si no se pasa parámetro, lee el propio campo. Si se pasa un campo hermano, busca **prioritariamente dentro de la misma tarjeta (`card`)**; si no se encuentra allí, busca en el ámbito global del formulario (fallback).
-* `scope.setValue([target], value)`: Modifica el campo en la tarjeta actual (o en el ámbito global si no existe en la tarjeta).
-* `scope.getAttribute([target], attribute)` y `scope.setAttribute([target], attribute, value)`: Gestionan atributos con el mismo mecanismo de resolución contextual y fallback.
+* `scope.getValue([target])`: Lee el valor del campo.
+* `scope.setValue([target], value)`: Modifica el valor del campo.
+* `scope.getAttribute([target], attribute)` y `scope.setAttribute([target], attribute, value)`: Gestionan atributos con el mismo contexto de resolución.
+
+#### Reglas de resolución contextual en `scope`:
+1. **Mismo bloque que el evento**:
+   * En formularios escalares (`card === null`), resuelve contra los controles escalares del formulario.
+   * En bloques repetibles, se limita estrictamente a la tarjeta de la fila actual (`card`). Si un campo opcional no está renderizado en dicha fila, devuelve `null` y nunca busca en otras filas.
+
+2. **Bloque distinto:**
+   * Si el campo pertenece a un bloque padre (ancestro), asciende por la jerarquía de tarjetas manteniendo la coherencia de índices.
+   * Si el campo pertenece a un bloque hijo (subárbol), resuelve la instancia dependiente siempre que no exista ambigüedad (si existen varias subinstancias sin especificar índice, devuelve `null` para prevenir escrituras accidentales).
+   * Si no pertenece a la jerarquía de repetición, solo busca en el ámbito global del formulario si el campo de destino es estrictamente escalar. Nunca cruza a filas ajenas de otros bloques repetibles.
+
+#### Ejemplo de uso en formulario escalar:
+```javascript
+AWF.onChange('Contacts0.tipo_documento', function(valor, scope) {
+    var esPasaporte = valor === 'pasaporte';
+    scope.setAttribute('Contacts0.dni', 'required', !esPasaporte);
+    scope.setAttribute('Contacts0.pasaporte', 'required', esPasaporte);
+});
+```
 
 #### Ejemplo de uso en bloque repetible (Tutor del menor):
 ```javascript
@@ -463,12 +492,12 @@ AWF.onChange('Contacts0.edad', function(edad, scope) {
 ---
 
 ### 4. Soporte multiformulario y opciones avanzadas
-Cuando varios formularios AWF conviven en una misma página (por ejemplo mediante incrustación o portals):
+Cuando varios formularios AWF conviven en una misma página:
 * **`AWF.for(formId)`**: Devuelve la instancia acotada al formulario indicado.
 * **Parámetro `options.form`**: Todos los métodos globales aceptan `{ form: formIdOrElement }` en sus opciones.
 * **Parámetro `options.instanceIndex`**: Permite discriminar la búsqueda a una instancia concreta de un bloque repetible:
 ```javascript
-AWF.getValue('Participantes0.nombre', { instanceIndex: 1 });
+AWF.getValue('Contacts0.nombre', { instanceIndex: 1 });
 ```
 * **Métodos auxiliares:**
   * `AWF.resolve(target, [options])`: Devuelve `{ elements, element, card, parsed }` para inspección técnica del DOM.
