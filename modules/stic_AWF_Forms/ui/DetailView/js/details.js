@@ -38,9 +38,14 @@ function DetailsForm() {
       let jsonString = "{}";
       if (this.bean?.configuration) {
         jsonString = this.bean.configuration;
-        // Decode Html entities (&quot; -> ", &#039; -> ')
-        if (typeof jsonString === 'string' && jsonString.includes('&quot;')) {
-          jsonString = new DOMParser().parseFromString(jsonString, 'text/html').documentElement.textContent;
+        // Decode HTML entities (&quot; -> ", &#039; -> ') until stable, to handle
+        // values that arrive single or double encoded from the server
+        if (typeof jsonString === 'string' && jsonString.includes('&')) {
+          for (let i = 0; i < 3; i++) {
+            const decoded = new DOMParser().parseFromString(jsonString, 'text/html').documentElement.textContent;
+            if (decoded === jsonString) break;
+            jsonString = decoded;
+          }
         }
       }
       try {
