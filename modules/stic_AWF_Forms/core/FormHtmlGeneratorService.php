@@ -3358,6 +3358,9 @@ JS;
     return wrapper ? wrapper.querySelector('form') : null;
   }
 
+  // Fast memoization cache for parsed field names
+  var parseCache = Object.create(null);
+
   // Parse a control name into { detached, block, indexes, field, multi }.
   // Strictly requires canonical formats:
   // "Block.field" | "Block[0][field]" | "Block[0][1][field]"
@@ -3366,15 +3369,18 @@ JS;
     if (name == null) return null;
     var n = String(name).trim();
     if (n === '') return null;
+    if (parseCache[n]) return parseCache[n];
+
     var multi = false;
-    if (n.slice(-2) === '[]') { multi = true; n = n.slice(0, -2); }
+    var raw = n;
+    if (raw.slice(-2) === '[]') { multi = true; raw = raw.slice(0, -2); }
     var detached = false;
-    if (n.indexOf('_detached.') === 0) { detached = true; n = n.slice(10); }
+    if (raw.indexOf('_detached.') === 0) { detached = true; raw = raw.slice(10); }
 
     // Matches indexed group: Block[0][field] or Block[0][1][field]
-    var m = n.match(/^([^\[\].]+)((?:\[\d+\])+)\[(.*)\]$/);
+    var m = raw.match(/^([^\[\].]+)((?:\[\d+\])+)\[(.*)\]$/);
     if (m) {
-      return {
+      return parseCache[n] = {
         detached: detached,
         block: m[1],
         indexes: (m[2].match(/\d+/g) || []).map(Number),
@@ -3384,19 +3390,19 @@ JS;
     }
 
     // Matches dot notation: Block.field
-    var dot = n.indexOf('.');
+    var dot = raw.indexOf('.');
     if (dot >= 0) {
-      return {
+      return parseCache[n] = {
         detached: detached,
-        block: n.slice(0, dot),
+        block: raw.slice(0, dot),
         indexes: [],
-        field: n.slice(dot + 1),
+        field: raw.slice(dot + 1),
         multi: multi
       };
     }
 
     // Bare field names without block are strictly rejected
-    return null;
+    return parseCache[n] = null;
   }
 
   // Specificity match: 2 = exact match; 0 = no match.
@@ -3483,11 +3489,10 @@ JS;
     var multi = String(first.name).slice(-2) === '[]';
 
     if (type === 'checkbox') {
-      // Only multi-value checkbox lists (e.g. name="field[]") return arrays
       if (multi) {
         return elements.filter(function (el) { return el.checked; }).map(function (el) { return el.value; });
       }
-      return !!first.checked;
+      return Boolean(first.checked);
     }
     if (type === 'radio') {
       var checked = elements.filter(function (el) { return el.checked; })[0];
@@ -3507,6 +3512,13 @@ JS;
     el.dispatchEvent(new Event('change', { bubbles: true }));
   }
 
+  function isTruthyBool(val) {
+    if (val === false || val === null || val === undefined || val === 0 || val === '0' || val === 'false' || val === '') {
+      return false;
+    }
+    return true;
+  }
+
   function setValueOn(elements, value) {
     if (!elements || elements.length === 0) return false;
     var first = elements[0];
@@ -3520,7 +3532,7 @@ JS;
         elements.forEach(function (el) { el.checked = arr.indexOf(String(el.value)) !== -1; });
         fire(first); // Single event dispatch for the whole multi-checkbox group
       } else {
-        var boolVal = (value === true || value === 'true' || value === 1 || value === '1');
+        var boolVal = isTruthyBool(value);
         elements.forEach(function (el) {
           el.checked = boolVal;
           fire(el);
@@ -3535,7 +3547,7 @@ JS;
         el.checked = (String(el.value) === v);
         if (el.checked && !fired) { fire(el); fired = true; }
       });
-      if (!fired) fire(first); // Dispatch change event if selection was cleared
+      if (!fired) fire(first);
       return true;
     }
     if (tag === 'select') {
@@ -3563,7 +3575,6 @@ JS;
     var first = elements[0];
     var attrLower = String(attr).toLowerCase();
 
-    // Standard boolean DOM attributes/properties
     if (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required') {
       return Boolean(first[attrLower] !== undefined ? first[attrLower] : first.hasAttribute(attrLower));
     }
@@ -3579,17 +3590,48 @@ JS;
 
   function setAttributeOn(elements, attr, value) {
     if (!elements || elements.length === 0 || !attr) return false;
+    var first = elements[0];
     var attrLower = String(attr).toLowerCase();
 
     if (attrLower === 'value') {
       return setValueOn(elements, value);
     }
 
-    var isBoolAttr = (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required');
+    var isBoolAttr = (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required' || attrLower === 'checked');
+    var isTruthy = isTruthyBool(value);
+    var multi = String(first.name).slice(-2) === '[]';
+
+    // Special case for checked attribute
+    if (attrLower === 'checked') {
+      elements.forEach(function (el) {
+        el.checked = isTruthy;
+        if (isTruthy) {
+          el.setAttribute('checked', 'checked');
+        } else {
+          el.removeAttribute('checked');
+        }
+        fire(el);
+      });
+      return true;
+    }
+
+    // Special case for required attribute on multi-checkbox groups
+    if (attrLower === 'required' && multi && first.type === 'checkbox') {
+      if (isTruthy) {
+        first.setAttribute('aria-required', 'true');
+        updateAsterisk(first, true);
+      } else {
+        first.removeAttribute('aria-required');
+        updateAsterisk(first, false);
+      }
+      return true;
+    }
+
+    // Forbidden properties that should never be overridden directly
+    var forbiddenProps = ['id', 'name', 'type', 'form', 'tagname'];
 
     elements.forEach(function (el) {
       if (isBoolAttr) {
-        var isTruthy = !(value === false || value === null || value === undefined || value === 0 || value === '0' || value === '');
         if (isTruthy) {
           el.setAttribute(attrLower, attrLower);
           if (attrLower in el) el[attrLower] = true;
@@ -3610,8 +3652,8 @@ JS;
           el.removeAttribute(attr);
         } else {
           el.setAttribute(attr, String(value));
-          if (attr in el && typeof el[attr] !== 'function') {
-            try { el[attr] = String(value); } catch (e) {}
+          if (attrLower in el && typeof el[attrLower] !== 'function' && forbiddenProps.indexOf(attrLower) === -1) {
+            try { el[attrLower] = String(value); } catch (e) {}
           }
         }
       }
@@ -3621,8 +3663,11 @@ JS;
   }
 
   function updateAsterisk(el, isRequired) {
-    var label = document.querySelector('label[for="' + el.id + '"]') || (el.closest('.awf-field') ? el.closest('.awf-field').querySelector('label') : null);
+    var wrapper = el.closest('.awf-field') || el.closest('.form-check') || el.parentElement;
+    if (!wrapper) return;
+    var label = wrapper.querySelector('label.form-label') || wrapper.querySelector('label');
     if (!label) return;
+
     var asterisk = label.querySelector('.awf-required');
     if (isRequired) {
       if (!asterisk) {
@@ -3641,7 +3686,7 @@ JS;
   var delegatedForm = null;
 
   function buildInfo(el, card, parsed) {
-    var currentCanonical = (parsed.detached ? '_detached.' : '') + parsed.block + '.' + parsed.field;
+    var currentCanonical = parsed ? ((parsed.detached ? '_detached.' : '') + parsed.block + '.' + parsed.field) : null;
     return {
       element: el,
       card: card,
@@ -3651,25 +3696,40 @@ JS;
       instanceIndexes: parsed ? parsed.indexes : [],
       instanceIndex: parsed && parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null,
       getValue: function (target) {
-        return api.getValue(target || currentCanonical, { card: card });
+        var t = target || currentCanonical;
+        var res = resolve(t, { card: card });
+        if (card && res.elements.length === 0) {
+          res = resolve(t, { card: null });
+        }
+        return valueOf(res.elements);
       },
       setValue: function (target, val) {
-        if (arguments.length === 1) {
-          return api.setValue(currentCanonical, target, { card: card });
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var v = (arguments.length === 1) ? target : val;
+        var res = resolve(t, { card: card });
+        if (card && res.elements.length === 0) {
+          res = resolve(t, { card: null });
         }
-        return api.setValue(target, val, { card: card });
+        return setValueOn(res.elements, v);
       },
       getAttribute: function (target, attr) {
-        if (arguments.length === 1) {
-          return api.getAttribute(currentCanonical, target, { card: card });
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var a = (arguments.length === 1) ? target : attr;
+        var res = resolve(t, { card: card });
+        if (card && res.elements.length === 0) {
+          res = resolve(t, { card: null });
         }
-        return api.getAttribute(target, attr, { card: card });
+        return getAttributeOn(res.elements, a);
       },
       setAttribute: function (target, attr, val) {
-        if (arguments.length === 2) {
-          return api.setAttribute(currentCanonical, target, attr, { card: card });
+        var t = (arguments.length === 2) ? currentCanonical : target;
+        var a = (arguments.length === 2) ? target : attr;
+        var v = (arguments.length === 2) ? attr : val;
+        var res = resolve(t, { card: card });
+        if (card && res.elements.length === 0) {
+          res = resolve(t, { card: null });
         }
-        return api.setAttribute(target, attr, val, { card: card });
+        return setAttributeOn(res.elements, a, v);
       },
       getAttributeValue: function (target, attr) {
         return this.getAttribute.apply(this, arguments);
