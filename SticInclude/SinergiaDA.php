@@ -192,6 +192,10 @@ class ExternalReporting
                 $errorString = str_replace('__enabled_users__', $normalUsersEnabled->num_rows, $errorString);
                 $this->info .= "[FATAL: {$errorString}]";
                 $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Number of non-admin users enabled is greater than the limit allowed. Is not possible to enable more than {$maxNonAdminUsers} non-admin users. There is a total of {$normalUsersEnabled->num_rows} non-admin users enabled.');
+                if (isset($_REQUEST['print_debug'])) {
+                    echo $this->info;
+                    die();
+                }
                 return $this->info;
             }
         }

@@ -379,8 +379,13 @@ class stic_AwfField {
     this.subtype_in_form = this.getAvailableSubtypesInForm()[0]?.id;
     this.value_type = this.getAvailableValueTypes()[0]?.id;
     if (this.value_type != 'selectable' && this.value_type != 'fixed') {
-      // Reset value_options
-      this.value_options = [];
+      // Reset value_options in place to keep the array reference live
+      // for wizard components bound to it
+      if (Array.isArray(this.value_options)) {
+        this.value_options.splice(0, this.value_options.length);
+      } else {
+        this.value_options = [];
+      }
     }
     if (fieldInfo.module) {
         this.related_module = fieldInfo.module;
@@ -644,7 +649,11 @@ class stic_AwfField {
   setValueOptions(originalOptions) {
     if (this.isSelectCustomOptions() && this.acceptValueOptions()) {
       if ((this.value_options?.length ?? 0) == 0) {
-        this.value_options = [new stic_AwfValueOption()];
+        // Push in place to keep the array reference live for wizard components bound to it
+        if (!Array.isArray(this.value_options)) {
+          this.value_options = [];
+        }
+        this.value_options.push(new stic_AwfValueOption());
       }
       return this.value_options;
     }
@@ -652,7 +661,12 @@ class stic_AwfField {
       return this.value_options;
     }
 
-    this.value_options = [];
+    // Clear in place to keep the array reference live for wizard components bound to it
+    if (Array.isArray(this.value_options)) {
+      this.value_options.splice(0, this.value_options.length);
+    } else {
+      this.value_options = [];
+    }
     if (originalOptions) {
       originalOptions.forEach(o => {
         this.value_options.push(new stic_AwfValueOption({

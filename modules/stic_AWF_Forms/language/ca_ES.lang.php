@@ -63,6 +63,8 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Dades generals',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
 
+  'LBL_LISTVIEW_OPTION_INVERT_SELECTION' => 'Inverteix la selecció',
+
   // -- MODULE FIELDS --
   'LBL_STATUS' => 'Estat',
   'LBL_START_DATE' => "Data d'inici",
@@ -125,6 +127,7 @@ $mod_strings = array (
   // General editors
   'LBL_SELECT_PLACEHOLDER' => 'Seleccioneu un element...',
   'LBL_SELECT_WRITE_TO_SEARCH' => 'Escriviu per filtrar la llista...',
+  'LBL_SELECT_SEARCH_CLEAN' => 'Neteja el filtre',  
   'LBL_SELECT_NO_RESULTS' => 'No hi ha coincidències',
 
   // DataBlocks
@@ -184,8 +187,13 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_TYPE' => 'Tipus de valor',
   'LBL_FIELD_VALUE_OPTIONS_LIST' => 'Llista associada',
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE' => 'Personalitza les opcions',
-  'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modificat)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Selecciona els registres',
+  'LBL_FIELD_VALUE_OPTIONS_ADD_REGS' => 'Afegeix registres',
+  'LBL_FIELD_VALUE_OPTIONS_PAGE_INFO' => '({from} - {to} de {total})',
+  'LBL_FIELD_VALUE_OPTIONS_RELOAD_LIST' => 'Recarrega la llista',
+  'LBL_FIELD_VALUE_OPTIONS_REMOVE_STALE' => 'Neteja els valors obsolets',
+  'LBL_FIELD_VALUE_OPTIONS_PAGE_SIZE' => 'Registres per pàgina',
+  'LBL_FIELD_VALUE_OPTION_HIDE' => 'Amaga',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valors possibles',
   'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostra els valors interns',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Valor intern',
