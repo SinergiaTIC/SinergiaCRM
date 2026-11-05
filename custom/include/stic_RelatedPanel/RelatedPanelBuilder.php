@@ -29,11 +29,11 @@ if (!defined('sugarEntry') || !sugarEntry) {
 // Builds the payload of the right-hand "related records" panel for a record detail view.
 // Configuration driven (SticRelatedPanelSettings):
 //  - which modules / subpanels are shown (admin tree)
-//  - per subpanel: title field, subtitle field, right field (defaults: auto)
-//  - per subpanel: record sort field (title|subtitle|right) and direction
-//  - subpanels without records are returned as empty sections (count 0) unless
-//    "hide_empty" is enabled; they are always placed at the bottom
-//  - section order: admin order, overridden by the user preference; empties last
+//  - per subpanel: title field, subtitle field and the date field used to place
+//    its records in the chronology (defaults: name, assigned user, date_modified)
+//  - ALL the records of every enabled relation are merged into ONE flat
+//    chronology (newest first), with no grouping by subpanel
+//  - the relation list (for the user filter) only contains sources with records
 // Data access reuses the core subpanel machinery (SubPanelDefinitions +
 // SugarBean::get_union_related_list) so relationship logic, collections and
 // "function:" data sources behave exactly as in the bottom subpanels.
@@ -93,19 +93,20 @@ class SticRelatedPanelBuilder
      *
      * @param SugarBean $bean Retrieved parent record
      * @return array{module:string, record:string, generated_at:string,
-     *               enabled:bool, pinned:bool, hide_empty:bool, sections:array}
+     *               enabled:bool, pinned:bool, timeline:array, relations:array}
      */
     public function build(SugarBean $bean)
     {
         $module = (string) $bean->module_dir;
         $enabled = SticRelatedPanelSettings::isEnabledForModule($module);
         $pinned = SticRelatedPanelSettings::isPinned();
-        $hideEmpty = SticRelatedPanelSettings::hideEmpty();
 
-        $sections = array();
+        $timeline = array();
+        $relations = array();
         if ($enabled) {
-            $sections = $this->buildSections($bean, $module, $hideEmpty);
-            $sections = $this->orderSections($sections, $module);
+            $built = $this->buildTimeline($bean, $module);
+            $timeline = $built['timeline'];
+            $relations = $built['relations'];
         }
 
         return array(
@@ -114,22 +115,23 @@ class SticRelatedPanelBuilder
             'generated_at' => date('c'),
             'enabled' => $enabled,
             'pinned' => $pinned,
-            'hide_empty' => $hideEmpty,
-            'sections' => $sections,
+            'timeline' => $timeline,
+            'relations' => $relations,
         );
     }
 
     /**
-     * Collects the sections (one per ENABLED subpanel, empties included unless hidden).
+     * Collects ALL the related records in ONE flat chronology (no grouping by
+     * subpanel) plus the list of relation sources that can be filtered.
      *
      * @param SugarBean $bean
      * @param string $module
-     * @param bool $hideEmpty
-     * @return array
+     * @return array{timeline:array, relations:array}
      */
-    protected function buildSections(SugarBean $bean, $module, $hideEmpty)
+    protected function buildTimeline(SugarBean $bean, $module)
     {
-        $sections = array();
+        $timeline = array();
+        $relations = array();
         $max = SticRelatedPanelSettings::getMax();
 
         $definitions = new SubPanelDefinitions($bean);
@@ -144,7 +146,7 @@ class SticRelatedPanelBuilder
             $rel->load_relationship_meta();
         }
 
-        $order = 0;
+        $adminOrder = 0;
         foreach ($tabs as $key) {
             $subConfig = SticRelatedPanelSettings::getSubpanelConfig($module, $key);
             if (empty($subConfig['enabled'])) {
@@ -169,14 +171,37 @@ class SticRelatedPanelBuilder
                 continue;
             }
 
+            $headerPanel = $panel->isCollection() ? $panel->get_header_panel_def() : $panel;
+            $headerModule = $headerPanel ? (string) $headerPanel->get_module_name() : '';
+            $relationTitle = $headerPanel ? trim((string) $headerPanel->get_title()) : '';
+            if ($relationTitle === '' && $panel->isCollection()) {
+                // Collections (e.g. Activities/History) keep their title in the
+                // collection definition, not in the first sub-subpanel header.
+                $titleKey = isset($panel->_instance_properties['title_key'])
+                    ? (string) $panel->_instance_properties['title_key']
+                    : '';
+                if ($titleKey !== '') {
+                    $relationTitle = (string) translate($titleKey, $module);
+                }
+            }
+            if ($relationTitle === '') {
+                $relationTitle = (string) $key;
+            }
+            $dateField = SticRelatedPanelSettings::getSubpanelDateField($subConfig);
+
             $records = array();
             $rowCount = 0;
             $hasMore = false;
 
+            // Make sure the fields needed to merge every relation in the global
+            // chronology are part of the SELECT. The union wrapper can only
+            // ORDER BY (and expose) columns that the subqueries return.
+            $restoreFields = $this->injectDateFields($panel, array($dateField, SticRelatedPanelSettings::DEFAULT_DATE_FIELD, 'date_entered'));
+
             try {
                 $result = SugarBean::get_union_related_list(
                     $bean,
-                    $this->getSortBy($panel),
+                    $this->getTimelineSortBy($panel, $dateField),
                     'desc',
                     '',
                     0,
@@ -191,97 +216,64 @@ class SticRelatedPanelBuilder
                 if (!empty($rows)) {
                     $rows = $this->security->filterVisibleRows($rows);
                     foreach ($rows as $row) {
-                        $records[] = $this->mapRow($row, $panel, $subConfig);
+                        $record = $this->mapRow($row, $panel, $subConfig);
+                        $record['subpanel'] = (string) $key;
+                        $record['relation'] = $relationTitle;
+                        $records[] = $record;
                     }
-                    $records = $this->sortRecords($records, $subConfig);
-                    $records = array_slice($records, 0, $max);
                     $hasMore = $rowCount > count($rows);
                 }
             } catch (Throwable $e) {
                 $GLOBALS['log']->error('SticRelatedPanelBuilder: subpanel [' . $key . '] - ' . $e->getMessage());
+            } finally {
+                $this->restoreDateFields($restoreFields);
             }
 
-            if (empty($records) && $hideEmpty) {
+            // Relations without records cannot contribute to the chronology nor
+            // be filtered: they are not part of the payload.
+            if (empty($records)) {
                 continue;
             }
 
-            $headerPanel = $panel->isCollection() ? $panel->get_header_panel_def() : $panel;
-            $headerModule = $headerPanel ? (string) $headerPanel->get_module_name() : '';
-
-            $sections[] = array(
+            $relations[] = array(
                 'key' => (string) $key,
-                'title' => $headerPanel ? (string) $headerPanel->get_title() : (string) $key,
+                'title' => $relationTitle,
                 'module' => $headerModule,
                 'icon' => $this->iconClass($headerModule),
                 'count' => $rowCount,
                 'has_more' => $hasMore,
-                'empty' => empty($records),
-                'order' => $subConfig['order'] !== null ? (int) $subConfig['order'] : $order,
-                'records' => $records,
+                'date_field' => $dateField,
+                'order' => $subConfig['order'] !== null ? (int) $subConfig['order'] : $adminOrder,
             );
-            $order++;
+            $adminOrder++;
+
+            foreach ($records as $record) {
+                $timeline[] = $record;
+            }
         }
 
-        return $sections;
-    }
-
-    /**
-     * Applies the section order: admin order, then the user preference, then
-     * empty sections are moved to the bottom.
-     *
-     * @param array $sections
-     * @param string $module
-     * @return array
-     */
-    protected function orderSections(array $sections, $module)
-    {
-        // Admin order
-        usort($sections, function ($a, $b) {
+        // Admin (tree) order for the relation filter list
+        usort($relations, function ($a, $b) {
             if ($a['order'] === $b['order']) {
                 return 0;
             }
             return ($a['order'] < $b['order']) ? -1 : 1;
         });
 
-        // User preference order (only keys present in the sections)
-        $userOrder = SticRelatedPanelSettings::getUserOrder($module);
-        if (!empty($userOrder)) {
-            $position = array();
-            foreach ($userOrder as $index => $key) {
-                $position[$key] = $index;
-            }
-            usort($sections, function ($a, $b) use ($position) {
-                $pa = isset($position[$a['key']]) ? $position[$a['key']] : 9999;
-                $pb = isset($position[$b['key']]) ? $position[$b['key']] : 9999;
-                if ($pa === $pb) {
-                    return 0;
-                }
-                return ($pa < $pb) ? -1 : 1;
-            });
-        }
+        // ONE chronology: newest first, records without date at the bottom.
+        usort($timeline, array($this, 'compareByDate'));
 
-        // Empty sections always at the bottom
-        $filled = array();
-        $empty = array();
-        foreach ($sections as $section) {
-            if (!empty($section['empty'])) {
-                $empty[] = $section;
-            } else {
-                $filled[] = $section;
-            }
-        }
-
-        return array_merge($filled, $empty);
+        return array('timeline' => $timeline, 'relations' => $relations);
     }
 
     /**
-     * Maps one union row to a timeline card using the subpanel configuration.
+     * Maps one union row to a timeline entry using the subpanel configuration.
      *
      * @param mixed $row Union row bean (SugarBean or stdClass fallback)
      * @param aSubPanel $panel Subpanel the row belongs to
      * @param array $subConfig Effective subpanel configuration
      * @return array{id:string,module:string,icon:string,title:string,subtitle:string,
-     *               right:string,date:?string,right_label:string,url:string}
+     *               date:string,date_label:string,date_field:string,date_ts:mixed,url:string}
      */
     protected function mapRow($row, $panel, array $subConfig)
     {
@@ -299,38 +291,278 @@ class SticRelatedPanelBuilder
         $module = isset($row->module_dir) ? (string) $row->module_dir : '';
         $id = isset($row->id) ? (string) $row->id : '';
 
-        // --- Right field (was "date"): configured field or automatic date
-        $rightRaw = null;
-        $rightLabel = '';
-        if (!empty($subConfig['right_field'])) {
-            $rightRaw = $this->rawFieldValue($row, $fields, $subConfig['right_field']);
-            if ($rightRaw !== null && $rightRaw !== '') {
-                $rightLabel = $this->formatFieldValue($row, $rightRaw, $subConfig['right_field']);
-            }
-        }
-        $autoDate = $this->pickDate($row);
-        if (($rightRaw === null || $rightRaw === '') && $autoDate !== null) {
-            $rightRaw = $autoDate;
-            $rightLabel = $this->formatDate($autoDate);
-        }
+        // --- Chronology date: configured field, then date_modified, then auto
+        $dateField = SticRelatedPanelSettings::getSubpanelDateField($subConfig);
+        $dateRaw = $this->resolveDate($row, $fields, $dateField);
+        $dateLabel = $dateRaw !== null ? $this->formatFieldValue($row, $dateRaw, $dateField) : '';
+        // Title and subtitle come straight from get_list_view_data(), which
+        // HTML-escapes the values; the client renders them as text nodes, so
+        // decode once here to avoid showing "&quot;&quot;" literally.
+        $title = $this->textValue($this->resolveTitle($row, $rowPanel, $fields, $subConfig['title_field']));
+        $subtitle = $this->textValue($this->resolveSubtitle($row, $fields, $subConfig['subtitle_field']));
 
-        $record = array(
+        return array(
             'id' => $id,
             'module' => $module,
             'icon' => $this->iconClass($module),
-            'title' => $this->resolveTitle($row, $rowPanel, $fields, $subConfig['title_field']),
-            'subtitle' => $this->resolveSubtitle($row, $fields, $subConfig['subtitle_field']),
-            'right' => $rightRaw !== null ? (string) $rightRaw : '',
-            'right_label' => $rightLabel,
+            'title' => $title,
+            'subtitle' => $subtitle,
+            'date' => $dateRaw !== null ? (string) $dateRaw : '',
+            'date_label' => $dateLabel,
+            'date_field' => $dateField,
+            'date_ts' => $this->sortKeyValue($dateRaw),
             'url' => $this->buildUrl($module, $id),
+            'details' => $this->buildDetails($row, $rowPanel, $fields, $subConfig, $title, $subtitle, $dateLabel),
         );
+    }
 
-        // Internal sort keys (stripped before returning by sortRecords)
-        $record['_sort_title'] = mb_strtolower($record['title']);
-        $record['_sort_subtitle'] = mb_strtolower($record['subtitle']);
-        $record['_sort_right'] = $this->sortKeyValue($rightRaw);
+    /**
+     * Extra list-view columns shown in the client tooltip of a timeline entry:
+     * the rest of the subpanel columns that are not already the title,
+     * subtitle or chronology date of the card.
+     *
+     * @param mixed $row
+     * @param aSubPanel|null $rowPanel
+     * @param array $fields get_list_view_data() values
+     * @param array $subConfig
+     * @param string $title
+     * @param string $subtitle
+     * @param string $dateLabel
+     * @return array<int,array{label:string,value:string}>
+     */
+    protected function buildDetails($row, $rowPanel, array $fields, array $subConfig, $title, $subtitle, $dateLabel)
+    {
+        $details = array();
+        if (!$rowPanel || !is_callable(array($rowPanel, 'get_list_fields'))) {
+            return $details;
+        }
+        $instance = isset($rowPanel->template_instance) ? $rowPanel->template_instance : null;
+        $module = (string) $rowPanel->get_module_name();
+        $dateField = SticRelatedPanelSettings::getSubpanelDateField($subConfig);
 
-        return $record;
+        $skipNames = array(
+            'id', 'deleted', 'module_dir', 'edit_button', 'remove_button', 'select_button',
+            // Already represented by the automatic subtitle (assigned user)
+            'assigned_user_name',
+            // UNION helper columns that may not carry usage => query_only in
+            // every subpanel definition
+            'contact_id', 'contact_name_owner', 'contact_name_mod',
+            'assigned_user_owner', 'assigned_user_mod', 'reply_to_status', 'file_url',
+        );
+        foreach (array('title_field', 'subtitle_field') as $configKey) {
+            if (!empty($subConfig[$configKey])) {
+                $skipNames[] = (string) $subConfig[$configKey];
+            }
+        }
+        $skipNames[] = $dateField;
+        if (empty($subConfig['date_field'])) {
+            // The automatic chronology date is date_modified: do not repeat it.
+            $skipNames[] = SticRelatedPanelSettings::DEFAULT_DATE_FIELD;
+        }
+
+        // Values already visible in the card (title / subtitle / date): never
+        // repeat them as extra fields.
+        $skipValues = array();
+        foreach (array($title, $subtitle, $dateLabel) as $visibleValue) {
+            $normalized = $this->normalizeDetailValue($visibleValue);
+            if ($normalized !== '') {
+                $skipValues[$normalized] = true;
+            }
+        }
+
+        $seenFields = array();
+        foreach ($rowPanel->get_list_fields() as $fieldName => $def) {
+            $fieldName = (string) $fieldName;
+            if ($fieldName === '' || isset($seenFields[$fieldName])) {
+                continue;
+            }
+            $seenFields[$fieldName] = true;
+
+            if (in_array($fieldName, $skipNames, true)) {
+                continue;
+            }
+            // Column kept out of the subpanel display (union helper columns
+            // such as contact_id / contact_name_owner use usage => query_only)
+            if (!empty($def['query_only'])
+                || (!empty($def['usage']) && (string) $def['usage'] === 'query_only')) {
+                continue;
+            }
+            if (!empty($def['widget_class'])
+                && (stripos((string) $def['widget_class'], 'Button') !== false
+                    || stripos((string) $def['widget_class'], 'SubPanelIcon') !== false)) {
+                continue;
+            }
+
+            $raw = $this->rawFieldValue($row, $fields, $fieldName);
+            if ($raw === null) {
+                continue;
+            }
+            $type = $this->fieldType($row, $instance, $fieldName, $def);
+            if (in_array($type, array('link', 'image', 'file', 'wysiwyg'), true)) {
+                continue;
+            }
+            $value = $this->normalizeDetailValue($this->formatFieldValue($row, $raw, $fieldName, $type));
+            if ($value === '' || strpos($value, '0000-00-00') === 0) {
+                continue;
+            }
+            if (isset($skipValues[$value])) {
+                continue;
+            }
+            $skipValues[$value] = true; // no duplicate columns with the same value
+
+            $details[] = array(
+                'label' => $this->fieldLabel($fieldName, $def, $module, $instance, $row),
+                'value' => $this->truncateDetailValue($value),
+            );
+            if (count($details) >= 8) {
+                break;
+            }
+        }
+        return $details;
+    }
+
+    /**
+     * Type of a subpanel field (list definition first, then vardefs).
+     *
+     * @param mixed $row
+     * @param SugarBean|null $instance
+     * @param string $fieldName
+     * @param array $def
+     * @return string
+     */
+    protected function fieldType($row, $instance, $fieldName, array $def)
+    {
+        if (!empty($def['type'])) {
+            return (string) $def['type'];
+        }
+        if ($instance && !empty($instance->field_defs[$fieldName]['type'])) {
+            return (string) $instance->field_defs[$fieldName]['type'];
+        }
+        if (is_object($row) && !empty($row->field_defs[$fieldName]['type'])) {
+            return (string) $row->field_defs[$fieldName]['type'];
+        }
+        return '';
+    }
+
+    /**
+     * Translated label of a tooltip field, with vardefs fallback (list_fields
+     * entries such as first_name / last_name have no vname).
+     *
+     * @param string $fieldName
+     * @param array $def
+     * @param string $module
+     * @param SugarBean|null $instance
+     * @param mixed $row
+     * @return string
+     */
+    protected function fieldLabel($fieldName, array $def, $module, $instance, $row)
+    {
+        $vname = !empty($def['vname']) ? (string) $def['vname'] : '';
+        // list_fields keys sometimes reference labels that are not shipped in
+        // the module language file (e.g. LBL_LIST_DATE in the Tasks/Meetings
+        // Activities subpanels): always fall back to the vardefs, whose label
+        // is the one the detail view uses.
+        $fallbacks = array();
+        if ($instance && !empty($instance->field_defs[$fieldName]['vname'])) {
+            $fallbacks[] = (string) $instance->field_defs[$fieldName]['vname'];
+        }
+        if (is_object($row) && !empty($row->field_defs[$fieldName]['vname'])) {
+            $fallbacks[] = (string) $row->field_defs[$fieldName]['vname'];
+        }
+        foreach (array_merge(array($vname), $fallbacks) as $candidate) {
+            if ($candidate === '') {
+                continue;
+            }
+            $translated = translate($candidate, $module);
+            if ($translated && $translated !== $candidate) {
+                return $this->normalizeDetailValue(rtrim(trim((string) $translated), ':'));
+            }
+        }
+        return $fieldName;
+    }
+
+    /**
+     * Cleans a display value that will be rendered as text on the client card
+     * (list view values arrive HTML-escaped): strips tags, decodes entities
+     * and collapses whitespace. Same rules as detail (tooltip) values.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    protected function textValue($value)
+    {
+        return $this->normalizeDetailValue($value);
+    }
+
+    /**
+     * Cleans a value for the tooltip: no HTML, decoded entities and single spaces.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    protected function normalizeDetailValue($value)
+    {
+        $value = (string) $value;
+        if (strpos($value, '<') !== false) {
+            $value = strip_tags($value);
+        }
+        $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $value = preg_replace('/\s+/u', ' ', $value);
+        return trim((string) $value);
+    }
+
+    /**
+     * Caps a tooltip value to keep the popover readable.
+     *
+     * @param string $value
+     * @return string
+     */
+    protected function truncateDetailValue($value)
+    {
+        $limit = 120;
+        if (function_exists('mb_strlen') && function_exists('mb_substr')) {
+            if (mb_strlen($value, 'UTF-8') > $limit) {
+                return mb_substr($value, 0, $limit - 1, 'UTF-8') . '…';
+            }
+            return $value;
+        }
+        if (strlen($value) > $limit) {
+            return substr($value, 0, $limit - 3) . '...';
+        }
+        return $value;
+    }
+
+    /**
+     * Raw value used to place a row in the chronology.
+     *
+     * @param mixed $row
+     * @param array $fields
+     * @param string $dateField
+     * @return string|null
+     */
+    protected function resolveDate($row, array $fields, $dateField)
+    {
+        $value = $this->rawFieldValue($row, $fields, $dateField);
+        if (!$this->isUsableDate($value)) {
+            $value = $this->rawFieldValue($row, $fields, SticRelatedPanelSettings::DEFAULT_DATE_FIELD);
+        }
+        if (!$this->isUsableDate($value)) {
+            $value = $this->pickDate($row);
+        }
+        return $this->isUsableDate($value) ? (string) $value : null;
+    }
+
+    /**
+     * Whether a raw value can be used as a chronology date.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    protected function isUsableDate($value)
+    {
+        return $value !== null
+            && $value !== ''
+            && strpos((string) $value, '0000-00-00') === false;
     }
 
     /**
@@ -355,6 +587,9 @@ class SticRelatedPanelBuilder
         if (!empty($subtitleField)) {
             $value = $this->rawFieldValue($row, $fields, $subtitleField);
             if ($value !== null && $value !== '') {
+                if ($subtitleField === 'assigned_user_name') {
+                    return translate('LBL_RRP_ASSIGNED_TO') . ': ' . (string) $value;
+                }
                 // Enum values are already translated by get_list_view_data()
                 return (string) $value;
             }
@@ -384,11 +619,16 @@ class SticRelatedPanelBuilder
 
     /**
      * Formats a field value for display (dates/datetimes through the user format).
+     *
+     * @param mixed $row
+     * @param mixed $value
+     * @param string $fieldName
+     * @param string|null $type Optional field type (vardefs fallback when provided)
+     * @return string
      */
-    protected function formatFieldValue($row, $value, $fieldName)
+    protected function formatFieldValue($row, $value, $fieldName, $type = null)
     {
-        $type = null;
-        if (is_object($row) && isset($row->field_defs[$fieldName]['type'])) {
+        if ($type === null && is_object($row) && isset($row->field_defs[$fieldName]['type'])) {
             $type = $row->field_defs[$fieldName]['type'];
         }
         if ($type === 'date') {
@@ -501,47 +741,58 @@ class SticRelatedPanelBuilder
     }
 
     /**
-     * Sorts the records of one section according to its configuration
-     * and strips the internal sort keys.
+     * Chronology comparator: newest first, rows without date always last.
+     * Public because it is used as a usort callback.
+     *
+     * @param array $a
+     * @param array $b
+     * @return int
      */
-    protected function sortRecords(array $records, array $subConfig)
+    public function compareByDate($a, $b)
     {
-        $field = 'right';
-        if (in_array($subConfig['sort_field'], SticRelatedPanelSettings::SORT_FIELDS, true)) {
-            $field = $subConfig['sort_field'];
+        $av = isset($a['date_ts']) ? $a['date_ts'] : null;
+        $bv = isset($b['date_ts']) ? $b['date_ts'] : null;
+
+        // Nulls always last regardless of direction
+        if ($av === null && $bv === null) {
+            return 0;
         }
-        $dir = ($subConfig['sort_dir'] === 'asc') ? 1 : -1;
-        $key = '_sort_' . $field;
-
-        usort($records, function ($a, $b) use ($key, $dir) {
-            $av = $a[$key];
-            $bv = $b[$key];
-            // Nulls always last regardless of direction
-            if ($av === null && $bv === null) {
-                return 0;
-            }
-            if ($av === null) {
-                return 1;
-            }
-            if ($bv === null) {
-                return -1;
-            }
-            if (is_int($av) && is_int($bv)) {
-                return ($av === $bv) ? 0 : (($av < $bv) ? -$dir : $dir);
-            }
-            if (is_numeric($av) && is_numeric($bv)) {
-                $cmp = ($av == $bv) ? 0 : (($av < $bv) ? -1 : 1);
-                return $cmp * $dir;
-            }
-            $cmp = strcasecmp((string) $av, (string) $bv);
-            return $cmp * $dir;
-        });
-
-        foreach ($records as $index => $record) {
-            unset($records[$index]['_sort_title'], $records[$index]['_sort_subtitle'], $records[$index]['_sort_right']);
+        if ($av === null) {
+            return 1;
         }
+        if ($bv === null) {
+            return -1;
+        }
+        if (is_int($av) && is_int($bv)) {
+            return $this->normalizeCompare($av, $bv, true);
+        }
+        if (is_numeric($av) && is_numeric($bv)) {
+            return $this->normalizeCompare($av, $bv, true);
+        }
+        return -strcasecmp((string) $av, (string) $bv) < 0 ? -1
+            : (-strcasecmp((string) $av, (string) $bv) > 0 ? 1 : 0);
+    }
 
-        return $records;
+    /**
+     * Sign of (b - a): -1 when b > a (b is more recent), 1 when b < a,
+     * 0 when equal. Comparisons must stay consistent (-1 / 0 / 1).
+     *
+     * @param mixed $a
+     * @param mixed $b
+     * @param bool $descending
+     * @return int
+     */
+    protected function normalizeCompare($a, $b, $descending)
+    {
+        $an = (float) $a;
+        $bn = (float) $b;
+        if ($an === $bn) {
+            return 0;
+        }
+        if ($an < $bn) {
+            return $descending ? 1 : -1;
+        }
+        return $descending ? -1 : 1;
     }
 
     /**
@@ -568,6 +819,76 @@ class SticRelatedPanelBuilder
     }
 
     /**
+     * Adds the given fields to the subpanel list fields so the UNION query
+     * selects them (needed to merge all the relations in one chronology).
+     * Returns the state required by restoreDateFields().
+     *
+     * @param aSubPanel $panel
+     * @param array $fields
+     * @return array
+     */
+    protected function injectDateFields($panel, array $fields)
+    {
+        $state = array();
+        $fields = array_values(array_unique(array_filter(array_map('strval', $fields), 'strlen')));
+        if (empty($fields)) {
+            return $state;
+        }
+
+        $panels = $panel->isCollection() ? $panel->sub_subpanels : array($panel);
+        foreach ($panels as $current) {
+            if (!$current || !isset($current->panel_definition['list_fields'])) {
+                continue;
+            }
+            $instance = isset($current->template_instance) ? $current->template_instance : null;
+            if (!$instance || empty($instance->field_defs)) {
+                continue;
+            }
+            foreach ($fields as $field) {
+                if (!isset($instance->field_defs[$field])) {
+                    continue;
+                }
+                $state[] = array(
+                    'panel' => $current,
+                    'field' => $field,
+                    'exists' => array_key_exists($field, $current->panel_definition['list_fields']),
+                    'value' => isset($current->panel_definition['list_fields'][$field])
+                        ? $current->panel_definition['list_fields'][$field]
+                        : null,
+                );
+                if (array_key_exists($field, $current->panel_definition['list_fields'])) {
+                    continue;
+                }
+                $definition = $instance->field_defs[$field];
+                if (!isset($definition['name'])) {
+                    $definition['name'] = $field;
+                }
+                $current->panel_definition['list_fields'][$field] = $definition;
+            }
+        }
+        return $state;
+    }
+
+    /**
+     * Reverts the list field changes made by injectDateFields().
+     *
+     * @param array $state
+     * @return void
+     */
+    protected function restoreDateFields(array $state)
+    {
+        foreach ($state as $entry) {
+            $current = $entry['panel'];
+            $field = $entry['field'];
+            if ($entry['exists']) {
+                $current->panel_definition['list_fields'][$field] = $entry['value'];
+            } else {
+                unset($current->panel_definition['list_fields'][$field]);
+            }
+        }
+    }
+
+    /**
      * Default sort field of a subpanel (same default as the core list view).
      */
     protected function getSortBy($panel)
@@ -575,5 +896,52 @@ class SticRelatedPanelBuilder
         return isset($panel->_instance_properties['sort_by'])
             ? (string) $panel->_instance_properties['sort_by']
             : 'id';
+    }
+
+    /**
+     * Field declared by the related module(s) of a subpanel.
+     *
+     * @param aSubPanel $panel
+     * @param string $field
+     * @return bool
+     */
+    protected function panelDeclaresField($panel, $field)
+    {
+        if ($field === '') {
+            return false;
+        }
+        $panels = $panel->isCollection() ? $panel->sub_subpanels : array($panel);
+        foreach ($panels as $current) {
+            $instance = ($current && isset($current->template_instance)) ? $current->template_instance : null;
+            if ($instance && isset($instance->field_defs[$field])) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Field used to fetch the records that will be placed in the chronology.
+     * The configured date field wins when the related module declares it;
+     * otherwise date_modified, the subpanel default or the always present id.
+     *
+     * @param aSubPanel $panel
+     * @param string $dateField
+     * @return string
+     */
+    protected function getTimelineSortBy($panel, $dateField)
+    {
+        $candidates = array(
+            (string) $dateField,
+            SticRelatedPanelSettings::DEFAULT_DATE_FIELD,
+            $this->getSortBy($panel),
+            'id',
+        );
+        foreach ($candidates as $candidate) {
+            if ($candidate !== '' && $this->panelDeclaresField($panel, $candidate)) {
+                return $candidate;
+            }
+        }
+        return 'id';
     }
 }

@@ -142,37 +142,9 @@ class ViewSticrelatedpanel extends SugarView
         $this->ss->assign('TREE', $this->buildTree());
         $this->ss->assign('SAVED', $saved || !empty($_REQUEST['rrp_saved']));
         $this->ss->assign('SAVE_ERROR', $saveError);
-        $this->ss->assign('SORT_OPTIONS', $this->getSortOptions());
-        $this->ss->assign('DIR_OPTIONS', $this->getDirOptions());
+        $this->ss->assign('TREE', $this->buildTree());
 
         echo $this->ss->fetch('custom/modules/Administration/templates/SticRelatedPanelConfig.tpl');
-    }
-
-    /**
-     * Sort field options (labels translated in the Administration language files).
-     *
-     * @return array
-     */
-    protected function getSortOptions()
-    {
-        return array(
-            array('value' => 'title', 'label' => translate('LBL_RRP_SORT_TITLE', 'Administration')),
-            array('value' => 'subtitle', 'label' => translate('LBL_RRP_SORT_SUBTITLE', 'Administration')),
-            array('value' => 'right', 'label' => translate('LBL_RRP_SORT_RIGHT', 'Administration')),
-        );
-    }
-
-    /**
-     * Sort direction options.
-     *
-     * @return array
-     */
-    protected function getDirOptions()
-    {
-        return array(
-            array('value' => 'asc', 'label' => translate('LBL_RRP_SORT_ASC', 'Administration')),
-            array('value' => 'desc', 'label' => translate('LBL_RRP_SORT_DESC', 'Administration')),
-        );
     }
 
     /**
@@ -225,14 +197,86 @@ class ViewSticrelatedpanel extends SugarView
                         continue;
                     }
 
-                    $subConfig = SticRelatedPanelSettings::getSubpanelConfig($moduleName, $key);
+                    $portal_key = (string) $key;
+                    $subConfig = SticRelatedPanelSettings::getSubpanelConfig($moduleName, $portal_key);
+                    // Field options of the header panel, but the chronology date
+                    // must be selectable from ANY module of a collection
+                    // (Activities/History include several modules).
+                    $panelsForFields = ($panel->isCollection() && !empty($panel->sub_subpanels))
+                        ? array_merge(array($headerPanel), array_values($panel->sub_subpanels))
+                        : array($headerPanel);
+
+                    $fields = array();
+                    $indexes = array();
+                    foreach ($panelsForFields as $fieldPanel) {
+                        foreach ($this->getFieldOptions($fieldPanel) as $option) {
+                            $name = (string) $option['name'];
+                            if (isset($indexes[$name])) {
+                                // Collections merge the list fields of every
+                                // sub-subpanel: a later panel may translate the
+                                // same field with its own vardefs (e.g. the
+                                // 'filename' of Notes inside History), while
+                                // the first occurrence may have resolved to
+                                // the raw field name.
+                                $index = $indexes[$name];
+                                if ($fields[$index]['label'] === $name && $option['label'] !== $name) {
+                                    $fields[$index]['label'] = $option['label'];
+                                }
+                                if ($fields[$index]['type'] === '' && $option['type'] !== '') {
+                                    $fields[$index]['type'] = $option['type'];
+                                }
+                                continue;
+                            }
+                            $indexes[$name] = count($fields);
+                            $fields[] = $option;
+                        }
+                    }
+                    $dateFields = array();
+                    foreach ($fields as $field) {
+                        if (in_array($field['type'], array('date', 'datetime', 'datetimecombo'), true)) {
+                            $dateFields[] = $field;
+                        }
+                    }
+
+                    // Default (automatic) field of every select. The automatic
+                    // option is rendered as "<Label> (Default)" and the default
+                    // field is NOT repeated as a separate explicit option.
+                    $defaults = $this->getSubpanelDefaults($fields, $dateFields);
+                    // Configurations saved with the explicit default value are
+                    // equivalent to the automatic option: show them as default.
+                    foreach (array('date_field', 'title_field', 'subtitle_field') as $configKey) {
+                        if ($subConfig[$configKey] !== '' && $subConfig[$configKey] === $defaults[$configKey]) {
+                            $subConfig[$configKey] = '';
+                        }
+                    }
+
+                    // Collection labels live in the collection definition
+                    // (title_key), not in the first sub-subpanel header
+                    $panelTitle = trim((string) $panel->get_title());
+                    if ($panelTitle === '' && $panel->isCollection()) {
+                        $titleKey = isset($panel->_instance_properties['title_key'])
+                            ? (string) $panel->_instance_properties['title_key']
+                            : '';
+                        if ($titleKey !== '') {
+                            $panelTitle = trim((string) translate($titleKey, $moduleName));
+                        }
+                    }
+                    if ($panelTitle === '') {
+                        $panelTitle = (string) $headerPanel->get_title();
+                    }
+                    if ($panelTitle === '') {
+                        $panelTitle = $portal_key;
+                    }
+
                     $subpanels[] = array(
-                        'key' => (string) $key,
-                        'title' => (string) $headerPanel->get_title(),
+                        'key' => $portal_key,
+                        'title' => $panelTitle,
                         'module' => (string) $headerPanel->get_module_name(),
                         'icon' => $this->iconClass($headerPanel->get_module_name()),
                         'config' => $subConfig,
-                        'fields' => $this->getFieldOptions($headerPanel),
+                        'fields' => $fields,
+                        'date_fields' => $dateFields,
+                        'defaults' => $defaults,
                         'sort_order' => ($subConfig['order'] !== null ? (int) $subConfig['order'] : 1000 + $index),
                     );
                     $index++;
@@ -273,14 +317,43 @@ class ViewSticrelatedpanel extends SugarView
             }
         }
 
+        // Alphabetical order by the displayed module name (case insensitive),
+        // with the internal module name as tie-breaker.
+        usort($tree, function ($a, $b) {
+            $labelA = function_exists('mb_strtolower')
+                ? mb_strtolower((string) $a['label'], 'UTF-8')
+                : strtolower((string) $a['label']);
+            $labelB = function_exists('mb_strtolower')
+                ? mb_strtolower((string) $b['label'], 'UTF-8')
+                : strtolower((string) $b['label']);
+            if ($labelA !== $labelB) {
+                return strcasecmp($labelA, $labelB);
+            }
+            return strcmp((string) $a['module'], (string) $b['module']);
+        });
+
         return $tree;
     }
 
     /**
-     * Displayable field options of a subpanel (used by the title/subtitle/right selects).
-     *
-     * @param aSubPanel $headerPanel
-     * @return array
+     * UNION helper columns of the subpanel queries (declared with
+     * usage => query_only only in some of the collection subpanels, so the
+     * flag alone is not enough): they are never valid targets for the three
+     * selectors and usually carry no label.
+     * @var string[]
+     */
+    protected $helperColumns = array(
+        'contact_id',
+        'contact_name_owner',
+        'contact_name_mod',
+        'assigned_user_owner',
+        'assigned_user_mod',
+        'reply_to_status',
+        'file_url',
+    );
+
+    /**
+     * Field options of the selectors of one subpanel (its module).
      */
     protected function getFieldOptions($headerPanel)
     {
@@ -288,25 +361,167 @@ class ViewSticrelatedpanel extends SugarView
         if (!$headerPanel) {
             return $fields;
         }
-        $panelModule = $headerPanel->get_module_name();
+        $panelModule = (string) $headerPanel->get_module_name();
+        $instance = isset($headerPanel->template_instance) ? $headerPanel->template_instance : null;
+        $seen = array();
+
         foreach ($headerPanel->get_list_fields() as $fieldName => $def) {
             $fieldName = (string) $fieldName;
-            if (isset($def['widget_class']) && stripos((string) $def['widget_class'], 'Button') !== false) {
+            $widget = isset($def['widget_class']) ? (string) $def['widget_class'] : '';
+            if ($widget !== ''
+                && (stripos($widget, 'Button') !== false || stripos($widget, 'SubPanelIcon') !== false)) {
                 continue;
             }
-            if (in_array($fieldName, array('edit_button', 'remove_button', 'select_button'), true)) {
+            if (in_array($fieldName, array('edit_button', 'remove_button', 'select_button'), true)
+                || in_array($fieldName, $this->helperColumns, true)) {
                 continue;
             }
-            $label = $fieldName;
-            if (!empty($def['vname'])) {
-                $translated = translate($def['vname'], $panelModule);
-                if ($translated && $translated !== $def['vname']) {
-                    $label = $translated;
+            $fields[] = array(
+                'name' => $fieldName,
+                'label' => $this->resolveFieldLabel($fieldName, $def, $panelModule, $instance),
+                'type' => isset($def['type']) ? (string) $def['type'] : '',
+            );
+            $seen[$fieldName] = true;
+        }
+
+        // Fields that are valid targets even when they are not part of the
+        // subpanel list fields (typical with date_modified / assigned_user_name).
+        $extraNames = array('name', 'assigned_user_name', 'date_modified', 'date_entered');
+        if ($instance && !empty($instance->field_defs)) {
+            foreach ($extraNames as $extra) {
+                if (isset($seen[$extra]) || !isset($instance->field_defs[$extra])) {
+                    continue;
+                }
+                $def = $instance->field_defs[$extra];
+                $fields[] = array(
+                    'name' => $extra,
+                    'label' => $this->resolveFieldLabel($extra, $def, $panelModule, $instance),
+                    'type' => isset($def['type']) ? (string) $def['type'] : '',
+                );
+                $seen[$extra] = true;
+            }
+        }
+
+        // Subpanel list_fields usually declare no 'type'; the reliable type
+        // comes from the module vardefs (template_instance). Without this the
+        // chronology date select would be empty for many subpanels.
+        if ($instance && !empty($instance->field_defs)) {
+            foreach (array_keys($fields) as $index) {
+                $field = $fields[$index]['name'];
+                $vardefType = isset($instance->field_defs[$field]['type'])
+                    ? (string) $instance->field_defs[$field]['type']
+                    : '';
+                if ($vardefType !== '' && $fields[$index]['type'] === '') {
+                    $fields[$index]['type'] = $vardefType;
                 }
             }
-            $fields[] = array('name' => $fieldName, 'label' => $label);
         }
         return $fields;
+    }
+
+    /**
+     * Translated label of a field. Subpanel list_fields entries (e.g. the
+     * query_only first_name / last_name of the person templates) often carry
+     * no vname, so the module vardefs are used as a fallback.
+     *
+     * @param string $fieldName
+     * @param array $def
+     * @param string $panelModule
+     * @param SugarBean|null $instance
+     * @return string
+     */
+    protected function resolveFieldLabel($fieldName, array $def, $panelModule, $instance)
+    {
+        // list_fields keys sometimes reference labels not shipped in the module
+        // language (e.g. LBL_LIST_DATE in the Tasks/Meetings Activities
+        // subpanels): fall back to the vardefs, whose label is the one the
+        // detail view uses.
+        $candidates = array();
+        if (!empty($def['vname'])) {
+            $candidates[] = (string) $def['vname'];
+        }
+        if ($instance && !empty($instance->field_defs[$fieldName]['vname'])) {
+            $candidates[] = (string) $instance->field_defs[$fieldName]['vname'];
+        }
+        foreach ($candidates as $vname) {
+            $translated = translate($vname, $panelModule);
+            if ($translated && $translated !== $vname) {
+                return $this->cleanLabel($translated);
+            }
+        }
+        return (string) $fieldName;
+    }
+
+    /**
+     * Normalizes a translated label for the selects (no trailing colon).
+     *
+     * @param string $label
+     * @return string
+     */
+    protected function cleanLabel($label)
+    {
+        return trim(rtrim(trim((string) $label), ':'));
+    }
+
+    /**
+     * Default (automatic) field of the three selectors of a subpanel.
+     *
+     * @param array $fields
+     * @param array $dateFields
+     * @return array{date_field:string,date_label:string,title_field:string,title_label:string,subtitle_field:string,subtitle_label:string}
+     */
+    protected function getSubpanelDefaults(array $fields, array $dateFields)
+    {
+        $dateField = $this->pickDefaultField($dateFields, array(SticRelatedPanelSettings::DEFAULT_DATE_FIELD, 'date_entered'));
+        $titleField = $this->pickDefaultField($fields, array('name', 'document_name', 'subject'));
+        $subtitleField = $this->pickDefaultField($fields, array('assigned_user_name', 'status'));
+
+        return array(
+            'date_field' => $dateField,
+            'date_label' => $this->fieldLabelByName($dateField, $fields),
+            'title_field' => $titleField,
+            'title_label' => $this->fieldLabelByName($titleField, $fields),
+            'subtitle_field' => $subtitleField,
+            'subtitle_label' => $this->fieldLabelByName($subtitleField, $fields),
+        );
+    }
+
+    /**
+     * First candidate present in the field list, or the first candidate.
+     *
+     * @param array $fields
+     * @param array $candidates
+     * @return string
+     */
+    protected function pickDefaultField(array $fields, array $candidates)
+    {
+        $names = array();
+        foreach ($fields as $field) {
+            $names[(string) $field['name']] = true;
+        }
+        foreach ($candidates as $candidate) {
+            if (isset($names[$candidate])) {
+                return (string) $candidate;
+            }
+        }
+        return (string) $candidates[0];
+    }
+
+    /**
+     * Label of a field from the prepared options list.
+     *
+     * @param string $fieldName
+     * @param array $fields
+     * @return string
+     */
+    protected function fieldLabelByName($fieldName, array $fields)
+    {
+        foreach ($fields as $field) {
+            if ((string) $field['name'] === (string) $fieldName) {
+                return (string) $field['label'];
+            }
+        }
+        return (string) $fieldName;
     }
 
     /**

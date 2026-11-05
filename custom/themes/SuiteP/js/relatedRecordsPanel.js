@@ -34,10 +34,10 @@
 //    where the bottom subpanels start, and the fields area gets a right margin.
 //  - Lazy load: data is fetched from the sticRelatedPanel entry point only when
 //    the panel is opened, and cached in memory per module:record.
-//  - Sections: one per configured subpanel (empty ones at the bottom, count 0),
-//    collapsible, with a "View all" link that scrolls to the bottom subpanel.
-//  - The user can reorder the sections (drag & drop); the order is saved as a
-//    user preference through the same entry point and can be restored.
+//  - ONE flat chronology: all the records of every enabled relation merged
+//    and sorted globally (newest first), without grouping by subpanel.
+//  - The user can filter which relations (subpanels) are shown; the choice is
+//    saved as a user preference through the same entry point.
 //  - This file is re-executed by SUGAR.util.evalScript() on every ajaxUI
 //    navigation, so it MUST remain idempotent (window.SticRelatedPanel guard +
 //    delegated namespaced events).
@@ -59,19 +59,21 @@
     var COOKIE_NAME = 'rightbartoggle';
     var DESKTOP_MIN_WIDTH = 1200;
     var CACHE_LIMIT = 10;
+    var PANEL_MARGIN = 16; // keep in sync with $rrp-gap in SticRelatedPanel.scss
 
     var state = {
         open: false,
         enabled: null,     // from status: panel enabled for this module
         adminPinned: false,// from status: admin "pinned" default
-        hideEmpty: false,  // from status
+        hiddenRelations: [], // from status: relation (subpanel) keys hidden by the user
         userPrefs: { pinned: null, shrink: null }, // from status (null = follow the default)
         renderedKey: null,
+        currentPayload: null,
+        filterOpen: false,
         cache: {},
         cacheKeys: [],
         request: null,
         statusRequest: null,
-        dragKey: null,
         geom: null         // pinned layout geometry (baseTop, limitDoc, height)
     };
 
@@ -100,6 +102,16 @@
     function contentNode() {
         var panel = panelNode();
         return panel ? panel.querySelector('.stic-rrp-content') : null;
+    }
+
+    function filterPopoverNode() {
+        var panel = panelNode();
+        return panel ? panel.querySelector('.stic-rrp-filter-popover') : null;
+    }
+
+    function filterButtonNode() {
+        var panel = panelNode();
+        return panel ? panel.querySelector('.stic-rrp-tool-filter') : null;
     }
 
     function clearNode(node) {
@@ -181,7 +193,7 @@
 
         document.body.classList.toggle('stic-rrp-open', state.open);
         document.body.classList.toggle('stic-rrp-pinned', pinned && state.open && state.enabled !== false);
-        document.body.classList.toggle('stic-rrp-shrink', pinned && state.open && shrink && state.enabled !== false);
+        document.body.classList.toggle('stic-rrp-shrink', shrink && state.open && state.enabled !== false);
 
         // Header toolbar (user preferences) state
         var pinTool = panel.querySelector('.stic-rrp-tool-pin');
@@ -226,41 +238,41 @@
      */
     function applyPinnedLayout() {
         var panel = panelNode();
-        var detailView = document.querySelector('#content .detail-view') || document.querySelector('.detail-view');
         var subpanels = document.getElementById('subpanel_list');
         if (!panel) {
             return;
         }
-        // Base top from a STABLE reference: the toggle button is fixed too and its
-        // inline style is never touched (the panel's own computed top can NOT be
-        // used because we slide the panel by setting its inline top).
+        // Base top from a STABLE reference. The toggle button used to be that
+        // reference, but it is hidden while the panel is open (its own close
+        // button replaces it), so it can no longer be measured. The navbar
+        // height is fixed (76px) and is exactly the panel's initial top.
+        var baseTop = 76;
         var toggle = document.getElementById('stic-rrp-toggle');
-        var baseTop = toggle ? toggle.getBoundingClientRect().top : 76;
-        if (baseTop < 20 || baseTop > 400) {
-            // Implausible value (measured during a transient layout state, e.g.
-            // right in the middle of an ajaxUI content injection): retry shortly
-            if (!state.geomRetries || state.geomRetries < 6) {
-                state.geomRetries = (state.geomRetries || 0) + 1;
-                window.setTimeout(function () {
-                    state.geomRetries = 0;
-                    applyPinnedLayout();
-                }, 150);
+        if (toggle && toggle.offsetHeight > 0) {
+            var measured = toggle.getBoundingClientRect().top;
+            if (measured >= 20 && measured <= 400) {
+                baseTop = measured;
             }
-            return;
         }
         state.geomRetries = 0;
         var limit = null;
         if (subpanels) {
+            // The panel must end where the bottom subpanels start (document
+            // coordinate): that is the hard limit it can never cross.
             limit = subpanels.getBoundingClientRect().top + window.scrollY;
+        } else {
+            limit = document.documentElement.scrollHeight;
         }
-        if (detailView) {
-            var detailBottom = detailView.getBoundingClientRect().bottom + window.scrollY + 20;
-            limit = (limit === null) ? detailBottom : Math.min(limit, detailBottom);
-        }
-        if (limit === null) {
+        if (!limit) {
             return;
         }
-        var height = Math.max(200, limit - baseTop - 10);
+        // The panel can never be taller than the viewport: otherwise its bottom
+        // edge would sit at the end of the detail view and any scroll would
+        // immediately slide it out of sight. Capping it to the viewport keeps it
+        // "sticky" beside the detail view; the content scrolls inside the panel.
+        var viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+        var viewportLimit = viewportHeight > 0 ? viewportHeight - PANEL_MARGIN : limit;
+        var height = Math.max(200, Math.min(limit - baseTop - PANEL_MARGIN, viewportLimit - baseTop));
         state.geom = { baseTop: baseTop, limitDoc: limit, height: height };
         panel.style.height = Math.round(height) + 'px';
         panel.style.bottom = 'auto';
@@ -277,7 +289,14 @@
         if (!panel || !state.geom) {
             return;
         }
-        var allowedTop = state.geom.limitDoc - state.geom.height - 10 - window.scrollY;
+        // Read the subpanels start live: the detail view can change height after
+        // the initial measurement (lazy content, images, tabs), so a cached
+        // document coordinate could leave a gap or overlap them.
+        var subpanels = document.getElementById('subpanel_list');
+        if (subpanels) {
+            state.geom.limitDoc = subpanels.getBoundingClientRect().top + window.scrollY;
+        }
+        var allowedTop = state.geom.limitDoc - state.geom.height - PANEL_MARGIN - window.scrollY;
         var top = Math.min(state.geom.baseTop, allowedTop);
         panel.style.top = Math.round(top) + 'px';
         // Completely hidden once it slides past the navbar: keep it that way
@@ -307,6 +326,9 @@
         }
         if (state.open) {
             ensureLoaded();
+        } else {
+            closeFilter();
+            hideTooltip();
         }
     }
 
@@ -334,7 +356,9 @@
             state.statusRequest = null;
             state.enabled = !!status.enabled;
             state.adminPinned = !!status.pinned;
-            state.hideEmpty = !!status.hide_empty;
+            state.hiddenRelations = Array.isArray(status.hidden_relations)
+                ? status.hidden_relations.slice()
+                : [];
             state.userPrefs = (status.user_prefs && typeof status.user_prefs === 'object')
                 ? {
                     pinned: (status.user_prefs.pinned === null || status.user_prefs.pinned === undefined) ? null : !!status.user_prefs.pinned,
@@ -370,6 +394,8 @@
         clearNode(content);
         content.setAttribute('data-state', 'loading');
         content.appendChild(el('div', 'stic-rrp-status', lang('LBL_RRP_LOADING', '...')));
+        updateFilterButton([]);
+        renderFilterPopover([]);
     }
 
     function showError() {
@@ -383,6 +409,8 @@
         var retry = el('button', 'stic-rrp-retry', lang('LBL_RRP_RETRY'));
         retry.setAttribute('type', 'button');
         content.appendChild(retry);
+        updateFilterButton([]);
+        renderFilterPopover([]);
     }
 
     function ensureLoaded() {
@@ -438,6 +466,8 @@
     // ---------------------------------------------------------------- render
 
     function render(payload) {
+        state.currentPayload = payload;
+        hideTooltip();
         var content = contentNode();
         if (!content) {
             return;
@@ -445,73 +475,157 @@
         clearNode(content);
         content.setAttribute('data-state', 'ready');
 
-        var sections = payload && payload.sections ? payload.sections : [];
-        if (!sections.length) {
+        var relations = payload && payload.relations ? payload.relations : [];
+        var timeline = payload && payload.timeline ? payload.timeline : [];
+
+        updateFilterButton(relations);
+        renderFilterPopover(relations);
+
+        if (!relations.length && !timeline.length) {
             content.setAttribute('data-state', 'empty');
             content.appendChild(el('div', 'stic-rrp-status stic-rrp-status-empty', lang('LBL_RRP_EMPTY')));
             return;
         }
 
-        for (var i = 0; i < sections.length; i++) {
-            content.appendChild(buildSection(sections[i]));
+        var visible = filterTimeline(timeline);
+        if (!visible.length) {
+            content.setAttribute('data-state', 'empty');
+            content.appendChild(el('div', 'stic-rrp-status stic-rrp-status-empty', lang('LBL_RRP_FILTER_EMPTY')));
+            var reset = el('a', 'stic-rrp-filter-all stic-rrp-filter-all-empty', lang('LBL_RRP_FILTER_ALL'));
+            reset.setAttribute('href', 'javascript:void(0)');
+            content.appendChild(reset);
+            return;
         }
 
-        // User order tools (drag & drop reset)
-        var tools = el('div', 'stic-rrp-tools');
-        var reset = el('a', 'stic-rrp-reset-order', lang('LBL_RRP_RESET_ORDER'));
-        reset.setAttribute('href', 'javascript:void(0)');
-        reset.setAttribute('title', lang('LBL_RRP_RESET_ORDER_TITLE'));
-        tools.appendChild(el('span', 'stic-rrp-drag-hint', lang('LBL_RRP_DRAG_HINT')));
-        tools.appendChild(reset);
-        content.appendChild(tools);
+        content.appendChild(buildTimeline(visible));
     }
 
-    function buildSection(section) {
-        var node = el('section', 'stic-rrp-section' + (section.empty ? ' is-empty' : ''));
-        node.setAttribute('data-key', section.key || '');
-        node.setAttribute('draggable', 'true');
+    /**
+     * Whether a relation (subpanel key) is hidden by the user filter.
+     */
+    function isHiddenRelation(key) {
+        return state.hiddenRelations.indexOf(key) !== -1;
+    }
 
-        // Header (collapsible + drag handle)
-        var head = el('div', 'stic-rrp-section-head');
-        head.setAttribute('role', 'button');
-        head.setAttribute('tabindex', '0');
-        head.setAttribute('aria-expanded', 'true');
+    /**
+     * Timeline entries of the relations selected in the user filter.
+     */
+    function filterTimeline(timeline) {
+        return timeline.filter(function (entry) {
+            return !isHiddenRelation(entry.subpanel);
+        });
+    }
 
-        var handle = el('span', 'suitepicon suitepicon-action-sorting-none stic-rrp-section-handle');
-        handle.setAttribute('title', lang('LBL_RRP_DRAG_HINT'));
-        head.appendChild(handle);
-        head.appendChild(iconSpan(section.icon, 'suitepicon-action-list'));
-        head.appendChild(el('span', 'stic-rrp-section-title', section.title || section.key || ''));
-        head.appendChild(el('span', 'stic-rrp-section-count' + (section.empty ? ' stic-rrp-count-empty' : ''),
-            String(section.count || 0)));
-        head.appendChild(el('span', 'suitepicon suitepicon-action-caret stic-rrp-section-caret'));
-        node.appendChild(head);
-
-        // Entries (timeline)
-        var list = el('ul', 'stic-rrp-entries');
-        var records = section.records || [];
-        for (var i = 0; i < records.length; i++) {
-            list.appendChild(buildEntry(records[i]));
+    /**
+     * Updates the header filter button (shown/total badge). The filter is only
+     * useful when more than one relation has records.
+     */
+    function updateFilterButton(relations) {
+        var button = filterButtonNode();
+        if (!button) {
+            return;
         }
-        if (!records.length) {
-            list.appendChild(el('li', 'stic-rrp-entry stic-rrp-entry-empty', lang('LBL_RRP_NO_RECORDS')));
+        var total = relations.length;
+        var shown = 0;
+        for (var i = 0; i < total; i++) {
+            if (!isHiddenRelation(relations[i].key)) {
+                shown++;
+            }
         }
-        node.appendChild(list);
+        var available = total > 1;
+        button.hidden = !available;
+        button.classList.toggle('is-active', available && state.filterOpen);
+        button.setAttribute('aria-expanded', (available && state.filterOpen) ? 'true' : 'false');
+        // Sync the checkboxes with the persisted user choice (they are rebuilt
+        // when the popover re-renders).
+        var popover = filterPopoverNode();
+        if (popover) {
+            var checks = popover.querySelectorAll('.stic-rrp-filter-check');
+            for (var c = 0; c < checks.length; c++) {
+                checks[c].checked = !isHiddenRelation(checks[c].value);
+            }
+        }
+    }
 
-        // "View all" link: scrolls to the bottom subpanel and expands it
-        if (section.has_more) {
-            var more = el('a', 'stic-rrp-more', lang('LBL_RRP_VIEW_ALL').replace('{0}', String(section.count)));
-            more.setAttribute('href', 'javascript:void(0)');
-            more.setAttribute('data-subpanel', section.key || '');
-            node.appendChild(more);
+    /**
+     * Renders the filter popover (absolute, under the panel header) so it does
+     * not consume vertical space in the timeline.
+     */
+    function renderFilterPopover(relations) {
+        var popover = filterPopoverNode();
+        if (!popover) {
+            return;
         }
-        return node;
+        clearNode(popover);
+        var show = state.filterOpen && relations.length > 1;
+        popover.hidden = !show;
+        if (show) {
+            popover.appendChild(buildFilter(relations));
+        }
+    }
+
+    /**
+     * Relation filter: one checkbox per relation source with records.
+     */
+    function buildFilter(relations) {
+        var box = el('div', 'stic-rrp-filter');
+
+        var head = el('div', 'stic-rrp-filter-head');
+        head.appendChild(el('span', 'stic-rrp-filter-title', lang('LBL_RRP_FILTER_HINT')));
+        var all = el('a', 'stic-rrp-filter-all', lang('LBL_RRP_FILTER_ALL'));
+        all.setAttribute('href', 'javascript:void(0)');
+        head.appendChild(all);
+        var none = el('a', 'stic-rrp-filter-none', lang('LBL_RRP_FILTER_NONE', 'Select none'));
+        none.setAttribute('href', 'javascript:void(0)');
+        head.appendChild(none);
+        box.appendChild(head);
+
+        for (var i = 0; i < relations.length; i++) {
+            var relation = relations[i];
+            var item = el('label', 'stic-rrp-filter-item');
+            var check = document.createElement('input');
+            check.type = 'checkbox';
+            check.className = 'stic-rrp-filter-check';
+            check.value = relation.key || '';
+            check.checked = !isHiddenRelation(relation.key);
+            item.appendChild(check);
+            item.appendChild(iconSpan(relation.icon, 'suitepicon-action-view-record'));
+            item.appendChild(el('span', 'stic-rrp-filter-name', relation.title || relation.key || ''));
+            item.appendChild(el('span', 'stic-rrp-filter-count', String(relation.count || 0)));
+            box.appendChild(item);
+        }
+        return box;
+    }
+
+    /**
+     * ONE flat chronology: no sections, no grouping by subpanel.
+     */
+    function buildTimeline(entries) {
+        var list = el('ul', 'stic-rrp-timeline');
+        for (var i = 0; i < entries.length; i++) {
+            list.appendChild(buildEntry(entries[i]));
+        }
+        return list;
     }
 
     function buildEntry(record) {
         var node = el('li', 'stic-rrp-entry');
+        node.setAttribute('data-subpanel', record.subpanel || '');
+        node.__rrpRecord = record;
 
-        node.appendChild(iconSpan(record.icon, 'suitepicon-action-info'));
+        var details = Array.isArray(record.details) ? record.details : [];
+
+        // Left column: module icon (the tooltip is triggered on hover/focus).
+        var side = el('div', 'stic-rrp-entry-side');
+        var icon = iconSpan(record.icon, 'suitepicon-action-info');
+        icon.classList.add('stic-rrp-entry-icon');
+        if (details.length) {
+            icon.setAttribute('tabindex', '0');
+            icon.setAttribute('role', 'button');
+            icon.setAttribute('aria-label', lang('LBL_RRP_INFO', 'Info'));
+        }
+        side.appendChild(icon);
+        node.appendChild(side);
 
         var main = el('div', 'stic-rrp-entry-main');
         if (record.url) {
@@ -524,11 +638,15 @@
         if (record.subtitle) {
             main.appendChild(el('span', 'stic-rrp-entry-subtitle', record.subtitle));
         }
+        if (record.relation) {
+            main.appendChild(el('span', 'stic-rrp-entry-relation', record.relation));
+        }
+        // Date below the subtitle, full width for the text above it.
+        if (record.date_label) {
+            main.appendChild(el('span', 'stic-rrp-entry-date', record.date_label));
+        }
         node.appendChild(main);
 
-        if (record.right_label) {
-            node.appendChild(el('span', 'stic-rrp-entry-date', record.right_label));
-        }
         return node;
     }
 
@@ -540,90 +658,212 @@
         return span;
     }
 
-    // ---------------------------------------------------------- user ordering
+    // -------------------------------------------------------- entry tooltip
 
-    /**
-     * Persists the current DOM order of the (non-empty) sections.
-     * Empty sections always stay at the bottom and are not part of the order.
-     */
-    function saveCurrentOrder() {
-        var context = currentContext();
-        if (!context.module) {
-            return;
+    var tooltipNode = null;
+    var tooltipHideTimer = null;
+
+    function tooltipElement() {
+        if (tooltipNode && document.body.contains(tooltipNode)) {
+            return tooltipNode;
         }
-        var keys = [];
-        var sections = document.querySelectorAll('.stic-rrp-section:not(.is-empty)');
-        for (var i = 0; i < sections.length; i++) {
-            var key = sections[i].getAttribute('data-key');
-            if (key) {
-                keys.push(key);
-            }
-        }
-        var body = new URLSearchParams();
-        body.set('module', context.module);
-        keys.forEach(function (key) {
-            body.append('order[]', key);
-        });
-        fetch(endpointUrl({ panel_action: 'saveOrder' }), {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'Accept': 'application/json'
-            },
-            body: body.toString()
-        }).catch(function () { });
+        tooltipNode = el('div', 'stic-rrp-tooltip');
+        tooltipNode.setAttribute('role', 'tooltip');
+        tooltipNode.hidden = true;
+        document.body.appendChild(tooltipNode);
+        return tooltipNode;
     }
 
-    function resetOrder() {
+    /**
+     * Shows a fixed tooltip with the rest of the subpanel columns of a record.
+     * Triggered by the entry module icon or by the small info button.
+     */
+    function showTooltip(trigger) {
+        if (!trigger) {
+            return;
+        }
+        var entry = trigger.closest ? trigger.closest('.stic-rrp-entry') : null;
+        var record = entry ? entry.__rrpRecord : null;
+        var details = (record && Array.isArray(record.details)) ? record.details : [];
+        if (!record || !details.length) {
+            return;
+        }
+        if (tooltipHideTimer) {
+            window.clearTimeout(tooltipHideTimer);
+            tooltipHideTimer = null;
+        }
+
+        var tip = tooltipElement();
+        clearNode(tip);
+        tip.appendChild(el('div', 'stic-rrp-tooltip-title', record.title || record.id || ''));
+        if (record.relation) {
+            tip.appendChild(el('div', 'stic-rrp-tooltip-relation', record.relation));
+        }
+        var list = el('dl', 'stic-rrp-tooltip-details');
+        for (var i = 0; i < details.length; i++) {
+            list.appendChild(el('dt', null, details[i].label || ''));
+            list.appendChild(el('dd', null, details[i].value || ''));
+        }
+        tip.appendChild(list);
+
+        // Measure first (hidden visibility avoids a flash at 0,0), then place
+        // it on the left of the trigger because the panel is on the right.
+        tip.hidden = false;
+        tip.style.visibility = 'hidden';
+        var rect = trigger.getBoundingClientRect();
+        var tipRect = tip.getBoundingClientRect();
+        var margin = 8;
+        var left = rect.left - tipRect.width - margin;
+        if (left < margin) {
+            left = Math.min(window.innerWidth - tipRect.width - margin, rect.right + margin);
+        }
+        if (left < margin) {
+            left = margin;
+        }
+        var top = rect.top + (rect.height / 2) - (tipRect.height / 2);
+        top = Math.max(margin, Math.min(top, window.innerHeight - tipRect.height - margin));
+        tip.style.left = Math.round(left) + 'px';
+        tip.style.top = Math.round(top) + 'px';
+        tip.style.visibility = '';
+    }
+
+    function hideTooltip() {
+        if (tooltipHideTimer) {
+            window.clearTimeout(tooltipHideTimer);
+            tooltipHideTimer = null;
+        }
+        if (tooltipNode) {
+            tooltipNode.hidden = true;
+            clearNode(tooltipNode);
+        }
+    }
+
+    function scheduleHideTooltip() {
+        if (tooltipHideTimer) {
+            window.clearTimeout(tooltipHideTimer);
+        }
+        tooltipHideTimer = window.setTimeout(hideTooltip, 120);
+    }
+
+    // ----------------------------------------------------------- user filter
+
+    /**
+     * Toggles the relation filter popover (rendered from the cached payload).
+     */
+    function toggleFilter(event) {
+        event.preventDefault();
+        var relations = state.currentPayload && state.currentPayload.relations
+            ? state.currentPayload.relations
+            : [];
+        if (relations.length < 2) {
+            return;
+        }
+        state.filterOpen = !state.filterOpen;
+        updateFilterButton(relations);
+        renderFilterPopover(relations);
+    }
+
+    /**
+     * Closes the filter popover (if open).
+     */
+    function closeFilter() {
+        if (!state.filterOpen) {
+            return;
+        }
+        var relations = state.currentPayload && state.currentPayload.relations
+            ? state.currentPayload.relations
+            : [];
+        state.filterOpen = false;
+        updateFilterButton(relations);
+        renderFilterPopover(relations);
+    }
+
+    /**
+     * Rebuilds the hidden-relation list from the checkboxes and persists it as a
+     * user preference. The timeline is re-rendered in place.
+     */
+    function changeFilter(event) {
+        var check = event.target.closest ? event.target.closest('.stic-rrp-filter-check') : null;
+        if (!check) {
+            return;
+        }
+        // The checkboxes live in the header popover since the filter moved
+        // out of the timeline content.
+        var popover = filterPopoverNode();
+        var content = contentNode();
+        var hidden = [];
+        var checks = popover
+            ? popover.querySelectorAll('.stic-rrp-filter-check')
+            : (content ? content.querySelectorAll('.stic-rrp-filter-check') : []);
+        for (var i = 0; i < checks.length; i++) {
+            if (!checks[i].checked && checks[i].value) {
+                hidden.push(checks[i].value);
+            }
+        }
+        state.hiddenRelations = hidden;
+        saveFilter();
+        render(state.currentPayload);
+    }
+
+    /**
+     * Shows every relation again.
+     */
+    function showAllRelations(event) {
+        if (event) {
+            event.preventDefault();
+            // Keep the popover open: the outside-click handler runs after this
+            // one, when the link has already been replaced by the re-render.
+            event.__rrpFilterInteraction = true;
+        }
+        state.hiddenRelations = [];
+        saveFilter();
+        render(state.currentPayload);
+    }
+
+    /**
+     * Hides every relation (the timeline shows the empty state; the popover
+     * stays open with its per-relation checkboxes and the empty-state "select
+     * all" link to come back).
+     */
+    function showNoRelations(event) {
+        if (event) {
+            event.preventDefault();
+            event.__rrpFilterInteraction = true;
+        }
+        var relations = state.currentPayload && state.currentPayload.relations
+            ? state.currentPayload.relations
+            : [];
+        var hidden = [];
+        for (var i = 0; i < relations.length; i++) {
+            if (relations[i].key) {
+                hidden.push(String(relations[i].key));
+            }
+        }
+        state.hiddenRelations = hidden;
+        saveFilter();
+        render(state.currentPayload);
+    }
+
+    /**
+     * Persists the user relation filter (per module) in the user preferences.
+     */
+    function saveFilter() {
         var context = currentContext();
         if (!context.module) {
             return;
         }
-        var body = new URLSearchParams();
-        body.set('module', context.module);
-        fetch(endpointUrl({ panel_action: 'resetOrder' }), {
+        fetch(endpointUrl({ panel_action: 'saveFilter', module: context.module }), {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
-            body: body.toString()
-        }).then(function () {
-            // Drop the cached payload and reload: the server applies the admin order
-            delete state.cache[cacheKey(context)];
-            ensureLoaded();
+            body: JSON.stringify({ hidden: state.hiddenRelations })
         }).catch(function () { });
     }
 
     // ---------------------------------------------------------------- events
-
-    function viewAll(event) {
-        event.preventDefault();
-        var key = event.currentTarget.getAttribute('data-subpanel');
-        if (!key) {
-            return;
-        }
-        var subpanel = document.getElementById('whole_subpanel_' + key);
-        if (!subpanel) {
-            return;
-        }
-        var subpanelTitle = document.getElementById('subpanel_title_' + key);
-        if (subpanelTitle) {
-            subpanelTitle.click(); // Expand the collapsed subpanel first
-        }
-        subpanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function toggleSection(event) {
-        var section = event.currentTarget.closest('.stic-rrp-section');
-        if (!section) {
-            return;
-        }
-        var collapsed = section.classList.toggle('is-collapsed');
-        event.currentTarget.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-    }
 
     function bindEvents() {
         var doc = jQuery(document);
@@ -641,22 +881,55 @@
             event.preventDefault();
             ensureLoaded();
         });
-        doc.on('click.rrp', '.stic-rrp-reset-order', function (event) {
-            event.preventDefault();
-            resetOrder();
-        });
-        doc.on('click.rrp keydown.rrp', '.stic-rrp-section-head', function (event) {
-            if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') {
+        doc.on('click.rrp', '.stic-rrp-tool-filter', toggleFilter);
+        doc.on('click.rrp', '.stic-rrp-filter-all', showAllRelations);
+        doc.on('click.rrp', '.stic-rrp-filter-none', showNoRelations);
+        doc.on('change.rrp', '.stic-rrp-filter-check', changeFilter);
+        doc.on('keydown.rrp', function (event) {
+            if (event.key !== 'Escape') {
                 return;
             }
-            event.preventDefault();
-            toggleSection(event);
-        });
-        doc.on('click.rrp', '.stic-rrp-more', viewAll);
-        doc.on('keydown.rrp', function (event) {
-            if (event.key === 'Escape' && state.open) {
+            if (state.filterOpen) {
+                closeFilter();
+            } else if (state.open) {
                 setOpen(false);
             }
+        });
+
+        // Close the filter when clicking outside its popover and the button
+        doc.on('click.rrp', function (event) {
+            hideTooltip();
+            if (event.__rrpFilterInteraction) {
+                return;
+            }
+            if (!state.filterOpen) {
+                return;
+            }
+            var target = jQuery(event.target);
+            if (target.closest('.stic-rrp-filter-popover, .stic-rrp-tool-filter').length) {
+                return;
+            }
+            closeFilter();
+        });
+
+        // Tooltip with the rest of the subpanel columns (entry icon + info "i")
+        doc.on('mouseover.rrp', '.stic-rrp-entry-icon, .stic-rrp-entry-info', function (event) {
+            if (event.relatedTarget && this.contains && this.contains(event.relatedTarget)) {
+                return;
+            }
+            showTooltip(this);
+        });
+        doc.on('mouseout.rrp', '.stic-rrp-entry-icon, .stic-rrp-entry-info', function (event) {
+            if (event.relatedTarget && this.contains && this.contains(event.relatedTarget)) {
+                return;
+            }
+            scheduleHideTooltip();
+        });
+        doc.on('focusin.rrp', '.stic-rrp-entry-icon, .stic-rrp-entry-info', function () {
+            showTooltip(this);
+        });
+        doc.on('focusout.rrp', '.stic-rrp-entry-icon, .stic-rrp-entry-info', function () {
+            scheduleHideTooltip();
         });
 
         // User preferences toolbar (panel header)
@@ -710,86 +983,8 @@
             if (state.geom) {
                 updatePinnedPosition();
             }
-        }, { passive: true });
-    }
-
-    function bindDragAndDrop() {
-        var content = contentNode();
-        if (!content || content.__rrpDnd) {
-            return;
-        }
-        content.__rrpDnd = true;
-
-        content.addEventListener('dragstart', function (event) {
-            var section = event.target.closest ? event.target.closest('.stic-rrp-section') : null;
-            if (!section) {
-                return;
-            }
-            state.dragKey = section.getAttribute('data-key');
-            section.classList.add('is-dragging');
-            event.dataTransfer.effectAllowed = 'move';
-            try {
-                event.dataTransfer.setData('text/plain', state.dragKey);
-            } catch (e) { }
-        });
-        content.addEventListener('dragend', function (event) {
-            var section = event.target.closest ? event.target.closest('.stic-rrp-section') : null;
-            if (section) {
-                section.classList.remove('is-dragging');
-            }
-            state.dragKey = null;
-        });
-        content.addEventListener('dragover', function (event) {
-            var target = event.target.closest ? event.target.closest('.stic-rrp-section') : null;
-            if (!target || !state.dragKey) {
-                return;
-            }
-            event.preventDefault();
-            event.dataTransfer.dropEffect = 'move';
-            target.classList.add('is-drop-target');
-        });
-        content.addEventListener('dragleave', function (event) {
-            var target = event.target.closest ? event.target.closest('.stic-rrp-section') : null;
-            if (target) {
-                target.classList.remove('is-drop-target');
-            }
-        });
-        content.addEventListener('drop', function (event) {
-            event.preventDefault();
-            var target = event.target.closest ? event.target.closest('.stic-rrp-section') : null;
-            var dragging = state.dragKey
-                ? content.querySelector('.stic-rrp-section.is-dragging')
-                : null;
-            if (!target || !dragging || dragging === target) {
-                return;
-            }
-            target.classList.remove('is-drop-target');
-
-            // Insert the dragged section before/after the target depending on the pointer
-            var rect = target.getBoundingClientRect();
-            var after = (event.clientY - rect.top) > rect.height / 2;
-            target.parentNode.insertBefore(dragging, after ? target.nextSibling : target);
-
-            // Empty sections must remain at the bottom
-            normalizeEmptySections();
-
-            saveCurrentOrder();
-        });
-    }
-
-    /**
-     * Moves the empty sections back to the bottom of the list.
-     */
-    function normalizeEmptySections() {
-        var content = contentNode();
-        if (!content) {
-            return;
-        }
-        var empties = content.querySelectorAll('.stic-rrp-section.is-empty');
-        var tools = content.querySelector('.stic-rrp-tools');
-        for (var i = 0; i < empties.length; i++) {
-            content.insertBefore(empties[i], tools || null);
-        }
+            hideTooltip();
+        }, { passive: true, capture: true });
     }
 
     // ----------------------------------------------------------------- init
@@ -804,7 +999,6 @@
         if (!panel || isPrintRequest()) {
             return;
         }
-        bindDragAndDrop();
         bindScroll();
         applyVisualState();
 
@@ -824,6 +1018,8 @@
                     clearNode(content);
                     content.setAttribute('data-state', 'idle');
                 }
+                closeFilter();
+                hideTooltip();
             }
         }
     }
@@ -834,7 +1030,6 @@
             return;
         }
         bindEvents();
-        bindDragAndDrop();
         bindScroll();
         applyVisualState();
 
@@ -868,7 +1063,10 @@
             // Keep the pinned layout in sync: window resize and detail view tab
             // switching. The scroll handler slides the panel along the content
             // when the user approaches the bottom subpanels.
-            jQuery(window).off('resize.rrp').on('resize.rrp', schedulePinnedLayout);
+            jQuery(window).off('resize.rrp').on('resize.rrp', function () {
+                hideTooltip();
+                schedulePinnedLayout();
+            });
             jQuery(document).off('click.rrpTabs').on('click.rrpTabs', '.nav-tabs a, .panel-heading a', schedulePinnedLayout);
         });
     }

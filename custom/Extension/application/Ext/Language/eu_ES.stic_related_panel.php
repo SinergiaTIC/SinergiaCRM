@@ -24,18 +24,19 @@
 // STIC-Custom 20261022 DEV - Related records panel (right side bar)
 // See stic-ai-handbook: output/features/related-records-panel
 
-$app_strings['LBL_RRP_TITLE'] = 'Erlazionatutako erregistroak';
+$app_strings['LBL_RRP_TITLE'] = 'Kronologia';
 $app_strings['LBL_RRP_OPEN'] = 'Erakutsi erlazionatutako erregistroak';
 $app_strings['LBL_RRP_CLOSE'] = 'Ezkutatu erlazionatutako erregistroak';
 $app_strings['LBL_RRP_LOADING'] = 'Erlazionatutako erregistroak kargatzen...';
 $app_strings['LBL_RRP_EMPTY'] = 'Erlazionatutako erregistrorik ez';
 $app_strings['LBL_RRP_ERROR'] = 'Ezin izan dira erlazionatutako erregistroak kargatu';
-$app_strings['LBL_RRP_RETRY'] = 'Berriro saiatu';
-$app_strings['LBL_RRP_VIEW_ALL'] = 'Denak ikusi ({0})';
-$app_strings['LBL_RRP_NO_RECORDS'] = 'Erregistrorik ez';
-$app_strings['LBL_RRP_RESET_ORDER'] = 'Berrezarri ordena';
-$app_strings['LBL_RRP_RESET_ORDER_TITLE'] = 'Administrazioan definitutako ordenara itzuli';
-$app_strings['LBL_RRP_DRAG_HINT'] = 'Arrastatu sailak ordenatzeko';
+$app_strings['LBL_RRP_RETRY'] = 'Saiatu berriro';
+$app_strings['LBL_RRP_FILTER'] = 'Iragazi erlazioak';
+$app_strings['LBL_RRP_FILTER_HINT'] = 'Erakutsitako erlazioak';
+$app_strings['LBL_RRP_FILTER_ALL'] = 'Hautatu guztiak';
+$app_strings['LBL_RRP_FILTER_NONE'] = 'Bat ere ez';
+$app_strings['LBL_RRP_FILTER_EMPTY'] = 'Ez da erlaziorik hautatu';
+$app_strings['LBL_RRP_INFO'] = 'Erakutsi erregistro honen gainerako eremuak';
 $app_strings['LBL_RRP_PIN_TITLE'] = 'Finkatu panela xehetasun ikuspegiaren ondoan';
 $app_strings['LBL_RRP_PIN_ON'] = 'Panela finkatuta: xehetasun ikuspegiaren ondoan mantentzen da eta ez ditu azpipaneleak estaltzen. Egin klik desaktibatzeko.';
 $app_strings['LBL_RRP_PIN_OFF'] = 'Finkatu panela xehetasun ikuspegiaren ondoan';

@@ -23,7 +23,8 @@
 
 // STIC-Custom 20261022 DEV - Related records panel
 // Entry point registry: returns the related records of a DetailView record
-// (one section per subpanel, only sections with data) as JSON.
+// (one flat chronology of every relational source, plus the relation list
+// for the user's filter) as JSON.
 // See stic-ai-handbook: output/features/related-records-panel
 
 $entry_point_registry['sticRelatedPanel'] = array(

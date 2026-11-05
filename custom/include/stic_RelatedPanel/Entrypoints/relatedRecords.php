@@ -28,17 +28,18 @@ if (!defined('sugarEntry') || !sugarEntry) {
 // STIC-Custom 20261023 DEV - Related records panel
 // Entry point handler of the right-hand "related records" panel.
 //
-//   GET  index.php?entryPoint=sticRelatedPanel&action=status&module=<Module>
-//        -> {enabled, pinned, hide_empty}  (cheap, called on every detail view load)
+//   GET  index.php?entryPoint=sticRelatedPanel&panel_action=status&module=<Module>
+//        -> {enabled, pinned, hide_empty, user_prefs, hidden_relations}
+//        (cheap, called on every detail view load)
 //
 //   GET  index.php?entryPoint=sticRelatedPanel&module=<Module>&record=<id>
-//        -> full payload with sections (lazy loaded when the panel is opened)
+//        -> full payload with a flat "timeline" and the filterable "relations"
 //
-//   POST index.php?entryPoint=sticRelatedPanel&action=saveOrder&module=<Module>
-//        body: order[]=key1&order[]=key2...  (user section order preference)
+//   POST index.php?entryPoint=sticRelatedPanel&panel_action=saveFilter&module=<Module>
+//        raw JSON body: {"hidden": ["contacts", ...]}  (user relation filter)
 //
-//   POST index.php?entryPoint=sticRelatedPanel&action=resetOrder&module=<Module>
-//        -> removes the user order preference
+//   POST index.php?entryPoint=sticRelatedPanel&panel_action=savePrefs&module=<Module>
+//        body: pinned=1&shrink=0  (user panel preferences)
 //
 // Responses: 200 JSON; 400 invalid request; 403 no access; 404 record not found.
 // See stic-ai-handbook: output/features/related-records-panel
@@ -93,6 +94,26 @@ if ($action === 'saveprefs') {
     ));
 }
 
+// ------------------------------------------------------------ user filter
+// Relations hidden by the user in the panel (JSON body: {"hidden": [...]})
+if ($action === 'savefilter') {
+    if (!is_object($current_user) || empty($current_user->id)) {
+        sticRelatedPanelRespond(403, array('error' => 'LBL_RRP_NO_ACCESS'));
+    }
+    $hidden = array();
+    $rawInput = (string) file_get_contents('php://input');
+    $decodedBody = $rawInput !== '' ? json_decode($rawInput, true) : null;
+    if (is_array($decodedBody) && isset($decodedBody['hidden']) && is_array($decodedBody['hidden'])) {
+        $hidden = $decodedBody['hidden'];
+    } elseif (isset($_POST['hidden']) && is_array($_POST['hidden'])) {
+        $hidden = $_POST['hidden'];
+    }
+    sticRelatedPanelRespond(200, array(
+        'saved' => SticRelatedPanelSettings::saveUserFilter($module, $hidden),
+        'hidden_relations' => SticRelatedPanelSettings::getUserFilter($module),
+    ));
+}
+
 // -------------------------------------------------------------------- status
 if ($action === 'status') {
     sticRelatedPanelRespond(200, array(
@@ -100,7 +121,7 @@ if ($action === 'status') {
         'enabled' => SticRelatedPanelSettings::isEnabledForModule($module),
         'pinned' => SticRelatedPanelSettings::isPinned(),
         'hide_empty' => SticRelatedPanelSettings::hideEmpty(),
-        'user_order' => SticRelatedPanelSettings::getUserOrder($module),
+        'hidden_relations' => SticRelatedPanelSettings::getUserFilter($module),
         'user_prefs' => SticRelatedPanelSettings::getUserPrefs(),
     ));
 }

@@ -24,18 +24,19 @@
 // STIC-Custom 20261022 DEV - Related records panel (right side bar)
 // See stic-ai-handbook: output/features/related-records-panel
 
-$app_strings['LBL_RRP_TITLE'] = 'Related records';
+$app_strings['LBL_RRP_TITLE'] = 'Chronology';
 $app_strings['LBL_RRP_OPEN'] = 'Show related records';
 $app_strings['LBL_RRP_CLOSE'] = 'Hide related records';
 $app_strings['LBL_RRP_LOADING'] = 'Loading related records...';
 $app_strings['LBL_RRP_EMPTY'] = 'No related records';
 $app_strings['LBL_RRP_ERROR'] = 'Related records could not be loaded';
 $app_strings['LBL_RRP_RETRY'] = 'Retry';
-$app_strings['LBL_RRP_VIEW_ALL'] = 'View all ({0})';
-$app_strings['LBL_RRP_NO_RECORDS'] = 'No records';
-$app_strings['LBL_RRP_RESET_ORDER'] = 'Reset order';
-$app_strings['LBL_RRP_RESET_ORDER_TITLE'] = 'Back to the order defined in the administration';
-$app_strings['LBL_RRP_DRAG_HINT'] = 'Drag the sections to reorder them';
+$app_strings['LBL_RRP_FILTER'] = 'Filter relations';
+$app_strings['LBL_RRP_FILTER_HINT'] = 'Shown relations';
+$app_strings['LBL_RRP_FILTER_ALL'] = 'Select all';
+$app_strings['LBL_RRP_FILTER_NONE'] = 'Select none';
+$app_strings['LBL_RRP_FILTER_EMPTY'] = 'No relation selected';
+$app_strings['LBL_RRP_INFO'] = 'Show the other fields of this record';
 $app_strings['LBL_RRP_PIN_TITLE'] = 'Pin the panel beside the detail view';
 $app_strings['LBL_RRP_PIN_ON'] = 'Panel pinned: it stays beside the detail view and never covers the subpanels. Click to disable.';
 $app_strings['LBL_RRP_PIN_OFF'] = 'Pin the panel beside the detail view';

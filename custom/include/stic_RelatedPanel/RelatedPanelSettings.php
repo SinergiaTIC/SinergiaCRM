@@ -33,26 +33,24 @@ if (!defined('sugarEntry') || !sugarEntry) {
 // {
 //   "enabled": true,            // global on/off switch
 //   "pinned": false,            // panel pinned to the right, beside the detail panels only
-//   "hide_empty": false,        // hide subpanels without records
-//   "max_per_section": 10,      // records returned per section (hard cap 30)
+//   "max_per_section": 10,      // records fetched per relation (hard cap 30)
 //   "modules": {
 //     "Contacts": {
 //       "enabled": true,
 //       "subpanels": {
 //         "opportunities": {
 //           "enabled": true,
-//           "title_field": "",           // "" = auto (first record link)
+//           "title_field": "",           // "" = auto (name / first record link)
 //           "subtitle_field": "",        // "" = auto (assigned user / status)
-//           "right_field": "",           // "" = auto (first date field)
-//           "sort_field": "right",       // "title" | "subtitle" | "right"
-//           "sort_dir": "desc",          // "asc" | "desc"
+//           "date_field": "",            // "" = auto (date_modified)
 //           "order": 3                   // admin order (position in the tree)
 //         }
 //       }
 //     }
 //   }
 // }
-// Per-user section order is stored as a user preference ("rrp_order_<Module>").
+// The records of every relation are merged into ONE chronology (no grouping by
+// subpanel). Per-user relation filter is stored as "rrp_hidden_<Module>".
 // See stic-ai-handbook: output/features/related-records-panel
 
 class SticRelatedPanelSettings
@@ -64,6 +62,7 @@ class SticRelatedPanelSettings
 
     const DEFAULT_MAX = 10;
     const HARD_MAX = 30;
+    const DEFAULT_DATE_FIELD = 'date_modified';
     const SORT_FIELDS = array('title', 'subtitle', 'right');
     const SORT_DIRS = array('asc', 'desc');
 
@@ -206,7 +205,7 @@ class SticRelatedPanelSettings
      *
      * @param string $module
      * @param string $panelKey
-     * @return array{enabled:bool,title_field:string,subtitle_field:string,right_field:string,sort_field:string,sort_dir:string,order:int}
+     * @return array{enabled:bool,title_field:string,subtitle_field:string,date_field:string,order:int}
      */
     public static function getSubpanelConfig($module, $panelKey)
     {
@@ -215,33 +214,44 @@ class SticRelatedPanelSettings
             'enabled' => true,
             'title_field' => '',
             'subtitle_field' => '',
-            'right_field' => '',
-            'sort_field' => 'right',
-            'sort_dir' => 'desc',
+            'date_field' => '',
             'order' => null,
         );
         if (isset($config['modules'][$module]['subpanels'][$panelKey])
             && is_array($config['modules'][$module]['subpanels'][$panelKey])) {
             $raw = $config['modules'][$module]['subpanels'][$panelKey];
-            foreach (array('enabled', 'title_field', 'subtitle_field', 'right_field', 'sort_field', 'sort_dir', 'order') as $key) {
+            foreach (array('enabled', 'title_field', 'subtitle_field', 'date_field', 'order') as $key) {
                 if (array_key_exists($key, $raw)) {
                     $subpanel[$key] = $raw[$key];
                 }
             }
+            // Backwards compatibility with the first version of the panel, where
+            // the date field was called "right_field".
+            if (empty($subpanel['date_field']) && !empty($raw['right_field'])) {
+                $subpanel['date_field'] = $raw['right_field'];
+            }
         }
         // Sanitize
-        if (!in_array($subpanel['sort_field'], self::SORT_FIELDS, true)) {
-            $subpanel['sort_field'] = 'right';
-        }
-        if (!in_array($subpanel['sort_dir'], self::SORT_DIRS, true)) {
-            $subpanel['sort_dir'] = 'desc';
-        }
-        foreach (array('title_field', 'subtitle_field', 'right_field') as $fieldKey) {
+        foreach (array('title_field', 'subtitle_field', 'date_field') as $fieldKey) {
             if (!preg_match('/^[a-z0-9_]*$/i', (string) $subpanel[$fieldKey])) {
                 $subpanel[$fieldKey] = '';
             }
         }
         return $subpanel;
+    }
+
+    /**
+     * Field used to place a record in the chronology: the configured one or the
+     * default (date_modified).
+     *
+     * @param array $subConfig
+     * @return string
+     */
+    public static function getSubpanelDateField(array $subConfig)
+    {
+        return !empty($subConfig['date_field'])
+            ? (string) $subConfig['date_field']
+            : self::DEFAULT_DATE_FIELD;
     }
 
     /**
@@ -292,8 +302,7 @@ class SticRelatedPanelSettings
             'hide_empty' => empty($data['hide_empty']) ? false : true,
             'max_per_section' => self::DEFAULT_MAX,
             'modules' => array(),
-        );
-        if (isset($data['max_per_section'])) {
+        );        if (isset($data['max_per_section'])) {
             $max = (int) $data['max_per_section'];
             if ($max > 0) {
                 $config['max_per_section'] = min($max, self::HARD_MAX);
@@ -322,11 +331,7 @@ class SticRelatedPanelSettings
                     'enabled' => empty($panelData['enabled']) ? false : true,
                     'title_field' => preg_replace('/[^a-z0-9_]/i', '', (string) (isset($panelData['title_field']) ? $panelData['title_field'] : '')),
                     'subtitle_field' => preg_replace('/[^a-z0-9_]/i', '', (string) (isset($panelData['subtitle_field']) ? $panelData['subtitle_field'] : '')),
-                    'right_field' => preg_replace('/[^a-z0-9_]/i', '', (string) (isset($panelData['right_field']) ? $panelData['right_field'] : '')),
-                    'sort_field' => (isset($panelData['sort_field']) && in_array($panelData['sort_field'], self::SORT_FIELDS, true))
-                        ? $panelData['sort_field'] : 'right',
-                    'sort_dir' => (isset($panelData['sort_dir']) && in_array($panelData['sort_dir'], self::SORT_DIRS, true))
-                        ? $panelData['sort_dir'] : 'desc',
+                    'date_field' => preg_replace('/[^a-z0-9_]/i', '', (string) (isset($panelData['date_field']) ? $panelData['date_field'] : '')),
                     'order' => $order++,
                 );
                 $config['modules'][$module]['subpanels'][$panelKey] = $sub;
@@ -413,7 +418,10 @@ class SticRelatedPanelSettings
             $prefs['shrink'] = (bool) $shrink;
         }
         $current_user->setPreference('rrp_prefs', $prefs, 0, 'global');
-        return (bool) $current_user->savePreferencesToDB();
+        // User::savePreferencesToDB() returns void (the preference object persists
+        // the values), so success must be reported explicitly.
+        $current_user->savePreferencesToDB();
+        return true;
     }
 
     /**
@@ -437,7 +445,8 @@ class SticRelatedPanelSettings
             }
         }
         $current_user->setPreference('rrp_order_' . $module, $clean, 0, 'global');
-        return (bool) $current_user->savePreferencesToDB();
+        $current_user->savePreferencesToDB();
+        return true;
     }
 
     /**
@@ -453,7 +462,49 @@ class SticRelatedPanelSettings
             return false;
         }
         $current_user->setPreference('rrp_order_' . $module, null, 0, 'global');
-        return (bool) $current_user->savePreferencesToDB();
+        $current_user->savePreferencesToDB();
+        return true;
+    }
+
+    /**
+     * User filter: relation (subpanel) keys hidden by the user for a module.
+     *
+     * @param string $module
+     * @return array
+     */
+    public static function getUserFilter($module)
+    {
+        global $current_user;
+        if (!is_object($current_user) || empty($current_user->id)) {
+            return array();
+        }
+        $hidden = $current_user->getPreference('rrp_hidden_' . $module);
+        return is_array($hidden) ? array_values($hidden) : array();
+    }
+
+    /**
+     * Saves the user relation filter for a module (keys that must stay hidden).
+     *
+     * @param string $module
+     * @param array $keys
+     * @return bool
+     */
+    public static function saveUserFilter($module, array $keys)
+    {
+        global $current_user;
+        if (!is_object($current_user) || empty($current_user->id)) {
+            return false;
+        }
+        $clean = array();
+        foreach ($keys as $key) {
+            $key = preg_replace('/[^A-Za-z0-9_\-]/', '', (string) $key);
+            if ($key !== '' && !in_array($key, $clean, true)) {
+                $clean[] = $key;
+            }
+        }
+        $current_user->setPreference('rrp_hidden_' . $module, $clean, 0, 'global');
+        $current_user->savePreferencesToDB();
+        return true;
     }
 
     // --------------------------------------------------------------- helpers

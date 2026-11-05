@@ -24,18 +24,19 @@
 // STIC-Custom 20261022 DEV - Related records panel (right side bar)
 // See stic-ai-handbook: output/features/related-records-panel
 
-$app_strings['LBL_RRP_TITLE'] = 'Registres relacionats';
+$app_strings['LBL_RRP_TITLE'] = 'Cronologia';
 $app_strings['LBL_RRP_OPEN'] = 'Mostrar registres relacionats';
-$app_strings['LBL_RRP_CLOSE'] = 'Amagar registres relacionats';
+$app_strings['LBL_RRP_CLOSE'] = 'Ocultar registres relacionats';
 $app_strings['LBL_RRP_LOADING'] = 'Carregant registres relacionats...';
 $app_strings['LBL_RRP_EMPTY'] = 'Sense registres relacionats';
 $app_strings['LBL_RRP_ERROR'] = 'No s\'han pogut carregar els registres relacionats';
-$app_strings['LBL_RRP_RETRY'] = 'Reintentar';
-$app_strings['LBL_RRP_VIEW_ALL'] = 'Veure-ho tot ({0})';
-$app_strings['LBL_RRP_NO_RECORDS'] = 'Sense registres';
-$app_strings['LBL_RRP_RESET_ORDER'] = 'Restablir ordre';
-$app_strings['LBL_RRP_RESET_ORDER_TITLE'] = 'Tornar a l\'ordre definit a l\'administració';
-$app_strings['LBL_RRP_DRAG_HINT'] = 'Arrossega les seccions per ordenar-les';
+$app_strings['LBL_RRP_RETRY'] = 'Tornar a provar';
+$app_strings['LBL_RRP_FILTER'] = 'Filtrar relacions';
+$app_strings['LBL_RRP_FILTER_HINT'] = 'Relacions mostrades';
+$app_strings['LBL_RRP_FILTER_ALL'] = 'Seleccionar totes';
+$app_strings['LBL_RRP_FILTER_NONE'] = 'Cap';
+$app_strings['LBL_RRP_FILTER_EMPTY'] = 'Cap relació seleccionada';
+$app_strings['LBL_RRP_INFO'] = 'Mostrar la resta de camps d\'aquest registre';
 $app_strings['LBL_RRP_PIN_TITLE'] = 'Fixar el panell al costat de la vista de detall';
 $app_strings['LBL_RRP_PIN_ON'] = 'Panell fixat: es manté al costat de la vista de detall i no tapa els subpanells. Clic per desactivar.';
 $app_strings['LBL_RRP_PIN_OFF'] = 'Fixar el panell al costat de la vista de detall';

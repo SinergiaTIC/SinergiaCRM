@@ -24,18 +24,19 @@
 // STIC-Custom 20261022 DEV - Related records panel (right side bar)
 // See stic-ai-handbook: output/features/related-records-panel
 
-$app_strings['LBL_RRP_TITLE'] = 'Registros relacionados';
+$app_strings['LBL_RRP_TITLE'] = 'Cronología';
 $app_strings['LBL_RRP_OPEN'] = 'Mostrar registros relacionados';
 $app_strings['LBL_RRP_CLOSE'] = 'Ocultar registros relacionados';
 $app_strings['LBL_RRP_LOADING'] = 'Cargando registros relacionados...';
 $app_strings['LBL_RRP_EMPTY'] = 'Sin registros relacionados';
 $app_strings['LBL_RRP_ERROR'] = 'No se han podido cargar los registros relacionados';
 $app_strings['LBL_RRP_RETRY'] = 'Reintentar';
-$app_strings['LBL_RRP_VIEW_ALL'] = 'Ver todos ({0})';
-$app_strings['LBL_RRP_NO_RECORDS'] = 'Sin registros';
-$app_strings['LBL_RRP_RESET_ORDER'] = 'Restablecer orden';
-$app_strings['LBL_RRP_RESET_ORDER_TITLE'] = 'Volver al orden definido en la administración';
-$app_strings['LBL_RRP_DRAG_HINT'] = 'Arrastra las secciones para ordenarlas';
+$app_strings['LBL_RRP_FILTER'] = 'Filtrar relaciones';
+$app_strings['LBL_RRP_FILTER_HINT'] = 'Relaciones mostradas';
+$app_strings['LBL_RRP_FILTER_ALL'] = 'Seleccionar todas';
+$app_strings['LBL_RRP_FILTER_NONE'] = 'Ninguna';
+$app_strings['LBL_RRP_FILTER_EMPTY'] = 'Ninguna relación seleccionada';
+$app_strings['LBL_RRP_INFO'] = 'Mostrar el resto de campos de este registro';
 $app_strings['LBL_RRP_PIN_TITLE'] = 'Fijar el panel junto a la vista de detalle';
 $app_strings['LBL_RRP_PIN_ON'] = 'Panel fijado: se mantiene junto a la vista de detalle y no tapa los subpaneles. Clic para desactivar.';
 $app_strings['LBL_RRP_PIN_OFF'] = 'Fijar el panel junto a la vista de detalle';

@@ -9,7 +9,7 @@
 // STIC-Custom 20261023 DEV - Related records panel (right side bar)
 //
 // Styles for the collapsible right-hand panel that shows the related records of a
-// DetailView record (sections per subpanel rendered as a chronology), aligned
+// DetailView record as ONE flat chronology (no grouping by subpanels), aligned
 // with the SuiteP design language (panels, badges, list-view rows).
 // Imported from SticCustom.scss so BOTH subthemes (Stic and SticCustom) get it,
 // and so the configurable base color ($stic-base / GENERAL_CUSTOM_THEME_COLOR)
@@ -55,6 +55,7 @@ $rrp-z-index: 1000;
 }
 
 .stic-rrp-body {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -109,6 +110,9 @@ $rrp-z-index: 1000;
     display: block;
     line-height: 28px;
     font-size: 14px;
+    // SuiteCRM paints every .suitepicon whitesmoke (navbar icons); do not
+    // let that global rule hide the icon on the light panel header.
+    color: inherit;
   }
 
   &:hover,
@@ -127,6 +131,17 @@ $rrp-z-index: 1000;
   &:hover {
     color: $stic-base;
   }
+}
+
+// Filter lives in the header (next to the padlock) so the timeline gains the
+// vertical space that the old in-content filter bar used to take.
+.stic-rrp-tool-filter {
+  position: relative;
+
+  &[hidden] {
+    display: none;
+  }
+
 }
 
 // CSS-drawn padlock (suitepicon has no lock glyph)
@@ -172,6 +187,28 @@ $rrp-z-index: 1000;
   padding: 12px 12px 4px;
 }
 
+// Filter dropdown: absolutely positioned under the header so it overlays the
+// chronology instead of pushing it down (extra room for timeline records).
+.stic-rrp-filter-popover {
+  position: absolute;
+  top: 42px;
+  left: 8px;
+  right: 8px;
+  z-index: 6;
+  max-height: calc(100% - 56px);
+  overflow-y: auto;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+
+  &[hidden] {
+    display: none;
+  }
+
+  .stic-rrp-filter {
+    margin-bottom: 0;
+  }
+}
+
 // --------------------------------------------------------------------------
 // Toggle button (outside the sliding panel, like the left sidebar toggle)
 // --------------------------------------------------------------------------
@@ -195,7 +232,11 @@ $rrp-z-index: 1000;
     display: block;
     line-height: 30px;
     font-size: 16px;
-    transition: transform 0.2s ease;
+    color: inherit;
+    // The arrow must point LEFT when the panel is collapsed: it opens a
+    // drawer that comes in from the right edge, and it is hidden when the
+    // panel is open.
+    transform: rotate(180deg);
   }
 
   &:hover {
@@ -212,8 +253,11 @@ $rrp-z-index: 1000;
   }
 }
 
-body.stic-rrp-open #stic-rrp-toggle .suitepicon {
-  transform: rotate(180deg);
+// When the panel is open the toggle disappears altogether: the close button
+// in the panel header plays that role (the surrounding body always offers a
+// way back: reopening uses the same toggle).
+body.stic-rrp-open #stic-rrp-toggle {
+  display: none;
 }
 
 // --------------------------------------------------------------------------
@@ -248,126 +292,154 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
 }
 
 // --------------------------------------------------------------------------
-// Sections (SuiteP panel / panel-heading look)
+// User relation filter
 // --------------------------------------------------------------------------
 
-.stic-rrp-section {
-  margin-bottom: 10px;
-  background: $rrp-bg;
-  border: 1px solid $rrp-border;
-  border-radius: 6px;
-  overflow: hidden;
-
-  &.is-empty {
-    border-style: dashed;
-    border-color: $rrp-border-light;
-
-    .stic-rrp-section-head .stic-rrp-section-title {
-      color: $rrp-meta;
-      font-weight: 400;
-    }
-  }
-
-  &.is-dragging {
-    opacity: 0.45;
-  }
-
-  &.is-drop-target {
-    outline: 2px dashed $stic-base;
-    outline-offset: -2px;
-  }
+.stic-rrp-filterbar {
+  margin-bottom: 8px;
 }
 
-.stic-rrp-section-head {
+.stic-rrp-filter-toggle {
   display: flex;
   align-items: center;
   gap: 6px;
   width: 100%;
-  padding: 7px 10px;
+  padding: 6px 10px;
+  border: 1px solid $rrp-border;
+  border-radius: 6px;
   background: $stic-main-bg;
-  border: none;
-  border-bottom: 1px solid $rrp-border-light;
-  cursor: pointer;
-  text-align: left;
-  font-size: 13px;
   color: $stic-text;
+  cursor: pointer;
+  font-size: 12px;
+  text-align: left;
 
-  &:hover {
-    background: rgba($stic-base, 0.08);
-  }
-
-  .stic-rrp-section-handle {
-    color: rgba($stic-text, 0.35);
-    font-size: 12px;
-    cursor: grab;
-  }
-
-  .stic-rrp-icon {
+  .suitepicon {
     color: $stic-base;
-    font-size: 15px;
+    font-size: 14px;
   }
 
-  .stic-rrp-section-title {
+  .stic-rrp-filter-label {
     flex: 1 1 auto;
     font-weight: 600;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-  .stic-rrp-section-count {
+  .stic-rrp-filter-badge {
     background: $stic-base;
     color: bw($stic-base);
     border-radius: 10px;
     padding: 1px 8px;
     font-size: 11px;
     font-weight: 600;
+  }
 
-    &.stic-rrp-count-empty {
-      background: rgba($stic-text, 0.35);
+  &:hover {
+    background: rgba($stic-base, 0.08);
+  }
+}
+
+.stic-rrp-filter {
+  margin-bottom: 10px;
+  background: $rrp-bg;
+  border: 1px solid $rrp-border;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.stic-rrp-filter-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  background: $stic-main-bg;
+  border-bottom: 1px solid $rrp-border-light;
+
+  .stic-rrp-filter-title {
+    font-size: 11px;
+    color: $rrp-meta;
+  }
+
+  .stic-rrp-filter-all,
+  .stic-rrp-filter-none {
+    font-size: 11px;
+    color: $stic-base;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 
-  .stic-rrp-section-caret {
+  .stic-rrp-filter-none {
     color: $rrp-meta;
-    font-size: 12px;
-    transition: transform 0.15s ease;
+
+    &:hover {
+      color: $stic-base;
+    }
   }
 }
 
-.stic-rrp-section.is-collapsed {
-  .stic-rrp-entries,
-  .stic-rrp-more {
-    display: none;
-  }
-
-  .stic-rrp-section-caret {
-    transform: rotate(-90deg);
-  }
-}
-
-.stic-rrp-more {
-  display: block;
-  padding: 6px 10px;
-  border-top: 1px dashed $rrp-border-light;
+.stic-rrp-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-bottom: 1px solid $rrp-border-light;
+  cursor: pointer;
   font-size: 12px;
-  color: $stic-base;
-  text-decoration: none;
+
+  &:last-child {
+    border-bottom: none;
+  }
 
   &:hover {
-    text-decoration: underline;
+    background: rgba($stic-base, 0.04);
+  }
+
+  input {
+    margin: 0;
+  }
+
+  .stic-rrp-icon {
+    width: 16px;
+    text-align: center;
+    font-size: 13px;
+    color: $stic-complement;
+  }
+
+  .stic-rrp-filter-name {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .stic-rrp-filter-count {
+    padding: 0 7px;
+    border-radius: 9px;
+    background: rgba($stic-text, 0.12);
+    color: $stic-text;
+    font-size: 10px;
+    font-weight: 600;
   }
 }
 
+.stic-rrp-filter-all-empty {
+  display: block;
+  margin: 6px auto 0;
+  text-align: center;
+}
+
 // --------------------------------------------------------------------------
-// Entries (SuiteP list-view rows + timeline marks)
+// Flat chronology (one single line: no grouping by subpanel)
 // --------------------------------------------------------------------------
 
-.stic-rrp-entries {
+.stic-rrp-timeline {
   position: relative;
   list-style: none;
   margin: 0;
-  padding: 4px 8px 8px 28px;
+  padding: 4px 2px 8px 28px;
 
   // Vertical timeline line
   &:before {
@@ -423,6 +495,16 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
   border-radius: 50%;
 }
 
+.stic-rrp-entry .stic-rrp-entry-icon {
+  cursor: help;
+
+  &:focus {
+    outline: 2px solid $stic-complement;
+    outline-offset: 1px;
+  }
+}
+
+
 .stic-rrp-entry-main {
   flex: 1 1 auto;
   min-width: 0;
@@ -454,6 +536,18 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
   white-space: nowrap;
 }
 
+.stic-rrp-entry-relation {
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: rgba($stic-base, 0.75);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .stic-rrp-entry-date {
   flex: 0 0 auto;
   font-size: 11px;
@@ -462,47 +556,57 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
   padding-top: 3px;
 }
 
-.stic-rrp-entry-empty {
-  justify-content: center;
-  color: $rrp-meta;
+// --------------------------------------------------------------------------
+// Entry tooltip (rest of the subpanel columns)
+// --------------------------------------------------------------------------
+
+.stic-rrp-tooltip {
+  position: fixed;
+  z-index: $rrp-z-index + 100;
+  max-width: 320px;
+  padding: 10px 12px;
+  background: #fff;
+  color: $stic-text;
+  border: 1px solid $rrp-border;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   font-size: 12px;
-  font-style: italic;
-  padding: 10px 0;
+  pointer-events: none;
 
-  &:before {
-    display: none; // no timeline node for the "no records" placeholder
+  &[hidden] {
+    display: none;
   }
-}
 
-// --------------------------------------------------------------------------
-// User order tools
-// --------------------------------------------------------------------------
+  .stic-rrp-tooltip-title {
+    font-weight: 600;
+    margin-bottom: 2px;
+    overflow-wrap: anywhere;
+  }
 
-.stic-rrp-tools {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-top: 2px;
-  padding: 8px 4px 6px;
-  border-top: 1px dashed $rrp-border-light;
-
-  .stic-rrp-drag-hint {
+  .stic-rrp-tooltip-relation {
+    margin-bottom: 6px;
     font-size: 10px;
-    color: rgba($stic-text, 0.4);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    color: rgba($stic-base, 0.75);
   }
 
-  .stic-rrp-reset-order {
-    font-size: 11px;
-    color: $stic-base;
-    text-decoration: none;
-    white-space: nowrap;
+  .stic-rrp-tooltip-details {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2px 8px;
+    margin: 0;
 
-    &:hover {
-      text-decoration: underline;
+    dt {
+      color: $rrp-meta;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
     }
   }
 }
@@ -512,26 +616,25 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
 // --------------------------------------------------------------------------
 
 @media (min-width: 1200px) {
-  body.stic-rrp-open.stic-rrp-pinned {
-    #stic-rrp-toggle {
-      right: $rrp-width;
-    }
-
-    // The fields area moves left ONLY when the user wants the detail view
-    // narrower ("shrink" preference, on by default); the bottom subpanels
-    // always keep the full width
-    &.stic-rrp-shrink .detail-view {
-      margin-right: $rrp-width + $rrp-gap;
-      transition: margin-right 0.2s ease;
-    }
-  }
 
   #stic-rrp-toggle {
     transition: right 0.2s ease, background-color 0.15s ease;
   }
 
-  body.stic-rrp-open:not(.stic-rrp-pinned) #bootstrap-container {
-    margin-right: $rrp-width;
+  // Shrinking must narrow the CONTENT, not the bootstrap grid column (its
+  // width is fixed by the col-md-* classes, so a margin there just overflows
+  // and the detail view never gets visually smaller). #pagecontent holds the
+  // detail view AND the subpanels and has auto width.
+  // Pinned mode: only the fields (detail view) narrow, subpanels stay full
+  // width (the panel is beside the fields only).
+  body.stic-rrp-open.stic-rrp-pinned.stic-rrp-shrink .detail-view {
+    margin-right: 300px;
+    transition: margin-right 0.2s ease;
+  }
+
+  // Overlay mode: the whole content (detail view + subpanels) shifts left.
+  body.stic-rrp-open.stic-rrp-shrink:not(.stic-rrp-pinned) #pagecontent {
+    margin-right: 300px;
     transition: margin-right 0.2s ease;
   }
 }
@@ -542,6 +645,14 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
 
 .stic-rrp-admin {
   max-width: 960px;
+
+  // SuiteCRM paints every .suitepicon whitesmoke (navbar icons) with a low
+  // specificity rule; on the white configuration screen that makes the row
+  // actions (pencil, drag handle, carets) invisible. Inherit the contextual
+  // colour instead; the more specific rules below still win.
+  .suitepicon {
+    color: inherit;
+  }
 
   .stic-rrp-admin-desc {
     color: $rrp-meta;
@@ -594,6 +705,10 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
 
     &:hover {
       background: rgba($stic-base, 0.08);
+    }
+
+    .suitepicon {
+      color: $stic-base;
     }
 
     .suitepicon-module {
@@ -688,7 +803,7 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
     border: none;
     border-radius: 4px;
     background: transparent;
-    color: $rrp-meta;
+    color: $stic-text;
     cursor: pointer;
     padding: 0;
 
@@ -743,6 +858,14 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
   }
 }
 
+.stic-rrp-admin-actions-top {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  background: $stic-main-bg;
+  border: 1px solid $rrp-border;
+  border-radius: 6px;
+}
+
 // --------------------------------------------------------------------------
 // Accessibility / print
 // --------------------------------------------------------------------------
@@ -751,8 +874,8 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
   #stic-related-panel,
   #stic-rrp-toggle,
   #stic-rrp-toggle .suitepicon,
-  body.stic-rrp-open.stic-rrp-pinned .detail-view,
-  body.stic-rrp-open:not(.stic-rrp-pinned) #bootstrap-container {
+  body.stic-rrp-open.stic-rrp-pinned.stic-rrp-shrink .detail-view,
+  body.stic-rrp-open.stic-rrp-shrink:not(.stic-rrp-pinned) #pagecontent {
     transition: none;
   }
 }
@@ -768,7 +891,7 @@ body.stic-rrp-open #stic-rrp-toggle .suitepicon {
     margin-right: 0;
   }
 
-  body.stic-rrp-open:not(.stic-rrp-pinned) #bootstrap-container {
+  body.stic-rrp-open.stic-rrp-shrink:not(.stic-rrp-pinned) #pagecontent {
     margin-right: 0;
   }
 }

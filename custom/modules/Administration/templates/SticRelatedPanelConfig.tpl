@@ -21,6 +21,13 @@
     {* The form is never submitted as-is: SticRelatedPanelAdmin.js builds a single
        JSON from the DOM and posts it (the full form would exceed PHP max_input_vars). *}
 
+    {* ------------------------------------------- actions (top, always visible) *}
+    <div class="stic-rrp-admin-actions stic-rrp-admin-actions-top">
+        <input type="button" class="button primary js-rrp-save" value="{$MOD.LBL_RRP_SAVE}" data-error-text="{$MOD.LBL_RRP_SAVE_ERROR}">
+        <span class="stic-rrp-admin-saving js-rrp-saving" style="display:none;">{$MOD.LBL_RRP_SAVING}</span>
+        <input type="button" class="button js-rrp-cancel" data-cancel-url="index.php?module=Administration&amp;action=index" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
+    </div>
+
     {* ---------------------------------------------------- global options *}
     <div class="panel panel-default">
         <div class="panel-heading"><h3 class="panel-title">{$MOD.LBL_RRP_ADMIN_GLOBAL}</h3></div>
@@ -39,16 +46,10 @@
                 </label>
                 <div class="stic-rrp-admin-desc">{$MOD.LBL_RRP_PINNED_DESC}</div>
             </div>
-            <div class="stic-rrp-admin-option">
-                <label class="stic-rrp-admin-check">
-                    <input type="checkbox" name="hide_empty" value="1" {if $CONFIG.hide_empty}checked{/if}>
-                    <strong>{$MOD.LBL_RRP_HIDE_EMPTY}</strong>
-                </label>
-                <div class="stic-rrp-admin-desc">{$MOD.LBL_RRP_HIDE_EMPTY_DESC}</div>
-            </div>
             <div class="stic-rrp-admin-option stic-rrp-admin-inline">
                 <label for="rrp-max"><strong>{$MOD.LBL_RRP_MAX_PER_SECTION}</strong></label>
                 <input type="number" id="rrp-max" name="max_per_section" min="1" max="30" value="{$CONFIG.max_per_section}" class="input-sm">
+                <span class="stic-rrp-admin-desc">{$MOD.LBL_RRP_MAX_PER_SECTION_DESC}</span>
             </div>
         </div>
     </div>
@@ -85,51 +86,41 @@
                         <span class="suitepicon {$S.icon}"></span>
                         <span class="stic-rrp-admin-row-title">{$S.title}</span>
                         <span class="stic-rrp-admin-row-key">{$S.key}</span>
-                        <button type="button" class="stic-rrp-admin-expand">
+                        <button type="button" class="stic-rrp-admin-expand" title="{$MOD.LBL_RRP_CONFIGURE_RELATION}" aria-label="{$MOD.LBL_RRP_CONFIGURE_RELATION}" aria-expanded="false">
                             <span class="suitepicon suitepicon-action-edit"></span>
                         </button>
 
                         <div class="stic-rrp-admin-config">
                             <div class="stic-rrp-admin-field">
+                                <label>{$MOD.LBL_RRP_DATE_FIELD}</label>
+                                <select name="modules[{$M.module}][subpanels][{$S.key}][date_field]">
+                                    <option value="" {if !$S.config.date_field}selected{/if}>{$S.defaults.date_label} ({$MOD.LBL_RRP_DEFAULT_SUFFIX})</option>
+                                    {foreach from=$S.date_fields item=F}
+                                        {if $F.name != $S.defaults.date_field}
+                                            <option value="{$F.name}" {if $S.config.date_field == $F.name}selected{/if}>{$F.label}</option>
+                                        {/if}
+                                    {/foreach}
+                                </select>
+                            </div>
+                            <div class="stic-rrp-admin-field">
                                 <label>{$MOD.LBL_RRP_TITLE_FIELD}</label>
                                 <select name="modules[{$M.module}][subpanels][{$S.key}][title_field]">
-                                    <option value="" {if !$S.config.title_field}selected{/if}>{$MOD.LBL_RRP_AUTO}</option>
+                                    <option value="" {if !$S.config.title_field}selected{/if}>{$S.defaults.title_label} ({$MOD.LBL_RRP_DEFAULT_SUFFIX})</option>
                                     {foreach from=$S.fields item=F}
-                                        <option value="{$F.name}" {if $S.config.title_field == $F.name}selected{/if}>{$F.label}</option>
+                                        {if $F.name != $S.defaults.title_field}
+                                            <option value="{$F.name}" {if $S.config.title_field == $F.name}selected{/if}>{$F.label}</option>
+                                        {/if}
                                     {/foreach}
                                 </select>
                             </div>
                             <div class="stic-rrp-admin-field">
                                 <label>{$MOD.LBL_RRP_SUBTITLE_FIELD}</label>
                                 <select name="modules[{$M.module}][subpanels][{$S.key}][subtitle_field]">
-                                    <option value="" {if !$S.config.subtitle_field}selected{/if}>{$MOD.LBL_RRP_AUTO}</option>
+                                    <option value="" {if !$S.config.subtitle_field}selected{/if}>{$S.defaults.subtitle_label} ({$MOD.LBL_RRP_DEFAULT_SUFFIX})</option>
                                     {foreach from=$S.fields item=F}
-                                        <option value="{$F.name}" {if $S.config.subtitle_field == $F.name}selected{/if}>{$F.label}</option>
-                                    {/foreach}
-                                </select>
-                            </div>
-                            <div class="stic-rrp-admin-field">
-                                <label>{$MOD.LBL_RRP_RIGHT_FIELD}</label>
-                                <select name="modules[{$M.module}][subpanels][{$S.key}][right_field]">
-                                    <option value="" {if !$S.config.right_field}selected{/if}>{$MOD.LBL_RRP_AUTO_DATE}</option>
-                                    {foreach from=$S.fields item=F}
-                                        <option value="{$F.name}" {if $S.config.right_field == $F.name}selected{/if}>{$F.label}</option>
-                                    {/foreach}
-                                </select>
-                            </div>
-                            <div class="stic-rrp-admin-field">
-                                <label>{$MOD.LBL_RRP_SORT_BY}</label>
-                                <select name="modules[{$M.module}][subpanels][{$S.key}][sort_field]">
-                                    {foreach from=$SORT_OPTIONS item=O}
-                                        <option value="{$O.value}" {if $S.config.sort_field == $O.value}selected{/if}>{$O.label}</option>
-                                    {/foreach}
-                                </select>
-                            </div>
-                            <div class="stic-rrp-admin-field">
-                                <label>{$MOD.LBL_RRP_SORT_DIR}</label>
-                                <select name="modules[{$M.module}][subpanels][{$S.key}][sort_dir]">
-                                    {foreach from=$DIR_OPTIONS item=O}
-                                        <option value="{$O.value}" {if $S.config.sort_dir == $O.value}selected{/if}>{$O.label}</option>
+                                        {if $F.name != $S.defaults.subtitle_field}
+                                            <option value="{$F.name}" {if $S.config.subtitle_field == $F.name}selected{/if}>{$F.label}</option>
+                                        {/if}
                                     {/foreach}
                                 </select>
                             </div>
@@ -144,9 +135,9 @@
     </div>
 
     <div class="stic-rrp-admin-actions">
-        <input type="button" class="button primary" id="rrp-save" value="{$MOD.LBL_RRP_SAVE}" data-error-text="{$MOD.LBL_RRP_SAVE_ERROR}">
-        <span class="stic-rrp-admin-saving" id="rrp-saving" style="display:none;">{$MOD.LBL_RRP_SAVING}</span>
-        <input type="button" class="button" onclick="window.location='index.php?module=Administration&amp;action=index';" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
+        <input type="button" class="button primary js-rrp-save" value="{$MOD.LBL_RRP_SAVE}" data-error-text="{$MOD.LBL_RRP_SAVE_ERROR}">
+        <span class="stic-rrp-admin-saving js-rrp-saving" style="display:none;">{$MOD.LBL_RRP_SAVING}</span>
+        <input type="button" class="button js-rrp-cancel" data-cancel-url="index.php?module=Administration&amp;action=index" value="{$APP.LBL_CANCEL_BUTTON_LABEL}">
     </div>
 </form>
 

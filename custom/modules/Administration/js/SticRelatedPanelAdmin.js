@@ -26,6 +26,15 @@
     // -------------------------------------------------- collapse / expand
 
     container.addEventListener('click', function (event) {
+        // Cancel (top and bottom toolbars)
+        var cancel = event.target.closest('.js-rrp-cancel');
+        if (cancel) {
+            event.preventDefault();
+            window.location.href = cancel.getAttribute('data-cancel-url')
+                || 'index.php?module=Administration&action=index';
+            return;
+        }
+
         // Module body
         var moduleHead = event.target.closest('.stic-rrp-admin-module-head');
         if (moduleHead && !event.target.closest('input')) {
@@ -44,6 +53,7 @@
             var row = expand.closest('.stic-rrp-admin-row');
             var config = row.querySelector('.stic-rrp-admin-config');
             var hidden = row.classList.toggle('is-config-open');
+            expand.setAttribute('aria-expanded', hidden ? 'true' : 'false');
             if (config) {
                 config.style.display = hidden ? '' : 'none';
             }
@@ -68,14 +78,13 @@
 
     // -------------------------------------------------- save (single JSON)
 
-    var saveButton = document.getElementById('rrp-save');
-    var savingIndicator = document.getElementById('rrp-saving');
+    var saveButtons = container.querySelectorAll('.js-rrp-save');
+    var savingIndicators = container.querySelectorAll('.js-rrp-saving');
 
     function buildConfig() {
         var config = {
             enabled: !!document.querySelector('input[name="enabled"]').checked,
             pinned: !!document.querySelector('input[name="pinned"]').checked,
-            hide_empty: !!document.querySelector('input[name="hide_empty"]').checked,
             max_per_section: parseInt(document.querySelector('input[name="max_per_section"]').value, 10) || 10,
             modules: {}
         };
@@ -105,9 +114,7 @@
                     enabled: !!row.querySelector('input[type="checkbox"]').checked,
                     title_field: selectByName('title_field') ? selectByName('title_field').value : '',
                     subtitle_field: selectByName('subtitle_field') ? selectByName('subtitle_field').value : '',
-                    right_field: selectByName('right_field') ? selectByName('right_field').value : '',
-                    sort_field: selectByName('sort_field') ? selectByName('sort_field').value : 'right',
-                    sort_dir: selectByName('sort_dir') ? selectByName('sort_dir').value : 'desc'
+                    date_field: selectByName('date_field') ? selectByName('date_field').value : ''
                 };
             }
             config.modules[moduleName] = moduleEntry;
@@ -115,41 +122,45 @@
         return config;
     }
 
-    if (saveButton) {
-        saveButton.addEventListener('click', function () {
-            saveButton.disabled = true;
-            if (savingIndicator) {
-                savingIndicator.style.display = '';
+    function setSaving(saving) {
+        for (var b = 0; b < saveButtons.length; b++) {
+            saveButtons[b].disabled = saving;
+        }
+        for (var s = 0; s < savingIndicators.length; s++) {
+            savingIndicators[s].style.display = saving ? '' : 'none';
+        }
+    }
+
+    function saveConfiguration(button) {
+        setSaving(true);
+        // The JSON travels as the raw request body: $_POST values are mangled
+        // by the SuiteCRM request cleaning
+        fetch(window.location.href + '&rrp_save=1', {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(buildConfig())
+        }).then(function (response) {
+            return response.json();
+        }).then(function (result) {
+            if (result && result.saved) {
+                window.location.href = window.location.href + '&rrp_saved=1';
+            } else {
+                setSaving(false);
+                alert(button.getAttribute('data-error-text') || 'Save failed');
             }
-            // The JSON travels as the raw request body: $_POST values are mangled
-            // by the SuiteCRM request cleaning
-            fetch(window.location.href + '&rrp_save=1', {
-                method: 'POST',
-                credentials: 'same-origin',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(buildConfig())
-            }).then(function (response) {
-                return response.json();
-            }).then(function (result) {
-                if (result && result.saved) {
-                    window.location.href = window.location.href + '&rrp_saved=1';
-                } else {
-                    saveButton.disabled = false;
-                    if (savingIndicator) {
-                        savingIndicator.style.display = 'none';
-                    }
-                    alert(saveButton.getAttribute('data-error-text') || 'Save failed');
-                }
-            }).catch(function () {
-                saveButton.disabled = false;
-                if (savingIndicator) {
-                    savingIndicator.style.display = 'none';
-                }
-                alert(saveButton.getAttribute('data-error-text') || 'Save failed');
-            });
+        }).catch(function () {
+            setSaving(false);
+            alert(button.getAttribute('data-error-text') || 'Save failed');
+        });
+    }
+
+    for (var sb = 0; sb < saveButtons.length; sb++) {
+        saveButtons[sb].addEventListener('click', function () {
+            saveConfiguration(this);
         });
     }
 

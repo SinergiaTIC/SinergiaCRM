@@ -387,7 +387,11 @@
                         <header class="stic-rrp-header">
                             <h3 class="stic-rrp-title">{$APP.LBL_RRP_TITLE}</h3>
                             <div class="stic-rrp-header-tools">
-                                {* STIC-Custom 20261023 DEV - user preferences (pin / shrink) *}
+                                {* STIC-Custom 20261023 DEV - user preferences (filter / pin / shrink) *}
+                                <button type="button" class="stic-rrp-tool stic-rrp-tool-filter" aria-pressed="false" aria-expanded="false" hidden
+                                        title="{$APP.LBL_RRP_FILTER}" aria-label="{$APP.LBL_RRP_FILTER}">
+                                    <span class="suitepicon suitepicon-module-filter" aria-hidden="true"></span>
+                                </button>
                                 <button type="button" class="stic-rrp-tool stic-rrp-tool-pin" aria-pressed="false"
                                         title="{$APP.LBL_RRP_PIN_TITLE}" data-title-on="{$APP.LBL_RRP_PIN_ON}" data-title-off="{$APP.LBL_RRP_PIN_OFF}">
                                     <span class="stic-rrp-lock" aria-hidden="true"></span>
@@ -402,6 +406,9 @@
                                 </button>
                             </div>
                         </header>
+                        {* Relation filter popover: overlays the content instead of
+                           consuming vertical space in the timeline. *}
+                        <div class="stic-rrp-filter-popover" hidden></div>
                         <div class="stic-rrp-content" data-state="idle"></div>
                     </div>
                 </aside>
