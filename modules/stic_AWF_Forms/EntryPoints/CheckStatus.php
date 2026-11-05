@@ -108,5 +108,16 @@ if ($status) {
     }
 }
 
-echo json_encode(['active' => $isActive]);
+// Generation of a TimeTrap token for downloaded forms
+global $sugar_config;
+
+$secretKey = $sugar_config['unique_key'] ?? 'default_fallback_key';
+$serverTs = (string)microtime(true);
+$signature = hash_hmac('sha256', $serverTs, $secretKey);
+
+echo json_encode([
+    'active' => $isActive,
+    'ts'     => $serverTs,
+    'token'  => $signature
+]);
 exit;

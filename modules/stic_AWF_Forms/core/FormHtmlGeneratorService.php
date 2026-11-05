@@ -286,6 +286,7 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-field-break-row { grid-column-start: 1; }
 #{$wrapperId} .awf-field-full-width { grid-column: 1 / -1; }
 #{$wrapperId} .awf-help-text { font-size: 0.85em; color: #6c757d; font-style: italic; margin-top: 0.25rem; }
+#{$wrapperId} .awf-help-text:empty { display: none; }
 #{$wrapperId} .awf-section-card { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); border-radius: calc(var(--awf-card-radius) - 2px); box-shadow: 0 2px 4px rgba(0,0,0,0.05); height: var(--awf-section-height); }
 #{$wrapperId} .awf-section-card .card-header { background-color: rgba(0, 0, 0, 0.03); color: var(--bs-body-color); font-weight: bold; border-bottom: 1px solid var(--bs-border-color); }
 #{$wrapperId} .awf-section-card .card-header:first-child { border-radius: var(--awf-card-radius) var(--awf-card-radius) 0 0; }
@@ -319,10 +320,6 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .nav-tabs .nav-link:hover, #{$wrapperId} .nav-tabs .nav-link:focus-visible { color: var(--bs-body-color); background-color: {$tabHoverBg}; border-color: {$tabHoverBorder}; border-top-color: {$tabHoverBorder}; border-bottom-color: {$tabHoverBorder}; }
 #{$wrapperId} .nav-tabs .nav-link.active, #{$wrapperId} .nav-tabs .nav-link:active { color: var(--bs-body-color); background-color: var(--bs-body-bg); border-color: {$tabIdleBorder}; border-top: 3px solid var(--bs-primary); border-bottom-color: transparent; font-weight: 600; box-shadow: none; position: relative; z-index: 2; margin-bottom: -1px !important; }
 #{$wrapperId} .tab-pane { margin-top: -1px; }
-/* Accordion shares the SAME theme tones and the SAME 3px primary accent as the
-   tabs (idle label/border, hover tone, open = primary accent + tinted bg). The
-   open item also paints its TOP edge with the primary color, mirroring the
-   active tab's top edge. */
 #{$wrapperId} .awf-accordion { border: 1px solid {$tabIdleBorder}; border-radius: var(--bs-border-radius); overflow: hidden; }
 #{$wrapperId} .awf-accordion-item + .awf-accordion-item { border-top: 1px solid {$tabIdleBorder}; }
 #{$wrapperId} .awf-accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .75rem 1rem; background-color: {$accIdleBg}; border: 0; border-left: 3px solid transparent; text-align: left; font-weight: 600; color: {$tabIdleText}; cursor: pointer; transition: color .15s ease-in-out, border-color .15s ease-in-out, background-color .15s ease-in-out; }
@@ -471,6 +468,9 @@ class FormHtmlGeneratorService {
 
                     // Capture the URL of the page where the form is embedded
                     $html .= "<input type='hidden' name='awf_form_url' x-init=\"\$el.value = (window.self !== window.top) ? document.referrer : window.location.href\">" . $this->newLine();
+
+                    // Capture the TimeZone of the user's browser for correct conversion on the backend
+                    $html .= "<input type='hidden' name='awf_timezone' x-init=\"\$el.value = Intl.DateTimeFormat().resolvedOptions().timeZone\">" . $this->newLine();
                     
                     // Sections Grid
                     $html .= "<div class='awf-grid-sections'>" .$this->newLine('+');
@@ -543,8 +543,9 @@ class FormHtmlGeneratorService {
      */
     private function renderSectionNode(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?string $currentGroupRootId = null, array $outerIndexVars = [], bool $withChrome = true): string {
         $groupRootBlock = null;
-        $isTopLevelGroupSection = $section instanceof FormLayoutGroupSection && $currentGroupRootId === null;
-        if ($isTopLevelGroupSection) {
+        // Check if is Top Level Group section (not nested inside another group loop)
+        if ($section instanceof FormLayoutGroupSection && $currentGroupRootId === null) {
+            /** @var FormLayoutGroupSection $section */
             $groupRootBlock = self::resolveGroupRootBlock($config, $section->groupRootBlockId);
             if (!$groupRootBlock) {
                 return "<!-- Group section has an invalid or missing group root reference -->" . $this->newLine();
@@ -598,19 +599,17 @@ class FormHtmlGeneratorService {
             return $this->renderSectionChildren($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
         }
 
-        // Tabs CONTAINERS (tabs_card/tabs_panel): their nested sections become
-        // tab panes (only at chrome level; a pane renders its children flat)
+        // Tabs CONTAINERS (tabs_card/tabs_panel): their nested sections become tab panes
         if ($withChrome && in_array($section->containerType, ['card_tabs', 'panel_tabs'], true)) {
             return $this->renderContainerSections($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, $section->containerType === 'card_tabs');
         }
 
-        // Accordion CONTAINERS (accordion_card/accordion_panel): their nested
-        // sections become accordion items (one open at a time)
+        // Accordion CONTAINERS (accordion_card/accordion_panel): their nested sections become accordion items
         if ($withChrome && in_array($section->containerType, ['card_accordion', 'panel_accordion'], true)) {
             return $this->renderAccordionSections($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars, $section->containerType === 'card_accordion');
         }
 
-        // Pane content (no chrome): the section's children without its own card/header
+        // Pane content: the section's children without its own card/header
         if (!$withChrome) {
             return $this->renderSectionChildren($section, $config, $theme, $instanceIndexVar, $currentGroupRootId, $outerIndexVars);
         }
@@ -1497,13 +1496,9 @@ class FormHtmlGeneratorService {
         $maxInstances = $rootBlock->max_instances !== null ? (int)$rootBlock->max_instances : 'null';
         $isRepeatable = $rootBlock->isRepeatable();
         $isOptional = $rootBlock->isOptional();
-        // Groups whose DESIGNATED section is a tabs container render their
-        // instances as DYNAMIC TABS (spec: group rendered as dynamic tabs):
-        // one tab + one pane per instance instead of stacked instance cards.
+        // Groups whose DESIGNATED section is a tabs container render their instances as DYNAMIC TABS
         $isTabsGroup = $section !== null && in_array($section->containerType, ['panel_tabs', 'card_tabs'], true);
-        // Groups whose DESIGNATED section is an accordion container render their
-        // instances as ACCORDION ITEMS (one open at a time), mirroring the tabs
-        // group: same chrome, same add/remove controls.
+        // Groups whose DESIGNATED section is an accordion container render their instances as ACCORDION ITEMS
         $isAccordionGroup = $section !== null && in_array($section->containerType, ['panel_accordion', 'card_accordion'], true);
         // Both tabs flavors render the same FLAT chrome for a group (see the
         // tabs branch below), so card_tabs no longer adds a card frame here.
@@ -1525,19 +1520,14 @@ class FormHtmlGeneratorService {
         // Direct children only (subgroup heads will be rendered recursively)
         $children = $config->getGroupChildren($rootBlock);
 
-        // A SERVER-DATA optional group (spec §1.36): the whole subtree draws no
-        // input, but the group has server-resolved fields. It renders as a
-        // SINGLE activation switch (no section title, no body); turning it on
-        // persists the server-side record. Checked BEFORE the single-block case
-        // so a lone server-data content section still collapses to the switch.
+        // A SERVER-DATA optional group: the whole subtree draws no input, but the group has server-resolved fields. 
+        // It renders as a SINGLE activation switch (no section title, no body)
         if (self::isServerDataOptionalGroup($rootBlock, $config)) {
             return $this->renderServerDataOptionalGroup($rootBlock, $section, $contentOuterVars, $config, $theme);
         }
 
-        // A single-block OPTIONAL, non-repeatable group (spec §1.35): the group
-        // container IS the only box — the internal "element" template card and
-        // the block's host card are suppressed, and the root block's fields
-        // render directly inside the group container.
+        // A single-block OPTIONAL, non-repeatable group: the group container IS the only box. 
+        // The root block's fields render directly inside the group container.
         $templateContentSections = ($templateSection !== null)
             ? array_filter($templateSection->elements, fn ($el) => $el instanceof FormLayoutSection)
             : [];
@@ -1574,7 +1564,8 @@ class FormHtmlGeneratorService {
             }
 
             // 2. Instance Loop (visible if active)
-            $html .= "<div x-show='active' x-transition>" . $this->newLine('+');
+            $displayStyle = $isOptional ? " style='display: none;'" : "";
+            $html .= "<div x-show='active'{$displayStyle} x-transition>" . $this->newLine('+');
             {
                 // --- DYNAMIC INSTANCE TABS: one tab + one pane per instance ---
                 if ($isTabsGroup) {
@@ -2280,32 +2271,36 @@ class FormHtmlGeneratorService {
         // Instance-aware field rendering for repeatable groups
         $isInstance = $instanceIndexVar !== null;
         $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
-        
-        // Template for dynamic name attribute inside the x-for loop (Alpine expression)
+        $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+
+        // Default attributes for scalar fields
         $inputNameTemplate = $inputName;
-        $inputKeyForId = $isInstance ? $field->data_block->name : $field->getKeyForId();
+        $nameAttr = "name='{$inputName}'";
+        $idExpr = "id='f_{$inputName}'";
+        $forExpr = "for='f_{$inputName}'";
+        $inputKeyExpr = '';
+        $indexChain = '';
+
         if ($isInstance) {
-            $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
-            // Full index stack: enclosing loops first, own loop last
             $allVars = array_merge($outerIndexVars, [$instanceIndexVar]);
             $indexPart = '';
-            $idIndexPart = '';
-            foreach ($allVars as $varIndex => $var) {
+            foreach ($allVars as $var) {
                 $indexPart .= "[' + {$var} + ']";
-                // Single-underscore join: Block_i_j_field
-                $idIndexPart .= ($varIndex === 0 ? "_' + {$var} + '_" : "' + {$var} + '_");
             }
             $inputNameTemplate = $namePrefix . $field->data_block->name . $indexPart . "[" . $field->name . "]";
-            // The logical key used for the dynamic input ID (matches getKeyForIdForIndexes() validation error keys)
-            $inputKeyForId = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $field->data_block->name . $idIndexPart . $field->name;
+            $nameAttr = ":name=\"'{$inputNameTemplate}'\"";
+
+            // Clean JavaScript expression for dynamic IDs without fragmenting quotes
+            $indexChain = implode(" + '_' + ", $allVars);
+            $inputKeyExpr = "'{$namePrefix}{$field->data_block->name}_' + {$indexChain} + '_{$field->name}'";
+            $idExpr = ":id=\"'f_' + {$inputKeyExpr}\"";
+            $forExpr = ":for=\"'f_' + {$inputKeyExpr}\"";
         }
 
         // Render hidden fields differently: only input without label or wrapper
         if ($field->type_in_form === 'hidden') {
             $val = htmlspecialchars($field->value ?? '', ENT_QUOTES, 'UTF-8');
-            $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
-            $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
-            return "<input type='hidden' {$nameAttr} {$idAttr} value='{$val}'>" . $this->newLine();
+            return "<input type='hidden' {$nameAttr} {$idExpr} value='{$val}'>" . $this->newLine();
         }
 
         $label = htmlspecialchars($field->label);
@@ -2330,20 +2325,26 @@ class FormHtmlGeneratorService {
             }
         }
 
-        // Dynamic help ID and input IDs for repeatable fields
+        // Help text and dynamic ARIA binding setup
         $description = "";
+        $parsedDesc = "";
         $ariaDescribedBy = "";
-        if ($field->description != '') {
-            $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
+
+        if ($isInstance) {
+            $helpIdExpr = "'help_' + {$inputKeyExpr}";
+            $helpIdAttr = ":id=\"{$helpIdExpr}\"";
+            if ($field->description != '') {
+                $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
+                $ariaDescribedBy = ":aria-describedby=\"{$helpIdExpr}\"";
+            }
+            $description = "<div {$helpIdAttr} class='form-text awf-help-text'>{$parsedDesc}</div>";
+        } else {
             $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
-            if ($isInstance) {
-                $helpIdDynamic = "'help_' + '{$inputKeyForId}'";
-                $description = "<div :id=\"{$helpIdDynamic}\" class='form-text awf-help-text'>{$parsedDesc}</div>";
-                $ariaDescribedBy = ":aria-describedby=\"{$helpIdDynamic}\"";
-            } else {
-                $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
+            if ($field->description != '') {
+                $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
                 $ariaDescribedBy = "aria-describedby='{$helpId}'";
             }
+            $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
         }
 
         // Get layout classes for the field container (row breaks, full width, etc.)
@@ -2355,11 +2356,8 @@ class FormHtmlGeneratorService {
         if ($field->subtype_in_form === 'select_checkbox') {
             $html = "<div class='form-check awf-field {$layoutClasses}'>" .$this->newLine('+');
             {
-                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
-                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
-                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
-                $html .= "<input type='checkbox' {$nameAttr} class='form-check-input' value='1' {$idAttr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
-                $html .= "<label class='form-check-label' {$forAttr}>" . $this->newLine('+');
+                $html .= "<input type='checkbox' {$nameAttr} class='form-check-input' value='1' {$idExpr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
+                $html .= "<label class='form-check-label' {$forExpr}>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -2367,9 +2365,7 @@ class FormHtmlGeneratorService {
                     }
                 }
                 $html .= "</label>" . $this->newLine('-');
-                if ($description !== '') {
-                    $html .= $description .$this->newLine();
-                }
+                $html .= $description .$this->newLine();
             }
             $html .= "</div>" .$this->newLine('-');
             return $html;
@@ -2378,11 +2374,8 @@ class FormHtmlGeneratorService {
         if ($field->subtype_in_form === 'select_switch') {
             $html = "<div class='form-check form-switch awf-field {$layoutClasses}'>" .$this->newLine('+');
             {
-                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
-                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
-                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
-                $html .= "<input type='checkbox' role='switch' {$nameAttr} class='form-check-input' value='1' {$idAttr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
-                $html .= "<label class='form-check-label' {$forAttr}>" . $this->newLine('+');
+                $html .= "<input type='checkbox' role='switch' {$nameAttr} class='form-check-input' value='1' {$idExpr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
+                $html .= "<label class='form-check-label' {$forExpr}>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -2390,9 +2383,7 @@ class FormHtmlGeneratorService {
                     }
                 }
                 $html .= "</label>" . $this->newLine('-');
-                if ($description !== '') {
-                    $html .= $description .$this->newLine();
-                }
+                $html .= $description .$this->newLine();
             }
             $html .= "</div>" .$this->newLine('-');
             return $html;
@@ -2407,19 +2398,14 @@ class FormHtmlGeneratorService {
         // --- SPECIAL CASES (File Upload - Compact Bootstrap 5 File Input) ---
 
         if ($field->type_in_form === 'file') {
-            // Instance-aware file input: the NAME uses the flat underscore form
-            // ("_detached_Block_' + idx_l1 + '_' + idx_l2 + '_field") because PHP
-            // nests bracket-named $_FILES entries (unaddressable by the flat
-            // uploaded-files parser), while the ID/label keep the standard
-            // instance DOM-id convention. Scalar files keep the plain dot key
-            // (PHP itself mangles dots to underscores in the FILES key).
-            $fileKeyTemplate = null;
+            $fileKeyExpr = null;
+            $fileIdExpr = null;
             if ($isInstance) {
                 $filePrefix = str_replace('.', '_', $namePrefix);
-                $fileKeyTemplate = $filePrefix . $field->data_block->name . $idIndexPart . $field->name;
+                $fileKeyExpr = "'{$filePrefix}{$field->data_block->name}_' + {$indexChain} + '_{$field->name}'";
+                $fileIdExpr = $inputKeyExpr;
             }
-            $fileIdTemplate = $isInstance ? $inputKeyForId : null;
-            return $this->generateFileField($field, $theme, $fileKeyTemplate, $fileIdTemplate, $layoutClasses) .$this->newLine();
+            return $this->generateFileField($field, $theme, $fileKeyExpr, $fileIdExpr, $layoutClasses) .$this->newLine();
         }
 
         // --- COMMON CASES ---
@@ -2430,12 +2416,7 @@ class FormHtmlGeneratorService {
                       $field->subtype_in_form !== 'select_radio' &&
                       $field->subtype_in_form !== 'select_multiple';
 
-        if ($isFloating) {
-            // Placeholder is required in Floating labels
-            $placeholder = $userPlaceholder !== '' ? $userPlaceholder : '...';
-        } else {
-            $placeholder = $userPlaceholder;
-        }
+        $placeholder = $isFloating && $userPlaceholder === '' ? '...' : $userPlaceholder;
 
         $wrapperClass = $isFloating ? 'form-floating awf-field' : 'awf-field';
         $html = "<div class='{$wrapperClass} {$layoutClasses}'>" .$this->newLine('+');
@@ -2444,9 +2425,7 @@ class FormHtmlGeneratorService {
 
             // Text Areas
             if ($field->type_in_form == 'textarea') {
-                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
-                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
-                $controlHtml .= "<textarea {$validationsAttr} {$nameAttr} class='form-control' {$idAttr} ".
+                $controlHtml .= "<textarea {$validationsAttr} {$nameAttr} class='form-control' {$idExpr} ".
                                 "placeholder='{$placeholder}' style='height: 100px' {$ariaDescribedBy} {$requiredAttr}></textarea>" .$this->newLine();
 
             // Selects & Lists
@@ -2457,7 +2436,7 @@ class FormHtmlGeneratorService {
                     $isMulti = ($inputType === 'checkbox');
                     $finalName = $inputName . ($isMulti ? '[]' : ''); // If multiple, name is array (ex: names[])
                     $finalNameTemplate = $isInstance ? $inputNameTemplate . ($isMulti ? '[]' : '') : $finalName;
-                    $nameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
+                    $optNameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
 
                     $controlHtml .= "<div class='awf-option-group pt-1'>" .$this->newLine('+');
                     {
@@ -2465,9 +2444,11 @@ class FormHtmlGeneratorService {
                             if ($opt->is_visible) {
                                 $val = htmlspecialchars($opt->value);
                                 $txt = htmlspecialchars($opt->text);
-                                $optId = "f_{$inputName}_" . preg_replace('/[^a-zA-Z0-9]/', '', $val); 
-                                $optIdTemplate = $isInstance ? "'f_' + '{$inputKeyForId}' + '_" . preg_replace('/[^a-zA-Z0-9]/', '', $val) . "'" : "'{$optId}'";
-                                $req = ($requiredAttr && !$isMulti) ? 'required' : '';  // Note: 'required' in checkboxes groups is complex in pure HTML5. 
+                                $optValSuffix = '_' . preg_replace('/[^a-zA-Z0-9]/', '', $val);
+                                $optId = "f_{$inputName}" . $optValSuffix; 
+                                $optIdExpr = $isInstance ? ":id=\"'f_' + {$inputKeyExpr} + '{$optValSuffix}'\"" : "id='{$optId}'";
+                                $optForExpr = $isInstance ? ":for=\"'f_' + {$inputKeyExpr} + '{$optValSuffix}'\"" : "for='{$optId}'";
+                                $req = ($requiredAttr && !$isMulti) ? 'required' : '';
 
                                 $scoreAttr = '';
                                 if ($opt->score !== null && $opt->score !== '') {
@@ -2476,10 +2457,8 @@ class FormHtmlGeneratorService {
 
                                 $controlHtml .= "<div class='form-check'>" .$this->newLine('+');
                                 {
-                                    $idAttr = $isInstance ? ":id=\"{$optIdTemplate}\"" : "id='{$optId}'";
-                                    $forAttr = $isInstance ? ":for=\"{$optIdTemplate}\"" : "for='{$optId}'";
-                                    $controlHtml .= "<input {$validationsAttr} type='{$inputType}' {$nameAttr} {$idAttr} value='{$val}' class='form-check-input' {$req}{$scoreAttr}>" .$this->newLine();
-                                    $controlHtml .= "<label class='form-check-label' {$forAttr}>{$txt}</label>" .$this->newLine();
+                                    $controlHtml .= "<input {$validationsAttr} type='{$inputType}' {$optNameAttr} {$optIdExpr} value='{$val}' class='form-check-input' {$req}{$scoreAttr}>" .$this->newLine();
+                                    $controlHtml .= "<label class='form-check-label' {$optForExpr}>{$txt}</label>" .$this->newLine();
                                 }
                                 $controlHtml .= "</div>" .$this->newLine('-');
                             }
@@ -2488,40 +2467,59 @@ class FormHtmlGeneratorService {
                     $controlHtml .= "</div>" .$this->newLine('-');
 
                 } 
-                // Select && Select muliple
+                // Select && Select multiple
                 else {
                     $isMultipleSelect = ($field->subtype_in_form === 'select_multiple');
                     $finalName = $inputName . ($isMultipleSelect ? '[]' : '');
                     $finalNameTemplate = $isInstance ? $inputNameTemplate . ($isMultipleSelect ? '[]' : '') : $finalName;
-                    $nameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
+                    $selectNameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
                     $multipleAttr = $isMultipleSelect ? 'multiple' : '';
                     
-                    $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
-                    $controlHtml .= "<select {$validationsAttr} {$nameAttr} class='form-select' {$idAttr} {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine('+');
+                    $controlHtml .= "<select {$validationsAttr} {$selectNameAttr} class='form-select' {$idExpr} {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" . $this->newLine('+');
                     {
-                        // Empty option only if not muliple
-                        if (!$isMultipleSelect) {
-                            $controlHtml .= "<option value='' selected></option>" .$this->newLine();
+                        // Check if a visible empty option already exists in configuration
+                        $hasVisibleEmptyOption = false;
+                        if (!empty($field->value_options)) {
+                            foreach ($field->value_options as $opt) {
+                                if (!empty($opt->is_visible) && (string)$opt->value === '') {
+                                    $hasVisibleEmptyOption = true;
+                                    break;
+                                }
+                            }
                         }
-                        // Other options
+
+                        // Inject synthetic empty placeholder only when not multiple and no visible empty option is defined
+                        if (!$isMultipleSelect && !$hasVisibleEmptyOption) {
+                            $controlHtml .= "<option value='' selected></option>" . $this->newLine();
+                        }
+
+                        // Render options
+                        $emptyOptionSelected = false;
                         foreach ($field->value_options as $opt) {
-                            if ($opt->is_visible) {
-                                $val = htmlspecialchars($opt->value);
-                                $txt = htmlspecialchars($opt->text);
+                            if (!empty($opt->is_visible)) {
+                                $val = htmlspecialchars((string)$opt->value, ENT_QUOTES, 'UTF-8');
+                                $txt = htmlspecialchars((string)$opt->text, ENT_QUOTES, 'UTF-8');
 
                                 $scoreAttr = '';
                                 if ($opt->score !== null && $opt->score !== '') {
                                     $scoreAttr = ' data-score="' . htmlspecialchars((string)$opt->score, ENT_QUOTES, 'UTF-8') . '"';
                                 }
 
-                                $controlHtml .= "<option value='{$val}'{$scoreAttr}>{$txt}</option>" .$this->newLine();
+                                // Ensure the existing empty option gets selected by default in single selects
+                                $selectedAttr = '';
+                                if (!$isMultipleSelect && $hasVisibleEmptyOption && !$emptyOptionSelected && (string)$opt->value === '') {
+                                    $selectedAttr = ' selected';
+                                    $emptyOptionSelected = true;
+                                }
+
+                                $controlHtml .= "<option value='{$val}'{$scoreAttr}{$selectedAttr}>{$txt}</option>" .$this->newLine();
                             }
                         }
                     }
                     $controlHtml .= "</select>" .$this->newLine('-');
                 }
 
-            // Inputs
+            // Standard Inputs
             } else {
                 $controlType = 'text';
                 $autocomplete = $inputName; //'off';
@@ -2538,17 +2536,14 @@ class FormHtmlGeneratorService {
                 }
                 $iconClass = $this->getIconClass($field->subtype_in_form);
                 $cssClasses = 'form-control ' . ($iconClass ?? '');
-                $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$inputName}'";
-                $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$inputName}'";
-                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' {$nameAttr} class='{$cssClasses}' {$idAttr} ".
+                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' {$nameAttr} class='{$cssClasses}' {$idExpr} ".
                                 "placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine();
             }
 
             if ($isFloating) {
                 // Floating order: Input, Label
                 $html .= $controlHtml .$this->newLine();
-                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
-                $html .= "<label {$forAttr}>" . $this->newLine('+'); 
+                $html .= "<label {$forExpr}>" . $this->newLine('+'); 
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -2559,8 +2554,7 @@ class FormHtmlGeneratorService {
         
             } else {
                 // Default order: Label, Input
-                $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$inputName}'";
-                $html .= "<label {$forAttr} class='form-label'>" . $this->newLine('+');
+                $html .= "<label {$forExpr} class='form-label'>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -2570,9 +2564,7 @@ class FormHtmlGeneratorService {
                 $html .= "</label>" . $this->newLine('-');
                 $html .= $controlHtml .$this->newLine();
             }
-            if ($description !== '') {
-                $html .= $description .$this->newLine();
-            }
+            $html .= $description .$this->newLine();
         }
         $html .= "</div>" .$this->newLine('-');
 
@@ -2582,35 +2574,30 @@ class FormHtmlGeneratorService {
     /**
      * Renders a customized native Bootstrap 5 file input wrapped in an illusion text-group.
      * Guarantees left-aligned actions, disabled secondary modifiers, and shared SVG extraction.
-     */
-    /**
+     *
      * @param FormDataBlockField $field
      * @param FormTheme $theme
-     * @param ?string $instanceKeyTemplate Flat underscore-joined NAME template for
-     *        group instances (Alpine expression), null for scalar fields
-     * @param ?string $instanceIdTemplate Instance DOM-id template (Alpine expression),
-     *        null for scalar fields
+     * @param ?string $instanceKeyTemplate Alpine expression for group instances name, null for scalar fields
+     * @param ?string $instanceIdTemplate Alpine expression for group instances DOM-id, null for scalar fields
+     * @param string $layoutClasses
+     * @return string
      */
     private function generateFileField(FormDataBlockField $field, FormTheme $theme, ?string $instanceKeyTemplate = null, ?string $instanceIdTemplate = null, string $layoutClasses = ''): string {
         $inputName = $field->getKey();
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
         $asterisk = $field->required_in_form ? "<span class='awf-required' aria-hidden='true'>*</span>" : '';
-        // Instance-aware attribute builders: dynamic (Alpine) for group instances,
-        // static for scalar fields
-        $fileIdAttr = $instanceIdTemplate !== null
-            ? ":id=\"'f_' + '{$instanceIdTemplate}'\""
-            : "id='f_{$inputName}'";
-        $fileLabelAttr = $instanceIdTemplate !== null
-            ? ":for=\"'f_' + '{$instanceIdTemplate}'\""
-            : "for='f_{$inputName}'";
-        $fileNameAttr = $instanceKeyTemplate !== null
-            ? ":name=\"'{$instanceKeyTemplate}'\""
-            : "name='{$inputName}'";
+        
+        $isInstance = $instanceIdTemplate !== null;
+
+        // Instance-aware attribute builders: dynamic (Alpine) for group instances, static for scalar fields
+        $fileIdAttr = $isInstance ? ":id=\"'f_' + {$instanceIdTemplate}\"" : "id='f_{$inputName}'";
+        $fileLabelAttr = $isInstance ? ":for=\"'f_' + {$instanceIdTemplate}\"" : "for='f_{$inputName}'";
+        $fileNameAttr = $instanceKeyTemplate !== null ? ":name=\"{$instanceKeyTemplate}\"" : "name='{$inputName}'";
         
         $isFloating = !empty($theme->floating_labels);
 
-        // Dynamically extract the allowed file extensions from the field's validations to set the 'accept' attribute for the file input.
+        // Dynamically extract allowed file extensions for 'accept' attribute
         $acceptAttr = '';
         if (!empty($field->validations)) {
             foreach ($field->validations as $val) {
@@ -2619,7 +2606,7 @@ class FormHtmlGeneratorService {
                     if (!empty($extsParam)) {
                         $exts = explode(',', $extsParam);
                         // Convert 'pdf, jpg' to '.pdf,.jpg' for the standard 'accept' format
-                        $acceptFields = array_map(function($e) { return '.' . trim(strtolower($e)); }, $exts);
+                        $acceptFields = array_map(fn($e) => '.' . trim(strtolower($e)), $exts);
                         $acceptAttr = " accept='" . implode(',', $acceptFields) . "'";
                         break;
                     }
@@ -2645,17 +2632,26 @@ class FormHtmlGeneratorService {
             }
         }
 
+        // Help text and dynamic ARIA binding setup
         $description = "";
+        $parsedDesc = "";
         $ariaDescribedBy = "";
-        if ($field->description != '') {
-            $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
-            // Instance help ids: strip the Alpine expression parts of the template
-            $helpKey = $instanceIdTemplate !== null
-                ? str_replace(array("'", ' + '), '', $instanceIdTemplate)
-                : $inputName;
-            $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $helpKey);
+
+        if ($isInstance) {
+            $helpIdExpr = "'help_' + {$instanceIdTemplate}";
+            $helpIdAttr = ":id=\"{$helpIdExpr}\"";
+            if ($field->description != '') {
+                $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
+                $ariaDescribedBy = ":aria-describedby=\"{$helpIdExpr}\"";
+            }
+            $description = "<div {$helpIdAttr} class='form-text awf-help-text'>{$parsedDesc}</div>";
+        } else {
+            $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
+            if ($field->description != '') {
+                $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
+                $ariaDescribedBy = "aria-describedby='{$helpId}'";
+            }
             $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
-            $ariaDescribedBy = "aria-describedby='{$helpId}'";
         }
 
         $html = "<div class='awf-field {$layoutClasses}' x-data='awfFileField()'>" .$this->newLine('+');
@@ -2666,7 +2662,7 @@ class FormHtmlGeneratorService {
 
             $html .= "<div class='input-group'>" .$this->newLine('+');
             {
-                // Search Button
+                // Browse Button
                 $html .= "<button type='button' class='btn awf-btn-file-browse' @click='\$refs.fileInput.click()'></button>" .$this->newLine();
 
                 if ($isFloating) {
@@ -2675,33 +2671,26 @@ class FormHtmlGeneratorService {
 
                 // Reading text input gets the classic '.awf-icon-file-upload' icon on the right
                 $userPlaceholder = htmlspecialchars($field->placeholder ?? '');
-                if ($isFloating) {
-                    // Placeholder is required in Floating labels
-                    $placeholder = $userPlaceholder !== '' ? $userPlaceholder : '...';
-                } else {
-                    $placeholder = $userPlaceholder;
-                }
+                $placeholder = $isFloating && $userPlaceholder === '' ? '...' : $userPlaceholder;
+
                 $html .= "<input type='text' class='form-control awf-icon-file-upload' readonly :value='fileName' placeholder='{$placeholder}' " .
-                         "style='cursor: pointer;' @click='\$refs.fileInput.click()'>" .$this->newLine();
+                         "style='cursor: pointer;' @click='\$refs.fileInput.click()' {$ariaDescribedBy}>" .$this->newLine();
                 
                 if ($isFloating) {
                     $html .= "<label {$fileLabelAttr}>{$label} {$asterisk}</label>" . $this->newLine();
                     $html .= "</div>" .$this->newLine('-');
                 }
 
-                // Delete button
+                // Clear button
                 $html .= "<button type='button' class='btn awf-btn-file-clear' :disabled='!fileName' @click='if(fileName) clear()'></button>" .$this->newLine();
             }
             $html .= "</div>" .$this->newLine('-');
 
-            // The actual file input remains hidden to avoid disrupting the label flow
+            // Actual file input
             $html .= "<input type='file' {$fileNameAttr} x-ref='fileInput' {$fileIdAttr} " .
                      "style='display: none !important;' @change='updateFileInfo()' {$requiredAttr} {$acceptAttr} {$ariaDescribedBy} {$validationsAttr}>" .$this->newLine();
 
-            if ($description !== '') {
-                $html .= $description .$this->newLine();
-            }
-
+            $html .= $description .$this->newLine();
             $html .= "<div class='invalid-feedback' style='display: none;'></div>" .$this->newLine();
         }
         $html .= "</div>" .$this->newLine('-');
@@ -2715,48 +2704,59 @@ class FormHtmlGeneratorService {
      * The method uses AlpineJS for interactivity, allowing users to hover and select their rating, with visual feedback.
      * 
      * @param FormDataBlockField $field The rating field to be rendered, containing all necessary information about its label, description, subtype, and validation requirements
+     * @param ?string $instanceIndexVar
+     * @param array $outerIndexVars
      * @return string The generated HTML for the rating field as a string, including the interactive controls and any associated labels and descriptions
      */
     private function generateRatingField(FormDataBlockField $field, ?string $instanceIndexVar = null, array $outerIndexVars = []): string {
-        // Instance-aware: inside a repeatable loop every repetition must post to
-        // its OWN indexed name/id (Alpine :name/:id), exactly like the other
-        // controls. Without this, all repetitions shared one static name and
-        // overwrote each other on submit.
         $isInstance = $instanceIndexVar !== null;
         $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
+        $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
+
+        $name = htmlspecialchars($inputName);
         $inputNameTemplate = $inputName;
-        $inputKeyForId = $isInstance ? $field->data_block->name : $field->getKeyForId();
+        $nameAttr = "name='{$name}'";
+        $idExpr = "id='f_{$name}'";
+        $forExpr = "for='f_{$name}'";
+        $inputKeyExpr = '';
+
         if ($isInstance) {
-            $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
             $allVars = array_merge($outerIndexVars, [$instanceIndexVar]);
             $indexPart = '';
-            $idIndexPart = '';
-            foreach ($allVars as $varIndex => $var) {
+            foreach ($allVars as $var) {
                 $indexPart .= "[' + {$var} + ']";
-                $idIndexPart .= ($varIndex === 0 ? "_' + {$var} + '_" : "' + {$var} + '_");
             }
             $inputNameTemplate = $namePrefix . $field->data_block->name . $indexPart . "[" . $field->name . "]";
-            $inputKeyForId = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $field->data_block->name . $idIndexPart . $field->name;
+            $nameAttr = ":name=\"'{$inputNameTemplate}'\"";
+
+            $indexChain = implode(" + '_' + ", $allVars);
+            $inputKeyExpr = "'{$namePrefix}{$field->data_block->name}_' + {$indexChain} + '_{$field->name}'";
+            $idExpr = ":id=\"'f_' + {$inputKeyExpr}\"";
+            $forExpr = ":for=\"'f_' + {$inputKeyExpr}\"";
         }
-        $name = htmlspecialchars($inputName);
+
         $label = htmlspecialchars($field->label ?? '');
-        $nameAttr = $isInstance ? ":name=\"'{$inputNameTemplate}'\"" : "name='{$name}'";
-        $idAttr = $isInstance ? ":id=\"'f_' + '{$inputKeyForId}'\"" : "id='f_{$name}'";
-        $forAttr = $isInstance ? ":for=\"'f_' + '{$inputKeyForId}'\"" : "for='f_{$name}'";
+
+        // Help text and dynamic ARIA binding setup
         $description = "";
+        $parsedDesc = "";
         $ariaDescribedBy = "";
-        
-        if (!empty($field->description)) {
-            $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
-            if ($isInstance) {
-                $helpIdDynamic = "'help_' + '{$inputKeyForId}'";
-                $description = "<div :id=\"{$helpIdDynamic}\" class='form-text awf-help-text'>{$parsedDesc}</div>";
-                $ariaDescribedBy = ":aria-describedby=\"{$helpIdDynamic}\"";
-            } else {
-                $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
-                $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
+
+        if ($isInstance) {
+            $helpIdExpr = "'help_' + {$inputKeyExpr}";
+            $helpIdAttr = ":id=\"{$helpIdExpr}\"";
+            if (!empty($field->description)) {
+                $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
+                $ariaDescribedBy = ":aria-describedby=\"{$helpIdExpr}\"";
+            }
+            $description = "<div {$helpIdAttr} class='form-text awf-help-text'>{$parsedDesc}</div>";
+        } else {
+            $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
+            if (!empty($field->description)) {
+                $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
                 $ariaDescribedBy = "aria-describedby='{$helpId}'";
             }
+            $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
         }
 
         $subtype = !empty($field->subtype_in_form) ? $field->subtype_in_form : 'rating_stars';
@@ -2769,12 +2769,11 @@ class FormHtmlGeneratorService {
         // Get layout classes for the field container (row breaks, full width, etc.)
         $layoutClasses = $this->getFieldLayoutClasses($field);
         
-        $html = "";
         $html = "<div class='awf-field mb-3 {$layoutClasses}' x-data=\"awfRating('{$subtype}', {$isLightStr})\">" . $this->newLine('+');
         {
             // Label
             if ($label) {
-                $html .= "<label {$forAttr} class='form-label'>" . $this->newLine('+');
+                $html .= "<label {$forExpr} class='form-label'>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
                     if ($asterisk !== '') {
@@ -2787,7 +2786,7 @@ class FormHtmlGeneratorService {
             // Phantom input for HTML5 validation
             $errorMsg = translate('LBL_REQUIRED_FIELD_MESSAGE', 'stic_AWF_Forms');
             $requiredAttr = $isRequired ? 'required' : '';
-            $html .= "<input type='text' x-ref=\"input\" {$nameAttr} {$idAttr} :value=\"val\" {$ariaDescribedBy} {$requiredAttr} tabindex='-1'" .
+            $html .= "<input type='text' x-ref=\"input\" {$nameAttr} {$idExpr} :value=\"val\" {$ariaDescribedBy} {$requiredAttr} tabindex='-1'" .
                     "style='opacity:0; width:100%; height:1px; position:absolute; bottom:0; left:0; z-index:-1; pointer-events:none;'" .
                     "oninvalid=\"this.setCustomValidity('{$errorMsg}')\" oninput=\"this.setCustomValidity('')\"> " . $this->newLine();
 
@@ -2841,7 +2840,6 @@ class FormHtmlGeneratorService {
                             $showFill    = "(hover ? hover : val) >= $val";
                             $showEmpty   = "(hover ? hover : val) < $val";
                         } else {
-                            $lightStr    = $isLight ? 'true' : 'false';
                             $alpineStyle = "emojiStyle($val)";
                             $showFill    = "(hover > 0 ? hover : val) === $val";
                             $showEmpty   = "(hover > 0 ? hover : val) !== $val";
@@ -2873,9 +2871,7 @@ class FormHtmlGeneratorService {
                 $html .= "</div>".$this->newLine('-');
             }
 
-            if ($description) {
-                $html .= $description . $this->newLine();
-            }
+            $html .= $description .$this->newLine();
             
             // Error message
             if ($isRequired) {
@@ -2996,6 +2992,15 @@ document.addEventListener('alpine:init', () => {
       if (!config.isPreview && config.checkUrl) {
         fetch(config.checkUrl).then(r => r.json()).then(d => {
           this.isActive = d.active;
+          if (d.ts && d.token) {
+            const form = this.$refs.form;
+            if (form) {
+              const tsInput = form.querySelector('[name="awf_submission_ts"]');
+              const tokenInput = form.querySelector('[name="awf_submission_token"]');
+              if (tsInput) tsInput.value = d.ts;
+              if (tokenInput) tokenInput.value = d.token;
+            }
+          }
         }).catch(e => console.error(e));
       }
       this.prefillFromUrl();
@@ -3373,9 +3378,6 @@ JS;
   var parseCache = Object.create(null);
 
   // Parse a control name into { detached, block, indexes, field, multi }.
-  // Strictly requires canonical formats:
-  // "Block.field" | "Block[0][field]" | "Block[0][1][field]"
-  // "_detached.Block.field" | "_detached.Block[0][field]"
   function parseFieldName(name) {
     if (name == null) return null;
     var n = String(name).trim();
@@ -3400,7 +3402,6 @@ JS;
       });
     }
 
-    // Matches dot notation: Block.field
     var dot = raw.indexOf('.');
     if (dot >= 0) {
       return (parseCache[n] = {
@@ -3412,11 +3413,9 @@ JS;
       });
     }
 
-    // Bare field names without block are strictly rejected
     return (parseCache[n] = null);
   }
 
-  // Specificity match: 2 = exact match; 0 = no match.
   function getMatchSpecificity(parsed, targetName) {
     var t = parseFieldName(targetName);
     if (!parsed || !t) return 0;
@@ -3439,7 +3438,6 @@ JS;
     if (!root) return [];
     var all = Array.prototype.slice.call(root.querySelectorAll('input[name], select[name], textarea[name]'));
     if (scope) {
-      // Isolate instance cards: exclude controls belonging to deeper nested instance cards
       return all.filter(function (el) {
         return el.closest(INSTANCE_SELECTOR) === scope;
       });
@@ -3492,7 +3490,6 @@ JS;
     };
   }
 
-  // Resolves contextual fields for scope/info preserving hierarchical instance safety
   function resolveForInfo(target, card, parsedCurrent) {
     if (target && target.nodeType === 1) {
       return resolve(target);
@@ -3501,21 +3498,17 @@ JS;
     var t = parseFieldName(target);
     if (!t) return { elements: [], element: null, card: null, parsed: null };
 
-    // 1. Explicit indexes: resolve globally with exact index matching
     if (t.indexes.length > 0) {
       return resolve(target, { card: null });
     }
 
-    // 2. Target in the same block
     if (parsedCurrent && t.block === parsedCurrent.block && t.detached === parsedCurrent.detached) {
       if (card) {
         var local = resolve(target, { card: card });
         if (local.elements.length > 0) return local;
-        // If field was optional and not rendered in this row, do NOT fallback to row 0
         return { elements: [], element: null, card: card, parsed: t };
       }
 
-      // Scalar form without card wrapper: resolve against unindexed controls
       var scalarSameBlock = resolve(target, { card: null }).elements.filter(function (el) {
         var p = parseFieldName(el.name);
         return p && p.indexes.length === 0;
@@ -3528,7 +3521,6 @@ JS;
       };
     }
 
-    // 3. Target in an ancestor card (e.g. child row reading parent row data)
     if (card) {
       var ancestorCard = card.parentElement ? card.parentElement.closest(INSTANCE_SELECTOR) : null;
       while (ancestorCard) {
@@ -3560,7 +3552,6 @@ JS;
       }
     }
 
-    // 4. Target in a nested child card inside this card's subtree
     if (card) {
       var allDescendants = Array.prototype.slice.call(card.querySelectorAll('input[name], select[name], textarea[name]'));
       var matchedInSubtree = allDescendants.filter(function (el) {
@@ -3575,7 +3566,6 @@ JS;
       });
 
       if (matchedInSubtree.length > 0) {
-        // Guard against ambiguous fan-out across multiple nested instance cards
         var firstCard = matchedInSubtree[0].closest(INSTANCE_SELECTOR);
         var firstBaseName = matchedInSubtree[0].name.replace(/\[\]$/, '');
         var isAmbiguous = false;
@@ -3599,7 +3589,6 @@ JS;
       }
     }
 
-    // 5. Fallback to global scope ONLY IF target is a SCALAR (unindexed) field
     var globalRes = resolve(target, { card: null });
     var scalarElements = globalRes.elements.filter(function (el) {
       var p = parseFieldName(el.name);
@@ -3621,6 +3610,61 @@ JS;
   function containerOf(elements) {
     if (!elements || elements.length === 0) return null;
     return elements[0].closest('.awf-field') || elements[0].closest('.form-check') || elements[0].parentElement;
+  }
+
+  function findLabelFor(el) {
+    if (!el) return null;
+    if (el.id) {
+      var wrapper = el.closest('.awf-field') || el.closest('.form-check') || el.parentElement;
+      if (wrapper) {
+        var labels = wrapper.querySelectorAll('label');
+        for (var i = 0; i < labels.length; i++) {
+          if (labels[i].htmlFor === el.id) return labels[i];
+        }
+      }
+      try {
+        var escapedId = (window.CSS && CSS.escape) ? CSS.escape(el.id) : el.id.replace(/([ #;&,.+*~':"!^$[\]()=>|\/@])/g, '\\$1');
+        var docLbl = document.querySelector('label[for="' + escapedId + '"]');
+        if (docLbl) return docLbl;
+      } catch (e) {}
+    }
+    return el.closest('.form-check') ? el.closest('.form-check').querySelector('label') : null;
+  }
+
+  function labelTextOf(container) {
+    if (!container) return '';
+    var lbl = container.querySelector('label.form-label') || container.querySelector('label');
+    if (!lbl) return '';
+    var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
+      return n.nodeType === 3;
+    })[0];
+    if (textNode) {
+      return textNode.nodeValue.trim();
+    }
+    var clone = lbl.cloneNode(true);
+    var req = clone.querySelector('.awf-required');
+    if (req) req.remove();
+    return clone.textContent.trim();
+  }
+
+  function setLabelTextOn(container, text) {
+    if (!container) return false;
+    var lbl = container.querySelector('label.form-label') || container.querySelector('label');
+    if (!lbl) return false;
+
+    var strVal = (text === null || text === undefined) ? '' : String(text);
+    var formatted = strVal.trim() ? strVal.trim() + ' ' : '';
+
+    var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
+      return n.nodeType === 3;
+    })[0];
+
+    if (textNode) {
+      textNode.nodeValue = formatted;
+    } else {
+      lbl.insertBefore(document.createTextNode(formatted), lbl.firstChild);
+    }
+    return true;
   }
 
   function valueOf(elements) {
@@ -3669,21 +3713,18 @@ JS;
     if (type === 'radio') {
       var checked = elements.filter(function (el) { return el.checked; })[0];
       if (!checked) return '';
-      var lbl = checked.id ? document.querySelector('label[for="' + checked.id + '"]') : null;
-      if (!lbl) lbl = checked.closest('.form-check') ? checked.closest('.form-check').querySelector('label') : null;
+      var lbl = findLabelFor(checked);
       return lbl ? lbl.textContent.trim() : checked.value;
     }
 
     if (type === 'checkbox') {
       if (multi) {
         return elements.filter(function (el) { return el.checked; }).map(function (el) {
-          var elLbl = el.id ? document.querySelector('label[for="' + el.id + '"]') : null;
-          if (!elLbl) elLbl = el.closest('.form-check') ? el.closest('.form-check').querySelector('label') : null;
+          var elLbl = findLabelFor(el);
           return elLbl ? elLbl.textContent.trim() : el.value;
         });
       }
-      var singleLbl = first.id ? document.querySelector('label[for="' + first.id + '"]') : null;
-      if (!singleLbl) singleLbl = first.closest('.form-check') ? first.closest('.form-check').querySelector('label') : null;
+      var singleLbl = findLabelFor(first);
       return singleLbl ? singleLbl.textContent.trim() : (first.checked ? 'true' : 'false');
     }
 
@@ -3815,52 +3856,12 @@ JS;
     if (!elements || elements.length === 0 || !attr) return false;
     var first = elements[0];
     var attrLower = String(attr).toLowerCase();
+    var multi = String(first.name).slice(-2) === '[]';
 
     if (attrLower === 'value') {
       return setValueOn(elements, value);
     }
 
-    var isBoolAttr = (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required');
-    var isTruthy = isTruthyBool(value);
-    var multi = String(first.name).slice(-2) === '[]';
-
-    // Special case for checked attribute
-    if (attrLower === 'checked') {
-      if (first.type === 'radio') {
-        elements.forEach(function (el) {
-          var shouldCheck = isTruthy && (value === true ? el === first : String(el.value) === String(value));
-          el.checked = shouldCheck;
-          if (shouldCheck) el.setAttribute('checked', 'checked');
-          else el.removeAttribute('checked');
-          fire(el);
-        });
-        return true;
-      }
-      elements.forEach(function (el) {
-        el.checked = isTruthy;
-        if (isTruthy) {
-          el.setAttribute('checked', 'checked');
-        } else {
-          el.removeAttribute('checked');
-        }
-        fire(el);
-      });
-      return true;
-    }
-
-    // Special case for required attribute on multi-checkbox groups
-    if (attrLower === 'required' && multi && first.type === 'checkbox') {
-      if (isTruthy) {
-        first.setAttribute('aria-required', 'true');
-        updateAsterisk(first, true);
-      } else {
-        first.removeAttribute('aria-required');
-        updateAsterisk(first, false);
-      }
-      return true;
-    }
-
-    // Special case for score / data-score (bidirectional symmetry)
     if (attrLower === 'data-score' || attrLower === 'score') {
       var validatedScore = parseScoreValue(value);
       var scoreStr = validatedScore !== null ? String(validatedScore) : null;
@@ -3892,6 +3893,43 @@ JS;
       }
 
       elements.forEach(function(el) { setScoreAttr(el); });
+      return true;
+    }
+
+    var isBoolAttr = (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required');
+    var isTruthy = isTruthyBool(value);
+
+    if (attrLower === 'checked') {
+      if (first.type === 'radio') {
+        elements.forEach(function (el) {
+          var shouldCheck = isTruthy && (value === true ? el === first : String(el.value) === String(value));
+          el.checked = shouldCheck;
+          if (shouldCheck) el.setAttribute('checked', 'checked');
+          else el.removeAttribute('checked');
+          fire(el);
+        });
+        return true;
+      }
+      elements.forEach(function (el) {
+        el.checked = isTruthy;
+        if (isTruthy) {
+          el.setAttribute('checked', 'checked');
+        } else {
+          el.removeAttribute('checked');
+        }
+        fire(el);
+      });
+      return true;
+    }
+
+    if (attrLower === 'required' && multi && first.type === 'checkbox') {
+      if (isTruthy) {
+        first.setAttribute('aria-required', 'true');
+        updateAsterisk(first, true);
+      } else {
+        first.removeAttribute('aria-required');
+        updateAsterisk(first, false);
+      }
       return true;
     }
 
@@ -3949,6 +3987,28 @@ JS;
     }
   }
 
+  function helpTextOf(container) {
+    if (!container) return '';
+    var helpEl = container.querySelector('.awf-help-text');
+    return helpEl ? helpEl.textContent.trim() : '';
+  }
+
+  function setHelpTextOn(container, text) {
+    if (!container) return false;
+    var helpEl = container.querySelector('.awf-help-text');
+    var strVal = (text === null || text === undefined) ? '' : String(text);
+
+    // Fallback: if container doesn't have .awf-help-text (e.g. legacy/custom templates), create it
+    if (!helpEl) {
+      helpEl = document.createElement('div');
+      helpEl.className = 'form-text awf-help-text';
+      container.appendChild(helpEl);
+    }
+
+    helpEl.textContent = strVal;
+    return true;
+  }
+
   var listeners = [];
   var delegatedForm = null;
 
@@ -3958,10 +4018,9 @@ JS;
       ? Number(card.dataset.awfInstance)
       : (parsed && parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null);
 
-    return {
+    var info = {
       element: el,
       card: card,
-      fieldContainer: containerOf([el]),
       block: parsed ? parsed.block : null,
       field: parsed ? parsed.field : null,
       detached: parsed ? parsed.detached : false,
@@ -3970,7 +4029,7 @@ JS;
       getFieldContainer: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
         return containerOf(res.elements);
-      },      
+      },
       getValue: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
         return valueOf(res.elements);
@@ -3983,33 +4042,23 @@ JS;
       },
       getLabel: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
-        var container = containerOf(res.elements);
-        if (!container) return '';
-        var lbl = container.querySelector('label.form-label') || container.querySelector('label');
-        if (!lbl) return '';
-        var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
-          return n.nodeType === Node.TEXT_NODE;
-        })[0];
-        return textNode ? textNode.nodeValue.trim() : lbl.textContent.trim();
+        return labelTextOf(containerOf(res.elements));
       },
       setLabel: function (target, text) {
         var t = (arguments.length === 1) ? currentCanonical : target;
         var val = (arguments.length === 1) ? target : text;
         var res = resolveForInfo(t, card, parsed);
-        var container = containerOf(res.elements);
-        if (!container) return false;
-        var lbl = container.querySelector('label.form-label') || container.querySelector('label');
-        if (!lbl) return false;
-
-        var formatted = String(val).trim() + ' ';
-        var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
-            return n.nodeType === Node.TEXT_NODE;
-        })[0];
-
-        if (textNode) { textNode.nodeValue = formatted;} 
-        else { lbl.insertBefore(document.createTextNode(formatted), lbl.firstChild); }
-
-        return true;
+        return setLabelTextOn(containerOf(res.elements), val);
+      },
+      getHelp: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return helpTextOf(containerOf(res.elements));
+      },
+      setHelp: function (target, text) {
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var val = (arguments.length === 1) ? target : text;
+        var res = resolveForInfo(t, card, parsed);
+        return setHelpTextOn(containerOf(res.elements), val);
       },
       getText: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
@@ -4035,18 +4084,30 @@ JS;
         return this.setAttribute.apply(this, arguments);
       }
     };
+
+    Object.defineProperty(info, 'fieldContainer', {
+      get: function () {
+        return containerOf([el]);
+      },
+      enumerable: true,
+      configurable: true
+    });
+
+    return info;
   }
 
-  // Multi-instance immediate evaluation runner
   function triggerListenerImmediate(listener, targetCard) {
     var form = getForm();
     if (!form) return;
+    if (!parseFieldName(listener.fieldName)) return;
 
-    var parsedTarget = parseFieldName(listener.fieldName);
-    if (!parsedTarget) return;
-
-    // Single target instance evaluation (new instance created at runtime)
     if (targetCard) {
+      targetCard._awfRanListeners = targetCard._awfRanListeners || [];
+      if (targetCard._awfRanListeners.indexOf(listener) !== -1) {
+        return;
+      }
+      targetCard._awfRanListeners.push(listener);
+
       var cardControls = controls(targetCard).filter(function (el) {
         return matches(parseFieldName(el.name), listener.fieldName, listener.options) > 0;
       });
@@ -4063,7 +4124,6 @@ JS;
       return;
     }
 
-    // Global evaluation across all pre-existing instances
     var cards = Array.prototype.slice.call(form.querySelectorAll(INSTANCE_SELECTOR));
     var executedOnAnyCard = false;
 
@@ -4074,19 +4134,22 @@ JS;
         });
         if (cardControls.length > 0) {
           executedOnAnyCard = true;
-          var firstEl = cardControls[0];
-          var cardParsed = parseFieldName(firstEl.name);
-          var val = valueOf(cardControls);
-          try {
-            listener.callback(val, buildInfo(firstEl, card, cardParsed));
-          } catch (err) {
-            console.error('AWF.onChange immediate card error', err);
+          card._awfRanListeners = card._awfRanListeners || [];
+          if (card._awfRanListeners.indexOf(listener) === -1) {
+            card._awfRanListeners.push(listener);
+            var firstEl = cardControls[0];
+            var cardParsed = parseFieldName(firstEl.name);
+            var val = valueOf(cardControls);
+            try {
+              listener.callback(val, buildInfo(firstEl, card, cardParsed));
+            } catch (err) {
+              console.error('AWF.onChange immediate card error', err);
+            }
           }
         }
       });
     }
 
-    // Scalar fallback if no cards matched (scalar form or unindexed control)
     if (!executedOnAnyCard) {
       var resolved = resolve(listener.fieldName, listener.options);
       if (resolved.element) {
@@ -4100,27 +4163,31 @@ JS;
     }
   }
 
-  // Reactive DOM observer to catch newly added repeatable instances
   function initMutationObserver(form) {
     if (typeof MutationObserver === 'undefined' || form._awfObserverInitialized) return;
     form._awfObserverInitialized = true;
+
+    function collectCards(node, acc) {
+      if (!node || node.nodeType !== 1) return;
+      if (node.matches && node.matches(INSTANCE_SELECTOR)) {
+        acc.push(node);
+      }
+      if (node.querySelectorAll) {
+        var sub = node.querySelectorAll(INSTANCE_SELECTOR);
+        for (var i = 0; i < sub.length; i++) {
+          acc.push(sub[i]);
+        }
+      }
+    }
 
     var observer = new MutationObserver(function (mutations) {
       var addedCards = [];
 
       mutations.forEach(function (mutation) {
         if (!mutation.addedNodes || mutation.addedNodes.length === 0) return;
-        Array.prototype.slice.call(mutation.addedNodes).forEach(function (node) {
-          if (node.nodeType !== 1) return;
-          if (node.matches && node.matches(INSTANCE_SELECTOR)) {
-            addedCards.push(node);
-          } else if (node.querySelectorAll) {
-            var sub = node.querySelectorAll(INSTANCE_SELECTOR);
-            if (sub.length > 0) {
-              addedCards.push.apply(addedCards, Array.prototype.slice.call(sub));
-            }
-          }
-        });
+        for (var i = 0; i < mutation.addedNodes.length; i++) {
+          collectCards(mutation.addedNodes[i], addedCards);
+        }
       });
 
       if (addedCards.length > 0) {
@@ -4128,7 +4195,6 @@ JS;
           return arr.indexOf(c) === idx;
         });
 
-        // Defer to next tick to ensure Alpine bindings, defaults and attributes are fully hydrated
         setTimeout(function () {
           uniqueCards.forEach(function (card) {
             listeners.forEach(function (listener) {
@@ -4143,15 +4209,22 @@ JS;
 
     observer.observe(form, { childList: true, subtree: true });
 
-    // Explicit event support
     form.addEventListener('awf:instance-added', function (ev) {
       var card = ev.detail && ev.detail.card ? ev.detail.card : ev.target;
       if (card && card.nodeType === 1) {
+        var cardsToInit = [];
+        collectCards(card, cardsToInit);
+        var uniqueCards = cardsToInit.filter(function (c, idx, arr) {
+          return arr.indexOf(c) === idx;
+        });
+
         setTimeout(function () {
-          listeners.forEach(function (listener) {
-            if (listener.options && listener.options.immediate) {
-              triggerListenerImmediate(listener, card);
-            }
+          uniqueCards.forEach(function (c) {
+            listeners.forEach(function (listener) {
+              if (listener.options && listener.options.immediate) {
+                triggerListenerImmediate(listener, c);
+              }
+            });
           });
         }, 0);
       }
@@ -4162,24 +4235,45 @@ JS;
     var form = getForm();
     if (!form || delegatedForm === form) return;
     delegatedForm = form;
+    
     var handler = function (event) {
       var el = event.target;
       if (!el || !el.name) return;
       var parsed = parseFieldName(el.name);
       if (!parsed) return;
+
       var card = el.closest(INSTANCE_SELECTOR);
       var canonical = (parsed.detached ? '_detached.' : '') + parsed.block + '.' + parsed.field;
+
       listeners.slice().forEach(function (listener) {
         if (matches(parsed, listener.fieldName, listener.options) === 0) return;
+        
         var groupEls = controls(card).filter(function (e) {
           return matches(parseFieldName(e.name), canonical, listener.options) > 0;
         });
+
         var value = valueOf(groupEls.length ? groupEls : [el]);
-        try { listener.callback(value, buildInfo(el, card, parsed)); }
-        catch (err) { console.error('AWF.onChange callback error', err); }
+
+        listener._lastValues = listener._lastValues || Object.create(null);
+        var controlKey = el.name;
+        var serializedVal = JSON.stringify(value);
+
+        if (listener._lastValues[controlKey] === serializedVal) {
+          return;
+        }
+        listener._lastValues[controlKey] = serializedVal;
+
+        try { 
+          listener.callback(value, buildInfo(el, card, parsed)); 
+        } catch (err) { 
+          console.error('AWF.onChange callback error', err); 
+        }
       });
     };
+       
     form.addEventListener('change', handler);
+    form.addEventListener('input', handler);
+
     initMutationObserver(form);
   }
 
@@ -4192,6 +4286,10 @@ JS;
     getValue: function (target, options) { return valueOf(resolve(target, options).elements); },
     setValue: function (target, value, options) { return setValueOn(resolve(target, options).elements, value); },
     getText: function (target, options) { return textOf(resolve(target, options).elements); },
+    getLabel: function (target, options) { return labelTextOf(containerOf(resolve(target, options).elements)); },
+    setLabel: function (target, text, options) { return setLabelTextOn(containerOf(resolve(target, options).elements), text); },
+    getHelp: function (target, options) { return helpTextOf(containerOf(resolve(target, options).elements)); },
+    setHelp: function (target, text, options) { return setHelpTextOn(containerOf(resolve(target, options).elements), text); },
     getAttribute: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
     setAttribute: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
     getAttributeValue: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
@@ -4214,7 +4312,6 @@ JS;
     }
   };
 
-  // Register form-scoped API instance
   window.AWF_FORMS = window.AWF_FORMS || {};
   window.AWF_LIST = window.AWF_LIST || [];
   window.AWF_FORMS[FORM_ID] = api;
@@ -4262,10 +4359,14 @@ JS;
       getValue: function (target, options) { return scoped('getValue', [target, options], options); },
       setValue: function (target, value, options) { return scoped('setValue', [target, value, options], options); },
       getText: function (target, options) { return scoped('getText', [target, options], options); },
-      getAttribute: function (target, attr, options) { return scoped('getAttribute', [target, attr], options); },
-      setAttribute: function (target, attr, value, options) { return scoped('setAttribute', [target, attr, value], options); },
-      getAttributeValue: function (target, attr, options) { return scoped('getAttributeValue', [target, attr], options); },
-      setAttributeValue: function (target, attr, value, options) { return scoped('setAttributeValue', [target, attr, value], options); },
+      getLabel: function (target, options) { return scoped('getLabel', [target, options], options); },
+      setLabel: function (target, text, options) { return scoped('setLabel', [target, text, options], options); },
+      getHelp: function (target, options) { return helpTextOf(containerOf(resolve(target, options).elements)); },
+      setHelp: function (target, text, options) { return setHelpTextOn(containerOf(resolve(target, options).elements), text); },
+      getAttribute: function (target, attr, options) { return scoped('getAttribute', [target, attr, options], options); },
+      setAttribute: function (target, attr, value, options) { return scoped('setAttribute', [target, attr, value, options], options); },
+      getAttributeValue: function (target, attr, options) { return scoped('getAttributeValue', [target, attr, options], options); },
+      setAttributeValue: function (target, attr, value, options) { return scoped('setAttributeValue', [target, attr, value, options], options); },
       onChange: function (fieldName, callback, options) { return scoped('onChange', [fieldName, callback, options], options); },
       parseFieldName: parseFieldName
     };
