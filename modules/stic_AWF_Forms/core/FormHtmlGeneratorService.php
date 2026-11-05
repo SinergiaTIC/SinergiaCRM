@@ -3971,6 +3971,30 @@ JS;
     }
   }
 
+  // Helper to extract help text from a field container
+  function helpTextOf(container) {
+    if (!container) return '';
+    var helpEl = container.querySelector('.awf-help-text');
+    return helpEl ? helpEl.textContent.trim() : '';
+  }
+
+  // Helper to set help text on a field container
+  function setHelpTextOn(container, text) {
+    if (!container) return false;
+    var helpEl = container.querySelector('.awf-help-text');
+    var strVal = (text === null || text === undefined) ? '' : String(text);
+
+    // Fallback: if container doesn't have .awf-help-text (e.g. legacy/custom templates), create it
+    if (!helpEl) {
+      helpEl = document.createElement('div');
+      helpEl.className = 'form-text awf-help-text';
+      container.appendChild(helpEl);
+    }
+
+    helpEl.textContent = strVal;
+    return true;
+  }
+
   var listeners = [];
   var delegatedForm = null;
 
@@ -4011,6 +4035,16 @@ JS;
         var val = (arguments.length === 1) ? target : text;
         var res = resolveForInfo(t, card, parsed);
         return setLabelTextOn(containerOf(res.elements), val);
+      },
+      getHelp: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return helpTextOf(containerOf(res.elements));
+      },
+      setHelp: function (target, text) {
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var val = (arguments.length === 1) ? target : text;
+        var res = resolveForInfo(t, card, parsed);
+        return setHelpTextOn(containerOf(res.elements), val);
       },
       getText: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
@@ -4219,6 +4253,8 @@ JS;
     getText: function (target, options) { return textOf(resolve(target, options).elements); },
     getLabel: function (target, options) { return labelTextOf(containerOf(resolve(target, options).elements)); },
     setLabel: function (target, text, options) { return setLabelTextOn(containerOf(resolve(target, options).elements), text); },
+    getHelp: function (target, options) { return helpTextOf(containerOf(resolve(target, options).elements)); },
+    setHelp: function (target, text, options) { return setHelpTextOn(containerOf(resolve(target, options).elements), text); },
     getAttribute: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
     setAttribute: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
     getAttributeValue: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
@@ -4290,6 +4326,8 @@ JS;
       getText: function (target, options) { return scoped('getText', [target, options], options); },
       getLabel: function (target, options) { return scoped('getLabel', [target, options], options); },
       setLabel: function (target, text, options) { return scoped('setLabel', [target, text, options], options); },
+      getHelp: function (target, options) { return helpTextOf(containerOf(resolve(target, options).elements)); },
+      setHelp: function (target, text, options) { return setHelpTextOn(containerOf(resolve(target, options).elements), text); },
       getAttribute: function (target, attr, options) { return scoped('getAttribute', [target, attr, options], options); },
       setAttribute: function (target, attr, value, options) { return scoped('setAttribute', [target, attr, value, options], options); },
       getAttributeValue: function (target, attr, options) { return scoped('getAttributeValue', [target, attr, options], options); },

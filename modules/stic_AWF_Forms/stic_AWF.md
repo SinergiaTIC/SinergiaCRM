@@ -611,20 +611,6 @@ var emailFila1 = AWF.getValue('Contacts0.email1', { instanceIndex: 1 });
 * **`AWF.parseFieldName(name)`**: Descompone un nombre de control en `{ detached, block, indexes, field, multi }`.
 * **Evento `awf:instance-added`**: Evento DOM disparado sobre el formulario que los integradores externos pueden emitir manualmente pasando `{ detail: { card: elementoCard } }` para forzar la inicialización de contenedores creados fuera del ciclo estándar de Alpine.js.
 
----
-
-### 4. Soporte multiformulario y opciones avanzadas
-Cuando varios formularios AWF conviven en una misma página:
-* **`AWF.for(formId)`**: Devuelve la instancia acotada al formulario indicado.
-* **Parámetro `options.form`**: Todos los métodos globales aceptan `{ form: formIdOrElement }` en sus opciones.
-* **Parámetro `options.instanceIndex`**: Permite discriminar la búsqueda a una instancia concreta de un bloque repetible:
-```javascript
-AWF.getValue('Contacts0.nombre', { instanceIndex: 1 });
-```
-* **Métodos auxiliares:**
-  * `AWF.resolve(target, [options])`: Devuelve `{ elements, element, card, parsed }` para inspección técnica del DOM.
-  * `AWF.parseFieldName(name)`: Desglosa un nombre de control en sus componentes `{ detached, block, indexes, field, multi }`.
-
 ## Análisis y Métricas de Rendimiento
 Además de capturar datos, el formulario web es una herramienta de medición de impacto. Desde la vista de detalle del formulario, se centraliza toda la información estadística y de rendimiento de la campaña:
 
