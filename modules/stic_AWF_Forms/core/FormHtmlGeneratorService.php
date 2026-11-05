@@ -3977,14 +3977,12 @@ JS;
     }
   }
 
-  // Helper to extract help text from a field container
   function helpTextOf(container) {
     if (!container) return '';
     var helpEl = container.querySelector('.awf-help-text');
     return helpEl ? helpEl.textContent.trim() : '';
   }
 
-  // Helper to set help text on a field container
   function setHelpTextOn(container, text) {
     if (!container) return false;
     var helpEl = container.querySelector('.awf-help-text');
@@ -4227,24 +4225,45 @@ JS;
     var form = getForm();
     if (!form || delegatedForm === form) return;
     delegatedForm = form;
+    
     var handler = function (event) {
       var el = event.target;
       if (!el || !el.name) return;
       var parsed = parseFieldName(el.name);
       if (!parsed) return;
+
       var card = el.closest(INSTANCE_SELECTOR);
       var canonical = (parsed.detached ? '_detached.' : '') + parsed.block + '.' + parsed.field;
+
       listeners.slice().forEach(function (listener) {
         if (matches(parsed, listener.fieldName, listener.options) === 0) return;
+        
         var groupEls = controls(card).filter(function (e) {
           return matches(parseFieldName(e.name), canonical, listener.options) > 0;
         });
+
         var value = valueOf(groupEls.length ? groupEls : [el]);
-        try { listener.callback(value, buildInfo(el, card, parsed)); }
-        catch (err) { console.error('AWF.onChange callback error', err); }
+
+        listener._lastValues = listener._lastValues || Object.create(null);
+        var controlKey = el.name;
+        var serializedVal = JSON.stringify(value);
+
+        if (listener._lastValues[controlKey] === serializedVal) {
+          return;
+        }
+        listener._lastValues[controlKey] = serializedVal;
+
+        try { 
+          listener.callback(value, buildInfo(el, card, parsed)); 
+        } catch (err) { 
+          console.error('AWF.onChange callback error', err); 
+        }
       });
     };
+       
     form.addEventListener('change', handler);
+    form.addEventListener('input', handler);
+
     initMutationObserver(form);
   }
 
