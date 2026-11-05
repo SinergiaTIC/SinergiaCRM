@@ -32,12 +32,11 @@ class stic_AttendancesController extends SugarController
     public function action_createAttendances()
     {
         require_once 'modules/stic_Attendances/Utils.php';
-        if (empty($_REQUEST['date'])) {stic_AttendancesUtils::createAttendances();} else {
-            $GLOBALS['log']->debug(__METHOD__ . '. Creando asistencias solo para el día  ' . $_REQUEST['date']);
-            stic_AttendancesUtils::createAttendances($_REQUEST['date'], null, null);
-            SugarApplication::redirect('index.php?module=stic_Attendances&action=index');
-
-        }
+        $date = empty($_REQUEST['date']) ? date('Y-m-d') : $_REQUEST['date'];
+        $GLOBALS['log']->debug(__METHOD__ . '. Creando asistencias solo para el día  ' . $date);
+        stic_AttendancesUtils::createAttendances($date, null, null, true);
+        stic_AttendancesUtils::sendUISummary();
+        SugarApplication::redirect('index.php?module=stic_Attendances&action=index');
 
     }
 
@@ -76,17 +75,24 @@ class stic_AttendancesController extends SugarController
         $session_id = $_REQUEST['session_id'];
         $start = new DateTime($_REQUEST['start']);
         $end = new DateTime($_REQUEST['end']);
+        $numDays = $start->diff($end)->days;
+
         $GLOBALS['log']->debug(__METHOD__ . '. line ' . __LINE__ . ' START ' . $_REQUEST['start'] . ' --- END ' . $_REQUEST['end'] . ' DAYS: ' . $numDays);
 
-        $numDays = $start->diff($end)->days;
         $dayToCreate = $start->format('Y-m-d');
+
+        // Enable batch mode to defer recalculations until all days are processed
+        stic_AttendancesUtils::setBatchMode(true);
+        $a = 0;
         while ($a <= $numDays) {
             $GLOBALS['log']->debug(__METHOD__ . '. line ' . __LINE__ . ' Creando asistencias para el día ' . $dayToCreate);
-            stic_AttendancesUtils::createAttendances($dayToCreate, $registration_id, $session_id);
+            stic_AttendancesUtils::createAttendances($dayToCreate, $registration_id, $session_id, true);
             $dayToCreate = $start->add(new DateInterval('P1D'))->format('Y-m-d');
             $a++;
 
         }
+        stic_AttendancesUtils::setBatchMode(false);
+        stic_AttendancesUtils::sendUISummary();
         SugarApplication::redirect('index.php?module=stic_Attendances&action=index');
 
     }

@@ -23,6 +23,60 @@
 class stic_AttendancesUtils
 {
 
+    private static $batchMode = false;
+    private static $pendingRegistrationUpdates = [];
+    private static $pendingSessionUpdates = [];
+    private static $uiCreatedDates = [];
+    private static $uiNoopDates = [];
+
+    /**
+     * Enable or disable batch mode for deferred recalculations.
+     *
+     * @param bool $enabled
+     * @return void
+     */
+    public static function setBatchMode($enabled)
+    {
+        self::$batchMode = $enabled;
+        if (!$enabled) {
+            self::flushDeferredUpdates();
+        }
+    }
+
+    /**
+     * Flush all deferred registration and session recalculations.
+     *
+     * @return void
+     */
+    public static function flushDeferredUpdates()
+    {
+        foreach (self::$pendingRegistrationUpdates as $id => $_) {
+            self::setRegistrationTotalHoursAndPercentage($id);
+        }
+        foreach (self::$pendingSessionUpdates as $id => $_) {
+            require_once 'modules/stic_Sessions/Utils.php';
+            stic_SessionsUtils::setSessionAttendancesCounters($id);
+        }
+        self::$pendingRegistrationUpdates = [];
+        self::$pendingSessionUpdates = [];
+    }
+
+    /**
+     * Queue or execute session counters update depending on batch mode.
+     *
+     * @param String $sessionId
+     * @return void
+     */
+    public static function updateSessionCounters($sessionId)
+    {
+        if (self::$batchMode) {
+            self::$pendingSessionUpdates[$sessionId] = true;
+            return;
+        }
+        require_once 'modules/stic_Sessions/Utils.php';
+        stic_SessionsUtils::setSessionAttendancesCounters($sessionId);
+    }
+
     /**
      * createAttendances Creates attendances according to the parameters provided
      *
@@ -31,7 +85,7 @@ class stic_AttendancesUtils
      * @param String $sessionId Optional, default null
      * @return void
      */
-    public static function createAttendances($date = null, $registrationId = null, $sessionId = null)
+    public static function createAttendances($date = null, $registrationId = null, $sessionId = null, $fromUI = false)
     {
 
         if ($date > date('Y-m-d')) {
@@ -40,6 +94,7 @@ class stic_AttendancesUtils
         }
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  Creating attendances with these params: date:' . $date . '| registration_id:' . $registrationId . '| session_id:' . $sessionId);
+
         // STIC TIP: run task in navigator with:
         // window.location.href="/index.php?module=stic_Attendances&action=createAttendances&return_module=stic_Attendances&return_action=index"
         // window.location.href="/index.php?module=stic_Attendances&action=createAttendancesRange&return_module=stic_Attendances&return_action=index&start=2019-01-15&end=2019-01-15&session_id=b10a46ce-9dbc-fa97-2355-5ca399094453"
@@ -132,6 +187,15 @@ class stic_AttendancesUtils
             return false;
         }
 
+        // Enable batch mode to defer session and registration recalculations
+        $enableBatch = !self::$batchMode;
+        if ($enableBatch) {
+            self::setBatchMode(true);
+        }
+
+        $createdCount = 0;
+        $startTime = microtime(true);
+
         while ($row = $db->fetchByAssoc($result)) {
 
             // Avoid attendance creation if $date weekday appears in registration disabled_weekdays string
@@ -176,8 +240,73 @@ class stic_AttendancesUtils
 
             $attendance->save();
 
+            $createdCount++;
         }
+
+        if ($enableBatch) {
+            self::setBatchMode(false);
+        }
+
+        if ($createdCount > 0) {
+            $elapsed = microtime(true) - $startTime;
+            $avg = ($elapsed / $createdCount) * 1000;
+            $GLOBALS['log']->debug(__METHOD__ . ": Created $createdCount attendances in " . round($elapsed, 4) . " seconds (avg " . round($avg, 2) . " ms per attendance)");
+        }
+
+        if ($fromUI) {
+            if ($createdCount > 0) {
+                self::$uiCreatedDates[] = $date;
+            } else {
+                self::$uiNoopDates[] = $date;
+            }
+        }
+
         return true;
+    }
+
+    /**
+     * Send a summary of UI-created attendances as a success message.
+     * If total days <= 10, lists individual dates; otherwise shows aggregated counts.
+     *
+     * @return void
+     */
+    public static function sendUISummary()
+    {
+        if (empty(self::$uiCreatedDates) && empty(self::$uiNoopDates)) {
+            return;
+        }
+        require_once 'include/MVC/SugarApplication.php';
+        global $timedate, $current_language;
+
+        $formatDate = function ($date) use ($timedate) {
+            $dateObj = $timedate->fromDbDate($date);
+            return $dateObj ? $timedate->asUserDate($dateObj, false) : $date;
+        };
+
+        $created = array_map($formatDate, self::$uiCreatedDates);
+        $noop = array_map($formatDate, self::$uiNoopDates);
+        $total = count($created) + count($noop);
+
+        $parts = [];
+        if (!empty($created)) {
+            if ($total <= 10) {
+                $parts[] = sprintf(translate('LBL_UI_CREATED_LIST', 'stic_Attendances'), implode(', ', $created));
+            } else {
+                $parts[] = sprintf(translate('LBL_UI_CREATED_COUNT', 'stic_Attendances'), count($created));
+            }
+        }
+        if (!empty($noop)) {
+            if ($total <= 10) {
+                $parts[] = sprintf(translate('LBL_UI_NOOP_LIST', 'stic_Attendances'), implode(', ', $noop));
+            } else {
+                $parts[] = sprintf(translate('LBL_UI_NOOP_COUNT', 'stic_Attendances'), count($noop));
+            }
+        }
+
+        SugarApplication::appendSuccessMessage(implode('<br>', $parts));
+
+        self::$uiCreatedDates = [];
+        self::$uiNoopDates = [];
     }
 
     /**
@@ -191,6 +320,11 @@ class stic_AttendancesUtils
         $GLOBALS['log']->debug(__METHOD__ . "Calculating total hours and percentage for registration $registrationId ");
         if (empty($registrationId)) {
             $GLOBALS['log']->error(__METHOD__ . " | The function has been called without the $registrationId parameter");
+            return;
+        }
+
+        if (self::$batchMode) {
+            self::$pendingRegistrationUpdates[$registrationId] = true;
             return;
         }
 

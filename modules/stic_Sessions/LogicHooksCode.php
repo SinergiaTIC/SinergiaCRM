@@ -94,7 +94,8 @@ class stic_SessionsLogicHooks
             require_once 'modules/stic_Attendances/Utils.php';
             $startDateString = substr($bean->start_date, 0, 10);
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ':  ' . $startDateString . '  >>>>  ' . $bean->end_date . ' >>>  ' . $bean->id);
-            stic_AttendancesUtils::createAttendances($startDateString, null, $bean->id);
+            stic_AttendancesUtils::createAttendances($startDateString, null, $bean->id, true);
+            stic_AttendancesUtils::sendUISummary();
 
             // Recalculate event total hours (in periodic session creation will use notUpdateRelatedEvent flag
             // in order to boost performance by only recalculating in the last created session)
@@ -143,10 +144,14 @@ class stic_SessionsLogicHooks
                 case 'after_relationship_add':
                     // Recalculate event total hours
                     stic_EventsUtils::setEventTotalHours($event_id);
-                    // Create attendances if neccesary
-                    require_once 'modules/stic_Attendances/Utils.php';
-                    $startDateString = substr($bean->start_date, 0, 10);
-                    stic_AttendancesUtils::createAttendances($startDateString, null, $bean->id);
+                    // For existing sessions (not new), create attendances if needed.
+                    // For new sessions, after_save handles attendance creation.
+                    if (!empty($bean->fetched_row['id'])) {
+                        require_once 'modules/stic_Attendances/Utils.php';
+                        $startDateString = substr($bean->start_date, 0, 10);
+            stic_AttendancesUtils::createAttendances($startDateString, null, $bean->id, true);
+            stic_AttendancesUtils::sendUISummary();
+                    }
                     break;
                 default:
                     break;
