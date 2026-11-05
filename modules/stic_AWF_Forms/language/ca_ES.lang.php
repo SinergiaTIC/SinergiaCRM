@@ -625,6 +625,20 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un camp contingui una URL vàlida.',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La URL no és vàlida.',
 
+  // SignatureAction
+  'LBL_SIGNATURE_ACTION_TITLE' => 'Signar document',
+  'LBL_SIGNATURE_ACTION_DESC' => "Afegeix l'usuari com a signant a un procés de signatura i redirigeix al portal de signatura.",
+  'LBL_SIGNATURE_ACTION_FLOW_SUCCESS' => 'Document signat',
+  'LBL_SIGNATURE_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_TEXT' => 'Registre origen',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_DESC' => "Bloc de dades del formulari que s'usarà com a registre d'origen. El selector de procés de signatura es pre-filtra segons el mòdul d'aquest bloc. L'acció detecta automàticament el bloc adequat si aquest no coincideix.",
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_TEXT' => 'Procés de signatura',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_DESC' => "Seleccioneu el procés de signatura al qual s'afegirà l'usuari com a signant.",
+  'LBL_SIGNATURE_ACTION_DELIVERY_TEXT' => "Mode d'entrega",
+  'LBL_SIGNATURE_ACTION_DELIVERY_DESC' => "Com arriba la invitació de firma al firmant: redirigint directament al portal en enviar el formulari, o enviant un email amb l'enllaç al portal.",
+  'LBL_SIGNATURE_ACTION_DELIVERY_PORTAL_TEXT' => 'Redirigir al portal de firma',
+  'LBL_SIGNATURE_ACTION_DELIVERY_EMAIL_TEXT' => 'Enviar email al firmant',
+ 
   // MaxDocumentSizeValidatorAction
   'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_TITLE' => 'Mida màxima de fitxer',
   'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Valida que el fitxer pujat no superi la mida màxima permesa.',
