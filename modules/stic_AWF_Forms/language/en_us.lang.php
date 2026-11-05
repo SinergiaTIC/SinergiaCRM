@@ -625,6 +625,21 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Validates that a field contains a valid URL.',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'The URL is invalid.',
 
+  // SignatureAction
+  'LBL_SIGNATURE_ACTION_TITLE' => 'Sign document',
+  'LBL_SIGNATURE_ACTION_DESC' => 'Adds the user as a signer to a signature process and redirects to the signature portal.',
+  'LBL_SIGNATURE_ACTION_FLOW_SUCCESS' => 'Document signed',
+  'LBL_SIGNATURE_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_TEXT' => 'Source record',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_DESC' => 'Data block of the form that will be used as the source record. The signature process selector is pre-filtered by this block module. The action automatically detects the right block if this one does not match.',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_TEXT' => 'Signature process',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_DESC' => 'Select the signature process to which the user will be added as a signer.',
+  'LBL_SIGNATURE_ACTION_DELIVERY_TEXT' => 'Delivery mode',
+  'LBL_SIGNATURE_ACTION_DELIVERY_DESC' => 'How the signing invitation reaches the signer: redirecting straight to the portal when the form is submitted, or emailing a link to the portal.',
+  'LBL_SIGNATURE_ACTION_DELIVERY_PORTAL_TEXT' => 'Redirect to the signing portal',
+  'LBL_SIGNATURE_ACTION_DELIVERY_EMAIL_TEXT' => 'Send email to the signer',
+
+
   // MaxDocumentSizeValidatorAction
   'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_TITLE' => 'Max file size',
   'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Validates that the uploaded file does not exceed the maximum allowed size.',
