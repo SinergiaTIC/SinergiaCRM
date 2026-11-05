@@ -359,9 +359,11 @@ Este es el último paso del asistente, destinado a revisar el resultado final, e
   * **Descargar código**: Permite descargar el código HTML generado para realizar inserciones manuales o integraciones más específicas en plataformas externas.
 
 ## API JavaScript de Cliente (window.AWF) ##
-El motor de formularios genera de forma nativa la librería de cliente `window.AWF`, disponible en el ámbito global y lista para su uso en el bloque de **JS Personalizado** (`custom_js`) en el Paso 4 (Maquetación).
+El motor de formularios inyecta de forma nativa la librería de cliente `window.AWF`, disponible en el ámbito global del navegador y lista para su uso en el bloque de **JS Personalizado** (`custom_js`) en el Paso 4 (Maquetación).
 
-Esta API permite manipular valores y atributos HTML sin depender de selectores frágiles del DOM (`#f_...`), garantizando compatibilidad con bloques escalares, repetibles y opcionales (#1365).
+Esta API permite consultar y manipular valores, atributos HTML, etiquetas y contenedores sin depender de selectores frágiles del DOM (`#f_...`), abstrayendo al desarrollador de la estructura interna y garantizando compatibilidad total con bloques escalares, repetibles y opcionales (#1365).
+
+---
 
 ### 1. Nomenclatura canónica obligatoria
 Para evitar colisiones entre campos homónimos de distintos bloques o campos virtuales, el acceso exige siempre el nombre interno canónico:
@@ -369,139 +371,246 @@ Para evitar colisiones entre campos homónimos de distintos bloques o campos vir
 * **Campos no enlazados (virtuales)**: `_detached.NombreBloque.nombre_campo` (ej: `_detached.Contacts0.terminos`).
 * **Instancias concretas en repetibles**: `NombreBloque[indice][nombre_campo]` (ej: `Participantes0[0][first_name]`).
 
-No se admiten nombres cortos sin bloque (como `'first_name'`), retornando `null` o `false` en caso de intento de acceso no cualificado.
+No se admiten nombres cortos sin bloque (como `'first_name'`). Cualquier llamada con un nombre no cualificado retornará `null` o `false`.
 
 ---
 
-### 2. Métodos de la API global
+### 2. Métodos de la API global (`window.AWF`)
 
-#### `AWF.getValue(target, [options])`
-Obtiene el valor actual de un control:
-* Casillas de verificación individuales: booleano (`true`/`false`).
-* Listas de casillas o selects múltiples (`[]`): array de cadenas con los valores seleccionados.
-* Botones de radio o selects simples: valor de la opción seleccionada.
-* Campos de texto/textarea: cadena con el valor actual.
-* Si el campo no existe: retorna `null`.
+#### AWF.getValue(target, [options])
+Obtiene el valor de datos (payload) actual de un control:
+* **Casillas de verificación individuales**: booleano (`true`/`false`).
+* **Listas de casillas o selects múltiples (`[]`)**: array de cadenas con los valores seleccionados.
+* **Botones de radio o selects simples**: valor de la opción seleccionada.
+* **Campos de texto / textarea**: cadena con el valor actual.
+* **Si el campo no existe**: retorna `null`.
 
 ```javascript
 var email = AWF.getValue('Contacts0.email1');
 var acepta = AWF.getValue('_detached.Contacts0.terminos');
 ```
 
-#### `AWF.setValue(target, value, [options])`
-Asigna reactivamente un valor sobre el campo emitiendo los eventos nativos `input` y `change`, lo que mantiene sincronizado el estado interno de Alpine.js y recalcula las validaciones. En casillas individuales o booleanos, normaliza valores equivalentes (`true`, `false`, `'1'`, `'0'`, `'true'`, `'false'`).
+#### AWF.setValue(target, value, [options])
+Asigna reactivamente un valor sobre el control emitiendo los eventos nativos `input` y `change` con propagación (`bubbles: true`), lo que mantiene sincronizado el estado reactivo de Alpine.js y recalcula las validaciones. Normaliza valores booleanos equivalentes (`true`, `false`, `'1'`, `'0'`, `'true'`, `'false'`).
 
 ```javascript
 AWF.setValue('Contacts0.first_name', 'Marta');
 AWF.setValue('_detached.Contacts0.terminos', true);
 ```
 
-#### `AWF.getAttribute(target, attributeName, [options])`
+#### AWF.getText(target, [options])
+*(Alias: `scope.getText`)*
+Obtiene el texto legible y visible para el usuario de la selección actual (no su clave o ID interno):
+* **Desplegable (`select`)**: texto de la opción seleccionada (en selecciones múltiples, array de textos).
+* **Botones de radio (`input type="radio"`)**: texto de la etiqueta vinculada a la opción marcada.
+* **Casillas de verificación (`checkbox`)**: texto de la etiqueta si existe, o `'true'`/`'false'`.
+* **Campos de texto o textarea**: valor actual del campo.
+
+```javascript
+// Si el valor interno es 'passport' pero la opción visible dice 'Pasaporte':
+var tipoDoc = AWF.getText('Contacts0.tipo_documento'); // 'Pasaporte'
+```
+
+#### AWF.getLabel(target, [options])
+*(Alias: `scope.getLabel`)*
+Obtiene el texto de la etiqueta principal (`<label>`) del campo, limpiando de forma segura el asterisco visual de obligatoriedad (`*` o `.awf-required`). Retorna una cadena vacía si no existe etiqueta.
+
+```javascript
+var etiqueta = AWF.getLabel('Contacts0.phone_mobile'); // 'Teléfono móvil'
+```
+
+#### AWF.setLabel(target, text, [options])
+*(Alias: `scope.setLabel`)*
+Modifica dinámicamente el texto de la etiqueta principal del campo respetando y preservando intacto el nodo del asterisco (`<span class="awf-required">*</span>`) si el campo es obligatorio.
+* Si se pasa `null` o `undefined`, limpia el texto de la etiqueta sin alterar los indicadores visuales ni romper el marcado HTML.
+
+```javascript
+AWF.setLabel('Contacts0.stic_identification_number_c', 'Número de pasaporte:');
+```
+
+#### AWF.getFieldContainer(target, [options])
+*(Alias: `scope.getFieldContainer` y propiedad `scope.fieldContainer`)*
+Retorna el elemento DOM contenedor del campo (`.awf-field` o `.form-check`). Resulta indispensable para ocultar o mostrar bloques de entrada completos (input, etiqueta y textos de ayuda) sin dejar etiquetas huérfanas ni desalinear la cuadrícula visual de Bootstrap.
+
+```javascript
+var contenedor = AWF.getFieldContainer('Contacts0.empresa');
+if (contenedor) {
+    contenedor.style.display = 'none'; // Oculta campo, etiqueta y textos de ayuda
+}
+```
+
+#### AWF.getAttribute(target, attributeName, [options])
 *(Alias: `AWF.getAttributeValue`)*
-Lee el valor o estado de un atributo HTML:
+Inspecciona el valor o estado de un atributo HTML del control:
 * **Atributos booleanos (`disabled`, `readonly`, `checked`)**: retorna booleano (`true`/`false`).
-* **Atributo `required`**: retorna `true` si el control tiene el atributo nativo `required` o si tiene `aria-required="true"` (caso de listas de selección múltiple por casillas).
-* **Puntuación (`score` o `data-score`)**: resuelve de forma simétrica el valor numérico de la opción actualmente seleccionada:
-  * En `<select>` simple o `<input type="radio">`: retorna el valor numérico (`float`/`int`) del `data-score` de la opción marcada, o `null` si la opción no tiene puntuación definida o no es convertible a número (evita `NaN`).
-  * En controles múltiples (`select multiple` o `select_checkbox_list`): retorna un array con las puntuaciones de las opciones seleccionadas (ej. `[10, null, 25]`). Si una opción no tiene puntuación, su posición en el array es `null` (nunca `0` por defecto).
-* **Otros atributos de texto (`placeholder`, `min`, `max`, `style`, etc.)**: retorna la cadena con el valor o `null` si no está definido.
+* **Atributo `required`**: retorna `true` si el control tiene el atributo nativo `required` o si tiene asignado `aria-required="true"` (caso de listas de selección múltiple por casillas).
+* **Puntuación (`score` o `data-score`)**: resuelve de forma simétrica el valor numérico de la opción actualmente seleccionada en desplegables o botones de radio (retorna `float`/`int` o `null` si no está definida; nunca retorna `NaN` ni ceros artificiales). En selecciones múltiples retorna un array de números o valores `null`.
+* **Atributos de texto (`placeholder`, `min`, `max`, `style`, etc.)**: retorna la cadena o `null` si no está definido.
 
 ```javascript
 var esObligatorio = AWF.getAttribute('Contacts0.email1', 'required');
-var placeholder = AWF.getAttribute('Contacts0.phone_mobile', 'placeholder');
-// Lectura de puntuación en radio o select
-var puntos = AWF.getAttribute('Encuesta0.satisfaccion', 'score'); // Retorna número o null
+var puntos = AWF.getAttribute('Encuesta0.satisfaccion', 'score'); // Retorna ej: 25 (número) o null
 ```
 
-#### `AWF.setAttribute(target, attributeName, value, [options])`
+#### AWF.setAttribute(target, attributeName, value, [options])
 *(Alias: `AWF.setAttributeValue`)*
-Asigna o retira un atributo en el control:
-* **Atributos booleanos**: Si se pasa un valor falso (`false`, `null`, `0`, `'false'`, `'0'`, `''`), el atributo y la propiedad se retiran; en caso afirmativo, se añaden.
-* **Selección en radios y checkboxes (`checked`):**
-  * En casillas individuales conmuta el estado booleano.
-  * En grupos de botones de radio, si se pasa un valor concreto (ej. `AWF.setAttribute('Encuesta0.opcion', 'checked', 'B')`), marca exclusivamente la opción que coincide con dicho valor y desmarca el resto.
-* **Control de obligatoriedad (`required`)**: Sincroniza la propiedad nativa, el atributo `aria-required` y el asterisco visual (`*`). En listas múltiples (`select_checkbox_list`) omite el `required` nativo de HTML5 para no bloquear el envío y aplica únicamente `aria-required="true"` y el asterisco del grupo.
-* **Puntuación (`score` o `data-score`):** Asigna dinámicamente la puntuación garantizando simetría con `getAttribute`:
-  * Tanto si se indica `'score'` como `'data-score'`, el valor se valida numéricamente y se escribe en el atributo canónico data-score del elemento u opción activa (la opción seleccionada en `<select>` o el radio activo en grupos de radiobuttons).
-  * Si el valor es nulo, vacío o no numérico, se retira el atributo `data-score` de la opción activa.
-  * Limpia automáticamente cualquier atributo no estándar `score` residual en el contenedor raíz para evitar divergencias en el DOM.
+Asigna o retira atributos en el control con total simetría respecto a `getAttribute`:
+* **Atributos booleanos (`disabled`, `readonly`)**: Si se pasa un valor falsy (`false`, `null`, `0`, `'false'`, `'0'`, `''`), el atributo y la propiedad se retiran; en caso truthy, se añaden.
+* **Selección en radios y casillas (`checked`)**:
+  * En casillas conmuta el estado booleano.
+  * En grupos de botones de radio, si se pasa un valor concreto, marca exclusivamente la opción coincidente y desmarca las restantes.
+* **Control de obligatoriedad (`required`)**: Sincroniza la propiedad nativa, el atributo `aria-required` y el asterisco visual (`*`). En listas múltiples (`select_checkbox_list`) omite el `required` nativo para no exigir marcar todas las opciones en HTML5, limitándose a `aria-required="true"` y al asterisco del grupo.
+* **Puntuación (`score` o `data-score`)**: Valida numéricamente el valor y lo escribe directamente en el atributo canónico `data-score` de la opción activa (la seleccionada en select o radio), retirando el atributo no estándar residual si existiera.
 
 ```javascript
-// Deshabilitar un campo
-AWF.setAttribute('Contacts0.phone_mobile', 'disabled', true);
-
-// Hacer obligatorio un campo y mostrar el asterisco automáticamente
 AWF.setAttribute('Contacts0.description', 'required', true);
-
-// Modificar un placeholder o atributo HTML5
-AWF.setAttribute('Contacts0.age', 'min', '18');
-
-// Asignación simétrica de puntuación
 AWF.setAttribute('Encuesta0.satisfaccion', 'score', 50);
-console.log(AWF.getAttribute('Encuesta0.satisfaccion', 'score')); // Retorna 50
 ```
 
-#### `AWF.onChange(target, callback, [options])`
-Registra un observador mediante delegación en el formulario (`form`). Detecta cambios tanto en campos iniciales como en filas que el usuario añada posteriormente en grupos repetibles.
+#### AWF.onChange(target, callback, [options])
+Registra un observador mediante delegación de eventos a nivel de formulario (`<form>`). Detecta modificaciones de valor tanto en controles estáticos como en filas que el usuario añada posteriormente en grupos repetibles.
 * **Firma del callback**: `function(value, scope)`
-* **Opciones**: `{ immediate: true }` para forzar la ejecución del callback tras registrarse con el valor inicial. Retorna la función `off()` para desuscribirse.
+* **Opciones**:
+  * `immediate: true`: Ejecuta el callback inmediatamente tras el registro.
+  * `instanceIndex: n`: Limita la observación a una fila concreta en repetibles.
+  * `form: formIdOrElement`: En entornos multiformulario, asocia la escucha al formulario indicado.
+* **Retorno**: Función de desuscripción `off()` para cancelar la escucha.
 
 ```javascript
 var stop = AWF.onChange('Contacts0.tipo_documento', function(valor, scope) {
-    if (valor === 'pasaporte') {
-        scope.setAttribute('Contacts0.dni', 'required', false);
-        scope.setAttribute('Contacts0.pasaporte', 'required', true);
+    if (valor === 'cancelar') {
+        stop(); // Cancela el observador
     }
 });
 ```
 
 ---
 
-### 3. El objeto de contexto `scope`
-El segundo parámetro recibido en el callback de `onChange` proporciona el contexto exacto de la instancia que originó el cambio:
-* `scope.block`: Nombre del bloque de datos (ej: `'Contacts0'`).
+### 3. Ciclo de vida y comportamiento de `options.immediate`
+Al registrar un observador con `options.immediate = true`, el motor aplica una estrategia integral de inicialización:
+1. **Instancias existentes**: Se ejecuta de forma inmediata e independiente para cada una de las tarjetas de instancia (`.awf-instance-card`) ya presentes en el formulario, recibiendo cada una su propio contexto `scope`.
+2. **Nuevas filas dinámicas (`MutationObserver`)**: Cuando el usuario pulsa para añadir nuevas filas en grupos repetibles, un observador del DOM detecta la nueva tarjeta y sus posibles tarjetas hijas anidadas. Tras un microtick de hidratación de Alpine.js (donde los campos adquieren sus nombres indexados y valores por defecto), el motor dispara automáticamente el callback para la nueva fila.
+3. **Deduplicación garantizada**: Cada tarjeta de instancia mantiene un registro interno de listeners ejecutados. Esto previene dobles ejecuciones si se dispara explícitamente el evento DOM `awf:instance-added` por código personalizado.
+
+---
+
+### 4. El objeto de contexto `scope`
+El segundo parámetro recibido en el callback de `onChange` proporciona el contexto exacto de la instancia que originó el evento:
+
+#### Propiedades y metadatos:
+* `scope.block`: Nombre canónico del bloque de datos (ej: `'Participantes0'`).
 * `scope.field`: Nombre del campo (ej: `'edad'`).
-* `scope.detached`: Booleano que indica si el campo que disparó el evento es virtual/desvinculado.
-* `scope.instanceIndexes`: Array inmutable con la jerarquía completa de índices numéricos de repetición (ej: `[1, 0]` en bloques anidados).
+* `scope.detached`: Booleano que indica si el campo es virtual/desvinculado.
+* `scope.instanceIndexes`: Array inmutable con la jerarquía completa de índices numéricos de repetición (ej: `[0, 1]` en bloques anidados).
 * `scope.instanceIndex`: Índice numérico de la fila en repetibles (o `null` si es escalar).
-* `scope.card`: Elemento DOM contenedor de la instancia (`.awf-instance-card`).
-* `scope.getValue([target])`: Lee el valor del campo.
-* `scope.setValue([target], value)`: Modifica el valor del campo.
-* `scope.getAttribute([target], attribute)` y `scope.setAttribute([target], attribute, value)`: Gestionan atributos con el mismo contexto de resolución.
+* `scope.card`: Elemento DOM contenedor de la instancia (`.awf-instance-card`) o `null` en formularios escalares.
+* `scope.fieldContainer`: Propiedad getter que devuelve directamente el elemento DOM contenedor del campo (`.awf-field`).
+
+#### Métodos contextuales:
+Todos los métodos globales están disponibles en `scope` operando por defecto sobre el campo actual o sobre campos hermanos de la misma tarjeta:
+* `scope.getValue([target])`
+* `scope.setValue([target], value)`
+* `scope.getText([target])`
+* `scope.getLabel([target])`
+* `scope.setLabel([target], text)`
+* `scope.getFieldContainer([target])`
+* `scope.getAttribute([target], attribute)`
+* `scope.setAttribute([target], attribute, value)`
 
 #### Reglas de resolución contextual en `scope`:
 1. **Mismo bloque que el evento**:
-   * En formularios escalares (`card === null`), resuelve contra los controles escalares del formulario.
-   * En bloques repetibles, se limita estrictamente a la tarjeta de la fila actual (`card`). Si un campo opcional no está renderizado en dicha fila, devuelve `null` y nunca busca en otras filas.
+   * En formularios escalares (`card === null`), resuelve contra los controles no indexados del formulario.
+   * En bloques repetibles, se limita estrictamente a la tarjeta actual (`card`). Si un campo opcional no está renderizado en dicha fila, devuelve `null` y nunca salta a la fila 0.
+2. **Bloque distinto**:
+   * **Ancestros**: Si el campo pertenece a una fila contenedora padre, asciende por la jerarquía de tarjetas manteniendo la coherencia de índices.
+   * **Descendientes**: Si pertenece a un sub-bloque hijo, resuelve la instancia dependiente siempre que no exista ambigüedad (si existen varias subinstancias sin especificar índice, devuelve `null` para evitar escrituras accidentales).
+   * **Ámbito global**: Solo busca fuera de la tarjeta si el campo de destino es **estrictamente escalar** (no indexado). Nunca cruza a filas ajenas de otros bloques repetibles.
 
-2. **Bloque distinto:**
-   * Si el campo pertenece a un bloque padre (ancestro), asciende por la jerarquía de tarjetas manteniendo la coherencia de índices.
-   * Si el campo pertenece a un bloque hijo (subárbol), resuelve la instancia dependiente siempre que no exista ambigüedad (si existen varias subinstancias sin especificar índice, devuelve `null` para prevenir escrituras accidentales).
-   * Si no pertenece a la jerarquía de repetición, solo busca en el ámbito global del formulario si el campo de destino es estrictamente escalar. Nunca cruza a filas ajenas de otros bloques repetibles.
+---
 
-#### Ejemplo de uso en formulario escalar:
+### 5. Ejemplos prácticos en JS Personalizado (`custom_js`)
+
+#### Ejemplo A: Ayuda contextual dinámica según el tipo de documento
 ```javascript
-AWF.onChange('Contacts0.tipo_documento', function(valor, scope) {
-    var esPasaporte = valor === 'pasaporte';
-    scope.setAttribute('Contacts0.dni', 'required', !esPasaporte);
-    scope.setAttribute('Contacts0.pasaporte', 'required', esPasaporte);
-});
+AWF.onChange('Contacts0.stic_identification_type_c', function(val, scope) {
+    var targetField = 'Contacts0.stic_identification_number_c';
+    var isFilled = (val !== '' && val !== null && val !== undefined);
+
+    // Conmuta obligatoriedad y asterisco visual
+    scope.setAttribute(targetField, 'required', isFilled);
+
+    // Obtiene el contenedor visual .awf-field
+    var container = scope.getFieldContainer(targetField);
+    if (!container) return;
+
+    var hintId = 'hint_' + targetField.replace(/[^a-zA-Z0-9_-]/g, '_');
+    var hintEl = container.querySelector('#' + hintId);
+
+    if (isFilled) {
+        var docTypeText = scope.getText('Contacts0.stic_identification_type_c');
+        var mensaje = 'Escriba su ' + docTypeText;
+
+        if (!hintEl) {
+            hintEl = document.createElement('div');
+            hintEl.id = hintId;
+            hintEl.className = 'form-text text-muted mt-1 small';
+            container.appendChild(hintEl);
+        }
+        hintEl.textContent = mensaje;
+        hintEl.style.display = '';
+        
+        // Actualiza el texto de la etiqueta principal respetando el asterisco
+        scope.setLabel(targetField, 'Número de ' + docTypeText + ':');
+    } else if (hintEl) {
+        hintEl.style.display = 'none';
+        scope.setLabel(targetField, 'Número de identificación:');
+    }
+}, { immediate: true });
 ```
 
-#### Ejemplo de uso en bloque repetible (Tutor del menor):
+#### Ejemplo B: Sincronización en filas repetibles (Tutor del menor)
 ```javascript
-AWF.onChange('Contacts0.edad', function(edad, scope) {
+AWF.onChange('Participantes0.edad', function(edad, scope) {
     var esMenor = parseInt(edad, 10) < 18;
     
-    // Hace obligatorio el campo de tutor solo en la misma fila del participante menor
-    scope.setAttribute('Contacts0.nombre_tutor', 'required', esMenor);
-    scope.setAttribute('Contacts0.nombre_tutor', 'disabled', !esMenor);
-    
+    // Modifica campos exclusivamente en la propia fila repetible
+    scope.setAttribute('Participantes0.tutor_nombre', 'required', esMenor);
+    scope.setAttribute('Participantes0.tutor_nombre', 'disabled', !esMenor);
+
     if (!esMenor) {
-        scope.setValue('Contacts0.nombre_tutor', '');
+        scope.setValue('Participantes0.tutor_nombre', '');
     }
 });
 ```
+
+#### Ejemplo C: Acceso ascendente a datos de la fila padre desde una fila anidada
+```javascript
+AWF.onChange('Alergias0.tiene_alergia', function(tieneAlergia, scope) {
+    if (tieneAlergia) {
+        // Participantes0 es el bloque padre contenedor
+        var nombrePadre = scope.getValue('Participantes0.first_name');
+        console.log('Registrando alergia para: ' + nombrePadre);
+    }
+});
+```
+
+---
+
+### 6. Soporte multiformulario y utilidades de bajo nivel
+Cuando conviven varios formularios AWF en la misma página (portales o incrustaciones múltiples):
+* **`AWF.for(formIdOrElement)`**: Retorna la instancia de la API vinculada exclusivamente a ese formulario.
+* **Parámetro `options.form`**: Todos los métodos globales aceptan `{ form: 'formId' }`.
+* **Parámetro `options.instanceIndex`**: Permite forzar la resolución sobre una fila específica de un bloque repetible:
+
+```javascript
+var emailFila1 = AWF.getValue('Contacts0.email1', { instanceIndex: 1 });
+```
+
+#### Métodos de diagnóstico e inspección:
+* **`AWF.resolve(target, [options])`**: Devuelve el desglose estructural `{ elements, element, card, parsed }`.
+* **`AWF.parseFieldName(name)`**: Descompone un nombre de control en `{ detached, block, indexes, field, multi }`.
+* **Evento `awf:instance-added`**: Evento DOM disparado sobre el formulario que los integradores externos pueden emitir manualmente pasando `{ detail: { card: elementoCard } }` para forzar la inicialización de contenedores creados fuera del ciclo estándar de Alpine.js.
+
 ---
 
 ### 4. Soporte multiformulario y opciones avanzadas

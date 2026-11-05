@@ -3362,9 +3362,6 @@ JS;
   var parseCache = Object.create(null);
 
   // Parse a control name into { detached, block, indexes, field, multi }.
-  // Strictly requires canonical formats:
-  // "Block.field" | "Block[0][field]" | "Block[0][1][field]"
-  // "_detached.Block.field" | "_detached.Block[0][field]"
   function parseFieldName(name) {
     if (name == null) return null;
     var n = String(name).trim();
@@ -3389,7 +3386,6 @@ JS;
       });
     }
 
-    // Matches dot notation: Block.field
     var dot = raw.indexOf('.');
     if (dot >= 0) {
       return (parseCache[n] = {
@@ -3401,11 +3397,9 @@ JS;
       });
     }
 
-    // Bare field names without block are strictly rejected
     return (parseCache[n] = null);
   }
 
-  // Specificity match: 2 = exact match; 0 = no match.
   function getMatchSpecificity(parsed, targetName) {
     var t = parseFieldName(targetName);
     if (!parsed || !t) return 0;
@@ -3428,7 +3422,6 @@ JS;
     if (!root) return [];
     var all = Array.prototype.slice.call(root.querySelectorAll('input[name], select[name], textarea[name]'));
     if (scope) {
-      // Isolate instance cards: exclude controls belonging to deeper nested instance cards
       return all.filter(function (el) {
         return el.closest(INSTANCE_SELECTOR) === scope;
       });
@@ -3481,7 +3474,6 @@ JS;
     };
   }
 
-  // Resolves contextual fields for scope/info preserving hierarchical instance safety
   function resolveForInfo(target, card, parsedCurrent) {
     if (target && target.nodeType === 1) {
       return resolve(target);
@@ -3490,21 +3482,17 @@ JS;
     var t = parseFieldName(target);
     if (!t) return { elements: [], element: null, card: null, parsed: null };
 
-    // 1. Explicit indexes: resolve globally with exact index matching
     if (t.indexes.length > 0) {
       return resolve(target, { card: null });
     }
 
-    // 2. Target in the same block
     if (parsedCurrent && t.block === parsedCurrent.block && t.detached === parsedCurrent.detached) {
       if (card) {
         var local = resolve(target, { card: card });
         if (local.elements.length > 0) return local;
-        // If field was optional and not rendered in this row, do NOT fallback to row 0
         return { elements: [], element: null, card: card, parsed: t };
       }
 
-      // Scalar form without card wrapper: resolve against unindexed controls
       var scalarSameBlock = resolve(target, { card: null }).elements.filter(function (el) {
         var p = parseFieldName(el.name);
         return p && p.indexes.length === 0;
@@ -3517,7 +3505,6 @@ JS;
       };
     }
 
-    // 3. Target in an ancestor card (e.g. child row reading parent row data)
     if (card) {
       var ancestorCard = card.parentElement ? card.parentElement.closest(INSTANCE_SELECTOR) : null;
       while (ancestorCard) {
@@ -3549,7 +3536,6 @@ JS;
       }
     }
 
-    // 4. Target in a nested child card inside this card's subtree
     if (card) {
       var allDescendants = Array.prototype.slice.call(card.querySelectorAll('input[name], select[name], textarea[name]'));
       var matchedInSubtree = allDescendants.filter(function (el) {
@@ -3564,7 +3550,6 @@ JS;
       });
 
       if (matchedInSubtree.length > 0) {
-        // Guard against ambiguous fan-out across multiple nested instance cards
         var firstCard = matchedInSubtree[0].closest(INSTANCE_SELECTOR);
         var firstBaseName = matchedInSubtree[0].name.replace(/\[\]$/, '');
         var isAmbiguous = false;
@@ -3588,7 +3573,6 @@ JS;
       }
     }
 
-    // 5. Fallback to global scope ONLY IF target is a SCALAR (unindexed) field
     var globalRes = resolve(target, { card: null });
     var scalarElements = globalRes.elements.filter(function (el) {
       var p = parseFieldName(el.name);
@@ -3610,6 +3594,61 @@ JS;
   function containerOf(elements) {
     if (!elements || elements.length === 0) return null;
     return elements[0].closest('.awf-field') || elements[0].closest('.form-check') || elements[0].parentElement;
+  }
+
+  function findLabelFor(el) {
+    if (!el) return null;
+    if (el.id) {
+      var wrapper = el.closest('.awf-field') || el.closest('.form-check') || el.parentElement;
+      if (wrapper) {
+        var labels = wrapper.querySelectorAll('label');
+        for (var i = 0; i < labels.length; i++) {
+          if (labels[i].htmlFor === el.id) return labels[i];
+        }
+      }
+      try {
+        var escapedId = (window.CSS && CSS.escape) ? CSS.escape(el.id) : el.id.replace(/([ #;&,.+*~':"!^$[\]()=>|\/@])/g, '\\$1');
+        var docLbl = document.querySelector('label[for="' + escapedId + '"]');
+        if (docLbl) return docLbl;
+      } catch (e) {}
+    }
+    return el.closest('.form-check') ? el.closest('.form-check').querySelector('label') : null;
+  }
+
+  function labelTextOf(container) {
+    if (!container) return '';
+    var lbl = container.querySelector('label.form-label') || container.querySelector('label');
+    if (!lbl) return '';
+    var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
+      return n.nodeType === 3;
+    })[0];
+    if (textNode) {
+      return textNode.nodeValue.trim();
+    }
+    var clone = lbl.cloneNode(true);
+    var req = clone.querySelector('.awf-required');
+    if (req) req.remove();
+    return clone.textContent.trim();
+  }
+
+  function setLabelTextOn(container, text) {
+    if (!container) return false;
+    var lbl = container.querySelector('label.form-label') || container.querySelector('label');
+    if (!lbl) return false;
+
+    var strVal = (text === null || text === undefined) ? '' : String(text);
+    var formatted = strVal.trim() ? strVal.trim() + ' ' : '';
+
+    var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
+      return n.nodeType === 3;
+    })[0];
+
+    if (textNode) {
+      textNode.nodeValue = formatted;
+    } else {
+      lbl.insertBefore(document.createTextNode(formatted), lbl.firstChild);
+    }
+    return true;
   }
 
   function valueOf(elements) {
@@ -3658,21 +3697,18 @@ JS;
     if (type === 'radio') {
       var checked = elements.filter(function (el) { return el.checked; })[0];
       if (!checked) return '';
-      var lbl = checked.id ? document.querySelector('label[for="' + checked.id + '"]') : null;
-      if (!lbl) lbl = checked.closest('.form-check') ? checked.closest('.form-check').querySelector('label') : null;
+      var lbl = findLabelFor(checked);
       return lbl ? lbl.textContent.trim() : checked.value;
     }
 
     if (type === 'checkbox') {
       if (multi) {
         return elements.filter(function (el) { return el.checked; }).map(function (el) {
-          var elLbl = el.id ? document.querySelector('label[for="' + el.id + '"]') : null;
-          if (!elLbl) elLbl = el.closest('.form-check') ? el.closest('.form-check').querySelector('label') : null;
+          var elLbl = findLabelFor(el);
           return elLbl ? elLbl.textContent.trim() : el.value;
         });
       }
-      var singleLbl = first.id ? document.querySelector('label[for="' + first.id + '"]') : null;
-      if (!singleLbl) singleLbl = first.closest('.form-check') ? first.closest('.form-check').querySelector('label') : null;
+      var singleLbl = findLabelFor(first);
       return singleLbl ? singleLbl.textContent.trim() : (first.checked ? 'true' : 'false');
     }
 
@@ -3804,52 +3840,12 @@ JS;
     if (!elements || elements.length === 0 || !attr) return false;
     var first = elements[0];
     var attrLower = String(attr).toLowerCase();
+    var multi = String(first.name).slice(-2) === '[]';
 
     if (attrLower === 'value') {
       return setValueOn(elements, value);
     }
 
-    var isBoolAttr = (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required');
-    var isTruthy = isTruthyBool(value);
-    var multi = String(first.name).slice(-2) === '[]';
-
-    // Special case for checked attribute
-    if (attrLower === 'checked') {
-      if (first.type === 'radio') {
-        elements.forEach(function (el) {
-          var shouldCheck = isTruthy && (value === true ? el === first : String(el.value) === String(value));
-          el.checked = shouldCheck;
-          if (shouldCheck) el.setAttribute('checked', 'checked');
-          else el.removeAttribute('checked');
-          fire(el);
-        });
-        return true;
-      }
-      elements.forEach(function (el) {
-        el.checked = isTruthy;
-        if (isTruthy) {
-          el.setAttribute('checked', 'checked');
-        } else {
-          el.removeAttribute('checked');
-        }
-        fire(el);
-      });
-      return true;
-    }
-
-    // Special case for required attribute on multi-checkbox groups
-    if (attrLower === 'required' && multi && first.type === 'checkbox') {
-      if (isTruthy) {
-        first.setAttribute('aria-required', 'true');
-        updateAsterisk(first, true);
-      } else {
-        first.removeAttribute('aria-required');
-        updateAsterisk(first, false);
-      }
-      return true;
-    }
-
-    // Special case for score / data-score (bidirectional symmetry)
     if (attrLower === 'data-score' || attrLower === 'score') {
       var validatedScore = parseScoreValue(value);
       var scoreStr = validatedScore !== null ? String(validatedScore) : null;
@@ -3881,6 +3877,43 @@ JS;
       }
 
       elements.forEach(function(el) { setScoreAttr(el); });
+      return true;
+    }
+
+    var isBoolAttr = (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required');
+    var isTruthy = isTruthyBool(value);
+
+    if (attrLower === 'checked') {
+      if (first.type === 'radio') {
+        elements.forEach(function (el) {
+          var shouldCheck = isTruthy && (value === true ? el === first : String(el.value) === String(value));
+          el.checked = shouldCheck;
+          if (shouldCheck) el.setAttribute('checked', 'checked');
+          else el.removeAttribute('checked');
+          fire(el);
+        });
+        return true;
+      }
+      elements.forEach(function (el) {
+        el.checked = isTruthy;
+        if (isTruthy) {
+          el.setAttribute('checked', 'checked');
+        } else {
+          el.removeAttribute('checked');
+        }
+        fire(el);
+      });
+      return true;
+    }
+
+    if (attrLower === 'required' && multi && first.type === 'checkbox') {
+      if (isTruthy) {
+        first.setAttribute('aria-required', 'true');
+        updateAsterisk(first, true);
+      } else {
+        first.removeAttribute('aria-required');
+        updateAsterisk(first, false);
+      }
       return true;
     }
 
@@ -3947,10 +3980,9 @@ JS;
       ? Number(card.dataset.awfInstance)
       : (parsed && parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null);
 
-    return {
+    var info = {
       element: el,
       card: card,
-      fieldContainer: containerOf([el]),
       block: parsed ? parsed.block : null,
       field: parsed ? parsed.field : null,
       detached: parsed ? parsed.detached : false,
@@ -3959,7 +3991,7 @@ JS;
       getFieldContainer: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
         return containerOf(res.elements);
-      },      
+      },
       getValue: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
         return valueOf(res.elements);
@@ -3972,33 +4004,13 @@ JS;
       },
       getLabel: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
-        var container = containerOf(res.elements);
-        if (!container) return '';
-        var lbl = container.querySelector('label.form-label') || container.querySelector('label');
-        if (!lbl) return '';
-        var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
-          return n.nodeType === Node.TEXT_NODE;
-        })[0];
-        return textNode ? textNode.nodeValue.trim() : lbl.textContent.trim();
+        return labelTextOf(containerOf(res.elements));
       },
       setLabel: function (target, text) {
         var t = (arguments.length === 1) ? currentCanonical : target;
         var val = (arguments.length === 1) ? target : text;
         var res = resolveForInfo(t, card, parsed);
-        var container = containerOf(res.elements);
-        if (!container) return false;
-        var lbl = container.querySelector('label.form-label') || container.querySelector('label');
-        if (!lbl) return false;
-
-        var formatted = String(val).trim() + ' ';
-        var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
-            return n.nodeType === Node.TEXT_NODE;
-        })[0];
-
-        if (textNode) { textNode.nodeValue = formatted;} 
-        else { lbl.insertBefore(document.createTextNode(formatted), lbl.firstChild); }
-
-        return true;
+        return setLabelTextOn(containerOf(res.elements), val);
       },
       getText: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
@@ -4024,18 +4036,30 @@ JS;
         return this.setAttribute.apply(this, arguments);
       }
     };
+
+    Object.defineProperty(info, 'fieldContainer', {
+      get: function () {
+        return containerOf([el]);
+      },
+      enumerable: true,
+      configurable: true
+    });
+
+    return info;
   }
 
-  // Multi-instance immediate evaluation runner
   function triggerListenerImmediate(listener, targetCard) {
     var form = getForm();
     if (!form) return;
+    if (!parseFieldName(listener.fieldName)) return;
 
-    var parsedTarget = parseFieldName(listener.fieldName);
-    if (!parsedTarget) return;
-
-    // Single target instance evaluation (new instance created at runtime)
     if (targetCard) {
+      targetCard._awfRanListeners = targetCard._awfRanListeners || [];
+      if (targetCard._awfRanListeners.indexOf(listener) !== -1) {
+        return;
+      }
+      targetCard._awfRanListeners.push(listener);
+
       var cardControls = controls(targetCard).filter(function (el) {
         return matches(parseFieldName(el.name), listener.fieldName, listener.options) > 0;
       });
@@ -4052,7 +4076,6 @@ JS;
       return;
     }
 
-    // Global evaluation across all pre-existing instances
     var cards = Array.prototype.slice.call(form.querySelectorAll(INSTANCE_SELECTOR));
     var executedOnAnyCard = false;
 
@@ -4063,19 +4086,22 @@ JS;
         });
         if (cardControls.length > 0) {
           executedOnAnyCard = true;
-          var firstEl = cardControls[0];
-          var cardParsed = parseFieldName(firstEl.name);
-          var val = valueOf(cardControls);
-          try {
-            listener.callback(val, buildInfo(firstEl, card, cardParsed));
-          } catch (err) {
-            console.error('AWF.onChange immediate card error', err);
+          card._awfRanListeners = card._awfRanListeners || [];
+          if (card._awfRanListeners.indexOf(listener) === -1) {
+            card._awfRanListeners.push(listener);
+            var firstEl = cardControls[0];
+            var cardParsed = parseFieldName(firstEl.name);
+            var val = valueOf(cardControls);
+            try {
+              listener.callback(val, buildInfo(firstEl, card, cardParsed));
+            } catch (err) {
+              console.error('AWF.onChange immediate card error', err);
+            }
           }
         }
       });
     }
 
-    // Scalar fallback if no cards matched (scalar form or unindexed control)
     if (!executedOnAnyCard) {
       var resolved = resolve(listener.fieldName, listener.options);
       if (resolved.element) {
@@ -4089,27 +4115,31 @@ JS;
     }
   }
 
-  // Reactive DOM observer to catch newly added repeatable instances
   function initMutationObserver(form) {
     if (typeof MutationObserver === 'undefined' || form._awfObserverInitialized) return;
     form._awfObserverInitialized = true;
+
+    function collectCards(node, acc) {
+      if (!node || node.nodeType !== 1) return;
+      if (node.matches && node.matches(INSTANCE_SELECTOR)) {
+        acc.push(node);
+      }
+      if (node.querySelectorAll) {
+        var sub = node.querySelectorAll(INSTANCE_SELECTOR);
+        for (var i = 0; i < sub.length; i++) {
+          acc.push(sub[i]);
+        }
+      }
+    }
 
     var observer = new MutationObserver(function (mutations) {
       var addedCards = [];
 
       mutations.forEach(function (mutation) {
         if (!mutation.addedNodes || mutation.addedNodes.length === 0) return;
-        Array.prototype.slice.call(mutation.addedNodes).forEach(function (node) {
-          if (node.nodeType !== 1) return;
-          if (node.matches && node.matches(INSTANCE_SELECTOR)) {
-            addedCards.push(node);
-          } else if (node.querySelectorAll) {
-            var sub = node.querySelectorAll(INSTANCE_SELECTOR);
-            if (sub.length > 0) {
-              addedCards.push.apply(addedCards, Array.prototype.slice.call(sub));
-            }
-          }
-        });
+        for (var i = 0; i < mutation.addedNodes.length; i++) {
+          collectCards(mutation.addedNodes[i], addedCards);
+        }
       });
 
       if (addedCards.length > 0) {
@@ -4117,7 +4147,6 @@ JS;
           return arr.indexOf(c) === idx;
         });
 
-        // Defer to next tick to ensure Alpine bindings, defaults and attributes are fully hydrated
         setTimeout(function () {
           uniqueCards.forEach(function (card) {
             listeners.forEach(function (listener) {
@@ -4132,15 +4161,22 @@ JS;
 
     observer.observe(form, { childList: true, subtree: true });
 
-    // Explicit event support
     form.addEventListener('awf:instance-added', function (ev) {
       var card = ev.detail && ev.detail.card ? ev.detail.card : ev.target;
       if (card && card.nodeType === 1) {
+        var cardsToInit = [];
+        collectCards(card, cardsToInit);
+        var uniqueCards = cardsToInit.filter(function (c, idx, arr) {
+          return arr.indexOf(c) === idx;
+        });
+
         setTimeout(function () {
-          listeners.forEach(function (listener) {
-            if (listener.options && listener.options.immediate) {
-              triggerListenerImmediate(listener, card);
-            }
+          uniqueCards.forEach(function (c) {
+            listeners.forEach(function (listener) {
+              if (listener.options && listener.options.immediate) {
+                triggerListenerImmediate(listener, c);
+              }
+            });
           });
         }, 0);
       }
@@ -4181,6 +4217,8 @@ JS;
     getValue: function (target, options) { return valueOf(resolve(target, options).elements); },
     setValue: function (target, value, options) { return setValueOn(resolve(target, options).elements, value); },
     getText: function (target, options) { return textOf(resolve(target, options).elements); },
+    getLabel: function (target, options) { return labelTextOf(containerOf(resolve(target, options).elements)); },
+    setLabel: function (target, text, options) { return setLabelTextOn(containerOf(resolve(target, options).elements), text); },
     getAttribute: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
     setAttribute: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
     getAttributeValue: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
@@ -4203,7 +4241,6 @@ JS;
     }
   };
 
-  // Register form-scoped API instance
   window.AWF_FORMS = window.AWF_FORMS || {};
   window.AWF_LIST = window.AWF_LIST || [];
   window.AWF_FORMS[FORM_ID] = api;
@@ -4251,10 +4288,12 @@ JS;
       getValue: function (target, options) { return scoped('getValue', [target, options], options); },
       setValue: function (target, value, options) { return scoped('setValue', [target, value, options], options); },
       getText: function (target, options) { return scoped('getText', [target, options], options); },
-      getAttribute: function (target, attr, options) { return scoped('getAttribute', [target, attr], options); },
-      setAttribute: function (target, attr, value, options) { return scoped('setAttribute', [target, attr, value], options); },
-      getAttributeValue: function (target, attr, options) { return scoped('getAttributeValue', [target, attr], options); },
-      setAttributeValue: function (target, attr, value, options) { return scoped('setAttributeValue', [target, attr, value], options); },
+      getLabel: function (target, options) { return scoped('getLabel', [target, options], options); },
+      setLabel: function (target, text, options) { return scoped('setLabel', [target, text, options], options); },
+      getAttribute: function (target, attr, options) { return scoped('getAttribute', [target, attr, options], options); },
+      setAttribute: function (target, attr, value, options) { return scoped('setAttribute', [target, attr, value, options], options); },
+      getAttributeValue: function (target, attr, options) { return scoped('getAttributeValue', [target, attr, options], options); },
+      setAttributeValue: function (target, attr, value, options) { return scoped('setAttributeValue', [target, attr, value, options], options); },
       onChange: function (fieldName, callback, options) { return scoped('onChange', [fieldName, callback, options], options); },
       parseFieldName: parseFieldName
     };
