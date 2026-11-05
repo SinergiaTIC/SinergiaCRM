@@ -880,6 +880,15 @@ body.stic-rrp-open #stic-rrp-toggle {
   }
 }
 
+@media (max-width: 767px) {
+  // Mobile / responsive mode: the panel is not available (the screen is too
+  // narrow for a 330 px side bar). Hide the toggle and the shell altogether.
+  #stic-rrp-toggle,
+  #stic-rrp-container {
+    display: none !important;
+  }
+}
+
 @media print {
   #stic-related-panel,
   #stic-rrp-toggle,
