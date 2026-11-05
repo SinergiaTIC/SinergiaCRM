@@ -97,7 +97,7 @@ $app_strings['LBL_SUBTHEME_OPTIONS_STIC_CUSTOM'] = 'SticCustom';
 
 // SinergiaCRM global links
 $app_strings['LBL_STIC_FORUMS_LINK'] = 'Forums';
-$app_strings['LBL_STIC_GUIA_LINK'] = 'GuIA (global AI powered guide)';
+$app_strings['LBL_STIC_GUIA_LINK'] = 'GuIA (AI guide)';
 $app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki';
 $app_strings['LBL_STIC_VIDEOS_LINK'] = 'Videos';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
