@@ -149,7 +149,9 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
 
         // === Sort series dropdown by usage count (desc), then alphabetically ===
         if (AOS_InvoicesUtils::isVerifactuActivated()) {
-            $usageQuery = "SELECT c.verifactu_invoice_type_c, COUNT(*) AS cnt FROM aos_invoices_cstm c INNER JOIN aos_invoices i ON c.id_c = i.id WHERE i.deleted = 0 AND c.verifactu_invoice_type_c IS NOT NULL AND c.verifactu_invoice_type_c != '' GROUP BY c.verifactu_invoice_type_c";
+            // Count only invoices actually sent (submitted to AEAT) so drafts, test
+            // re-tries and legacy data do not distort the "most used first" order.
+            $usageQuery = "SELECT c.verifactu_invoice_type_c, COUNT(*) AS cnt FROM aos_invoices_cstm c INNER JOIN aos_invoices i ON c.id_c = i.id WHERE i.deleted = 0 AND c.verifactu_invoice_type_c IS NOT NULL AND c.verifactu_invoice_type_c != '' AND c.verifactu_submitted_at_c IS NOT NULL AND c.verifactu_submitted_at_c != '' GROUP BY c.verifactu_invoice_type_c";
             $usageResult = $GLOBALS['db']->query($usageQuery);
             $usageCounts = [];
             while ($row = $GLOBALS['db']->fetchByAssoc($usageResult)) {
@@ -163,6 +165,20 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
                 }
                 return strcasecmp($a, $b);
             });
+            // Pre-select the first (most used) series when none is set yet.
+            // The EditView field defs were built before this block (parent::preDisplay),
+            // so the empty value must also be set into ev->fieldDefs for the select
+            // to render it as the chosen option.
+            if (empty($this->bean->verifactu_invoice_type_c) && !empty($app_list_strings['stic_invoices_types_list'])) {
+                $firstKey = array_key_first($app_list_strings['stic_invoices_types_list']);
+                if ($firstKey !== null) {
+                    $this->bean->verifactu_invoice_type_c = $firstKey;
+                    if (isset($this->ev->fieldDefs['verifactu_invoice_type_c'])) {
+                        $this->ev->fieldDefs['verifactu_invoice_type_c']['value'] = $firstKey;
+                        $this->ev->fieldDefs['verifactu_invoice_type_c']['default'] = $firstKey;
+                    }
+                }
+            }
         }
         // === End Sort ===
 

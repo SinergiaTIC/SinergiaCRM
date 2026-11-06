@@ -237,7 +237,9 @@ array(
         'label' => 'LBL_VERIFACTU_TEST_INVOICE',
         'default' => true,
     ),
-    'STIC_INVOICE_TYPE_C' => array(
+    'VERIFACTU_INVOICE_TYPE_C' => array(
+        'type' => 'enum',
+        'options' => 'stic_invoices_types_list',
         'width' => '15%',
         'label' => 'LBL_VERIFACTU_INVOICE_TYPE',
         'default' => true,

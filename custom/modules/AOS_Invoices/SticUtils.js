@@ -473,16 +473,21 @@ function initSeriesFilter() {
   if (isNew) {
     // New invoices: start with non-rectified series only
     $("#verifactu_is_rectified_c").prop("checked", false);
-    // Pre-select the first non-rectified series before filtering
+    // Pre-select the first non-rectified series only when the select has no value
+    // yet: the server already pre-selects the most-used series (sorted by usage),
+    // whose first entry is normally a non-rectified series. Config order must not
+    // override that.
     var select = $("#verifactu_invoice_type_c");
-    var firstNonRectified = null;
-    sticSeriesConfig.forEach(function(s) {
-      if (!s.isRectified && !firstNonRectified) {
-        firstNonRectified = s.name;
+    if (!select.val()) {
+      var firstNonRectified = null;
+      sticSeriesConfig.forEach(function(s) {
+        if (!s.isRectified && !firstNonRectified) {
+          firstNonRectified = s.name;
+        }
+      });
+      if (firstNonRectified) {
+        select.val(firstNonRectified);
       }
-    });
-    if (firstNonRectified) {
-      select.val(firstNonRectified);
     }
   }
 

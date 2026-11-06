@@ -203,6 +203,18 @@ $searchFields['AOS_Invoices'] = array(
         'query_type' => 'default',
         'enable_range_search' => true,
     ),
+    'range_total_amt' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'start_range_total_amt' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'end_range_total_amt' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
     'range_subtotal_amount' => array(
         'query_type' => 'default',
         'enable_range_search' => true,

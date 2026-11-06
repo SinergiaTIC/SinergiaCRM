@@ -142,7 +142,7 @@ array(
                 'default' => true,
                 'name' => 'verifactu_aeat_status_c',
             ),
-             'STIC_INVOICE_TYPE_C' => array( 
+             'VERIFACTU_INVOICE_TYPE_C' => array( 
                 'type' => 'enum',
                 'studio' => 'visible',
                 'label' => 'LBL_VERIFACTU_INVOICE_TYPE',
@@ -350,6 +350,7 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'total_amt',
+                'enable_range_search' => true,
             ),
             'total_amount' => array(
                 'name' => 'total_amount',

@@ -23,6 +23,12 @@
 // Make name field not required (auto-generated from Organization/Person + DateTime)
 $dictionary['AOS_Invoices']['fields']['name']['required'] = false;
 
+// Enable range search on subtotal_amount (currency field) like total_amount
+$dictionary['AOS_Invoices']['fields']['subtotal_amount']['enable_range_search'] = 1;
+$dictionary['AOS_Invoices']['fields']['subtotal_amount']['options'] = 'numeric_range_search_dom';
+$dictionary['AOS_Invoices']['fields']['total_amt']['enable_range_search'] = 1;
+$dictionary['AOS_Invoices']['fields']['total_amt']['options'] = 'numeric_range_search_dom';
+
 $dictionary['AOS_Invoices']['fields']['description']['rows'] = '2'; // Make textarea fields shorter
 
 // Mass update fields definition:
