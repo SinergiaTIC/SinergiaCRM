@@ -104,14 +104,35 @@ class FormLayoutSection extends FormLayoutNode {
 
     private static function findLegacyGroupRootBlockId(FormLayout $layout, array $elements): string {
         if (empty($elements) || !($layout->form_config instanceof FormConfig)) return '';
-        $firstBlock = self::findFirstReferencedBlock($layout, $elements);
-        if (!$firstBlock instanceof FormDataBlock) return '';
-        $rootBlock = $layout->form_config->getGroupRootBlock($firstBlock);
-        if (!($rootBlock instanceof FormDataBlock) || $rootBlock->group_root !== '') return '';
-        $isGroupHead = $rootBlock->isRepeatable()
-            || $rootBlock->isOptional()
-            || !empty($layout->form_config->getGroupChildren($rootBlock));
-        return $isGroupHead ? $rootBlock->id : '';
+        $allBlocks = self::findAllReferencedBlocks($layout, $elements);
+        foreach ($allBlocks as $candidate) {
+            if (!($candidate instanceof FormDataBlock)) continue;
+            $rootBlock = $layout->form_config->getGroupRootBlock($candidate);
+            if (!($rootBlock instanceof FormDataBlock) || $rootBlock->group_root !== '') continue;
+            $isGroupHead = $rootBlock->isRepeatable()
+                || $rootBlock->isOptional()
+                || !empty($layout->form_config->getGroupChildren($rootBlock));
+            if ($isGroupHead) return $rootBlock->id;
+        }
+        return '';
+    }
+
+    private static function findAllReferencedBlocks(FormLayout $layout, array $elements): array {
+        $result = [];
+        foreach ($elements as $element) {
+            if (!is_array($element)) continue;
+            if (($element['type'] ?? '') === 'section' || isset($element['elements'])) {
+                $nestedElements = $element['elements'] ?? [];
+                if (!is_array($nestedElements)) continue;
+                $result = array_merge($result, self::findAllReferencedBlocks($layout, $nestedElements));
+                continue;
+            }
+            $elementType = $element['type'] ?? 'datablock';
+            if (!in_array($elementType, ['datablock', 'field'], true) || empty($element['ref_id'])) continue;
+            $block = $layout->form_config->data_blocks[$element['ref_id']] ?? null;
+            if ($block instanceof FormDataBlock) $result[] = $block;
+        }
+        return $result;
     }
 
     private static function findFirstReferencedBlock(FormLayout $layout, array $elements): ?FormDataBlock {
