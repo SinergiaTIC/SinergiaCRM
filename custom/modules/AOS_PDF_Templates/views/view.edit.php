@@ -44,6 +44,9 @@ class CustomAOS_PDF_TemplatesViewEdit extends AOS_PDF_TemplatesViewEdit
         SticViews::preDisplay($this);
 
         // Write here you custom code
+        // Selector of the {{variables}} usable in the "Nombre fichero" pattern
+        include_once 'custom/modules/AOS_PDF_Templates/SticUtils.php';
+        $this->ss->assign('FILE_NAME_SELECTOR', AOS_PDF_TemplatesUtils::getFileNameSelector($this));
     }
 
     public function display()

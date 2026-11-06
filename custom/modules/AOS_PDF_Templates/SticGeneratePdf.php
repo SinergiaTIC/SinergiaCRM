@@ -29,6 +29,7 @@
  */
 
 use SuiteCRM\PDF\Exceptions\PDFException;
+use SuiteCRM\PDF\PDFFileNameResolver;
 use SuiteCRM\PDF\PDFWrapper;
 
 if (!isset($_REQUEST['uid']) || empty($_REQUEST['uid']) || !isset($_REQUEST['templateID']) || empty($_REQUEST['templateID'])) {
@@ -143,8 +144,11 @@ $footer = templateParser::parse_template($footer, $beanArray);
 // Replace last break lines by html tags
 $printable = str_replace("\n", "<br />", $converted);
 
-// Create output filename
-$fileName = str_replace(" ", "_", $bean->name)."_".date('YmdHis') . ".pdf";
+// Create output filename, honouring the pattern configured in the template when it resolves
+$fileName = PDFFileNameResolver::resolve($templateBean->stic_file_name_c ?? '', $bean, $templateBean);
+if ($fileName === '') {
+    $fileName = str_replace(" ", "_", $bean->name)."_".date('YmdHis') . ".pdf";
+}
 
 // Create a temporary PDF file of the parsed template in the upload folder
 try {

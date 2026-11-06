@@ -39,6 +39,9 @@
  */
 
 use SuiteCRM\PDF\Exceptions\PDFException;
+// STIC-Custom 20261106 ART - Add new use statement for PDFFileNameResolver
+use SuiteCRM\PDF\PDFFileNameResolver;
+// END STIC-Custom
 use SuiteCRM\PDF\PDFWrapper;
 
 require_once('modules/AOS_PDF_Templates/templateParser.php');
@@ -99,6 +102,14 @@ if (!$template) {
 
 $file_name = str_replace(" ", "_", (string) $template->name) . ".pdf";
 
+// STIC-Custom 20261106 ART - Use PDFFileNameResolver to resolve the file name pattern configured in the template
+// The pattern configured in the template is interpolated with the data of the first selected
+// record, the same as when the mass action is used with a single record. Whenever the pattern
+// is left empty or cannot be resolved, the legacy name made of the template name is kept.
+$contextBean = BeanFactory::getBean($_REQUEST['module'], reset($recordIds));
+$file_name = PDFFileNameResolver::resolve($template->stic_file_name_c ?? '', $contextBean, $template)
+    ?: $file_name;
+// END STIC-Custom
 $pdfConfig = [
     'mode' => 'en',
     'page_size' => $template->page_size,
