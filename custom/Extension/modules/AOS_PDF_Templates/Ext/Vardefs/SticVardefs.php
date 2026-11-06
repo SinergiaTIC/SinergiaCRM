@@ -23,3 +23,27 @@
 $dictionary['AOS_PDF_Templates']['fields']['sample']['studio'] = false;
 
 $dictionary['AOS_PDF_Templates']['unified_search_default_enabled'] = false;
+
+$dictionary['AOS_PDF_Templates']['fields']['stic_file_name_c'] = array(
+    'name' => 'stic_file_name_c',
+    'id' => 'AOS_PDF_Templatesstic_file_name_c',
+    'vname' => 'LBL_STIC_FILE_NAME',
+    'type' => 'varchar',
+    'custom_module' => 'AOS_PDF_Templates',
+    'source' => 'custom_fields',
+    'len' => '255',
+    'inline_edit' => 1,
+    'required' => 0,
+    'massupdate' => 0,
+    'importable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'audited' => 0,
+    'reportable' => 1,
+    'unified_search' => 0,
+    'merge_filter' => 'selected',
+    'default' => null,
+    'no_default' => 0,
+    'studio' => 'visible',
+    'popupHelp' => 'LBL_STIC_FILE_NAME_HELP',
+);
