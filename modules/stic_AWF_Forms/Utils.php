@@ -128,17 +128,27 @@ class stic_AWF_FormsUtils {
                 $linkName = $arr['link'];
                 $linkRelName = $fieldDefs[$linkName]['relationship'] ?? '';
                 if (!empty($linkRelName) && isset($result['relationships'][$linkRelName])) {
-                    $result['fields'][$fieldName]['options'] = $linkRelName;
-                    $result['fields'][$fieldName]['link_name'] = $linkName;
+                    $idName = $arr['id_name'] ?? '';
+                    $idFieldDef = ($idName !== '' && isset($fieldDefs[$idName])) ? $fieldDefs[$idName] : null;
+                    $isDbBacked = $idFieldDef && (($idFieldDef['source'] ?? 'db') !== 'non-db');
+                    if ($isDbBacked) {
+                        $result['fields'][$fieldName]['options'] = $linkRelName;
+                        $result['fields'][$fieldName]['link_name'] = $linkName;
+                    }
                 }
             }
 
             // For standalone relate fields (no link, but has id_name): link to their virtual relationship
+            // Only when the id_name is a real, db-backed column (see note above).
             if ($arr['type'] === 'relate' && !isset($arr['link']) && !empty($arr['id_name'])) {
-                $virtualName = 'virtual__' . $fieldName;
-                if (isset($result['relationships'][$virtualName])) {
-                    $result['fields'][$fieldName]['options'] = $virtualName;
-                    $result['fields'][$fieldName]['link_name'] = $virtualName;
+                $idFieldDef = isset($fieldDefs[$arr['id_name']]) ? $fieldDefs[$arr['id_name']] : null;
+                $isDbBacked = $idFieldDef && (($idFieldDef['source'] ?? 'db') !== 'non-db');
+                if ($isDbBacked) {
+                    $virtualName = 'virtual__' . $fieldName;
+                    if (isset($result['relationships'][$virtualName])) {
+                        $result['fields'][$fieldName]['options'] = $virtualName;
+                        $result['fields'][$fieldName]['link_name'] = $virtualName;
+                    }
                 }
             }
         }
@@ -343,6 +353,9 @@ class stic_AWF_FormsUtils {
             if (!empty($f['link'])) continue;
             if (empty($f['module']) || !isset($availableModules[$f['module']])) continue;
             if (isset($coveredIdNames[$f['id_name']])) continue;
+            // Skip non-db id_name: FK injection cannot persist it.
+            $idFieldDef = isset($fields[$f['id_name']]) ? $fields[$f['id_name']] : null;
+            if (!$idFieldDef || (($idFieldDef['source'] ?? 'db') === 'non-db')) continue;
 
             $virtualName = 'virtual__' . $fieldName;
 
@@ -409,6 +422,9 @@ class stic_AWF_FormsUtils {
                 if (empty($f['id_name'])) continue;
                 if (!empty($f['link'])) continue;
                 if (($f['module'] ?? '') !== $moduleName) continue;
+                // Skip non-db id_name: FK injection cannot persist it.
+                $idFieldDef = isset($otherFields[$f['id_name']]) ? $otherFields[$f['id_name']] : null;
+                if (!$idFieldDef || (($idFieldDef['source'] ?? 'db') === 'non-db')) continue;
 
                 $virtualName = 'virtual__' . $fieldName;
                 if (isset($processed[$virtualName])) continue;
