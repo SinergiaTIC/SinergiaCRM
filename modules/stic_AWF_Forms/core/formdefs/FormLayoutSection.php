@@ -103,10 +103,11 @@ class FormLayoutSection extends FormLayoutNode {
     }
 
     private static function findLegacyGroupRootBlockId(FormLayout $layout, array $elements): string {
+        if (empty($elements) || !($layout->form_config instanceof FormConfig)) return '';
         $firstBlock = self::findFirstReferencedBlock($layout, $elements);
-        if (!$firstBlock) return '';
+        if (!$firstBlock instanceof FormDataBlock) return '';
         $rootBlock = $layout->form_config->getGroupRootBlock($firstBlock);
-        if (!$rootBlock || $rootBlock->group_root !== '') return '';
+        if (!($rootBlock instanceof FormDataBlock) || $rootBlock->group_root !== '') return '';
         $isGroupHead = $rootBlock->isRepeatable()
             || $rootBlock->isOptional()
             || !empty($layout->form_config->getGroupChildren($rootBlock));

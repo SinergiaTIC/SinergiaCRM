@@ -101,8 +101,6 @@ class ServerActionFlowExecutor {
                 }
 
                 $isTerminal = $actionExecutor instanceof ITerminalAction;
-                $conditionLogic = $actionConfig->condition_logic ?? 'AND';
-
                 // Build instance descriptors
                 $instanceDescriptors = null;
                 if ($motorBlock !== null && !$isTerminal) {
@@ -121,7 +119,7 @@ class ServerActionFlowExecutor {
                 // Condition gating by scope (Scalar vs Instance)
                 if ($instanceDescriptors !== null) {
                     // Repeatable action: scalar conditions gate the whole action before entering the loop
-                    if (!stic_AWFUtils::evaluateScalarConditions($actionConfig->conditions, $this->context->formConfig, $this->context->formData, $conditionLogic)) {
+                    if (!stic_AWFUtils::evaluateScalarConditions($actionConfig->conditions, $this->context->formConfig, $this->context->formData)) {
                         $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Skipping repeatable action '{$actionConfig->text}' because scalar condition failed.");
                         $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
                         $this->context->addActionResult($skippedResult);
@@ -129,7 +127,7 @@ class ServerActionFlowExecutor {
                     }
                 } else {
                     // Scalar action: evaluate all conditions at global scope once
-                    if (!stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, [], $conditionLogic)) {
+                    if (!stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, [])) {
                         $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Skipping scalar action '{$actionConfig->text}' because condition failed.");
                         $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
                         $this->context->addActionResult($skippedResult);
@@ -152,7 +150,7 @@ class ServerActionFlowExecutor {
                     }
 
                     // Per-instance conditions evaluation (inside loop)
-                    if ($motorBlock !== null && !stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, $this->context->getInstanceIndexes(), $conditionLogic)) {
+                    if ($motorBlock !== null && !stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, $this->context->getInstanceIndexes())) {
                         $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Skipping instance of action '{$actionConfig->text}' (" . implode(':', $descriptor) . ") because condition failed.");
                         $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met for instance " . implode(':', $descriptor) . ".");
                         $this->context->addActionResult($skippedResult);
