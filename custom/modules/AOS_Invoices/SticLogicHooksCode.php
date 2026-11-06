@@ -33,9 +33,14 @@ class AOS_InvoicesHook
         $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1') 
             || (!empty($_REQUEST['duplicateSave']) && $_REQUEST['duplicateSave'] === 'true');
         
-        if ($isDuplicate && !empty($bean->number)) {
-            $GLOBALS['log']->debug(__METHOD__ . ': Clearing number on duplicate. Original number was: ' . $bean->number);
-            $bean->number = '';
+        if ($isDuplicate) {
+            if (!empty($bean->number)) {
+                $GLOBALS['log']->debug(__METHOD__ . ': Clearing number on duplicate. Original number was: ' . $bean->number);
+                $bean->number = '';
+            }
+            // Clear the auto-generated name so it is regenerated for the new invoice
+            // (otherwise it keeps the original's "Client - DateTime" name).
+            $bean->name = '';
         }
         // === End Step 1.3 ===
 

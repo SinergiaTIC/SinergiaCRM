@@ -43,6 +43,27 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
         parent::preDisplay();
 
         SticViews::preDisplay($this);
+        // Name is auto-generated; do not mark as required (no asterisk)
+        if (isset($this->bean->field_defs['name'])) {
+            $this->bean->field_defs['name']['required'] = false;
+        }
+        // Also clear required from the panel defs (template checks both)
+        if (isset($this->ev->defs['panels']) && is_array($this->ev->defs['panels'])) {
+            foreach ($this->ev->defs['panels'] as $pk => &$pp) {
+                if (!is_array($pp)) continue;
+                foreach ($pp as $rk => &$rr) {
+                    if (!is_array($rr)) continue;
+                    foreach ($rr as $ck => &$cc) {
+                        if (is_array($cc) && isset($cc['name']) && $cc['name'] === 'name') {
+                            $cc['required'] = false;
+                            if (isset($cc['displayParams']['required'])) {
+                                $cc['displayParams']['required'] = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         $bean = $this->bean;
         $isDuplicate = (!empty($_REQUEST['mass_duplicate']) && $_REQUEST['mass_duplicate'] == '1')
@@ -51,8 +72,11 @@ class CustomAOS_InvoicesViewEdit extends AOS_InvoicesViewEdit
 
         require_once 'custom/modules/AOS_Invoices/SticUtils.php';
 
+        // Accepted invoices are fully blocked (redirect to DetailView).
+        // Cancelled invoices keep a limited edit (Usuario, Descripción, Notas):
+        // fiscal fields are still protected by the before_save hook.
         if (!$isDuplicate && !empty($bean->id) &&
-            AOS_InvoicesUtils::isInvoiceProtected($bean)) {
+            $bean->verifactu_aeat_status_c === 'accepted') {
 
             if (!empty($bean->id)) {
                 SugarApplication::redirect('index.php?module=AOS_Invoices&action=DetailView&record=' . $bean->id);

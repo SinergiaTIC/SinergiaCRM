@@ -181,6 +181,16 @@ switch (viewType()) {
         $("#verifactu_invoice_type_c").closest(".edit-view-row-item").hide();
       }
 
+      // Disable "Tipo de factura" (series) in EditView when the invoice is already
+      // sent to AEAT (accepted/cancelled): changing series is blocked server-side
+      // (Step 2.8), so reflect it in the UI to avoid confusion.
+      if (typeof STIC !== 'undefined' && STIC.record && STIC.record.id &&
+          (STIC.record.verifactu_aeat_status_c === 'accepted' ||
+           STIC.record.verifactu_aeat_status_c === 'cancelled')) {
+        var $seriesField = $("#verifactu_invoice_type_c");
+        $seriesField.prop('disabled', true).addClass('stic-disabled');
+      }
+
       // Clear address fields when Account or Contact X button is clicked
       $('#btn_clr_billing_account, #btn_clr_billing_contact').on('click', function() {
           setTimeout(function() {

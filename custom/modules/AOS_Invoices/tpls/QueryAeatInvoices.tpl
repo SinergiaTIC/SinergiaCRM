@@ -392,7 +392,11 @@
 
   var form = document.forms['VerifactuQueryForm'];
   if (form) {
+    // Ensure hidden period[] inputs exist for the chips rendered as selected
+    // (e.g. after a postback), so the filter is not lost on the next submit.
+    syncPeriodInputs(form);
     form.addEventListener('submit', function (e) {
+      syncPeriodInputs(form);
       saveFilterState();
       if (!isValidQuery(form)) {
         e.preventDefault();

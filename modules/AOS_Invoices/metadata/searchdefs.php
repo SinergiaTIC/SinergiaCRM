@@ -136,7 +136,7 @@ array(
                 'name' => 'verifactu_test_invoice_c',
             ),
             'VERIFACTU_AEAT_STATUS_C' => array(
-                'type' => 'text',
+                'type' => 'enum',
                 'label' => 'LBL_VERIFACTU_AEAT_STATUS',
                 'width' => '10%',
                 'default' => true,
@@ -157,6 +157,13 @@ array(
                 'default' => true,
                 'name' => 'verifactu_valid_invoice_c',
             ),
+            'VERIFACTU_RECTIFIED_DATE_C' => array(
+                'type' => 'date',
+                'label' => 'LBL_VERIFACTU_RECTIFIED_DATE',
+                'width' => '10%',
+                'default' => false,
+                'name' => 'verifactu_rectified_date_c',
+            ),
             'total_amount' => array(
                 'type' => 'currency',
                 'label' => 'LBL_GRAND_TOTAL',
@@ -164,6 +171,15 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'total_amount',
+            ),
+            'subtotal_amount' => array(
+                'type' => 'currency',
+                'label' => 'LBL_SUBTOTAL_AMOUNT',
+                'currency_format' => true,
+                'width' => '10%',
+                'default' => false,
+                'name' => 'subtotal_amount',
+                'enable_range_search' => true,
             ),
             'invoice_date' => array(
                 'type' => 'date',
@@ -325,6 +341,7 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'subtotal_amount',
+                'enable_range_search' => true,
             ),
             'total_amt' => array(
                 'type' => 'currency',
@@ -475,6 +492,13 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'verifactu_valid_invoice_c',
+            ),
+            'VERIFACTU_RECTIFIED_DATE_C' => array(
+                'type' => 'date',
+                'label' => 'LBL_VERIFACTU_RECTIFIED_DATE',
+                'width' => '10%',
+                'default' => false,
+                'name' => 'verifactu_rectified_date_c',
             ),
             'date_entered' => array(
                 'type' => 'datetime',

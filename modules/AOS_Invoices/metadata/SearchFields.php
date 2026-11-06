@@ -203,6 +203,18 @@ $searchFields['AOS_Invoices'] = array(
         'query_type' => 'default',
         'enable_range_search' => true,
     ),
+    'range_subtotal_amount' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'start_range_subtotal_amount' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
+    'end_range_subtotal_amount' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+    ),
     'range_due_date' => array(
         'query_type' => 'default',
         'enable_range_search' => true,
@@ -280,6 +292,11 @@ $searchFields['AOS_Invoices'] = array(
     ),
     'verifactu_valid_invoice_c' => array(
         'query_type' => 'default',
+    ),
+    'verifactu_rectified_date_c' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true,
     ),
 );
 // END STIC-Custom

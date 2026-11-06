@@ -106,11 +106,15 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
         if (AOS_InvoicesUtils::isInvoiceProtected($bean)) {
 
             $isTestInvoice = !empty($bean->verifactu_test_invoice_c);
+            $isCancelled = ($bean->verifactu_aeat_status_c === 'cancelled');
 
-            // Non-test invoices: hide both edit and delete buttons
-            // Test invoices: hide only edit button, keep delete visible
+            // Accepted (and test accepted): no full edit, hide buttons.
+            // Cancelled: keep edit button visible for Usuario/Descripción/Notas
+            // (fiscal fields are blocked server-side by the before_save hook).
             if ($isTestInvoice) {
                 echo '<style>.detail-view-action .edit_button { display: none !important; }</style>';
+            } elseif ($isCancelled) {
+                // keep buttons visible
             } else {
                 $this->dv->defs['form']['hideButtons'] = true;
             }
@@ -123,7 +127,9 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
             
             $bannerMessage = $isTestInvoice
                 ? $mod_strings['LBL_VERIFACTU_ACCEPTED_TEST_BANNER']
-                : $mod_strings['LBL_VERIFACTU_ACCEPTED_BANNER'];
+                : ($isCancelled
+                    ? $mod_strings['LBL_VERIFACTU_CANCELLED_BANNER']
+                    : $mod_strings['LBL_VERIFACTU_ACCEPTED_BANNER']);
             
             echo '<div class="alert alert-warning" style="margin: 10px 0; padding: 12px; border-left: 4px solid #f0ad4e; background-color: #fcf8e3;">
                 <strong><span class="suitepicon suitepicon-action-warning"></span> ' . $bannerMessage . '</strong>
@@ -150,6 +156,25 @@ class CustomAOS_InvoicesViewDetail extends AOS_InvoicesViewDetail
             </div>';
         }
         // === End customer identification number warning ===
+
+        // === Non-vigente (rectified/cancelled) notice with link to the rectificativa ===
+        // When an invoice is no longer vigente, surface a link to the rectificativa
+        // that replaced it (if any), so the user can reach it from the original.
+        if ($this->bean->verifactu_valid_invoice_c === '0' && !empty($this->bean->id)) {
+            global $mod_strings, $db;
+            if (empty($mod_strings)) {
+                $mod_strings = return_module_language($GLOBALS['current_language'], 'AOS_Invoices');
+            }
+            $rectId = $db->getOne("SELECT id_c FROM aos_invoices_cstm WHERE verifactu_cancel_id_c = '" . $db->quote($this->bean->id) . "' AND verifactu_is_rectified_c = '1' AND (SELECT deleted FROM aos_invoices WHERE id = id_c) = 0 ORDER BY verifactu_submitted_at_c DESC LIMIT 1");
+            if (!empty($rectId)) {
+                $rectBean = BeanFactory::getBean('AOS_Invoices', $rectId);
+                $rectLabel = !empty($rectBean->number) ? $rectBean->number : $rectId;
+                echo '<div class="alert alert-warning" style="margin: 10px 0; padding: 12px; border-left: 4px solid #f0ad4e; background-color: #fcf8e3;">
+                    <strong><span class="suitepicon suitepicon-action-warning"></span> ' . $mod_strings['LBL_ORIGINAL_INVOICE_RECTIFIED_BY'] . '<a href="index.php?module=AOS_Invoices&action=DetailView&record=' . $rectId . '">' . htmlspecialchars($rectLabel, ENT_QUOTES, 'UTF-8') . '</a></strong>
+                </div>';
+            }
+        }
+        // === End non-vigente notice ===
 
         // === Test invoice banner (detail view) ===
         // Show a clear notice whenever the invoice is flagged as a test invoice.

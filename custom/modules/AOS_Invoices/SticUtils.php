@@ -1493,15 +1493,45 @@ class AOS_InvoicesUtils
                         $originalAuditLog .= "[{$auditTimestamp}] " . str_replace(['{0}', '{1}'], [$rectifiedRef, $invoiceBean->id], $mod_strings['LBL_AUDIT_ORIGINAL_RECTIFIED_SENT']);
                         $auditLogQuoted = $originalInvoice->db->quote($originalAuditLog);
                         $originalInvoice->db->query("UPDATE aos_invoices_cstm SET verifactu_audit_log_c = '{$auditLogQuoted}', verifactu_valid_invoice_c = '0' WHERE id_c = '{$originalId}'");
-                        // Mark all other rectificatives of the same original as non-vigente (0)
-                        $originalInvoice->db->query(
-                            "UPDATE aos_invoices_cstm c "
+                        // Mark every other invoice of the same rectification chain as non-vigente (0).
+                        // Direct rectificativas (cancel_id = original) plus any second-level one
+                        // (cancel_id pointing to a rectificativa of the original) are covered.
+                        $chainIds = array($originalId);
+                        $levelResult = $originalInvoice->db->query(
+                            "SELECT c.id_c FROM aos_invoices_cstm c "
                             . "INNER JOIN aos_invoices i ON i.id = c.id_c "
-                            . "SET c.verifactu_valid_invoice_c = '0' "
-                            . "WHERE c.verifactu_cancel_id_c = '{$originalId}' "
-                            . "AND c.id_c != '{$invoiceBean->id}' "
-                            . "AND i.deleted = 0"
+                            . "WHERE c.verifactu_cancel_id_c = '{$originalId}' AND i.deleted = 0"
                         );
+                        $levelIds = array();
+                        while ($lvlRow = $originalInvoice->db->fetchByAssoc($levelResult)) {
+                            $levelIds[] = $lvlRow['id_c'];
+                        }
+                        $chainIds = array_merge($chainIds, $levelIds);
+                        // Second level: rectificativas of rectificativas
+                        if (!empty($levelIds)) {
+                            $quotedLevel = implode("','", array_map(array($originalInvoice->db, 'quote'), $levelIds));
+                            $level2Result = $originalInvoice->db->query(
+                                "SELECT c.id_c FROM aos_invoices_cstm c "
+                                . "INNER JOIN aos_invoices i ON i.id = c.id_c "
+                                . "WHERE c.verifactu_cancel_id_c IN ('{$quotedLevel}') AND i.deleted = 0"
+                            );
+                            while ($lvl2Row = $originalInvoice->db->fetchByAssoc($level2Result)) {
+                                $chainIds[] = $lvl2Row['id_c'];
+                            }
+                        }
+                        $chainIds = array_unique($chainIds);
+                        $toMark = array();
+                        foreach ($chainIds as $chainId) {
+                            if ($chainId !== $invoiceBean->id) {
+                                $toMark[] = $originalInvoice->db->quoted($chainId);
+                            }
+                        }
+                        if (!empty($toMark)) {
+                            $originalInvoice->db->query(
+                                "UPDATE aos_invoices_cstm SET verifactu_valid_invoice_c = '0' "
+                                . "WHERE id_c IN (" . implode(',', $toMark) . ")"
+                            );
+                        }
                     }
                 }
 
@@ -2301,8 +2331,10 @@ class AOS_InvoicesUtils
             }
 
             // Check invoice has required verifactu fields
-            if (empty($invoiceBean->verifactu_hash_c) || empty($invoiceBean->verifactu_previous_hash_c)) {
-                throw new Exception('Invoice must have verifactu hash and previous hash');
+            // The first invoice in a chain has no previous hash (verifactu_previous_hash_c
+            // is null): only the own hash is mandatory, so it can be cancelled too.
+            if (empty($invoiceBean->verifactu_hash_c)) {
+                throw new Exception('Invoice must have verifactu hash');
             }
 
             $originalHash = $invoiceBean->verifactu_hash_c;
@@ -2491,9 +2523,10 @@ class AOS_InvoicesUtils
         } catch (Exception $e) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Error sending cancellation to AEAT: ' . $e->getMessage());
 
-            // Update invoice with error
+            // Keep the invoice as accepted (it is still accepted by AEAT): only
+            // record the error in the response/log so the user can retry the
+            // cancellation. Do not move it to a non-standard 'error' status.
             if (!empty($invoiceBean->id)) {
-                $invoiceBean->verifactu_aeat_status_c = 'error';
                 $invoiceBean->verifactu_aeat_response_c = 'Error al anular: ' . $e->getMessage();
                 $invoiceBean->save();
             }
