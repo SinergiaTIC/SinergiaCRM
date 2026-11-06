@@ -232,7 +232,7 @@ const searchSelectTemplate = (optionsVar, modelVar, placeholder) => `
          @keydown.escape.prevent="close(true)"
          :style="getTriggerStyle()">
       
-      <span x-show="!open" x-html="selectedLabel ? selectedLabel : placeholder" 
+      <span x-show="!open" x-text="selectedLabel ? selectedLabel : placeholder" 
             style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 20px;" 
             :class="{'text-muted': !selectedLabel}"></span>
       
@@ -251,7 +251,7 @@ const searchSelectTemplate = (optionsVar, modelVar, placeholder) => `
           <template x-for="(option, index) in filteredOptions" :key="option.id">
             <li @click.stop="selectOption(option)" :class="{ 'selected': option.id == selected, 'focused': index === focusedIndex }"
                 @mouseenter="focusedIndex = index" :style="getItemStyle(option.id == selected, index === focusedIndex)"> 
-              <span x-html="option.label ? option.label : '&nbsp;'" :style="getTextStyle(option.id == selected)"></span>
+              <span x-text="option.label ? option.label : ' '" :style="getTextStyle(option.id == selected)"></span>
             </li>
           </template>
           
