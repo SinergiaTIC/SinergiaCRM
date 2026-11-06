@@ -118,3 +118,5 @@ $mod_strings['LBL_WHISTLEBLOWING_SECTION_ABOUT'] = 'Kanalari buruz';
 $mod_strings['LBL_WHISTLEBLOWING_SECTION_CONFID'] = 'Konfidentzialtasuna';
 $mod_strings['LBL_WHISTLEBLOWING_SECTION_SECURITY'] = 'Segurtasuna';
 $mod_strings['LBL_WHISTLEBLOWING_DESC'] = 'Testuen kudeaketa eta kanalaren aktibazioa.';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_LABEL'] = 'Kanalean reCaptcha aktibatu:';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_HELP'] = 'Aktibatuta badago, kanal publikoak Etiketak (GENERAL_RECAPTCHA) panelean definitutako «(Orokorra)» reCaptcha balidatuko du.';

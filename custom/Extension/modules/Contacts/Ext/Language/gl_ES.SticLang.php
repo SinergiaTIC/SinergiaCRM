@@ -247,3 +247,6 @@ $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Proxecto actual';
 
 // Productos financieros
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Produtos financeiros';
+
+// Canal de denuncias
+$mod_strings['LBL_STIC_WHISTLEBLOWING_CONTACTS_FROM_STIC_WHISTLEBLOWING_TITLE'] = 'Denuncias';

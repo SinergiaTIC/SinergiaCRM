@@ -177,6 +177,7 @@ $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['moduleList']['stic_Assets'] = 'Activos';
+$app_list_strings['moduleList']['stic_Whistleblowing'] = 'Salaketak';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -4039,7 +4040,13 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
 $app_list_strings['stic_whistleblowing_status_list']['new'] = 'Berria';
 $app_list_strings['stic_whistleblowing_status_list']['working'] = 'Berrikuspen prozesuan';
 $app_list_strings['stic_whistleblowing_status_list']['solved'] = 'Ebaztuta';
-$app_list_strings['stic_whistleblowing_status_list']['arxivat'] = 'Artxibatuta';
+$app_list_strings['stic_whistleblowing_status_list']['archived'] = 'Artxibatuta';
+
+// Tipos del canal de denuncias
+$app_list_strings['stic_whistleblowing_type_list']['fraud'] = 'Iruzurra';
+$app_list_strings['stic_whistleblowing_type_list']['harassment'] = 'Jazarpena';
+$app_list_strings['stic_whistleblowing_type_list']['data_privacy'] = 'Datu-babesa';
+$app_list_strings['stic_whistleblowing_type_list']['others'] = 'Bestelakoak';
 
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

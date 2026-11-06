@@ -118,3 +118,5 @@ $mod_strings['LBL_WHISTLEBLOWING_SECTION_ABOUT'] = 'About the Channel';
 $mod_strings['LBL_WHISTLEBLOWING_SECTION_CONFID'] = 'Confidentiality';
 $mod_strings['LBL_WHISTLEBLOWING_SECTION_SECURITY'] = 'Security';
 $mod_strings['LBL_WHISTLEBLOWING_DESC'] = 'Text management and channel activation.';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_LABEL'] = 'Enable reCaptcha in the channel:';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_HELP'] = 'When enabled, the public channel validates the “(General)” reCaptcha defined in Study Settings (GENERAL_RECAPTCHA).';

@@ -118,3 +118,5 @@ $mod_strings['LBL_WHISTLEBLOWING_SECTION_ABOUT'] = 'Sobre a Canle';
 $mod_strings['LBL_WHISTLEBLOWING_SECTION_CONFID'] = 'Confidencialidade';
 $mod_strings['LBL_WHISTLEBLOWING_SECTION_SECURITY'] = 'Seguridade';
 $mod_strings['LBL_WHISTLEBLOWING_DESC'] = 'Xestión de textos e activación da canle.';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_LABEL'] = 'Activar reCaptcha no canal:';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_HELP'] = 'Se está activado, o canal público validará o reCaptcha «(Xeral)» definido en Etiquetas de Estudo (GENERAL_RECAPTCHA).';

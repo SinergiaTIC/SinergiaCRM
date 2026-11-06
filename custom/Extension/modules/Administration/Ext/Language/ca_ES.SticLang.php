@@ -118,3 +118,5 @@ $mod_strings['LBL_WHISTLEBLOWING_SECTION_ABOUT'] = 'Sobre el Canal';
 $mod_strings['LBL_WHISTLEBLOWING_SECTION_CONFID'] = 'Confidencialitat';
 $mod_strings['LBL_WHISTLEBLOWING_SECTION_SECURITY'] = 'Seguretat';
 $mod_strings['LBL_WHISTLEBLOWING_DESC'] = 'Gestió de textos i activació del canal.';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_LABEL'] = 'Activar el reCaptcha al canal:';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_HELP'] = 'Si està activat, el canal públic validarà el reCaptcha «(General)» definit a Etiquetes d’Estudi (GENERAL_RECAPTCHA).';

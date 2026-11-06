@@ -177,6 +177,7 @@ $app_list_strings['moduleList']['stic_Signers'] = 'Firmants';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productes financers';
 $app_list_strings['moduleList']['stic_Assets'] = 'Actius';
+$app_list_strings['moduleList']['stic_Whistleblowing'] = 'Denúncies';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -4040,6 +4041,12 @@ $app_list_strings['stic_whistleblowing_status_list']['new'] = 'Nou';
 $app_list_strings['stic_whistleblowing_status_list']['working'] = 'En procés de revisió';
 $app_list_strings['stic_whistleblowing_status_list']['solved'] = 'Resolt';
 $app_list_strings['stic_whistleblowing_status_list']['archived'] = 'Arxivat';
+
+// Tipus del canal de denúncies
+$app_list_strings['stic_whistleblowing_type_list']['fraud'] = 'Frau';
+$app_list_strings['stic_whistleblowing_type_list']['harassment'] = 'Assetjament';
+$app_list_strings['stic_whistleblowing_type_list']['data_privacy'] = 'Protecció de dades';
+$app_list_strings['stic_whistleblowing_type_list']['others'] = 'Altres';
 
 
 // Llista dinàmica

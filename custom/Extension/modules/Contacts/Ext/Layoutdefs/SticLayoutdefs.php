@@ -157,6 +157,26 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_followups_contacts'] = array(
     ),
 );
 
+// stic_Whistleblowing subpanel
+$layout_defs["Contacts"]["subpanel_setup"]['stic_whistleblowing_contacts'] = array(
+    'order' => 200,
+    'module' => 'stic_Whistleblowing',
+    'subpanel_name' => 'default',
+    'sort_order' => 'desc',
+    'sort_by' => 'date_modified',
+    'title_key' => 'LBL_STIC_WHISTLEBLOWING_CONTACTS_FROM_STIC_WHISTLEBLOWING_TITLE',
+    'get_subpanel_data' => 'stic_whistleblowing_contacts',
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+        1 => array(
+            'widget_class' => 'SubPanelTopSelectButton',
+            'mode' => 'MultiSelect',
+        ),
+    ),
+);
+
 // stic_Goals subpanel
 $layout_defs["Contacts"]["subpanel_setup"]['stic_goals_contacts'] = array(
     'order' => 100,

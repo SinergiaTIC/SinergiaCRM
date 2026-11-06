@@ -1,3 +1,28 @@
+{*
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ *
+ * Administration page for the Whistleblowing channel configuration.
+ * Template rendered by ViewWhistleblowingConfigAdmin
+ * (custom/modules/Administration/views/view.whistleblowingconfigadmin.php).
+ *}
 {literal}
 <style>
     .whistleblowing-switch {
@@ -61,9 +86,9 @@
 </style>
 {/literal}
 
-<form id="whistleblowingConfig" name="whistleblowingConfig" method="POST" action="index.php?module=Administration&action=WhistleblowingConfig_Admin">
+<form id="whistleblowingConfig" name="whistleblowingConfig" method="POST" action="index.php?module=Administration&action=WhistleblowingConfigSave">
     <input type="hidden" name="do" value="save">
-    
+
     <table width="100%" cellpadding="0" cellspacing="10" border="0" class="actionsContainer">
         <tr>
             <th align="left">
@@ -84,9 +109,23 @@
                     <td width="75%" class="dataField">
                         <label class="whistleblowing-switch">
                             <input type="hidden" name="whistleblowing_enabled" value="0">
-                            <input type="checkbox" id="whistleblowing_enabled" name="whistleblowing_enabled" value="1" 
-                                   {if $config.whistleblowing_enabled == '1'}checked{/if} 
+                            <input type="checkbox" id="whistleblowing_enabled" name="whistleblowing_enabled" value="1"
+                                   {if $config.whistleblowing_enabled == '1'}checked{/if}
                                    onchange="toggleWhistle(this.checked)">
+                            <span class="whistleblowing-slider"></span>
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="25%" class="dataLabel">
+                        {$MOD.LBL_WHISTLEBLOWING_RECAPTCHA_LABEL}
+                        <div class="whistle-help-text">{$MOD.LBL_WHISTLEBLOWING_RECAPTCHA_HELP}</div>
+                    </td>
+                    <td width="75%" class="dataField">
+                        <label class="whistleblowing-switch">
+                            <input type="hidden" name="whistleblowing_recaptcha_enabled" value="0">
+                            <input type="checkbox" id="whistleblowing_recaptcha_enabled" name="whistleblowing_recaptcha_enabled" value="1"
+                                   {if $config.whistleblowing_recaptcha_enabled == '1'}checked{/if}>
                             <span class="whistleblowing-slider"></span>
                         </label>
                     </td>
@@ -95,7 +134,7 @@
         </div>
 
         <div id="whistleblowing_config_body" {if $config.whistleblowing_enabled != '1'}style="display:none;"{/if}>
-            
+
             <div class="whistleblowing-row" style="background-color: #eef2e1; border: 1px solid #8ca33e;">
                 <label class="whistleblowing-label-header" style="color: #5d6d29;">{$MOD.LBL_WHISTLEBLOWING_LINK_TITLE}</label>
                 <p style="margin: 5px 0;">
@@ -105,7 +144,7 @@
                 </p>
                 <div class="whistle-help-text">{$MOD.LBL_WHISTLEBLOWING_LINK_HELP}</div>
             </div>
-            
+
             <div class="whistleblowing-row">
                 <label class="whistleblowing-label-header">{$MOD.LBL_WHISTLEBLOWING_SECTION_ABOUT}</label>
                 <textarea name="whistleblowing_text_about" class="whistle-textarea">{$config.whistleblowing_text_about}</textarea>

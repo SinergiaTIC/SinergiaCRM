@@ -177,6 +177,7 @@ $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['moduleList']['stic_Assets'] = 'Activos';
+$app_list_strings['moduleList']['stic_Whistleblowing'] = 'Denuncias';
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interesado';
@@ -4040,6 +4041,12 @@ $app_list_strings['stic_whistleblowing_status_list']['new'] = 'Nuevo';
 $app_list_strings['stic_whistleblowing_status_list']['working'] = 'En proceso de revisión';
 $app_list_strings['stic_whistleblowing_status_list']['solved'] = 'Resuelto';
 $app_list_strings['stic_whistleblowing_status_list']['archived'] = 'Archivado';
+
+// Tipos del canal de denuncias
+$app_list_strings['stic_whistleblowing_type_list']['fraud'] = 'Fraude';
+$app_list_strings['stic_whistleblowing_type_list']['harassment'] = 'Acoso';
+$app_list_strings['stic_whistleblowing_type_list']['data_privacy'] = 'Protección de datos';
+$app_list_strings['stic_whistleblowing_type_list']['others'] = 'Otros';
 
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

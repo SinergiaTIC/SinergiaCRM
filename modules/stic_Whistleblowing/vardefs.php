@@ -1,18 +1,12 @@
 <?php
 /**
- *
- * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
- *
- * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2018 SalesAgility Ltd.
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation with the addition of the following permission added
- * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
- * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * Free Software Foundation.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -24,18 +18,7 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA.
  *
- * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
- * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
- *
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License version 3.
- *
- * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
- * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
 $dictionary['stic_Whistleblowing'] = array(
@@ -156,6 +139,54 @@ $dictionary['stic_Whistleblowing'] = array(
       'merge_filter' => 'disabled',
       'len' => '255',
       'size' => '20',
+    ),
+    // Link field for the Documents relationship (join table defined in custom/metadata/SticRelationshipsMetaData.php)
+    'stic_whistleblowing_documents' => array(
+      'name' => 'stic_whistleblowing_documents',
+      'type' => 'link',
+      'relationship' => 'stic_whistleblowing_documents',
+      'source' => 'non-db',
+      'module' => 'Documents',
+      'bean_name' => 'Document',
+      'vname' => 'LBL_STIC_WHISTLEBLOWING_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+    ),
+    // Link fields for the Contacts relationship (join table defined in custom/metadata/SticRelationshipsMetaData.php)
+    'stic_whistleblowing_contacts' => array(
+      'name' => 'stic_whistleblowing_contacts',
+      'type' => 'link',
+      'relationship' => 'stic_whistleblowing_contacts',
+      'source' => 'non-db',
+      'module' => 'Contacts',
+      'bean_name' => 'Contact',
+      'vname' => 'LBL_STIC_WHISTLEBLOWING_CONTACTS_FROM_CONTACTS_TITLE',
+      'id_name' => 'stic_whistleblowing_contactscontacts_ida',
+    ),
+    'stic_whistleblowing_contacts_name' => array(
+      'name' => 'stic_whistleblowing_contacts_name',
+      'type' => 'relate',
+      'source' => 'non-db',
+      'vname' => 'LBL_STIC_WHISTLEBLOWING_CONTACTS_FROM_CONTACTS_TITLE',
+      'save' => 1,
+      'id_name' => 'stic_whistleblowing_contactscontacts_ida',
+      'link' => 'stic_whistleblowing_contacts',
+      'table' => 'contacts',
+      'module' => 'Contacts',
+      'massupdate' => 1,
+      'rname' => 'name',
+      'required' => 0,
+      'db_concat_fields' => array(
+        0 => 'first_name',
+        1 => 'last_name',
+      ),
+    ),
+    'stic_whistleblowing_contactscontacts_ida' => array(
+      'name' => 'stic_whistleblowing_contactscontacts_ida',
+      'type' => 'link',
+      'relationship' => 'stic_whistleblowing_contacts',
+      'source' => 'non-db',
+      'reportable' => false,
+      'side' => 'right',
+      'vname' => 'LBL_STIC_WHISTLEBLOWING_CONTACTS_FROM_CONTACTS_TITLE',
     ),
   ),
     'relationships' => array (
