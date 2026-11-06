@@ -87,7 +87,7 @@ class RedirectToRecordAction extends HookDataBlockActionDefinition implements IT
         $view = $actionConfig->getResolvedParameter('crm_view') ?? 'DetailView';
 
         // $block is already checked and guaranteed not to be null by parent class
-        $beanRef = $block->dataBlock->getBeanReference();
+        $beanRef = $block->getInstanceBeanReference() ?? $block->dataBlock->getBeanReference();
         if ($beanRef === null || empty($beanRef->beanId)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "The selected Data Block has no saved record ID.");
         }

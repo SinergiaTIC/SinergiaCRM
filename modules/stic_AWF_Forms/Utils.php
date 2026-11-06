@@ -112,7 +112,9 @@ class stic_AWF_FormsUtils {
 
             $result['fields'][$fieldName] = [
                 'name' => $fieldName,
-                'text' => rtrim(trim(translate($arr['vname'] ?? '', $moduleName)), ":"),
+                // Decode HTML entities so the client stores pure text in the JSON config
+                // (see getRecordsTextById for details)
+                'text' => html_entity_decode(rtrim(trim(translate($arr['vname'] ?? '', $moduleName)), ":"), ENT_QUOTES, 'UTF-8'),
                 'type' => $arr['type'],
                 'required' => isset($arr['required']) && $arr['required'],
                 'default' => $arr['default'] ?? null,
@@ -610,6 +612,12 @@ class stic_AWF_FormsUtils {
 
             $displayField = self::detectDisplayField($bean);
             $text = isset($bean->$displayField) ? $bean->$displayField : $bean->id;
+            // The DB layer entity-encodes the value ("&quot;", "&#039;"...). If this text
+            // is stored as is in the form configuration and the configuration is saved
+            // again, from_html() (applied by the DB layer on save) decodes those entities
+            // to raw characters, producing invalid JSON. Decode here so the client always
+            // receives pure text.
+            $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
 
             $results[] = [
                 'id' => $bean->id,
@@ -809,6 +817,72 @@ class stic_AWF_FormsUtils {
                 $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::UNCHANGED, $newValue, $oldValue);
             }
         }
+        return $modifications;
+    }
+
+    /**
+     * Fills a bean only with empty fields (enriches).
+     * @param SugarBean $bean The bean to enrich
+     * @param DataBlockResolved $block The resolved data block
+     * @return array<string, FieldModification> List of modifications indexed by field name
+     */
+    public static function enrichBeanFromBlock(SugarBean $bean, DataBlockResolved $block): array
+    {
+        require_once 'modules/stic_AWF_Forms/core/FieldModification.php';
+
+        /** @var FieldModification[] $modifications */
+        $modifications = [];
+
+        foreach ($block->formData as $fieldName => $fieldResolved) {
+            if ($fieldResolved === null) {
+                continue;
+            }
+
+            $newValue = $fieldResolved->value;
+            $fieldDef = $bean->field_defs[$fieldName] ?? null;
+
+            // If it is a related field, the real field that changes in the database is the id_name
+            $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
+            $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
+
+            if (isset($bean->field_defs[$targetField]) && self::isEmailField($bean->field_defs[$targetField], $targetField)) {
+                if ($targetField === 'email') {
+                    $targetField = 'email1';
+                }
+                $oldValue = $bean->$targetField ?? null;
+            } else {
+                $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
+            }
+
+            // Check if the field in the bean is empty or null
+            $isEmpty = ($oldValue === null || $oldValue === '' || $oldValue === '^^');
+
+            // Check if the field is boolean (in that case, consider false as empty)
+            $isBoolean = ($fieldDef && isset($fieldDef['type']) && ($fieldDef['type'] === 'bool' || $fieldDef['type'] === 'boolean'));
+            if ($isBoolean) {
+                // Normalize new value to boolean true if it is sent as checked (otherside, consider it false)
+                $newValue = ($newValue === true || $newValue === 1 || $newValue === '1');
+
+                // If the field has value, consider empty old value false or null
+                if ($newValue) {
+                    $isEmpty = ($isEmpty || $oldValue === false || $oldValue === 0 || $oldValue === '0');
+                }
+            }
+
+            if ($isEmpty && $newValue !== null && $newValue !== '') {
+                // The current field is empty.
+                $bean->$targetField = $newValue;
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::APPLIED, $newValue, $oldValue);
+                
+            } elseif (!$isEmpty && $newValue !== null && $newValue !== '' && $oldValue != $newValue) {
+                // The form sends a value but there is already another one
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::IGNORED_ENRICH, $newValue, $oldValue);
+            } else {
+                // Both values ​​are equal or null
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::UNCHANGED, $newValue, $oldValue);
+            }
+        }
+
         return $modifications;
     }
 }

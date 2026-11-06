@@ -131,8 +131,10 @@ class utils {
    *   }
    */
   static getModuleInformation(moduleName) {
-    // Do not get info of not enabled modules
-    if (!moduleName || !STIC.enabledModules.hasOwnProperty(moduleName)) {
+    // Do not get info of not enabled modules. STIC/enabledModules are guarded:
+    // some views (e.g. the DetailView) do not define STIC.enabledModules, and a
+    // crash here aborts the whole config load (fromJSON -> _migrateLegacyRelationships).
+    if (!moduleName || typeof STIC === 'undefined' || !STIC.enabledModules || !STIC.enabledModules.hasOwnProperty(moduleName)) {
       return null;
     }
 
