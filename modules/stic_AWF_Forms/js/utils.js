@@ -132,7 +132,7 @@ class utils {
    */
   static getModuleInformation(moduleName) {
     // Do not get info of not enabled modules
-    if (!moduleName || !STIC.enabledModules.hasOwnProperty(moduleName)) {
+    if (!moduleName || !STIC?.enabledModules?.hasOwnProperty(moduleName)) {
       return null;
     }
 

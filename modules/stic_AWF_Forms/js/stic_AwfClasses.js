@@ -1390,6 +1390,9 @@ class stic_AwfConfiguration {
     if (!this.data_blocks || this.data_blocks.length === 0) {
       return;
     }
+    if (!STIC?.enabledModules) {
+      return;
+    }
 
     this.data_blocks.forEach(block => {
       if (!block.module || !block.fields) {
