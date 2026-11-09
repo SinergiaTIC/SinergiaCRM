@@ -397,6 +397,13 @@ class ExternalReporting
                             continue 2;
                         }
                         break;
+                    case 'Contacts':
+                        // account_name resolves to the same join (accounts_contacts) as account_id, which already
+                        // registers the relationship. Skipping it avoids a duplicate row in sda_def_relationships.
+                        if (($fieldV['name'] ?? null) == 'account_name') {
+                            continue 2;
+                        }
+                        break;
                     default:
                         break;
                 }
