@@ -611,6 +611,11 @@ class stic_AWF_FormsUtils {
             $displayField = self::detectDisplayField($bean);
             $text = isset($bean->$displayField) ? $bean->$displayField : $bean->id;
 
+            // BeanFactory::getBean() applies to_html() on fetched fields, so a record name
+            // containing quotes (&quot;) or other entities would end up stored as-is inside
+            // the configuration JSON and break its parsing on the next editor load.
+            $text = html_entity_decode((string) $text, ENT_QUOTES, 'UTF-8');
+
             $results[] = [
                 'id' => $bean->id,
                 'text' => $text,
@@ -618,6 +623,38 @@ class stic_AWF_FormsUtils {
         }
 
         return $results;
+    }
+
+    /**
+     * Decodes HTML-entity-like sequences inside JSON values (e.g. &quot; arriving encoded
+     * from AJAX responses) so that the single html_entity_decode applied by the read paths
+     * does not break the JSON structure on the next editor load. The replacement is surgical
+     * (leaf strings only), so the rest of the document stays byte-for-byte identical
+     * (empty objects {} and formatting are preserved).
+     */
+    public static function normalizeConfigurationJson(string $json): string
+    {
+        $data = json_decode($json, true);
+        if (!is_array($data)) {
+            return $json;
+        }
+        $out = $json;
+        $seen = [];
+        array_walk_recursive($data, function (&$value) use (&$out, &$seen): void {
+            if (!is_string($value) || strpos($value, '&') === false || isset($seen[$value])) {
+                return;
+            }
+            $seen[$value] = true;
+            $decoded = html_entity_decode($value, ENT_QUOTES, 'UTF-8');
+            if ($decoded !== $value) {
+                $encodedOld = json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                $encodedNew = json_encode($decoded, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                if (is_string($encodedOld) && is_string($encodedNew)) {
+                    $out = str_replace($encodedOld, $encodedNew, $out);
+                }
+            }
+        });
+        return $out;
     }
 
     /**

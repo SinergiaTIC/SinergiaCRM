@@ -49,8 +49,16 @@ class FormDuplicateRule {
         $dto = new self();
         $dto->data_block = $dataBlock;
 
-        $dto->fields = $data['fields'];
-        $dto->on_duplicate = OnDuplicateAction::from($data['on_duplicate']);
+
+        // Defensive parsing of duplicate rule fields: The configuration JSON may be corrupted by external factors -> don't crash
+        $dto->fields = $data['fields'] ?? [];
+        $dupData = $data['on_duplicate'] ?? '';
+        try {
+            $dto->on_duplicate = OnDuplicateAction::from($dupData);
+        } catch (\ValueError $e) {
+            $GLOBALS['log']->warning('Line ' . __LINE__ . ': ' . __METHOD__ . ": OnDuplicateAction: invalid value '{$dupData}'. Defaulting to ENRICH.");
+            $dto->on_duplicate = OnDuplicateAction::ENRICH;
+        }
 
         return $dto;
     }
