@@ -477,15 +477,19 @@ class ExternalReporting
                                     $fieldV['rLabel'] = translate('LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_R_TITLE', $fieldV['module']);
                                     $fieldV['lLabel'] = translate('LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_L_TITLE', $fieldV['module']);
                                     $fieldV['autoRelJoinModuleRelLabel'] = 'LBL_' . strtoupper($fieldV['link']) . '_FROM_' . strtoupper($moduleName) . '_R_TITLE';
-                                    // Resolve the actual relationship name from the link field definition
-                                    // (needed when the link field name differs from the relationship name, e.g. member_of vs member_accounts)
-                                    $linkFieldDef = $moduleBean->getFieldDefinitions()[$fieldV['link']] ?? null;
-                                    if ($linkFieldDef && !empty($linkFieldDef['relationship'])) {
-                                        $fieldV['rel_name'] = $linkFieldDef['relationship'];
-                                    }
                                     $autoRelationships[$fieldV['link']] = $fieldV;
                                     $this->autoRelationshipsRegistered[$fieldV['link']] = $fieldV['table'];
                                 }
+
+                                
+                                // Needed for every relate field, not only auto-relationships: the link name
+                                // can differ from the relationship name (e.g. 'surveyquestion' vs
+                                // 'surveyquestions_surveyquestionresponses'), which used to skip the field.
+                                $linkFieldDef = $moduleBean->getFieldDefinitions()[$fieldV['link']] ?? null;
+                                if ($linkFieldDef && !empty($linkFieldDef['relationship'])) {
+                                    $fieldV['rel_name'] = $linkFieldDef['relationship'];
+                                }
+                                
 
                                 $res = $this->createRelateLeftJoin($fieldV, $tableName, $joinLabel, ($fieldV['isAutoRelationship'] ?? null));
 
