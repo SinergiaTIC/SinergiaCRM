@@ -35,9 +35,14 @@ $mod_strings['LBL_MODIFIED_ID'] = 'Modificado por (ID)';
 $mod_strings['LBL_STIC_PAYMENTS_MEETINGS_FROM_STIC_PAYMENTS_TITLE'] = 'Actividades:Pagos';
 $mod_strings['LBL_STIC_PAYMENTS_ACTIVITIES_MEETINGS_FROM_STIC_PAYMENTS_TITLE'] = 'Pagos';
 $mod_strings['LBL_STIC_REGISTRATIONS_MEETINGS_FROM_STIC_REGISTRATIONS_TITLE'] = 'Inscripciones';
-$mod_strings['LBL_MEETING_INFORMATION'] = 'Datos generals';
+$mod_strings['LBL_MEETING_INFORMATION'] = 'Datos generales';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalles del registro';
+$mod_strings['LBL_CONTACT_NAME'] = 'Persona:';
+$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Personas';
 $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interesados';
+$mod_strings['LBL_CREATE_CONTACT'] = 'Nueva Persona';
+$mod_strings['LBL_CREATE_LEAD'] = 'Nuevo Interesado'; 
+$mod_strings['LBL_LIST_CONTACT'] = 'Persona';
 
 // Campos de filtro en relaciones muchos a muchos
 $mod_strings['LBL_STIC_MEETINGS_CONTACTS_NAME'] = 'Persona';

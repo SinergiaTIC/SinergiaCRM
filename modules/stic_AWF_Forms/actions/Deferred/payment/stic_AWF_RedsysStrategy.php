@@ -58,6 +58,32 @@ class stic_AWF_RedsysStrategy extends stic_AWF_PaymentStrategy
      * Prepare payment for the current Strategy (Offline, RedSys, CECA...)
      */
     protected function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
+        // TODO
+
+        $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'TERMINAL', 'MERCHANT_NAME', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));
+        $config['SERVER_URL'] = 'https://sis.redsys.es/sis/realizarPago';
+        $config['SERVER_URL_TEST'] = 'https://sis-t.redsys.es:25443/sis/realizarPago';
+        $config['VERSION'] = 'HMAC_SHA256_V1';
+        $config['VERSION_TEST'] = 'HMAC_SHA256_V1';
+
+    /**
+     * Extracts the external transaction ID from the raw webhook request data.
+     * Each gateway sends the ID in a different location/format.
+     *
+     * @param array $rawData POST data array
+     * @param string $rawBody Raw request body (for JSON-based gateways)
+     * @return string|null The external transaction ID or null if not found
+     */
+    public static function extractExternalId(array $rawData, string $rawBody , array $headers): ?string {
+        // TODO
+        
+        return null;
+    }
+
+    /**
+     * Prepare payment for the current Strategy (Offline, RedSys, CECA...)
+     */
+    protected function initiateStrategy(ExecutionContext $context, FormAction $actionConfig, stic_Payments $beanPayment): ActionResult {
         $config = $this->getConfigValues(array('CURRENCY', 'MERCHANT_CODE', 'TERMINAL', 'MERCHANT_NAME', 'TEST', 'PASSWORD', 'PASSWORD_TEST'));
 
         $isTest = !empty($config['TEST']) && $config['TEST'] == '1';
