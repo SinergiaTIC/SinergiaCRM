@@ -1255,12 +1255,14 @@ document.addEventListener('alpine:init', () => {
       let formValid = true;
       this.serverErrors = {};
       
-      // Validate required checkbox/radio groups (no native HTML5 support)
+      // Validate required checkbox/radio groups (no native HTML5 support).
+      // A checked option with an empty value (the blank option of the source
+      // list) does not count as filled (see issue #1475)
       formElement.querySelectorAll('.awf-option-group[data-required="true"]').forEach(group => {
         const name = group.dataset.fieldName;
         const selector = `input[name="${name}[]"], input[name="${name}"]`;
         const inputs = Array.from(formElement.querySelectorAll(selector));
-        const checked = inputs.some(i => i.checked);
+        const checked = inputs.some(i => i.checked && (i.value || '').trim() !== '');
         if (!checked) {
           formValid = false;
           const anchor = document.getElementById('f_' + name);
@@ -1281,6 +1283,20 @@ document.addEventListener('alpine:init', () => {
       
       formElement.querySelectorAll('input, select, textarea').forEach(input => {
         if (input.willValidate && !this.validateInput(input)) formValid = false;
+      });
+
+      // Validate required select-multiple: a selection made only of empty values
+      // (e.g. the blank option of the source list) is treated as not filled,
+      // because native HTML5 validation only counts selected options (issue #1475)
+      formElement.querySelectorAll('select[multiple][required]').forEach(select => {
+        const selected = Array.from(select.selectedOptions || []);
+        if (selected.length > 0 && selected.every(option => (option.value || '').trim() === '')) {
+          formValid = false;
+          const fieldName = (select.id || '').replace(/^f_/, '');
+          if (fieldName) {
+            this.showServerError(fieldName, config.requiredFieldMessage);
+          }
+        }
       });
       if (!formValid) {
         formElement.classList.add('was-validated');
