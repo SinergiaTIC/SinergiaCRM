@@ -109,6 +109,20 @@ class ProjectTask extends SugarBean
         }
     }
 
+    // STIC-Custom 20261016 ART - Import the correct value of assigned user from the file instead of the current user when importing a project task
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1459
+    /**
+     * Reset assigned user fields so imports apply the file value instead of the current user
+     */
+    public function unPopulateDefaultValues()
+    {
+        parent::unPopulateDefaultValues();
+
+        $this->assigned_user_id = null;
+        $this->assigned_user_name = null;
+    }
+    // END STIC-Custom
+
     /**
      * @param bool $skip updating parent percent complete
      */

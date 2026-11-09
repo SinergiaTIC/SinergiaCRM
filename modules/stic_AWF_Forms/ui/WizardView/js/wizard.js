@@ -68,6 +68,25 @@ function wizardForm() {
         this.formConfig.prepareProcessingMode(newMode);
       });
 
+      // Auto-manage CheckSessionAction based on form_type
+      this.$watch('bean.form_type', (newType, oldType) => {
+        if (newType === oldType) return;
+        const config = this.formConfig;
+        if (newType === 'crm') {
+          const mainFlow = config.flows.find(f => f.id == '0');
+          if (mainFlow && !mainFlow.actions.some(a => a.name === 'CheckSessionAction')) {
+            const actionDef = utils.getDefinedAction('CheckSessionAction');
+            if (actionDef) {
+              config.addAction(actionDef, {}, '0');
+            }
+          }
+        } else {
+          config.flows.forEach(flow => {
+            flow.actions = flow.actions.filter(a => a.name !== 'CheckSessionAction');
+          });
+        }
+      });
+
       // Quill Editor Modal Component
       Alpine.data('quillEditorModal', () => ({
         editor: null,
@@ -206,6 +225,17 @@ function wizardForm() {
         this.isReadOnly = true;
       }
 
+      if (this.bean?.form_type === 'crm') {
+        const mainFlow = this.formConfig.flows.find(f => f.id == '0');
+        if (mainFlow && !mainFlow.actions.some(a => a.name === 'CheckSessionAction')) {
+          const actionDef = utils.getDefinedAction('CheckSessionAction');
+          if (actionDef) {
+            this.formConfig.addAction(actionDef, {}, '0');
+          }
+        }
+      }
+     
+
       // Load current Step
       WizardNavigation.loadStep();
     },
@@ -286,6 +316,12 @@ class WizardNavigation {
     // If going forward, validate the current step
     if (WizardNavigation.validateCurrentStep()) {
       window.alpineComponent.navigation.step = targetStep;
+
+      // Regenerate automatic actions when entering Step 3 to reflect current data block configuration
+      if (targetStep === 3 && !window.alpineComponent.isReadOnly) {
+        window.alpineComponent.formConfig.regenerateAutomaticActions();
+      }
+
       WizardNavigation.autoSave();
       WizardNavigation.loadStep();
     }
@@ -400,6 +436,19 @@ function set_wizard_assigned_user(popup_reply_data) {
 
 
 function handle_open_popup(popup_reply_data) {
+  const appendMode = window.__awfPopupAppend === true;
+  window.__awfPopupAppend = false;
+  const mergeIds = (existingVal, newIds) => {
+    const existing = (existingVal || '').split('|').map((s) => s.trim()).filter((s) => s !== '');
+    const merged = [...existing];
+    (newIds || []).forEach((id) => {
+      const cleanId = (id || '').toString().trim();
+      if (cleanId !== '' && !merged.includes(cleanId)) {
+        merged.push(cleanId);
+      }
+    });
+    return merged.join('|');
+  };
   if (popup_reply_data.name_to_value_array) {
     Object.entries(popup_reply_data.name_to_value_array).forEach(el => {
       let decodedVal = typeof el[1] === 'string' ? utils.decodeHTMLString(el[1]) : el[1];
@@ -409,7 +458,40 @@ function handle_open_popup(popup_reply_data) {
   }
   if (popup_reply_data.selection_list) {
     const idField = popup_reply_data.passthru_data.id;
-    $(`#${idField}`).val(Object.values(popup_reply_data.selection_list).join("|"));
+    const newIds = Object.values(popup_reply_data.selection_list);
+    if (popup_reply_data.select_entire_list == 1 && popup_reply_data.current_query_by_page) {
+      $.ajax({
+        url: 'index.php',
+        data: {
+          module: 'stic_AWF_Forms',
+          action: 'getAllPopupIds',
+          current_query_by_page: popup_reply_data.current_query_by_page
+        },
+        dataType: 'json',
+        async: false,
+        success: function(response) {
+          const fetchedIds = (response.success && response.ids) ? response.ids : newIds;
+          if (appendMode) {
+            $(`#${idField}`).val(mergeIds($(`#${idField}`).val(), fetchedIds));
+          } else {
+            $(`#${idField}`).val((fetchedIds || []).join("|"));
+          }
+        },
+        error: function() {
+          if (appendMode) {
+            $(`#${idField}`).val(mergeIds($(`#${idField}`).val(), newIds));
+          } else {
+            $(`#${idField}`).val(newIds.join("|"));
+          }
+        }
+      });
+    } else {
+      if (appendMode) {
+        $(`#${idField}`).val(mergeIds($(`#${idField}`).val(), newIds));
+      } else {
+        $(`#${idField}`).val(newIds.join("|"));
+      }
+    }
     $(`#${idField}`)[0].dispatchEvent(new Event('input', { bubbles: true }));
   }
 }
@@ -427,15 +509,10 @@ class WizardStep2 {
           Alpine.store('dataBlockRelationships', {
             get formConfig() { return window.alpineComponent.formConfig; },
 
-            _dataBlockRelationships: null,
             get dataBlockRelationships() { 
-              if (this._dataBlockRelationships == null) {
-                this._dataBlockRelationships = this.formConfig.getAllDataBlockRelationships(); 
-              }
-              return this._dataBlockRelationships;
+              return this.formConfig.getAllDataBlockRelationships(); 
             },
             resetDataBlockRelationships() {
-              this._dataBlockRelationships = null;
             },
             usedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
@@ -443,7 +520,35 @@ class WizardStep2 {
             },
             unusedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
-              return this.dataBlockRelationships[datablockId].filter(r => r.datablock_orig == '' && r.datablock_dest == '');
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block) return [];
+              let moduleInfo = utils.getModuleInformation(block.module);
+              let seen = new Set();
+              return this.dataBlockRelationships[datablockId].filter(r => {
+                if (seen.has(r.name)) return false;
+                // Check if this block is the N side: it has a relate field, or relationship metadata marks it as 1-N
+                let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === r.name);
+                if (!hasRelateField) {
+                  // Fallback: check relationship metadata for virtual 1-N
+                  let relData = moduleInfo?.relationships?.[r.name];
+                  if (relData?.type === '1-N' || relData?.relationship_type === 'one-to-many') {
+                    // Block is N side if its module matches module_orig
+                    if (relData.module_orig === block.module) hasRelateField = true;
+                  }
+                }
+                if (!hasRelateField) {
+                  seen.add(r.name);
+                  return true;
+                }
+                // For self-referencing (hasRelateField on both sides), only hide if the block
+                // is the initiator (role !== 'target'), not when it's the target (1 side).
+                let isUsed = block.relationships.some(br => br.name === r.name && br.role !== 'target');
+                if (!isUsed) {
+                  seen.add(r.name);
+                  return true;
+                }
+                return false;
+              });
             },
             addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText) {
               let dataBlock = this.formConfig.addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText);
@@ -452,26 +557,78 @@ class WizardStep2 {
               }
               return dataBlock;
             },
+            deleteRelationship(datablockId, relName, relatedDatablockId) {
+              this.formConfig.deleteRelationship(datablockId, relName, relatedDatablockId);
+              this.resetDataBlockRelationships();
+            },
+            getRelationshipTypeLabel(datablockId, relName, otherDatablockId, origDatablockId) {
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block) return 'N\u2009\u27f7\u2009M';
+              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherDatablockId);
+              let moduleInfo = utils.getModuleInformation(block.module);
+              let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
+              let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              let otherHasRelateField = otherModuleInfo && Object.values(otherModuleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              if (hasRelateField && otherHasRelateField && block.module === otherBlock?.module) {
+                return datablockId === origDatablockId ? 'N\u2009\u27f6\u20091' : '1\u2009\u27f5\u2009N';
+              }
+              if (hasRelateField && !otherHasRelateField) return 'N\u2009\u27f6\u20091';
+              if (!hasRelateField && otherHasRelateField) return '1\u2009\u27f5\u2009N';
+              if (hasRelateField && otherHasRelateField) return '1\u2009\u27f7\u20091';
+              // Fallback: check relationship metadata for virtual/inverse virtual relationships
+              let relData = moduleInfo?.relationships?.[relName];
+              if (!relData && otherModuleInfo) relData = otherModuleInfo.relationships?.[relName];
+              if (relData?.type === '1-N' || relData?.relationship_type === 'one-to-many') {
+                if (relData.module_orig === block.module) return 'N\u2009\u27f6\u20091';
+                if (relData.module_dest === block.module) return '1\u2009\u27f5\u2009N';
+              }
+              return 'N\u2009\u27f7\u2009M';
+            },
             getAvailableDataBlocksForRelationship(datablockId, relName) { 
               return this.formConfig.getAvailableDataBlocksForRelationship(datablockId, relName);
             },
             suggestNewDestDataBlockText(origDatablockId, relName) {
               return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
             },
-            getRelText(datablockId, relName) {
-              let rel = this.dataBlockRelationships[datablockId].find(r => r.name == relName);
-              let dataBlock_orig = this.formConfig.data_blocks.find(d => d.id == rel.datablock_orig);
-              let dataBlock_dest = this.formConfig.data_blocks.find(d => d.id == rel.datablock_dest);
-              let str = "";
-              if (dataBlock_orig && dataBlock_dest) {
-                if (dataBlock_orig.id == datablockId) {
-                  str = `${dataBlock_orig.text} ⟶ ${dataBlock_dest.text}`;
-                } else {
-                  str = `${dataBlock_dest.text} ⟵ ${dataBlock_orig.text}`;
-                }
-                str += ` (${rel.text})`;
+            _relArrow(datablockId, relName, otherBlock, initiatorId) {
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block) return '⟷';
+              let moduleInfo = utils.getModuleInformation(block.module);
+              let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
+              let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              let otherHasRelateField = otherModuleInfo && Object.values(otherModuleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
+              if (hasRelateField && otherHasRelateField && block.module === otherBlock?.module) {
+                return datablockId === initiatorId ? '⟶' : '⟵';
               }
-              return str;
+              if (hasRelateField && !otherHasRelateField) return '⟶';
+              if (!hasRelateField && otherHasRelateField) return '⟵';
+              // Fallback: check relationship metadata for virtual relationships
+              let relData = moduleInfo?.relationships?.[relName];
+              if (!relData && otherModuleInfo) relData = otherModuleInfo.relationships?.[relName];
+              if (relData?.type === '1-N' || relData?.relationship_type === 'one-to-many') {
+                if (relData.module_orig === block.module) return '⟶';
+                if (relData.module_dest === block.module) return '⟵';
+              }
+              return '⟷';
+            },
+            getRelText(datablockId, rel) {
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              if (!block || !rel) return rel?.text || '';
+              let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
+              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              if (!otherBlock) return rel.text;
+
+              let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
+              return `${block.text} ${arrow} ${otherBlock.text}`;
+            },
+            getInvolvedBlocksText(datablockId, rel) {
+              let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
+              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              if (!block || !otherBlock) return rel.text;
+
+              let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
+              return `${block.text} (${block.getModuleText()}) ${arrow} ${otherBlock.text} (${otherBlock.getModuleText()})`;
             },
           });
         }
@@ -526,7 +683,7 @@ class WizardStep2 {
 
             /** Get the translated title of a validator */
             getValidatorTitle(validatorName) {
-                const def = utils.getDefinedActions().find(a => a.name === validatorName);
+                const def = utils.getDefinedAction(validatorName);
                 return def ? def.title : validatorName;
             },
 
@@ -563,7 +720,7 @@ class WizardStep2 {
             getValidationParamsForTable(validation) {
               if (!validation || !validation.validator || !validation.params) return [];
               
-              const def = utils.getDefinedActions().find(a => a.name === validation.validator);
+              const def = utils.getDefinedAction(validation.validator);
               if (!def) return [];
               
               return Object.entries(validation.params).map(([key, value]) => {
@@ -715,7 +872,7 @@ class WizardStep2 {
               Alpine.effect(() => {
                 const validatorName = this.validation?.validator;
                 if (validatorName && (!this.validation.message || this.validation.message === '')) {
-                  const def = utils.getDefinedActions().find(a => a.name === validatorName);
+                  const def = utils.getDefinedAction(validatorName);
                   if (def) {
                     this.validation.message = def.defaultErrorMessage ?? '';
                   }
@@ -739,9 +896,15 @@ class WizardStep2 {
             onValidatorChange() {
               // Only reset parameters if the user makes a REAL CHANGE of validator
               if (this.validation && this.validation.validator !== this._originalValidator) {
-                  this.validation.params = {};
-                  this.validation.message = '';
-                  this._originalValidator = this.validation.validator; 
+                const def = utils.getDefinedActions().find(a => a.name === this.validation.validator);
+                const defaultParams = {};
+                if (def && def.parameters) {
+                  def.parameters.forEach(p => { defaultParams[p.name] = p.defaultValue || ''; });
+                }
+
+                this.validation.params = defaultParams;
+                this.validation.message = '';
+                this._originalValidator = this.validation.validator; 
               }
             },
 
@@ -981,9 +1144,19 @@ class WizardStep2 {
     };
   }
 
-  static sortableListxData(initial_items) {
+  static sortableListxData(initial_items, context = {}) {
     return {
       items: initial_items,
+      context: context,
+      sortKey: '',
+      sortAsc: true,
+      showInternalValues: false,
+      page: 1,
+      pageSize: 10,
+
+      init() {
+        this.$watch('searchText', () => { this.page = 1; });
+      },
 
       moveUp(index) {
         if (index <= 0) return;
@@ -991,6 +1164,8 @@ class WizardStep2 {
         const itemToMove = this.items[index];
         this.items.splice(index, 1);
         this.items.splice(index - 1, 0, itemToMove);
+        // Manual reordering cancels any active column sort mark
+        this.sortKey = '';
       },
 
       moveDown(index) {
@@ -999,6 +1174,266 @@ class WizardStep2 {
         const itemToMove = this.items[index];
         this.items.splice(index, 1);
         this.items.splice(index + 1, 0, itemToMove);
+        // Manual reordering cancels any active column sort mark
+        this.sortKey = '';
+      },
+
+      getSortValue(item, key) {
+        const val = item?.[key];
+        if (key === 'is_visible') {
+          return val ? 1 : 0;
+        }
+        return (val ?? '').toString();
+      },
+
+      sortBy(key, asc = true) {
+        if (!key || !Array.isArray(this.items)) return;
+        this.sortKey = key;
+        this.sortAsc = asc !== false;
+        this.page = 1;
+        this.items.sort((a, b) => {
+          if (key === 'is_visible') {
+            // Ascending means visible first for better UX
+            return (this.getSortValue(b, key) - this.getSortValue(a, key)) * (this.sortAsc ? 1 : -1);
+          }
+          const dir = this.sortAsc ? 1 : -1;
+          return this.getSortValue(a, key).localeCompare(this.getSortValue(b, key), undefined, { sensitivity: 'base', numeric: true }) * dir;
+        });
+      },
+
+      toggleSort(key) {
+        if (this.sortKey === key) {
+          this.sortBy(key, !this.sortAsc);
+        } else {
+          this.sortBy(key, true);
+        }
+      },
+
+      getSortIconClass(key) {
+        if (this.sortKey !== key) return 'suitepicon suitepicon-action-sorting-none';
+        return this.sortAsc ? 'suitepicon suitepicon-action-sorting-descending' : 'suitepicon suitepicon-action-sorting-ascending';
+      },
+
+      searchText: '',
+
+      get originalOptions() {
+        if (typeof this.context?.getOriginalOptions !== 'function') return [];
+        return this.context.getOriginalOptions() || [];
+      },
+
+      get hasOriginalList() {
+        return this.originalOptions.length > 0;
+      },
+
+      reloadOriginalList() {
+        const original = this.originalOptions;
+        if (original.length === 0) return;
+        const existing = new Set(this.items.map((o) => String(o.value)));
+        original.forEach((op) => {
+          if (existing.has(String(op.id))) return;
+          this.items.push(new stic_AwfValueOption({
+            value: op.id,
+            is_visible: true,
+            text_original: op.text,
+            text: op.text,
+          }));
+        });
+        const pageBefore = this.page;
+        if (this.sortKey) this.sortBy(this.sortKey, this.sortAsc);
+        this.goToPage(pageBefore);
+      },
+
+      removeNotInOriginalList() {
+        const original = this.originalOptions;
+        if (original.length === 0) return;
+        const valid = new Set(original.map((op) => String(op.id)));
+        for (let i = this.items.length - 1; i >= 0; i--) {
+          if (!valid.has(String(this.items[i].value))) this.items.splice(i, 1);
+        }
+        this.goToPage(this.page);
+      },
+
+      isSel(option) {
+        if (!option || typeof option !== 'object') return false;
+        if (!Object.prototype.hasOwnProperty.call(option, '__sel')) {
+          // Non-enumerable flag: survives re-renders/component re-inits and is
+          // skipped by JSON.stringify when the form is saved. Created lazily on
+          // first read (defineProperty itself does not trigger reactivity), so
+          // later assignments go through the proxy setter and do trigger it.
+          Object.defineProperty(option, '__sel', {
+            value: false,
+            enumerable: false,
+            writable: true,
+            configurable: true,
+          });
+        }
+        return !!option.__sel;
+      },
+
+      setSel(option, value) {
+        if (!option || typeof option !== 'object') return;
+        this.isSel(option);
+        option.__sel = !!value;
+      },
+
+      toggleSelect(option) {
+        this.setSel(option, !this.isSel(option));
+      },
+
+      selectPage() {
+        this.pagedItems.forEach((row) => this.setSel(row.option, true));
+      },
+
+      deselectPage() {
+        this.pagedItems.forEach((row) => this.setSel(row.option, false));
+      },
+
+      selectAllFiltered() {
+        this.filteredItems.forEach((row) => this.setSel(row.option, true));
+      },
+
+      selectInverted() {
+        this.filteredItems.forEach((row) => this.setSel(row.option, !this.isSel(row.option)));
+      },
+
+      clearSelection() {
+        if (Array.isArray(this.items)) this.items.forEach((o) => this.setSel(o, false));
+      },
+
+      get pageAllSelected() {
+        return this.pagedItems.length > 0 && this.pagedItems.every((row) => this.isSel(row.option));
+      },
+
+      get pageSomeSelected() {
+        return this.pagedItems.some((row) => this.isSel(row.option));
+      },
+
+      get selectedCount() {
+        return this.items.filter((o) => this.isSel(o)).length;
+      },
+
+      massSetVisible(visible) {
+        this.items.forEach((o) => { if (this.isSel(o)) o.is_visible = visible; });
+      },
+
+      massDelete() {
+        for (let i = this.items.length - 1; i >= 0; i--) {
+          if (this.isSel(this.items[i])) this.items.splice(i, 1);
+        }
+        this.goToPage(this.page);
+      },
+
+      searchFields(element) {
+        // Only search over visible columns: internal value is included
+        // only when the internal values column is shown
+        const fields = [element?.text, element?.text_original];
+        if (this.showInternalValues) {
+          fields.push(element?.value);
+        }
+        return fields;
+      },
+
+      normalizeSearchText(text) {
+        // Lowercase + accent-insensitive (ex: "telefon" matches "telèfon")
+        return (text ?? '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      },
+
+      matchesSearch(element) {
+        const q = this.normalizeSearchText((this.searchText || '').trim());
+        if (q === '') return true;
+        return this.searchFields(element).some((v) => this.normalizeSearchText(v).includes(q));
+      },
+
+      clearSearch() {
+        this.searchText = '';
+      },
+
+      get filteredCount() {
+        if (!Array.isArray(this.items)) return 0;
+        const q = this.normalizeSearchText((this.searchText || '').trim());
+        if (q === '') return this.items.length;
+        return this.items.filter((o) => this.searchFields(o).some((v) => this.normalizeSearchText(v).includes(q))).length;
+      },
+
+      get filteredItems() {
+        // Matching rows with their real index, so paged actions still
+        // operate on the full array
+        if (!Array.isArray(this.items)) return [];
+        const out = [];
+        this.items.forEach((o, realIndex) => {
+          if (this.matchesSearch(o)) out.push({ option: o, realIndex: realIndex });
+        });
+        return out;
+      },
+
+      get totalPages() {
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length;
+        return Math.max(1, Math.ceil(this.filteredItems.length / Math.max(1, per)));
+      },
+
+      get pagedItems() {
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length || 1;
+        return this.filteredItems.slice((this.currentPage - 1) * per, this.currentPage * per);
+      },
+
+      get currentPage() {
+        return Math.min(Math.max(1, this.page), this.totalPages);
+      },
+
+      get pageStart() {
+        if (this.filteredItems.length === 0) return 0;
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length || 1;
+        return (this.currentPage - 1) * per + 1;
+      },
+
+      get pageEnd() {
+        const per = this.pageSize > 0 ? this.pageSize : this.filteredItems.length || 1;
+        return Math.min(this.currentPage * per, this.filteredItems.length);
+      },
+
+      get pageInfoText() {
+        return utils.translate('LBL_FIELD_VALUE_OPTIONS_PAGE_INFO')
+          .replace('{from}', this.pageStart)
+          .replace('{to}', this.pageEnd)
+          .replace('{total}', this.filteredItems.length);
+      },
+
+      goToPage(p) {
+        this.page = Math.min(Math.max(1, p || 1), this.totalPages);
+      },
+
+      setPageSize(n) {
+        this.pageSize = parseInt(n, 10) || 0;
+        this.page = 1;
+      },
+
+      escapeHtml(text) {
+        return (text ?? '').toString().replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+      },
+
+      highlightSearch(text) {
+        const safe = this.escapeHtml(text);
+        const q = (this.searchText || '').trim();
+        if (q === '') return safe;
+        // Accent-insensitive pattern: each base letter also matches its accented variants
+        const accentMap = { a: 'aàáâãäå', e: 'eèéêë', i: 'iìíîï', o: 'oòóôõö', u: 'uùúûü', n: 'nñ', c: 'cç', y: 'yýÿ' };
+        let pattern = '';
+        for (const ch of q) {
+          const lower = ch.toLowerCase();
+          if (accentMap[lower]) {
+            const variants = accentMap[lower];
+            pattern += `[${variants}${variants.toUpperCase()}]`;
+          } else if ('.*+?^${}()|[]\\'.includes(ch)) {
+            pattern += '\\' + ch;
+          } else {
+            pattern += ch;
+          }
+        }
+        try {
+          return safe.replace(new RegExp(`(${pattern})`, 'gi'), '<mark>$1</mark>');
+        } catch (e) {
+          return safe;
+        }
       },
     };
   }
@@ -1057,6 +1492,17 @@ class WizardStep2 {
           }
         });
       },
+      handleAddDocumentDatablock() {
+        const text = this.formConfig.suggestDataBlockText('Documents');
+        const dataBlock = this.formConfig.addDataBlockModule('Documents', true, text);
+        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
+        this.$nextTick(() => {
+          const element = document.getElementById('dataBlock_' + dataBlock.id); 
+          if(element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        });
+      },
     };
   }
  
@@ -1097,7 +1543,11 @@ class WizardStep2 {
           }
         };
         if (this.optionValuesRelated != ''){
-          listName = `${utils.getModuleInformation(this.relatedModule)?.text} (${this.optionValuesRelated.split('|').length})`;
+          let relatedModuleText = utils.getModuleInformation(this.relatedModule)?.text;
+          if(!relatedModuleText && this.selectedFieldInfo?.module) {
+            relatedModuleText = SUGAR.language.languages.app_list_strings.moduleList[this.selectedFieldInfo.module] ?? this.selectedFieldInfo.module;
+          }
+          listName = `${relatedModuleText} (${this.optionValuesRelated.split('|').length})`;
         }
         if (listName == '' && this.field && this.field.value_options.length > 0) {
           listName = this.field.value_options.filter(v => v.is_visible).map(v => v.text).join(', ');
@@ -1107,7 +1557,8 @@ class WizardStep2 {
 
       get relatedModule() {
         if (this.field && this.field.type == 'relate') {
-          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options);
+          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options)
+                 || this.selectedFieldInfo?.module || '';
         }
         return '';
       },
@@ -1170,7 +1621,7 @@ class WizardStep2 {
         });
         this.$watch('field.text_original', (newText, oldText) => {
           if (!this.field) return;
-          if (this.field.type_field == 'unlinked') {
+          if (this.field.type_field == 'unlinked' && this.field.type_in_form !== 'file') {
             let newName = stic_AwfConfiguration.cleanName(newText);
             if (newName != this.field.name) {
               this.field.name = this.dataBlock.suggestFieldName(newName);
@@ -1244,6 +1695,8 @@ class WizardStep2 {
               this.field.type = 'date';
             } else if (newType == 'number') {
               this.field.type = 'float';
+            } else if (newType == 'file_upload') {
+              this.field.type = 'file';
             } else {
               this.field.type = 'varchar';
             }
@@ -1339,11 +1792,12 @@ class WizardStep2 {
         }
       },
 
-      openPopUp(idBase, single=true) {
+      openPopUp(idBase, single=true, popupMode='replace') {
         let mode = 'single';
         if (single!=true) {
           mode = 'MultiSelect';
         }
+        window.__awfPopupAppend = (popupMode === 'add');
         let destModule = this.relatedModule;
         let objMap = {'id':`${idBase}_id`, 'name':`${idBase}_name`};
         open_popup(destModule, 600, 400, '', true, false,
@@ -1393,7 +1847,7 @@ class WizardStep2 {
 
       get selectedValidatorDefinition() {
         if (!this.validation || !this.validation.validator) return null;
-        return utils.getDefinedActions().find(a => a.name === this.validation.validator);
+        return utils.getDefinedAction(this.validation.validator);
       },
     };
   }
@@ -1482,7 +1936,7 @@ class WizardStep2 {
 
         let tooltip = utils.translateForFieldLabel('LBL_FIELD_ACTIVE_VALIDATIONS') + "\n";
         const lines = field.validations.map(val => {
-            const def = utils.getDefinedActions().find(a => a.name === val.validator);
+            const def = utils.getDefinedAction(val.validator);
             const name = def ? def.title : val.validator;
             return `- ${name}`;
         });
@@ -1525,13 +1979,43 @@ class WizardStep3 {
       flowTabSelected: 0,
       get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
       get actions() { return this.flow?.actions ?? []; },
-      showAllActions: false,
 
       selectedCategory: '', 
       selectedActionDefName: '', 
 
+      /**
+       * Indicates whether a terminal action can be added to the flow
+       * @param {stic_AwfFlow} flow 
+       * @returns 
+       */
+      canAddTerminalAction(flow) {
+        if (!flow) return false;
+        if (flow.hasTerminalAction()) return false; // Only one Terminal action per flow
+
+        // If it is a deferred sub-flow (ex: 'awfa123_ok'), check the parent context (deferred action)
+        if (flow.id !== '0' && flow.id !== '-1' && flow.id !== '1') {
+          for (const f of this.formConfig.flows) {
+            const parentAction = f.actions.find(a => a.flow_success_id == flow.id || a.flow_error_id == flow.id);
+            if (parentAction) {
+              // Check reumptionContext from the deferred action
+              const parentDef = utils.getDefinedActions().find(d => d.name == parentAction.name);
+              if (parentDef && parentDef.resumptionContext !== 'original_user') {
+                return false;
+              }
+              break;
+            }
+          }
+        }
+        return true;
+      },
+
       init() {
         this.flowTabSelected = this.bean.processing_mode == 'async' ? 1 : 0;
+
+        // Regenerate automatic actions when entering Step 3 to reflect current data block relationships
+        if (window.alpineComponent && !window.alpineComponent.isReadOnly) {
+          window.alpineComponent.formConfig.regenerateAutomaticActions();
+        }
 
         // Store for the Action Editor management
         if (!Alpine.store('actionEditor')) {
@@ -1587,10 +2071,16 @@ class WizardStep3 {
               return 'text';
             },
 
+            _reloadDefinitions() {
+              const formType = window.alpineComponent?.bean?.form_type || '';
+              this.allDefinitions = utils.getDefinedActions()
+                .filter(a => a.isUserSelectable && a.isActive && (a.type == 'Hook' || a.type == 'Deferred'))
+                .filter(a => !formType || !a.supportedFormTypes || a.supportedFormTypes.length === 0 ||
+                             a.supportedFormTypes.includes(formType));
+            },
+
             init() {
-              // Load all user selectable action definitions
-              this.allDefinitions = utils.getDefinedActions().filter(a => a.isUserSelectable && a.isActive && 
-                                                                     (a.type == 'Hook' || a.type == 'Deferred'));
+              this._reloadDefinitions();
             },
 
             updateApplyCondition(value) {
@@ -1620,12 +2110,57 @@ class WizardStep3 {
               }
             },
 
+            get parentResumptionContext() {
+              if (!this.flow) return 'original_user';
+              if (this.flow.id === '0' || this.flow.id === '-1' || this.flow.id === '1') return 'original_user';
+              
+              for (const f of this.formConfig.flows) {
+                const parentAction = f.actions.find(a => a.flow_success_id == this.flow.id || a.flow_error_id == this.flow.id);
+                if (parentAction) {
+                  const parentDef = utils.getDefinedActions().find(d => d.name == parentAction.name);
+                  return parentDef ? parentDef.resumptionContext : 'original_user';
+                }
+              }
+              return 'original_user';
+            },
+
+            get validDefinitionsForCurrentFlow() {
+              const parentCtx = this.parentResumptionContext;
+              const hasTerminal = this.flow?.hasTerminalAction();
+              
+              return this.allDefinitions.filter(d => {
+                // For UX, every deferred action is considered non Terminal
+                const isTerminalForUser = d.isTerminal && d.type !== 'Deferred';
+
+                // Add Terminal button
+                if (isTerminalForUser !== this.isTerminalFilter) {
+                  return false;
+                }
+
+                // If flow has any real terminal action
+                if (isTerminalForUser && hasTerminal) {
+                  if (!this.isEdit || this.action?.name !== d.name) return false;
+                }
+
+                // Parent context restrictions
+                if (parentCtx === 'server_webhook' || parentCtx === 'third_party_human') {
+                  if (d.isTerminal) return false;
+                  // Do not allow deferred actions that need the original user's browser 
+                  if (d.type === 'Deferred' && d.resumptionContext === 'original_user') {
+                    return false;
+                  }
+                }
+                
+                return true;
+              });
+            },
+
             /** 
              * Returns the categories available according to the valid actions 
              * @returns {Array} List of available categories 
              */
             get availableCategories() {
-              const validActions = this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter);
+              const validActions = this.validDefinitionsForCurrentFlow;
               const uniqueCatIds = [...new Set(validActions.map(a => a.category))];
               return stic_AwfAction.category_in_formList().filter(c => uniqueCatIds.includes(c.id));
             },
@@ -1636,7 +2171,7 @@ class WizardStep3 {
              */
             get filteredActions() {
                 if (!this.selectedCategory) return [];
-                return this.allDefinitions.filter(d => d.isTerminal == this.isTerminalFilter && d.category == this.selectedCategory);
+                return this.validDefinitionsForCurrentFlow.filter(d => d.category == this.selectedCategory);
             },
 
             get isValid() {
@@ -1651,6 +2186,7 @@ class WizardStep3 {
              * @returns {void} 
              */
             openCreate(flow, isTerminal) {
+              this._reloadDefinitions();
               this.isEdit = false;
               this.flow = flow;
               this.original_id = '';
@@ -1679,6 +2215,7 @@ class WizardStep3 {
              * @returns {void} 
              */
             openEdit(flow, action) {
+              this._reloadDefinitions();
               this.isEdit = true;
               this.flow = flow;
               this.original_id = action.id;
@@ -1769,15 +2306,17 @@ class WizardStep3 {
 
                 // Create an empty instance based on the definition
                 let tempAction = new stic_AwfAction({
-                    name: def.name,
-                    title: def.title,
-                    text: def.title, // By default the title
-                    description: def.description,
-                    category: def.category,
-                    is_terminal: def.isTerminal,
-                    continue_on_error: def.defaultContinueOnError || false,
-                    order: defaultOrder,
-                    is_user_selectable: true
+                  name: def.name,
+                  title: def.title,
+                  text: def.title, // By default the title
+                  description: def.description,
+                  category: def.category,
+                  is_terminal: def.isTerminal,
+                  continue_on_error: def.defaultContinueOnError || false,
+                  order: defaultOrder,
+                  is_user_selectable: true,
+                  flow_success_text: def.flowSuccessLabel || utils.translate("LBL_FLOW_DEFERRED_MAIN"),
+                  flow_error_text: def.flowErrorLabel || utils.translate("LBL_FLOW_ONERROR"),
                 });
 
                 // Initialize empty parameters according to the definition
@@ -1890,11 +2429,9 @@ class WizardStep3 {
              */
             saveChanges() {
               const form = document.getElementById('ModalActionConfigForm');
-              if (form) {
-                  // Execute the native function to check input validity and show errors
-                  if (!form.reportValidity()) {
-                      return; // Si no es valido, abortamos el proceso
-                  }
+              // Execute the native function to check input validity and show errors
+              if (form && !form.reportValidity()) {
+                return; // Si no es valido, abortamos el proceso
               }
               if (!this.isValid) {
                 alert(utils.translate('LBL_ACTION_PARAM_MISSING_MESSAGE'));
@@ -1904,23 +2441,12 @@ class WizardStep3 {
               // Recalculate action before saving
               this._recalculateAction(this.action, this.definition);
 
-              if (this.isNewAction) {
-                // Add Action to flow: Insertion based on order
-                let insertIndex = this.flow.actions.length;
-                for (let i = 0; i < this.flow.actions.length; i++) {
-                  if ((this.flow.actions[i].order ?? 0) > (this.action.order ?? 0)) {
-                    insertIndex = i;
-                    break;
-                  }
-                }
-                this.flow.actions.splice(insertIndex, 0, this.action);
-              } else {
-                // Update existing Action in flow
-                const index = this.flow.actions.findIndex(a => a.id == this.original_id);
-                if (index !== -1) {
-                  this.flow.actions[index] = this.action;
-                }
-              }
+              this.formConfig.upsertAction(
+                this.action, 
+                this.definition.type, 
+                this.flow, 
+                this.isNewAction ? null : this.original_id
+              );
               this.close();
             },
 
@@ -2041,7 +2567,7 @@ class WizardStep3 {
        * @return {void} 
        */
       removeAction(action) {
-        this.flow.actions = this.flow.actions.filter(a => a.id != action.id);
+        this.formConfig.removeAction(this.flow.id, action.id)
       },
 
       /**
@@ -2050,18 +2576,17 @@ class WizardStep3 {
        * @returns {boolean}
        */
       canMoveUpAction(action) {
-        // We cannot move a fixed order action
         if (action.is_fixed_order) return false;
 
-        // We cannot move the first action
         const index = this.actions.findIndex(a => a.id == action.id);
         if (index <= 0) return false;
 
-        // We cannot skip a fixed order action
         const prevAction = this.actions[index - 1];
         if (prevAction.is_fixed_order) return false;
 
-        // We cannot move before a requisite action
+        // Manual actions cannot move past automatic actions
+        if (!action.is_automatic && prevAction.is_automatic) return false;
+
         if ((action.requisite_actions || []).includes(prevAction.id)) return false;
 
         return true;
@@ -2087,18 +2612,19 @@ class WizardStep3 {
        * @returns {boolean}
        */
       canMoveDownAction(action) {
-        // We cannot move a fixed order action
         if (action.is_fixed_order) return false;
 
-        // We cannot move the last action
         const index = this.actions.findIndex(a => a.id == action.id);
         if (index >= this.actions.length - 1) return false;
 
-        // We cannot skip a fixed order action
         const nextAction = this.actions[index + 1];
         if (nextAction.is_fixed_order) return false;
 
-        // We cannot move if we are a requisite of the next action
+        // Manual actions cannot move past automatic actions
+        if (!action.is_automatic && nextAction.is_automatic) return false;
+        // Automatic actions cannot move past manual actions
+        if (action.is_automatic && !nextAction.is_automatic) return false;
+
         if ((nextAction.requisite_actions || []).includes(action.id)) return false;
 
         return true;  

@@ -25,9 +25,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 require_once "modules/stic_AWF_Forms/core/includes.php";
+require_once "modules/stic_AWF_Forms/Utils.php";
 
 /**
- * EntryPoint: ResponseHandler
+ * EntryPoint: stic_AWF_responseHandler
  * Entry point class responsible for handling form responses submitted by users. 
  * It processes the incoming data, performs validations, detects spam, saves the response, and executes the defined action flows based on the form configuration.
  */
@@ -67,39 +68,43 @@ class ResponseHandler
         $rawPostData = $_POST;
         $cleanData = $this->sanitizeInput($rawPostData);
 
-        $isSpam = false;
-        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        // Process uploaded files from $_FILES
+        $uploadedFiles = [];
+        foreach ($_FILES as $key => $fileInfo) {
+            if (is_array($fileInfo['error'])) {
+                // Handle multi-file uploads (not supported yet, but keep structure safe)
+                foreach ($fileInfo['error'] as $i => $error) {
+                    if ($error === UPLOAD_ERR_OK && isset($fileInfo['tmp_name'][$i])) {
+                        $uploadedFiles[$key . '_' . $i] = [
+                            'name' => $fileInfo['name'][$i],
+                            'type' => $fileInfo['type'][$i],
+                            'tmp_name' => $fileInfo['tmp_name'][$i],
+                            'error' => $error,
+                            'size' => $fileInfo['size'][$i],
+                        ];
+                    }
+                }
+            } elseif ($fileInfo['error'] === UPLOAD_ERR_OK) {
+                $uploadedFiles[$key] = [
+                    'name' => $fileInfo['name'],
+                    'type' => $fileInfo['type'],
+                    'tmp_name' => $fileInfo['tmp_name'],
+                    'error' => $fileInfo['error'],
+                    'size' => $fileInfo['size'],
+                ];
+            }
+        }
+
         $remoteIp = $_SERVER['REMOTE_ADDR'] ?? '';
+        $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
         // Anti-Spam Detection 
-        // 1- Honeypot: Hidden field that bots usually fill in
-        if (!$isSpam) {
-            if (isset($cleanData['awf_honey_pot']) && $cleanData['awf_honey_pot'] !== '') {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Honeypot protection");
-                $isSpam = true;
-                $responseDescription = translate('LBL_RESPONSE_HONEYPOT_SPAM', 'stic_AWF_Responses');
-            }
-        }
-        // 2- TimeTrap: Normally bots submit the form immediately and/or without executing JS
-        if (!$isSpam) {
-            $currentTs = microtime(true);
-            $submissionTs = (float)($_POST['awf_submission_ts'] ?? $currentTs);
-            $duration = round($currentTs - $submissionTs, 2);
-            if ($submissionTs === 0 || $duration < 2.0) {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by Timetrap protection. Duration: {$duration}s");
-                $isSpam = true;
-                $responseDescription = translate('LBL_RESPONSE_TIMETRAP_SPAM', 'stic_AWF_Responses'). " ({$duration}s)";
-            } else {
-                $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Form valid submission. Time to complete: {$duration}s");
-            }
-        }
-        // 3- UserAgent: Some bots don't impersonate browsers
-        if (!$isSpam) {
-            if ($this->isBotUserAgent($userAgent)) {
-                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam detected by UserAgent filter");
-                $isSpam = true;
-                $responseDescription = translate('LBL_RESPONSE_USERAGENT_SPAM', 'stic_AWF_Responses');
-            }
+        $antiSpamService = new AntiSpamService();
+        $spamResult = $antiSpamService->checkRequest($cleanData, $_SERVER);
+        $isSpam = $spamResult->isSpam;
+        $responseDescription = $spamResult->userDescription;
+        if ($isSpam) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: " . $responseDescription);
         }
 
         // Form URL
@@ -116,15 +121,20 @@ class ResponseHandler
             $cleanUrl = $scheme . $host . $path;
         }
 
-        // Data sanitization
+        // Data sanitization: Remove system fields so they are not saved as actual form data
         unset($cleanData['module']);
         unset($cleanData['action']);
         unset($cleanData['entryPoint']);
         unset($cleanData['id']);
         unset($cleanData['awf_honey_pot']);
         unset($cleanData['awf_submission_ts']);
+        unset($cleanData['awf_submission_token']);
         unset($cleanData['awf_form_url']);
-
+        foreach ($cleanData as $key => $value) {
+            if (strpos($key, 'awf_website_url_') === 0) {
+                unset($cleanData[$key]);
+            }
+        }
 
         // Initial validations
         if (empty($formId)) {
@@ -163,7 +173,7 @@ class ResponseHandler
         $fingerprintString = $payloadJson . $formId . $remoteIp . $userAgent . $formUrl . $timeSlot;
         $responseHash = md5($fingerprintString);
 
-        if ($this->checkDuplicateSubmission($formId, $responseHash)) {
+        if ($this->checkDuplicateSubmission($responseHash)) {
             if ($isSpam) {
                 $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Spam duplicated");
                 stic_AWFUtils::renderGenericSpamResponse();
@@ -183,6 +193,15 @@ class ResponseHandler
             $this->terminateRawError("Invalid Form Configuration.");
         }
         $formConfig = FormConfig::fromJsonArray($configData);
+
+        // CRM form type: detect form_type for legacy forms
+        stic_AWF_FormsUtils::detectAndSaveFormType($formBean, $configData);
+        
+        // If CRM form type and there is a real session user, use that user instead of admin
+        if ($formBean->form_type === 'crm' && $realUserId) {
+            $current_user = BeanFactory::getBean('Users', $realUserId);
+        }
+        
 
         // AJAX: Remote validation for js
         if (isset($_REQUEST['ajax_validation_only']) && $_REQUEST['ajax_validation_only'] == '1') {
@@ -231,7 +250,10 @@ class ResponseHandler
         }
 
         // Execution context
-        $defaultAssignedUserId = $realUserId ?? $formBean->assigned_user_id;
+        $defaultAssignedUserId = '';
+        if ($formBean->form_type !== 'crm') {
+            $defaultAssignedUserId = $formBean->assigned_user_id;
+        }
         if (empty($defaultAssignedUserId)) {
             $defaultAssignedUserId = $current_user->id;
         }
@@ -252,7 +274,7 @@ class ResponseHandler
         $responseBean->save();
 
         // Execution Context
-        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean);
+        $context = new ExecutionContext($formBean->id, $responseBean->id, $cleanData, $formConfig, null, $defaultAssignedUserId, $responseBean, $formBean->form_type, $uploadedFiles);
         $context->visitorUserId = $realUserId;
 
         // Html Summary
@@ -352,38 +374,63 @@ class ResponseHandler
             // Update status to processing
             $responseBean->status = 'processing';
             $responseBean->save();
-            
-            // Process response using the service
-            $lastResult = ResponseProcessingService::processResponse($responseBean->id);
-            
-            // Reload response to get updated status
-            $responseBean = BeanFactory::getBean('stic_AWF_Responses', $responseBean->id);
-            
-            // Handle terminal action
-            $lastAction = $lastResult->getAction();
-            if ($lastAction instanceof ITerminalAction) {
-                try {
-                    $lastAction->performTerminal($context, $lastResult);
-                } catch (\Throwable $t) {
-                    $context->addError($t, $lastResult->actionConfig);
-                    $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action: " . $t->getMessage());
+
+            if ($mainFlow) {
+                // Execute all actions
+                $lastResult = $executor->executeFlow($mainFlow, $errorFlow);
+
+                // Save traceability links (created/modified records)                
+                $this->saveLinks($responseBean, $context);
+
+                // Generate analytical response details
+                $this->generateResponseDetails($responseBean, $formBean, $formConfig, $cleanData, $context->uploadedFiles);
+
+                // Generate execution log
+                stic_AWFUtils::updateResponseExecutionLog($context);
+
+                // Update status
+                $hasErrors = false;
+                foreach ($context->actionResults as $result) {
+                    if ($result->isError()) {
+                        $hasErrors = true;
+                        break;
+                    }
                 }
-            }
-            
-            // Render response to user
-            if ($responseBean->status === 'error') {
-                $title = translate('LBL_ERROR_GENERIC_TITLE', 'stic_AWF_Responses');
-                $msg = translate('LBL_ERROR_GENERIC_MSG', 'stic_AWF_Responses');
-                stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
+                if ($lastResult->isError()) {
+                    $responseBean->status = 'error';
+                    $hasErrors = true;
+                } elseif ($lastResult->isWait()) {
+                    $responseBean->status = 'awaiting_action'; 
+                } else {
+                    $responseBean->status = $hasErrors ? 'error' : 'processed';
+                }
+                $responseBean->save();
+
+                // Get last action and check if is Terminal
+                $lastAction = $lastResult->getAction();
+                if ($lastAction instanceof ITerminalAction) {
+                    try {
+                        $lastAction->performTerminal($context, $lastResult);
+                    } catch (\Throwable $t) {
+                        $context->addError($t, $lastResult->actionConfig);
+                        $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error performing Terminal action in Main flow {$lastResult->actionConfig?->name}: " . $t->getMessage());
+                    }
+                }
+                // No terminal (or error runing terminal): Show generic message
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Terminal action not found or failed in Main flow in form. ID: $formId");
+                if ($hasErrors) {
+                    stic_AWFUtils::renderGenericResponseError($formConfig);
+                } else {
+                    stic_AWFUtils::renderGenericResponseSuccess($formConfig); 
+                }
+                
             } else {
-                $title = $formConfig->layout->processed_form_title ?? translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE', 'stic_AWF_Forms');
-                $msg = $formConfig->layout->processed_form_text ?? translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE', 'stic_AWF_Forms');
-                stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
+                // If there is no main flow, we show generic message
+                $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Main flow not found in form. ID: $formId");
+                stic_AWFUtils::renderGenericResponseError($formConfig);
             }
         }
     }
-
-
 
     /**
      * Terminates the execution and returns a raw error message with HTTP 400 status code. 
@@ -399,22 +446,15 @@ class ResponseHandler
      * Checks if a response with the same hash has been received for the same form. This is used for duplicate detection.
      * For human users, we check if we have received the same response from the same origin within a 5-minute window.
      * For bots (identified as spam), we check if we have received the same response from the same origin at any time.
-     * @param string $formId The ID of the form
      * @param string $hash The hash of the response to check for duplicates
      * @return bool True if a duplicate submission is detected, false otherwise
      */
-    private function checkDuplicateSubmission(string $formId, string $hash): bool {
+    private function checkDuplicateSubmission(string $hash): bool {
         global $db;
-        $safeFormId = $db->quote($formId);
+        $safeHash = $db->quote($hash);
 
         $query = "SELECT count(response.id) as count FROM stic_awf_responses response
-                    INNER JOIN stic_awf_forms_stic_awf_responses_c form_response
-                        ON form_response.stic_awf_forms_stic_awf_responsesresponses_idb = response.id
-                  WHERE
-                    form_response.stic_awf_forms_stic_awf_responsesforms_ida = '{$safeFormId}'
-                    AND form_response.deleted = 0
-                    AND response.response_hash = '{$hash}'
-                    AND response.deleted = 0";
+                  WHERE response.response_hash = '{$safeHash}' AND response.deleted = 0";
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": " . $query);
         $result = $db->query($query);
@@ -430,9 +470,9 @@ class ResponseHandler
         $configData = json_decode(html_entity_decode($formBean->configuration), true);
         $formConfig = $configData ? FormConfig::fromJsonArray($configData) : null;
         if ($formConfig) {
-            stic_AWFUtils::renderGenericResponse($formConfig, 
-                                             translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_AWF_Responses'),
-                                             translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_AWF_Responses'));
+            $title = translate('LBL_DUPLICATE_RESPONSE_TITLE', 'stic_AWF_Responses');
+            $msg = translate('LBL_DUPLICATE_RESPONSE_MSG', 'stic_AWF_Responses');
+            stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);
         } else {
             $this->terminateRawError("This response has already been submitted.");
         }
@@ -563,6 +603,10 @@ class ResponseHandler
             'errorDescriptions' => [],
         ];
 
+        // Preprocess data to fill in missing boolean/checkbox fields
+        // (browsers don't send unchecked checkboxes)
+        stic_AWFUtils::fillMissingBooleanFields($config, $data);
+
         foreach ($config->data_blocks as $block) {
             // Datablock is detached
             if (empty($block->module)) continue; 
@@ -572,14 +616,18 @@ class ResponseHandler
             if (empty($realVardefs)) continue;
 
             foreach ($block->fields as $formField) {
-                $prefix = ($formField->type_field === DataBlockFieldType::UNLINKED) ? '_detached.' : '';
-                $inputKeyInForm = $prefix . $block->name . '.' . $formField->name;
-                $inputKey = str_replace(".", "_", $inputKeyInForm);
+                $inputKeyInForm = $formField->getKey();
+                $inputKey = $formField->getPhpKey();
                 $value = $data[$inputKey] ?? null;
                 $label = rtrim($formField->label, ":");
                 
                 if ($formField->type == 'relate') {
                     continue; // Skip relate fields
+                }
+
+                // Skip file upload fields — validated separately via $_FILES in SaveDocumentBlockAction
+                if ($formField->type_in_form === 'file') {
+                    continue;
                 }
 
                 // Validation of required field (Required) (in Form)
@@ -657,7 +705,7 @@ class ResponseHandler
                     case 'boolean':
                     case 'select_checkbox':
                     case 'select_switch':
-                        if (!filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE)) {
+                        if (filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) === null) {
                             $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
                                                                             translate('LBL_ERROR_BOOL_FIELD', 'stic_AWF_Responses');
                             $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_BOOL_FIELD', 'stic_AWF_Responses');
@@ -717,6 +765,142 @@ class ResponseHandler
         return $errors;
     }
 
+    /**
+     * Generates response details for storage and subsequent analysis.
+     * @param SugarBean $responseBean Response bean
+     * @param SugarBean $formBean Form bean
+     * @param FormConfig $formConfig Form configuration
+     * @param array $submittedData Data sent in the submission
+     */
+    private function generateResponseDetails(SugarBean $responseBean, SugarBean $formBean, FormConfig $formConfig, array $submittedData, array $uploadedFiles = []): void {
+        global $app_strings;
+
+        // Global counter
+        $orderCounter = 1;
+
+        // if (!$responseBean->load_relationship('details_link')) {
+        //     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship 'details_link' in Responses bean.");
+        // }
+
+        foreach ($formConfig->data_blocks as $block) {
+            foreach ($block->fields as $field) {
+
+                // Skip fixed fields
+                if ($field->type_field === DataBlockFieldType::FIXED) continue;
+
+                // Skip file upload fields — binary data is not stored as response details
+                if ($field->type_in_form === 'file') {
+                    // Store document reference if this is a document block
+                    if ($block->is_document_block) {
+                        $currentOrder = $orderCounter++;
+                        $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
+                        $detailBean->stic_awf_responses_id_c = $responseBean->id;
+                        $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
+                        $detailBean->assigned_user_id = $responseBean->assigned_user_id;
+                        $detailBean->question_key = $block->name . '.' . $field->name;
+                        $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+                        $detailBean->question_label = rtrim($detailBean->question_label, ' :');
+                        $detailBean->question_section = $block->text;
+                        $detailBean->question_sort_order = $currentOrder;
+
+                        $phpKey = $field->getPhpKey();
+                        $fileName = $uploadedFiles[$phpKey]['name'] ?? '';
+                        $detailBean->answer_value = $fileName;
+                        $detailBean->answer_text = $fileName;
+                        $detailBean->answer_type = 'file';
+                        $detailBean->answer_integer = 0;
+                        $detailBean->save();
+                    }
+                    continue;
+                }
+
+                // Input key
+                $inputKey = $field->getPhpKey();
+                
+                $rawValue = $submittedData[$inputKey] ?? null;
+                
+                // Calculate readable text and value to store
+                $readableText = $rawValue;
+                $storedValue = $rawValue;
+                
+                // List type fields (select, multiselect, radio)
+                if (!empty($field->value_options)) {
+                    if (is_array($rawValue)) {
+                        // Multi-selection
+                        $labels = [];
+                        foreach ($rawValue as $valItem) {
+                            $opt = $this->findOption($field->value_options, $valItem);
+                            $labels[] = $opt ? $opt->text : $valItem;
+                        }
+                        $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE); // Store JSON ["A","B"]
+                        $readableText = implode(', ', $labels); // Text: "Option A, Option B"
+                    } else {
+                        // Single selection
+                        $opt = $this->findOption($field->value_options, $rawValue);
+                        if ($opt) {
+                            $readableText = $opt->text;
+                        }
+                    }
+                } 
+                // Boolean fields (checkbox)
+                elseif ($field->type === 'bool' || $field->type === 'checkbox') {
+                    $isTrue = ($rawValue === '1' || $rawValue === 'on' || $rawValue === 'true' || $rawValue === true);
+                    $readableText = $isTrue ? $app_strings['LBL_YES'] : $app_strings['LBL_NO'];
+                    $storedValue = $isTrue ? '1' : '0';
+                }
+                // Generic arrays that are not lists
+                elseif (is_array($rawValue)) {
+                    $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE);
+                    $readableText = 'Array'; 
+                }
+
+                // Create analytical response bean
+                $currentOrder = $orderCounter++;
+                $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
+                $detailBean->stic_awf_responses_id_c = $responseBean->id;
+                $detailBean->stic_awf_forms_id_c = $formBean->id ?? ''; 
+                $detailBean->assigned_user_id = $responseBean->assigned_user_id;
+                
+                $detailBean->question_key = $block->name . '.' . $field->name;
+                $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+                $detailBean->question_label = rtrim($detailBean->question_label, ' :');
+                if (!empty($field->description)) {
+                    $detailBean->question_help_text = stic_AWFUtils::parseAnchorMarkdown($field->description);
+                }
+                $detailBean->question_section = $block->text;
+                
+                $detailBean->question_sort_order = $currentOrder;
+
+                $detailBean->answer_value = (string)$storedValue;
+                $detailBean->answer_text = (string)$readableText;
+                $detailBean->answer_type = $field->type_in_form;
+                
+                // Save the value as integer to facilitate analysis
+                // Special handling for rating fields to normalize them to a 0-100 scale
+                if ($field->type_in_form === 'rating' && is_numeric($rawValue)) {
+                    $rawNum = (float)$rawValue;
+                    
+                    if ($field->subtype_in_form === 'rating_nps') {
+                        // NPS (0-10) -> Scale 0-100
+                        $normalized = $rawNum * 10;
+                    } else {
+                        // Stars, emojis, lights, thumbs (1-5) -> Scale 0-100: 1=20, 2=40, 3=60, 4=80, 5=100
+                        $normalized = $rawNum * 20;
+                    }
+                    // Make sure to store a clean integer limited between 0 and 100
+                    $detailBean->answer_integer = (int)max(0, min(100, round($normalized)));
+                } elseif (!is_array($rawValue) && is_numeric($rawValue)) {
+                    // Save the numeric value if applicable
+                    $detailBean->answer_integer = (int)round((float)$rawValue);
+                } else {
+                    $detailBean->answer_integer = 0;
+                }
+
+                $detailBean->save();
+            }
+        }
+    }
+
     /** 
      * Helper function to find an option object by its value in a list of options
      * @param array $options List of option objects with 'value' and 'text' properties
@@ -757,47 +941,6 @@ class ResponseHandler
     }
 
 
-    /**
-     * Determines if the User Agent string belongs to a bot or script. This is used for spam detection and to apply different duplicate detection rules.
-     * The function checks if the User Agent is empty (which is suspicious) 
-     *  or if it contains known signatures of programming tools and libraries commonly used for making HTTP requests (like curl, wget, python, java, etc.).
-     * If any of these conditions are met, it returns true, indicating that the User Agent is likely a bot. 
-     * Otherwise, it returns false, indicating that it is likely a human user.
-     * @param string $userAgent The User Agent string from the request headers
-     * @return bool True if the User Agent is identified as a bot, false otherwise
-     */
-    private function isBotUserAgent(string $userAgent): bool 
-    {
-        // If it's empty, it's suspicious (all browsers send something)
-        if (empty($userAgent)) {
-            return true; 
-        }
-
-        // Blacklist of programming tools that are NOT browsers
-        // If the User Agent contains any of these words, it is a script.
-        $botSignatures = [
-            'curl',          // Linux command tool
-            'wget',          // Download tool
-            'python',        // Requests/Ulllib library
-            'java/',         // Java HTTP Client
-            'libwww',        // Perl library
-            'httpclient',    // Generic Apache/Java
-            'php/',          // PHP scripts (file_get_contents)
-            'postman',       // API testing tool
-            'insomnia',      // API testing tool
-            'node-fetch',    // NodeJS
-            'axios',         // JS library (server side)
-            'go-http-client' // Golang
-        ];
-
-        foreach ($botSignatures as $bot) {
-            if (strpos($userAgent, $bot) !== false) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }
 
 // Handler execution
