@@ -4115,6 +4115,21 @@ $app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Mass action';
 $app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Record merge';
 $app_list_strings['stic_recycle_deletion_source_list']['other'] = 'External action';
 
+// Advanced Web Forms Deferred Tickets: status
+$app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
+$app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pending';
+$app_list_strings['stic_awf_deferred_tickets_status']['processing'] = 'Processing';
+$app_list_strings['stic_awf_deferred_tickets_status']['resolved'] = 'Resolved';
+$app_list_strings['stic_awf_deferred_tickets_status']['failed'] = 'Failed';
+$app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancelled';
+
+// Advanced Web Forms Incoming Events: status
+$app_list_strings['stic_awf_incoming_events_status'][''] = '';
+$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pending';
+$app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Processed';
+$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Failed';
+$app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignored';
+
 // SuiteCRM Core modifications
 
 // Opportunities: Roles of the contacts in the opportunity context
