@@ -648,14 +648,6 @@ $sugar_config = array(
     'stic_remote_monitor_curlopt_timeout' => null,
     // END STIC
 
-    // STIC-Custom 20261109 AAM - Related records panel (right side bar)
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1505
-    'stic_related_panel' => array(
-        'enabled' => true,
-        'pinned' => false,
-    ),
-    // END STIC
-
     // STIC-Custom 20251222 AAM - Adding maintenance mode
     'stic_maintenance_mode_enabled' => false,
     // END STIC
@@ -699,4 +691,12 @@ $sugar_config = array(
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
     'stic_async_list_count' => false, 
     // END STIC-Custom
+
+    // STIC-Custom 20261109 AAM - Related records panel (right side bar)
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1505
+    'stic_related_panel' => array(
+        'enabled' => true,
+        'pinned' => false,
+    ),
+    // END STIC
 );

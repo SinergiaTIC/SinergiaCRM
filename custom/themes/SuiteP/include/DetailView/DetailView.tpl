@@ -371,7 +371,8 @@
             <script type="text/javascript" src="include/InlineEditing/inlineEditing.js"></script>
             <script type="text/javascript" src="modules/Favorites/favorites.js"></script>
 
-
+            {{* STIC-Custom AAM 20261109 -  Related panel functionality *}}
+            {{* https://github.com/SinergiaTIC/SinergiaCRM/pull/1505 *}}
             {if !isset($smarty.request.print) && !isset($smarty.request.to_pdf)}
             <div id="stic-rrp-container" class="stic-rrp-container">
                 <button type="button" id="stic-rrp-toggle" class="stic-rrp-toggle"
@@ -411,6 +412,7 @@
             </div>
             {sugar_getscript file='custom/themes/SuiteP/js/relatedRecordsPanel.js'}
             {/if}
+            {{* END STIC-Custom *}}
 
             {literal}
 
