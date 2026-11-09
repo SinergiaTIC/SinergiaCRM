@@ -1598,8 +1598,23 @@ class WizardStep2 {
 
           if (this.isEdit) {
             if (this.isFixedValueOfDate) {
-              if (this.availableRelativeDates.find(v => v.id == this.field.value)) {
+              // Relative dates are stored as free text (spaces instead of underscores), so
+              // the value must be normalized before comparing it with the list ids
+              const value = (this.field.value ?? '').trim();
+              const isStoredRelative = this.availableRelativeDates.find(v => v.id == value.replaceAll(' ', '_')) != undefined;
+              // Enable the selector for predefined relative dates and also for custom ones
+              // (non-empty text that is not a specific date)
+              if (isStoredRelative || (value != '' && !/^\d{4}-\d{2}-\d{2}$/.test(value))) {
                 this.showRelativeDateSelector = true;
+                if (!isStoredRelative) {
+                  // Restore the custom value after the relative date watchers settle,
+                  // because selecting "Custom" clears the value to allow typing a new one
+                  this.$nextTick(() => {
+                    if (this.isFixedValueOfDate) {
+                      this.field.value = value;
+                    }
+                  });
+                }
               }
             }
             return;
@@ -1735,10 +1750,21 @@ class WizardStep2 {
         this.$watch('showRelativeDateSelector', (newValue, oldValue) => {
           if (!this.field) return;
           if (newValue == true) {
-            if (!this.availableRelativeDates.find(v => v.id == this.field.value)) {
+            // Relative dates are stored as free text (spaces instead of underscores), so
+            // the value must be normalized before comparing it with the list ids
+            const value = (this.field.value ?? '').trim();
+            const storedOption = this.availableRelativeDates.find(v => v.id == value.replaceAll(' ', '_'));
+            if (storedOption != undefined) {
+              // Restore the stored predefined relative option
+              this.relativeDateSelected = storedOption.id;
+            } else if (/^\d{4}-\d{2}-\d{2}$/.test(value) || value == '') {
+              // No relative value stored yet (empty value or a specific date): use the default predefined option
               this.field.value = 'today';
+              this.relativeDateSelected = 'today';
+            } else {
+              // The stored value is a custom relative date: keep it and select "Custom"
+              this.relativeDateSelected = 'custom';
             }
-            this.relativeDateSelected = this.field.value;
           }
           if (newValue !== true) {
             this.field.value = '';
@@ -1766,7 +1792,10 @@ class WizardStep2 {
               }
 
             } else {
-              this.field.value_text = new Date(newValue).toLocaleDateString();
+              // When the value can not be parsed as a date (e.g. custom relative dates)
+              // keep the raw value as text instead of an "Invalid Date" string
+              const parsedDate = new Date(newValue);
+              this.field.value_text = isNaN(parsedDate.getTime()) ? (newValue ?? '') : parsedDate.toLocaleDateString();
             }
           } else if (this.isFixedValueOfDefault) {
             this.field.value_text = this.field.value;
