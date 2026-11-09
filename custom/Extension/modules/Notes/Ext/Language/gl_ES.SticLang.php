@@ -39,3 +39,11 @@ $mod_strings['LBL_STIC_PAYMENTS_ACTIVITIES_NOTES_FROM_STIC_PAYMENTS_TITLE'] = 'P
 $mod_strings['LBL_STIC_REGISTRATIONS_NOTES_FROM_STIC_REGISTRATIONS_TITLE'] = 'Inscricións';
 $mod_strings['LBL_STIC_JOB_APPLICATIONS_ACTIVITIES_NOTES_FROM_STIC_JOB_APPLICATIONS_TITLE'] = 'Candidaturas';
 $mod_strings['LBL_STIC_JOB_OFFERS_ACTIVITIES_NOTES_FROM_STIC_JOB_OFFERS_TITLE'] = 'Ofertas laborais';
+$mod_strings['LBL_CONTACT_NAME'] = 'Persoa:';
+$mod_strings['LBL_ACCOUNT_ID'] = 'ID Organización:';
+$mod_strings['LBL_CONTACT_ID'] = 'ID Persoa:';
+$mod_strings['LBL_LEAD_ID'] = 'ID Interesado:';
+$mod_strings['LBL_OPPORTUNITY_ID'] = 'ID Subvención:';
+$mod_strings['LBL_LIST_CONTACT_NAME'] = 'Persoa';
+$mod_strings['LBL_LIST_CONTACT'] = 'Persoa';
+    
