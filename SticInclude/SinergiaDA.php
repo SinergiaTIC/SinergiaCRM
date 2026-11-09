@@ -497,6 +497,13 @@ class ExternalReporting
                                     continue 2;
                                 }
 
+                                // Two relate fields (e.g. Contacts account_name/account_id) may resolve to the same
+                                // relationship (accounts_contacts). A second LEFT JOIN with the same table/alias fails
+                                // with "Not unique table/alias", so skip this field keeping the first occurrence.
+                                if (!empty($res['leftJoin']) && strpos($leftJoins, $res['leftJoin']) !== false) {
+                                    continue 2;
+                                }
+
                                 $fieldSrc = " IFNULL({$res['field']},'') ";
 
                                 // Prepare parent_id field for autorelationships
