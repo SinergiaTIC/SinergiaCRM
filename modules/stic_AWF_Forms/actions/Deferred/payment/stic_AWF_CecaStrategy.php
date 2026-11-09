@@ -217,7 +217,7 @@ class stic_AWF_CecaStrategy extends stic_AWF_PaymentStrategy
 
         return new ActionResult(ResultStatus::ERROR, $result->actionConfig, 'Missing Referencia and Codigo_error');
     }
-
+    
     /**
      * Generate CECA SHA256 signature for payment initiation.
      * Format: PASSWORD + MERCHANT_CODE + ACQUIRER_BIN + TERMINAL + ORDER + AMOUNT + CURRENCY + "0"

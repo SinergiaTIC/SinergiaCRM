@@ -26,6 +26,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 include_once __DIR__."/stic_AWFUtils.php";
 
+include_once __DIR__."/AntiSpamResult.php";
+include_once __DIR__."/AntiSpamService.php";
+
 include_once __DIR__."/BeanReference.php";
 include_once __DIR__."/BeanModified.php";
 include_once __DIR__."/DataBlockResolved.php";

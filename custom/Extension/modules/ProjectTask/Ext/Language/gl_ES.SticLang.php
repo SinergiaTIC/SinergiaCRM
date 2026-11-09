@@ -20,13 +20,14 @@
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
-$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a';
+$mod_strings['LBL_ASSIGNED_TO_ID'] = 'Asignado a (ID)';
 $mod_strings['LBL_ASSIGNED_TO_NAME'] = 'Asignado a';
 $mod_strings['LBL_ASSIGNED_TO'] = 'Asignado a';
 $mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Asignado a';
 $mod_strings['LBL_LIST_ASSIGNED_USER'] = 'Asignado a';
 $mod_strings['LBL_ASSIGNED_USER_NAME'] = 'Asignado a';
-$mod_strings['LBL_LIST_ASSIGNED_USER_ID'] = 'Asignado a';
+$mod_strings['LBL_ASSIGNED_USER_ID'] = 'Asignado a (ID)';
+$mod_strings['LBL_LIST_ASSIGNED_USER_ID'] = 'Asignado a (ID)';
 $mod_strings['LBL_CREATED'] = 'Creado por';
 $mod_strings['LBL_CREATED_USER'] = 'Creado por';
 $mod_strings['LBL_CREATED_ID'] = 'Creado por';
