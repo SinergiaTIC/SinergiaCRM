@@ -70,11 +70,40 @@ abstract class DeferredActionDefinition extends ServerActionDefinition implement
         $paramDays->type = ActionParameterType::VALUE;
         $paramDays->dataType = ActionDataType::INTEGER;
         $paramDays->defaultValue = $this->defaultExpirationDays;
+        $paramDays->colSize = 'col-9';
         $paramDays->required = true;
-
         $parameters[] = $paramDays;
 
+        $paramSpacer = new ActionParameterDefinition();
+        $paramSpacer->name = 'spacer_1';
+        $paramSpacer->text = '';
+        $paramSpacer->type = ActionParameterType::EMPTY; 
+        $paramSpacer->colSize = 'col-10';
+        $parameters[] = $paramSpacer;
+
         if ($this->getResumptionContext() !== DeferredResumptionContext::SERVER_WEBHOOK) {
+            $paramProcTitle = new ActionParameterDefinition();
+            $paramProcTitle->name = 'already_processed_title';
+            $paramProcTitle->text = translate('LBL_PARAM_ALREADY_PROCESSED_TITLE', 'stic_AWF_Forms');
+            $paramProcTitle->description = translate('LBL_PARAM_ALREADY_PROCESSED_TITLE_DESC', 'stic_AWF_Forms');
+            $paramProcTitle->type = ActionParameterType::VALUE;
+            $paramProcTitle->dataType = ActionDataType::TEXT;
+            $paramProcTitle->defaultValue = translate('LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT', 'stic_AWF_Forms');
+            $paramProcTitle->required = false;
+            $paramProcTitle->colSize = 'col-6';
+            $parameters[] = $paramProcTitle;
+
+            $paramProcMsg = new ActionParameterDefinition();
+            $paramProcMsg->name = 'already_processed_message';
+            $paramProcMsg->text = translate('LBL_PARAM_ALREADY_PROCESSED_TEXT', 'stic_AWF_Forms');
+            $paramProcMsg->description = translate('LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC', 'stic_AWF_Forms');
+            $paramProcMsg->type = ActionParameterType::VALUE;
+            $paramProcMsg->dataType = ActionDataType::TEXTAREA;
+            $paramProcMsg->defaultValue = translate('LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT', 'stic_AWF_Forms');
+            $paramProcMsg->required = false;
+            $paramProcMsg->colSize = 'col-6';
+            $parameters[] = $paramProcMsg;
+
             $paramTitle = new ActionParameterDefinition();
             $paramTitle->name = 'expired_title';
             $paramTitle->text = translate('LBL_PARAM_EXPIRED_TITLE', 'stic_AWF_Forms');
@@ -83,6 +112,7 @@ abstract class DeferredActionDefinition extends ServerActionDefinition implement
             $paramTitle->dataType = ActionDataType::TEXT;
             $paramTitle->defaultValue = translate('LBL_PARAM_EXPIRED_TITLE_DEFAULT', 'stic_AWF_Forms');
             $paramTitle->required = false;
+            $paramTitle->colSize = 'col-6';
             $parameters[] = $paramTitle;
 
             $paramMsg = new ActionParameterDefinition();
@@ -93,6 +123,7 @@ abstract class DeferredActionDefinition extends ServerActionDefinition implement
             $paramMsg->dataType = ActionDataType::TEXTAREA;
             $paramMsg->defaultValue = translate('LBL_PARAM_EXPIRED_TEXT_DEFAULT', 'stic_AWF_Forms');
             $paramMsg->required = false;
+            $paramMsg->colSize = 'col-6';
             $parameters[] = $paramMsg;
         }
 

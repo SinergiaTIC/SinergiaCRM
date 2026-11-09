@@ -55,7 +55,7 @@ class FormHtmlGeneratorService {
             {
                 $htmlRaw .= "<meta charset='UTF-8'>" .$this->newLine();
                 $htmlRaw .= "<meta name='viewport' content='width=device-width, initial-scale=1.0'>" .$this->newLine();
-                $htmlRaw .= "<title>Advanced Web Form</title>" .$this->newLine();
+                $htmlRaw .= "<title>" . htmlspecialchars($config->layout->web_title) . "</title>" .$this->newLine();
         
                 // External libraries (Bootstrap + Alpine)
                 $htmlRaw .= '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">' .$this->newLine();
@@ -120,7 +120,7 @@ class FormHtmlGeneratorService {
         $primaryRgb = stic_AWFUtils::hex2rgb($theme->primary_color);
         $btnTextColor = $this->getContrastColor($theme->primary_color);
 
-        // Pre-càlcul: Quines icones i funcionalitats s'estan fent servir realment?
+        // Pre-calculation: Which icons and functionalities are actually being used?
         $usedSubtypes = [];
         $hasCollapsible = false;
 
@@ -138,7 +138,7 @@ class FormHtmlGeneratorService {
             }
         }
 
-        // Grid i Variables Base
+        // Grid and Base Variables
         $secCols   = intval($theme->sections_per_row ?? 1);
         $fieldCols = intval($theme->fields_per_row ?? 1);
         $secMinPx   = '200px'; 
@@ -183,6 +183,7 @@ class FormHtmlGeneratorService {
         if (isset($usedSubtypes['date']) || isset($usedSubtypes['date_time']) || isset($usedSubtypes['date_datetime'])) {
             $browserIconFix = "\n/* Hide native Webkit icons */\n#{$wrapperId} .awf-icon-date::-webkit-calendar-picker-indicator, #{$wrapperId} .awf-icon-date-time::-webkit-calendar-picker-indicator, #{$wrapperId} .awf-icon-date-datetime::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 75%; position: absolute; right: 0; top: 0; width: auto; z-index: 10; }\n#{$wrapperId} .awf-icon-date, #{$wrapperId} .awf-icon-date-time, #{$wrapperId} .awf-icon-date-datetime { position: relative; }\n";
         }
+        $fileValidationFix = "\n/* Fix for file input validation in Bootstrap 5 without glow overlay */\n#{$wrapperId} .awf-field:has(input[type='file'].is-invalid) .form-control[readonly],\n#{$wrapperId} .was-validated .awf-field:has(input[type='file']:invalid) .form-control[readonly] { border-color: #dc3545 !important; box-shadow: none !important; }\n";
 
         $html = "<style>
 #{$wrapperId} { --bs-primary: {$theme->primary_color}; --bs-primary-rgb: {$primaryRgb}; --bs-body-bg: {$theme->form_bg_color}; --bs-body-color: {$theme->text_color}; --bs-border-color: {$theme->border_color}; --bs-border-radius: {$theme->border_radius_controls}px; --bs-body-font-family: {$theme->font_family}; --bs-btn-border-radius: {$theme->border_radius_controls}px; --awf-page-bg: {$theme->page_bg_color}; --awf-max-width: {$theme->form_width}; --awf-box-shadow: {$shadowVal}; --awf-border-width: {$theme->border_width}px; --awf-sec-cols: {$secCols}; --awf-sec-min-px: {$secMinPx}; --awf-field-cols: {$fieldCols}; --awf-field-min-px: {$fieldMinPx}; --awf-card-radius: {$theme->border_radius_container}px; --awf-field-spacing: {$fieldSpacing}; --awf-section-height: {$sectionHeight}; --awf-label-weight: {$labelWeightVal}; --awf-submit-width: {$submitWidthVal}; background-color: var(--awf-page-bg); font-family: var(--bs-body-font-family); color: var(--bs-body-color); font-size: {$theme->font_size}px; line-height: 1.5; padding: 2rem 1rem; min-height: 100vh; }
@@ -193,7 +194,8 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .btn-primary:hover { filter: brightness(0.9); }
 #{$wrapperId} .btn-primary:active, #{$wrapperId} .btn-primary.active { filter: brightness(0.85); background-color: var(--bs-primary) !important; border-color: var(--bs-primary) !important; }
 #{$wrapperId} h1, #{$wrapperId} .h1 { font-size: 2.5em; } #{$wrapperId} h2, #{$wrapperId} .h2 { font-size: 2em; } #{$wrapperId} h3, #{$wrapperId} .h3 { font-size: 1.75em; } #{$wrapperId} h4, #{$wrapperId} .h4 { font-size: 1.5em; } #{$wrapperId} h5, #{$wrapperId} .h5 { font-size: 1.25em; } #{$wrapperId} h6, #{$wrapperId} .h6 { font-size: 1em; }
-#{$wrapperId} .form-label { margin-bottom: 0; } #{$wrapperId} .btn { border-radius: var(--bs-border-radius); } #{$wrapperId} .card-header { font-size: 1em; } #{$wrapperId} .form-text, #{$wrapperId} .small { font-size: 0.85em; } #{$wrapperId} .extra-small { font-size: 0.75em; }
+#{$wrapperId} .form-label { margin-bottom: 0; } #{$wrapperId} .card-header { font-size: 1em; } #{$wrapperId} .form-text, #{$wrapperId} .small { font-size: 0.85em; } #{$wrapperId} .extra-small { font-size: 0.75em; }
+#{$wrapperId} .input-group .btn { border-color: var(--bs-border-color); z-index: 0; } #{$wrapperId} .input-group .btn:hover:not(:disabled) { background-color: rgba(0, 0, 0, 0.04); }
 #{$wrapperId} .awf-main-card { width: 100%; max-width: var(--awf-max-width); min-width: 200px; margin: 0 auto; background-color: var(--bs-body-bg); border: var(--awf-border-width) solid var(--bs-border-color); border-radius: var(--awf-card-radius); box-shadow: var(--awf-box-shadow); position: relative; overflow: hidden; }
 #{$wrapperId} .awf-preview-ribbon { position: absolute; top: 5px; right: -95px; transform: rotate(45deg); background-color: #dc3545; color: #ffffff; padding: 5px 40px; font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 10px 5px rgba(0,0,0,0.3); z-index: 1050; pointer-events: none; user-select: none; }
 #{$wrapperId} .awf-grid-sections { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(max(var(--awf-sec-min-px), calc((100% - (1.5rem * (var(--awf-sec-cols) - 1))) / var(--awf-sec-cols))), 1fr)); }
@@ -209,6 +211,7 @@ class FormHtmlGeneratorService {
 #{$wrapperId} .awf-section-panel { border: none; background: transparent; box-shadow: none; height: var(--awf-section-height); }
 #{$wrapperId} .awf-section-title-panel { font-size: 1.25em; margin-bottom: 0; padding-bottom: 0.5rem; border-bottom: 1px solid var(--bs-border-color); }
 #{$wrapperId} .awf-section-title-card { font-weight: 700; margin: 0; }
+#{$wrapperId} .awf-section-subtitle { font-size: 0.9em; margin-top: -0.15rem; margin-left: 0.25rem; }
 #{$wrapperId} .awf-footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--bs-border-color); font-size: 0.875em; color: #6c757d; text-align: center; }
 #{$wrapperId} .awf-required { color: #dc3545; font-weight: bold; }
 #{$wrapperId} label, #{$wrapperId} .form-label, #{$wrapperId} .form-check-label { font-weight: var(--awf-label-weight); }
@@ -224,6 +227,7 @@ class FormHtmlGeneratorService {
         if ($iconCss !== "")  $html .= "\n".$iconCss;
         if ($chevronCss !== "")  $html .= "\n".$chevronCss;
         if ($browserIconFix !== "")  $html .= "\n".$browserIconFix;
+        if ($fileValidationFix !== "") $html .= "\n".$fileValidationFix;
         $html .= $this->newLine()."</style>".$this->newLine();
     
         return $html;
@@ -300,7 +304,7 @@ class FormHtmlGeneratorService {
                     $html .= "<div class='awf-overlay-content'>" .$this->newLine('+');
                     {
                         $html .= "<h3 class='h4 text-danger awf-field'>{$closedFormTitle}</h3>" .$this->newLine();
-                        $html .= "<p class='mb-0 lead' x-text='message'>{$closedFormText}</p>" .$this->newLine();
+                        $html .= "<p class='mb-0 lead'>{$closedFormText}</p>" .$this->newLine();
                     }
                     $html .= "</div>" .$this->newLine('-');
                 }
@@ -323,18 +327,26 @@ class FormHtmlGeneratorService {
                 // Begin Form
                 $html .= "<form x-ref='form' {$formAttributes} {$alpineSubmit} class='needs-validation'>" .$this->newLine('+');
                 {
-                    // Honeypot: Invisible anti-spam
-                    $html .= "<div style='display:none; opacity:0; position:absolute; left:-9999px;'>" .$this->newLine('+');
+                    // Honeypot: Invisible anti-spam. V2: Dynamic and Semantic
+                    $randomSuffix = substr(md5(uniqid((string)mt_rand(), true)), 0, 6);
+                    $honeypotName = 'awf_website_url_' . $randomSuffix;
+                    $html .= "<div class='awf-form-group' style='opacity: 0; position: absolute; left: -9999px; z-index: -1;' aria-hidden='true'>" .$this->newLine('+');
                     {
-                        $html .= "<label for='awf_website'>".translate('LBL_HONEYPOT_LABEL', 'stic_AWF_Forms')."</label>" .$this->newLine();
-                        $html .= "<input type='text' id='awf_website' name='awf_honey_pot' value='' tabindex='-1' autocomplete='off'>" .$this->newLine();
+                        $html .= "<label for='{$honeypotName}'>Website</label>" .$this->newLine();
+                        $html .= "<input type='text' name='{$honeypotName}' id='{$honeypotName}' tabindex='-1' autocomplete='{$honeypotName}'>" .$this->newLine();
                     }
                     $html .= "</div>" .$this->newLine('-');
 
-                    // TimeTrap: Hidden field to track time spent on form
-                    $html .= "<input type='hidden' name='awf_submission_ts' x-model='loadTime'>";
+                    // TimeTrap: Hidden field to track time spent on form. V2: Server-side + HMAC
+                    global $sugar_config;
+                    $secretKey = $sugar_config['unique_key'] ?? 'default_fallback_key';
+                    // Convert to string to ensure the full precision of microtime is preserved for the HMAC signature
+                    $serverTs = (string)microtime(true);
+                    $signature = hash_hmac('sha256', $serverTs, $secretKey);
+                    $html .= "<input type='hidden' name='awf_submission_ts' value='{$serverTs}'>" .$this->newLine();
+                    $html .= "<input type='hidden' name='awf_submission_token' value='{$signature}'>" .$this->newLine();
 
-                    // Captura de la url del formulario
+                    // Capture the URL of the page where the form is embedded
                     $html .= "<input type='hidden' name='awf_form_url' x-init=\"\$el.value = (window.self !== window.top) ? document.referrer : window.location.href\">" . $this->newLine();
                     
                     // Sections Grid
@@ -353,14 +365,14 @@ class FormHtmlGeneratorService {
                             $html .= "<div class='card {$containerClass}' {$xDataAttr} {$styleAttr}>" .$this->newLine('+');
                             {
                                 // Header
-                                if ($section->showTitle && !empty($section->title)) {
+                                if ($section->showTitle && (!empty($section->title) || !empty($section->subtitle)))  {
                                     $toggleBtn = "";
                                     $cursorStyle = "";
 
                                     if ($isCollapsible) {
                                         $cursorStyle = "cursor: pointer;"; 
                                         $toggleBtn = "<button type='button' class='btn btn-sm btn-link text-decoration-none text-reset p-0 ms-2' " .
-                                                              "@click='open = !open' :aria-expanded='open.toString()' aria-controls='{$sectionPanelId}'>" .$this->newLine('+');
+                                                              "@click.stop='open = !open' :aria-expanded='open.toString()' aria-controls='{$sectionPanelId}'>" .$this->newLine('+');
                                         {
                                             $toggleBtn .= "<span class='awf-icon-toggle' :class=\"open ? 'open' : ''\"></span>" .$this->newLine();
                                         }
@@ -372,7 +384,18 @@ class FormHtmlGeneratorService {
 
                                         $html .= "<div class='awf-section-header-panel d-flex justify-content-between align-items-center' {$clickAction} style='{$cursorStyle}'>" .$this->newLine('+');
                                         {
-                                            $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>".htmlspecialchars($section->title)."</h4>" .$this->newLine();
+                                            $html .= "<div class='awf-section-title-wrapper'>" .$this->newLine('+');
+                                            {
+                                                if (!empty($section->title)) {
+                                                    $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0'>".htmlspecialchars($section->title)."</h4>" .$this->newLine();
+                                                }
+                                                if (!empty($section->subtitle)) {
+                                                    $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
+                                                    $marginTop = !empty($section->title) ? "mt-1" : "";
+                                                    $html .= "<div class='awf-section-subtitle text-muted {$marginTop}' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$parsedSubtitle}</div>" .$this->newLine();
+                                                }
+                                            }
+                                            $html .= "</div>" .$this->newLine('-');
                                             $html .= $toggleBtn .$this->newLine();
                                         }
                                         $html .= "</div>" .$this->newLine('-');
@@ -383,7 +406,18 @@ class FormHtmlGeneratorService {
 
                                         $html .= "<div class='card-header awf-section-title-card d-flex justify-content-between align-items-center' {$clickAction} style='{$cursorStyle}'>" .$this->newLine('+');
                                         {
-                                            $html .= "<span>".htmlspecialchars($section->title)."</span>" .$this->newLine();
+                                            $html .= "<div class='awf-section-title-wrapper'>" .$this->newLine('+');
+                                            {
+                                                if (!empty($section->title)) {
+                                                    $html .= "<span>".htmlspecialchars($section->title)."</span>" .$this->newLine();
+                                                }
+                                                if (!empty($section->subtitle)) {
+                                                    $parsedSubtitle = htmlspecialchars($section->subtitle, ENT_QUOTES, 'UTF-8');
+                                                    $marginTop = !empty($section->title) ? "mt-1" : "";
+                                                    $html .= "<span class='awf-section-subtitle text-muted d-block {$marginTop}' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$parsedSubtitle}</span>" .$this->newLine();
+                                                }
+                                            }
+                                            $html .= "</div>" .$this->newLine('-');
                                             $html .= $toggleBtn .$this->newLine();
                                         }
                                         $html .= "</div>" .$this->newLine('-');
@@ -450,7 +484,7 @@ class FormHtmlGeneratorService {
         $html = "";
         foreach ($block->fields as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
-            $html .= $this->renderField($block, $field, $theme);
+            $html .= $this->renderField($field, $theme);
         }
         return $html;
     }
@@ -460,13 +494,12 @@ class FormHtmlGeneratorService {
      * It handles special cases such as hidden fields, single checkboxes, switches, and rating fields, as well as common cases for text inputs, textareas, and selects. 
      * It also incorporates validation attributes and help text when provided.
      * 
-     * @param FormDataBlock $block The data block to which the field belongs, used for constructing the input name and ID
      * @param FormDataBlockField $field The field to be rendered, containing all necessary information about its type, label, validations, etc.
      * @param FormTheme $theme The form theme that may affect the rendering of the field (e.g., whether floating labels are used)
      * @return string The generated HTML for the field as a string
      */
-    private function renderField(FormDataBlock $block, FormDataBlockField $field, FormTheme $theme): string {
-        $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
+    private function renderField(FormDataBlockField $field, FormTheme $theme): string {
+        $inputName = $field->getKey();
 
         // Render hidden fields differently: only input without label or wrapper
         if ($field->type_in_form === 'hidden') {
@@ -551,7 +584,13 @@ class FormHtmlGeneratorService {
         // --- SPECIAL CASES (ratings) ---
 
         if ($field->type_in_form === 'rating') {
-            return $this->generateRatingField($block, $field) .$this->newLine();
+            return $this->generateRatingField($field) .$this->newLine();
+        }
+
+        // --- SPECIAL CASES (File Upload - Compact Bootstrap 5 File Input) ---
+
+        if ($field->type_in_form === 'file') {
+            return $this->generateFileField($field, $theme) .$this->newLine();
         }
 
         // --- COMMON CASES ---
@@ -687,16 +726,122 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * Renders a customized native Bootstrap 5 file input wrapped in an illusion text-group.
+     * Guarantees left-aligned actions, disabled secondary modifiers, and shared SVG extraction.
+     */
+    private function generateFileField(FormDataBlockField $field, FormTheme $theme): string {
+        $inputName = $field->getKey();
+        $label = htmlspecialchars($field->label);
+        $requiredAttr = $field->required_in_form ? 'required' : '';
+        $asterisk = $field->required_in_form ? "<span class='awf-required' aria-hidden='true'>*</span>" : '';
+        
+        $isFloating = !empty($theme->floating_labels);
+
+        // Dynamically extract the allowed file extensions from the field's validations to set the 'accept' attribute for the file input.
+        $acceptAttr = '';
+        if (!empty($field->validations)) {
+            foreach ($field->validations as $val) {
+                if ($val->validator === 'AllowedExtensionsValidatorAction') {
+                    $extsParam = $val->params['extensions'] ?? $val->params->extensions ?? '';
+                    if (!empty($extsParam)) {
+                        $exts = explode(',', $extsParam);
+                        // Convert 'pdf, jpg' to '.pdf,.jpg' for the standard 'accept' format
+                        $acceptFields = array_map(function($e) { return '.' . trim(strtolower($e)); }, $exts);
+                        $acceptAttr = " accept='" . implode(',', $acceptFields) . "'";
+                        break;
+                    }
+                }
+            }
+        }
+
+        $validationsAttr = " @input='resetError(\$el)'";
+        if (!empty($field->validations)) {
+            $rules = [];
+            foreach ($field->validations as $val) {
+                $rules[] = [
+                    'name' => $val->name,
+                    'validator' => $val->validator,
+                    'message' => $val->message,
+                    'params' => $val->params,
+                    'conditions' => $val->conditions ?? [],
+                ];
+            }
+            if (!empty($rules)) {
+                $jsonRules = htmlspecialchars(json_encode($rules), ENT_QUOTES, 'UTF-8');
+                $validationsAttr .= " data-awf-validations='{$jsonRules}'";
+            }
+        }
+
+        $description = "";
+        $ariaDescribedBy = "";
+        if ($field->description != '') {
+            $parsedDesc = stic_AWFUtils::parseAnchorMarkdown($field->description);
+            $helpId = "help_" . preg_replace('/[^a-zA-Z0-9_-]/', '', $inputName);
+            $description = "<div id='{$helpId}' class='form-text awf-help-text'>{$parsedDesc}</div>";
+            $ariaDescribedBy = "aria-describedby='{$helpId}'";
+        }
+
+        $html = "<div class='awf-field' x-data='awfFileField()'>" .$this->newLine('+');
+        {
+            if (!$isFloating) {
+                $html .= "<label for='f_{$inputName}' class='form-label'>{$label} {$asterisk}</label>" . $this->newLine();
+            }
+
+            $html .= "<div class='input-group'>" .$this->newLine('+');
+            {
+                // Search Button
+                $html .= "<button type='button' class='btn awf-btn-file-browse' @click='\$refs.fileInput.click()'></button>" .$this->newLine();
+
+                if ($isFloating) {
+                    $html .= "<div class='form-floating'>" .$this->newLine('+');
+                }
+
+                // Reading text input gets the classic '.awf-icon-file-upload' icon on the right
+                $userPlaceholder = htmlspecialchars($field->placeholder ?? '');
+                if ($isFloating) {
+                    // Placeholder is required in Floating labels
+                    $placeholder = $userPlaceholder !== '' ? $userPlaceholder : '...';
+                } else {
+                    $placeholder = $userPlaceholder;
+                }
+                $html .= "<input type='text' class='form-control awf-icon-file-upload' readonly :value='fileName' placeholder='{$placeholder}' " .
+                         "style='cursor: pointer;' @click='\$refs.fileInput.click()'>" .$this->newLine();
+                
+                if ($isFloating) {
+                    $html .= "<label for='f_{$inputName}'>{$label} {$asterisk}</label>" . $this->newLine();
+                    $html .= "</div>" .$this->newLine('-');
+                }
+
+                // Delete button
+                $html .= "<button type='button' class='btn awf-btn-file-clear' :disabled='!fileName' @click='if(fileName) clear()'></button>" .$this->newLine();
+            }
+            $html .= "</div>" .$this->newLine('-');
+
+            // The actual file input remains hidden to avoid disrupting the label flow
+            $html .= "<input type='file' name='{$inputName}' x-ref='fileInput' id='f_{$inputName}' " .
+                     "style='display: none !important;' @change='updateFileInfo()' {$requiredAttr} {$acceptAttr} {$ariaDescribedBy} {$validationsAttr}>" .$this->newLine();
+
+            if ($description !== '') {
+                $html .= $description .$this->newLine();
+            }
+
+            $html .= "<div class='invalid-feedback' style='display: none;'></div>" .$this->newLine();
+        }
+        $html .= "</div>" .$this->newLine('-');
+
+        return $html;
+    }
+
+    /**
      * Generates the HTML for the 'rating' field type (rating)
      * Supports different subtypes: stars, emojis, thumbs, and lights, each with its own visual representation and interaction logic.
      * The method uses AlpineJS for interactivity, allowing users to hover and select their rating, with visual feedback.
      * 
-     * @param FormDataBlock $block The data block to which the rating field belongs, used for constructing the input name and ID
      * @param FormDataBlockField $field The rating field to be rendered, containing all necessary information about its label, description, subtype, and validation requirements
      * @return string The generated HTML for the rating field as a string, including the interactive controls and any associated labels and descriptions
      */
-    private function generateRatingField(FormDataBlock $block, FormDataBlockField $field): string {
-        $inputName = ($field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '') . $block->name . '.' . $field->name;
+    private function generateRatingField(FormDataBlockField $field): string {
+        $inputName = $field->getKey();
         $name = htmlspecialchars($inputName);
         $label = htmlspecialchars($field->label ?? '');
         $description = "";
@@ -840,10 +985,15 @@ class FormHtmlGeneratorService {
         // Get used validators
         $usedValidators = [];
         $hasRating = false;
+        $hasFile = false; // Flag to trace active file uploads globally
+
         foreach ($config->data_blocks as $block) {
             foreach ($block->fields as $field) {
                 if ($field->type_in_form === 'rating') {
                     $hasRating = true;
+                }
+                if ($field->type_in_form === 'file') { // Detect active file upload
+                    $hasFile = true;
                 }
                 if (!empty($field->validations)) {
                     foreach ($field->validations as $val) {
@@ -871,7 +1021,7 @@ class FormHtmlGeneratorService {
             }
         }
 
-        // == FRONTEND ACTIONS ==
+        // == UI ACTIONS ==
         if (isset($config->flows['0'])) {
             // Load Hook and UI actions to check for IFrontendAction
             $possibleActions = ActionDiscoveryService::discoverActions([ActionType::HOOK, ActionType::UI]);
@@ -896,7 +1046,7 @@ class FormHtmlGeneratorService {
         }
 
         // == ALPINE CORE COMPONENTS ==
-        $js .= "<script>\n" . $this->getAlpineComponentsJs($hasRating).$this->newLine()."</script>" . $this->newLine();
+        $js .= "<script>\n" . $this->getAlpineComponentsJs($hasRating, $hasFile).$this->newLine()."</script>" . $this->newLine();
 
         // == CUSTOM JS ==
         // Add custom JS from layout
@@ -910,7 +1060,7 @@ class FormHtmlGeneratorService {
     /**
      * Declares the reusable Alpine.js global components
      */
-    private function getAlpineComponentsJs(bool $hasRating): string {
+    private function getAlpineComponentsJs(bool $hasRating, bool $hasFile): string {
         $js = <<<'JS'
 // --- Alpine.js COMPONENTS ---
 document.addEventListener('alpine:init', () => {
@@ -918,17 +1068,17 @@ document.addEventListener('alpine:init', () => {
   // Main Component of the Form
   Alpine.data('awfForm', (config) => ({
     isActive: true,
-    loadTime: 0,
+    clientLoadTime: 0,
     message: config.closedFormText,
     submitting: false,
     serverErrors: {},
     
     init() {
-      this.loadTime = (Date.now() / 1000).toFixed(3);
+      this.clientLoadTime = Date.now();
+
       if (!config.isPreview && config.checkUrl) {
         fetch(config.checkUrl).then(r => r.json()).then(d => {
           this.isActive = d.active;
-          this.message = this.message === config.closedFormText ? d.message : this.message;
         }).catch(e => console.error(e));
       }
       this.prefillFromUrl();
@@ -938,21 +1088,79 @@ document.addEventListener('alpine:init', () => {
       try {
         const urlParams = new URLSearchParams(window.location.search);
         const ignore = ['entryPoint', 'id', 'module', 'action', 'ajax_validation_only'];
+        const disablePrefix = '[disabled]';
+        const hiddenPrefix = '[hidden]';
+
+        // Track the panels (cards) we modify to check if they should be hidden entirely
+        const affectedPanels = new Set();
+
         urlParams.forEach((value, key) => {
           if (ignore.includes(key)) return;
           const form = this.$refs.form;
           if (!form) return;
-          
+
+          let isDisabled = false, isHidden = false;
+          if (key.startsWith(disablePrefix)) {
+            isDisabled = true;
+            key = key.substring(disablePrefix.length);
+          } else if (key.startsWith(hiddenPrefix)) {
+            isHidden = true;
+            key = key.substring(hiddenPrefix.length);
+          }
+         
           const selector = `[name='${key}'], [name$='_${key}'], [name$='.${key}']`;
           const inputs = form.querySelectorAll(selector);
           inputs.forEach(input => {
-            if (!input.value && input.type !== 'hidden') {
+            // Ignore our own hidden clones
+            if (input.dataset.clone === 'true') return;
+
+            // Assign value (supporting checkboxes and radios)
+            if (input.type === 'checkbox' || input.type === 'radio') {
+              if (input.value === value) {
+                input.checked = true;
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+                input.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            } else {
               input.value = value;
               input.dispatchEvent(new Event('input', { bubbles: true }));
               input.dispatchEvent(new Event('change', { bubbles: true }));
             }
+
+            // Apply disabled or hidden modifiers
+            if (isDisabled) {
+              // Disabled: disable the input and add a hidden clone to ensure value is submitted in POST
+              input.disabled = true;
+              if (!input.parentNode.querySelector(`input[type="hidden"][name="${input.name}"][data-clone="true"]`)) {
+                const hiddenClone = document.createElement('input');
+                hiddenClone.type = 'hidden';
+                hiddenClone.name = input.name;
+                hiddenClone.value = value;
+                hiddenClone.dataset.clone = 'true';
+                input.parentNode.insertBefore(hiddenClone, input.nextSibling);
+              }
+            } else if (isHidden) {
+              // Hidden: hide the input and its wrapper
+              const wrapper = input.closest('.awf-field') || input.closest('.form-group') || input.parentElement;
+              if (wrapper) {
+                wrapper.style.display = 'none';
+
+                // Track the closest section panel (card)
+                const panel = wrapper.closest('.awf-section-panel');
+                if (panel) affectedPanels.add(panel);
+              }
+            }
           });
         });
+        // Post-process affected panels to hide empty ones
+        affectedPanels.forEach(panel => {
+          const allFields = Array.from(panel.querySelectorAll('.awf-field'));
+          const allHidden = allFields.every(field => field.style.display === 'none');
+          if (allHidden) {
+            panel.style.display = 'none';
+          }
+        });
+
       } catch (e) { console.warn('AWF Prefill Error:', e); }
     },
 
@@ -1051,27 +1259,32 @@ document.addEventListener('alpine:init', () => {
       }
 
       this.submitting = true;
-      const formData = new FormData(formElement);
-      formData.append('ajax_validation_only', '1');
+      const timeElapsedMs = Date.now() - this.clientLoadTime;
+      const delayMs = timeElapsedMs < 2000 ? (2500 - timeElapsedMs) : 0;
+
+      setTimeout(() => {
+        const formData = new FormData(formElement);
+        formData.append('ajax_validation_only', '1');
       
-      fetch(formElement.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }})
-      .then(response => response.json()).then(data => {
-        if (data.status === 'success') {
-          formElement.submit();
-        } else {
-          this.submitting = false;
-          this.serverErrors = data.errors || {};
-          const errorIds = Object.keys(this.serverErrors);
-          if (errorIds.length > 0) {
-            errorIds.forEach(id => this.showServerError(id, this.serverErrors[id]));
-          } else {
+        fetch(formElement.action, { method: 'POST', body: formData, headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+        .then(response => response.json()).then(data => {
+          if (data.status === 'success') {
             formElement.submit();
+          } else {
+            this.submitting = false;
+            this.serverErrors = data.errors || {};
+            const errorIds = Object.keys(this.serverErrors);
+            if (errorIds.length > 0) {
+              errorIds.forEach(id => this.showServerError(id, this.serverErrors[id]));
+            } else {
+              formElement.submit();
+            }
           }
-        }
-      }).catch(err => {
-        console.error('Validation Error', err);
-        formElement.submit();
-      });
+        }).catch(err => {
+          console.error('Validation Error', err);
+          formElement.submit();
+        });
+      }, delayMs);
     }
   }));
 JS;
@@ -1095,9 +1308,7 @@ JS;
     },
     npsClass(i) { 
       if(this.val !== i) return 'btn-outline-secondary opacity-75';
-      if(i <= 6) return 'btn-danger text-white border-danger shadow-sm';
-      if(i <= 8) return 'btn-warning text-dark border-warning shadow-sm';
-      return 'btn-success text-white border-success shadow-sm';
+      return 'btn-primary border-primary shadow-sm';
     },
     starContainerStyle(i) {
       const baseStyle = 'width: 1.5rem; height: 1.5rem; transform-origin: center center; transition: all 0.2s ease; margin-bottom: 0.5rem;';
@@ -1122,6 +1333,33 @@ JS;
   }));
 JS;
         }
+
+        if ($hasFile) { // Inject global minimal handler for File input
+            $js .= "\n\n" . <<<'JS'
+  // Component for File Upload Fields (Compact bootstrap native layout)
+  Alpine.data('awfFileField', () => ({
+    fileName: '',
+    
+    updateFileInfo() {
+      const file = this.$refs.fileInput.files[0];
+      this.fileName = file ? file.name : '';
+      
+      // Remove the $nextTick with dispatchEvent and call the core directly
+      this.validateInput(this.$refs.fileInput);
+    },
+    
+    clear() {
+      this.fileName = '';
+      this.$refs.fileInput.value = '';
+      
+      // Clear the error and force immediate re-evaluation
+      this.resetError(this.$refs.fileInput);
+      this.validateInput(this.$refs.fileInput);
+    }
+  }));
+JS;
+        }
+
         $js .= "\n});";
         return $js;
     }    
@@ -1196,7 +1434,7 @@ JS;
      * @return string|null The CSS class name for the icon if the subtype is supported,
      */
     private function getIconClass(string $subtype): ?string {
-        $icons = ['text_email', 'text_tel', 'text_url', 'text_password', 'number', 'date', 'date_time', 'date_datetime'];
+        $icons = ['text_email', 'text_tel', 'text_url', 'text_password', 'number', 'date', 'date_time', 'date_datetime', 'file_upload'];
         if (in_array($subtype, $icons)) {
             return 'awf-icon-' . str_replace('_', '-', $subtype);
         }
@@ -1223,19 +1461,27 @@ JS;
             'number' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-hash" viewBox="0 0 16 16"><path d="M8.39 12.648a1 1 0 0 0-.015.18c0 .305.21.508.5.508.266 0 .492-.172.555-.477l.554-2.703h1.204c.421 0 .617-.234.617-.547 0-.312-.188-.53-.617-.53h-.985l.516-2.524h1.265c.43 0 .618-.227.618-.547 0-.313-.188-.524-.618-.524h-1.046l.476-2.304a1 1 0 0 0 .016-.164.51.51 0 0 0-.516-.516.54.54 0 0 0-.539.43l-.523 2.554H7.617l.477-2.304c.008-.04.015-.118.015-.164a.51.51 0 0 0-.523-.516.54.54 0 0 0-.531.43L6.53 5.484H5.414c-.43 0-.617.22-.617.532s.187.539.617.539h.906l-.515 2.523H4.609c-.421 0-.609.219-.609.531s.188.547.61.547h.976l-.516 2.492c-.008.04-.015.125-.015.18 0 .305.21.508.5.508.265 0 .492-.172.554-.477l.555-2.703h2.242zm-1-6.109h2.266l-.515 2.563H6.859l.532-2.563z"/></svg>',
             'date' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z"/></svg>',
             'date_time' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"/></svg>',
+            'file_upload' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16"><path d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707z"/><path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z"/></svg>',
+            'file_browse' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder2-open" viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v.64c.57.265.94.876.856 1.546l-.64 5.124A2.5 2.5 0 0 1 12.733 15H3.266a2.5 2.5 0 0 1-2.481-2.19l-.64-5.124A1.5 1.5 0 0 1 1 6.14zM2 6h12v-.5a.5.5 0 0 0-.5-.5H9c-.964 0-1.71-.629-2.174-1.154C6.374 3.334 5.82 3 5.264 3H2.5a.5.5 0 0 0-.5.5zm-.367 1a.5.5 0 0 0-.496.562l.64 5.124A1.5 1.5 0 0 0 3.266 14h9.468a1.5 1.5 0 0 0 1.489-1.314l.64-5.124A.5.5 0 0 0 14.367 7z"/></svg>',
+            'file_clear' => '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16"><path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/></svg>',
         ];
         $definitions['date_datetime'] = $definitions['date'];
 
         $cssRules = [];
         foreach ($definitions as $type => $svg) {
             // Only process if the form uses this input subtype
-            if (empty($usedSubtypes) || isset($usedSubtypes[$type])) {
+            if (empty($usedSubtypes) || isset($usedSubtypes[$type]) || (($type === 'file_browse' || $type === 'file_clear') && isset($usedSubtypes['file_upload']))) {
                 $svgColored = str_replace('currentColor', $hexColor, $svg);
                 $encoded = base64_encode($svgColored);
-                $className = 'awf-icon-' . str_replace('_', '-', $type);
                 $dataUri = "data:image/svg+xml;base64,{$encoded}";
                 
-                $cssRules[] = "\n#%WRAPPER_ID% .{$className} { background-image: url(\"{$dataUri}\"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1rem 1rem; padding-right: 2.5rem !important; }";
+                if ($type === 'file_browse' || $type === 'file_clear') {
+                    $className = 'awf-btn-' . str_replace('_', '-', $type);
+                    $cssRules[] = "\n#%WRAPPER_ID% .{$className} { background-image: url(\"{$dataUri}\"); background-repeat: no-repeat; background-position: center; min-width: 2rem; }";
+                } else {
+                    $className = 'awf-icon-' . str_replace('_', '-', $type);
+                    $cssRules[] = "\n#%WRAPPER_ID% .{$className} { background-image: url(\"{$dataUri}\"); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1rem 1rem; padding-right: 2.5rem !important; }";
+                }
             }
         }
         return $cssRules;

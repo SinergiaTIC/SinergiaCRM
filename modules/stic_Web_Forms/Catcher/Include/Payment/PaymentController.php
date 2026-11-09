@@ -1005,6 +1005,15 @@ class PaymentController extends WebFormDataController {
             'cancel_url' => $koURL,
         ];
 
+        // Propagate the transaction code to the subscription in recurring payments.
+        // In API >= 2025-03-31.basil the subscription is created after the payment, so the
+        // checkout.session.completed event may arrive without session.subscription. This metadata
+        // lets the customer.subscription.created handler link stripe_subscr_id to the Payment
+        // Commitment (session-level metadata is NOT propagated to the subscription).
+        if ($payment_mode == 'subscription') {
+            $stripeSessionValues['subscription_data'] = ['metadata' => ['transaction_code' => $transaction_code]];
+        }
+
         // Add user's email if available
         if (isset($_REQUEST['Contacts___email1']) && !empty($_REQUEST['Contacts___email1'])) {
             $stripeSessionValues['customer_email'] = $_REQUEST['Contacts___email1'];

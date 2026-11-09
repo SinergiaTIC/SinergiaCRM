@@ -37,7 +37,12 @@ $mod_strings['LBL_STIC_PAYMENTS_ACTIVITIES_MEETINGS_FROM_STIC_PAYMENTS_TITLE'] =
 $mod_strings['LBL_STIC_REGISTRATIONS_MEETINGS_FROM_STIC_REGISTRATIONS_TITLE'] = 'Inscripcions';
 $mod_strings['LBL_MEETING_INFORMATION'] = 'Dades generals';
 $mod_strings['LBL_STIC_PANEL_RECORD_DETAILS'] = 'Detalls del registre';
+$mod_strings['LBL_CONTACT_NAME'] = 'Persona:';
+$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Persones';
 $mod_strings['LBL_LEADS_SUBPANEL_TITLE'] = 'Interessats';
+$mod_strings['LBL_CREATE_CONTACT'] = 'Nova Persona';
+$mod_strings['LBL_CREATE_LEAD'] = 'Nou Interessat'; 
+$mod_strings['LBL_LIST_CONTACT'] = 'Persona';
 
 // Camps de filtre en relacions molts a molts
 $mod_strings['LBL_STIC_MEETINGS_CONTACTS_NAME'] = 'Persona';
