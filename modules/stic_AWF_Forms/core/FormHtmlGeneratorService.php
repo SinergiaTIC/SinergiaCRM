@@ -1549,7 +1549,7 @@ class FormHtmlGeneratorService {
         // user can see. Same contract as the regular tabs container: the pane
         // publishes its instance index and the owner of `activeTab` switches.
         $paneActivation = "@invalid.capture=\"const gp = \$event.target.closest('[data-awf-group-pane]'); if (gp && gp.closest('.awf-group-container') === \$el) activeTab = +gp.dataset.awfGroupPane; const gi = \$event.target.closest('[data-awf-group-item]'); if (gi && gi.closest('.awf-group-container') === \$el) openItem = +gi.dataset.awfGroupItem\" @awf-show-group-pane=\"if (\$event.target.closest('.awf-group-container') === \$el) activeTab = +\$event.detail\" @awf-show-group-item=\"if (\$event.target.closest('.awf-group-container') === \$el) openItem = +\$event.detail\"";
-        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0, openItem: 0 }\" {$paneActivation}>" . $this->newLine('+');
+        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0, openItem: 0, titleOverrides: {}, titleOverrideFor: function (index, fallback) { var o = this.titleOverrides[index]; return (o === undefined || o === null) ? fallback : o; } }\" {$paneActivation}>" . $this->newLine('+');
         {
             // The group section's header (title/subtitle) is rendered by the
             // loop paths below (stacked cards) or by the tabs chrome — both
@@ -1577,7 +1577,7 @@ class FormHtmlGeneratorService {
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === index ? 'active' : ''\" @click=\"activeTab = index; \$el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })\" x-text=\"{$instanceTitle}\"></button>" . $this->newLine();
+                            $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === index ? 'active' : ''\" @click=\"activeTab = index; \$el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })\" x-text=\"titleOverrideFor(index, {$instanceTitle})\"></button>" . $this->newLine();
                         }
                         $tabsHtml .= "</template>" . $this->newLine('-');
                         if ($isRepeatable) {
@@ -1726,7 +1726,7 @@ class FormHtmlGeneratorService {
                             {
                                 $accHtml .= "<div class='awf-accordion-header' :class=\"openItem === index ? 'is-open' : ''\" @click=\"openItem = (openItem === index ? null : index)\" style='cursor: pointer;'>" . $this->newLine('+');
                                 {
-                                    $accHtml .= "<span class='awf-accordion-title' x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
+                                    $accHtml .= "<span class='awf-accordion-title' x-text=\"titleOverrideFor(index, {$instanceTitle})\"></span>" . $this->newLine();
                                     $accHtml .= "<span class='d-flex align-items-center gap-2'>" . $this->newLine();
                                     if ($isRepeatable) {
                                         $accHtml .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click.stop=\"instances = instances.filter(i => i !== instance); if (activeTab >= instances.length) activeTab = Math.max(0, instances.length - 1); if (openItem >= instances.length) openItem = Math.max(0, instances.length - 1)\">" . $this->newLine('+');
@@ -1971,7 +1971,7 @@ class FormHtmlGeneratorService {
                                 {
                                     $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
                                     {
-                                        $html .= "<span x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
+                                        $html .= "<span x-text=\"titleOverrideFor(index, {$instanceTitle})\"></span>" . $this->newLine();
                                         if ($tSubtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$tSubtitle}</span>" . $this->newLine();
                                     }
                                     $html .= "</div>" . $this->newLine('-');
@@ -1988,7 +1988,7 @@ class FormHtmlGeneratorService {
                                 {
                                     $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
                                     {
-                                        $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0' x-text=\"{$instanceTitle}\"></h4>" . $this->newLine();
+                                        $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0' x-text=\"titleOverrideFor(index, {$instanceTitle})\"></h4>" . $this->newLine();
                                         if ($tSubtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$tSubtitle}</div>" . $this->newLine();
                                     }
                                     $html .= "</div>" . $this->newLine('-');
@@ -2013,7 +2013,7 @@ class FormHtmlGeneratorService {
                             // without a tinted background)
                             $html .= "<div class='card-header d-flex justify-content-between align-items-center py-2'>" . $this->newLine('+');
                             {
-                                $html .= "<span class='fw-bold text-secondary' x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
+                                $html .= "<span class='fw-bold text-secondary' x-text=\"titleOverrideFor(index, {$instanceTitle})\"></span>" . $this->newLine();
                                 if ($isRepeatable) {
                                     $html .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance)\">" . $this->newLine('+');
                                     {
@@ -3999,6 +3999,119 @@ JS;
     return true;
   }
 
+  // --- Section title (getSectionTitle / setSectionTitle) -----------------
+  // Locates the VISIBLE title element of the section that renders a field.
+  // The title "lives" in a different place per representation: section header
+  // (card/panel), layout tab label, layout accordion header, or group
+  // instance chrome (stacked card header, tab button, accordion header).
+  // Returns null when the field's section renders no title (chrome-less).
+
+  function sectionTitleElOf(elements) {
+    var field = containerOf(elements);
+    if (!field || !field.closest) return null;
+
+    // Repeatable/optional groups: per-instance chrome
+    var inst = field.closest('.awf-instance-card');
+    if (inst) {
+      if (inst.dataset.awfGroupPane !== undefined && inst.dataset.awfGroupPane !== '') {
+        // Group tabs: the title is the tab button, outside the pane
+        var gWrap = inst.closest('.awf-group-container');
+        var gNav = gWrap ? gWrap.querySelector('.nav-tabs') : null;
+        return gNav ? (gNav.querySelectorAll('.nav-link')[Number(inst.dataset.awfGroupPane)] || null) : null;
+      }
+      var gItem = inst.closest('.awf-accordion-item');
+      if (gItem) return gItem.querySelector('.awf-accordion-title');
+      // Stacked instance cards: header inside the instance card itself
+      var own = inst.querySelector('.awf-section-title-wrapper > :not(.awf-section-subtitle), .card-header .fw-bold');
+      if (own) return own;
+      // Suppressed instance chrome (single-block optional groups): the visible
+      // title is the ancestor group section's static header — climb to it
+      var outer = inst.parentElement ? inst.parentElement.closest('.card') : null;
+      var depth = 0;
+      while (outer && depth < 5) {
+        var hdr = outer.querySelector(':scope > .card-header .awf-section-title-wrapper > :not(.awf-section-subtitle), :scope > .awf-section-header-panel .awf-section-title-wrapper > :not(.awf-section-subtitle)');
+        if (hdr) return hdr;
+        outer = outer.parentElement ? outer.parentElement.closest('.card') : null;
+        depth++;
+      }
+      return null;
+    }
+
+    // Layout tabs: the title is the tab label, outside the pane
+    var pane = field.closest('[data-awf-pane]');
+    if (pane) {
+      var wrap = pane.closest('.awf-tabs-container');
+      var nav = wrap ? wrap.querySelector('.nav-tabs') : null;
+      if (!nav) return null;
+      var paneIdx = Array.prototype.indexOf.call(pane.parentElement.children, pane);
+      return nav.querySelectorAll('.nav-link')[paneIdx] || null;
+    }
+
+    // Layout accordion: the title is the item header, outside the body
+    var accItem = field.closest('.awf-accordion-item');
+    if (accItem) return accItem.querySelector('.awf-accordion-title');
+
+    // Plain section (card or panel flavor): nearest card owning a header,
+    // climbing over chrome-less nested cards
+    var sec = field.closest('.card');
+    var depth = 0;
+    while (sec && depth < 5) {
+      var own = sec.querySelector(':scope > .card-header .awf-section-title-wrapper > :not(.awf-section-subtitle), :scope > .awf-section-header-panel .awf-section-title-wrapper > :not(.awf-section-subtitle)');
+      if (own) return own;
+      sec = sec.parentElement ? sec.parentElement.closest('.card') : null;
+      depth++;
+    }
+    return null;
+  }
+
+  function getSectionTitleFrom(elements) {
+    var el = sectionTitleElOf(elements);
+    return el ? el.textContent.trim() : null;
+  }
+
+  function setSectionTitleOn(elements, text) {
+    var el = sectionTitleElOf(elements);
+    if (!el) return false;
+    // Instance chrome: the title is Alpine-bound (x-text). Route the write
+    // through the group container's reactive `titleOverrides` state so the
+    // override survives Alpine re-renders (add/remove instance).
+    if (el.hasAttribute('x-text')) {
+      var owner = null;
+      var idx = null;
+      var item = el.closest('.awf-accordion-item');
+      if (item && item.dataset.awfGroupItem !== undefined) {
+        // Group accordion: header and body share the accordion item
+        owner = item.closest('.awf-group-container');
+        idx = item.dataset.awfGroupItem;
+      } else {
+        var inst = el.closest('.awf-instance-card');
+        if (inst && inst.dataset.awfInstance !== undefined) {
+          // Stacked instance cards: the header lives inside the instance card
+          owner = inst.closest('.awf-group-container');
+          idx = inst.dataset.awfInstance;
+        } else {
+          var nav = el.closest('.nav-tabs');
+          if (nav) {
+            // Group tabs: tab buttons and panes iterate `instances` in parallel
+            idx = String(Array.prototype.indexOf.call(nav.querySelectorAll('.nav-link'), el));
+            owner = nav.closest('.awf-group-container');
+          }
+        }
+      }
+      if (owner === null || idx === null || idx < 0) return false;
+      if (!window.Alpine || typeof window.Alpine.$data !== 'function') return false;
+      var groupData = window.Alpine.$data(owner);
+      if (!groupData || !groupData.titleOverrides) return false;
+      groupData.titleOverrides[idx] = text;
+      return true;
+    }
+    // Static titles: keep the original text so repeated writes can compose
+    // "base - value" without appending to a previous override
+    if (el.dataset.awfBaseTitle === undefined) el.dataset.awfBaseTitle = el.textContent.trim();
+    el.textContent = text;
+    return true;
+  }
+
   var listeners = [];
   var delegatedForm = null;
 
@@ -4049,6 +4162,16 @@ JS;
         var val = (arguments.length === 1) ? target : text;
         var res = resolveForInfo(t, card, parsed);
         return setHelpTextOn(containerOf(res.elements), val);
+      },
+      getSectionTitle: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return getSectionTitleFrom(res.elements);
+      },
+      setSectionTitle: function (target, text) {
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var val = (arguments.length === 1) ? target : text;
+        var res = resolveForInfo(t, card, parsed);
+        return setSectionTitleOn(res.elements, val);
       },
       getText: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
@@ -4280,6 +4403,8 @@ JS;
     setLabel: function (target, text, options) { return setLabelTextOn(containerOf(resolve(target, options).elements), text); },
     getHelp: function (target, options) { return helpTextOf(containerOf(resolve(target, options).elements)); },
     setHelp: function (target, text, options) { return setHelpTextOn(containerOf(resolve(target, options).elements), text); },
+    getSectionTitle: function (target, options) { return getSectionTitleFrom(resolve(target, options).elements); },
+    setSectionTitle: function (target, text, options) { return setSectionTitleOn(resolve(target, options).elements, text); },
     getAttribute: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
     setAttribute: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
     getAttributeValue: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
@@ -4358,6 +4483,8 @@ JS;
       getAttributeValue: function (target, attr, options) { return scoped('getAttributeValue', [target, attr, options], options); },
       setAttributeValue: function (target, attr, value, options) { return scoped('setAttributeValue', [target, attr, value, options], options); },
       onChange: function (fieldName, callback, options) { return scoped('onChange', [fieldName, callback, options], options); },
+      getSectionTitle: function (target, options) { return scoped('getSectionTitle', [target, options], options); },
+      setSectionTitle: function (target, text, options) { return scoped('setSectionTitle', [target, text, options], options); },
       parseFieldName: parseFieldName
     };
   } else {
