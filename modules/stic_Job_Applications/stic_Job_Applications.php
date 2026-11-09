@@ -79,12 +79,6 @@ class stic_Job_Applications extends Basic
             $this->name = $contact_name .' - '.$offer_name;
         }
 
-        // If it is a new record, the assigned user of the offer is indicated in the job application
-        if (!empty($offerBean) &&
-            $this->assigned_user_id != $offerBean->assigned_user_id) {
-            $this->assigned_user_id = $offerBean->assigned_user_id;
-        }
-
         parent::save($check_notify);
 
         if (isset($this->status) && $this->status == 'accepted') {

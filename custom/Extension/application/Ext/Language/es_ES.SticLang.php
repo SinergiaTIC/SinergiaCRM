@@ -45,6 +45,9 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Deslucrativizado por SinergiaCR
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM ha sido desarrollado por la Asociación SinergiaTIC. El software se proporciona TAL CUAL ES, sin garantía de ningún tipo. Bajo la licencia AGPLv3. Para más información, visite el <a href="https://www.sinergiacrm.org">web de SinergiaCRM</a>.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Este programa es software libre. Se permite redistribuirlo y/o modificarlo bajo los términos de la Licencia Pública General Affero de GNU versión 3, publicada por la Free Software Foundation, incluyendo cualquier permiso adicional indicado en la cabecera del código fuente.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = 'Todos los nombres de otras empresas y productos mencionados aquí pueden ser marcas registradas de sus respectivas compañías asociadas.';
+$app_strings['ERR_OPT_IN_RELATION_INCORRECT'] = 'Para autorizar es necesario que el correo esté relacionado con una Organización/Persona/Interesado/Público Objetivo';
+$app_strings['LBL_CONFIRM_OPT_IN_ONLY_FOR_PERSON'] = 'Envío de correo de confirmación de autorización sólo para Organizaciones/Personas/Interesados/Público Objetivo';
+$app_strings['LBL_LIST_ACCOUNT_NAME'] = 'Organización';
 
 // Creación de registro horario vía cabecera
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crear registro';
@@ -186,6 +189,8 @@ $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Formularios Web Avanzados';
 $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Procesos en espera de formularios';
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Notificaciones externas de formularios';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversaciones';
+$app_list_strings['moduleList']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
+$app_list_strings['moduleList']['stic_Recycle_Bin_Relationships'] = 'Relaciones de la papelera';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organización';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
@@ -251,6 +256,8 @@ $app_list_strings['moduleListSingular']['stic_AWF_Forms'] = 'Formulario Web Avan
 $app_list_strings['moduleListSingular']['stic_AWF_Deferred_Tickets'] = 'Proceso en espera de formulario';
 $app_list_strings['moduleListSingular']['stic_AWF_Incoming_Events'] = 'Notificación externa de formulario';
 $app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversación';
+$app_list_strings['moduleListSingular']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
+$app_list_strings['moduleListSingular']['stic_Recycle_Bin_Relationships'] = 'Relación de la papelera';
 
 $app_list_strings['parent_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['parent_type_display']['Contacts'] = 'Personas';
@@ -298,6 +305,8 @@ $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['parent_type_display']['stic_Assets'] = 'Activos';
 $app_list_strings['parent_type_display']['stic_Conversations'] = 'Conversaciones';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin_Relationships'] = 'Relación de la papelera';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display']['Contacts'] = 'Personas';
@@ -347,6 +356,8 @@ $app_list_strings['record_type_display']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['record_type_display']['stic_Assets'] = 'Activos';
 $app_list_strings['record_type_display']['stic_Conversations'] = 'Conversaciones';
+$app_list_strings['record_type_display']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
+$app_list_strings['record_type_display']['stic_Recycle_Bin_Relationships'] = 'Relación de la papelera';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organizaciones';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Personas';
@@ -396,6 +407,8 @@ $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacci
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['record_type_display_notes']['stic_Assets'] = 'Activos';
 $app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Conversaciones';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin_Relationships'] = 'Relación de la papelera';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvenciones';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Eventos';
@@ -3976,6 +3989,7 @@ $app_list_strings['stic_awf_forms_field_type_in_form_list']['date'] = '🗓️ T
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['select'] = '▼ Opciones predeterminadas';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['rating'] = '🏅 Valoración';
 $app_list_strings['stic_awf_forms_field_type_in_form_list']['hidden'] = '🕵️ Oculta';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['file'] = '📄 Fichero';
 
 // Advanced Web Forms: configuration->data_block->field->subtype_in_form
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text'] = '🔤 Texto simple';
@@ -3999,6 +4013,7 @@ $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_emoji'] =
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_lights'] = '🚦 Semáforo';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_thumbs'] = '👍 Pulgares';
 $app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 Escala 0-10';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['file_upload'] = '📎 Fichero adjunto';
 
 // Advanced Web Forms: configuration->data_block->field->value_type
 $app_list_strings['stic_awf_forms_field_value_type_list']['editable'] = 'Editable';
@@ -4229,6 +4244,18 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Llamadas';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
+
+// Motivos de no restauración de relaciones de la papelera
+$app_list_strings['stic_recycle_skip_reason_list'][''] = '';
+$app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Registro relacionado eliminado';
+$app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Registro relacionado reasignado';
+
+// Procedencia de la eliminación en la papelera
+$app_list_strings['stic_recycle_deletion_source_list'][''] = '';
+$app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Vista de detalle';
+$app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acción masiva';
+$app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinación de registros';
+$app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acción externa';
 
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

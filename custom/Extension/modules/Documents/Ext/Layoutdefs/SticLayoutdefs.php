@@ -123,6 +123,17 @@ $layout_defs["Documents"]["subpanel_setup"]['stic_group_opportunities_documents_
     ),
   );
 
+$layout_defs['Documents']['subpanel_setup']['stic_awf_responses_documents'] = array(
+    'order' => 100,
+    'module' => 'stic_AWF_Responses',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_STIC_AWF_RESPONSES_TITLE',
+    'get_subpanel_data' => 'stic_awf_responses_documents',
+    'top_buttons' => array(),
+);
+
 // Subpanels default sorting
 $layout_defs['Documents']['subpanel_setup']['accounts']['sort_order'] = 'asc';
 $layout_defs['Documents']['subpanel_setup']['accounts']['sort_by'] = 'name';

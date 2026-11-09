@@ -287,6 +287,40 @@ $dictionary['stic_AWF_Responses']['fields']['details_link'] = array(
     'side' => 'right',
 );
 
+$dictionary["stic_AWF_Responses"]["fields"]["stic_awf_responses_documents"] = array(
+    'name' => 'stic_awf_responses_documents',
+    'type' => 'link',
+    'relationship' => 'stic_awf_responses_documents',
+    'source' => 'non-db',
+    'module' => 'Documents',
+    'bean_name' => 'Document',
+    'vname' => 'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+    'id_name' => 'stic_awf_responses_documentsdocuments_idb',
+);
+$dictionary["stic_AWF_Responses"]["fields"]["stic_awf_responses_documents_name"] = array(
+    'name' => 'stic_awf_responses_documents_name',
+    'type' => 'relate',
+    'source' => 'non-db',
+    'vname' => 'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+    'save' => true,
+    'id_name' => 'stic_awf_responses_documentsdocuments_idb',
+    'link' => 'stic_awf_responses_documents',
+    'table' => 'documents',
+    'module' => 'Documents',
+    'rname' => 'document_name',
+    'inline_edit' => false,
+    'massupdate' => false,
+);
+$dictionary["stic_AWF_Responses"]["fields"]["stic_awf_responses_documentsdocuments_idb"] = array(
+    'name' => 'stic_awf_responses_documentsdocuments_idb',
+    'type' => 'link',
+    'relationship' => 'stic_awf_responses_documents',
+    'source' => 'non-db',
+    'reportable' => false,
+    'side' => 'right',
+    'vname' => 'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_STIC_AWF_RESPONSES_TITLE',
+);
+
 if (!class_exists('VardefManager')) {
         require_once('include/SugarObjects/VardefManager.php');
 }

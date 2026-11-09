@@ -105,7 +105,8 @@ switch (viewType()) {
 // Function to show the tabs depending of the type
 function showTabs(typeSelected) {
 
-  var panelLanguages = $("div.panel-content");
+  // Select the language panel by its data-id, avoiding affecting other panels (including those created from Studio)
+  var panelLanguages = $(".panelContainer[data-id='LBL_PANEL_LANGUAGE']").closest(".panel");
 
   // Ocultar el panel de lenguaje por defecto
   panelLanguage(panelLanguages, "hide");
@@ -137,8 +138,8 @@ function showTabsEdit() {
       });
     }
   } else {
-    $("#type").on("change", function () {
-      showTabsEdit();
+    $("#type").off("change.sticTabs").on("change.sticTabs", function () {
+      showTabs($("#type").val());
     });
   }
 }
@@ -158,7 +159,7 @@ function getRequiredStatus(fieldId) {
 function panelLanguage(panelLanguages, view) {
   // Showing the tab Task and put the fields required if is in the EditView
   if (view === "show") {
-    panelLanguages.show();
+    panelLanguages.removeClass("hidden");
     if (
       viewType() === "edit" ||
       viewType() === "quickcreate" ||
@@ -185,7 +186,7 @@ function panelLanguage(panelLanguages, view) {
     }
     // Hiding the tab Task and put the fields unrequired if is in the EditView
   } else if (view === "hide") {
-    panelLanguages.hide();
+    panelLanguages.addClass("hidden");
     if (
       viewType() === "edit" ||
       viewType() === "quickcreate" ||

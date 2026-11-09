@@ -33,7 +33,8 @@ class FormDataBlock {
     /** @var FormDataBlockField[] */
     private array $fields;                 // Fields of the data block
     /** @var FormDuplicateRule[] */
-    private array $duplicate_detections;   // Definition of duplicate detection
+    public array $duplicate_detections;   // Definition of duplicate detection
+    public bool $is_document_block = false; // Whether this is a Document upload block
 
     private ?BeanReference $beanReference = null; // Bean where the data block has been saved
 
@@ -48,7 +49,8 @@ class FormDataBlock {
         $dto->id = $data['id'];
         $dto->name = $data['name'];
         $dto->text = $data['text'];
-        $dto->module = $data['module'] ?? null;
+        $dto->module = $data['module'];
+        $dto->is_document_block = $data['is_document_block'] ?? false;
 
         $dto->fields = [];
         if (isset($data['fields'])) {

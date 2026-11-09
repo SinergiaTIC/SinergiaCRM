@@ -80,7 +80,7 @@ $mod_strings = array (
   'LBL_EXECUTION_ITEM_OK' => '✅ [OK]',
   'LBL_EXECUTION_ITEM_SKIPPED' => '⏭️ [OMITIDO]',
   'LBL_EXECUTION_ITEM_ERROR' => '❌ [ERRO]',
-  'LBL_EXECUTION_DEFERRED' => 'Ejecución diferida',
+  'LBL_EXECUTION_DEFERRED' => 'Execución diferida',
 
   // General
   'LBL_FIELD' => 'Campo',
@@ -118,4 +118,5 @@ $mod_strings = array (
   'LBL_STIC_AWF_RESPONSES_STIC_AWF_LINKS_FROM_STIC_AWF_LINKS_TITLE' => 'Vínculos da resposta ao formulario',
   'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_FORMS_TITLE' => 'Formulario Web Avanzado',
   'LBL_ANSWERS_SUBPANEL_TITLE' => 'Detalles da resposta',
+  'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_DOCUMENTS_TITLE' => 'Documentos',
 );

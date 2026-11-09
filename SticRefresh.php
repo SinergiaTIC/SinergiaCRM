@@ -62,10 +62,13 @@ global $moduleList, $current_language;
 
 return_application_language($current_language);
 
+// Para evitar otros módulos que puedan aparecer que no estén en la moduleKist
+LanguageManager::clearLanguageCache();
 foreach ($moduleList as $module) {
-    LanguageManager::clearLanguageCache($module);
+    // LanguageManager::clearLanguageCache($module);
     return_module_language($current_language, $module);
 }
+return_module_language($current_language, 'Administration');
 
 
 // Cleanup application resources

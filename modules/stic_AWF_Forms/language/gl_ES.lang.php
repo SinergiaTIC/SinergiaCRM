@@ -33,15 +33,15 @@ $mod_strings = array (
   'LBL_MODIFIED_NAME' => 'Modificado por',
   'LBL_MODIFIED_USER' => 'Modificado por',
   'LBL_MODIFIED_ID' => 'Modificado por (ID)',
-  'LBL_SECURITYGROUPS' => 'Grupos de seguridad',
-  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de seguridad',
+  'LBL_SECURITYGROUPS' => 'Grupos de seguridade',
+  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de seguridade',
   'LBL_ID' => 'ID',
-  'LBL_DATE_ENTERED' => 'Fecha de Creación',
-  'LBL_DATE_MODIFIED' => 'Fecha de Modificación',
-  'LBL_DESCRIPTION' => 'Descripción',
+  'LBL_DATE_ENTERED' => 'Data de Creación',
+  'LBL_DATE_MODIFIED' => 'Data de Modificación',
+  'LBL_DESCRIPTION' => 'Descrición',
   'LBL_DELETED' => 'Eliminado',
-  'LBL_NAME' => 'Nombre',
-  'LBL_LIST_NAME' => 'Nombre',
+  'LBL_NAME' => 'Nome',
+  'LBL_LIST_NAME' => 'Nome',
   'LBL_EDIT_BUTTON' => 'Editar',
   'LBL_QUICKEDIT_BUTTON' => '↙ Editar',
   'LBL_REMOVE' => 'Desvincular',
@@ -63,6 +63,8 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Datos xerais',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles do rexistro',
 
+  'LBL_LISTVIEW_OPTION_INVERT_SELECTION' => 'Invertir selección',
+
   // -- MODULE FIELDS --
   'LBL_STATUS' => 'Estado',
   'LBL_START_DATE' => 'Data de inicio',
@@ -71,7 +73,7 @@ $mod_strings = array (
   'LBL_PROCESSING_MODE' => 'Modo de procesamento',
   'LBL_PROCESSING_MODE_DESC' => 'Define como se xestionan as respostas recibidas. En modo síncrono as respostas almacénanse e procésanse ao recibirse. En modo asíncrono as respostas almacénanse ao recibirse e procésanse posteriormente mediante un proceso en segundo plano, o que pode ser de interese para optimizar o rendemento do sistema en casos de gran afluencia.',
   'LBL_FORM_TYPE' => 'Tipo de formulario',
-  'LBL_FORM_TYPE_DESC' => 'Define al público destinatario del formulario. Los formularios web son accesibles para cualquier persona mientras que los formularios del CRM sólo pueden ser rellenados por usuarios autenticados.',
+  'LBL_FORM_TYPE_DESC' => 'Define ao público destinatario do formulario.  Os formularios web son accesibles para calquera persoa mentres que os formularios do CRM só poden ser cubertos por usuarios autenticados.',
   'LBL_CONFIGURATION' => 'Configuración',
   'LBL_ANALYTICS_VIEWS' => 'Visitas totais',
   'LBL_ANALYTICS_BLOCKED' => 'Visitas bloqueadas (non público)',
@@ -125,6 +127,7 @@ $mod_strings = array (
   // General editors
   'LBL_SELECT_PLACEHOLDER' => 'Seleccione un elemento',
   'LBL_SELECT_WRITE_TO_SEARCH' => 'Escriba para filtrar a lista...',
+  'LBL_SELECT_SEARCH_CLEAN' => 'Limpiar filtro',
   'LBL_SELECT_NO_RESULTS' => 'Non existen coincidencias',
 
   // DataBlocks
@@ -135,6 +138,8 @@ $mod_strings = array (
   'LBL_DATABLOCK_ADD_TITLE' => 'Configurar un bloque de datos relacionado cun módulo do sistema',
   'LBL_DATABLOCK_ADD_UNLINKED' => 'Engadir un bloque de datos non enlazado',
   'LBL_DATABLOCK_ADD_UNLINKED_TITLE' => 'Configurar un bloque de datos sen relacionalo con ningún módulo do sistema',
+  'LBL_DATABLOCK_ADD_DOCUMENTS' => 'Engadir un bloque de datos de documentos',
+  'LBL_DATABLOCK_ADD_DOCUMENTS_TITLE' => 'Engadir un bloque de datos de documentos para subir ficheiros',
   'LBL_DATABLOCK_NEW' => 'Novo bloque de datos',
   'LBL_DATABLOCK_NEW_UNLINKED' => 'Novo bloque de datos non enlazado',
   'LBL_DATABLOCK_MODULE' => 'Módulo',
@@ -161,6 +166,7 @@ $mod_strings = array (
   'LBL_FIELD_DEFINITION' => 'Definición',
   'LBL_FIELD_DEFINITION_FORM' => 'Representación no formulario',
   'LBL_FIELD_DEFINITION_VALIDATIONS' => 'Validación de Datos',
+  'LBL_FIELD_UPLOAD' => 'Subir ficheiro',
 
   'LBL_FIELD' => 'Campo',
   'LBL_FIELD_NAME' => 'Nome',
@@ -181,8 +187,13 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_TYPE' => 'Tipo de valor',
   'LBL_FIELD_VALUE_OPTIONS_LIST' => 'Lista asociada',
   'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZE' => 'Personalizar opcións',
-  'LBL_FIELD_VALUE_OPTIONS_CUSTOMIZED' => '(Modificado)',
   'LBL_FIELD_VALUE_OPTIONS_SELECT_REGS' => 'Seleccionar rexistros',
+  'LBL_FIELD_VALUE_OPTIONS_ADD_REGS' => 'Añadir registros',
+  'LBL_FIELD_VALUE_OPTIONS_PAGE_INFO' => '({from} - {to} de {total})',
+  'LBL_FIELD_VALUE_OPTIONS_RELOAD_LIST' => 'Recargar lista',
+  'LBL_FIELD_VALUE_OPTIONS_REMOVE_STALE' => 'Limpiar valores obsoletos',
+  'LBL_FIELD_VALUE_OPTIONS_PAGE_SIZE' => 'Registros por página',
+  'LBL_FIELD_VALUE_OPTION_HIDE' => 'Ocultar',
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
   'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostrar valores internos',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Valor interno',
@@ -251,7 +262,6 @@ $mod_strings = array (
   'LBL_ACTION_ACTIONS' => 'Accións',
   'LBL_ACTION_AUTOMATIC' => 'Automática',
   'LBL_ACTION_NO_PARAMS' => 'Sen parámetros',
-
   'LBL_ACTION_PARAM_SELECT_NO_OPTION' => '-- Seleccionar --',
   'LBL_ACTION_PARAM_CRM_RECORD_MODULE' => 'Módulo',
   'LBL_ACTION_PARAM_CRM_RECORD_RECORD' => 'Rexistro',
@@ -276,8 +286,8 @@ $mod_strings = array (
   'LBL_LAYOUT_FOOTER' => 'Pé',
 
   // Layout -> Theme
-  'LBL_THEME_GENERAL' => 'General',
-  'LBL_THEME_WEB_TITLE_TEXT' => 'Título de la página',
+  'LBL_THEME_GENERAL' => 'Xeral',
+  'LBL_THEME_WEB_TITLE_TEXT' => 'Título da páxina',
   'LBL_THEME_WEB_TITLE_VALUE' => 'Formulario Web Avanzado',
   'LBL_THEME_SUBMIT_BUTTON_TEXT' => 'Texto do botón de envío',
   'LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE' => 'Enviar',
@@ -285,7 +295,7 @@ $mod_strings = array (
   'LBL_THEME_PRIMARY_COLOR' => 'Principal',
   'LBL_THEME_PAGE_BG_COLOR' => 'Fondo de páxina',
   'LBL_THEME_FORM_BG_COLOR' => 'Fondo do formulario',
-  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Formato del texto',
+  'LBL_THEME_TYPOGRAPGY_TEXT' => 'Tipografía y texto',
   'LBL_THEME_FONT_FAMILY' => 'Fonte',
   'LBL_THEME_FONT_SIZE' => 'Tamaño',
   'LBL_THEME_TEXT_COLOR' => 'Color',
@@ -385,17 +395,17 @@ $mod_strings = array (
   'LBL_RATE_ARIA' => 'Valore con un %s',
 
   // Errors
-  'LBL_ERROR_DATABLOCK_IS_INVALID' => 'O bloque de datos ten erros',
-  'LBL_ERROR_DATABLOCK_NAME' => 'O nome interno do bloque de datos está baleiro',
-  'LBL_ERROR_DATABLOCK_TITLE' => 'O bloque de datos debe ter un nome público',
-  'LBL_ERROR_NO_DATABLOCKS' => 'Debe definirse polo menos un bloque de datos para continuar',
-  'LBL_ERROR_FIELD_IS_INVALID' => 'O campo ten erros',
-  'LBL_ERROR_FIELD_NAME' => 'O nome interno do campo está baleiro',
-  'LBL_ERROR_FIELD_LABEL' => 'O campo ten erros',
-  'LBL_ERROR_FIELD_TYPE' => 'Non se definiu o tipo de campo ou de editor no formulario',
-  'LBL_ERROR_FIELD_OPTIONS' => 'Despregable sen opcións definidas',
-  'LBL_ERROR_FIELD_FIXED_EMPTY' => 'Campo fixo sen valor asignado',
-  'LBL_OK_FIELD_IS_VALID' => 'O campo é correcto',
+  'LBL_ERROR_DATABLOCK_IS_INVALID' => 'O bloque de datos ten erros.',
+  'LBL_ERROR_DATABLOCK_NAME' => 'O nome interno do bloque de datos está baleiro.',
+  'LBL_ERROR_DATABLOCK_TITLE' => 'O bloque de datos debe ter un nome público.',
+  'LBL_ERROR_NO_DATABLOCKS' => 'Debe definirse polo menos un bloque de datos para continuar.',
+  'LBL_ERROR_FIELD_IS_INVALID' => 'O campo ten erros.',
+  'LBL_ERROR_FIELD_NAME' => 'O nome interno do campo está baleiro.',
+  'LBL_ERROR_FIELD_LABEL' => 'O campo ten erros.',
+  'LBL_ERROR_FIELD_TYPE' => 'Non se definiu o tipo de campo ou de editor no formulario.',
+  'LBL_ERROR_FIELD_OPTIONS' => 'O despregable non ten opcións definidas.',
+  'LBL_ERROR_FIELD_FIXED_EMPTY' => 'Campo fixo sen valor asignado.',
+  'LBL_OK_FIELD_IS_VALID' => 'O campo é correcto.',
 
   // -- SUBPANELS --
   'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE' => 'Respostas a formularios',
@@ -403,11 +413,11 @@ $mod_strings = array (
   // -- HOOK ACTIONS --
   // Generic 
   'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_TEXT' => 'Bloque de datos',
-  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DESC' => 'Seleccione o bloque de datos que será utilizado como parámetro na acción',
+  'LBL_CUSTOM_ACTION_DATABLOCK_PARAM_DESC' => 'Seleccione o bloque de datos que será utilizado como parámetro na acción.',
 
   // SaveRecordAction
   'LBL_SAVE_RECORD_ACTION_TITLE' => 'Gardar rexistro',
-  'LBL_SAVE_RECORD_ACTION_DESC' => 'Garda ou actualiza un rexistro a partir dos datos do formulario',
+  'LBL_SAVE_RECORD_ACTION_DESC' => 'Garda ou actualiza un rexistro a partir dos datos do formulario.',
   'LBL_SAVE_RECORD_ACTION_DUPLICATE_RULE_MATCHED_TEXT' => 'Coincidencia por campos',
   'LBL_SAVE_RECORD_ACTION_RELATION_CONFIGS_TEXT' => 'Campos de relación',
 
@@ -415,38 +425,44 @@ $mod_strings = array (
   'LBL_RELATE_RECORDS_ACTION_TITLE' => 'Guardar relación',
   'LBL_RELATE_RECORDS_ACTION_DESC' => 'Crea unha relación entre dous rexistros',
   'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_TEXT' => 'Destino da relación',
-  'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'O bloque de datos ou rexistro destino da relación a gardar',
+  'LBL_RELATE_RECORDS_ACTION_TARGET_OBJECT_DESC' => 'O bloque de datos ou rexistro destino da relación a gardar.',
+  'LBL_RELATE_RECORDS_ACTION_SOURCE_OBJECT_TEXT' => 'Orixe da relación',
   'LBL_RELATE_RECORDS_ACTION_OPTION_BLOCK_TEXT' => 'Bloque de datos destino',
   'LBL_RELATE_RECORDS_ACTION_OPTION_VALUE_TEXT' => 'ID do rexistro destino',
   'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_TEXT' => 'Relación a actualizar',
-  'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'O nome interno da relación que enlaza co bloque de datos destino',
-  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Campo relacionado',
+  'LBL_RELATE_RECORDS_ACTION_RELATIONSHIP_DESC' => 'O nome interno da relación que enlaza co bloque de datos destino.',
+  'LBL_RELATE_RECORDS_ACTION_RELATION_ID_NAME_TEXT' => 'Campo Relacionado',
 
+  // SaveDocumentBlockAction
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_TITLE' => 'Gardar Documento',
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_DESC' => 'Crear un registro de documento a partir de un bloque de documento y vincularlo a la respuesta.',
+  'LBL_SAVE_DOCUMENT_BLOCK_ACTION_FILENAME_TEXT' => 'Nome do ficheiro',
+  
   // AddToTargetListAction
   'LBL_ADD_TO_TARGET_LIST_ACTION_TITLE' => 'Agregar a Lista de Público Obxectivo',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Engade o rexistro procesado (persoa, interesado, usuario ou organización) a unha Lista de Público Obxectivo existente',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_DESC' => 'Engade o rexistro procesado (persoa, interesado, usuario ou organización) a unha Lista de Público Obxectivo existente.',
   'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_TEXT' => 'Destinatario',
-  'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'Indica o bloque de datos que contén o destinatario que se vai a engadir á Lista de Público Obxectivo',
+  'LBL_ADD_TO_TARGET_LIST_ACTION_CONTACT_TO_ADD_DESC' => 'Indica o bloque de datos que contén o destinatario que se vai a engadir á Lista de Público Obxectivo.',
   'LBL_ADD_TO_TARGET_LIST_ACTION_TARGET_LIST_RECORD_TEXT' => 'Lista de Público Obxectivo (LPO)',
   
   // SendEmailToDataBlockAction
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TITLE' => 'Enviar correo ao remitente do formulario',
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Envía un correo electrónico ao rexistro procesado (persoa, interesado, usuario ou organización) contido nun bloque de datos',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_DESC' => 'Envía un correo electrónico ao rexistro procesado (persoa, interesado, usuario ou organización) contido nun bloque de datos.',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
-  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica o bloque de datos que contén o destinatario do correo electrónico',
+  'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica o bloque de datos que contén o destinatario do correo electrónico.',
   'LBL_SEND_EMAIL_TO_DATABLOCK_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
 
   // SendEmailToAddressAction
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TITLE' => 'Enviar correo a un enderezo',
-  'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a un enderezo de correo electrónico concreto',
+  'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_DESC' => 'Envía un correo electrónico a un enderezo de correo electrónico concreto.',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_EMAIL_TEXT' => 'Correo electrónico',
   'LBL_SEND_EMAIL_TO_ADDRESS_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-
+    
   // SendEmailToAssignedAction
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_TITLE' => 'Enviar correo a un usuario asignado',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envía un correo electrónico ao usuario asignado do formulario ou dun rexistro',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_DESC' => 'Envía un correo electrónico ao usuario asignado do formulario ou dun rexistro.',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_TEXT' => 'Orixe do usuario asignado',
-  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => 'Indica o rexistro do cal se obterá o usuario asignado',
+  'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_SOURCE_DESC' => 'Indica o rexistro do cal se obterá o usuario asignado.',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_OWNER_TEXT' => 'Formulario ',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_RESPONSE_TEXT' => 'Resposta do formulario',
   'LBL_SEND_EMAIL_TO_ASSIGNED_ACTION_OPT_DATABLOCK_TEXT' => 'Bloque de datos',
@@ -456,7 +472,7 @@ $mod_strings = array (
   
   // RedirectAction
   'LBL_REDIRECT_ACTION_TITLE' => 'Ir a unha páxina web',
-  'LBL_REDIRECT_ACTION_DESC' => 'Redirecciona o navegador do usuario final a unha páxina web concreta',
+  'LBL_REDIRECT_ACTION_DESC' => 'Redirecciona o navegador do usuario final a unha páxina web concreta.',
   'LBL_REDIRECT_ACTION_URL_TEXT' => 'URL de redirección',
   'LBL_REDIRECT_ACTION_URL_DESC' => 'Indica o enderezo da páxina web á que redirixir ao usuario final. Debe incluír o protocolo (http:// o https://).',
   'LBL_REDIRECT_ACTION_METHOD_TEXT' => 'Método de envío',
@@ -469,23 +485,23 @@ $mod_strings = array (
   'LBL_REDIRECT_ACTION_SUBMIT_BUTTON' => 'Pulse aquí para continuar',
 
   // RedirectToRecordAction
-  'LBL_REDIRECT_TO_RECORD_ACTION_TITLE' => 'Ir a un registro',
-  'LBL_REDIRECT_TO_RECORD_ACTION_DESC' => 'Redirecciona el navegador del usuario final a la página de un registro concreto del CRM',
-  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_TEXT' => 'Bloque de datos del registro',
-  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_DESC' => 'Indica el bloque de datos que contiene el registro al que redirigir al usuario final.',
-  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_TEXT' => 'Vista del CRM',
+  'LBL_REDIRECT_TO_RECORD_ACTION_TITLE' => 'Ir a un rexistro',
+  'LBL_REDIRECT_TO_RECORD_ACTION_DESC' => 'Redirecciona o navegador do usuario final á páxina dun rexistro concreto do CRM.',
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_TEXT' => 'Bloque de datos do rexistro',
+  'LBL_REDIRECT_TO_RECORD_ACTION_TARGET_DATA_BLOCK_DESC' => 'Indica o bloque de datos que contén o rexistro ao que redirixir ao usuario final.',
+  'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_TEXT' => 'Vista do CRM',
   'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_DETAILVIEW_TEXT' => 'Vista de detalle',
   'LBL_REDIRECT_TO_RECORD_ACTION_CRM_VIEW_EDITVIEW_TEXT' => 'Vista de edición',
-  
+
   // RedirectSummaryPageAction
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE' => 'Mostrar resumo de datos',
-  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona o navegador do usuario final a unha páxina na que se mostran os datos facilitados',
+  'LBL_REDIRECT_SUMMARY_PAGE_ACTION_DESC' => 'Redirecciona o navegador do usuario final a unha páxina na que se mostran os datos facilitados.',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_TEXT' => 'Título da páxina',
   'LBL_REDIRECT_SUMMARY_PAGE_ACTION_TITLE_DEFAULT' => 'Resumo dos datos facilitados',
 
   // CheckSessionAction
   'LBL_CHECK_SESSION_ACTION_TITLE' => 'Verificar sesión activa e permisos',
-  'LBL_CHECK_SESSION_ACTION_DESC' => 'Bloquea o procesamento do formulario se non hai unha sesión de usuario activa ou se o usuario non ten os permisos para crear os rexistros asociados ao formulario',
+  'LBL_CHECK_SESSION_ACTION_DESC' => 'Bloquea o procesamento do formulario se non hai unha sesión de usuario activa ou se o usuario non ten os permisos para crear os rexistros asociados ao formulario.',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT' => 'Mensaxe por falta de permisos',
   'LBL_CHECK_SESSION_ACTION_PERMISSIONS_ERROR_MSG_TEXT_DEFAULT' => 'Acceso non autorizado. Non posúe os permisos necesarios para continuar.',
   'LBL_CHECK_SESSION_ACTION_CHECKING' => 'Verificando acceso e permisos...',
@@ -493,117 +509,131 @@ $mod_strings = array (
   'LBL_CHECK_SESSION_ACTION_ACTIVE_SESSION' => 'Sesión activa',
 
   // -- DEFERRED ACTIONS --
-  'LBL_PARAM_EXPIRATION_DAYS' => 'Días para caducidad',
-  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Número de días después del cual caducará la acción diferida.',
-  'LBL_PARAM_ALREADY_PROCESSED_TITLE' => 'Título para enlace ya utilizado', 
-  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DESC' => 'Título del aviso que se mostrará cuando se acceda al enlace si ya se ha utilizado.', 
-  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT' => 'Acción ya realizada', 
-  'LBL_PARAM_ALREADY_PROCESSED_TEXT' => 'Texto para enlace ya utilizado', 
-  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC' => 'Texto del aviso que se mostrará cuando se acceda al enlace si ya se ha utilizado.', 
-  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT' => 'Esta acción ya se ha completado anteriormente de forma correcta y no es necesario repetirla.',  
+  'LBL_PARAM_EXPIRATION_DAYS' => 'Días para caducidade',
+  'LBL_PARAM_EXPIRATION_DAYS_DESC' => 'Número de días despois do cal caducará a acción diferida.',
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE' => 'Título para enlace xa utilizado', 
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DESC' => 'Título do aviso que se mostrará cando se acceda ao enlace se xa foi utilizado.', 
+  'LBL_PARAM_ALREADY_PROCESSED_TITLE_DEFAULT' => 'Acción xa realizada', 
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT' => 'Texto para enlace xa utilizado', 
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DESC' => 'Texto do aviso que se mostrará cando se acceda ao enlace se xa foi utilizado.', 
+  'LBL_PARAM_ALREADY_PROCESSED_TEXT_DEFAULT' => 'Esta acción xa se completou anteriormente de forma correcta e no é necesario repetila.',  
   'LBL_PARAM_EXPIRED_TITLE' => 'Título para enlace caducado',
-  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Título del aviso que se mostrará al acceder al enlace caducado.',
+  'LBL_PARAM_EXPIRED_TITLE_DESC' => 'Título do aviso que se mostrará ao acceder ao enlace caducado.',
   'LBL_PARAM_EXPIRED_TITLE_DEFAULT' => 'Enlace caducado',
-  'LBL_PARAM_EXPIRED_TEXT' => 'Texto del enlace caducado',
-  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Texto del aviso que se mostrará al acceder al enlace caducado.',
-  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Este enlace ha caducado por motivos de seguridad.',  // EmailConfirmationAction
-  'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Confirmar correo electrónico',
-  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Genera un enlace único y lo envía por correo electrónico para que el usuario pueda confirmar su dirección de correo electrónico.',
+  'LBL_PARAM_EXPIRED_TEXT' => 'Texto do enlace caducado',
+  'LBL_PARAM_EXPIRED_TEXT_DESC' => 'Texto do aviso que se mostrará ao acceder ao enlace caducado.',
+  'LBL_PARAM_EXPIRED_TEXT_DEFAULT' => 'Este enlace caducou por motivos de seguridade.',
+  
+  // EmailConfirmationAction
+  'LBL_EMAIL_CONFIRMATION_ACTION_TITLE' => 'Coinfirmar correo electrónico',
+  'LBL_EMAIL_CONFIRMATION_ACTION_DESC' => 'Xera un enlace único e envíao por correo electrónico para que o usuario poida confirmar o seu enderezo de correo electrónico.',
   'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_SUCCESS' => 'Correo confirmado',
-  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_EMAIL_CONFIRMATION_ACTION_FLOW_ERROR' => 'Erro',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_TEXT' => 'Destinatario',
   'LBL_EMAIL_CONFIRMATION_ACTION_RECIPIENT_BLOCK_DESC' => 'Indica el bloque de datos que contiene el correo electrónico a verificar y al que se enviará el enlace de confirmación',
   'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_TEXT' => 'Plantilla de correo electrónico',
-  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'La plantilla de correo electrónico deberá tener la variable {::confirmation_url::} en el cuerpo del mensaje para que se genere el enlace de confirmación.',
+  'LBL_EMAIL_CONFIRMATION_ACTION_TEMPLATE_DESC' => 'A plantilla de correo electrónico deberá ter a variable {::confirmation_url::} no corpo da mensaxe para que se xere o enlace de confirmación.',
 
   // PaymentRouterAction
   'LBL_PAYMENT_ROUTER_ACTION_TITLE' => 'Realizar pago',
   'LBL_PAYMENT_ROUTER_ACTION_DESC' => 'Procesa o pago correspondente a un bloque de datos nunha plataforma externa.',
   'LBL_PAYMENT_ROUTER_ACTION_FLOW_SUCCESS' => 'Pago confirmado',
-  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_PAYMENT_ROUTER_ACTION_FLOW_ERROR' => 'Erro',
   'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_TEXT' => 'Compromiso de pago',
-  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona o bloque de datos co Compromiso de Pago para realizar o seu pago na plataforma externa.',
+  'LBL_PAYMENT_ROUTER_ACTION_PAYMENT_COMMITMENT_DESC' => 'Selecciona o bloque de datos co compromiso de pago para realizar o seu pago na plataforma externa.',
 
   // -- VALIDATOR ACTIONS --
   // RegexValidatorAction
   'LBL_REGEX_VALIDATOR_ACTION_TITLE' => 'Validador Regex',
-  'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Valida un campo segundo unha expresión regular',
+  'LBL_REGEX_VALIDATOR_ACTION_DESC' => 'Valida un campo segundo unha expresión regular.',
   'LBL_REGEX_VALIDATOR_ACTION_PATTERN_TEXT' => 'Expresión regular',
-  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O formato do campo non é válido',
+  'LBL_REGEX_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O formato do campo non é válido.',
 
   // EmailValidatorAction
   'LBL_EMAIL_VALIDATOR_ACTION_TITLE' => 'Validador de correo electrónico',
-  'LBL_EMAIL_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un correo electrónico válido',
-  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O enderezo de correo electrónico non é válido',
+  'LBL_EMAIL_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un correo electrónico válido.',
+  'LBL_EMAIL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O enderezo de correo electrónico non é válido.',
 
   // DniValidatorAction
   'LBL_DNI_VALIDATOR_ACTION_TITLE' => 'Validador de DNI/NIF',
-  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un DNI/NIF español válido',
-  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O DNI/NIF non é válido',
+  'LBL_DNI_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un DNI/NIF español válido.',
+  'LBL_DNI_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O DNI/NIF non é válido.',
 
   // CifValidatorAction
   'LBL_CIF_VALIDATOR_ACTION_TITLE' => 'Validador de NIF de persoa xurídica',
-  'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un NIF español de persoa xurídica válido',
-  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O NIF non é válido',
+  'LBL_CIF_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un NIF español de persoa xurídica válido.',
+  'LBL_CIF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O NIF non é válido.',
 
   // NieValidatorAction
   'LBL_NIE_VALIDATOR_ACTION_TITLE' => 'Validador de NIE',
-  'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un NIE español válido',
-  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O NIE non é válido',
+  'LBL_NIE_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un NIE español válido.',
+  'LBL_NIE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O NIE non é válido.',
 
   // CatSalutCipValidatorAction
   'LBL_CATSALUT_CIP_VALIDATOR_ACTION_TITLE' => 'Validador de CIP (CatSalut)',
-  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un Código de Identificación Persoal (CIP) de CatSalut válido',
-  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O CIP non é válido',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un Código de Identificación Persoal (CIP) de CatSalut válido.',
+  'LBL_CATSALUT_CIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O CIP non é válido.',
 
   // NafValidatorAction
   'LBL_NAF_VALIDATOR_ACTION_TITLE' => 'Validador de NUSS',
-  'LBL_NAF_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un número de afiliación á Seguridade Social (NUSS) válido',
-  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O número de afiliación á Seguridade Social non é válido',
+  'LBL_NAF_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un número de afiliación á Seguridade Social (NUSS) válido.',
+  'LBL_NAF_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O número de afiliación á Seguridade Social non é válido.',
 
   // NumericValidatorAction
   'LBL_NUMERIC_VALIDATOR_ACTION_TITLE' => 'Validador numérico',
-  'LBL_NUMERIC_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un valor numérico e que, opcionalmente, se atope dentro dun rango',
+  'LBL_NUMERIC_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un valor numérico e que, opcionalmente, se atope dentro dun rango.',
   'LBL_NUMERIC_VALIDATOR_ACTION_MIN_TEXT' => 'Valor mínimo (opcional)',
   'LBL_NUMERIC_VALIDATOR_ACTION_MAX_TEXT' => 'Valor máximo (opcional)',
-  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O valor debe ser numérico e estar entre os valores permitidos',
+  'LBL_NUMERIC_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O valor debe ser numérico e estar entre os valores permitidos.',
 
   // TextLengthValidatorAction
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_TITLE' => 'Validador de lonxitude de texto',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un texto cunha lonxitude dentro dun rango',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un texto cunha lonxitude dentro dun rango.',
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MIN_LENGTH_TEXT' => 'Lonxitude mínima (opcional)',
   'LBL_TEXT_LENGTH_VALIDATOR_ACTION_MAX_LENGTH_TEXT' => 'Lonxitude máxima (opcional)',
-  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O texto debe ter unha lonxitude entre os valores permitidos',
+  'LBL_TEXT_LENGTH_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O texto debe ter unha lonxitude entre os valores permitidos.',
 
   // IbanValidatorAction
   'LBL_IBAN_VALIDATOR_ACTION_TITLE' => 'Validador de IBAN',
-  'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un IBAN válido',
+  'LBL_IBAN_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un IBAN válido.',
   'LBL_IBAN_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O IBAN non é válido',
 
   // PhoneValidatorAction
   'LBL_PHONE_VALIDATOR_ACTION_TITLE' => 'Validador de teléfono',
-  'LBL_PHONE_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un número de teléfono español válido (polo menos 9 díxitos numéricos)',
+  'LBL_PHONE_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un número de teléfono español válido (polo menos 9 díxitos numéricos).',
   'LBL_PHONE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O teléfono non é válido',
 
   // SpanishZipValidatorAction
   'LBL_SPANISH_ZIP_VALIDATOR_ACTION_TITLE' => 'Validador de código postal',
-  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un código postal español válido (5 díxitos numéricos)',
+  'LBL_SPANISH_ZIP_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña un código postal español válido (5 díxitos numéricos).',
   'LBL_SPANISH_ZIP_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O código postal non é válido',
 
   // TrueValidatorAction
   'LBL_TRUE_VALIDATOR_ACTION_TITLE' => 'Selección obrigada',
-  'LBL_TRUE_VALIDATOR_ACTION_DESC' => 'Asegura que unha casilla estea marcada (por exemplo, a aceptación de condicións)',
-  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'É necesario aceptar este campo para continuar',
+  'LBL_TRUE_VALIDATOR_ACTION_DESC' => 'Asegura que unha casilla estea marcada (por exemplo, a aceptación de condicións).',
+  'LBL_TRUE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'É necesario aceptar este campo para continuar.',
 
   // AgeValidatorAction
   'LBL_AGE_VALIDATOR_ACTION_TITLE' => 'Validador de idade',
-  'LBL_AGE_VALIDATOR_ACTION_DESC' => 'Calcula a idade a partir da data de nacemento e verifica que estea entre a mínima e a máxima permitidas',
+  'LBL_AGE_VALIDATOR_ACTION_DESC' => 'Calcula a idade a partir da data de nacemento e verifica que estea entre a mínima e a máxima permitidas.',
   'LBL_AGE_VALIDATOR_ACTION_MIN_YEARS_TEXT' => 'Idade mínima (opcional)',
   'LBL_AGE_VALIDATOR_ACTION_MAX_YEARS_TEXT' => 'Idade máxima (opcional)',
-  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'A idade non está no rango permitido',
+  'LBL_AGE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'A idade non está no rango permitido.',
 
   // UrlValidatorAction
   'LBL_URL_VALIDATOR_ACTION_TITLE' => 'Validador de URL',
-  'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña unha URL válida',
-  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'A URL non é válida',
+  'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña unha URL válida.',
+  'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'A URL non é válida.',
+
+  // MaxDocumentSizeValidatorAction
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_TITLE' => 'Tamaño máximo de ficheiro',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Valida que o ficheiro subido non supere o tamaño máximo permitido.',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_MAX_SIZE_MB_TEXT' => 'Tamaño Máximo (MB)',
+  'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'O ficheiro supera o tamaño máximo permitido.',
+
+  // AllowedExtensionsValidatorAction
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_TITLE' => 'Extensións permitidas',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_DESC' => 'Valida que o ficheiro subido teña unha extensión permitida.',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_EXTENSIONS_TEXT' => 'Extensións permitidas (separadas por comas)',
+  'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'A extensión do ficheiro non está permitida.',
 );
