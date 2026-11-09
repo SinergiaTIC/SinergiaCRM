@@ -485,7 +485,27 @@ class ExternalReporting
                                 // Needed for every relate field, not only auto-relationships: the link name
                                 // can differ from the relationship name (e.g. 'surveyquestion' vs
                                 // 'surveyquestions_surveyquestionresponses'), which used to skip the field.
-                                $linkFieldDef = $moduleBean->getFieldDefinitions()[$fieldV['link']] ?? null;
+                                $moduleFieldDefs = $moduleBean->getFieldDefinitions();
+                                $linkFieldDef = $moduleFieldDefs[$fieldV['link']] ?? null;
+
+                                // Fallback: the relate field's link name may not exist as a field key in the module
+                                // (e.g. SurveyQuestionResponses.surveyresponse_name -> link 'survey_response', while the
+                                // link field is 'surveyresponse'). It is only used when the link name is not a valid
+                                // relationship name either, so existing links keep their previous resolution.
+                                $linkIsRelationship = !empty($db->fetchOne("select relationship_name from relationships where relationship_name='" . $db->quote($fieldV['link']) . "'"));
+                                if (!$linkFieldDef && !$linkIsRelationship && !empty($fieldV['id_name'])) {
+                                    foreach ($moduleFieldDefs as $candidateDef) {
+                                        if (
+                                            ($candidateDef['type'] ?? null) == 'link'
+                                            && ($candidateDef['id_name'] ?? null) == $fieldV['id_name']
+                                            && !empty($candidateDef['relationship'])
+                                        ) {
+                                            $linkFieldDef = $candidateDef;
+                                            break;
+                                        }
+                                    }
+                                }
+
                                 if ($linkFieldDef && !empty($linkFieldDef['relationship'])) {
                                     $fieldV['rel_name'] = $linkFieldDef['relationship'];
                                 }
