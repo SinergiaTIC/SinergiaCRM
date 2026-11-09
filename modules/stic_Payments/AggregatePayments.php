@@ -41,6 +41,12 @@
 global $db, $current_user;
 require_once 'SticInclude/Utils.php';
 
+// Raise the GROUP_CONCAT limit for this session.
+// MySQL has a small default value for group_concat_max_len (1024 bytes), which is only enough to hold
+// about 27 record IDs (36 chars each), causing truncated aggregated attendances in environments that
+// use the default value. Setting it to 1MB allows more than 28.000 IDs per payment.
+$db->query('SET SESSION group_concat_max_len = 1048576');
+
 // Select all the payments that should be processed in the current month.
 // Those not processed for any reason will be showed as warning payments.
 $includedPaymentsQuery = "SELECT
