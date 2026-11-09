@@ -4259,3 +4259,25 @@ $app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acción exter
 
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+
+// Panel de registros relacionados (barra lateral derecha)
+$app_strings['LBL_RRP_TITLE'] = 'Cronología';
+$app_strings['LBL_RRP_OPEN'] = 'Mostrar registros relacionados';
+$app_strings['LBL_RRP_CLOSE'] = 'Ocultar registros relacionados';
+$app_strings['LBL_RRP_LOADING'] = 'Cargando registros relacionados...';
+$app_strings['LBL_RRP_EMPTY'] = 'Sin registros relacionados';
+$app_strings['LBL_RRP_ERROR'] = 'No se han podido cargar los registros relacionados';
+$app_strings['LBL_RRP_RETRY'] = 'Reintentar';
+$app_strings['LBL_RRP_FILTER'] = 'Filtrar relaciones';
+$app_strings['LBL_RRP_FILTER_HINT'] = 'Relaciones mostradas';
+$app_strings['LBL_RRP_FILTER_ALL'] = 'Seleccionar todas';
+$app_strings['LBL_RRP_FILTER_NONE'] = 'Ninguna';
+$app_strings['LBL_RRP_FILTER_EMPTY'] = 'Ninguna relación seleccionada';
+$app_strings['LBL_RRP_INFO'] = 'Mostrar el resto de campos de este registro';
+$app_strings['LBL_RRP_PIN_TITLE'] = 'Fijar el panel junto a la vista de detalle';
+$app_strings['LBL_RRP_PIN_ON'] = 'Panel fijado: se mantiene junto a la vista de detalle y no tapa los subpaneles. Clic para desactivar.';
+$app_strings['LBL_RRP_PIN_OFF'] = 'Fijar el panel junto a la vista de detalle';
+$app_strings['LBL_RRP_SHRINK_TITLE'] = 'Reducir la anchura de la vista de detalle';
+$app_strings['LBL_RRP_SHRINK_ON'] = 'La vista de detalle se reduce para dejar sitio al panel. Clic para que ocupe toda la anchura.';
+$app_strings['LBL_RRP_SHRINK_OFF'] = 'Reducir la anchura de la vista de detalle';
+$app_strings['LBL_RRP_ASSIGNED_TO'] = 'Asignado a';

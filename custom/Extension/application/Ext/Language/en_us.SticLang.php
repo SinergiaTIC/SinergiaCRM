@@ -4241,3 +4241,24 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
 
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+// Related records panel (right side bar)
+$app_strings['LBL_RRP_TITLE'] = 'Chronology';
+$app_strings['LBL_RRP_OPEN'] = 'Show related records';
+$app_strings['LBL_RRP_CLOSE'] = 'Hide related records';
+$app_strings['LBL_RRP_LOADING'] = 'Loading related records...';
+$app_strings['LBL_RRP_EMPTY'] = 'No related records';
+$app_strings['LBL_RRP_ERROR'] = 'Related records could not be loaded';
+$app_strings['LBL_RRP_RETRY'] = 'Retry';
+$app_strings['LBL_RRP_FILTER'] = 'Filter relations';
+$app_strings['LBL_RRP_FILTER_HINT'] = 'Shown relations';
+$app_strings['LBL_RRP_FILTER_ALL'] = 'Select all';
+$app_strings['LBL_RRP_FILTER_NONE'] = 'Select none';
+$app_strings['LBL_RRP_FILTER_EMPTY'] = 'No relation selected';
+$app_strings['LBL_RRP_INFO'] = 'Show the other fields of this record';
+$app_strings['LBL_RRP_PIN_TITLE'] = 'Pin the panel beside the detail view';
+$app_strings['LBL_RRP_PIN_ON'] = 'Panel pinned: it stays beside the detail view and never covers the subpanels. Click to disable.';
+$app_strings['LBL_RRP_PIN_OFF'] = 'Pin the panel beside the detail view';
+$app_strings['LBL_RRP_SHRINK_TITLE'] = 'Make the detail view narrower';
+$app_strings['LBL_RRP_SHRINK_ON'] = 'The detail view becomes narrower to make room for the panel. Click to use the full width.';
+$app_strings['LBL_RRP_SHRINK_OFF'] = 'Make the detail view narrower';
+$app_strings['LBL_RRP_ASSIGNED_TO'] = 'Assigned to';

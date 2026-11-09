@@ -71,3 +71,6 @@ $entry_point_registry['stic_AWF_resumeHandler'] = array('file' => 'modules/stic_
 $entry_point_registry['sticAsyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
 
 
+
+// Entry point: returns the related records of a DetailView record as JSON.
+$entry_point_registry['sticRelatedPanel'] = array('file' => 'SticInclude/SticRelatedPanel.php', 'auth' => true);

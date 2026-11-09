@@ -4259,3 +4259,25 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
 
 // Llista dinàmica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+
+// Panell de registres relacionats (barra lateral dreta)
+$app_strings['LBL_RRP_TITLE'] = 'Cronologia';
+$app_strings['LBL_RRP_OPEN'] = 'Mostrar registres relacionats';
+$app_strings['LBL_RRP_CLOSE'] = 'Ocultar registres relacionats';
+$app_strings['LBL_RRP_LOADING'] = 'Carregant registres relacionats...';
+$app_strings['LBL_RRP_EMPTY'] = 'Sense registres relacionats';
+$app_strings['LBL_RRP_ERROR'] = "No s'han pogut carregar els registres relacionats";
+$app_strings['LBL_RRP_RETRY'] = 'Tornar a provar';
+$app_strings['LBL_RRP_FILTER'] = 'Filtrar relacions';
+$app_strings['LBL_RRP_FILTER_HINT'] = 'Relacions mostrades';
+$app_strings['LBL_RRP_FILTER_ALL'] = 'Seleccionar totes';
+$app_strings['LBL_RRP_FILTER_NONE'] = 'Cap';
+$app_strings['LBL_RRP_FILTER_EMPTY'] = 'Cap relació seleccionada';
+$app_strings['LBL_RRP_INFO'] = "Mostrar la resta de camps d'aquest registre";
+$app_strings['LBL_RRP_PIN_TITLE'] = 'Fixar el panell al costat de la vista de detall';
+$app_strings['LBL_RRP_PIN_ON'] = 'Panell fixat: es manté al costat de la vista de detall i no tapa els subpanells. Clic per desactivar.';
+$app_strings['LBL_RRP_PIN_OFF'] = 'Fixar el panell al costat de la vista de detall';
+$app_strings['LBL_RRP_SHRINK_TITLE'] = "Reduir l'amplada de la vista de detall";
+$app_strings['LBL_RRP_SHRINK_ON'] = "La vista de detall es redueix per deixar lloc al panell. Clic perquè ocupi tota l'amplada.";
+$app_strings['LBL_RRP_SHRINK_OFF'] = "Reduir l'amplada de la vista de detall";
+$app_strings['LBL_RRP_ASSIGNED_TO'] = 'Assignat a';
