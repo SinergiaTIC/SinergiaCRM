@@ -118,7 +118,7 @@ class FormHtmlGeneratorService {
         $theme = $layout->theme;
         $customCss = $this->decode($layout->custom_css);
         $primaryRgb = stic_AWFUtils::hex2rgb($theme->primary_color);
-        $btnTextColor = $this->getContrastColor($theme->primary_color);
+        $btnTextColor = stic_AWFUtils::getContrastColor($theme->primary_color);
 
         // Pre-calculation: Which icons and functionalities are actually being used?
         $usedSubtypes = [];
@@ -1380,30 +1380,6 @@ JS;
         if (!mb_detect_encoding($decoded, 'UTF-8', true)) return $data;
         
         return $decoded;
-    }
-
-    /**
-     * Calculates whether the text should be black or white according to the font color using the YIQ formula.
-     * @param string $hexColor The background color in hexadecimal format (e.g., '#ff0000' or '#f00')
-     */
-    private function getContrastColor($hexColor) {
-        $hexColor = str_replace('#', '', $hexColor);
-        
-        if (strlen($hexColor) == 3) {
-            $r = hexdec(substr($hexColor, 0, 1) . substr($hexColor, 0, 1));
-            $g = hexdec(substr($hexColor, 1, 1) . substr($hexColor, 1, 1));
-            $b = hexdec(substr($hexColor, 2, 1) . substr($hexColor, 2, 1));
-        } else {
-            $r = hexdec(substr($hexColor, 0, 2));
-            $g = hexdec(substr($hexColor, 2, 2));
-            $b = hexdec(substr($hexColor, 4, 2));
-        }
-
-        // YIQ Luminosity Formula
-        $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
-
-        // If it is dark (<128), white text. If it is clear, black text.
-        return ($yiq >= 128) ? '#000000' : '#ffffff';
     }
 
     /**
