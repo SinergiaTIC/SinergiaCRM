@@ -24,10 +24,24 @@
 require_once 'modules/Contacts/controller.php';
 class CustomContactsController extends ContactsController
 {
+    public function action_DetailView()
+    {
+        require_once 'modules/stic_Settings/Utils.php';
+        $enabled = stic_SettingsUtils::getSetting('CONTACTS_SUMMARY_VIEW_ENABLED');
+        if ($enabled == '1') {
+            $record = !empty($_REQUEST['record']) ? $_REQUEST['record'] : '';
+            SugarApplication::redirect('index.php?module=Contacts&action=SummaryView&record=' . urlencode($record));
+            return;
+        }
+
+        // Default behaviour: let the framework render the standard DetailView.
+        $this->view = 'Detail';
+    }
+
     /**
      * This action is triggered when a record is created, added or unlinked from a subpanel.
-     * If so, we will run the function updateFieldOnSubpanelChange to update the value of certain fields. 
-     */ 
+     * If so, we will run the function updateFieldOnSubpanelChange to update the value of certain fields.
+     */
     public function action_SubPanelViewer()
     {
         require_once 'SticInclude/Utils.php';

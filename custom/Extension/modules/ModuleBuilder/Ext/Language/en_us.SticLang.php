@@ -21,3 +21,4 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $mod_strings['fieldTypes']['ColorPicker'] = 'Color Picker';
+$mod_strings['LBL_SUMMARYVIEW'] = 'Summary View';
