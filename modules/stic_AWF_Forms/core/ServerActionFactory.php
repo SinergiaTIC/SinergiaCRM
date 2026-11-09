@@ -29,7 +29,7 @@ class ServerActionFactory {
 
     public function createAction(FormAction $actionConfig): ServerActionDefinition {
         
-        $actionName = $actionConfig->name;    // Ex: 'SaveRecordAction' (file and class name without extension)
+        $actionName = $actionConfig->getName();    // Ex: 'SaveRecordAction' (file and class name without extension)
         $className = $actionName;             // Ex: 'SaveRecordAction' (class name)
 
         // Define search paths with priority: custom/Extension > custom > core

@@ -151,7 +151,7 @@ class RelateRecordsAction extends HookBeanActionDefinition {
             }
             $targetBeanRef = $targetDataBlock->dataBlock->getBeanReference();
             if ($targetBeanRef === null || empty($targetBeanRef->beanId)) {
-                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetDataBlock->dataBlock->name}' has no ID. Check Action Order.");
+                return new ActionResult(ResultStatus::ERROR, $actionConfig, "Destination data block '{$targetDataBlock->dataBlock->getName()}' has no ID. Check Action Order.");
             }
             $targetBeanId = $targetBeanRef->beanId;
         } else if ($targetObjectSelector->selectedOptionName == 'value') {

@@ -40,7 +40,7 @@ abstract class ServerBeanActionDefinition extends ServerDataBlockActionDefinitio
         // Get the Bean reference saved for the Data Block 
         $beanRef = $block->dataBlock->getBeanReference();
         if ($beanRef === null) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "There is no saved Bean for DataBlock {$block->dataBlock->name}.");
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "There is no saved Bean for DataBlock {$block->dataBlock->getName()}.");
         }
         
         // Load the Bean

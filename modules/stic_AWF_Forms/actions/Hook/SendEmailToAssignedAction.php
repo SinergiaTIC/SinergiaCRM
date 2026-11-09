@@ -125,11 +125,11 @@ class SendEmailToAssignedAction extends HookActionDefinition {
         if ($selector) {
             if ($selector->selectedOptionName === 'opt_form_owner') {
                 // Option A: The Form owner
-                $sourceBean = BeanFactory::getBean('stic_AWF_Forms', $context->formId);
+                $sourceBean = BeanFactory::getBean('stic_AWF_Forms', $context->getFormId());
 
             } else if ($selector->selectedOptionName === 'opt_response') {
                 // Option B: The assigned to the response
-                $sourceBean = BeanFactory::getBean('stic_AWF_Responses', $context->responseId);
+                $sourceBean = BeanFactory::getBean('stic_AWF_Responses', $context->getResponseId());
 
             } else if ($selector->selectedOptionName === 'opt_datablock') {
                 // Option C: A Data Block (ex: The assigned of the created Contact)

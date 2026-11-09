@@ -184,7 +184,7 @@ class ExampleDeferredAction extends DeferredActionDefinition implements IWebhook
      */
     public function processWebhook(ExecutionContext $context, array $requestData): ActionResult
     {
-        $deferredCtx = $context->deferredContext;
+        $deferredCtx = $context->getDeferredContext();
         if ($deferredCtx === null) {
             return new ActionResult(ResultStatus::ERROR, null, "Critical Error: Stored deferred execution context not found.");
         }

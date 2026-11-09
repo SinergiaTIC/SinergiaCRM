@@ -30,10 +30,10 @@ if (!defined('sugarEntry') || !sugarEntry) {
  */
 class FormConfig {
     /** @var FormDataBlock[] */
-    public array $data_blocks;         // The form's data blocks
+    private array $data_blocks;        // The form's data blocks
     /** @var FormFlow[] */
-    public array $flows;               // The form's action flows
-    public ?FormLayout $layout = null; // The form layout
+    private array $flows;              // The form's action flows
+    private ?FormLayout $layout = null; // The form layout
 
     /** 
      * Creates a FormConfig instance from a JSON array. 
@@ -46,25 +46,94 @@ class FormConfig {
         $dto->data_blocks = [];
         if (isset($data['data_blocks'])) {
             foreach ($data['data_blocks'] as $dataBlockData) {
-                $formDataBlock = FormDataBlock::fromJsonArray($dto, $dataBlockData);
-                $dto->data_blocks[$formDataBlock->id] = $formDataBlock;
+                $formDataBlock = FormDataBlock::fromJsonArray($dataBlockData);
+                $dto->addDataBlock($formDataBlock);
             }
         }
 
         $dto->flows = [];
         if (isset($data['flows'])) {
             foreach ($data['flows'] as $flowData) {
-                $formFlow = FormFlow::fromJsonArray($dto, $flowData);
-                $dto->flows[$formFlow->id] = $formFlow;
+                $formFlow = FormFlow::fromJsonArray($flowData);
+                $dto->addFlow($formFlow);
             }
         }
 
         if (isset($data['layout'])) {
-            $dto->layout = FormLayout::fromJsonArray($dto, $data['layout']);
+            $dto->setLayout(FormLayout::fromJsonArray($dto, $data['layout']));
         } else {
-            $dto->layout = new FormLayout();     // Default layout
-            $dto->layout->theme = new FormTheme();
+            $dto->setLayout(new FormLayout());     // Default layout
+            $dto->getLayout()->theme = new FormTheme();
         }
         return $dto;
+    }
+
+    /**
+     * Returns the action flows of the form.
+     * @return FormFlow[] The action flows (copy by value)
+     */
+    public function getFlows(): array {
+        return $this->flows;
+    }
+
+    /**
+     * Returns a flow by its ID.
+     * @param string $id The flow ID
+     * @return ?FormFlow The flow or null if not found
+     */
+    public function getFlowById(string $id): ?FormFlow {
+        return $this->flows[$id] ?? null;
+    }
+
+    /**
+     * Adds an action flow to the form.
+     * Private: only the construction process (fromJsonArray) should mutate the flows.
+     * @param FormFlow $flow The flow to add
+     */
+    private function addFlow(FormFlow $flow): void {
+        $this->flows[$flow->getId()] = $flow;
+    }
+
+    /**
+     * Returns the data blocks of the form.
+     * @return FormDataBlock[] The data blocks (copy by value)
+     */
+    public function getDataBlocks(): array {
+        return $this->data_blocks;
+    }
+
+    /**
+     * Returns a data block by its ID.
+     * @param string $id The data block ID
+     * @return ?FormDataBlock The data block or null if not found
+     */
+    public function getDataBlockById(string $id): ?FormDataBlock {
+        return $this->data_blocks[$id] ?? null;
+    }
+
+    /**
+     * Adds a data block to the form.
+     * Private: only the construction process (fromJsonArray) should mutate the data blocks.
+     * @param FormDataBlock $dataBlock The data block to add
+     */
+    private function addDataBlock(FormDataBlock $dataBlock): void {
+        $this->data_blocks[$dataBlock->getId()] = $dataBlock;
+    }
+
+    /**
+     * Returns the form layout.
+     * @return ?FormLayout The form layout
+     */
+    public function getLayout(): ?FormLayout {
+        return $this->layout;
+    }
+
+    /**
+     * Sets the form layout.
+     * Private: only the construction process (fromJsonArray) should mutate the layout.
+     * @param ?FormLayout $layout The form layout
+     */
+    private function setLayout(?FormLayout $layout): void {
+        $this->layout = $layout;
     }
 }
