@@ -363,6 +363,7 @@
                     shrink: (status.user_prefs.shrink === null || status.user_prefs.shrink === undefined) ? null : !!status.user_prefs.shrink
                 }
                 : { pinned: null, shrink: null };
+            applyVisualState();
             return status;
         }).catch(function () {
             state.statusRequest = null;
@@ -970,7 +971,7 @@
         if (key === 'pinned' && prefs.pinned) {
             body += '&shrink=1';
         }
-        fetch(endpointUrl({ panel_action: 'saveprefs' }), {
+        fetch(endpointUrl({ panel_action: 'saveprefs', module: context.module }), {
             method: 'POST',
             credentials: 'same-origin',
             headers: {
