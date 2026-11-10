@@ -2200,6 +2200,78 @@ class stic_AwfConfiguration {
     // These are skipped when generating RelateRecordsAction later.
     const handledRelationshipNames = new Set();
 
+    // Detect FK injection cycles during action generation.
+    // For each cycle in the FK dependency graph (block A informs B, B informs C,
+    // C informs A), break ONE edge so that the broken relationship is handled by
+    // RelateRecordsAction (post-save FK injection) instead of SaveRecordAction
+    // (pre-save FK injection). This avoids "FK to a not-yet-saved block" errors.
+    const deferredFkEdges = new Set();
+
+    // 1. Collect all candidate FK edges (initiator block -> target block)
+    const fkEdgeCandidates = [];
+    this.data_blocks.forEach(block => {
+      if (!block.module || block.is_document_block) return;
+      const allRels = this.getAllDataBlockRelationships();
+      const blockRels = allRels[block.id] || [];
+      const activeRels = blockRels.filter(r => r.datablock_orig && r.datablock_dest);
+      const moduleInfo = utils.getModuleInformation(block.module);
+      activeRels.forEach(r => {
+        if (r.datablock_orig !== block.id) return;
+        if (!r.name) return;
+        if (r.initiator_id && r.initiator_id !== block.id) return;
+        if (r.datablock_orig === r.datablock_dest) return;
+        const relateField = moduleInfo && Object.values(moduleInfo.fields).find(
+          f => f.type === 'relate' && f.options === r.name
+        );
+        if (relateField && relateField.id_name) {
+          fkEdgeCandidates.push({
+            initiatorBlockId: block.id,
+            targetBlockId: r.datablock_dest,
+            relName: r.name,
+            key: `${block.id}|${r.datablock_dest}|${r.name}`
+          });
+        }
+      });
+    });
+
+    // 2. Iteratively break one cycle edge at a time until the FK dependency graph is acyclic.
+    while (true) {
+      const blockSet = new Set(this.data_blocks.map(b => b.id));
+      const inDeg = new Map();
+      blockSet.forEach(id => inDeg.set(id, 0));
+      fkEdgeCandidates.forEach(edge => {
+        if (deferredFkEdges.has(edge.key)) return;
+        inDeg.set(edge.initiatorBlockId, (inDeg.get(edge.initiatorBlockId) || 0) + 1);
+      });
+
+      // Kahn's algorithm
+      const sortedBlocks = [];
+      const q = [];
+      inDeg.forEach((deg, id) => { if (deg === 0) q.push(id); });
+      while (q.length > 0) {
+        const cur = q.shift();
+        sortedBlocks.push(cur);
+        fkEdgeCandidates.forEach(edge => {
+          if (deferredFkEdges.has(edge.key)) return;
+          if (edge.targetBlockId === cur) {
+            inDeg.set(edge.initiatorBlockId, inDeg.get(edge.initiatorBlockId) - 1);
+            if (inDeg.get(edge.initiatorBlockId) === 0) q.push(edge.initiatorBlockId);
+          }
+        });
+      }
+
+      // Find a non-deferred edge whose initiator is still unsorted (part of a cycle)
+      const cycleEdge = fkEdgeCandidates.find(edge =>
+        !deferredFkEdges.has(edge.key) &&
+        !sortedBlocks.includes(edge.initiatorBlockId) &&
+        !sortedBlocks.includes(edge.targetBlockId)
+      );
+      if (!cycleEdge) break; // no more cycles
+
+      // Break this single edge
+      deferredFkEdges.add(cycleEdge.key);
+    }
+
     // Generate SAVE actions for each DataBlock.
     // Uses SaveRecordAction when the block has outgoing 1-N relationships,
     // so that FK values are injected before the first save.
@@ -2239,6 +2311,8 @@ class stic_AwfConfiguration {
         if (r.initiator_id && r.initiator_id !== block.id) return false;
         // Self-referencing: cannot inject FK before save (target not yet saved)
         if (r.datablock_orig === r.datablock_dest) return false;
+        // Skip cycle-breaking (deferred) edges: handled as RelateRecordsAction instead of FK injection.
+        if (deferredFkEdges.has(`${block.id}|${r.datablock_dest}|${r.name}`)) return false;
         const relateField = moduleInfo && Object.values(moduleInfo.fields).find(
           f => f.type === 'relate' && f.options === r.name
         );
@@ -2291,7 +2365,8 @@ class stic_AwfConfiguration {
       if (block.save_action_id) {
         const allRels = this.getAllDataBlockRelationships();
         (allRels[block.id] || [])
-          .filter(r => r.datablock_orig && r.datablock_dest && handledRelationshipNames.has(r.name) && r.initiator_id === block.id)
+          .filter(r => r.datablock_orig && r.datablock_dest && handledRelationshipNames.has(r.name) && r.initiator_id === block.id && 
+                       !deferredFkEdges.has(`${block.id}|${r.datablock_dest}|${r.name}`))
           .forEach(r => {
             const targetBlock = this.data_blocks.find(b => b.id === r.datablock_dest);
             if (targetBlock && targetBlock.save_action_id && targetBlock.save_action_id !== block.save_action_id) {
@@ -2348,7 +2423,8 @@ class stic_AwfConfiguration {
       // Both directions are skipped since the initiator's FK injection is sufficient.
       activeRels.forEach(rel => {
         if (rel.datablock_orig === blockId) {
-          if (handledRelationshipNames.has(rel.name)) return;
+          // Skip only if handled by SaveRecordAction AND not deferred (cycle-breaking): deferred edges must be handled by RelateRecordsAction.
+          if (handledRelationshipNames.has(rel.name) && !deferredFkEdges.has(`${blockId}|${rel.datablock_dest}|${rel.name}`)) return;
           // Skip non-initiator: N-M is bidirectional (one action suffices),
           // 1-N fallback FK injection is done on the initiator side.
           if (rel.initiator_id && rel.initiator_id !== blockId) return;
@@ -2455,7 +2531,9 @@ class stic_AwfConfiguration {
       let remaining = new Set(flow.actions.filter(a => !sorted.includes(a.id)).map(a => a.id));
 
       // For each remaining action, find a requisite that is also remaining (the cycle edge)
-      remaining.forEach(actionId => {
+      // Break only ONE cycle edge per cycle instead of all.
+      let brokenOne = false;
+      for (const actionId of remaining) {
         let action = actionMap.get(actionId);
         let cycleReq = (action.requisite_actions || []).find(r => remaining.has(r));
         if (cycleReq) {
@@ -2464,8 +2542,10 @@ class stic_AwfConfiguration {
           action.requisite_actions = action.requisite_actions.filter(r => r !== cycleReq);
           inDegree.set(actionId, inDegree.get(actionId) - 1);
           if (inDegree.get(actionId) === 0) queue.push(actionId);
+          brokenOne = true;
+          break; // break only ONE edge per cycle
         }
-      });
+      }
 
       // Continue BFS after breaking cycles
       while (queue.length > 0) {
@@ -2570,7 +2650,9 @@ class stic_AwfConfiguration {
       let remaining = new Set(flow.actions.filter(a => !sorted.includes(a.id)).map(a => a.id));
 
       // For each remaining action, find a requisite that is also remaining (the cycle edge)
-      remaining.forEach(actionId => {
+      // Break only ONE cycle edge per cycle instead of all.
+      let brokenOne = false;
+      for (const actionId of remaining) {
         let action = actionMap.get(actionId);
         let cycleReq = (action.requisite_actions || []).find(r => remaining.has(r));
         if (cycleReq) {
@@ -2579,8 +2661,10 @@ class stic_AwfConfiguration {
           action.requisite_actions = action.requisite_actions.filter(r => r !== cycleReq);
           inDegree.set(actionId, inDegree.get(actionId) - 1);
           if (inDegree.get(actionId) === 0) queue.push(actionId);
+          brokenOne = true;
+          break; // break only ONE edge per cycle
         }
-      });
+      }
 
       // Continue BFS after breaking cycles
       while (queue.length > 0) {
