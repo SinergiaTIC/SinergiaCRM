@@ -182,6 +182,7 @@ $app_list_strings['moduleList']['stic_Signers'] = 'Firmants';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transaccions';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productes financers';
 $app_list_strings['moduleList']['stic_Assets'] = 'Actius';
+$app_list_strings['moduleList']['stic_Whistleblowing'] = 'Denúncies';
 $app_list_strings['moduleList']['stic_AWF_Response_Details'] = 'Detalls de respostes a formularis';
 $app_list_strings['moduleList']['stic_AWF_Responses'] = 'Respostes a formularis';
 $app_list_strings['moduleList']['stic_AWF_Links'] = 'Enllaços de formularis';
@@ -4256,6 +4257,19 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
+
+// Estats del canal de denúncies
+$app_list_strings['stic_whistleblowing_status_list']['new'] = 'Nou';
+$app_list_strings['stic_whistleblowing_status_list']['working'] = 'En procés de revisió';
+$app_list_strings['stic_whistleblowing_status_list']['solved'] = 'Resolt';
+$app_list_strings['stic_whistleblowing_status_list']['archived'] = 'Arxivat';
+
+// Tipus del canal de denúncies
+$app_list_strings['stic_whistleblowing_type_list']['fraud'] = 'Frau';
+$app_list_strings['stic_whistleblowing_type_list']['harassment'] = 'Assetjament';
+$app_list_strings['stic_whistleblowing_type_list']['data_privacy'] = 'Protecció de dades';
+$app_list_strings['stic_whistleblowing_type_list']['others'] = 'Altres';
+
 
 // Llista dinàmica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

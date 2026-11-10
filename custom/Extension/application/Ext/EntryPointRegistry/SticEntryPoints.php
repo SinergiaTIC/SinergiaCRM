@@ -70,4 +70,5 @@ $entry_point_registry['stic_AWF_resumeHandler'] = array('file' => 'modules/stic_
 // Entry point for async ListView count
 $entry_point_registry['sticAsyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
 
-
+// Entry point for whistleblowing (public channel)
+$entry_point_registry['sticWhistleblowing'] = array('file' => 'modules/stic_Whistleblowing/sticWhistleblowingEntryPoint.php', 'auth' => false);

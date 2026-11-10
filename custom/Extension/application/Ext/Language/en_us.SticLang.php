@@ -179,6 +179,7 @@ $app_list_strings['moduleList']['stic_Places'] = 'Places';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transactions';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['moduleList']['stic_Assets'] = 'Assets';
+$app_list_strings['moduleList']['stic_Whistleblowing'] = 'Whistleblowing';
 $app_list_strings['moduleList']['stic_AWF_Response_Details'] = 'Form Response Details';
 $app_list_strings['moduleList']['stic_AWF_Responses'] = 'Form Responses';
 $app_list_strings['moduleList']['stic_AWF_Links'] = 'Form Links';
@@ -4238,6 +4239,18 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Calls';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Emails';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
+
+// Estats del canal de denúncies
+$app_list_strings['stic_whistleblowing_status_list']['new'] = 'New';
+$app_list_strings['stic_whistleblowing_status_list']['working'] = 'Under review';
+$app_list_strings['stic_whistleblowing_status_list']['solved'] = 'Solved';
+$app_list_strings['stic_whistleblowing_status_list']['archived'] = 'Archived';
+
+// Whistleblowing channel categories
+$app_list_strings['stic_whistleblowing_type_list']['fraud'] = 'Fraud';
+$app_list_strings['stic_whistleblowing_type_list']['harassment'] = 'Harassment';
+$app_list_strings['stic_whistleblowing_type_list']['data_privacy'] = 'Data privacy';
+$app_list_strings['stic_whistleblowing_type_list']['others'] = 'Others';
 
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

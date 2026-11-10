@@ -248,6 +248,8 @@ $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Proyecto actual';
 // Productos financieros
 $mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productos financieros';
 
+// Canal de denuncias
+$mod_strings['LBL_STIC_WHISTLEBLOWING_CONTACTS_FROM_STIC_WHISTLEBLOWING_TITLE'] = 'Denuncias';
 // Cadenas Área Privada
 $mod_strings['LBL_STIC_PA_USERNAME'] = 'Usuario área privada';
 $mod_strings['LBL_STIC_PA_PASSWORD'] = 'Contraseña área privada';
