@@ -87,4 +87,8 @@ $mod_strings = array(
     'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_ASSETS_TITLE' => 'Activo',
     'LBL_MUST_RELATE_TO_A_FAMILY_OR_A_CONTACT' => 'Hay que indicar una persona o una unidad familiar.',
     'LBL_COLOR_INFO' => 'Color con el que aparecerá el seguimiento en el Calendario de Actividades.',
+    'LBL_LOCATION' => 'Lugar',
+    'LBL_ORDER_OF_THE_DAY' => 'Orden del día',
+    'LBL_DEVELOPMENT' => 'Desarrollo de la reunión',
+    'LBL_AGREEMENTS' => 'Acuerdos',
 );

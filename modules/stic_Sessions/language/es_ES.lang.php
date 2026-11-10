@@ -78,4 +78,9 @@ $mod_strings = array (
     'LBL_END_DATE_ERROR' => 'La fecha de finalización debe ser posterior a la fecha de inicio.',
     'LBL_NAME_INFO' => 'Cualquier cambio realizado en el nombre de la sesión se propagará al nombre de las asistencias relacionadas.',
     'LBL_COLOR_INFO' => 'Color con el que aparecerá la sesión en el Calendario de Actividades.',
+    'LBL_LOCATION' => 'Lugar',
+    'LBL_MODALITY' => 'Modalidad',
+    'LBL_ORDER_OF_THE_DAY' => 'Orden del día',
+    'LBL_DEVELOPMENT' => 'Desarrollo de la reunión',
+    'LBL_AGREEMENTS' => 'Acuerdos',
 );
