@@ -101,7 +101,9 @@ Hecho: la fila se pone **verde con «Sí»** y los contadores saltan. No hay que
 
 ### 5.4. Si ha venido todo el grupo
 
-Si todos han asistido, no marques uno por uno:
+Si todos han asistido, no marques uno por uno. Esta captura muestra cómo se ve la lista con personas **pendientes** (gris / "Pendiente") y el botón **«Han venido todos»** en la parte superior derecha:
+
+![Pendientes y Han venido todos](img/08-pendientes-han-venido-todos.png)
 
 1. Pulsa el botón azul **«Han venido todos»** (encima de la lista, a la derecha).
 2. Confirma en el aviso que aparece:
@@ -147,6 +149,8 @@ No pasa nada: la lista **se refresca sola** después de cada acción. Y si otra 
 El pasador está pensado **para el bolsillo**: listas grandes, botones de toque generoso y sin menús enrollados.
 
 ![Vista móvil](img/07-movil.png)
+
+![Vista móvil con pendientes](img/09-movil-pendientes.png)
 
 > 💡 En la tablet, si el pasador "pierde la sesión" del CRM (te pide de nuevo usuario y contraseña), entra y volverás a la misma pantalla donde estabas.
 
