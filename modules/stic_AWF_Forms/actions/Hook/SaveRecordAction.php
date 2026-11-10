@@ -269,7 +269,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 default:
                     // Do nothing, the bean remains as it was
                     if ($onDuplicateAction !== OnDuplicateAction::SKIP) {
-                        $GLOBALS['log']->warning('Line ' . __LINE__ . ': ' . __METHOD__ . ": Unexpected on_duplicate action '{$onDuplicateAction->name}' for module '{$module}'. Applying SKIP.");
+                        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Unexpected on_duplicate action '{$onDuplicateAction->name}' for module '{$module}'. Applying SKIP.");
                     }
                     $modifications = $this->skipBean($bean, $block);
                     $modificationType = BeanModificationType::SKIPPED;

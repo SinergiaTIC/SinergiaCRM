@@ -56,7 +56,7 @@ class FormDuplicateRule {
         try {
             $dto->on_duplicate = OnDuplicateAction::from($dupData);
         } catch (\ValueError $e) {
-            $GLOBALS['log']->warning('Line ' . __LINE__ . ': ' . __METHOD__ . ": OnDuplicateAction: invalid value '{$dupData}'. Defaulting to ENRICH.");
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": OnDuplicateAction: invalid value '{$dupData}'. Defaulting to ENRICH.");
             $dto->on_duplicate = OnDuplicateAction::ENRICH;
         }
 

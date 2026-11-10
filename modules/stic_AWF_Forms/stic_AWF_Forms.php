@@ -21,6 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 class stic_AWF_Forms extends Basic
 {
     public $new_schema = true;
@@ -103,8 +106,8 @@ class stic_AWF_Forms extends Basic
 
         $configurationPristine = is_string($this->configuration ?? null) ? $this->configuration : null;
         // New records have no fetched value, so any set configuration counts as new.
-        $configurationModified = $configurationPristine !== null
-            && $configurationPristine !== ($this->fetched_row['configuration'] ?? null);
+        $configurationModified = $configurationPristine !== null && 
+                                 $configurationPristine !== ($this->fetched_row['configuration'] ?? null);
 
         // Normalize entity-like sequences inside JSON values (e.g. AJAX-provided record
         // names containing &quot;) so the single html_entity_decode of the read paths
@@ -112,6 +115,7 @@ class stic_AWF_Forms extends Basic
         if ($configurationModified) {
             require_once "modules/stic_AWF_Forms/Utils.php";
             $configurationPristine = stic_AWF_FormsUtils::normalizeConfigurationJson($configurationPristine);
+            $this->configuration = $configurationPristine;
         }
 
         $saveResult = parent::save($check_notify);
