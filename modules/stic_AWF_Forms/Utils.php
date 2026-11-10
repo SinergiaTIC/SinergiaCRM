@@ -123,17 +123,19 @@ class stic_AWF_FormsUtils {
                 'inViews' => false,
             ];
 
-            // For relate fields with 'link' property: link options to their relationship name
+            // For relate fields with 'link' property: always expose link_name so fixed-value
+            // relate fields can resolve the link in RelateRecordsAction, but only populate
+            // 'options' when id_name is a real db-backed column (suitable for 1-N FK injection).
             if ($arr['type'] === 'relate' && isset($arr['link'])) {
                 $linkName = $arr['link'];
                 $linkRelName = $fieldDefs[$linkName]['relationship'] ?? '';
                 if (!empty($linkRelName) && isset($result['relationships'][$linkRelName])) {
+                    $result['fields'][$fieldName]['link_name'] = $linkName;
                     $idName = $arr['id_name'] ?? '';
                     $idFieldDef = ($idName !== '' && isset($fieldDefs[$idName])) ? $fieldDefs[$idName] : null;
                     $isDbBacked = $idFieldDef && (($idFieldDef['source'] ?? 'db') !== 'non-db');
                     if ($isDbBacked) {
                         $result['fields'][$fieldName]['options'] = $linkRelName;
-                        $result['fields'][$fieldName]['link_name'] = $linkName;
                     }
                 }
             }
