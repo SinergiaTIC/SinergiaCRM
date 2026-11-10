@@ -84,6 +84,24 @@ class stic_AWF_Links extends Basic
 
         return false;
     }
+
+    public function cleanBean()
+    {
+        // Protect the submitted data JSON from HTML sanitization.
+        // submitted_data stores an internal JSON document (not user HTML). cleanBean()
+        // runs purify_html() on it, treating it as HTML: tag-like sequences inside field
+        // labels/values (e.g. 'A&B<s>xxx:</' snippets in a form label or a record value)
+        // are stripped or mangled ('<script>' even empties the whole document) and the
+        // JSON ends up corrupted. The read path (getLinkDataHtml) re-decodes entities,
+        // so keeping the raw JSON is safe. Same pattern as stic_AWF_Forms::cleanBean().
+
+        $submittedDataBackup = $this->submitted_data ?? null;
+        $this->submitted_data = null;
+        parent::cleanBean();
+        if ($submittedDataBackup !== null) {
+            $this->submitted_data = $submittedDataBackup;
+        }
+    }
 	
     /**
      * Enable "edit" only in automated saving.

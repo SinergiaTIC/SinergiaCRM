@@ -180,6 +180,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 }
                 $bean = $foundBean; // Duplicate found
                 $onDuplicateAction = $rule->on_duplicate;
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Duplicate found for module '{$module}' (rule fields: [" . implode(',', $rule->fields) . "]) — applying on_duplicate action '{$onDuplicateAction->value}'.");
 
                 $fieldLabels = [];
                 foreach ($rule->fields as $fName) {
@@ -228,6 +229,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
         } else {
             // Duplicate found, apply the rule
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": on_duplicate action '{$onDuplicateAction->name}' for module '{$module}'.");
             switch ($onDuplicateAction) {
                 case OnDuplicateAction::ERROR:
                     // Generate an error and stop the flow
@@ -266,6 +268,9 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 case OnDuplicateAction::SKIP:
                 default:
                     // Do nothing, the bean remains as it was
+                    if ($onDuplicateAction !== OnDuplicateAction::SKIP) {
+                        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Unexpected on_duplicate action '{$onDuplicateAction->name}' for module '{$module}'. Applying SKIP.");
+                    }
                     $modifications = $this->skipBean($bean, $block);
                     $modificationType = BeanModificationType::SKIPPED;
                     $injectedFks = false;

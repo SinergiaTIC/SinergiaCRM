@@ -52,8 +52,8 @@ class stic_AWF_FormsUtils {
             'relationships' => []
         ];
         // Set Text
-        $result['text'] = translate($moduleName);
-        $result['textSingular'] = $app_list_strings['moduleListSingular'][$moduleName] ?? $result['text'];
+        $result['text'] = html_entity_decode(translate($moduleName), ENT_QUOTES, 'UTF-8');
+        $result['textSingular'] = html_entity_decode($app_list_strings['moduleListSingular'][$moduleName] ?? $result['text'], ENT_QUOTES, 'UTF-8');
 
         // Fill Studio information
         require_once 'modules/ModuleBuilder/Module/StudioBrowser.php';
@@ -112,7 +112,7 @@ class stic_AWF_FormsUtils {
 
             $result['fields'][$fieldName] = [
                 'name' => $fieldName,
-                'text' => rtrim(trim(translate($arr['vname'] ?? '', $moduleName)), ":"),
+                'text' => html_entity_decode(rtrim(trim(translate($arr['vname'] ?? '', $moduleName)), ":"), ENT_QUOTES, 'UTF-8'),
                 'type' => $arr['type'],
                 'required' => isset($arr['required']) && $arr['required'],
                 'default' => $arr['default'] ?? null,
@@ -305,6 +305,7 @@ class stic_AWF_FormsUtils {
                         $text = translate($otherModule) ?: $relName;
                     }
                 }
+                $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
 
                 $result[$relName] = [
                     'name'              => $relName,
@@ -355,7 +356,7 @@ class stic_AWF_FormsUtils {
                 $text = translate($f['module']) ?: $fieldName;
             }
             $suffix = translate('LBL_AWF_FIELD_SUFFIX', 'stic_AWF_Forms');
-            $text .= ' (' . $suffix . ')';
+            $text = html_entity_decode($text . ' (' . $suffix . ')', ENT_QUOTES, 'UTF-8');
 
             $result[$virtualName] = [
                 'name'              => $virtualName,
@@ -421,6 +422,7 @@ class stic_AWF_FormsUtils {
                 if (empty($baseText)) {
                     $baseText = translate($moduleName) ?: $fieldName;
                 }
+                $baseText = html_entity_decode($baseText, ENT_QUOTES, 'UTF-8');
 
                 // Skip if a canonical relationship already covers the same text to the same module_dest.
                 // This prevents redundant inverse virtuals (e.g. Leads' report_to_name → Contacts
@@ -430,7 +432,7 @@ class stic_AWF_FormsUtils {
                     continue;
                 }
 
-                $suffix = translate('LBL_AWF_FIELD_SUFFIX', 'stic_AWF_Forms');
+                $suffix = html_entity_decode(translate('LBL_AWF_FIELD_SUFFIX', 'stic_AWF_Forms'), ENT_QUOTES, 'UTF-8');
                 $text = $baseText . ' (' . $suffix . ')';
 
                 $GLOBALS['log']->debug(__METHOD__ . ": Fourth source — FOUND relate field '{$fieldName}' in '{$otherModuleName}' pointing to '{$moduleName}', creating virtual '{$virtualName}' with text '{$text}'.");
@@ -567,8 +569,8 @@ class stic_AWF_FormsUtils {
             if (!isset($beanList[$key]) || in_array($key, $blackList)) {
                 continue;
             }
-            $text = translate($key);
-            $textSingular = $app_list_strings['moduleListSingular'][$key] ?? $text;
+            $text = html_entity_decode(translate($key), ENT_QUOTES, 'UTF-8');
+            $textSingular = html_entity_decode($app_list_strings['moduleListSingular'][$key] ?? $text, ENT_QUOTES, 'UTF-8');
             $enabled[$key] = ["name" => $key, "text" => $text, "textSingular" => $textSingular, "inStudio" => false, "icon" => ""];
         }
 
@@ -611,6 +613,11 @@ class stic_AWF_FormsUtils {
             $displayField = self::detectDisplayField($bean);
             $text = isset($bean->$displayField) ? $bean->$displayField : $bean->id;
 
+            // BeanFactory::getBean() applies to_html() on fetched fields, so a record name
+            // containing quotes (&quot;) or other entities would end up stored as-is inside
+            // the configuration JSON and break its parsing on the next editor load.
+            $text = html_entity_decode((string) $text, ENT_QUOTES, 'UTF-8');
+
             $results[] = [
                 'id' => $bean->id,
                 'text' => $text,
@@ -618,6 +625,40 @@ class stic_AWF_FormsUtils {
         }
 
         return $results;
+    }
+
+    /**
+     * Decodes HTML-entity-like sequences inside JSON values (e.g. &quot; arriving encoded
+     * from AJAX responses) so that the single html_entity_decode applied by the read paths
+     * does not break the JSON structure on the next editor load. The replacement is limited
+     * to leaf strings; the rest of the document stays byte-for-byte identical.
+     */
+    public static function normalizeConfigurationJson(string $json): string
+    {
+        $data = json_decode($json, true);
+        if (!is_array($data)) {
+            return $json;
+        }
+        $out = $json;
+        $seen = [];
+        array_walk_recursive($data, function (&$value) use (&$out, &$seen): void {
+            if (!is_string($value) || strpos($value, '&') === false || isset($seen[$value])) {
+                return;
+            }
+            $seen[$value] = true;
+            $decoded = $value;
+            while (($next = html_entity_decode($decoded, ENT_QUOTES, 'UTF-8')) !== $decoded) {
+                $decoded = $next;
+            }
+            if ($decoded !== $value) {
+                $encodedOld = json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                $encodedNew = json_encode($decoded, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                if (is_string($encodedOld) && is_string($encodedNew)) {
+                    $out = str_replace($encodedOld, $encodedNew, $out);
+                }
+            }
+        });
+        return $out;
     }
 
     /**
