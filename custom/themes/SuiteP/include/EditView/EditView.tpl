@@ -230,7 +230,11 @@
 {sugar_getscript file="cache/include/javascript/sugar_grp_yui_widgets.js"}
 <script type="text/javascript">
 var {{$form_name}}_tabs = new YAHOO.widget.TabView("{{$form_name}}_tabs");
-{{$form_name}}_tabs.selectTab(0);
+{* STIC-Custom 20260504 - Fix Console error in calendar *}
+{* https://github.com/SinergiaTIC/SinergiaCRM/pull/1008 *}
+{{* {{$form_name}}_tabs.selectTab(0); *}}
+try {ldelim} {{$form_name}}_tabs.selectTab(0); {rdelim} catch(e) {ldelim}{rdelim}
+{* End STIC-Custom *}
 </script>
 {{/if}}
 <script type="text/javascript">
@@ -272,8 +276,27 @@ $(document).ready(function() {ldelim}
     };
 
     var selectTabOnErrorInputHandle = function(inputHandle) {
-        var tab = $(inputHandle).closest('.tab-pane-NOBOOTSTRAPTOGGLER').attr('id').match(/^tab-content-(.*)$/)[1];
-        selectTabOnError(tab);
+        // STIC-Custom 20260727 EPS - Mark tab when error is in panel
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1353
+        // var tab = $(inputHandle).closest('.tab-pane-NOBOOTSTRAPTOGGLER').attr('id').match(/^tab-content-(.*)$/)[1];
+        // selectTabOnError(tab);
+        var $tabPane = $(inputHandle).closest('.tab-pane-NOBOOTSTRAPTOGGLER');
+        var tab;
+        if ($tabPane.length) {
+            tab = $tabPane.attr('id').match(/^tab-content-(.*)$/)[1];
+        } else {
+            var $tabPanel = $(inputHandle).closest("[class*='tab-panel-']");
+            if ($tabPanel.length) {
+                var tabMatch = $tabPanel.attr('class').match(/tab-panel-(\d+)/);
+                if (tabMatch) {
+                    tab = tabMatch[1];
+                }
+            }
+        }
+        if (typeof tab !== 'undefined') {
+            selectTabOnError(tab);
+        }
+        // END STIC-Custom 20260727 EPS
     };
 
 

@@ -92,6 +92,27 @@ $selectedActions = array(
 // Clear and rebuild database
 VardefManager::clearVardef();
 global $beanList, $beanFiles, $moduleList, $current_language;
+
+// Force OPcache revalidation for the rest of this request.
+// The merge and the rebuild below regenerate/rewrite PHP files (module registry
+// modules.ext.php, relationship metadata, per-module compiled vardefs,
+// TableDictionary). Until opcache.revalidate_freq elapses, PHP may keep
+// serving the previously compiled versions, so the rebuild and the repair
+// below would not see new modules, fields or relationships, and would still
+// finish with status success (empty repair).
+// opcache_reset()/opcache_invalidate() are blocked by opcache.restrict_api on
+// managed hosts, but ini_set() of the runtime opcache settings is not affected
+// by restrict_api: forcing revalidation on every include makes this worker
+// recompile the fresh content and update the shared OPcache entries, so every
+// other worker serves the new code from now on. ini_set values are
+// automatically restored when the request ends.
+if (extension_loaded('Zend OPcache')) {
+    @ini_set('opcache.validate_timestamps', '1');
+    @ini_set('opcache.revalidate_freq', '0');
+    @ini_set('opcache.file_update_protection', '0');
+    $infos[] = 'Forced OPcache revalidation for this request';
+}
+
 $mi->rebuild_all(true);
 require_once('modules/Administration/QuickRepairAndRebuild.php');
 $mod_strings = return_module_language($current_language, 'Administration');
@@ -103,6 +124,7 @@ $rac->clearDashlets();
 $rac->clearVardefs();
 $rac->clearJsLangFiles();
 $rac->rebuildAuditTables();
+$rac->clearThemeCache();
 
 // Enable throwing exceptions for database errors.
 $db->setDieOnError(true);
@@ -130,14 +152,26 @@ $cache_key = 'app_list_strings.' . ($defaultLanguage ?? 'en_us');
 sugar_cache_clear($cache_key);
 sugar_cache_reset();
 
+// Rebuild JavaScript grouped files (sugar_grp1.js, etc.)
+$_REQUEST['js_rebuild_concat'] = 'rebuild';
+$_REQUEST['root_directory'] = dirname(__FILE__);
+require_once 'jssource/minify.php';
+
 // Execute post-installation scripts
 runScripts($scriptsVersion, 'post_install.txt', $errors, $infos);
 
 // Apply custom SCSS theme settings (configurable via skipCssRebuild parameter, defaults to false)
 if (!filter_var($_REQUEST['skipCssRebuild'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
     $_REQUEST['keepUserTheme'] = 1;
+    ob_start();
     include_once('SticInclude/SticCustomScss.php');
+    ob_clean();
 }
+
+// Restore Roles and ACLs to ensure non-admin users can access modules
+ob_start();
+require_once 'modules/ACL/install_actions.php';
+ob_clean();
 
 // Cleanup application resources
 sugar_cleanup(false);

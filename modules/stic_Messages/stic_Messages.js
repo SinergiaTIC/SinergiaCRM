@@ -32,6 +32,10 @@ function onClickMassSendMessagesButton() {
 }
 
 function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}') {
+    if (source && typeof source.blur === 'function') {
+      source.blur();
+    }
+
     let numRecordsSelected = $(".selectedRecords.value").eq(0).text();
 
     if (numRecordsSelected > getMessagesLimit()) {
@@ -96,24 +100,102 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
         data: paramsPost,
         success: function(data) {
         var panelBody = $('<div class="content">').append(data).find('#EditView').parent();
+        // Check if we are in the context of the Conversations subpanel to apply some defaults to the compose view
+        var sourceModule = $(source).attr('data-module') || '';
+        var isConversationsMessagesSubpanel =
+          paramsPost.relatedModule === 'stic_Conversations'
+          && (
+            sourceModule === 'stic_Conversations'
+            || $(source).closest('#whole_subpanel_stic_conversations_stic_messages').length > 0
+          );
+
+        function applyConversationSubpanelModalDefaults($panel) {
+          if (!isConversationsMessagesSubpanel) {
+            return;
+          }
+
+          var $form = $panel.find('#EditView');
+          if (!$form.length) {
+            return;
+          }
+
+          var conversationId = $(source).attr('data-record-id') || paramsPost.relatedId || '';
+          var conversationName = $(source).attr('data-name') || '';
+
+          if (conversationId) {
+            $form.find('#stic_conversations_ida').val(conversationId);
+          }
+          if (conversationName) {
+            $form.find('#stic_conversations_stic_messages_name').val(conversationName);
+          }
+
+          if (typeof initSubpanelConversationLogic === 'function') {
+            initSubpanelConversationLogic($form);
+          }
+        }
+
+        // Hide conversation type when context module is not Contacts
+        function applyConversationTypeVisibilityByModule($panel, moduleName) {
+          if (moduleName === 'Contacts' || moduleName === 'stic_Conversations') {
+            return;
+          }
+
+          var $typeSelect = $panel.find('select[name="type"]');
+          if (!$typeSelect.length) {
+            return;
+          }
+
+          var $conversationOption = $typeSelect.find('option[value="private_area"]');
+          if (!$conversationOption.length) {
+            return;
+          }
+
+          if ($typeSelect.val() === 'private_area') {
+            var fallbackValue = '';
+            $typeSelect.find('option').each(function () {
+              var value = $(this).val();
+              if (value !== 'private_area') {
+                fallbackValue = value;
+                return false;
+              }
+            });
+
+            if (fallbackValue) {
+              $typeSelect.val(fallbackValue).trigger('change');
+            }
+          }
+
+          $conversationOption.remove();
+        }
+
+        applyConversationTypeVisibilityByModule(panelBody, paramsPost.relatedModule);
+
         var dataPhone = $(source).attr('data-phone');
         var dataName = $(source).attr('data-name');
         // If the attribute data-record-id is present, then we come from subpanel, else we come from mass send or Edit View.
           var dataRecordId = $(source).attr('data-record-id');
-        if (typeof dataRecordId !== 'undefined' && dataRecordId !== '') {
+        if (typeof dataRecordId !== 'undefined' && dataRecordId !== '' && !isConversationsMessagesSubpanel) {
           panelBody.find('#phone').val(dataPhone);
           panelBody.find('#parent_name').val(dataName);
         }
-        else {
+        else if (typeof dataRecordId === 'undefined' || dataRecordId === '') {
           // Mass send messages
           phoneList = '';
           namesList = '';
           idsList = '';
           targetCount = 0;
+          totalRecords = 0;
+          singleRecordName = '';
+          singleRecordId = '';
           panelBody.find('.phone-compose-view-to-list').each(function () {
             dataPhone = $(this).attr('data-record-phone');
             dataId = $(this).attr('data-record-id');
             dataName = $(this).attr('data-record-name');
+            totalRecords++;
+            if (totalRecords === 1) {
+              singleRecordName = dataName;
+              singleRecordId = dataId;
+            }
             if (dataPhone !== '') {
               if (targetCount > 0 ){
                 phoneList += ',';
@@ -127,6 +209,12 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
             }
           });
           panelBody.find('#phone').val(phoneList);
+          if (totalRecords === 1) {
+            setTimeout(function() {
+              panelBody.find('#parent_name').val(singleRecordName);
+              panelBody.find('#parent_id').val(singleRecordId);
+            }, 200);
+          }
           function replacePhoneField(panelBody) {
             var originalPhone = panelBody.find('#phone');
             if (!originalPhone) return; // Exit if the original phone input doesn't exist
@@ -144,27 +232,51 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
           // $("#EditView .dcQuickEdit td.buttons").append("<input type='hidden' name='mass_ids' id='mass_ids' value='{$idsList}'>");
           panelBody.find('.dcQuickEdit td.buttons').append("<input type='hidden' name='mass_ids' id='mass_ids' value='"+idsList+"'>");
           // panelBody.find('#mass_ids').val(idsList);
-          // If this is a mass send with more than one target, disable WhatsAppWeb option and force SMS
+          // If this is a mass send with more than one target, disable whatsapp_web option and force SMS
             if (targetCount > 1) {
               var $typeSelect = panelBody.find('select[name="type"]');
               if ($typeSelect.length) {
-                // Disable WhatsApp option and change to SMS if WhatsAppWeb is selected
-                $typeSelect.find('option[value="WhatsAppWeb"]').prop('disabled', true);
-                if ($typeSelect.val() === 'WhatsAppWeb') {
-                  const smsOption = $typeSelect.find('option[value="SevenSmsHelper"]');
-                  $typeSelect.val(smsOption.length ? 'SevenSmsHelper' : $typeSelect.find('option:not(:disabled)').first().val());
+                // Disable WhatsApp option and change to SMS if whatsapp_web is selected
+                $typeSelect.find('option[value="whatsapp_web"]').prop('disabled', true);
+                if ($typeSelect.val() === 'whatsapp_web') {
+                  const smsOption = $typeSelect.find('option[value="sms"]');
+                  $typeSelect.val(smsOption.length ? 'sms' : $typeSelect.find('option:not(:disabled)').first().val());
                 }
               }
             }
         }
           SUGAR.ajaxUI.hideLoadingPanel();
 
-          $('<div>').append(panelBody).dialog({
+          var $dialogWrapper = $('<div>').append(panelBody).dialog({
               modal: true,
               // title: SUGAR.language.get(buttonModule, 'LBL_NEW_FORM_TITLE'),
               title: '',
               width: '80%',
+              open: function() {
+                // Focus message field when modal is opened
+                var focusMessageField = function() {
+                  var $messageField = $dialogWrapper.find('#message');
+                  if ($messageField.length) {
+                    $messageField.trigger('focus');
+                  }
+                };
+
+                setTimeout(focusMessageField, 0);
+                $(window).off('focus.sticMessagesModal').on('focus.sticMessagesModal', function() {
+                  setTimeout(focusMessageField, 0);
+                });
+              },
+              close: function() {
+                $(window).off('focus.sticMessagesModal');
+                $(this).dialog('destroy').remove();
+              }
           });
+          // If the modal is opened from the Conversations subpanel, we need to apply some defaults and hide some fields
+          if (isConversationsMessagesSubpanel) {
+            setTimeout(function() {
+              applyConversationSubpanelModalDefaults($dialogWrapper);
+            }, 0);
+          }
           if (typeof namesList !== 'undefined') {
             $('#namesList').val(namesList);
           }
@@ -181,42 +293,6 @@ function openMessagesModal(source, paramsJson = '{"return_action":"DetailView"}'
 
 $(function() {
   $.fn.qtip.zindex = 26000;
-
-  // Disable editing for WhatsAppWeb messages
-  if (typeof viewType !== 'undefined' && (viewType() === 'detail' || viewType() === 'edit')) {
-    var messageType = $('select[name="type"]').val() || $('input[name="type"]').val();
-    var messageId = $('input[name="record"]').val();
-    
-    // If editing an existing WhatsAppWeb message, disable all fields
-    if (messageId && messageType === 'WhatsAppWeb') {
-      // Disable all form fields except parent relationship
-      $('#EditView input:not([name="parent_name"]):not([name="parent_id"]):not([name="parent_type"])').prop('disabled', true);
-      $('#EditView select:not([name="parent_type"])').prop('disabled', true);
-      $('#EditView textarea').prop('disabled', true);
-      
-      // Hide save button, only allow cancel/back
-      $('#EditView input[type="submit"][name="button"]').hide();
-      
-      // Add a notice
-      if ($('#EditView .whatsapp-readonly-notice').length === 0) {
-        $('#EditView').prepend('<div class="whatsapp-readonly-notice" style="background: #fff3cd; border: 1px solid #ffc107; padding: 10px; margin-bottom: 10px; border-radius: 4px;"><strong>Aviso:</strong> Los mensajes de WhatsApp Web no pueden ser editados una vez enviados.</div>');
-      }
-    }
-  }
-
-  // Force status to 'sent' when type is WhatsAppWeb
-  $('select[name="type"]').on('change', function() {
-    if ($(this).val() === 'WhatsAppWeb') {
-      $('select[name="status"]').val('sent').prop('disabled', true);
-    } else {
-      $('select[name="status"]').prop('disabled', false);
-    }
-  });
-
-  // On page load, check if type is WhatsAppWeb
-  if ($('select[name="type"]').val() === 'WhatsAppWeb') {
-    $('select[name="status"]').val('sent').prop('disabled', true);
-  }
 
   if (typeof viewType !== 'undefined' && viewType() === 'detail') {
 

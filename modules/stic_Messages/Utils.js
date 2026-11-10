@@ -22,6 +22,20 @@
 /* HEADER */
 // Set module name
 var module = "stic_Messages";
+
+// Helper to get UI config for a message type
+function sticGetHelperConfig(type) {
+  if (typeof STIC_HELPERS_CONFIG !== 'undefined' && STIC_HELPERS_CONFIG[type]) {
+    return STIC_HELPERS_CONFIG[type];
+  }
+  return null;
+}
+
+function sticIsConversationType(type) {
+  var config = sticGetHelperConfig(type);
+  return config && config.fixedStatus === 'sent' && config.lockSender && config.hideAttachment;
+}
+
 /* VIEWS CUSTOM CODE */
 
 var sticViewType = originView = viewType();
@@ -39,9 +53,66 @@ switch (sticViewType) {
       var messageType = $('#type').val();
       
       addEditCreateTemplateLinks();
+
+      // Function to lock sender field and sync with assigned user
+      function lockSenderField() {
+        $('#sender').prop('disabled', true);
+        $('#sender').attr('readonly', true);
+        $('#sender').css('background', '#F8F8F8');
+        $('#sender').css('border-color', '#E2E7EB');
+
+        syncSenderWithAssignedUser();
+      }
+
+      // Function to lock sender and status fields when type is WhatsAppWeb or private_area
+      function lockSenderAndStatus(statusValue) {
+        $('#status').val(statusValue);
+        $('#status').prop('disabled', true);
+        $('#status').attr('readonly', true);
+        $('#status').css('background', '#F8F8F8');
+        $('#status').css('border-color', '#E2E7EB');
+
+        lockSenderField();
+      }
+
+      // Keep sender synchronized with assigned user when config says lockSender
+      function syncSenderWithAssignedUser() {
+        var type = $('#type').val();
+        var config = sticGetHelperConfig(type);
+        if (!config || !config.lockSender) {
+          return;
+        }
+
+        var assignedUserName = ($('#assigned_user_name').val() || '').trim();
+        if (assignedUserName) {
+          $('#sender').val(assignedUserName);
+        }
+      }
+
+      // Function to unlock sender and status fields for new messages that are not of type WhatsAppWeb or conversation
+      function unlockSenderAndStatusForNewMessage() {
+        $('#status').prop('disabled', false);
+        $('#status').attr('readonly', false);
+        $('#status').css('background', '');
+        $('#status').css('border-color', '');
+
+        $('#sender').prop('disabled', false);
+        $('#sender').attr('readonly', false);
+        $('#sender').css('background', '');
+        $('#sender').css('border-color', '');
+      }
+
+      // Function to unlock status field only (for types with lockSender but no fixedStatus)
+      function unlockStatusField() {
+        $('#status').prop('disabled', false);
+        $('#status').attr('readonly', false);
+        $('#status').css('background', '');
+        $('#status').css('border-color', '');
+      }
       
-      // WhatsAppWeb messages are always sent and cannot be edited
-      if (messageType === 'WhatsAppWeb' && $('#EditView input[name="record"]').val()) {
+      // Messages with fixedStatus are always sent and cannot be edited
+      var currentConfig = sticGetHelperConfig(messageType);
+      if (currentConfig && currentConfig.fixedStatus && $('#EditView input[name="record"]').val()) {
         // Disable all fields except parent relationship
         $('#type').prop('disabled', true);
         $('#type').attr('readonly', true);
@@ -76,9 +147,6 @@ switch (sticViewType) {
         $("#template_id_edit_link").addClass("ui-state-disabled");
         $("#template_id_create_link").addClass("ui-state-disabled");
 
-        // Hide save button for WhatsAppWeb messages
-        $('#EditView input[type="submit"][name="button"]').hide();
-        
       }
       
       if ($('#EditView input[name="record"]').val()) {
@@ -119,59 +187,93 @@ switch (sticViewType) {
         $("#template_id_create_link").addClass("ui-state-disabled");
       }
 
-      // When type changes to WhatsAppWeb, force status to 'sent'
-      $('#type').on('change', function() {
-        if ($(this).val() === 'WhatsAppWeb') {
-          $('#status').val('sent');
-          $('#status').prop('disabled', true);
-          $('#status').attr('readonly', true);
-          $('#status').css('background', '#F8F8F8');
-          $('#status').css('border-color', '#E2E7EB');
-          
-          // For WhatsAppWeb, sender is automatically set to assigned user
-          $('#sender').prop('disabled', true);
-          $('#sender').attr('readonly', true);
-          $('#sender').css('background', '#F8F8F8');
-          $('#sender').css('border-color', '#E2E7EB');
-          
-          // Get assigned user name and set it as sender
-          var assignedUserName = $('#assigned_user_name').val();
-          if (assignedUserName) {
-            $('#sender').val(assignedUserName);
-          }
-        } else if (!$('#EditView input[name="record"]').val()) {
-          // Only enable status and sender if it's a new message and not WhatsAppWeb
-          $('#status').prop('disabled', false);
-          $('#status').attr('readonly', false);
-          $('#status').css('background', '');
-          $('#status').css('border-color', '');
-          
-          // Re-enable sender field for other types
-          if (state === 'draft' || !$('#EditView input[name="record"]').val()) {
-            $('#sender').prop('disabled', false);
-            $('#sender').attr('readonly', false);
-            $('#sender').css('background', '');
-            $('#sender').css('border-color', '');
-          }
-        }
-      });
+      var originalStatusOptions = [];
 
-      // On page load, if type is WhatsAppWeb, force status to 'sent' and set sender
-      if ($('#type').val() === 'WhatsAppWeb') {
-        $('#status').val('sent');
-        
-        // Disable and set sender for WhatsAppWeb
-        $('#sender').prop('disabled', true);
-        $('#sender').attr('readonly', true);
-        $('#sender').css('background', '#F8F8F8');
-        $('#sender').css('border-color', '#E2E7EB');
-        
-        // Get assigned user name and set it as sender if not already set
-        var assignedUserName = $('#assigned_user_name').val();
-        if (assignedUserName && !$('#sender').val()) {
-          $('#sender').val(assignedUserName);
+      function filterStatusOptionsByType() {
+        var type = $('#type').val();
+        var config = sticGetHelperConfig(type);
+        var $statusSelect = $('#status');
+        if (!$statusSelect.length) {
+          return;
+        }
+
+        if (originalStatusOptions.length === 0) {
+          $statusSelect.find('option').each(function () {
+            originalStatusOptions.push({ value: $(this).val(), text: $(this).text() });
+          });
+        }
+
+        var currentValue = $statusSelect.val();
+        var allowedStatuses = config && config.allowedStatus;
+
+        $statusSelect.empty();
+
+        originalStatusOptions.forEach(function (opt) {
+          if (!allowedStatuses || allowedStatuses.indexOf(opt.value) !== -1) {
+            $statusSelect.append($('<option>').val(opt.value).text(opt.text));
+          }
+        });
+
+        if ($statusSelect.find('option[value="' + currentValue + '"]').length) {
+          $statusSelect.val(currentValue);
         }
       }
+
+      // When type changes, lock/unlock sender and status according to config
+      $('#type').on('change', function() {
+        var type = $(this).val();
+        var config = sticGetHelperConfig(type);
+        if (config) {
+          if (config.fixedStatus) {
+            lockSenderAndStatus(config.fixedStatus);
+          } else if (config.lockSender) {
+            unlockStatusField();
+            lockSenderField();
+          } else if (!$('#EditView input[name="record"]').val()) {
+            unlockSenderAndStatusForNewMessage();
+          }
+        } else if (!$('#EditView input[name="record"]').val()) {
+          unlockSenderAndStatusForNewMessage();
+        }
+        // Refresh templates list when type changes
+        try { refreshTemplateOptions(); } catch (e) { console.log('refreshTemplateOptions error', e); }
+        toggleParentTypeForConversation();
+        filterStatusOptionsByType();
+      });
+
+      // On page load, apply config-based behavior
+      var loadConfig = sticGetHelperConfig($('#type').val());
+      if (loadConfig && loadConfig.fixedStatus) {
+        lockSenderAndStatus(loadConfig.fixedStatus);
+      } else if (loadConfig && loadConfig.lockSender) {
+        lockSenderField();
+      }
+      filterStatusOptionsByType();
+
+  // On load, refresh templates select according to current type
+  try { refreshTemplateOptions(); } catch (e) { console.log('refreshTemplateOptions error', e); }
+      // Keep sender synced with assigned user for types that lock sender
+      function bindAssignedUserChanges() {
+        var $assignedUserName = $('#assigned_user_name');
+        var $assignedUserId = $('#assigned_user_id');
+        var lastAssignedUserName = $assignedUserName.val() || '';
+
+        $assignedUserName.add($assignedUserId).on('change keyup blur', syncSenderWithAssignedUser);
+
+        $('#btn_assigned_user_name, #btn_clr_assigned_user_name').on('click', function() {
+          setTimeout(syncSenderWithAssignedUser, 300);
+        });
+
+        setInterval(function() {
+          var currentName = $assignedUserName.val() || '';
+          if (currentName !== lastAssignedUserName) {
+            lastAssignedUserName = currentName;
+            syncSenderWithAssignedUser();
+          }
+        }, 500);
+      }
+
+      bindAssignedUserChanges();
 
       if($("#mass_ids").val()) {
         $('#parent_name').prop('disabled', true);
@@ -204,6 +306,38 @@ switch (sticViewType) {
       // Supress bottom margin
       infoElement.parent().css('margin-bottom', '0px');
 
+      // Toggle conversation fields visibility and validation based on type and new conversation checkbox
+      toggleConversationFieldsByType();
+      toggleParentTypeForConversation();
+      $('#type').on('change', toggleConversationFieldsByType);
+      $('#new_conversation[type="checkbox"]').on('change', toggleConversationFieldsByType);
+
+      // Conversations messages are always sent and cannot be edited
+      if(messageType === 'private_area'  && $('#EditView input[name="record"]').val()) {
+          var $newConversationCheckbox = $('#new_conversation[type="checkbox"]');
+          var $conversationName = $('#stic_conversations_stic_messages_name');
+
+          $newConversationCheckbox.prop('disabled', true);
+
+          $conversationName.prop('disabled', true);
+          $conversationName.attr('readonly', true);
+          $conversationName.css('background', '#F8F8F8');
+          $conversationName.css('border-color', '#E2E7EB');
+
+          $('#btn_stic_conversations_stic_messages_name').prop('disabled', true);
+          $('#btn_clr_stic_conversations_stic_messages_name').prop('disabled', true);
+          $('#btn_stic_conversations_stic_messages_name').hide();
+          $('#btn_clr_stic_conversations_stic_messages_name').hide();
+      }
+
+      // If we are in the conversations subpanel quick create, initialize conversation logic
+      var $wrapper = $('#whole_subpanel_stic_conversations_stic_messages');
+      if ($wrapper.length > 0) {
+        var $form = $wrapper.find('form').first();
+        if ($form.length > 0) {
+          initSubpanelConversationLogic($form);
+        }
+      }
 
     });
 
@@ -213,9 +347,17 @@ switch (sticViewType) {
     // Get record Id 
     recordId = $("#formDetailView input[type=hidden][name=record]").val();
     var messageType = $("#type").val();
+
+    // If message is not of conversation type, hide conversation field and new conversation checkbox
+    if (!sticIsConversationType(messageType)) {
+      $('div[data-field="new_conversation"]').hide();
+      $('div[data-field="stic_conversations_stic_messages_name"]').hide();
+    }
     
-    // Define button content - Don't show retry button for WhatsAppWeb messages
-    if ($("#status").val() != 'sent' && messageType !== 'WhatsAppWeb') {
+    // Define button content - Don't show retry button if config says no retry
+    var detailConfig = sticGetHelperConfig(messageType);
+    var canRetry = detailConfig ? detailConfig.canRetry : true;
+    if ($("#status").val() != 'sent' && canRetry) {
       var buttons = {
         retry: {
           id: "bt_retry_detailview",
@@ -249,6 +391,55 @@ switch (sticViewType) {
     break;
 }
 
+function refreshTemplateOptions() {
+  var messageType = ($('#type').val() || '').toLowerCase();
+  var templateType = 'sms';
+  if (messageType.indexOf('whatsapp') !== -1) {
+    templateType = 'whatsapp';
+  } else if (messageType.indexOf('sms') !== -1) {
+    templateType = 'sms';
+  }
+
+  $.ajax({
+    url: 'index.php?module=stic_Messages&action=FillDynamicListMessageTemplate',
+    method: 'POST',
+    data: { type: templateType },
+    dataType: 'json'
+  }).done(function(res) {
+    if (!res || !res.success) {
+      console.log('No templates response or error', res);
+      return;
+    }
+    var $select = $('#template_id');
+    if ($select.length === 0) return;
+    var current = $select.val();
+    $select.empty();
+    $select.append($('<option>').val('').text(SUGAR.language.get('app_strings', 'LBL_NONE')));
+    if (Array.isArray(res.data)) {
+      res.data.forEach(function(t) {
+        $select.append($('<option>').val(t.id).text(t.name));
+      });
+    } else {
+      for (var id in res.data) {
+        if (!res.data.hasOwnProperty(id)) continue;
+        $select.append($('<option>').val(id).text(res.data[id]));
+      }
+    }
+    if (current) {
+      $select.val(current);
+    }
+    template_change();
+  }).fail(function(xhr) {
+    console.log('Error fetching templates', xhr);
+  });
+}
+
+function decodeHtmlEntities(text) {
+    var txt = document.createElement('textarea');
+    txt.innerHTML = text;
+    return txt.value;
+}
+
 function onTemplateSelect(args) {
     var confirmed = function (args) {
       var args = JSON.parse(args);
@@ -258,7 +449,15 @@ function onTemplateSelect(args) {
         emailTemplateId: $("#template_id").val()
       }, function (jsonResponse) {
         var response = JSON.parse(jsonResponse);
-        $("#message").val(response.data.body);
+        $("#message").val(decodeHtmlEntities(response.data.body));
+        var tplType = $('#type').val();
+        var tplConfig = sticGetHelperConfig(tplType);
+        if (tplConfig && tplConfig.lockMessageOnTemplate) {
+          $('#message').prop('disabled', true);
+          $('#message').attr('readonly', true);
+          $('#message').css('background', '#F8F8F8');
+          $('#message').css('border-color', '#E2E7EB');
+        }
       });
       set_return(args);
     };
@@ -306,9 +505,10 @@ function showMessageBox(title, detail, onOk = null, onCancel = null) {
 function onClickRetryMessagesButton(recordId) {
   var status = $("#status").val();
   var messageType = $("#type").val();
+  var retryConfig = sticGetHelperConfig(messageType);
   
-  if(messageType === 'WhatsAppWeb') {
-    showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), 'Los mensajes de WhatsApp Web no se pueden reintentar. Ya fueron enviados mediante el cliente.');
+  if(retryConfig && !retryConfig.canRetry) {
+    showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_WHATSAPP_WEB_RETRY'));
   }
   else if(status === 'sent') {
     showMessageBox(SUGAR.language.get('stic_Messages', 'LBL_ERROR'), SUGAR.language.get('stic_Messages', 'LBL_ALREADY_SENT'));
@@ -393,7 +593,10 @@ function addEditCreateTemplateLinks() {
 }
 
 function open_email_template_form() {
-  URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
+  var typeVal = $("#type").val().toLowerCase();
+  var templateType = typeVal.indexOf('whatsapp') !== -1 ? 'whatsapp' : 'sms';
+
+  URL = "index.php?module=EmailTemplates&action=EditView&type=" + templateType;
   URL += "&inboundEmail=false&show_js=1";
 
   windowName = 'email_template';
@@ -407,7 +610,10 @@ function open_email_template_form() {
 }
 
 function edit_email_template_form() {
-  URL = "index.php?module=EmailTemplates&action=EditView&type=sms";
+  var typeVal = $("#type").val().toLowerCase();
+  var templateType = typeVal.indexOf('whatsapp') !== -1 ? 'whatsapp' : 'sms';
+
+  URL = "index.php?module=EmailTemplates&action=EditView&type=" + templateType;
 
   var field = document.getElementById('template_id');
   if (field.options[field.selectedIndex].value != 'undefined') {
@@ -452,6 +658,14 @@ function template_change() {
   console.log('template_chage #' + $("#template_id").val() +'#');
   if ($("#template_id").val() == "") {
     $("#template_id_edit_link").hide();
+    var tplType = $('#type').val();
+    var tplConfig = sticGetHelperConfig(tplType);
+    if (tplConfig && tplConfig.lockMessageOnTemplate) {
+      $('#message').prop('disabled', false);
+      $('#message').attr('readonly', false);
+      $('#message').css('background', '');
+      $('#message').css('border-color', '');
+    }
   } else {
     $("#template_id_edit_link").show();
   }
@@ -468,7 +682,15 @@ function updateMessageBox (args) {
         emailTemplateId: $('#template_id').val()
       }, function (jsonResponse) {
         var response = JSON.parse(jsonResponse);
-        $("#message").val(response.data.body);
+        $("#message").val(decodeHtmlEntities(response.data.body));
+        var msgType = $('#type').val();
+        var msgConfig = sticGetHelperConfig(msgType);
+        if (msgConfig && msgConfig.lockMessageOnTemplate) {
+          $('#message').prop('disabled', true);
+          $('#message').attr('readonly', true);
+          $('#message').css('background', '#F8F8F8');
+          $('#message').css('border-color', '#E2E7EB');
+        }
       });
       set_return(args);
     };
@@ -493,3 +715,267 @@ function updateMessageBox (args) {
       mb.remove();
     });
   }
+
+/**
+ * Opens a WhatsApp conversation window for a given record.
+ * Can be called from any module included in stic_Messages messageable modules.
+ *
+ * @param {String} recordId   The bean id
+ * @param {String} parentType The module name (Contacts, Leads, Accounts, Employees...)
+ */
+function openWhatsAppConversation(recordId, parentType) {
+    var parentName = $("#formDetailView input[type=hidden][name=full_name]").val()
+                  || $("h1.module-title-text").text().trim()
+                  || '';
+    var url = 'index.php?module=stic_Messages&action=conversation'
+            + '&parent_id='   + encodeURIComponent(recordId)
+            + '&parent_type=' + encodeURIComponent(parentType)
+            + '&parent_name=' + encodeURIComponent(parentName);
+    window.open(
+        url,
+        'whatsapp_conv_' + recordId,
+        'width=480,height=700,resizable=yes,scrollbars=yes'
+    );
+}
+var phoneInitiallyRequired = null;
+
+// Function to clear conversation selection and related fields
+function clearConversationSelection() {
+  $('#stic_conversations_stic_messages_name').val('');
+  $('#stic_conversations_ida').val('');
+}
+
+// Function to clear conversation subject field
+function clearConversationSubject() {
+  $('#stic_conversation_subject').val('');
+}
+
+// Function to toggle visibility and validation of conversation fields based on type and new conversation checkbox
+function toggleConversationFieldsByType() {
+  var formName = getFormName();
+  var type = $('#type').val();
+  var isConversationType = sticIsConversationType(type);
+  var $newConversationCheckbox = $('#new_conversation[type="checkbox"]');
+  var isNewConversationChecked = $newConversationCheckbox.is(':checked');
+  var conversationLabel = SUGAR.language.get(module, 'LBL_STIC_CONVERSATIONS_STIC_MESSAGES');
+  var conversationSubjectLabel = SUGAR.language.get(module, 'LBL_LIST_SUBJECT');
+  var phoneLabel = SUGAR.language.get(module, 'LBL_PHONE');
+
+  var $conversationSubjectRow = $('#stic_conversation_subject').closest('.edit-view-row-item');
+  if (!$conversationSubjectRow.length) {
+    $conversationSubjectRow = $('div[data-field="stic_conversation_subject"]');
+  }
+
+  // Hidden by default; only shown for conversation + new conversation.
+  $conversationSubjectRow.hide();
+
+  if (!$newConversationCheckbox.length || !$('#stic_conversations_stic_messages_name').length || !$('#stic_conversation_subject').length || !$('#phone').length) {
+    return;
+  }
+
+  if (phoneInitiallyRequired === null && typeof getRequiredStatus === 'function') {
+    phoneInitiallyRequired = getRequiredStatus('phone');
+  }
+
+  var $newConversationRow = $newConversationCheckbox.closest('.edit-view-row-item');
+  var $conversationRow = $('#stic_conversations_stic_messages_name').closest('.edit-view-row-item');
+  var $phoneRequiredMark = $('#phone').closest('.edit-view-row-item').find('.label .required');
+
+  if (isConversationType) {
+    $newConversationRow.show();
+    addRequiredMark('new_conversation');
+
+    removeFromValidate(formName, 'phone');
+    removeRequiredMark('phone');
+    $phoneRequiredMark.hide();
+
+    if (isNewConversationChecked) {
+      $conversationRow.hide();
+      $conversationSubjectRow.show();
+
+      removeFromValidate(formName, 'stic_conversations_stic_messages_name');
+      removeRequiredMark('stic_conversations_stic_messages_name');
+      removeFromValidate(formName, 'stic_conversation_subject');
+      addToValidate(formName, 'stic_conversation_subject', 'varchar', true, conversationSubjectLabel);
+      addRequiredMark('stic_conversation_subject');
+
+      $('#stic_conversations_ida').val('');
+      clearConversationSelection();
+      clearConversationSubject();
+
+      $('#stic_conversations_stic_messages_name').prop('readonly', false).attr('disabled', false);
+      $('#stic_conversation_subject').prop('readonly', false).attr('disabled', false);
+      $('#btn_stic_conversations_stic_messages_name, #btn_clr_stic_conversations_stic_messages_name').hide();
+    } else {
+      $conversationRow.show();
+      $conversationSubjectRow.hide();
+      removeFromValidate(formName, 'stic_conversations_stic_messages_name');
+      addToValidate(formName, 'stic_conversations_stic_messages_name', 'relate', true, conversationLabel);
+      addRequiredMark('stic_conversations_stic_messages_name');
+
+      removeFromValidate(formName, 'stic_conversation_subject');
+      removeRequiredMark('stic_conversation_subject');
+      clearConversationSubject();
+
+      $('#stic_conversations_stic_messages_name').prop('readonly', false).attr('disabled', false);
+      $('#btn_stic_conversations_stic_messages_name, #btn_clr_stic_conversations_stic_messages_name').show();
+    }
+  } else {
+    $newConversationRow.hide();
+    $conversationRow.hide();
+    $conversationSubjectRow.hide();
+
+    $newConversationCheckbox.prop('checked', false);
+    clearConversationSelection();
+    clearConversationSubject();
+
+    removeFromValidate(formName, 'stic_conversations_stic_messages_name');
+    removeRequiredMark('stic_conversations_stic_messages_name');
+    removeFromValidate(formName, 'stic_conversation_subject');
+    removeRequiredMark('stic_conversation_subject');
+    removeFromValidate(formName, 'new_conversation');
+    removeRequiredMark('new_conversation');
+
+    if (phoneInitiallyRequired === true) {
+      $phoneRequiredMark.show();
+      removeRequiredMark('phone');
+      removeFromValidate(formName, 'phone');
+      if (typeof getRequiredStatus === 'function' && !getRequiredStatus('phone')) {
+        addToValidate(formName, 'phone', 'phone', true, phoneLabel);
+      }
+    }
+  }
+}
+// Function to toggle parent type field based on conversation type and mass update
+function toggleParentTypeForConversation() {
+  var type = $('#type').val();
+  var isConversationType = sticIsConversationType(type);
+  var $parentType = $('#parent_type');
+
+  if (!$parentType.length) {
+    return;
+  }
+
+  if (isConversationType) {
+    if ($parentType.val() !== 'Contacts') {
+      $parentType.val('Contacts').trigger('change');
+    }
+
+    $parentType.prop('disabled', true);
+    $parentType.attr('readonly', true);
+    $parentType.css('background', '#F8F8F8');
+    $parentType.css('border-color', '#E2E7EB');
+  } else if (!$('#mass_ids').val()) {
+    $parentType.prop('disabled', false);
+    $parentType.attr('readonly', false);
+    $parentType.css('background', '');
+    $parentType.css('border-color', '');
+  }
+}
+
+// Function to initialize conversation logic in the conversations subpanel quick create form
+function initSubpanelConversationLogic($form) {
+  if (!$form || !$form.length || $form.hasClass('stic-custom-init')) {
+    return;
+  }
+  $form.addClass('stic-custom-init');
+
+    var formName = $form.attr('id') || $form.attr('name');
+    var messageLabel = SUGAR.language.get('stic_Messages', 'LBL_MESSAGE') || 'LBL_MESSAGE';
+    var senderLabel = SUGAR.language.get('stic_Messages', 'LBL_SENDER') || 'LBL_SENDER';
+
+    // If the validate array is not defined for the form, initialize it to avoid errors when adding/removing validation rules
+    if (typeof validate !== 'undefined' && formName) {
+      if (typeof validate[formName] === 'undefined') {
+        validate[formName] = [];
+      }
+    }
+
+    $form.find('#type').val('private_area').prop('disabled', true).css({'background': '#F8F8F8', 'border-color': '#E2E7EB'});
+    var convConfig = sticGetHelperConfig('private_area');
+    $form.find('#status').val(convConfig ? convConfig.fixedStatus : 'sent').prop('disabled', true).attr('readonly', true).css({'background': '#F8F8F8', 'border-color': '#E2E7EB'});
+    var assignedUserName = $form.find('#assigned_user_name').val();
+    if (assignedUserName) {
+      $form.find('#sender').val(assignedUserName);
+    }
+    $form.find('#sender').prop('disabled', true).attr('readonly', true).css({'background': '#F8F8F8', 'border-color': '#E2E7EB'});
+    
+    if ($form.find('#hidden_type_fixed').length === 0) {
+        $form.append('<input type="hidden" id="hidden_type_fixed" name="type" value="conversation">');
+        $form.append('<input type="hidden" id="hidden_parent_fixed" name="parent_type" value="Contacts">');
+    }
+
+    $form.find('#parent_type').val('Contacts').prop('disabled', true).css({'background': '#F8F8F8', 'border-color': '#E2E7EB'});
+    $form.find('#new_conversation[type="checkbox"]').prop('checked', false).prop('disabled', true).closest('.edit-view-row-item').hide();
+
+    // Remove required validation phone
+    if (typeof validate !== 'undefined' && formName && typeof validate[formName] !== 'undefined') {
+      removeFromValidate(formName, 'phone');
+    }
+    $form.find('#phone').closest('.edit-view-row-item').find('.label').removeClass('required').removeClass('conditional-required');
+    $form.find('#phone').closest('.edit-view-row-item').find('.label .required').hide();
+    
+    $form.find('#stic_conversations_stic_messages_name').attr('readonly', true).css({'background': '#F8F8F8'}).closest('.edit-view-row-item').show();
+    $form.find('#stic_conversations_stic_messages_name').attr('disabled', true);
+    $form.find('#stic_conversation_subject').val('').closest('.edit-view-row-item').hide();
+    $form.find('#btn_stic_conversations_stic_messages_name, #btn_clr_stic_conversations_stic_messages_name').hide();
+    $form.find('#parent_name').attr('readonly', true).css({'background': '#F8F8F8'});
+    $form.find('#parent_name').attr('disabled', true);
+    $form.find('#btn_parent_name, #btn_clr_parent_name').hide();
+
+    // Validate message and sender fields on save
+    $form.find('input[name="button"], input[type="submit"]').on('mousedown', function(e) {
+      // Check if the clicked button is a cancel action by looking at its id, title and value attributes
+      var $clickedButton = $(this);
+      var buttonId = ($clickedButton.attr('id') || '').toUpperCase();
+      var buttonTitle = ($clickedButton.attr('title') || '').toLowerCase();
+      var buttonValue = ($clickedButton.val() || '').toLowerCase();
+
+      // Do not validate on Cancel actions
+      if (buttonId === 'CANCEL' || buttonTitle.indexOf('cancel') !== -1 || buttonValue.indexOf('cancel') !== -1) {
+        return true;
+      }
+
+        var msgVal = $form.find('#message').val() || '';
+        var sndVal = $form.find('#sender').val() || '';
+        var errorFound = false;
+
+        if (typeof clear_all_errors === 'function') clear_all_errors();
+
+        var missingMsg = SUGAR.language.get('app_strings', 'ERR_MISSING_REQUIRED_FIELDS');
+
+        if ($.trim(msgVal) === '') {
+            add_error_style(formName, 'message', missingMsg + " " + messageLabel, true);
+            errorFound = true;
+        }
+        if ($.trim(sndVal) === '') {
+            add_error_style(formName, 'sender', missingMsg + " " + senderLabel, true);
+            errorFound = true;
+        }
+
+        if (errorFound) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    });
+
+    // Get record Id from parent form and fetch conversation data to prefill fields
+    var recordId = $('#formDetailView input[name="record"]').val() || new URLSearchParams(window.location.search).get('record');
+    if (recordId) {
+        $.ajax({
+            url: 'index.php?module=stic_Messages&action=getConversationData',
+            type: 'POST',
+            dataType: 'json',
+            data: { conversationId: recordId },
+            success: function(res) {
+                if (res && res.code === 'OK' && res.data) {
+                    $form.find('#stic_conversations_ida').val(res.data.conversation_id || '');
+                    $form.find('#stic_conversations_stic_messages_name').val(res.data.conversation_name || '');
+                    $form.find('#parent_id').val(res.data.parent_id || '');
+                    $form.find('#parent_name').val(res.data.parent_name || '');
+                }
+            }
+        });
+  }
+}

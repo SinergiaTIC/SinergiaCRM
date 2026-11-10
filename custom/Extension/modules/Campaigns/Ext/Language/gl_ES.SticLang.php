@@ -58,6 +58,8 @@ $mod_strings['LBL_WEBFORMS_INCLUDES_RECAPTCHA'] = 'Incluir validación reCAPTCHA
 $mod_strings['LBL_WEBFORMS_CHOOSE_RECAPTCHA'] = 'Configuración de reCAPTCHA:';
 $mod_strings['LBL_WEBFORMS_RECAPTCHA_KO_URL'] = 'URL de redirección en caso de erro de reCAPTCHA:';
 $mod_strings['LBL_WEBFORMS_RECAPTCHA_HELP'] = 'Para poder incluir validación reCAPTCHA no formulario é necesario telo correctamente configurado. Máis información en: <a href="https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA" target="_blank">https://wikisuite.sinergiacrm.org/index.php?title=Google_reCAPTCHA</a>';
+$mod_strings['LBL_LEAD_DEFAULT_HEADER'] = 'Formulario Web a interesado para a Campaña';
+$mod_strings['LBL_LEAD_FORM_WIZARD'] = 'Asistente de Formularios para Interesados';
 
 $mod_strings['LBL_STIC_NOTIFICATION_PROSPECT_LIST_NAMES_C'] = 'Listas de Público Obxectivo';
 $mod_strings['LBL_NOTIFICATION_PROSPECT_LIST_ID'] = 'Listas de Público Obxectivo';
@@ -89,7 +91,7 @@ $mod_strings['LBL_NOTIFICATION_AUTO_PROSPECT_LIST_SUCCESS'] = 'Creouse a seguint
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.';
 
 $mod_strings['LBL_NOTIFICATION_NEW_INFO'] = 'Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.';
-$mod_strings['LBL_STIC_DISPLAY_HTML'] = 'Incluir un enlace en el mensaje para ver el contenido en el navegador';
+$mod_strings['LBL_STIC_DISPLAY_HTML'] = 'Incluír un enlace na mensaxe para ver o contido no navegador';
 $mod_strings['LBL_MSG_NOTIFICATION_NEW_INFO'] = 'Ao gardar a notificación, os correos a enviar engadiranse automaticamente á cola de envío.';
 
 $mod_strings['LBL_MESSAGE_MARKETING_SUBPANEL_TITLE'] = 'Envíos de mensaxes';

@@ -205,3 +205,5 @@ $dictionary['Project']['fields']['override_business_hours']['massupdate'] = 1;
 $dictionary['Project']['fields']['assigned_user_id']['massupdate'] = 1;
 
 $dictionary['Project']['unified_search_default_enabled'] = true;
+
+$dictionary['Project']['audited'] = true;

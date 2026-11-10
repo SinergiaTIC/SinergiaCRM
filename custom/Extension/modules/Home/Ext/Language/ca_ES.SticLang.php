@@ -24,6 +24,7 @@
 $mod_strings['LBL_DASHLET_STIC_NEWS'] = 'Notícies SinergiaCRM';
 
 // Quant a
+$mod_strings['LBL_ABOUT_PAGE_TITLE'] = 'Quant a';
 $mod_strings['LBL_ABOUT_SINERGIACRM_TITLE'] = 'SinergiaCRM - CRM de codi obert per a organitzacions no lucratives';
 $mod_strings['LBL_ABOUT_SINERGIACRM'] = 'Quant a SinergiaCRM';
 $mod_strings['LBL_ABOUT_SINERGIACRM_1'] = "SinergiaCRM és un desenvolupament de l'Associació SinergiaTIC basat en SuiteCRM i publicat sota la llicència de codi obert AGPLv3.";
@@ -34,5 +35,16 @@ $mod_strings['LBL_ABOUT_SINERGIACRM_KREPORTER'] = 'Kreporter de Christian Knoll'
 $mod_strings['LBL_ABOUT_SINERGIACRM_MAIL_MERGE'] = "Mail Merge Reports d'Izertis";
 $mod_strings['LBL_ABOUT_SINERGIACRM_OTHER'] = "Altres llibreries de codi obert que trobareu a les carpetes <i>/vendor</i> i <i>/SticInclude/vendor</i>. La informació de llicència d'aquestes llibreries és als seus propis fitxers.";
 
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL'] = 'Amb el suport de';
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_SUPPORT'] = "Part de la funcionalitat de SinergiaCRM s'ha desenvolupat amb el suport financer de";
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_ALT'] = 'Unió Europea - NextGenerationEU - Gobierno de España - Plan de Recuperación, Transformación y Resiliencia - Next Generation Catalunya - Generalitat de Catalunya';
+
 // SinergiaDA
 $mod_strings['LBL_STIC_SINERGIADA_NOT_ALLOWED'] = "No teniu habilitat l'accés a SinergiaDA. Contacteu amb l'administrador."; 
+
+// Accounts, Contacts, Leads and Opportunities
+$mod_strings['LBL_NEW_FORM_TITLE'] = 'Nova Persona';
+$mod_strings['LNK_NEW_CONTACT'] = 'Nova Persona';
+$mod_strings['LNK_NEW_ACCOUNT'] = 'Crea una Organització';
+$mod_strings['LNK_NEW_OPPORTUNITY'] = 'Nova Subvenció';
+$mod_strings['LNK_NEW_LEAD'] = 'Nou Interessat';

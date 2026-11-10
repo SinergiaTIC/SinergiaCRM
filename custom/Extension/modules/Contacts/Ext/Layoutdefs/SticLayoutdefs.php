@@ -463,7 +463,7 @@ $layout_defs['Contacts']['subpanel_setup']['history']['collection_list']['stic_M
     'subpanel_name' => 'ForHistory',
     'get_subpanel_data' => 'function:stic_MessagesUtils::get_stic_messages',
     'generate_select' => true,
-    'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'sent', 'error'"),
+    'function_parameters' => array('import_function_file' => 'modules/stic_Messages/Utils.php', 'return_as_array' => 'true', 'status' => "'sent', 'error', 'received', 'redirected'"),
 );
 
 // Signatures subpanel
@@ -527,6 +527,21 @@ $layout_defs["Contacts"]["subpanel_setup"]['stic_assets_contacts'] = array (
     ),
   ),
 );
+
+  // Conversations subpanel
+  $layout_defs["Contacts"]["subpanel_setup"]['contacts_stic_conversations'] = array (
+    'order' => 100,
+    'module' => 'stic_Conversations',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE',
+    'get_subpanel_data' => 'contacts_stic_conversations',
+    'top_buttons' => array (
+        // array('widget_class' => 'SubPanelTopButtonQuickCreate'),
+        // array('widget_class' => 'SubPanelTopSelectButton', 'mode' => 'MultiSelect'),
+    ),
+ );
 
 $layout_defs['Contacts']['subpanel_setup']['leads']['override_subpanel_name'] = 'SticDefault';
 $layout_defs['Contacts']['subpanel_setup']['opportunities']['override_subpanel_name'] = 'SticDefault';

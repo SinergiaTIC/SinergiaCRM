@@ -79,14 +79,18 @@ $mod_strings = array(
     'LBL_GENDER' => 'Xénero da praza',
     'LBL_USER_TYPE' => 'Tipo de usuario do servizo',
     'LBL_BOOKING_TYPE' => 'Tipo de reserva',
-    'LBL_AMOUNT_DAY_OCCUPIED' => 'Importe diario por plaza ocupada',
-    'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Importe diario por plaza desocupada',
+    'LBL_AMOUNT_DAY_OCCUPIED' => 'Importe diario por praza ocupada',
+    'LBL_AMOUNT_DAY_UNOCCUPIED' => 'Importe diario por praza desocupada',
     'LBL_AMOUNT_COPAYMENT' => 'Importe diario de copago',
 
-    'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'No se puede cambiar el tipo de recurso porque tiene reservas asociadas.',
-    'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Hay que indicar un centro',
-    'LBL_PLACES' => 'Plazas',
+    'LBL_RESOURCE_TYPE_CHANGE_ERROR' => 'Non se pode cambiar o tipo de recurso porque ten reservas asociadas.',
+    'LBL_CENTER_REQUIRED_FOR_PLACES' => 'Hai que indicar un centro',
+    'LBL_PLACES' => 'Prazas',
 
     // Campos de filtro en relaciones muchos a muchos
     'LBL_STIC_RESOURCES_STIC_BOOKINGS_NAME' => 'Reserva',
+    'LBL_FILTER_RESOURCES' => 'Filtro de recursos',
+    'LBL_NUMBER_OF_PLACES' => 'Número de prazas',
+    'LBL_CENTERS_BUTTON' => 'Cargar centros',
+    'LBL_CENTERS_FILTER' => 'Centro',
 );

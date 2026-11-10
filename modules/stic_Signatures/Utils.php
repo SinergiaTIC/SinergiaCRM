@@ -29,6 +29,35 @@
 class stic_SignaturesUtils
 {
     /**
+     * Plain-text token used as a safe placeholder for the signature marker.
+     * It replaces the raw <img> marker before the HTML cleaning pipeline so that
+     * it survives the tag-stripping regexes, and is later replaced by the real
+     * signature image after the template is parsed.
+     */
+    const SIGNATURE_TOKEN = '@@SIGNATURE_IMAGE@@';
+
+    /**
+     * Normalizes any signature placeholder <img> to SIGNATURE_TOKEN before the HTML
+     * cleaning pipeline. Tolerant to attributes, order and quoting (TinyMCE variants).
+     *
+     * @param string $html Raw or parsed template HTML.
+     * @return string HTML with placeholders replaced by the token.
+     */
+    public static function normalizeSignatureMarkers($html)
+    {
+        $html = (string) $html;
+        if (strpos($html, 'SignaturePlaceholder.png') === false) {
+            return $html;
+        }
+        $html = preg_replace('/<img\b[^>]*SignaturePlaceholder\.png[^>]*\/?>/i', self::SIGNATURE_TOKEN, $html);
+        // Encoded variant: stay within a single &lt;...&gt; tag (never cross &gt; or &lt;),
+        // otherwise one match could span from an earlier <img> (e.g. a logo) to the
+        // signature marker, wiping all content in between.
+        $html = preg_replace('/&lt;\s*img\b(?:(?!&(lt|gt);).)*?SignaturePlaceholder\.png(?:(?!&(lt|gt);).)*?&gt;/is', self::SIGNATURE_TOKEN, $html);
+        return $html;
+    }
+
+    /**
      * Retrieves the relationships and fields for a given SuiteCRM module.
      * This function fetches a module's own reportable fields and also
      * identifies and lists reportable fields from related modules.
@@ -89,12 +118,14 @@ class stic_SignaturesUtils
 
                     $options = $options_array;
 
-                    // Build module path and label if not 'LBL_DELETED'
-                    if ($module_arr['vname'] !== 'LBL_DELETED') {
-                        $options_array['$' . $module->table_name . ':' . $name] = translate($module_arr['vname'], $module->module_dir);
-                        $module_path = $module_arr['module'] . ':' . ($module_arr['id_name'] ?? $module_arr['link']);
-                        $fmod_options_array[$module_path] = translate($relate_module->module_dir) . ' : ' . translate($module_arr['vname'], $module->module_dir);
+                    // Skip relate fields without label key to avoid warnings
+                    if (!isset($module_arr['vname']) || $module_arr['vname'] === 'LBL_DELETED') {
+                        continue;
                     }
+                    // Build module path and label
+                    $options_array['$' . $module->table_name . ':' . $name] = translate($module_arr['vname'], $module->module_dir);
+                    $module_path = $module_arr['module'] . ':' . ($module_arr['id_name'] ?? $module_arr['link']);
+                    $fmod_options_array[$module_path] = translate($relate_module->module_dir) . ' : ' . translate($module_arr['vname'], $module->module_dir);
                 }
             }
         }
@@ -172,11 +203,6 @@ class stic_SignaturesUtils
             
             // Exclude Leads module as signers
             if ($module == 'Leads') {
-                continue;
-            }
-            
-            // Exclude Users module except for assigned_user_id field when main module is also Users
-            if ($moduleName != 'Users' && $module == 'Users' && $moduleField != 'assigned_user_id') {
                 continue;
             }
            
@@ -268,9 +294,21 @@ class stic_SignaturesUtils
 
             // Process each signer and add to the unique list
             foreach ($signers as $signer) {
-                // Ensure signer ID is unique in the list
-                if (!isset($signersIdList[$signer->id])) {
-                    $signersIdList[$signer->id] = [
+                // Determine the dedup key based on allow_multiple_signers setting
+                $allowMultipleVal = property_exists($signatureBean, 'allow_multiple_signers') ? $signatureBean->allow_multiple_signers : '0';
+                $allowMultiple = ($allowMultipleVal === '1' || $allowMultipleVal === 1 || $allowMultipleVal === true);
+                
+                if ($allowMultiple) {
+                    // Use composite key for deduplication only (signer_id:source_id)
+                    $dedupKey = $signer->id . ':' . $mainModuleId;
+                } else {
+                    // Default behavior: deduplicate by signer ID only
+                    $dedupKey = $signer->id;
+                }
+                
+                // Ensure signer is unique based on dedup key
+                if (!isset($signersIdList[$dedupKey])) {
+                    $signersIdList[$dedupKey] = [
                         'module' => $signerModule,
                         'sourceModule' => $mainModule,
                         'sourceId' => $mainModuleId,
@@ -378,6 +416,14 @@ class stic_SignaturesUtils
             'chr(%1)',
         ];
 
+        // Normalize every possible representation of the signature marker to a
+        // plain-text token BEFORE the HTML cleaning pipeline. This way the marker
+        // survives the tag-stripping regexes even when it is placed inside a table,
+        // and can be replaced by the real signature image after the template is parsed.
+        $templateBean->pdfheader = self::normalizeSignatureMarkers($templateBean->pdfheader);
+        $templateBean->pdffooter = self::normalizeSignatureMarkers($templateBean->pdffooter);
+        $templateBean->description = self::normalizeSignatureMarkers($templateBean->description);
+
         // Clean the template content (header, footer, description)
         $header = preg_replace($search, $replace, $templateBean->pdfheader);
         $footer = preg_replace($search, $replace, $templateBean->pdffooter);
@@ -440,6 +486,11 @@ class stic_SignaturesUtils
 
         // The parse_template function requires an array of beans
         $beanArray = [$bean->module_dir => $bean->id];
+
+        // Enable custom parsing in templates
+        if (file_exists('custom/modules/stic_Signatures/customParseTemplate.php')){
+            require_once 'custom/modules/stic_Signatures/customParseTemplate.php';
+        }
 
         // First parse: Parse the template using the record's data
         $converted = templateParser::parse_template($text, $beanArray);

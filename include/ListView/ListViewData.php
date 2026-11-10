@@ -263,11 +263,23 @@ class ListViewData
             return null;
         }
         // END STIC Custom
-        global $current_user;
+        global $current_user, $sugar_config;
         require_once 'include/SearchForm/SearchForm2.php';
         SugarVCR::erase($seed->module_dir);
         $this->seed =& $seed;
-        $totalCounted = empty($GLOBALS['sugar_config']['disable_count_query']);
+        // STIC-Custom AAM - 20260309 - Check if async count is enabled
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
+        $useAsyncCount = !empty($sugar_config['stic_async_list_count']);
+        // When async is enabled, also enable disable_count_query for efficiency (limit + 1 trick)
+        $originalDisableCountQuery = $sugar_config['disable_count_query'] ?? false;
+        if ($useAsyncCount) {
+            $sugar_config['disable_count_query'] = true;
+        }
+        $totalCounted = empty($sugar_config['disable_count_query']);
+        
+        $sugar_config['disable_count_query'] = $originalDisableCountQuery;
+        // END STIC-Custom AAM
+        
         $_SESSION['MAILMERGE_MODULE_FROM_LISTVIEW'] = $seed->module_dir;
         if (empty($_REQUEST['action']) || $_REQUEST['action'] != 'Popup') {
             $_SESSION['MAILMERGE_MODULE'] = $seed->module_dir;
@@ -536,6 +548,12 @@ class ListViewData
         //join url parameters from array to a string
         $pageData['urls'] = $this->generateURLS($pageData['queries']);
         $pageData['offsets'] = array( 'current'=>$offset, 'next'=>$nextOffset, 'prev'=>$prevOffset, 'end'=>$endOffset, 'total'=>$totalCount, 'totalCounted'=>$totalCounted);
+        // STIC-Custom AAM - 20260309 - Add flag to indicate async count is pending
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
+        $pageData['offsets']['asyncCountPending'] = $useAsyncCount && !$totalCounted;
+        // Pass WHERE clause for async count to use filters
+        $pageData['offsets']['where'] = $where;
+        // END STIC-Custom OC
         $pageData['bean'] = array('objectName' => $seed->object_name, 'moduleDir' => $seed->module_dir, 'moduleName' => strtr($seed->module_dir, $module_names));
         $pageData['stamp'] = $this->stamp;
         $pageData['access'] = array('view' => $this->seed->ACLAccess('DetailView'), 'edit' => $this->seed->ACLAccess('EditView'));

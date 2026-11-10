@@ -241,6 +241,39 @@ $dictionary["Document"]["fields"]["stic_assets_documentsstic_assets_ida"] = arra
     'side' => 'right',
     'vname' => 'LBL_STIC_ASSETS_DOCUMENTS_FROM_DOCUMENTS_TITLE',
 );
+$dictionary['Document']['fields']['stic_awf_responses_documents'] = array(
+    'name' => 'stic_awf_responses_documents',
+    'type' => 'link',
+    'relationship' => 'stic_awf_responses_documents',
+    'source' => 'non-db',
+    'module' => 'stic_AWF_Responses',
+    'bean_name' => 'stic_AWF_Responses',
+    'vname' => 'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_STIC_AWF_RESPONSES_TITLE',
+    'id_name' => 'stic_awf_responses_documentsstic_awf_responses_ida',
+);
+$dictionary['Document']['fields']['stic_awf_responses_documents_name'] = array(
+    'name' => 'stic_awf_responses_documents_name',
+    'type' => 'relate',
+    'source' => 'non-db',
+    'vname' => 'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_STIC_AWF_RESPONSES_TITLE',
+    'save' => true,
+    'id_name' => 'stic_awf_responses_documentsstic_awf_responses_ida',
+    'link' => 'stic_awf_responses_documents',
+    'table' => 'stic_awf_responses',
+    'module' => 'stic_AWF_Responses',
+    'rname' => 'name',
+    'inline_edit' => 1,
+    'massupdate' => 1,
+);
+$dictionary['Document']['fields']['stic_awf_responses_documentsstic_awf_responses_ida'] = array(
+    'name' => 'stic_awf_responses_documentsstic_awf_responses_ida',
+    'type' => 'link',
+    'relationship' => 'stic_awf_responses_documents',
+    'source' => 'non-db',
+    'reportable' => false,
+    'side' => 'right',
+    'vname' => 'LBL_STIC_AWF_RESPONSES_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+);
 
 // Modified properties in native fields
 $dictionary['Document']['fields']['filename']['required'] = 0;
@@ -256,6 +289,7 @@ $dictionary['Document']['fields']['category_id']['massupdate'] = 1;
 $dictionary['Document']['fields']['subcategory_id']['massupdate'] = 1;
 
 $dictionary['Document']['fields']['name']['massupdate'] = 0;
+$dictionary['Document']['fields']['name']['db_concat_fields'] = array(0 => 'document_name');
 $dictionary['Document']['fields']['document_name']['massupdate'] = 0;
 $dictionary['Document']['fields']['doc_id']['massupdate'] = 0;
 $dictionary['Document']['fields']['doc_type']['massupdate'] = 0;
