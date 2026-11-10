@@ -630,7 +630,8 @@ class stic_AWF_FormsUtils {
     /**
      * Decodes HTML-entity-like sequences inside JSON values (e.g. &quot; arriving encoded
      * from AJAX responses) so that the single html_entity_decode applied by the read paths
-     * does not break the JSON structure on the next editor load. 
+     * does not break the JSON structure on the next editor load. The replacement is limited
+     * to leaf strings; the rest of the document stays byte-for-byte identical.
      */
     public static function normalizeConfigurationJson(string $json): string
     {
