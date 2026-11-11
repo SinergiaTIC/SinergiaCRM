@@ -64,8 +64,8 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
             $mod_options_array = array();
 
             //Getting Fields
-            // STIC-Custom 20261106 ART - Avoid "Undefined array key" warning when the list of types holds a
-            // tab which does not have a bean (e.g. the ResourceCalendar pseudo-module)
+            // STIC-Custom 20261106 ART - Avoid "Undefined array key" warning when the list of types holds a tab which does not have a bean (e.g. the ResourceCalendar pseudo-module)
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1514
             // if (!$beanList[$moduleName]) {
             if (empty($beanList[$moduleName])) {
             // END STIC-Custom
@@ -179,6 +179,7 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                 foreach ($product_quote->field_defs as $line_name => $line_arr) {
                     if (!((isset($line_arr['dbType']) && strtolower($line_arr['dbType']) == 'id') || $line_arr['type'] == 'id' || $line_arr['type'] == 'link')) {
                         // STIC-Custom 20261106 ART - Avoid "Undefined array key 'vname'" warning when a field definition of the product module has no vname
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1514
                         // if ((!isset($line_arr['reportable']) || $line_arr['reportable']) && $line_arr['vname']  != 'LBL_NAME') {
                         if ((!isset($line_arr['reportable']) || $line_arr['reportable']) && isset($line_arr['vname']) && $line_arr['vname']  != 'LBL_NAME') {
                         // END STIC-Custom

@@ -40,6 +40,7 @@
 
 use SuiteCRM\PDF\Exceptions\PDFException;
 // STIC-Custom 20261106 ART - Add new use statement for PDFFileNameResolver
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1514
 use SuiteCRM\PDF\PDFFileNameResolver;
 // END STIC-Custom
 use SuiteCRM\PDF\PDFWrapper;
@@ -103,6 +104,7 @@ if (!$template) {
 $file_name = str_replace(" ", "_", (string) $template->name) . ".pdf";
 
 // STIC-Custom 20261106 ART - Use PDFFileNameResolver to resolve the file name pattern configured in the template
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1514
 // The pattern configured in the template is interpolated with the data of the first selected
 // record, the same as when the mass action is used with a single record. Whenever the pattern
 // is left empty or cannot be resolved, the legacy name made of the template name is kept.
