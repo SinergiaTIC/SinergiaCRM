@@ -44,8 +44,10 @@ class CustomAOS_PDF_TemplatesViewEdit extends AOS_PDF_TemplatesViewEdit
         SticViews::preDisplay($this);
 
         // Write here you custom code
-        // Selector of the {{variables}} usable in the "Nombre fichero" pattern
+        // Selector of the {{variables}} usable in the stic_file_name_c pattern
         include_once 'custom/modules/AOS_PDF_Templates/SticUtils.php';
+        // When the view metadata is Studio-customized and lacks the field, inject it before rendering
+        AOS_PDF_TemplatesUtils::ensureFileNameFieldInView($this);
         $this->ss->assign('FILE_NAME_SELECTOR', AOS_PDF_TemplatesUtils::getFileNameSelector($this));
     }
 
