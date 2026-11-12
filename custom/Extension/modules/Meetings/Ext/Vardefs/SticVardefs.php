@@ -37,6 +37,16 @@ $dictionary["Meeting"]["fields"]["stic_job_offers_activities_meetings"] = array 
     'vname' => 'LBL_STIC_JOB_OFFERS_ACTIVITIES_MEETINGS_FROM_STIC_JOB_OFFERS_TITLE',
 );
 
+$dictionary["Meeting"]["fields"]["stic_meetings_documents"] = array (
+    'name' => 'stic_meetings_documents',
+    'type' => 'link',
+    'relationship' => 'stic_meetings_documents',
+    'source' => 'non-db',
+    'module' => 'Documents',
+    'bean_name' => 'Document',
+    'vname' => 'LBL_STIC_MEETINGS_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+);
+
 $dictionary['Meeting']['fields']['email_reminder_time']['options'] = 'stic_email_reminder_time_list';
 
 $dictionary['Meeting']['fields']['duration']['inline_edit'] = 0;

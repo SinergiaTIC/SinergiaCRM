@@ -54,3 +54,4 @@ $mod_strings['LBL_STIC_ORDER_OF_THE_DAY'] = 'Orden del día';
 $mod_strings['LBL_STIC_DEVELOPMENT'] = 'Desarrollo de la reunión';
 $mod_strings['LBL_STIC_AGREEMENTS'] = 'Acuerdos';
 $mod_strings['LBL_STIC_MEETINGS_ACTA_PANEL'] = 'Acta';
+$mod_strings['LBL_STIC_MEETINGS_DOCUMENTS_FROM_DOCUMENTS_TITLE'] = 'Documentos';
