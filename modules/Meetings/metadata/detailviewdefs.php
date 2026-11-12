@@ -266,6 +266,10 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_STIC_MEETINGS_ACTA_PANEL' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),
             ),
         ),
         'panels' => array(
@@ -315,6 +319,16 @@ array(
                 5 => array(
                     0 => 'description',
                 ),
+                6 => array(
+                    0 => array(
+                        'name' => 'stic_type_c',
+                        'label' => 'LBL_STIC_TYPE',
+                    ),
+                    1 => array(
+                        'name' => 'stic_modality_c',
+                        'label' => 'LBL_STIC_MODALITY',
+                    ),
+                ),
             ),
             'LBL_STIC_PANEL_RECORD_DETAILS' => array(
                 0 => array(
@@ -336,6 +350,26 @@ array(
                         'name' => 'date_modified',
                         'label' => 'LBL_DATE_MODIFIED',
                         'customCode' => '{$fields.date_modified.value}',
+                    ),
+                ),
+            ),
+            'lbl_stic_meetings_acta_panel' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'stic_order_of_the_day_c',
+                        'label' => 'LBL_STIC_ORDER_OF_THE_DAY',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'stic_development_c',
+                        'label' => 'LBL_STIC_DEVELOPMENT',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'stic_agreements_c',
+                        'label' => 'LBL_STIC_AGREEMENTS',
                     ),
                 ),
             ),

@@ -54,6 +54,10 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_ACTA_PANEL' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),
             ),
             'syncDetailEditViews' => true,
         ),
@@ -151,6 +155,12 @@ array(
                         'label' => 'LBL_DESCRIPTION',
                     ),
                 ),
+                9 => array(
+                    0 => array(
+                        'name' => 'location',
+                        'label' => 'LBL_LOCATION',
+                    ),
+                ),
             ),
             'lbl_panel_record_details' => array(
                 0 => array(
@@ -176,6 +186,26 @@ array(
                         'comment' => 'Date record last modified',
                         'label' => 'LBL_DATE_MODIFIED',
                         'customCode' => '{$fields.date_modified.value}',
+                    ),
+                ),
+            ),
+            'lbl_acta_panel' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'order_of_the_day',
+                        'label' => 'LBL_ORDER_OF_THE_DAY',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'development',
+                        'label' => 'LBL_DEVELOPMENT',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'agreements',
+                        'label' => 'LBL_AGREEMENTS',
                     ),
                 ),
             ),

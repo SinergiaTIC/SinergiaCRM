@@ -197,6 +197,12 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 ('Leadsstic_professional_sector_c','Leads','stic_professional_sector_c'),
 ('Leadsstic_professional_sector_other_c','Leads','stic_professional_sector_other_c'),
 ('Leadsstic_referral_agent_c','Leads','stic_referral_agent_c'),
+-- Meetings
+('Meetingsstic_type_c', 'Meetings', 'stic_type_c'),
+('Meetingsstic_modality_c', 'Meetings', 'stic_modality_c'),
+('Meetingsstic_order_of_the_day_c', 'Meetings', 'stic_order_of_the_day_c'),
+('Meetingsstic_development_c', 'Meetings', 'stic_development_c'),
+('Meetingsstic_agreements_c', 'Meetings', 'stic_agreements_c'),
 -- Opportunities
 ('Opportunitiesstic_advance_date_c', 'Opportunities', 'stic_advance_date_c'),
 ('Opportunitiesstic_amount_awarded_c', 'Opportunities', 'stic_amount_awarded_c'),

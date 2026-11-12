@@ -49,6 +49,11 @@ array (
           'newTab' => true,
           'panelDefault' => 'expanded',
         ),
+        'LBL_ACTA_PANEL' => 
+        array (
+          'newTab' => true,
+          'panelDefault' => 'expanded',
+        ),
       ),
     ),
     'panels' => 
@@ -107,6 +112,46 @@ array (
             'name' => 'description',
             'comment' => 'Full text of the note',
             'label' => 'LBL_DESCRIPTION',
+          ),
+        ),
+        5 => 
+        array (
+          0 => 
+          array (
+            'name' => 'location',
+            'label' => 'LBL_LOCATION',
+          ),
+          1 => 
+          array (
+            'name' => 'modality',
+            'label' => 'LBL_MODALITY',
+          ),
+        ),
+      ),
+      'lbl_acta_panel' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            'name' => 'order_of_the_day',
+            'label' => 'LBL_ORDER_OF_THE_DAY',
+          ),
+        ),
+        1 => 
+        array (
+          0 => 
+          array (
+            'name' => 'development',
+            'label' => 'LBL_DEVELOPMENT',
+          ),
+        ),
+        2 => 
+        array (
+          0 => 
+          array (
+            'name' => 'agreements',
+            'label' => 'LBL_AGREEMENTS',
           ),
         ),
       ),
