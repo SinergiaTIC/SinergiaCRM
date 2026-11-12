@@ -39,6 +39,10 @@
  */
 
 use SuiteCRM\PDF\Exceptions\PDFException;
+// STIC-Custom 20261106 ART - Add new use statement for PDFFileNameResolver
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/1514
+use SuiteCRM\PDF\PDFFileNameResolver;
+// END STIC-Custom
 use SuiteCRM\PDF\PDFWrapper;
 
 if (!isset($_REQUEST['uid']) || empty($_REQUEST['uid']) || !isset($_REQUEST['templateID']) || empty($_REQUEST['templateID'])) {
@@ -139,7 +143,15 @@ $footer = templateParser::parse_template($footer, $object_arr);
 $printable = str_replace("\n", "<br />", (string) $converted);
 
 if ($task === 'pdf' || $task === 'emailpdf') {
-    $file_name = $mod_strings['LBL_PDF_NAME'] . "_" . str_replace(" ", "_", (string) $bean->name) . ".pdf";
+    // STIC-Custom 20261106 ART - Use PDFFileNameResolver to resolve the file name pattern configured in the template
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1514
+    // $file_name = $mod_strings['LBL_PDF_NAME'] . "_" . str_replace(" ", "_", (string) $bean->name) . ".pdf";
+    // Honour the pattern configured in the template when it resolves, otherwise keep the legacy name
+    $file_name = PDFFileNameResolver::resolve($template->stic_file_name_c ?? '', $bean, $template);
+    if ($file_name === '') {
+        $file_name = $mod_strings['LBL_PDF_NAME'] . "_" . str_replace(" ", "_", (string) $bean->name) . ".pdf";
+    }
+    // END STIC-Custom
 
     try {
         $pdf = PDFWrapper::getPDFEngine();
