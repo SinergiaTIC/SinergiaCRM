@@ -867,7 +867,7 @@
                             <div x-show="showRelativeDateSelector" class="mt-2">
                               <select id="modalField_RelativeDateSelector" class="form-select" x-model="relativeDateSelected">
                                 <template x-for="relDate in availableRelativeDates" :key="relDate.id">
-                                  <option :value="relDate.id" x-text="relDate.text"></option>
+                                  <option :value="relDate.id" :selected="relativeDateSelected == relDate.id" x-text="relDate.text"></option>
                                 </template>
                               </select>
                             </div>
