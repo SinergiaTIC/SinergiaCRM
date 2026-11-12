@@ -1040,14 +1040,6 @@
                     {* 
                         STIC-Custom - ART - 20240216 - Sidebar Admin Actions
                         https://github.com/SinergiaTIC/SinergiaCRM/pull/124
-
-                        STIC-Custom - JBL - 20261109 - Keep the panel visible when a stylesheet
-                        defines [hidden] { display: none !important; } (e.g. bootstrap.scoped.min.css
-                        loaded by stic_AWF_Forms Detail/Edit views beats the inline style written by
-                        jQuery .show() while the hidden attribute is present).
-                        Initial state is now hidden with an inline style instead of the hidden
-                        attribute, and .show()/.hide() control visibility as before.
-                        https://github.com/SinergiaTIC/SinergiaCRM/issues/1290
                     *}
                     {literal}
                         <script>
@@ -1067,7 +1059,8 @@
                     {/literal}
                         {* 
                             STIC-Custom - JBL - 20261109 - Keep the panel visible when a stylesheet re-defines [hidden] class
-                            https://github.com/SinergiaTIC/SinergiaCRM/pull/????
+                            Initial state is now hidden with an inline style instead of the hidden attribute
+                            https://github.com/SinergiaTIC/SinergiaCRM/pull/1520
                         *}
                         {* <div id='admin_actions' class="actionMenuSidebar adminMenuSidebar" hidden> *}
                         <div id='admin_actions' class="actionMenuSidebar adminMenuSidebar" style="display:none">
