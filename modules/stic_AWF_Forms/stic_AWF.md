@@ -438,6 +438,7 @@ AWF.setLabel('Contacts0.stic_identification_number_c', 'Número de pasaporte:');
 Obtiene el texto del **título visible de la sección** que renderiza el campo indicado. El título vive en un lugar distinto según la representación, y esta API lo abstrae: cabecera de sección (card o panel), pestaña (el título está en la pestaña, fuera del panel), acordeón (cabecera del item) o instancias de grupos repetibles (cabecera de la tarjeta/pestaña/acordeón de la instancia).
 
 * Retorna `null` si la sección no renderiza título (secciones sin cabecera).
+* **Bloques repetibles**: la llamada global sin índice lee la **primera instancia** (mismo contrato que `getValue`); dentro de un `onChange` usa `scope.getSectionTitle()` para el título de la instancia del evento.
 * En representaciones de instancia (grupos repetibles/opcionales) el título está enlazado a Alpine (`x-text`): la lectura siempre refleja el texto actual (`'Contacto #1'`).
 
 ```javascript
@@ -451,13 +452,24 @@ Modifica dinámicamente el texto del título visible de la sección que renderiz
 * **Títulos estáticos (secciones card/panel, pestañas y acordeones de diseño)**: escribe el nuevo texto y retorna `true`.
 * **Títulos de instancias de grupos (repetibles/opcionales, con `x-text`)**: escribe la anulación a través del estado reactivo del grupo (`titleOverrides`, vía `Alpine.$data`), por lo que sobrevive a los re-renderizados (añadir/quitar instancias) y retorna `true`. Retorna `false` si no existe título visible o Alpine no está disponible.
 * **Título base original**: en títulos estáticos, en la primera escritura guarda el texto original en `data-awf-base-title`, de modo que nunca se pierde la base para componer textos tipo `"Base - Valor"`. En títulos de instancia la base es la propia expresión de plantilla (`'Contacto #N'`).
+* **Dirigir la instancia**: en bloques repetibles, la llamada global sin índice aplica el texto a **TODAS** las instancias (mismo contrato que `setValue`). Para escribir el título de la instancia del evento, usa `scope.setSectionTitle(...)` dentro del `onChange`; para una fila concreta, `AWF.setSectionTitle(target, text, { instanceIndex: N })`.
+* **Restaurar el original**: pasando `null` como texto se restaura el título original de la fila/la sección (en instancias, el de la plantilla: `'Persona #N'`).
+* **Nota**: las anulaciones se guardan por posición de la fila; al eliminar instancias pueden desalinearse.
 
 ```javascript
-// Componer el título con valores actuales sin duplicar la base:
-var base = AWF.getSectionTitle('Contacts0.first_name'); // Se captura una vez, antes de escribir
-AWF.onChange('Contacts0.first_name', function (val, scope) {
-    AWF.setSectionTitle('Contacts0.first_name', base + ' - ' + scope.getValue('Contacts0.first_name') + ' ' + scope.getValue('Contacts0.last_name'));
-});
+// Un título por instancia: la base es POR FILA (cada fila conserva su '#N')
+var baseTitles = {}; // base por índice de instancia, capturada lazy
+var updateTitle = function updateTitle(scope) {
+    var idx = scope.instanceIndex == null ? 0 : scope.instanceIndex;
+    if (baseTitles[idx] === undefined) baseTitles[idx] = scope.getSectionTitle() || '';
+    var nombre = (scope.getValue('Contacts0.first_name') + ' ' + scope.getValue('Contacts0.last_name')).trim();
+    scope.setSectionTitle(nombre ? baseTitles[idx] + ' - ' + nombre : baseTitles[idx]);
+};
+AWF.onChange('Contacts0.first_name', function (val, scope) { updateTitle(scope); }, { immediate: true });
+AWF.onChange('Contacts0.last_name', function (val, scope) { updateTitle(scope); }, { immediate: true });
+
+// Restaurar el título por defecto de la fila actual:
+// scope.setSectionTitle(null);
 ```
 
 #### AWF.getFieldContainer(target, [options])

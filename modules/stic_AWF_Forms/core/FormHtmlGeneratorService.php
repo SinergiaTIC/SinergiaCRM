@@ -4069,12 +4069,10 @@ JS;
     return el ? el.textContent.trim() : null;
   }
 
-  function setSectionTitleOn(elements, text) {
-    var el = sectionTitleElOf(elements);
-    if (!el) return false;
-    // Instance chrome: the title is Alpine-bound (x-text). Route the write
-    // through the group container's reactive `titleOverrides` state so the
-    // override survives Alpine re-renders (add/remove instance).
+  // Writes one title element: static titles directly (keeping the original in
+  // data-awf-base-title), Alpine-bound titles through the group container's
+  // reactive `titleOverrides` state so the override survives re-renders.
+  function writeSectionTitleEl(el, text) {
     if (el.hasAttribute('x-text')) {
       var owner = null;
       var idx = null;
@@ -4105,11 +4103,31 @@ JS;
       groupData.titleOverrides[idx] = text;
       return true;
     }
-    // Static titles: keep the original text so repeated writes can compose
-    // "base - value" without appending to a previous override
+    // Static titles: `null` restores the original text (cached on first write);
+    // any other value is written, keeping the original for later restores
+    if (text === null) {
+      if (el.dataset.awfBaseTitle !== undefined) el.textContent = el.dataset.awfBaseTitle;
+      return true;
+    }
     if (el.dataset.awfBaseTitle === undefined) el.dataset.awfBaseTitle = el.textContent.trim();
     el.textContent = text;
     return true;
+  }
+
+  function setSectionTitleOn(elements, text) {
+    if (!elements || elements.length === 0) return false;
+    // Global calls on repeatable blocks resolve EVERY instance (same contract
+    // as setValue): each row's title receives the text. Per-instance writes
+    // come from scope.setSectionTitle, scoped to the event's card.
+    var applied = false;
+    var seen = [];
+    elements.forEach(function (control) {
+      var el = sectionTitleElOf([control]);
+      if (!el || seen.indexOf(el) !== -1) return;
+      seen.push(el);
+      if (writeSectionTitleEl(el, text)) applied = true;
+    });
+    return applied;
   }
 
   var listeners = [];
