@@ -83,6 +83,7 @@ $mod_strings = array(
     'LBL_STIC_FOLLOWUPS_PROJECT_FROM_PROJECT_TITLE' => 'Proyecto',
     'LBL_STIC_FOLLOWUPS_STIC_REGISTRATIONS_FROM_STIC_REGISTRATIONS_TITLE' => 'Inscripción',
     'LBL_STIC_GOALS_STIC_FOLLOWUPS_FROM_STIC_GOALS_TITLE' => 'Objetivos',
+    'LBL_STIC_FOLLOWUPS_ACTIVITIES_TASKS_FROM_TASKS_TITLE' => 'Tareas',
     'LBL_STIC_FAMILIES_STIC_FOLLOWUPS_FROM_STIC_FAMILIES_TITLE' => 'Unidad familiar',
     'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_ASSETS_TITLE' => 'Activo',
     'LBL_MUST_RELATE_TO_A_FAMILY_OR_A_CONTACT' => 'Hay que indicar una persona o una unidad familiar.',
@@ -91,4 +92,5 @@ $mod_strings = array(
     'LBL_ORDER_OF_THE_DAY' => 'Orden del día',
     'LBL_DEVELOPMENT' => 'Desarrollo de la reunión',
     'LBL_AGREEMENTS' => 'Acuerdos',
+    'LBL_ACTA_PANEL' => 'Acta',
 );

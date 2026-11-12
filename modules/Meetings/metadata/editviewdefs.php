@@ -355,6 +355,19 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
         array (
           0 => 
           array (
+            'name' => 'stic_type_c',
+            'label' => 'LBL_STIC_TYPE',
+          ),
+          1 => 
+          array (
+            'name' => 'stic_modality_c',
+            'label' => 'LBL_STIC_MODALITY',
+          ),
+        ),
+        3 => 
+        array (
+          0 => 
+          array (
             'name' => 'date_start',
             'type' => 'datetimecombo',
             'displayParams' => 
@@ -374,7 +387,7 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
             ),
           ),
         ),
-        3 => 
+        4 => 
         array (
           0 => 
           array (
@@ -403,7 +416,7 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
             'label' => 'LBL_LOCATION',
           ),
         ),
-        4 => 
+        5 => 
         array (
           0 => 
           array (
@@ -416,7 +429,7 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
             'label' => 'LBL_REMINDERS',
           ),
         ),
-        5 => 
+        6 => 
         array (
           0 => 
           array (
@@ -425,19 +438,7 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
             'label' => 'LBL_DESCRIPTION',
           ),
         ),
-        6 => 
-        array (
-          0 => 
-          array (
-            'name' => 'stic_type_c',
-            'label' => 'LBL_STIC_TYPE',
-          ),
-          1 => 
-          array (
-            'name' => 'stic_modality_c',
-            'label' => 'LBL_STIC_MODALITY',
-          ),
-        ),
+
       ),
       'lbl_stic_meetings_acta_panel' => 
       array (

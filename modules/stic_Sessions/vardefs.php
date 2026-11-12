@@ -389,6 +389,15 @@ $dictionary['stic_Sessions'] = array(
             'side' => 'right',
             'vname' => 'LBL_STIC_SESSIONS_DOCUMENTS_FROM_DOCUMENTS_TITLE',
         ),
+        'stic_sessions_activities_tasks' => array(
+            'name' => 'stic_sessions_activities_tasks',
+            'type' => 'link',
+            'relationship' => 'stic_sessions_activities_tasks',
+            'source' => 'non-db',
+            'module' => 'Tasks',
+            'bean_name' => 'Task',
+            'vname' => 'LBL_STIC_SESSIONS_ACTIVITIES_TASKS_FROM_TASKS_TITLE',
+        ),
         'stic_sessions_stic_events' => array(
             'name' => 'stic_sessions_stic_events',
             'type' => 'link',

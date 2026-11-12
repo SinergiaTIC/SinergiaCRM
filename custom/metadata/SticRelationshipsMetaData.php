@@ -4128,6 +4128,26 @@ $dictionary["meetings_activities_tasks"] = array(
     'table' => '',
 );
 
+$dictionary["stic_sessions_activities_tasks"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_sessions_activities_tasks' => array(
+            'lhs_module' => 'stic_Sessions',
+            'lhs_table' => 'stic_sessions',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'stic_Sessions',
+        ),
+    ),
+    'fields' => '',
+    'indices' => '',
+    'table' => '',
+);
+
 $dictionary["stic_sessions_stic_events"] = array(
     'true_relationship_type' => 'one-to-many',
     'relationships' => array(
@@ -8621,4 +8641,25 @@ $dictionary["stic_awf_responses_documents"] = array(
             ),
         ),
     ),
+);
+
+
+$dictionary["stic_followups_activities_tasks"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_followups_activities_tasks' => array(
+            'lhs_module' => 'stic_FollowUps',
+            'lhs_table' => 'stic_followups',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'stic_FollowUps',
+        ),
+    ),
+    'fields' => '',
+    'indices' => '',
+    'table' => '',
 );

@@ -89,6 +89,12 @@ array(
                 ),
                 3 => array(
                     0 => array(
+                        'name' => 'location',
+                        'label' => 'LBL_LOCATION',
+                    ),
+                ),
+                4 => array(
+                    0 => array(
                         'name' => 'type',
                         'studio' => 'visible',
                         'label' => 'LBL_TYPE',
@@ -99,7 +105,7 @@ array(
                         'label' => 'LBL_SUBTYPE',
                     ),
                 ),
-                4 => array(
+                5 => array(
                     0 => array(
                         'name' => 'channel',
                         'studio' => 'visible',
@@ -111,7 +117,7 @@ array(
                         'label' => 'LBL_FOLLOWUP_ORIGIN',
                     ),
                 ),
-                5 => array(
+                6 => array(
                     0 => array(
                         'name' => 'attendees',
                         'studio' => 'visible',
@@ -122,7 +128,7 @@ array(
                         'label' => 'LBL_COLOR',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => array(
                         'name' => 'external_contact',
                         'studio' => 'visible',
@@ -134,7 +140,7 @@ array(
                         'label' => 'LBL_EXTERNAL_ACCOUNT',
                     ),
                 ),
-                7 => array(
+                8 => array(
                     0 => array(
                         'name' => 'stic_followups_project_name',
                     ),
@@ -142,7 +148,7 @@ array(
                         'name' => 'stic_followups_stic_registrations_name',
                     ),
                 ),
-                8 => array(
+                9 => array(
                     0 => array(
                         'name' => 'pending_actions',
                         'studio' => 'visible',
@@ -153,12 +159,6 @@ array(
                         'comment' => 'Full text of the note',
                         'studio' => 'visible',
                         'label' => 'LBL_DESCRIPTION',
-                    ),
-                ),
-                9 => array(
-                    0 => array(
-                        'name' => 'location',
-                        'label' => 'LBL_LOCATION',
                     ),
                 ),
             ),

@@ -557,6 +557,15 @@ $dictionary['stic_FollowUps'] = array(
             'vname' => 'LBL_STIC_FOLLOWUPS_STIC_REGISTRATIONS_FROM_STIC_REGISTRATIONS_TITLE',
             'id_name' => 'stic_followups_stic_registrationsstic_registrations_ida',
         ),
+        'stic_followups_activities_tasks' => array(
+            'name' => 'stic_followups_activities_tasks',
+            'type' => 'link',
+            'relationship' => 'stic_followups_activities_tasks',
+            'source' => 'non-db',
+            'module' => 'Tasks',
+            'bean_name' => 'Task',
+            'vname' => 'LBL_STIC_FOLLOWUPS_ACTIVITIES_TASKS_FROM_TASKS_TITLE',
+        ),
         'stic_followups_stic_registrations_name' => array(
             'name' => 'stic_followups_stic_registrations_name',
             'type' => 'relate',

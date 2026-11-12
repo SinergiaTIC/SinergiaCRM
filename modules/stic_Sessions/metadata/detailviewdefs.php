@@ -79,6 +79,16 @@ array(
                 ),
                 2 => array(
                     0 => array(
+                        'name' => 'location',
+                        'label' => 'LBL_LOCATION',
+                    ),
+                    1 => array(
+                        'name' => 'modality',
+                        'label' => 'LBL_MODALITY',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
                         'name' => 'start_date',
                         'label' => 'LBL_START_DATE',
                     ),
@@ -87,7 +97,7 @@ array(
                         'label' => 'LBL_END_DATE',
                     ),
                 ),
-                3 => array(
+                4 => array(
                     0 => array(
                         'name' => 'weekday',
                         'studio' => 'visible',
@@ -98,7 +108,7 @@ array(
                         'label' => 'LBL_DURATION',
                     ),
                 ),
-                4 => array(
+                5 => array(
                     0 => array(
                         'name' => 'total_attendances',
                         'label' => 'LBL_TOTAL_ATTENDANCES',
@@ -108,7 +118,7 @@ array(
                         'label' => 'LBL_VALIDATED_ATTENDANCES',
                     ),
                 ),
-                5 => array(
+                6 => array(
                     0 => array(
                         'name' => 'responsible',
                         'studio' => 'visible',
@@ -120,19 +130,10 @@ array(
                         'label' => 'LBL_ACTIVITY_TYPE',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => 'description',
                 ),
-                7 => array(
-                    0 => array(
-                        'name' => 'location',
-                        'label' => 'LBL_LOCATION',
-                    ),
-                    1 => array(
-                        'name' => 'modality',
-                        'label' => 'LBL_MODALITY',
-                    ),
-                ),
+
             ),
             'lbl_panel_record_details' => array(
                 0 => array(

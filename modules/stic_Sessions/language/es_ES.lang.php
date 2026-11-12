@@ -63,6 +63,7 @@ $mod_strings = array (
     'LBL_STIC_ATTENDANCES_STIC_SESSIONS_FROM_STIC_ATTENDANCES_TITLE' => 'Asistencias',
     'LBL_STIC_SESSIONS_STIC_EVENTS_FROM_STIC_EVENTS_TITLE' => 'Evento',
     'LBL_STIC_SESSIONS_DOCUMENTS_FROM_DOCUMENTS_TITLE' => 'Documentos',
+    'LBL_STIC_SESSIONS_ACTIVITIES_TASKS_FROM_TASKS_TITLE' => 'Tareas',
     'LBL_STIC_RESPONSIBLE' => 'Responsable',
     'LBL_START_DATE' => 'Fecha de inicio',
     'LBL_END_DATE' => 'Fecha de finalización',
@@ -83,4 +84,5 @@ $mod_strings = array (
     'LBL_ORDER_OF_THE_DAY' => 'Orden del día',
     'LBL_DEVELOPMENT' => 'Desarrollo de la reunión',
     'LBL_AGREEMENTS' => 'Acuerdos',
+    'LBL_ACTA_PANEL' => 'Acta',
 );
