@@ -115,6 +115,20 @@ $layout_defs['Meetings'] = array(
                 ),
             ),
         ),
+        'meetings_activities_tasks' => array(
+            'order' => 60,
+            'module' => 'Tasks',
+            'subpanel_name' => 'ForActivities',
+            'sort_order' => 'asc',
+            'sort_by' => 'date_due',
+            'title_key' => 'LBL_MEETINGS_ACTIVITIES_TASKS_FROM_TASKS_TITLE',
+            'get_subpanel_data' => 'meetings_activities_tasks',
+            'top_buttons' => array(
+                0 => array(
+                    'widget_class' => 'SubPanelTopCreateTaskButton',
+                ),
+            ),
+        ),
         'securitygroups' => array(
             'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect'),),
             'order' => 900,

@@ -4108,6 +4108,26 @@ $dictionary["stic_meetings_documents"] = array(
     ),
 );
 
+$dictionary["meetings_activities_tasks"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'meetings_activities_tasks' => array(
+            'lhs_module' => 'Meetings',
+            'lhs_table' => 'meetings',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Meeting',
+        ),
+    ),
+    'fields' => '',
+    'indices' => '',
+    'table' => '',
+);
+
 $dictionary["stic_sessions_stic_events"] = array(
     'true_relationship_type' => 'one-to-many',
     'relationships' => array(
