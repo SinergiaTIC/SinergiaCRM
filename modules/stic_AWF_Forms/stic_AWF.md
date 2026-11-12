@@ -213,6 +213,31 @@ Esta sección es fundamental cuando el formulario interactúa con más de un mó
 
 * Ejemplo práctico: Imaginemos un formulario de inscripción de una persona a un evento. En esta sección de Relaciones se indicará que ambos bloques (Persona e Inscripción) están unidos. Así, cuando el usuario envíe el formulario, el sistema no solo creará los dos registros por separado, sino que automáticamente generará el vínculo formal entre ambos dentro del CRM.
 
+#### Grupos de bloques de datos (Repetibles) ####
+
+La creación de un "Grupo" permite relacionar y repetir en el formulario uno o más bloques de datos en conjunto. Cuando se define el grupo como repetible, **todo el conjunto de campos de los bloques que lo componen aparece N veces** en un mismo envío, generando tantos registros en el CRM como repeticiones complete el visitante. Es la funcionalidad ideal para simplificar operativas como una inscripción grupal (recoger en una única respuesta los datos de varios participantes).
+
+* **Arquitectura "raíz + hijos"**: Un grupo tiene un bloque "raíz" (el que se convierte en repetible) y, opcionalmente, varios bloques "hijo" que dependen de él y se repiten siempre en bloque. Los bloques de datos que conviven en el formulario fuera de un grupo se comportan de forma independiente (un único bloque de datos por envío).
+
+* **Modelo de repetibilidad único (0..N)**: El sistema gestiona la repetición con dos parámetros por grupo, eliminando la distinción entre "bloque con instancias" y "grup de registros":
+  * **Mínima de instancias** (`min_instances`): 0 u 1.
+  * **Máxima de instancias** (`max_instances`): sin límite o un número concreto.
+  * Un grupo con **mínima 1** es *Obligatorio* (los campos se muestran al menos una vez). Un grupo con **mínima 0** es *Opcional*: se muestra inicialmente vacío y solo se guardan los datos si el visitante añade al menos una instancia; si no añade ninguna, sus acciones de guardado se **omiten** en el procesamiento en lugar de crear registros vacíos.
+
+* **Convertir un bloque en grupo repetible**: Desde la barra de acciones del bloque (Paso 2) hay un botón "+" que transforma cualquier bloque no repetible en la raíz de un grupo. El sistema crea automáticamente el grupo con:
+  * Título por defecto formado por el nombre del bloque raíz + los nombres de los bloques hijo vinculados (p. ej.: *"Menor + Inscripción"*), editable en cualquier momento.
+  * Mínima 1 (obligatorio) y máxima sin límite.
+  * Etiquetas de los botones "Añadir" y "Eliminar" por defecto (también personalizables).
+
+* **Configuración en línea (sin modales)**: La cabecera de cada grupo integra un panel de configuración desplegable, accesible con el botón de opciones. Desde él se ajustan:
+  * El **interruptor obligatorio/opcional** (mínima de instancias = 1 o 0).
+  * El **límite máximo** de instancias (dejarlo vacío = sin límite).
+  * Las **etiquetas personalizadas** de los botones "Añadir" y "Eliminar".
+  * El botón **"Desagrupar"**, que revierte el grupo a bloques independientes (restaurando los valores por defecto: mínima 1, sin máximo y sin título de grupo).
+
+* **Vinculación maestro-alumno**: Al igual que en las relaciones 1-N descritas arriba, los registros creados por el grupo se vinculan automáticamente en el CRM (por ejemplo, cada "Inscripción" creada se referencia con la "Persona" de la misma instancia).
+
+* **Anidamiento visual y cardinalidad**: Un grupo puede contener subgrupos y el modelo admite hasta dos niveles de grupos repetibles. La jerarquía se conserva visualmente: cada subgrupo tiene sus propios bloques, títulos e índices de instancia, y el contenido no puede salir del grupo al mover secciones. Los datos de los dos niveles se guardan correctamente (cada instancia del subgrupo genera sus propios registros vinculados en cascada al registro padre correspondiente). El formulario puede contener varios grupos disjuntos.
 
 ### Paso 3: Lógica y automatismos ###
 En este paso se configurará qué ocurre "por detrás" cuando alguien hace clic en "Enviar" del formulario. La lógica de negocio se articula mediante un sistema visual de flujos compuesto por **Acciones**.
@@ -226,6 +251,8 @@ En este paso se configurará qué ocurre "por detrás" cuando alguien hace clic 
 * **Acciones automáticas (Persistencia garantizada)**: Al añadir bloques de datos en el paso anterior del asistente, el sistema añade **automáticamente** al flujo principal las acciones necesarias para guardar los datos en el CRM ("Guardar registro") y vincularlos entre sí ("Enlazar registros"). Gracias a esto, no es necesario preocuparse por la persistencia de la información; el sistema garantiza que los registros se crearán, actualizarán y relacionarán solos según las reglas definidas. Estas acciones base no se pueden eliminar, pero sí reordenar.
 
   * **Optimización de relaciones 1-N (Guardar registro con relaciones)**: Cuando se define una relación de tipo 1-N (un bloque "padre" y un bloque "hijo" que contiene un campo FK apuntando al padre), el sistema utiliza una acción especial **"Guardar registro con relaciones"** en lugar de la combinación tradicional de "Guardar registro" + "Enlazar registros". Esta acción inyecta el ID del registro padre en el campo FK del registro hijo **antes** del primer guardado, evitando un paso de actualización posterior innecesario. Las relaciones N-M siguen utilizando la acción "Enlazar registros", creando una única acción (no dos) ya que la relación es bidireccional.
+
+  * **Grupos repetibles (una acción por instancia)**: Cuando un bloque forma parte de un grupo repetible, sus acciones automáticas se ejecutan para **cada instancia** del grupo — no solo el guardado y las relaciones, sino también las demás acciones que referencien el grupo (p. ej. crear una tarea o enviar un aviso por cada persona de la instancia). En el Paso 3, el asistente identifica las acciones pertenecientes a un mismo grupo con una **insignia del grupo (badge)** en su configurador, mostrando el nombre del grupo en cuestión. Un grupo con mínima de instancias 0 que se envía **vacío** no ejecuta sus acciones: el sistema las marca como *omitidas (SKIPPED)* en el registro de ejecución, en lugar de crear registros vacíos. Si una acción tiene condiciones que dependen de campos del grupo, se evalúan instancia por instancia y las instancias que no las cumplen se omiten individualmente.
 
 * **Acciones definidas por el usuario**: Más allá de guardar los datos, se pueden enriquecer los flujos añadiendo y encadenando nuevas acciones configurables. Cada acción introducida permite establecer parámetros específicos basándose en los propios datos introducidos en el formulario o en registros del CRM.
 
@@ -280,11 +307,17 @@ Entre las opciones de diseño y maquetación disponibles destacan:
 
 * **Secciones y contenedores visuales**: El formulario se estructura organizando los campos en diferentes **"Secciones"**, que actúan como contenedores visuales. Una sección puede incluir campos de uno o más bloques de datos. A nivel visual, estas secciones ofrecen mucha versatilidad:
 
-  * **Formato de contenedor**: Pueden mostrarse de forma limpia como un panel simple (sin bordes) o en formato tarjeta (con borde y fondo diferenciado).
+  * **Formato de contenedor**: Pueden mostrarse de forma limpia como un panel simple (sin bordes) o en formato tarjeta (con borde y fondo diferenciado). Además, existen los formatos **"Panel con pestañas"** y **"Tarjeta con pestañas"**: la sección actúa como contenedor de pestañas y **solo puede contener otras secciones** (cada una configurada como "Pestaña"); los elementos sueltos que contenga se agrupan automáticamente en una pestaña nueva ("Nova secció"). El título de la sección de pestañas se muestra siempre (plano o en la cabecera de la tarjeta, según el formato). En los formularios publicados, si un campo obligatorio de una pestaña oculta falla la validación, la pestaña se activa automáticamente y el campo se muestra con el error.
   
   * **Título**: Se puede definir si la sección muestra un título visible para estructurar el contenido o si queda oculto.
 
-  * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables, permitiendo elegir si al cargar la página aparecen expandidas o contraídas por defecto. Esto resulta extremadamente útil en formularios largos para no abrumar al usuario, permitiéndole navegar progresivamente por bloques o revelar información opcional solo si interactúa con ella.
+  * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables, permitiendo elegir si al cargar la página aparecen expandidas o contraídas por defecto. Esto resulta extremadamente útil en formularios largos para no abrumar al usuario, permitiéndole navegar progresivamente por bloques o revelar información opcional solo si interactúa con ella. (Las secciones de pestañas también pueden ser colapsables si se configura así.)
+
+  * **Grupos representados con estructura de plantilla**: Todo grupo (repetible u opcional) se representa con **dos niveles**: la sección contenedora del grupo (título general, subtítulo, conmutador de inclusión y botones de añadir/eliminar) y una **plantilla de instancia** interior (una pestaña con el nombre en singular, p. ej. *"Participante"*) que contiene sus campos. La plantilla no se puede eliminar de forma aislada (solo se elimina el grupo completo desde la sección contenedora) y sus campos solo se pueden reordenar dentro de la plantilla. La etiqueta de cada instancia se evalúa dinámicamente: *"Participante #1"*, *"Participante #2"* para repetibles; el nombre de la plantilla a secas para opcionales. Si la sección contenedora tiene formato de pestañas, cada instancia se representa como una pestaña dinámica.
+
+  * **Restaurar secciones por defecto**: Un botón ("Configuración de secciones por defecto"), junto al de añadir sección, restaura las secciones a las que se generarían automáticamente con los bloques de datos actuales (previa confirmación: se pierden las configuraciones manuales del paso).
+
+  * **Renderizado de grupos repetibles**: Cada instancia de un grupo repetible se renderiza de forma unificada y **jerárquica**: paneles simétricos (raíz e hijos) anidados dentro de una misma tarjeta de instancia, numerada (p. ej.: *"Grupo #1"*, *"Grupo #2"*), con su cabecera propia (título del grupo, botones de añadir/eliminar instancia) y respetando el límite máximo configurado. Los bloques enlazados se muestran como paneles internos con sus respectivos títulos y rejilla de campos. La sección del grupo conserva su asociación aunque sus campos se reorganicen entre subsecciones; los subgrupos anidados mantienen sus propios índices de instancia. Las etiquetas de grupo (conmutador de inclusión, botones de añadir/eliminar) se configuran en el panel de configuración de la sección del grupo en este mismo paso.
 
 * **Configuración general de estilos**: Existen multitud de opciones para adaptar la apariencia del formulario y lograr que se integre a la perfección con la identidad visual corporativa:
 
@@ -325,6 +358,305 @@ Este es el último paso del asistente, destinado a revisar el resultado final, e
   
   * **Descargar código**: Permite descargar el código HTML generado para realizar inserciones manuales o integraciones más específicas en plataformas externas.
 
+## API JavaScript de Cliente (window.AWF) ##
+El motor de formularios inyecta de forma nativa la librería de cliente `window.AWF`, disponible en el ámbito global del navegador y lista para su uso en el bloque de **JS Personalizado** (`custom_js`) en el Paso 4 (Maquetación).
+
+Esta API permite consultar y manipular valores, atributos HTML, etiquetas y contenedores sin depender de selectores frágiles del DOM (`#f_...`), abstrayendo al desarrollador de la estructura interna y garantizando compatibilidad total con bloques escalares, repetibles y opcionales (#1365).
+
+---
+
+### 1. Nomenclatura canónica obligatoria
+Para evitar colisiones entre campos homónimos de distintos bloques o campos virtuales, el acceso exige siempre el nombre interno canónico:
+* **Campos enlazados a CRM**: `NombreBloque.nombre_campo` (ej: `Contacts0.last_name`).
+* **Campos no enlazados (virtuales)**: `_detached.NombreBloque.nombre_campo` (ej: `_detached.Contacts0.terminos`).
+* **Instancias concretas en repetibles**: `NombreBloque[indice][nombre_campo]` (ej: `Participantes0[0][first_name]`).
+
+No se admiten nombres cortos sin bloque (como `'first_name'`). Cualquier llamada con un nombre no cualificado retornará `null` o `false`.
+
+---
+
+### 2. Métodos de la API global (`window.AWF`)
+
+> **⚠️ Ciclo de vida y timing:** el bloque de **JS Personalizado** se ejecuta en línea, **antes** de que Alpine.js (cargado con `defer`) inicialice el formulario. Los campos de grupos (repetibles/opcionales) se renderizan dentro de `<template x-for>`, por lo que **no existen en el DOM** durante la ejecución de primer nivel del `custom_js`: lecturas (`getValue`, `getText`) retornarán `null` y escrituras no tendrán efecto sobre controles aún no renderizados. Aplaza estas operaciones:
+> * Usa `AWF.onChange(target, callback, { immediate: true })`: el observador de mutaciones re-dispara los listeners sobre cada instancia cuando Alpine la renderiza (`awf:instance-added`).
+> * Para lecturas únicas, difiere con `window.addEventListener('load', ...)`.
+> * Nota: en el ámbito global (consola o `custom_js`) evita `var name = ...`: colisiona con la propiedad preexistente `window.name` (string), que distorsiona el resultado leído.
+
+#### AWF.getValue(target, [options])
+Obtiene el valor de datos (payload) actual de un control:
+* **Casillas de verificación individuales**: booleano (`true`/`false`).
+* **Listas de casillas o selects múltiples (`[]`)**: array de cadenas con los valores seleccionados.
+* **Botones de radio o selects simples**: valor de la opción seleccionada.
+* **Campos de texto / textarea**: cadena con el valor actual.
+* **Si el campo no existe o no está renderizado**: retorna `null` (nunca `undefined`). Esto incluye: sección opcional inactiva o grupo sin instancias, instancia de grupo aún no renderizada por Alpine (ver ciclo de vida) y nombres no cualificados o inexistentes. Para depurar la resolución usa `AWF.resolve(target)`, que retorna `{ elements, element, card, parsed }`.
+
+```javascript
+var email = AWF.getValue('Contacts0.email1');
+var acepta = AWF.getValue('_detached.Contacts0.terminos');
+```
+
+#### AWF.setValue(target, value, [options])
+Asigna reactivamente un valor sobre el control emitiendo los eventos nativos `input` y `change` con propagación (`bubbles: true`), lo que mantiene sincronizado el estado reactivo de Alpine.js y recalcula las validaciones. Normaliza valores booleanos equivalentes (`true`, `false`, `'1'`, `'0'`, `'true'`, `'false'`).
+
+```javascript
+AWF.setValue('Contacts0.first_name', 'Marta');
+AWF.setValue('_detached.Contacts0.terminos', true);
+```
+
+#### AWF.getText(target, [options])
+*(Alias: `scope.getText`)*
+Obtiene el texto legible y visible para el usuario de la selección actual (no su clave o ID interno):
+* **Desplegable (`select`)**: texto de la opción seleccionada (en selecciones múltiples, array de textos).
+* **Botones de radio (`input type="radio"`)**: texto de la etiqueta vinculada a la opción marcada.
+* **Casillas de verificación (`checkbox`)**: texto de la etiqueta si existe, o `'true'`/`'false'`.
+* **Campos de texto o textarea**: valor actual del campo.
+
+```javascript
+// Si el valor interno es 'passport' pero la opción visible dice 'Pasaporte':
+var tipoDoc = AWF.getText('Contacts0.tipo_documento'); // 'Pasaporte'
+```
+
+#### AWF.getLabel(target, [options])
+*(Alias: `scope.getLabel`)*
+Obtiene el texto de la etiqueta principal (`<label>`) del campo, limpiando de forma segura el asterisco visual de obligatoriedad (`*` o `.awf-required`). Retorna una cadena vacía si no existe etiqueta.
+
+```javascript
+var etiqueta = AWF.getLabel('Contacts0.phone_mobile'); // 'Teléfono móvil'
+```
+
+#### AWF.setLabel(target, text, [options])
+*(Alias: `scope.setLabel`)*
+Modifica dinámicamente el texto de la etiqueta principal del campo respetando y preservando intacto el nodo del asterisco (`<span class="awf-required">*</span>`) si el campo es obligatorio.
+* Si se pasa `null` o `undefined`, limpia el texto de la etiqueta sin alterar los indicadores visuales ni romper el marcado HTML.
+
+```javascript
+AWF.setLabel('Contacts0.stic_identification_number_c', 'Número de pasaporte:');
+```
+
+#### AWF.getSectionTitle(target, [options])
+*(Alias: `scope.getSectionTitle`)*
+Obtiene el texto del **título visible de la sección** que renderiza el campo indicado. El título vive en un lugar distinto según la representación, y esta API lo abstrae: cabecera de sección (card o panel), pestaña (el título está en la pestaña, fuera del panel), acordeón (cabecera del item) o instancias de grupos repetibles (cabecera de la tarjeta/pestaña/acordeón de la instancia).
+
+* Retorna `null` si la sección no renderiza título (secciones sin cabecera).
+* **Bloques repetibles**: la llamada global sin índice lee la **primera instancia** (mismo contrato que `getValue`); dentro de un `onChange` usa `scope.getSectionTitle()` para el título de la instancia del evento.
+* En representaciones de instancia (grupos repetibles/opcionales) el título está enlazado a Alpine (`x-text`): la lectura siempre refleja el texto actual (`'Contacto #1'`).
+
+```javascript
+var titulo = AWF.getSectionTitle('Contacts0.first_name'); // 'Datos de contacto'
+```
+
+#### AWF.setSectionTitle(target, text, [options])
+*(Alias: `scope.setSectionTitle`)*
+Modifica dinámicamente el texto del título visible de la sección que renderiza el campo indicado, resolviendo automáticamente el elemento correcto en cada representación.
+
+* **Títulos estáticos (secciones card/panel, pestañas y acordeones de diseño)**: escribe el nuevo texto y retorna `true`.
+* **Títulos de instancias de grupos (repetibles/opcionales, con `x-text`)**: escribe la anulación a través del estado reactivo del grupo (`titleOverrides`, vía `Alpine.$data`), por lo que sobrevive a los re-renderizados (añadir/quitar instancias) y retorna `true`. Retorna `false` si no existe título visible o Alpine no está disponible.
+* **Título base original**: en títulos estáticos, en la primera escritura guarda el texto original en `data-awf-base-title`, de modo que nunca se pierde la base para componer textos tipo `"Base - Valor"`. En títulos de instancia la base es la propia expresión de plantilla (`'Contacto #N'`).
+* **Dirigir la instancia**: en bloques repetibles, la llamada global sin índice aplica el texto a **TODAS** las instancias (mismo contrato que `setValue`). Para escribir el título de la instancia del evento, usa `scope.setSectionTitle(...)` dentro del `onChange`; para una fila concreta, `AWF.setSectionTitle(target, text, { instanceIndex: N })`.
+* **Restaurar el original**: pasando `null` como texto se restaura el título original de la fila/la sección (en instancias, el de la plantilla: `'Persona #N'`).
+* **Nota**: las anulaciones se guardan por posición de la fila; al eliminar instancias pueden desalinearse.
+
+```javascript
+// Un título por instancia: la base es POR FILA (cada fila conserva su '#N')
+var baseTitles = {}; // base por índice de instancia, capturada lazy
+var updateTitle = function updateTitle(scope) {
+    var idx = scope.instanceIndex == null ? 0 : scope.instanceIndex;
+    if (baseTitles[idx] === undefined) baseTitles[idx] = scope.getSectionTitle() || '';
+    var nombre = (scope.getValue('Contacts0.first_name') + ' ' + scope.getValue('Contacts0.last_name')).trim();
+    scope.setSectionTitle(nombre ? baseTitles[idx] + ' - ' + nombre : baseTitles[idx]);
+};
+AWF.onChange('Contacts0.first_name', function (val, scope) { updateTitle(scope); }, { immediate: true });
+AWF.onChange('Contacts0.last_name', function (val, scope) { updateTitle(scope); }, { immediate: true });
+
+// Restaurar el título por defecto de la fila actual:
+// scope.setSectionTitle(null);
+```
+
+#### AWF.getFieldContainer(target, [options])
+*(Alias: `scope.getFieldContainer` y propiedad `scope.fieldContainer`)*
+Retorna el elemento DOM contenedor del campo (`.awf-field` o `.form-check`). Resulta indispensable para ocultar o mostrar bloques de entrada completos (input, etiqueta y textos de ayuda) sin dejar etiquetas huérfanas ni desalinear la cuadrícula visual de Bootstrap.
+
+```javascript
+var contenedor = AWF.getFieldContainer('Contacts0.empresa');
+if (contenedor) {
+    contenedor.style.display = 'none'; // Oculta campo, etiqueta y textos de ayuda
+}
+```
+
+#### AWF.getAttribute(target, attributeName, [options])
+*(Alias: `AWF.getAttributeValue`)*
+Inspecciona el valor o estado de un atributo HTML del control:
+* **Atributos booleanos (`disabled`, `readonly`, `checked`)**: retorna booleano (`true`/`false`).
+* **Atributo `required`**: retorna `true` si el control tiene el atributo nativo `required` o si tiene asignado `aria-required="true"` (caso de listas de selección múltiple por casillas).
+* **Puntuación (`score` o `data-score`)**: resuelve de forma simétrica el valor numérico de la opción actualmente seleccionada en desplegables o botones de radio (retorna `float`/`int` o `null` si no está definida; nunca retorna `NaN` ni ceros artificiales). En selecciones múltiples retorna un array de números o valores `null`.
+* **Atributos de texto (`placeholder`, `min`, `max`, `style`, etc.)**: retorna la cadena o `null` si no está definido.
+
+```javascript
+var esObligatorio = AWF.getAttribute('Contacts0.email1', 'required');
+var puntos = AWF.getAttribute('Encuesta0.satisfaccion', 'score'); // Retorna ej: 25 (número) o null
+```
+
+#### AWF.setAttribute(target, attributeName, value, [options])
+*(Alias: `AWF.setAttributeValue`)*
+Asigna o retira atributos en el control con total simetría respecto a `getAttribute`:
+* **Atributos booleanos (`disabled`, `readonly`)**: Si se pasa un valor falsy (`false`, `null`, `0`, `'false'`, `'0'`, `''`), el atributo y la propiedad se retiran; en caso truthy, se añaden.
+* **Selección en radios y casillas (`checked`)**:
+  * En casillas conmuta el estado booleano.
+  * En grupos de botones de radio, si se pasa un valor concreto, marca exclusivamente la opción coincidente y desmarca las restantes.
+* **Control de obligatoriedad (`required`)**: Sincroniza la propiedad nativa, el atributo `aria-required` y el asterisco visual (`*`). En listas múltiples (`select_checkbox_list`) omite el `required` nativo para no exigir marcar todas las opciones en HTML5, limitándose a `aria-required="true"` y al asterisco del grupo.
+* **Puntuación (`score` o `data-score`)**: Valida numéricamente el valor y lo escribe directamente en el atributo canónico `data-score` de la opción activa (la seleccionada en select o radio), retirando el atributo no estándar residual si existiera.
+
+```javascript
+AWF.setAttribute('Contacts0.description', 'required', true);
+AWF.setAttribute('Encuesta0.satisfaccion', 'score', 50);
+```
+
+#### AWF.onChange(target, callback, [options])
+Registra un observador mediante delegación de eventos a nivel de formulario (`<form>`). Detecta modificaciones de valor tanto en controles estáticos como en filas que el usuario añada posteriormente en grupos repetibles.
+* **Firma del callback**: `function(value, scope)`
+* **Opciones**:
+  * `immediate: true`: Ejecuta el callback inmediatamente tras el registro.
+  * `instanceIndex: n`: Limita la observación a una fila concreta en repetibles.
+  * `form: formIdOrElement`: En entornos multiformulario, asocia la escucha al formulario indicado.
+* **Retorno**: Función de desuscripción `off()` para cancelar la escucha.
+
+```javascript
+var stop = AWF.onChange('Contacts0.tipo_documento', function(valor, scope) {
+    if (valor === 'cancelar') {
+        stop(); // Cancela el observador
+    }
+});
+```
+
+---
+
+### 3. Ciclo de vida y comportamiento de `options.immediate`
+Al registrar un observador con `options.immediate = true`, el motor aplica una estrategia integral de inicialización:
+1. **Instancias existentes**: Se ejecuta de forma inmediata e independiente para cada una de las tarjetas de instancia (`.awf-instance-card`) ya presentes en el formulario, recibiendo cada una su propio contexto `scope`.
+2. **Nuevas filas dinámicas (`MutationObserver`)**: Cuando el usuario pulsa para añadir nuevas filas en grupos repetibles, un observador del DOM detecta la nueva tarjeta y sus posibles tarjetas hijas anidadas. Tras un microtick de hidratación de Alpine.js (donde los campos adquieren sus nombres indexados y valores por defecto), el motor dispara automáticamente el callback para la nueva fila.
+3. **Deduplicación garantizada**: Cada tarjeta de instancia mantiene un registro interno de listeners ejecutados. Esto previene dobles ejecuciones si se dispara explícitamente el evento DOM `awf:instance-added` por código personalizado.
+
+---
+
+### 4. El objeto de contexto `scope`
+El segundo parámetro recibido en el callback de `onChange` proporciona el contexto exacto de la instancia que originó el evento:
+
+#### Propiedades y metadatos:
+* `scope.block`: Nombre canónico del bloque de datos (ej: `'Participantes0'`).
+* `scope.field`: Nombre del campo (ej: `'edad'`).
+* `scope.detached`: Booleano que indica si el campo es virtual/desvinculado.
+* `scope.instanceIndexes`: Array inmutable con la jerarquía completa de índices numéricos de repetición (ej: `[0, 1]` en bloques anidados).
+* `scope.instanceIndex`: Índice numérico de la fila en repetibles (o `null` si es escalar).
+* `scope.card`: Elemento DOM contenedor de la instancia (`.awf-instance-card`) o `null` en formularios escalares.
+* `scope.fieldContainer`: Propiedad getter que devuelve directamente el elemento DOM contenedor del campo (`.awf-field`).
+
+#### Métodos contextuales:
+Todos los métodos globales están disponibles en `scope` operando por defecto sobre el campo actual o sobre campos hermanos de la misma tarjeta:
+* `scope.getValue([target])`
+* `scope.setValue([target], value)`
+* `scope.getText([target])`
+* `scope.getLabel([target])`
+* `scope.setLabel([target], text)`
+* `scope.getSectionTitle([target])`
+* `scope.setSectionTitle([target], text)`
+* `scope.getFieldContainer([target])`
+* `scope.getAttribute([target], attribute)`
+* `scope.setAttribute([target], attribute, value)`
+
+#### Reglas de resolución contextual en `scope`:
+1. **Mismo bloque que el evento**:
+   * En formularios escalares (`card === null`), resuelve contra los controles no indexados del formulario.
+   * En bloques repetibles, se limita estrictamente a la tarjeta actual (`card`). Si un campo opcional no está renderizado en dicha fila, devuelve `null` y nunca salta a la fila 0.
+2. **Bloque distinto**:
+   * **Ancestros**: Si el campo pertenece a una fila contenedora padre, asciende por la jerarquía de tarjetas manteniendo la coherencia de índices.
+   * **Descendientes**: Si pertenece a un sub-bloque hijo, resuelve la instancia dependiente siempre que no exista ambigüedad (si existen varias subinstancias sin especificar índice, devuelve `null` para evitar escrituras accidentales).
+   * **Ámbito global**: Solo busca fuera de la tarjeta si el campo de destino es **estrictamente escalar** (no indexado). Nunca cruza a filas ajenas de otros bloques repetibles.
+
+---
+
+### 5. Ejemplos prácticos en JS Personalizado (`custom_js`)
+
+#### Ejemplo A: Ayuda contextual dinámica según el tipo de documento
+```javascript
+AWF.onChange('Contacts0.stic_identification_type_c', function(val, scope) {
+    var targetField = 'Contacts0.stic_identification_number_c';
+    var isFilled = (val !== '' && val !== null && val !== undefined);
+
+    // Conmuta obligatoriedad y asterisco visual
+    scope.setAttribute(targetField, 'required', isFilled);
+
+    // Obtiene el contenedor visual .awf-field
+    var container = scope.getFieldContainer(targetField);
+    if (!container) return;
+
+    var hintId = 'hint_' + targetField.replace(/[^a-zA-Z0-9_-]/g, '_');
+    var hintEl = container.querySelector('#' + hintId);
+
+    if (isFilled) {
+        var docTypeText = scope.getText('Contacts0.stic_identification_type_c');
+        var mensaje = 'Escriba su ' + docTypeText;
+
+        if (!hintEl) {
+            hintEl = document.createElement('div');
+            hintEl.id = hintId;
+            hintEl.className = 'form-text text-muted mt-1 small';
+            container.appendChild(hintEl);
+        }
+        hintEl.textContent = mensaje;
+        hintEl.style.display = '';
+        
+        // Actualiza el texto de la etiqueta principal respetando el asterisco
+        scope.setLabel(targetField, 'Número de ' + docTypeText + ':');
+    } else if (hintEl) {
+        hintEl.style.display = 'none';
+        scope.setLabel(targetField, 'Número de identificación:');
+    }
+}, { immediate: true });
+```
+
+#### Ejemplo B: Sincronización en filas repetibles (Tutor del menor)
+```javascript
+AWF.onChange('Participantes0.edad', function(edad, scope) {
+    var esMenor = parseInt(edad, 10) < 18;
+    
+    // Modifica campos exclusivamente en la propia fila repetible
+    scope.setAttribute('Participantes0.tutor_nombre', 'required', esMenor);
+    scope.setAttribute('Participantes0.tutor_nombre', 'disabled', !esMenor);
+
+    if (!esMenor) {
+        scope.setValue('Participantes0.tutor_nombre', '');
+    }
+});
+```
+
+#### Ejemplo C: Acceso ascendente a datos de la fila padre desde una fila anidada
+```javascript
+AWF.onChange('Alergias0.tiene_alergia', function(tieneAlergia, scope) {
+    if (tieneAlergia) {
+        // Participantes0 es el bloque padre contenedor
+        var nombrePadre = scope.getValue('Participantes0.first_name');
+        console.log('Registrando alergia para: ' + nombrePadre);
+    }
+});
+```
+
+---
+
+### 6. Soporte multiformulario y utilidades de bajo nivel
+Cuando conviven varios formularios AWF en la misma página (portales o incrustaciones múltiples):
+* **`AWF.for(formIdOrElement)`**: Retorna la instancia de la API vinculada exclusivamente a ese formulario.
+* **Parámetro `options.form`**: Todos los métodos globales aceptan `{ form: 'formId' }`.
+* **Parámetro `options.instanceIndex`**: Permite forzar la resolución sobre una fila específica de un bloque repetible:
+
+```javascript
+var emailFila1 = AWF.getValue('Contacts0.email1', { instanceIndex: 1 });
+```
+
+#### Métodos de diagnóstico e inspección:
+* **`AWF.resolve(target, [options])`**: Devuelve el desglose estructural `{ elements, element, card, parsed }`.
+* **`AWF.parseFieldName(name)`**: Descompone un nombre de control en `{ detached, block, indexes, field, multi }`.
+* **Evento `awf:instance-added`**: Evento DOM disparado sobre el formulario que los integradores externos pueden emitir manualmente pasando `{ detail: { card: elementoCard } }` para forzar la inicialización de contenedores creados fuera del ciclo estándar de Alpine.js.
+
 ## Análisis y Métricas de Rendimiento
 Además de capturar datos, el formulario web es una herramienta de medición de impacto. Desde la vista de detalle del formulario, se centraliza toda la información estadística y de rendimiento de la campaña:
 
@@ -337,7 +669,7 @@ Además de capturar datos, el formulario web es una herramienta de medición de 
 * **Fuentes de tráfico**: El sistema consolida y elabora un resumen de los dominios y orígenes (webs) desde los cuales se ha recibido alguna respuesta a ese formulario. Esto permite a la entidad identificar qué canales, páginas propias o dominios aliados están aportando más valor y resultados a la campaña.
 
 
-## Gestión de Respuestas y Trazabilidad Total ##
+## Gestión de Respuestas y Trazabilidad Total
 A diferencia de sistemas anteriores, los Formularios Web Avanzados ofrecen una auditoría completa y detallada de todo lo que ocurre con la información recibida. El sistema se organiza en tres niveles de registro para garantizar una trazabilidad total:
 
 * **Respuestas**: Desde la vista de detalle de un formulario se pueden consultar todas las respuestas que este ha recibido a lo largo del tiempo. Cada registro de respuesta guarda la información de forma íntegra e incluye datos técnicos y de contexto:
@@ -383,8 +715,6 @@ El nuevo sistema ofrece un grado de flexibilidad adicional para perfiles técnic
 
 ## Próximamente (Evolución del sistema) ##
 * **Archivos adjuntos**: Existirá la opción de que los usuarios puedan subir y adjuntar archivos o documentos digitales directamente a través del formulario.
-
-* **Grupos de bloques de datos repetibles**: Se incorporará el concepto de "Grupo", un contenedor que agrupa uno o más bloques de datos relacionados entre sí. Su característica principal es que podrá definirse como "repetible", permitiendo que el conjunto de campos que contiene aparezca múltiples veces en un mismo formulario. Esta funcionalidad será ideal para simplificar operativas complejas, como recoger los datos de varios participantes a la vez en una única inscripción grupal.
 
 * **Mayor flexibilidad en diseño y maquetación**: Se ampliarán las opciones visuales para organizar la información de forma más dinámica, permitiendo agrupar campos mediante pestañas, dividir formularios extensos en múltiples páginas y añadir otros elementos interactivos. El modelo de datos ya contempla estos contenedores, pendiente de completar su implementación en la capa de renderizado.
 
