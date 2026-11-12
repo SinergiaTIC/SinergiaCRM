@@ -46,8 +46,14 @@ class AOS_PDF_TemplatesUtils
         // The list of types is built by AOS_PDF_Templates::loadTabModules(). Its
         // per-user access filtering is tracked as a core issue; here it is filtered again through
         // isModuleAccessible() in getFileNameVariables()
-        $type = !empty($view->bean->type)
-            ? (string)$view->bean->type
+        $beanType = null;
+        if (!empty($view->bean) && isset($view->bean->type)) {
+            $beanType = $view->bean->type;
+        } elseif (!empty($view->ev->bean) && isset($view->ev->bean->type)) {
+            $beanType = $view->ev->bean->type;
+        }
+        $type = !empty($beanType)
+            ? (string)$beanType
             : (string)key($app_list_strings['pdf_template_type_dom'] ?? array());
         $variables = json_encode(self::getFileNameVariables(), JSON_UNESCAPED_UNICODE);
 

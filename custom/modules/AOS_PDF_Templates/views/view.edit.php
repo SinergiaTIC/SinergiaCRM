@@ -53,6 +53,18 @@ class CustomAOS_PDF_TemplatesViewEdit extends AOS_PDF_TemplatesViewEdit
 
     public function display()
     {
+        // Ensure the bean is available in the quickcreate flow, where preDisplay() is not invoked
+        if (empty($this->bean) && !empty($this->ev->bean)) {
+            $this->bean = $this->ev->bean;
+        }
+
+        // Selector of the {{variables}} usable in the stic_file_name_c pattern.
+        // Also injected here (and not only in preDisplay) so it runs in the quickcreate flow.
+        include_once 'custom/modules/AOS_PDF_Templates/SticUtils.php';
+        // When the view metadata is Studio-customized and lacks the field, inject it before rendering
+        AOS_PDF_TemplatesUtils::ensureFileNameFieldInView($this);
+        $this->ss->assign('FILE_NAME_SELECTOR', AOS_PDF_TemplatesUtils::getFileNameSelector($this));
+
         parent::display();
 
         SticViews::display($this);
