@@ -1765,6 +1765,13 @@ class WizardStep2 {
               // The stored value is a custom relative date: keep it and select "Custom"
               this.relativeDateSelected = 'custom';
             }
+            // Force the DOM selected state to match the model in every case.
+            const select = document.getElementById('modalField_RelativeDateSelector');
+            if (select && select.value !== this.relativeDateSelected) {
+              Array.from(select.options).forEach(option => {
+                option.selected = (option.value == this.relativeDateSelected);
+              });
+            }
           }
           if (newValue !== true) {
             this.field.value = '';
