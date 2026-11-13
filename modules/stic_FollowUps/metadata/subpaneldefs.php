@@ -40,6 +40,21 @@ $layout_defs["stic_FollowUps"]["subpanel_setup"]['stic_goals_stic_followups'] = 
     ),
 );
 
+$layout_defs["stic_FollowUps"]["subpanel_setup"]['stic_followups_activities_tasks'] = array(
+    'order' => 110,
+    'module' => 'Tasks',
+    'subpanel_name' => 'ForActivities',
+    'sort_order' => 'asc',
+    'sort_by' => 'date_due',
+    'title_key' => 'LBL_STIC_FOLLOWUPS_ACTIVITIES_TASKS_FROM_TASKS_TITLE',
+    'get_subpanel_data' => 'stic_followups_activities_tasks',
+    'top_buttons' => array(
+        0 => array(
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+    ),
+);
+
 $layout_defs['stic_FollowUps']['subpanel_setup']['securitygroups'] = array(
     'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect'),),
     'order' => 900,

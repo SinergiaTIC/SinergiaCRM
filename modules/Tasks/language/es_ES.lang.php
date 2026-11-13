@@ -94,4 +94,6 @@ $mod_strings = array(
     //For export labels
     'LBL_DATE_DUE' => 'Fecha vencimiento',
     'LBL_RELATED_TO' => 'Relacionado con:',
+    // Label for date_start column in ForActivities subpanel (STIC#1196)
+    'LBL_LIST_DATE' => 'Fecha de inicio',
 );

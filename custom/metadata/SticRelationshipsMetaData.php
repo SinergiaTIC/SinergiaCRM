@@ -4033,6 +4033,121 @@ $dictionary["stic_sessions_documents"] = array(
     ),
 );
 
+$dictionary["stic_meetings_documents"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_meetings_documents' => array(
+            'lhs_module' => 'Meetings',
+            'lhs_table' => 'meetings',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Documents',
+            'rhs_table' => 'documents',
+            'rhs_key' => 'id',
+            'relationship_type' => 'many-to-many',
+            'join_table' => 'stic_meetings_documents_c',
+            'join_key_lhs' => 'stic_meetings_documentsmeetings_ida',
+            'join_key_rhs' => 'stic_meetings_documentsdocuments_idb',
+        ),
+    ),
+    'table' => 'stic_meetings_documents_c',
+    'fields' => array(
+        0 => array(
+            'name' => 'id',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        1 => array(
+            'name' => 'date_modified',
+            'type' => 'datetime',
+        ),
+        2 => array(
+            'name' => 'deleted',
+            'type' => 'bool',
+            'len' => '1',
+            'default' => '0',
+            'required' => true,
+        ),
+        3 => array(
+            'name' => 'stic_meetings_documentsmeetings_ida',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        4 => array(
+            'name' => 'stic_meetings_documentsdocuments_idb',
+            'type' => 'varchar',
+            'len' => 36,
+        ),
+        5 => array(
+            'name' => 'document_revision_id',
+            'type' => 'varchar',
+            'len' => '36',
+        ),
+    ),
+    'indices' => array(
+        0 => array(
+            'name' => 'stic_meetings_documentsspk',
+            'type' => 'primary',
+            'fields' => array(
+                0 => 'id',
+            ),
+        ),
+        1 => array(
+            'name' => 'stic_meetings_documents_ida1',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_meetings_documentsmeetings_ida',
+            ),
+        ),
+        2 => array(
+            'name' => 'stic_meetings_documents_alt',
+            'type' => 'alternate_key',
+            'fields' => array(
+                0 => 'stic_meetings_documentsdocuments_idb',
+            ),
+        ),
+    ),
+);
+
+$dictionary["meetings_activities_tasks"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'meetings_activities_tasks' => array(
+            'lhs_module' => 'Meetings',
+            'lhs_table' => 'meetings',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'Meetings',
+        ),
+    ),
+    'fields' => '',
+    'indices' => '',
+    'table' => '',
+);
+
+$dictionary["stic_sessions_activities_tasks"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_sessions_activities_tasks' => array(
+            'lhs_module' => 'stic_Sessions',
+            'lhs_table' => 'stic_sessions',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'stic_Sessions',
+        ),
+    ),
+    'fields' => '',
+    'indices' => '',
+    'table' => '',
+);
+
 $dictionary["stic_sessions_stic_events"] = array(
     'true_relationship_type' => 'one-to-many',
     'relationships' => array(
@@ -8526,4 +8641,25 @@ $dictionary["stic_awf_responses_documents"] = array(
             ),
         ),
     ),
+);
+
+
+$dictionary["stic_followups_activities_tasks"] = array(
+    'true_relationship_type' => 'one-to-many',
+    'relationships' => array(
+        'stic_followups_activities_tasks' => array(
+            'lhs_module' => 'stic_FollowUps',
+            'lhs_table' => 'stic_followups',
+            'lhs_key' => 'id',
+            'rhs_module' => 'Tasks',
+            'rhs_table' => 'tasks',
+            'rhs_key' => 'parent_id',
+            'relationship_type' => 'one-to-many',
+            'relationship_role_column' => 'parent_type',
+            'relationship_role_column_value' => 'stic_FollowUps',
+        ),
+    ),
+    'fields' => '',
+    'indices' => '',
+    'table' => '',
 );

@@ -270,6 +270,11 @@ array (
           'newTab' => true,
           'panelDefault' => 'expanded',
         ),
+        'LBL_STIC_MEETINGS_ACTA_PANEL' => 
+        array (
+          'newTab' => true,
+          'panelDefault' => 'expanded',
+        ),
       ),
     ),
     'panels' => 
@@ -315,6 +320,19 @@ array (
         array (
           0 => 
           array (
+            'name' => 'stic_type_c',
+            'label' => 'LBL_STIC_TYPE',
+          ),
+          1 => 
+          array (
+            'name' => 'stic_modality_c',
+            'label' => 'LBL_STIC_MODALITY',
+          ),
+        ),
+        3 => 
+        array (
+          0 => 
+          array (
             'name' => 'date_start',
             'type' => 'datetimecombo',
             'displayParams' => 
@@ -334,7 +352,7 @@ array (
             ),
           ),
         ),
-        3 => 
+        4 => 
         array (
           0 => 
           array (
@@ -362,7 +380,7 @@ array (
             'label' => 'LBL_LOCATION',
           ),
         ),
-        4 => 
+        5 => 
         array (
           0 => 
           array (
@@ -375,13 +393,41 @@ array (
             'label' => 'LBL_REMINDERS',
           ),
         ),
-        5 => 
+        6 => 
         array (
           0 => 
           array (
             'name' => 'description',
             'comment' => 'Full text of the note',
             'label' => 'LBL_DESCRIPTION',
+          ),
+        ),
+
+      ),
+      'lbl_stic_meetings_acta_panel' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            'name' => 'stic_order_of_the_day_c',
+            'label' => 'LBL_STIC_ORDER_OF_THE_DAY',
+          ),
+        ),
+        1 => 
+        array (
+          0 => 
+          array (
+            'name' => 'stic_development_c',
+            'label' => 'LBL_STIC_DEVELOPMENT',
+          ),
+        ),
+        2 => 
+        array (
+          0 => 
+          array (
+            'name' => 'stic_agreements_c',
+            'label' => 'LBL_STIC_AGREEMENTS',
           ),
         ),
       ),

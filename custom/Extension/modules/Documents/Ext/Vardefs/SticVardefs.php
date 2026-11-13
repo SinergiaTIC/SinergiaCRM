@@ -145,6 +145,16 @@ $dictionary["Document"]["fields"]["stic_sessions_documentsstic_sessions_ida"] = 
     'side' => 'right',
     'vname' => 'LBL_STIC_SESSIONS_DOCUMENTS_FROM_DOCUMENTS_TITLE',
 );
+$dictionary["Document"]["fields"]["stic_meetings_documents"] = array(
+    'name' => 'stic_meetings_documents',
+    'type' => 'link',
+    'relationship' => 'stic_meetings_documents',
+    'source' => 'non-db',
+    'module' => 'Meetings',
+    'bean_name' => 'Meeting',
+    'vname' => 'LBL_STIC_MEETINGS_DOCUMENTS_FROM_MEETINGS_TITLE',
+    'id_name' => 'stic_meetings_documentsmeetings_ida',
+);
 $dictionary["Document"]["fields"]["stic_job_applications_documents"] = array(
     'name' => 'stic_job_applications_documents',
     'type' => 'link',

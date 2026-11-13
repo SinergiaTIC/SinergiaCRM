@@ -4257,5 +4257,14 @@ $app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acción masiva
 $app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinación de registros';
 $app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acción externa';
 
+// Tipos de Acta
+$app_list_strings['stic_acta_type_list'][''] = '';
+$app_list_strings['stic_acta_type_list']['team_meeting'] = 'Reunión de equipo';
+$app_list_strings['stic_acta_type_list']['management_team_meeting'] = 'Reunión de equipo directivo';
+$app_list_strings['stic_acta_type_list']['board_meeting'] = 'Reunión Junta directiva/Patronato';
+$app_list_strings['stic_acta_type_list']['working_group'] = 'Grupo de trabajo';
+$app_list_strings['stic_acta_type_list']['individual'] = 'Individual';
+$app_list_strings['stic_acta_type_list']['others'] = 'Otros';
+
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

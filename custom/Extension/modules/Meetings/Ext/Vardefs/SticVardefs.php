@@ -37,6 +37,26 @@ $dictionary["Meeting"]["fields"]["stic_job_offers_activities_meetings"] = array 
     'vname' => 'LBL_STIC_JOB_OFFERS_ACTIVITIES_MEETINGS_FROM_STIC_JOB_OFFERS_TITLE',
 );
 
+$dictionary["Meeting"]["fields"]["stic_meetings_documents"] = array (
+    'name' => 'stic_meetings_documents',
+    'type' => 'link',
+    'relationship' => 'stic_meetings_documents',
+    'source' => 'non-db',
+    'module' => 'Documents',
+    'bean_name' => 'Document',
+    'vname' => 'LBL_STIC_MEETINGS_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+);
+
+$dictionary["Meeting"]["fields"]["meetings_activities_tasks"] = array (
+    'name' => 'meetings_activities_tasks',
+    'type' => 'link',
+    'relationship' => 'meetings_activities_tasks',
+    'source' => 'non-db',
+    'module' => 'Tasks',
+    'bean_name' => 'Task',
+    'vname' => 'LBL_MEETINGS_ACTIVITIES_TASKS_FROM_TASKS_TITLE',
+);
+
 $dictionary['Meeting']['fields']['email_reminder_time']['options'] = 'stic_email_reminder_time_list';
 
 $dictionary['Meeting']['fields']['duration']['inline_edit'] = 0;
@@ -59,3 +79,150 @@ $dictionary['Meeting']['fields']['parent_name']['massupdate']='1';
 $dictionary['Meeting']['fields']['status']['massupdate']='1';
 $dictionary['Meeting']['fields']['date_start']['massupdate']='1';
 
+// Fields for meeting minutes
+$dictionary['Meeting']['fields']['stic_type_c'] = array(
+    'id' => 'Meetingsstic_type_c',
+    'name' => 'stic_type_c',
+    'vname' => 'LBL_STIC_TYPE',
+    'custom_module' => 'Meetings',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'enum',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'stic_acta_type_list',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 1,
+    'importable' => 1,
+    'massupdate' => 1,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'enabled',
+    'studio' => 'visible',
+    'dependency' => 0,
+);
+
+$dictionary['Meeting']['fields']['stic_modality_c'] = array(
+    'id' => 'Meetingsstic_modality_c',
+    'name' => 'stic_modality_c',
+    'vname' => 'LBL_STIC_MODALITY',
+    'custom_module' => 'Meetings',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'enum',
+    'len' => 100,
+    'size' => '20',
+    'options' => 'stic_followups_channels_list',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 1,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'enabled',
+    'duplicate_merge_dom_value' => 1,
+    'merge_filter' => 'enabled',
+    'studio' => 'visible',
+    'dependency' => 0,
+);
+
+
+$dictionary['Meeting']['fields']['stic_order_of_the_day_c'] = array(
+    'id' => 'Meetingsstic_order_of_the_day_c',
+    'name' => 'stic_order_of_the_day_c',
+    'vname' => 'LBL_STIC_ORDER_OF_THE_DAY',
+    'custom_module' => 'Meetings',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'wysiwyg',
+    'dbType' => 'text',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'dependency' => 0,
+    'editorOptions' => array(
+        'height' => 300,
+    ),
+);
+
+$dictionary['Meeting']['fields']['stic_development_c'] = array(
+    'id' => 'Meetingsstic_development_c',
+    'name' => 'stic_development_c',
+    'vname' => 'LBL_STIC_DEVELOPMENT',
+    'custom_module' => 'Meetings',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'wysiwyg',
+    'dbType' => 'text',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'dependency' => 0,
+    'editorOptions' => array(
+        'height' => 300,
+    ),
+);
+
+$dictionary['Meeting']['fields']['stic_agreements_c'] = array(
+    'id' => 'Meetingsstic_agreements_c',
+    'name' => 'stic_agreements_c',
+    'vname' => 'LBL_STIC_AGREEMENTS',
+    'custom_module' => 'Meetings',
+    'source' => 'custom_fields',
+    'comments' => '',
+    'help' => '',
+    'type' => 'wysiwyg',
+    'dbType' => 'text',
+    'size' => '20',
+    'required' => 0,
+    'audited' => 0,
+    'unified_search' => 0,
+    'default' => null,
+    'no_default' => 0,
+    'inline_edit' => 0,
+    'importable' => 1,
+    'massupdate' => 0,
+    'reportable' => 1,
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => 0,
+    'merge_filter' => 'disabled',
+    'studio' => 'visible',
+    'dependency' => 0,
+    'editorOptions' => array(
+        'height' => 300,
+    ),
+);

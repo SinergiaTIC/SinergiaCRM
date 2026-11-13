@@ -46,3 +46,13 @@ $mod_strings['LBL_LIST_CONTACT'] = 'Persona';
 
 // Campos de filtro en relaciones muchos a muchos
 $mod_strings['LBL_STIC_MEETINGS_CONTACTS_NAME'] = 'Persona';
+
+// Campos de acta (minutes)
+$mod_strings['LBL_STIC_TYPE'] = 'Tipo';
+$mod_strings['LBL_STIC_MODALITY'] = 'Modalidad';
+$mod_strings['LBL_STIC_ORDER_OF_THE_DAY'] = 'Orden del día';
+$mod_strings['LBL_STIC_DEVELOPMENT'] = 'Desarrollo de la reunión';
+$mod_strings['LBL_STIC_AGREEMENTS'] = 'Acuerdos';
+$mod_strings['LBL_STIC_MEETINGS_ACTA_PANEL'] = 'Acta';
+$mod_strings['LBL_STIC_MEETINGS_DOCUMENTS_FROM_DOCUMENTS_TITLE'] = 'Documentos';
+$mod_strings['LBL_MEETINGS_ACTIVITIES_TASKS_FROM_TASKS_TITLE'] = 'Tareas';

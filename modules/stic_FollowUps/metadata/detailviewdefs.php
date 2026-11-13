@@ -50,6 +50,10 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_ACTA_PANEL' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),
                 'LBL_PANEL_RECORD_DETAILS' => array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
@@ -85,6 +89,13 @@ array(
                 ),
                 3 => array(
                     0 => array(
+                        'name' => 'location',
+                        'label' => 'LBL_LOCATION',
+                    ),
+                    1 => '',
+                ),
+                4 => array(
+                    0 => array(
                         'name' => 'type',
                         'studio' => 'visible',
                         'label' => 'LBL_TYPE',
@@ -95,7 +106,7 @@ array(
                         'label' => 'LBL_SUBTYPE',
                     ),
                 ),
-                4 => array(
+                5 => array(
                     0 => array(
                         'name' => 'channel',
                         'studio' => 'visible',
@@ -107,7 +118,7 @@ array(
                         'label' => 'LBL_FOLLOWUP_ORIGIN',
                     ),
                 ),
-                5 => array(
+                6 => array(
                     0 => array(
                         'name' => 'attendees',
                         'studio' => 'visible',
@@ -118,7 +129,7 @@ array(
                         'label' => 'LBL_COLOR',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => array(
                         'name' => 'external_contact',
                         'studio' => 'visible',
@@ -130,7 +141,7 @@ array(
                         'label' => 'LBL_EXTERNAL_ACCOUNT',
                     ),
                 ),
-                7 => array(
+                8 => array(
                     0 => array(
                         'name' => 'stic_followups_project_name',
                     ),
@@ -138,7 +149,7 @@ array(
                         'name' => 'stic_followups_stic_registrations_name',
                     ),
                 ),
-                8 => array(
+                9 => array(
                     0 => array(
                         'name' => 'pending_actions',
                         'studio' => 'visible',
@@ -152,18 +163,36 @@ array(
                     ),
                 ),
             ),
+            'lbl_acta_panel' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'order_of_the_day',
+                        'label' => 'LBL_ORDER_OF_THE_DAY',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'development',
+                        'label' => 'LBL_DEVELOPMENT',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'agreements',
+                        'label' => 'LBL_AGREEMENTS',
+                    ),
+                ),
+            ),
             'lbl_panel_record_details' => array(
                 0 => array(
                     0 => array(
                         'name' => 'created_by_name',
                         'label' => 'LBL_CREATED',
-                        
                     ),
                     1 => array(
                         'name' => 'date_entered',
-                        'comment' => 'Date record created',
-                        'label' => 'LBL_DATE_ENTERED',
                         'customCode' => '{$fields.date_entered.value}',
+                        'label' => 'LBL_DATE_ENTERED',
                     ),
                 ),
                 1 => array(
@@ -173,14 +202,11 @@ array(
                     ),
                     1 => array(
                         'name' => 'date_modified',
-                        'comment' => 'Date record last modified',
-                        'label' => 'LBL_DATE_MODIFIED',
                         'customCode' => '{$fields.date_modified.value}',
+                        'label' => 'LBL_DATE_MODIFIED',
                     ),
                 ),
             ),
         ),
     ),
 );
-
-?>

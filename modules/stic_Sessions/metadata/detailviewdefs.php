@@ -50,6 +50,10 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_ACTA_PANEL' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),
                 'LBL_PANEL_RECORD_DETAILS' => array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
@@ -75,6 +79,16 @@ array(
                 ),
                 2 => array(
                     0 => array(
+                        'name' => 'location',
+                        'label' => 'LBL_LOCATION',
+                    ),
+                    1 => array(
+                        'name' => 'modality',
+                        'label' => 'LBL_MODALITY',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
                         'name' => 'start_date',
                         'label' => 'LBL_START_DATE',
                     ),
@@ -83,7 +97,7 @@ array(
                         'label' => 'LBL_END_DATE',
                     ),
                 ),
-                3 => array(
+                4 => array(
                     0 => array(
                         'name' => 'weekday',
                         'studio' => 'visible',
@@ -94,7 +108,7 @@ array(
                         'label' => 'LBL_DURATION',
                     ),
                 ),
-                4 => array(
+                5 => array(
                     0 => array(
                         'name' => 'total_attendances',
                         'label' => 'LBL_TOTAL_ATTENDANCES',
@@ -104,7 +118,7 @@ array(
                         'label' => 'LBL_VALIDATED_ATTENDANCES',
                     ),
                 ),
-                5 => array(
+                6 => array(
                     0 => array(
                         'name' => 'responsible',
                         'studio' => 'visible',
@@ -116,8 +130,29 @@ array(
                         'label' => 'LBL_ACTIVITY_TYPE',
                     ),
                 ),
-                6 => array(
+                7 => array(
                     0 => 'description',
+                ),
+
+            ),
+            'lbl_acta_panel' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'order_of_the_day',
+                        'label' => 'LBL_ORDER_OF_THE_DAY',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'development',
+                        'label' => 'LBL_DEVELOPMENT',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'agreements',
+                        'label' => 'LBL_AGREEMENTS',
+                    ),
                 ),
             ),
             'lbl_panel_record_details' => array(

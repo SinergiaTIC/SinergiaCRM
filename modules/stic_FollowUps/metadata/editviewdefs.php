@@ -49,6 +49,11 @@ array (
           'newTab' => true,
           'panelDefault' => 'expanded',
         ),
+        'LBL_ACTA_PANEL' => 
+        array (
+          'newTab' => true,
+          'panelDefault' => 'expanded',
+        ),
       ),
       'syncDetailEditViews' => false,
     ),
@@ -91,6 +96,15 @@ array (
         array (
           0 => 
           array (
+            'name' => 'location',
+            'label' => 'LBL_LOCATION',
+          ),
+          1 => '',
+        ),
+        4 => 
+        array (
+          0 => 
+          array (
             'name' => 'type',
             'studio' => 'visible',
             'label' => 'LBL_TYPE',
@@ -102,7 +116,7 @@ array (
             'label' => 'LBL_SUBTYPE',
           ),
         ),
-        4 => 
+        5 => 
         array (
           0 => 
           array (
@@ -117,7 +131,7 @@ array (
             'label' => 'LBL_FOLLOWUP_ORIGIN',
           ),
         ),
-        5 => 
+        6 => 
         array (
           0 => 
           array (
@@ -130,7 +144,7 @@ array (
             'label' => 'LBL_COLOR',
           ),
         ),
-        6 => 
+        7 => 
         array (
           0 => 
           array (
@@ -145,7 +159,7 @@ array (
             'label' => 'LBL_EXTERNAL_ACCOUNT',
           ),
         ),
-        7 => 
+        8 => 
         array (
           0 => 
           array (
@@ -156,7 +170,7 @@ array (
             'name' => 'stic_followups_stic_registrations_name',
           ),
         ),
-        8 => 
+        9 => 
         array (
           0 => 
           array (
@@ -170,6 +184,34 @@ array (
             'comment' => 'Full text of the note',
             'studio' => 'visible',
             'label' => 'LBL_DESCRIPTION',
+          ),
+        ),
+
+      ),
+      'lbl_acta_panel' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            'name' => 'order_of_the_day',
+            'label' => 'LBL_ORDER_OF_THE_DAY',
+          ),
+        ),
+        1 => 
+        array (
+          0 => 
+          array (
+            'name' => 'development',
+            'label' => 'LBL_DEVELOPMENT',
+          ),
+        ),
+        2 => 
+        array (
+          0 => 
+          array (
+            'name' => 'agreements',
+            'label' => 'LBL_AGREEMENTS',
           ),
         ),
       ),

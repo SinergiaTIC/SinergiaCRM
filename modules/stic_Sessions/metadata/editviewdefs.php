@@ -42,6 +42,10 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
+                'LBL_ACTA_PANEL' => array(
+                    'newTab' => true,
+                    'panelDefault' => 'expanded',
+                ),
             ),
             'syncDetailEditViews' => false,
         ),
@@ -63,6 +67,16 @@ array(
                 ),
                 2 => array(
                     0 => array(
+                        'name' => 'location',
+                        'label' => 'LBL_LOCATION',
+                    ),
+                    1 => array(
+                        'name' => 'modality',
+                        'label' => 'LBL_MODALITY',
+                    ),
+                ),
+                3 => array(
+                    0 => array(
                         'name' => 'start_date',
                         'label' => 'LBL_START_DATE',
                     ),
@@ -71,7 +85,7 @@ array(
                         'label' => 'LBL_END_DATE',
                     ),
                 ),
-                3 => array(
+                4 => array(
                     0 => array(
                         'name' => 'responsible',
                         'studio' => 'visible',
@@ -83,8 +97,29 @@ array(
                         'label' => 'LBL_ACTIVITY_TYPE',
                     ),
                 ),
-                4 => array(
+                5 => array(
                     0 => 'description',
+                ),
+
+            ),
+            'lbl_acta_panel' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'order_of_the_day',
+                        'label' => 'LBL_ORDER_OF_THE_DAY',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'development',
+                        'label' => 'LBL_DEVELOPMENT',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'agreements',
+                        'label' => 'LBL_AGREEMENTS',
+                    ),
                 ),
             ),
         ),
