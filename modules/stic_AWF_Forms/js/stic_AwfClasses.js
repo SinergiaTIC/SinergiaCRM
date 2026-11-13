@@ -1779,6 +1779,10 @@ class stic_AwfAction {
           return true;
         }
       }
+      // List parameters: value is an array of items, at least one is required
+      if (param.type === 'itemList') {
+        return Array.isArray(param.value) && param.value.length > 0;
+      }
       return param.value !== null && param.value !== '';
     });
   }

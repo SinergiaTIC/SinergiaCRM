@@ -93,6 +93,10 @@ class ParameterResolverService {
                 // The parameter is a CRM record. Value contains 'module|id'
                 return $this->resolveBean($def, $value, $context);
 
+            case ActionParameterType::ITEM_LIST:
+                // The parameter is a list of structured items. Value is a JSON array of objects
+                return $this->resolveItemList($def, $value, $context);
+
             case ActionParameterType::OPTION_SELECTOR:
                 // The parameter is a selector; 'selectedOption' contains the selection
                 $selectedOption = $config?->selectedOption;
@@ -201,6 +205,52 @@ class ParameterResolverService {
         }
 
         return $resolvedBlock;
+    }
+
+    /**
+     * Resolves a parameter of type ITEM_LIST, which holds a list of structured items.
+     * The configured value is a JSON string (or an array) of objects; each object
+     * contains a value for every item parameter defined in the action definition.
+     * @param ActionParameterDefinition $def The parameter definition (with itemParameters)
+     * @param ?string $value The JSON string with the list of items
+     * @param ExecutionContext $context The execution context (unused, kept for symmetry)
+     * @return array[] The list of items as associative arrays (empty if no valid items)
+     */
+    private function resolveItemList(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): array {
+        $raw = $value !== null && $value !== '' ? $value : $def->defaultValue;
+        if ($raw === null || $raw === '') {
+            return [];
+        }
+
+        // Accept both a JSON string and an already-decoded array
+        if (is_string($raw)) {
+            $decoded = json_decode($raw, true);
+            if (!is_array($decoded)) {
+                $GLOBALS['log']->warn("Line ".__LINE__.": ".__METHOD__.": Parameter {$def->name} has an invalid JSON list value.");
+                return [];
+            }
+        } elseif (is_array($raw)) {
+            $decoded = $raw;
+        } else {
+            return [];
+        }
+
+        // Normalize items: only keep the item parameters defined by the action
+        $itemParameterNames = array_map(fn($itemDef) => $itemDef->name, $def->itemParameters);
+        $items = [];
+        foreach ($decoded as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+            $normalized = [];
+            foreach ($itemParameterNames as $paramName) {
+                if (array_key_exists($paramName, $item)) {
+                    $normalized[$paramName] = $item[$paramName];
+                }
+            }
+            $items[] = $normalized;
+        }
+        return $items;
     }
 
     private function resolveBean(ActionParameterDefinition $def, ?string $value, ExecutionContext $context): ?BeanReference {

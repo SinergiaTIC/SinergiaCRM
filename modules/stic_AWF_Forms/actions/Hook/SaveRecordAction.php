@@ -69,6 +69,12 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "The configured module '{$module}' is not available on the system.");
         }
 
+        // Assessment Scores: fill the system fields (form ID and submission JSON)
+        // with the data of the current submission when the form does not set them
+        if ($module === 'stic_Assessments_Scores') {
+            $this->fillAssessmentScoreSystemFields($context, $block);
+        }
+
         $bean = null;
         $onDuplicateAction = null;
         $modifications = [];
@@ -372,7 +378,31 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     }
 
     /**
-     * Skips a bean 
+     * Fills the system fields of stic_Assessments_Scores blocks with the data
+     * of the current submission, when the form does not define them itself:
+     *  - form_id: identifier of the AWF form that generated the score
+     *  - submission_data: JSON with all the answers of the submission
+     * @param ExecutionContext $context The global context
+     * @param DataBlockResolved $block The resolved data block
+     * @return void
+     */
+    private function fillAssessmentScoreSystemFields(ExecutionContext $context, DataBlockResolved $block): void
+    {
+        foreach (['form_id' => $context->formId, 'submission_data' => stic_AWFUtils::buildSubmissionJson($context)] as $fieldName => $value) {
+            // Only when the block actually includes the field and the form does not set it
+            if (!isset($block->dataBlock->fields[$fieldName])) {
+                continue;
+            }
+            $fieldResolved = $block->getFieldValue($fieldName);
+            if ($fieldResolved === null || ($fieldResolved->value !== null && $fieldResolved->value !== '')) {
+                continue;
+            }
+            $fieldResolved->value = $value;
+        }
+    }
+
+    /**
+     * Skips a bean
      * @param SugarBean $bean The bean to skip
      * @param DataBlockResolved $block The resolved data block
      * @return array<string, FieldModification> List of modifications indexed by field name

@@ -2480,6 +2480,30 @@ class WizardStep3 {
                         param.value = [];
                       }
                     }
+
+                    // Normalization for Lists of structured items (Always Guarantee a Pure Array of objects)
+                    if (actualType === 'itemList') {
+                      if (typeof param.value === 'string') {
+                        try {
+                          param.value = param.value.trim() !== '' ? JSON.parse(param.value) : [];
+                        } catch (e) {
+                          param.value = [];
+                        }
+                      }
+                      if (!Array.isArray(param.value)) {
+                        param.value = [];
+                      }
+                      // Fill missing item keys according to the definition
+                      const itemParamDefs = paramDef.itemParameters || [];
+                      param.value = param.value.map(item => {
+                        const normalizedItem = {};
+                        itemParamDefs.forEach(ipDef => {
+                          normalizedItem[ipDef.name] = (item && item[ipDef.name] !== undefined && item[ipDef.name] !== null) ? item[ipDef.name] : (ipDef.defaultValue || '');
+                        });
+                        return normalizedItem;
+                      });
+                      this.updateListParamValueText(param, paramDef);
+                    }
                   }
                 });
               }
@@ -2535,6 +2559,7 @@ class WizardStep3 {
                 tempAction.parameters = (def.parameters || []).map(pDef => {
                   let initialValue = pDef.defaultValue;
                   if (pDef.type === 'field_list') initialValue = [];
+                  if (pDef.type === 'itemList') initialValue = [];
 
                   return new stic_AwfActionParameter({
                     name: pDef.name,
@@ -2571,6 +2596,51 @@ class WizardStep3 {
                   param.value = '';
                   param.value_text = '';
               }
+            },
+
+            /**
+             * Adds a new empty item to a list of structured items (itemList parameter)
+             * @param {stic_AwfActionParameter} param The parameter being edited
+             * @param {object} paramDef The parameter definition (DTO with itemParameters)
+             */
+            addListParamItem(param, paramDef) {
+              if (!Array.isArray(param.value)) param.value = [];
+              const newItem = {};
+              (paramDef.itemParameters || []).forEach(ipDef => {
+                newItem[ipDef.name] = ipDef.defaultValue || '';
+              });
+              param.value.push(newItem);
+              this.updateListParamValueText(param, paramDef);
+            },
+
+            /**
+             * Removes an item from a list of structured items (itemList parameter)
+             * @param {stic_AwfActionParameter} param The parameter being edited
+             * @param {number} index Index of the item to remove
+             * @param {object} paramDef The parameter definition (DTO with itemParameters)
+             */
+            removeListParamItem(param, index, paramDef) {
+              if (!Array.isArray(param.value)) return;
+              param.value.splice(index, 1);
+              this.updateListParamValueText(param, paramDef);
+            },
+
+            /**
+             * Updates the display text of a list of structured items parameter
+             * (number of items, with their titles when provided)
+             * @param {stic_AwfActionParameter} param The parameter being edited
+             * @param {object} paramDef The parameter definition (DTO with itemParameters)
+             */
+            updateListParamValueText(param, paramDef) {
+              if (!Array.isArray(param.value)) {
+                param.value_text = '';
+                return;
+              }
+              const titles = param.value
+                .map(item => (item && item.title ? item.title : ''))
+                .filter(t => t != '');
+              const count = param.value.length + ' ' + utils.translate('LBL_ACTION_PARAM_LIST_ITEMS');
+              param.value_text = titles.length > 0 ? `${count} (${titles.join(', ')})` : count;
             },
 
             /**

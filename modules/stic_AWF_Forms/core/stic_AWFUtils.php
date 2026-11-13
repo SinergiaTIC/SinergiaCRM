@@ -1791,5 +1791,483 @@ class stic_AWFUtils {
             $context->responseBean->save();
         }
     }
-        
+
+    /* =====================================================================
+     * SCALE / CALCULATION HELPERS
+     * Shared utilities for actions that compute values from the submitted
+     * form data (scale calculations, range/baremo interpretation, ...).
+     * ===================================================================== */
+
+    /**
+     * Resolves the data block that owns a form field key ("Block.field" or
+     * "_detached.Block.field").
+     * @param FormConfig $formConfig The form configuration
+     * @param string $formKey The full field key
+     * @return ?FormDataBlock The owning data block (null if not found)
+     */
+    public static function resolveFieldOwnerBlock(FormConfig $formConfig, string $formKey): ?FormDataBlock {
+        $keyToParse = str_starts_with($formKey, '_detached.') ? substr($formKey, 10) : $formKey;
+        foreach ($formConfig->data_blocks as $block) {
+            if (str_starts_with($keyToParse, $block->name . '.')) {
+                return $block;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Resolves the definition of the data block field referenced by a form
+     * field key ("Block.field" or "_detached.Block.field").
+     * @param FormConfig $formConfig The form configuration
+     * @param string $formKey The full field key
+     * @return ?FormDataBlockField The field definition (null if not found)
+     */
+    public static function resolveFieldDefinition(FormConfig $formConfig, string $formKey): ?FormDataBlockField {
+        $block = self::resolveFieldOwnerBlock($formConfig, $formKey);
+        if ($block === null) {
+            return null;
+        }
+        $keyToParse = str_starts_with($formKey, '_detached.') ? substr($formKey, 10) : $formKey;
+        $fieldName = substr($keyToParse, strlen($block->name) + 1);
+        return $block->fields[$fieldName] ?? null;
+    }
+
+    /**
+     * Reads the submitted value of a form field from the raw form data,
+     * addressing scalar fields by their flat PHP key and fields inside
+     * repeatable/optional groups through the active instance-index stack.
+     * @param FormConfig $formConfig The form configuration
+     * @param array $formData The raw form data (POST)
+     * @param string $formKey The full field key ("Block.field" / "_detached.Block.field")
+     * @param array $instanceIndexes Active loop-index stack (outer to inner)
+     * @return mixed The submitted value or null if the field has no submitted value
+     */
+    public static function getSubmittedFieldValue(FormConfig $formConfig, array $formData, string $formKey, array $instanceIndexes = []): mixed {
+        $block = self::resolveFieldOwnerBlock($formConfig, $formKey);
+        $depth = $block?->getLoopDepth() ?? 0;
+
+        // Scalar field: read directly from the flat formData
+        if ($depth === 0) {
+            $phpKey = str_replace('.', '_', $formKey);
+            if (array_key_exists($phpKey, $formData)) {
+                return $formData[$phpKey];
+            }
+            if (array_key_exists($formKey, $formData)) {
+                return $formData[$formKey];
+            }
+            return null;
+        }
+
+        // Field inside a group: navigate the POST matrix through the indexes
+        $isDetached = str_starts_with($formKey, '_detached.');
+        $blockKey = ($isDetached ? '_detached_' : '') . $block->name;
+        $fieldName = substr(str_starts_with($formKey, '_detached.') ? substr($formKey, 10) : $formKey, strlen($block->name) + 1);
+
+        if (!isset($formData[$blockKey]) || !is_array($formData[$blockKey])) {
+            return null;
+        }
+        $node = $formData[$blockKey];
+        $indexes = array_slice($instanceIndexes, 0, $depth);
+        while (count($indexes) < $depth) {
+            $indexes[] = 0;
+        }
+        foreach ($indexes as $index) {
+            if (!is_array($node) || !array_key_exists($index, $node)) {
+                return null;
+            }
+            $node = $node[$index];
+        }
+        if (!is_array($node) || !array_key_exists($fieldName, $node)) {
+            return null;
+        }
+        return $node[$fieldName];
+    }
+
+    /**
+     * Writes a value into the raw form data at the position that corresponds
+     * to the given field key, so later actions (data block saves, ...) read
+     * the recomputed value instead of the one sent by the browser.
+     * @param FormConfig $formConfig The form configuration
+     * @param array $formData The raw form data (passed by reference)
+     * @param string $formKey The full field key ("Block.field" / "_detached.Block.field")
+     * @param mixed $value The value to write
+     * @param array $instanceIndexes Active loop-index stack (outer to inner)
+     * @return bool True when the value was written
+     */
+    public static function setSubmittedFieldValue(FormConfig $formConfig, array &$formData, string $formKey, mixed $value, array $instanceIndexes = []): bool {
+        $block = self::resolveFieldOwnerBlock($formConfig, $formKey);
+        $depth = $block?->getLoopDepth() ?? 0;
+
+        // Scalar field: write into the flat formData
+        if ($depth === 0) {
+            $formData[str_replace('.', '_', $formKey)] = $value;
+            return true;
+        }
+
+        // Field inside a group: navigate the POST matrix through the indexes
+        $isDetached = str_starts_with($formKey, '_detached.');
+        $blockKey = ($isDetached ? '_detached_' : '') . $block->name;
+        $fieldName = substr(str_starts_with($formKey, '_detached.') ? substr($formKey, 10) : $formKey, strlen($block->name) + 1);
+
+        if (!isset($formData[$blockKey]) || !is_array($formData[$blockKey])) {
+            return false;
+        }
+        $indexes = array_slice($instanceIndexes, 0, $depth);
+        while (count($indexes) < $depth) {
+            $indexes[] = 0;
+        }
+
+        // Navigate (and create when missing) the instance nodes
+        $node = &$formData[$blockKey];
+        foreach ($indexes as $index) {
+            if (!is_array($node)) {
+                return false;
+            }
+            if (!isset($node[$index]) || !is_array($node[$index])) {
+                $node[$index] = [];
+            }
+            $node = &$node[$index];
+        }
+        $node[$fieldName] = $value;
+        return true;
+    }
+
+    /**
+     * Computes the numeric value of a submitted field, using the score
+     * configured for the selected option when the field options define one
+     * (dropdown/radio/checkbox fields with "score" attributes) and falling
+     * back to the plain numeric value of the submitted data.
+     * @param ?FormDataBlockField $fieldDef The field definition (if found)
+     * @param mixed $rawValue The submitted value (scalar or array for multi-fields)
+     * @return ?float The numeric value (null when there is no value at all)
+     */
+    public static function computeFieldNumericValue(?FormDataBlockField $fieldDef, mixed $rawValue): ?float {
+        if ($rawValue === null || $rawValue === '' || $rawValue === []) {
+            return null;
+        }
+
+        // Build the option-value -> score map when the options define scores
+        $scoreMap = [];
+        $hasScores = false;
+        foreach ($fieldDef?->value_options ?? [] as $option) {
+            if ($option->score !== null) {
+                $scoreMap[(string)$option->value] = (float)$option->score;
+                $hasScores = true;
+            }
+        }
+
+        $toNumber = function ($value) use ($scoreMap, $hasScores): ?float {
+            if ($hasScores && array_key_exists((string)$value, $scoreMap)) {
+                return $scoreMap[(string)$value];
+            }
+            return is_numeric($value) ? (float)$value : null;
+        };
+
+        // Multi-value fields: the numeric value is the sum of their values
+        if (is_array($rawValue)) {
+            $sum = 0.0;
+            $anyValue = false;
+            foreach ($rawValue as $single) {
+                $number = $toNumber($single);
+                if ($number !== null) {
+                    $sum += $number;
+                    $anyValue = true;
+                }
+            }
+            return $anyValue ? $sum : null;
+        }
+
+        return $toNumber($rawValue);
+    }
+
+    /**
+     * Parses a range definition in the compact format "min-max: Label", with
+     * ranges separated by newlines or pipes. Also supports open ranges
+     * (">=5", "<=5", ">5", "<5") and single values ("5"). The first matching
+     * range (in the declared order) wins when ranges overlap.
+     * @param string $raw The raw ranges definition
+     * @return array[] List of ['min' => ?float, 'max' => ?float, 'label' => string]
+     */
+    public static function parseRangeDefinition(string $raw): array {
+        $ranges = [];
+        $entries = preg_split('/[\r\n|]+/', $raw) ?: [];
+        foreach ($entries as $entry) {
+            $entry = trim($entry);
+            if ($entry === '' || !str_contains($entry, ':')) {
+                continue;
+            }
+            $colonIndex = strpos($entry, ':');
+            $key = trim(substr($entry, 0, $colonIndex));
+            $label = trim(substr($entry, $colonIndex + 1));
+            if ($key === '' || $label === '') {
+                continue;
+            }
+
+            // Open ranges: >=x, <=x, >x, <x
+            if (preg_match('/^(>=|<=|>|<)\s*(-?\d+(?:\.\d+)?)$/', $key, $matches)) {
+                $value = (float)$matches[2];
+                $min = in_array($matches[1], ['>=', '>'], true) ? $value : null;
+                $max = in_array($matches[1], ['<=', '<'], true) ? $value : null;
+                // Strict open bounds are resolved to the closest representable match
+                if ($matches[1] === '>') {
+                    $min = $value;
+                } elseif ($matches[1] === '<') {
+                    $max = $value;
+                }
+                $ranges[] = ['min' => $min, 'max' => $max, 'label' => $label];
+                continue;
+            }
+
+            // Closed range: min-max (also supports a single value: "5")
+            if (preg_match('/^(-?\d+(?:\.\d+)?)\s*-\s*(-?\d+(?:\.\d+)?)$/', $key, $matches)) {
+                $min = (float)$matches[1];
+                $max = (float)$matches[2];
+                if ($min > $max) {
+                    [$min, $max] = [$max, $min];
+                }
+                $ranges[] = ['min' => $min, 'max' => $max, 'label' => $label];
+                continue;
+            }
+            if (preg_match('/^(-?\d+(?:\.\d+)?)$/', $key, $matches)) {
+                $value = (float)$matches[1];
+                $ranges[] = ['min' => $value, 'max' => $value, 'label' => $label];
+            }
+        }
+        return $ranges;
+    }
+
+    /**
+     * Finds the label of the first range (in declared order) that contains
+     * the given value. Ranges without a bound are treated as unbounded.
+     * @param array[] $ranges Parsed ranges (see parseRangeDefinition)
+     * @param float $value The value to classify
+     * @return string The label of the matching range ('' when none matches)
+     */
+    public static function findRangeLabel(array $ranges, float $value): string {
+        foreach ($ranges as $range) {
+            $min = $range['min'] ?? null;
+            $max = $range['max'] ?? null;
+            if (($min !== null && $value < $min) || ($max !== null && $value > $max)) {
+                continue;
+            }
+            return (string)($range['label'] ?? '');
+        }
+        return '';
+    }
+
+    /**
+     * Safely evaluates a simple arithmetic expression with +, -, *, / and
+     * parentheses, where the operands may be numbers or placeholders
+     * ("{Block.field}") substituted by the provided numeric values.
+     * Implemented with a tokenizer and a shunting-yard evaluator: no eval()
+     * is used and anything outside the arithmetic syntax is rejected.
+     * @param string $expression The expression ("({a} + {b}) * 2")
+     * @param array $placeholderValues Placeholder values (without braces) => ?float
+     * @return ?float The result (null when the expression is invalid)
+     */
+    public static function evaluateNumericExpression(string $expression, array $placeholderValues): ?float {
+        // 1. Tokenize: numbers, placeholders, operators and parentheses
+        $tokens = [];
+        $offset = 0;
+        $length = mb_strlen($expression);
+        while ($offset < $length) {
+            $char = mb_substr($expression, $offset, 1);
+            if (trim($char) === '') {
+                $offset++;
+                continue;
+            }
+            // Placeholder: {identifier}
+            if ($char === '{') {
+                $close = mb_strpos($expression, '}', $offset);
+                if ($close === false) {
+                    return null;
+                }
+                $name = trim(mb_substr($expression, $offset + 1, $close - $offset - 1));
+                if ($name === '') {
+                    return null;
+                }
+                $tokens[] = ['type' => 'number', 'value' => $placeholderValues[$name] ?? 0.0];
+                $offset = $close + 1;
+                continue;
+            }
+            // Number
+            if (preg_match('/^(?:\d+(?:\.\d+)?|\.\d+)/', mb_substr($expression, $offset), $matches)) {
+                $tokens[] = ['type' => 'number', 'value' => (float)$matches[0]];
+                $offset += mb_strlen($matches[0]);
+                continue;
+            }
+            // Operator or parenthesis
+            if (in_array($char, ['+', '-', '*', '/', '(', ')'], true)) {
+                // Unary +/-: at the start or right after another operator or an open parenthesis
+                $previous = end($tokens);
+                if (($char === '-' || $char === '+') && ($previous === false || ($previous['type'] === 'operator' && $previous['value'] !== ')'))) {
+                    // Sign is folded into the next number/placeholder operand
+                    $sign = ($char === '-') ? -1.0 : 1.0;
+                    $offset++;
+                    while ($offset < $length && trim(mb_substr($expression, $offset, 1)) === '') {
+                        $offset++;
+                    }
+                    if ($offset >= $length) {
+                        return null;
+                    }
+                    $nextChar = mb_substr($expression, $offset, 1);
+                    if ($nextChar === '{') {
+                        $close = mb_strpos($expression, '}', $offset);
+                        if ($close === false) {
+                            return null;
+                        }
+                        $name = trim(mb_substr($expression, $offset + 1, $close - $offset - 1));
+                        if ($name === '') {
+                            return null;
+                        }
+                        $tokens[] = ['type' => 'number', 'value' => $sign * ($placeholderValues[$name] ?? 0.0)];
+                        $offset = $close + 1;
+                    } elseif (preg_match('/^(?:\d+(?:\.\d+)?|\.\d+)/', mb_substr($expression, $offset), $signMatches)) {
+                        $tokens[] = ['type' => 'number', 'value' => $sign * (float)$signMatches[0]];
+                        $offset += mb_strlen($signMatches[0]);
+                    } else {
+                        return null;
+                    }
+                    continue;
+                }
+                $tokens[] = ['type' => 'operator', 'value' => $char];
+                $offset++;
+                continue;
+            }
+            return null; // Unexpected character
+        }
+        if (empty($tokens)) {
+            return null;
+        }
+
+        // 2. Shunting-yard to postfix (RPN)
+        $precedence = ['+' => 1, '-' => 1, '*' => 2, '/' => 2];
+        $output = [];
+        $operators = [];
+        foreach ($tokens as $token) {
+            if ($token['type'] === 'number') {
+                $output[] = $token;
+            } elseif ($token['value'] === '(') {
+                $operators[] = $token;
+            } elseif ($token['value'] === ')') {
+                while (!empty($operators) && end($operators)['value'] !== '(') {
+                    $output[] = array_pop($operators);
+                }
+                if (empty($operators)) {
+                    return null; // Unbalanced parentheses
+                }
+                array_pop($operators);
+            } else {
+                while (!empty($operators) && end($operators)['value'] !== '('
+                    && $precedence[end($operators)['value']] >= $precedence[$token['value']]) {
+                    $output[] = array_pop($operators);
+                }
+                $operators[] = $token;
+            }
+        }
+        while (!empty($operators)) {
+            $operator = array_pop($operators);
+            if ($operator['value'] === '(') {
+                return null; // Unbalanced parentheses
+            }
+            $output[] = $operator;
+        }
+
+        // 3. Evaluate the postfix expression
+        $stack = [];
+        foreach ($output as $token) {
+            if ($token['type'] === 'number') {
+                $stack[] = (float)$token['value'];
+                continue;
+            }
+            if (count($stack) < 2) {
+                return null;
+            }
+            $right = array_pop($stack);
+            $left = array_pop($stack);
+            switch ($token['value']) {
+                case '+': $stack[] = $left + $right; break;
+                case '-': $stack[] = $left - $right; break;
+                case '*': $stack[] = $left * $right; break;
+                case '/':
+                    if ($right == 0.0) {
+                        return null; // Division by zero
+                    }
+                    $stack[] = $left / $right;
+                    break;
+            }
+        }
+        return count($stack) === 1 ? (float)end($stack) : null;
+    }
+
+    /**
+     * Builds a structured JSON string with all the data captured by a form
+     * submission: one entry per data block, with every field, its label and
+     * the value submitted (including unlinked/virtual fields and fixed
+     * server fields). Used, for example, to fill the "submission_data" field
+     * of the stic_Assessments_Scores module.
+     * @param ExecutionContext $context The execution context of the submission
+     * @return string The JSON string (empty array encoded as "[]" when there is no data)
+     */
+    public static function buildSubmissionJson(ExecutionContext $context): string {
+        $blocksData = [];
+        foreach ($context->formConfig->data_blocks as $block) {
+            $fieldsData = [];
+            $instancesData = [];
+
+            foreach ($block->fields as $fieldDef) {
+                $fieldData = [
+                    'label' => !empty($fieldDef->label) ? $fieldDef->label : $fieldDef->text_original,
+                    'type' => $fieldDef->type_in_form,
+                ];
+                if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
+                    $fieldData['unlinked'] = true;
+                }
+
+                if ($block->getLoopDepth() > 0) {
+                    // Repeatable/optional block: resolve the value per instance
+                    $instances = DataBlockResolved::resolveInstances($block, $context->formData, $context);
+                    foreach ($instances as $instanceIndex => $instance) {
+                        $value = $instance->getFieldValue($fieldDef->name)?->value;
+                        if ($fieldDef->type === 'multienum' && is_array($value)) {
+                            $value = implode(',', $value);
+                        }
+                        $fieldData['value'] = $value;
+                        $instancesData[$instanceIndex][$fieldDef->name] = $fieldData;
+                    }
+                    continue;
+                }
+
+                // Scalar block: flat key in the raw form data (or the fixed value)
+                $phpKey = str_replace('.', '_', $fieldDef->getKey());
+                $value = $context->formData[$phpKey] ?? ($fieldDef->value_type === DataBlockFieldValueType::FIXED ? $fieldDef->value : null);
+                if ($fieldDef->type === 'multienum' && is_array($value)) {
+                    $value = implode(',', $value);
+                }
+                $fieldData['value'] = $value;
+                $fieldsData[$fieldDef->name] = $fieldData;
+            }
+
+            $blockData = [
+                'text' => $block->text,
+                'module' => $block->module,
+            ];
+            if (!empty($fieldsData)) {
+                $blockData['fields'] = $fieldsData;
+            }
+            if (!empty($instancesData)) {
+                $blockData['instances'] = array_values($instancesData);
+            }
+            $blocksData[] = $blockData;
+        }
+
+        $submissionData = [
+            'form_id' => $context->formId,
+            'form_type' => $context->formType,
+            'submission_timestamp' => date('Y-m-d H:i:s', (int)$context->submissionTimestamp),
+            'blocks' => $blocksData,
+        ];
+
+        return json_encode($submissionData, JSON_UNESCAPED_UNICODE);
+    }
 }

@@ -409,6 +409,85 @@
                                                         </select>
                                                     </template>
 
+                                                    <!-- Type: itemList (list of structured items, e.g. baremos) -->
+                                                    <template x-if="paramDef.type == 'itemList'">
+                                                        <div :id="'ModalAction-param-'+paramDef.name"
+                                                             x-effect="$store.actionEditor.updateListParamValueText(param, paramDef)">
+                                                            <template x-for="(item, itemIndex) in param.value" :key="itemIndex">
+                                                                <div class="card p-2 mb-2 bg-white border">
+                                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                        <span class="small fw-bold" x-text="(itemIndex + 1) + '. ' + ((item.title && item.title != '') ? item.title : utils.translate('LBL_ACTION_PARAM_LIST_ITEM'))"></span>
+                                                                        <button type="button" class="btn btn-sm" :title="utils.translate('LBL_ACTION_PARAM_LIST_REMOVE')"
+                                                                                @click="$store.actionEditor.removeListParamItem(param, itemIndex, paramDef)">
+                                                                            <span class="suitepicon suitepicon-action-delete"></span>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div class="row g-2">
+                                                                        <template x-for="itemParamDef in paramDef.itemParameters" :key="itemParamDef.name">
+                                                                            <div :class="itemParamDef.colSize || 'col-4'">
+                                                                                <label class="form-label small text-muted" x-init="utils.setInlineHelpQtip()">
+                                                                                    <span x-text="utils.toFieldLabelText(itemParamDef.text)"></span>
+                                                                                    <i x-show="itemParamDef.description!=''" class="inline-help glyphicon glyphicon-info-sign"></i>
+                                                                                    <div class="inline-help-content" style="display:none;" x-text="itemParamDef.description"></div>
+                                                                                </label>
+
+                                                                                <!-- Item: text / number / date input -->
+                                                                                <template x-if="itemParamDef.type === 'value' && $store.actionEditor.getParameterValueInputType(itemParamDef.dataType) != '' && $store.actionEditor.getParameterValueInputType(itemParamDef.dataType) != 'checkbox'">
+                                                                                    <input :type="$store.actionEditor.getParameterValueInputType(itemParamDef.dataType)" class="form-control"
+                                                                                        x-model="item[itemParamDef.name]">
+                                                                                </template>
+
+                                                                                <!-- Item: checkbox -->
+                                                                                <template x-if="itemParamDef.type === 'value' && $store.actionEditor.getParameterValueInputType(itemParamDef.dataType) == 'checkbox'">
+                                                                                    <div class="form-check form-switch">
+                                                                                        <input type="checkbox" class="form-check-input" x-model="item[itemParamDef.name]">
+                                                                                    </div>
+                                                                                </template>
+
+                                                                                <!-- Item: textarea -->
+                                                                                <template x-if="itemParamDef.type === 'value' && itemParamDef.dataType == 'textarea'">
+                                                                                    <textarea class="form-control" rows="2" x-model="item[itemParamDef.name]"></textarea>
+                                                                                </template>
+
+                                                                                <!-- Item: select -->
+                                                                                <template x-if="itemParamDef.type === 'value' && itemParamDef.dataType === 'select'">
+                                                                                    <select class="form-select" x-model="item[itemParamDef.name]">
+                                                                                        <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                                                        <template x-for="opt in itemParamDef.options" :key="opt.value">
+                                                                                            <option :value="opt.value" x-text="opt.text" :selected="opt.value == item[itemParamDef.name]"></option>
+                                                                                        </template>
+                                                                                    </select>
+                                                                                </template>
+
+                                                                                <!-- Item: form field selector -->
+                                                                                <template x-if="itemParamDef.type == 'field'">
+                                                                                    <select class="form-select" x-model="item[itemParamDef.name]">
+                                                                                        <option value="" x-text="utils.translate('LBL_ACTION_PARAM_SELECT_NO_OPTION')"></option>
+                                                                                        <template x-for="field in $store.actionEditor.getSupportedFieldsList(itemParamDef.supportedDataTypes, $store.actionEditor.action)" :key="field.id">
+                                                                                            <option :value="field.id" x-text="utils.fromFieldLabelText(field.text)" :selected="field.id == item[itemParamDef.name]"></option>
+                                                                                        </template>
+                                                                                    </select>
+                                                                                </template>
+
+                                                                                <!-- Item: example (optional) -->
+                                                                                <template x-if="itemParamDef.example && itemParamDef.example != ''">
+                                                                                    <div class="form-text text-muted" style="white-space: pre-line;">
+                                                                                        <span class="fw-bold" x-text="utils.translate('LBL_ACTION_PARAM_EXAMPLE') + ': '"></span>
+                                                                                        <span x-text="itemParamDef.example"></span>
+                                                                                    </div>
+                                                                                </template>
+                                                                            </div>
+                                                                        </template>
+                                                                    </div>
+                                                                </div>
+                                                            </template>
+                                                            <button type="button" class="btn btn-sm" @click="$store.actionEditor.addListParamItem(param, paramDef)">
+                                                                <span class="suitepicon suitepicon-action-create"></span>
+                                                                <span x-text="utils.translate('LBL_ACTION_PARAM_LIST_ADD') + ' ' + utils.fromFieldLabelText(paramDef.text)"></span>
+                                                            </button>
+                                                        </div>
+                                                    </template>
+
                                                     <!-- Type: dataBlock -->
                                                     <template x-if="paramDef.type === 'dataBlock'">
                                                         <select :id="'ModalAction-param-'+paramDef.name" class="form-select" x-model="param.value" 
@@ -543,6 +622,35 @@
                                                                 </template>
                                                             </div>
                                                         </div>
+                                                    </template>
+
+                                                    <!-- Example (optional) -->
+                                                    <template x-if="paramDef.example && paramDef.example != ''">
+                                                        <div class="form-text text-muted" style="white-space: pre-line;">
+                                                            <span class="fw-bold" x-text="utils.translate('LBL_ACTION_PARAM_EXAMPLE') + ': '"></span>
+                                                            <span x-text="paramDef.example"></span>
+                                                        </div>
+                                                    </template>
+
+                                                    <!-- Available field IDs hint (optional, e.g. to build formulas) -->
+                                                    <template x-if="paramDef.fieldKeysHint">
+                                                        <details class="mt-1">
+                                                            <summary class="text-muted cursor-pointer user-select-none small" x-text="utils.translate('LBL_ACTION_PARAM_FIELD_KEYS')"></summary>
+                                                            <div class="border rounded p-2 mt-1 bg-white small" style="max-height: 200px; overflow-y: auto;">
+                                                                <template x-for="field in $store.actionEditor.getSupportedFieldsList([], $store.actionEditor.action)" :key="field.id">
+                                                                    <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
+                                                                        <code class="text-wrap" x-text="field.id"></code>
+                                                                        <div class="d-flex align-items-center gap-2 flex-shrink-0 ps-2">
+                                                                            <span class="text-muted extra-small" x-text="utils.fromFieldLabelText(field.text)"></span>
+                                                                            <button type="button" class="btn btn-sm py-0 px-2" :title="utils.translate('LBL_ACTION_PARAM_FIELD_KEYS_COPY')"
+                                                                                    @click="navigator.clipboard && navigator.clipboard.writeText(field.id)">
+                                                                                <span class="extra-small" x-text="utils.translate('LBL_ACTION_PARAM_FIELD_KEYS_COPY')"></span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </template>
+                                                            </div>
+                                                        </details>
                                                     </template>
                                                 </div>
                                             </template>

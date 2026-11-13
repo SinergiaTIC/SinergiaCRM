@@ -45,6 +45,10 @@ class ActionParameterDefinitionDTO {
     public array $supportedModules;
     /** @var ActionDataType[] */
     public array $supportedDataTypes;
+    /** @var ActionParameterDefinitionDTO[] */
+    public array $itemParameters = [];  // Structure of each item when the type is itemList
+    public string $example = '';        // Usage example displayed under the parameter input
+    public bool $fieldKeysHint = false; // When true, the wizard shows the available field IDs (e.g. to build formulas)
     public string $colSize; // The size of the column in the UI (Bootstrap grid classes)
         
     public function __construct(ActionParameterDefinition $def) {
@@ -73,5 +77,13 @@ class ActionParameterDefinitionDTO {
             fn($dt) => $dt->value, 
             $def->supportedDataTypes
         );
+
+        $this->itemParameters = array_map(
+            fn($itemDef) => new ActionParameterDefinitionDTO($itemDef),
+            $def->itemParameters
+        );
+
+        $this->example = $def->example;
+        $this->fieldKeysHint = $def->fieldKeysHint;
     }
 }
