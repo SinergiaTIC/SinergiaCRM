@@ -33,6 +33,7 @@ enum ActionParameterType: string {
     case CRM_RECORD      = 'crmRecord';
     case OPTION_SELECTOR = 'optionSelector';
     case EMPTY           = 'empty'; // The parameter or option does not require a value
+    case ITEM_LIST       = 'itemList'; // The parameter holds a list of structured items (defined by itemParameters)
 }
 
 enum ActionDataType: string {
@@ -79,10 +80,14 @@ class ActionParameterDefinition {
     public array $options = [];            // The options of the parameter if the type is SELECT
     /** @var ActionSelectorOptionDefinition[] */
     public array $selectorOptions = [];    // Additional options for object selectors
+    /** @var ActionParameterDefinition[] */
+    public array $itemParameters = [];     // Structure of each item when the type is ITEM_LIST
     /** @var string[] */
     public array $supportedModules = [];   // Supported modules if the destination is a CRM record
     /** @var ActionDataType[] */
     public array $supportedDataTypes = []; // List of data types of the fields pointed to, if applicable (for FIELD or FIELD_LIST)
+    public string $example = '';           // Usage example displayed under the parameter input
+    public bool $fieldKeysHint = false;    // When true, the wizard shows the available field IDs (e.g. to build formulas)
     public string $colSize = 'col-4';      // The size of the column in the UI (Bootstrap grid classes)
 }
 

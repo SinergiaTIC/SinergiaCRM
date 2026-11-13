@@ -46,7 +46,14 @@ class FormActionParameter {
         $dto->name = $data['name'];
         $dto->text = $data['text'];
         if (is_array($data['value'])) {
-            $dto->value = implode(',', $data['value']);
+            // Lists of scalars are stored comma-separated (field lists);
+            // lists of structured items are stored as a JSON string
+            $firstElement = reset($data['value']);
+            if (is_array($firstElement) || is_object($firstElement)) {
+                $dto->value = json_encode($data['value'], JSON_UNESCAPED_UNICODE);
+            } else {
+                $dto->value = implode(',', $data['value']);
+            }
         } else {
             $dto->value = $data['value'];
         }

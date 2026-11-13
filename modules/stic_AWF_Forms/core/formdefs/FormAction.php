@@ -26,21 +26,21 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 class FormAction {
-    public FormFlow $flow;           // The action flow it belongs to
+    public FormFlow $flow;                  // The action flow it belongs to
 
-    public string $id;               // ID of the action
-    public string $name;             // Name of the action
-    public string $text;             // The text to display
-    public string $description;      // The description of the action
+    public string $id;                      // ID of the action
+    public string $name;                    // Name of the action
+    public string $text;                    // The text to display
+    public string $description;             // The description of the action
     /** @var string[] */
-    public array $requisite_actions; // Array with the identifiers of the actions prior to the current one
+    public array $requisite_actions;        // Array with the identifiers of the actions prior to the current one
     /** @var FormActionParameter[] */
-    public array $parameters;        // The parameters of the action
+    public array $parameters;               // The parameters of the action
 
     private array $resolvedParameters = []; // Resolved parameters, with the final value
 
     /** @var FormCondition[] */
-    public array $conditions = [];        // Conditions to execute the validation (all must be accomplished)
+    public array $conditions = [];          // Conditions to execute the validation (all must be accomplished)
 
     public bool $continue_on_error = false; // Indicates if the flow should continue if this action fails (throws an exception or returns an error result)
 
