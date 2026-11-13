@@ -99,6 +99,7 @@ array (
             'name' => 'location',
             'label' => 'LBL_LOCATION',
           ),
+          1 => '',
         ),
         4 => 
         array (

@@ -50,11 +50,11 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
-                'LBL_PANEL_RECORD_DETAILS' => array(
+                'LBL_ACTA_PANEL' => array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
-                'LBL_ACTA_PANEL' => array(
+                'LBL_PANEL_RECORD_DETAILS' => array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
@@ -135,6 +135,26 @@ array(
                 ),
 
             ),
+            'lbl_acta_panel' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'order_of_the_day',
+                        'label' => 'LBL_ORDER_OF_THE_DAY',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'development',
+                        'label' => 'LBL_DEVELOPMENT',
+                    ),
+                ),
+                2 => array(
+                    0 => array(
+                        'name' => 'agreements',
+                        'label' => 'LBL_AGREEMENTS',
+                    ),
+                ),
+            ),
             'lbl_panel_record_details' => array(
                 0 => array(
                     0 => array(
@@ -156,26 +176,6 @@ array(
                         'name' => 'date_modified',
                         'customCode' => '{$fields.date_modified.value}',
                         'label' => 'LBL_DATE_MODIFIED',
-                    ),
-                ),
-            ),
-            'lbl_acta_panel' => array(
-                0 => array(
-                    0 => array(
-                        'name' => 'order_of_the_day',
-                        'label' => 'LBL_ORDER_OF_THE_DAY',
-                    ),
-                ),
-                1 => array(
-                    0 => array(
-                        'name' => 'development',
-                        'label' => 'LBL_DEVELOPMENT',
-                    ),
-                ),
-                2 => array(
-                    0 => array(
-                        'name' => 'agreements',
-                        'label' => 'LBL_AGREEMENTS',
                     ),
                 ),
             ),

@@ -68,7 +68,7 @@ $layout_defs["stic_Sessions"]["subpanel_setup"]['stic_sessions_activities_tasks'
     'get_subpanel_data' => 'stic_sessions_activities_tasks',
     'top_buttons' => array(
         0 => array(
-            'widget_class' => 'SubPanelTopCreateTaskButton',
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
         ),
     ),
 );

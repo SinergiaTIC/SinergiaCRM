@@ -50,7 +50,7 @@ $layout_defs["stic_FollowUps"]["subpanel_setup"]['stic_followups_activities_task
     'get_subpanel_data' => 'stic_followups_activities_tasks',
     'top_buttons' => array(
         0 => array(
-            'widget_class' => 'SubPanelTopCreateTaskButton',
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
         ),
     ),
 );

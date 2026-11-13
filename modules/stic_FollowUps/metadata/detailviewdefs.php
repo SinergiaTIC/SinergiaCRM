@@ -50,11 +50,11 @@ array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
-                'LBL_PANEL_RECORD_DETAILS' => array(
+                'LBL_ACTA_PANEL' => array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
-                'LBL_ACTA_PANEL' => array(
+                'LBL_PANEL_RECORD_DETAILS' => array(
                     'newTab' => true,
                     'panelDefault' => 'expanded',
                 ),
@@ -92,6 +92,7 @@ array(
                         'name' => 'location',
                         'label' => 'LBL_LOCATION',
                     ),
+                    1 => '',
                 ),
                 4 => array(
                     0 => array(
@@ -162,33 +163,6 @@ array(
                     ),
                 ),
             ),
-            'lbl_panel_record_details' => array(
-                0 => array(
-                    0 => array(
-                        'name' => 'created_by_name',
-                        'label' => 'LBL_CREATED',
-                        
-                    ),
-                    1 => array(
-                        'name' => 'date_entered',
-                        'comment' => 'Date record created',
-                        'label' => 'LBL_DATE_ENTERED',
-                        'customCode' => '{$fields.date_entered.value}',
-                    ),
-                ),
-                1 => array(
-                    0 => array(
-                        'name' => 'modified_by_name',
-                        'label' => 'LBL_MODIFIED_NAME',
-                    ),
-                    1 => array(
-                        'name' => 'date_modified',
-                        'comment' => 'Date record last modified',
-                        'label' => 'LBL_DATE_MODIFIED',
-                        'customCode' => '{$fields.date_modified.value}',
-                    ),
-                ),
-            ),
             'lbl_acta_panel' => array(
                 0 => array(
                     0 => array(
@@ -209,8 +183,30 @@ array(
                     ),
                 ),
             ),
+            'lbl_panel_record_details' => array(
+                0 => array(
+                    0 => array(
+                        'name' => 'created_by_name',
+                        'label' => 'LBL_CREATED',
+                    ),
+                    1 => array(
+                        'name' => 'date_entered',
+                        'customCode' => '{$fields.date_entered.value}',
+                        'label' => 'LBL_DATE_ENTERED',
+                    ),
+                ),
+                1 => array(
+                    0 => array(
+                        'name' => 'modified_by_name',
+                        'label' => 'LBL_MODIFIED_NAME',
+                    ),
+                    1 => array(
+                        'name' => 'date_modified',
+                        'customCode' => '{$fields.date_modified.value}',
+                        'label' => 'LBL_DATE_MODIFIED',
+                    ),
+                ),
+            ),
         ),
     ),
 );
-
-?>

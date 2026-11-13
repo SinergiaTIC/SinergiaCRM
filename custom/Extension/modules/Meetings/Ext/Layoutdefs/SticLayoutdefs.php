@@ -65,7 +65,7 @@ $layout_defs["Meetings"]["subpanel_setup"]['meetings_activities_tasks'] = array(
     'get_subpanel_data' => 'meetings_activities_tasks',
     'top_buttons' => array(
         0 => array(
-            'widget_class' => 'SubPanelTopCreateTaskButton',
+            'widget_class' => 'SubPanelTopButtonQuickCreate',
         ),
     ),
 );

@@ -4120,7 +4120,7 @@ $dictionary["meetings_activities_tasks"] = array(
             'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many',
             'relationship_role_column' => 'parent_type',
-            'relationship_role_column_value' => 'Meeting',
+            'relationship_role_column_value' => 'Meetings',
         ),
     ),
     'fields' => '',
