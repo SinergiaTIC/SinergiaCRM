@@ -691,4 +691,12 @@ $sugar_config = array(
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
     'stic_async_list_count' => false, 
     // END STIC-Custom
+
+    // STIC-Custom 20261109 AAM - Related records panel (right side bar)
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1505
+    'stic_related_panel' => array(
+        'enabled' => true,
+        'pinned' => false,
+    ),
+    // END STIC
 );
