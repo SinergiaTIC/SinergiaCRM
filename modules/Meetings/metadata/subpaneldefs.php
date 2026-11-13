@@ -97,38 +97,6 @@ $layout_defs['Meetings'] = array(
                 ),
             )
         ),
-        'stic_meetings_documents' => array(
-            'order' => 50,
-            'module' => 'Documents',
-            'subpanel_name' => 'SticDefault',
-            'sort_order' => 'asc',
-            'sort_by' => 'id',
-            'title_key' => 'LBL_STIC_MEETINGS_DOCUMENTS_FROM_DOCUMENTS_TITLE',
-            'get_subpanel_data' => 'stic_meetings_documents',
-            'top_buttons' => array(
-                0 => array(
-                    'widget_class' => 'SubPanelTopButtonQuickCreate',
-                ),
-                1 => array(
-                    'widget_class' => 'SubPanelTopSelectButton',
-                    'mode' => 'MultiSelect',
-                ),
-            ),
-        ),
-        'meetings_activities_tasks' => array(
-            'order' => 60,
-            'module' => 'Tasks',
-            'subpanel_name' => 'ForActivities',
-            'sort_order' => 'asc',
-            'sort_by' => 'date_due',
-            'title_key' => 'LBL_MEETINGS_ACTIVITIES_TASKS_FROM_TASKS_TITLE',
-            'get_subpanel_data' => 'meetings_activities_tasks',
-            'top_buttons' => array(
-                0 => array(
-                    'widget_class' => 'SubPanelTopCreateTaskButton',
-                ),
-            ),
-        ),
         'securitygroups' => array(
             'top_buttons' => array(array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect'),),
             'order' => 900,
