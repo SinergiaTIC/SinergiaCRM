@@ -398,10 +398,25 @@ class ExternalReporting
                         }
                         break;
                     case 'Contacts':
-                        // account_name resolves to the same join (accounts_contacts) as account_id, which already
-                        // registers the relationship. Skipping it avoids a duplicate row in sda_def_relationships.
-                        if (($fieldV['name'] ?? null) == 'account_name') {
-                            continue 2;
+                        // A display-only relate field (rname !== 'id') that shares its id_name with a sibling
+                        // FK relate field (rname === 'id') resolves to the same relationship/join (e.g.
+                        // account_name vs account_id -> accounts_contacts). Skip the display field so we do not
+                        // register a duplicate row in sda_def_relationships nor a duplicate LEFT JOIN.
+                        if (($fieldV['type'] ?? null) === 'relate'
+                            && ($fieldV['rname'] ?? null) !== 'id'
+                            && !empty($fieldV['id_name'])) {
+                            $hasFkSibling = false;
+                            foreach ($moduleBean->getFieldDefinitions() as $siblingField) {
+                                if (($siblingField['type'] ?? null) === 'relate'
+                                    && ($siblingField['id_name'] ?? null) === ($fieldV['id_name'] ?? null)
+                                    && ($siblingField['rname'] ?? null) === 'id') {
+                                    $hasFkSibling = true;
+                                    break;
+                                }
+                            }
+                            if ($hasFkSibling) {
+                                continue 2;
+                            }
                         }
                         break;
                     default:
@@ -499,16 +514,18 @@ class ExternalReporting
                                 // (e.g. SurveyQuestionResponses.surveyresponse_name -> link 'survey_response', while the
                                 // link field is 'surveyresponse'). It is only used when the link name is not a valid
                                 // relationship name either, so existing links keep their previous resolution.
-                                $linkIsRelationship = !empty($db->fetchOne("select relationship_name from relationships where relationship_name='" . $db->quote($fieldV['link']) . "'"));
-                                if (!$linkFieldDef && !$linkIsRelationship && !empty($fieldV['id_name'])) {
-                                    foreach ($moduleFieldDefs as $candidateDef) {
-                                        if (
-                                            ($candidateDef['type'] ?? null) == 'link'
-                                            && ($candidateDef['id_name'] ?? null) == $fieldV['id_name']
-                                            && !empty($candidateDef['relationship'])
-                                        ) {
-                                            $linkFieldDef = $candidateDef;
-                                            break;
+                                if (!$linkFieldDef && !empty($fieldV['id_name'])) {
+                                    $linkIsRelationship = !empty($db->fetchOne("select relationship_name from relationships where relationship_name='" . $db->quote($fieldV['link']) . "'"));
+                                    if (!$linkIsRelationship) {
+                                        foreach ($moduleFieldDefs as $candidateDef) {
+                                            if (
+                                                ($candidateDef['type'] ?? null) == 'link'
+                                                && ($candidateDef['id_name'] ?? null) == $fieldV['id_name']
+                                                && !empty($candidateDef['relationship'])
+                                            ) {
+                                                $linkFieldDef = $candidateDef;
+                                                break;
+                                            }
                                         }
                                     }
                                 }
