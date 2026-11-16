@@ -832,7 +832,13 @@ class MysqlManager extends DBManager
 
         // bug 22338 - don't set a default value on text or blob fields
         if (isset($ref['default']) &&
-            in_array($ref['colBaseType'], array('text', 'blob', 'longtext', 'longblob'))
+        // STIC-Custom EPS 20261116: mediumtext (and other text/blob variants) are included so
+        // that columns such as KReports.whereconditions do not keep a DEFAULT
+        // value that MySQL/MariaDB reports back quoted, causing recurring
+        // repair mismatches. See stic issue.
+        // in_array($ref['colBaseType'], array('text', 'blob', 'longtext', 'longblob'))
+            in_array($ref['colBaseType'], array('text', 'blob', 'longtext', 'longblob', 'mediumtext', 'mediumblob', 'tinytext', 'tinyblob'))
+        // END STIC-Custom
         ) {
             $ref['default'] = '';
         }
@@ -1108,7 +1114,16 @@ class MysqlManager extends DBManager
             ($fieldDef['dbType'] == 'text'
                 || $fieldDef['dbType'] == 'blob'
                 || $fieldDef['dbType'] == 'longtext'
-                || $fieldDef['dbType'] == 'longblob')
+                || $fieldDef['dbType'] == 'longblob'
+                // STIC-Custom EPS 20261116: mediumtext (and other text/blob variants) are included so
+                // that columns such as KReports.whereconditions do not keep a DEFAULT
+                // value that MySQL/MariaDB reports back quoted, causing recurring
+                // repair mismatches. See stic issue.
+                || $fieldDef['dbType'] == 'mediumtext'
+                || $fieldDef['dbType'] == 'mediumblob'
+                || $fieldDef['dbType'] == 'tinytext'
+                || $fieldDef['dbType'] == 'tinyblob')
+                // END STIC-Custom
         ) {
             unset($fieldDef['default']);
         }
