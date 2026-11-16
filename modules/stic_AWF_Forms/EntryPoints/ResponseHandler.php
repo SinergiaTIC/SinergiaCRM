@@ -589,6 +589,22 @@ class ResponseHandler
     }
 
     /**
+     * Determines if a submitted value must be considered empty for validation.
+     * Multi-selection fields are submitted as arrays; an array is considered
+     * empty when none of its elements has a non-empty value, so selecting only
+     * the blank option of the source list (e.g. [""]) is treated as an empty
+     * selection for required-field validation.
+     * @param mixed $value Value received in the submission
+     * @return bool True when the value is considered empty
+     */
+    private function isEmptySubmissionValue(mixed $value): bool {
+        if (is_array($value)) {
+            return array_filter($value, fn($element) => trim((string)$element) !== '') === [];
+        }
+        return $value === null || $value === '';
+    }
+
+    /**
      * Validates submission data against field definition in vardefs
      * @param FormConfig $config Form configuration
      * @param array $data Received data in the submission
@@ -629,7 +645,7 @@ class ResponseHandler
 
                 // Validation of required field (Required) (in Form)
                 if ($formField->required_in_form) {
-                    if ($value === null || $value === '' || (is_array($value) && empty($value))) {
+                    if ($this->isEmptySubmissionValue($value)) {
                         $errors['errorDescriptions'][$inputKeyInForm] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$label}': ". 
                                                                         translate('LBL_ERROR_REQUIRED_FIELD', 'stic_AWF_Responses');
                         $errors['errors'][$inputKeyInForm] = translate('LBL_ERROR_REQUIRED_FIELD', 'stic_AWF_Responses');
@@ -638,7 +654,7 @@ class ResponseHandler
                 }
 
                 // If is empty and not required: Do not validate type
-                if ($value === null || $value === '' || (is_array($value) && empty($value))) {
+                if ($this->isEmptySubmissionValue($value)) {
                     continue;
                 }
 
