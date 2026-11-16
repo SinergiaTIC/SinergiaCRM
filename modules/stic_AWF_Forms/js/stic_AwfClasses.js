@@ -2234,39 +2234,30 @@ class stic_AwfConfiguration {
       });
     });
 
-    // 2. Iteratively break one cycle edge at a time until the FK dependency graph is acyclic.
+    // 2. Iteratively defer ONE edge of each detected cycle until the FK dependency graph is acyclic.
     while (true) {
-      const blockSet = new Set(this.data_blocks.map(b => b.id));
-      const inDeg = new Map();
-      blockSet.forEach(id => inDeg.set(id, 0));
+      // Dependency graph: edge target -> initiator 
+      const adjacency = new Map();
+      this.data_blocks.forEach(b => adjacency.set(b.id, []));
       fkEdgeCandidates.forEach(edge => {
         if (deferredFkEdges.has(edge.key)) return;
-        inDeg.set(edge.initiatorBlockId, (inDeg.get(edge.initiatorBlockId) || 0) + 1);
+        if (!adjacency.has(edge.initiatorBlockId)) return;
+        const neighbors = adjacency.get(edge.targetBlockId);
+        if (neighbors) neighbors.push(edge.initiatorBlockId);
       });
 
-      // Kahn's algorithm
-      const sortedBlocks = [];
-      const q = [];
-      inDeg.forEach((deg, id) => { if (deg === 0) q.push(id); });
-      while (q.length > 0) {
-        const cur = q.shift();
-        sortedBlocks.push(cur);
-        fkEdgeCandidates.forEach(edge => {
-          if (deferredFkEdges.has(edge.key)) return;
-          if (edge.targetBlockId === cur) {
-            inDeg.set(edge.initiatorBlockId, inDeg.get(edge.initiatorBlockId) - 1);
-            if (inDeg.get(edge.initiatorBlockId) === 0) q.push(edge.initiatorBlockId);
-          }
-        });
-      }
+      const cyclicComponent = this._getStronglyConnectedComponents(adjacency)
+        .find(component => component.length > 1);
+      if (!cyclicComponent) break; // No more cycles: the graph is acyclic
 
-      // Find a non-deferred edge whose initiator is still unsorted (part of a cycle)
+      const componentSet = new Set(cyclicComponent);
+      // Defer the first candidate edge whose endpoints belong to the cyclic component
       const cycleEdge = fkEdgeCandidates.find(edge =>
         !deferredFkEdges.has(edge.key) &&
-        !sortedBlocks.includes(edge.initiatorBlockId) &&
-        !sortedBlocks.includes(edge.targetBlockId)
+        componentSet.has(edge.initiatorBlockId) &&
+        componentSet.has(edge.targetBlockId)
       );
-      if (!cycleEdge) break; // no more cycles
+      if (!cycleEdge) break; // Defensive: unreachable while a cyclic component exists
 
       // Break this single edge
       deferredFkEdges.add(cycleEdge.key);
@@ -2479,9 +2470,10 @@ class stic_AwfConfiguration {
 
   /**
    * Sorts the actions of a flow topologically using Kahn's algorithm based on requisite_actions.
-   * Detects cycles and marks the closing edge as deferred (removes it from requisites) so the
-   * topological sort can complete. Deferred edges are returned so the caller knows which
-   * RelateRecordsAction dependencies were broken.
+   * While unsorted actions remain, it locates ONE requirement cycle (a strongly connected
+   * component) and breaks ONE of its edges (removes it from requisites) before resuming the
+   * sort, preserving every other ordering constraint. Broken (deferred) edges are returned
+   * so the caller knows which RelateRecordsAction dependencies were broken.
    * @param {stic_AwfFlow} flow The flow to sort
    * @returns {Array} List of deferred edges: { from: actionId, to: actionId }
    */
@@ -2512,60 +2504,53 @@ class stic_AwfConfiguration {
 
     // Kahn's algorithm (BFS)
     let sorted = [];
+    let sortedSet = new Set();
     let queue = [];
     inDegree.forEach((deg, id) => { if (deg === 0) queue.push(id); });
 
-    while (queue.length > 0) {
-      let currentId = queue.shift();
-      sorted.push(currentId);
-      dependents.get(currentId).forEach(depId => {
-        inDegree.set(depId, inDegree.get(depId) - 1);
-        if (inDegree.get(depId) === 0) queue.push(depId);
-      });
-    }
-
-    // Cycle detection: if sorted < total, there is a cycle
-    let deferred = [];
-    if (sorted.length < flow.actions.length) {
-      // Find actions in the cycle (those not yet sorted)
-      let remaining = new Set(flow.actions.filter(a => !sorted.includes(a.id)).map(a => a.id));
-
-      // For each remaining action, find a requisite that is also remaining (the cycle edge)
-      // Break only ONE cycle edge per cycle instead of all.
-      let brokenOne = false;
-      for (const actionId of remaining) {
-        let action = actionMap.get(actionId);
-        let cycleReq = (action.requisite_actions || []).find(r => remaining.has(r));
-        if (cycleReq) {
-          deferred.push({ from: cycleReq, to: actionId });
-          // Remove the deferred edge so the sort can proceed
-          action.requisite_actions = action.requisite_actions.filter(r => r !== cycleReq);
-          inDegree.set(actionId, inDegree.get(actionId) - 1);
-          if (inDegree.get(actionId) === 0) queue.push(actionId);
-          brokenOne = true;
-          break; // break only ONE edge per cycle
-        }
-      }
-
-      // Continue BFS after breaking cycles
+    const runQueue = () => {
       while (queue.length > 0) {
         let currentId = queue.shift();
         sorted.push(currentId);
+        sortedSet.add(currentId);
         dependents.get(currentId).forEach(depId => {
           inDegree.set(depId, inDegree.get(depId) - 1);
           if (inDegree.get(depId) === 0) queue.push(depId);
         });
       }
+    };
+    runQueue();
 
-      // If there are still unsorted actions, force them at the end (resilience against multi-edge cycles)
-      let forced = [];
-      flow.actions.forEach(a => {
-        if (!sorted.includes(a.id)) {
-          sorted.push(a.id);
-          forced.push(a.id);
-        }
-      });
+    // Cycle handling: while unsorted actions remain, break ONE edge of ONE
+    // requirement cycle per iteration and resume the sort. Cycle edges are found
+    // inside strongly connected components, so actions merely blocked downstream
+    // of a cycle never get their requisites broken.
+    let deferred = [];
+    while (sorted.length < flow.actions.length) {
+      const cycleEdge = this._findCycleEdgeInRemaining(actionMap, sortedSet);
+      if (!cycleEdge) break; // No breakable cycle edge found (unexpected): stop breaking
+
+      deferred.push({ from: cycleEdge.from, to: cycleEdge.to });
+
+      // Remove the deferred edge so the sort can proceed
+      // It is dropped from both sides (requisites and dependents) 
+      // so the BFS propagation cannot account for it twice.
+      const action = actionMap.get(cycleEdge.to);
+      action.requisite_actions = action.requisite_actions.filter(r => r !== cycleEdge.from);
+      dependents.set(cycleEdge.from, dependents.get(cycleEdge.from).filter(depId => depId !== cycleEdge.to));
+      inDegree.set(cycleEdge.to, inDegree.get(cycleEdge.to) - 1);
+      if (inDegree.get(cycleEdge.to) === 0) queue.push(cycleEdge.to);
+      runQueue();
     }
+
+    // If there are still unsorted actions (no cycle edge could be broken),
+    // force them at the end preserving their original order (resilience).
+    flow.actions.forEach(a => {
+      if (!sortedSet.has(a.id)) {
+        sorted.push(a.id);
+        sortedSet.add(a.id);
+      }
+    });
 
     // Reorder flow.actions according to topological order
     let sortedMap = new Map();
@@ -2597,122 +2582,116 @@ class stic_AwfConfiguration {
   }
 
   /**
-   * Sorts the actions of a flow topologically using Kahn's algorithm based on requisite_actions.
-   * Detects cycles and marks the closing edge as deferred (removes it from requisites) so the
-   * topological sort can complete. Deferred edges are returned so the caller knows which
-   * RelateRecordsAction dependencies were broken.
-   * @param {stic_AwfFlow} flow The flow to sort
-   * @returns {Array} List of deferred edges: { from: actionId, to: actionId }
+   * Finds an edge that belongs to a requirement cycle among the not-yet-sorted
+   * actions. Uses strongly connected components so that only edges INSIDE a cycle
+   * are returned: actions merely blocked downstream of a cycle are never chosen,
+   * so their requisites are always preserved.
+   * @param {Map} actionMap Map of actionId -> action
+   * @param {Set} sortedSet Set of actionIds already sorted
+   * @returns {Object|null} { from, to } edge inside a cycle, or null if none
    */
-  sortFlowTopologically(flow) {
-    if (!flow || !flow.actions || flow.actions.length === 0) return [];
-
-    // Build action map for name resolution
-    let actionMap = new Map();
-    flow.actions.forEach(a => actionMap.set(a.id, a));
-
-    // Build adjacency list and in-degree count from requisite_actions
-    // Edge: requisite -> action (action depends on requisite)
-    let inDegree = new Map();
-    let dependents = new Map(); // actionId -> [actionIds that depend on it]
-    flow.actions.forEach(a => {
-      inDegree.set(a.id, 0);
-      dependents.set(a.id, []);
-    });
-
-    flow.actions.forEach(a => {
-      (a.requisite_actions || []).forEach(reqId => {
-        if (actionMap.has(reqId)) {
-          dependents.get(reqId).push(a.id);
-          inDegree.set(a.id, inDegree.get(a.id) + 1);
+  _findCycleEdgeInRemaining(actionMap, sortedSet) {
+    // Build the dependency graph of the remaining actions
+    // (edge: dependent -> requisite; the direction is irrelevant for SCCs)
+    const adjacency = new Map();
+    actionMap.forEach((action, actionId) => {
+      if (sortedSet.has(actionId)) return;
+      adjacency.set(actionId, []);
+      (action.requisite_actions || []).forEach(reqId => {
+        if (!sortedSet.has(reqId) && actionMap.has(reqId)) {
+          adjacency.get(actionId).push(reqId);
         }
       });
     });
 
-    // Kahn's algorithm (BFS)
-    let sorted = [];
-    let queue = [];
-    inDegree.forEach((deg, id) => { if (deg === 0) queue.push(id); });
-
-    while (queue.length > 0) {
-      let currentId = queue.shift();
-      sorted.push(currentId);
-      dependents.get(currentId).forEach(depId => {
-        inDegree.set(depId, inDegree.get(depId) - 1);
-        if (inDegree.get(depId) === 0) queue.push(depId);
-      });
+    // Any edge inside a strongly connected component closes (part of) a cycle.
+    // Single-node components only yield an edge for self-requisites (degenerate
+    // one-node cycles).
+    const components = this._getStronglyConnectedComponents(adjacency);
+    for (const component of components) {
+      const componentSet = new Set(component);
+      for (const actionId of component) {
+        const action = actionMap.get(actionId);
+        const cycleReq = (action.requisite_actions || []).find(reqId => componentSet.has(reqId));
+        if (cycleReq) return { from: cycleReq, to: actionId };
+      }
     }
+    return null;
+  }
 
-    // Cycle detection: if sorted < total, there is a cycle
-    let deferred = [];
-    if (sorted.length < flow.actions.length) {
-      // Find actions in the cycle (those not yet sorted)
-      let remaining = new Set(flow.actions.filter(a => !sorted.includes(a.id)).map(a => a.id));
+  /**
+   * Computes the strongly connected components (SCCs) of a directed graph using
+   * an iterative Tarjan's algorithm. Nodes in the same SCC can reach each other,
+   * so a component with more than one node always contains at least one cycle,
+   * while edges that merely leave a component can never close one. Used to decide
+   * which dependency can safely be deferred when breaking cycles.
+   * @param {Map} adjacency Map of nodeId -> Array of reachable nodeIds (directed edges)
+   * @returns {Array} Array of components, each an Array of nodeIds
+   */
+  _getStronglyConnectedComponents(adjacency) {
+    const indexMap = new Map(); // Discovery index of each node
+    const lowLink = new Map();  // Smallest discovery index reachable from each node
+    const onStack = new Set();
+    const nodeStack = [];
+    let nextIndex = 0;
+    const components = [];
 
-      // For each remaining action, find a requisite that is also remaining (the cycle edge)
-      // Break only ONE cycle edge per cycle instead of all.
-      let brokenOne = false;
-      for (const actionId of remaining) {
-        let action = actionMap.get(actionId);
-        let cycleReq = (action.requisite_actions || []).find(r => remaining.has(r));
-        if (cycleReq) {
-          deferred.push({ from: cycleReq, to: actionId });
-          // Remove the deferred edge so the sort can proceed
-          action.requisite_actions = action.requisite_actions.filter(r => r !== cycleReq);
-          inDegree.set(actionId, inDegree.get(actionId) - 1);
-          if (inDegree.get(actionId) === 0) queue.push(actionId);
-          brokenOne = true;
-          break; // break only ONE edge per cycle
+    const visit = (rootId) => {
+      // Explicit DFS stack of [nodeId, neighborCursor] to avoid deep recursion
+      const frames = [[rootId, 0]];
+      indexMap.set(rootId, nextIndex);
+      lowLink.set(rootId, nextIndex);
+      nextIndex++;
+      nodeStack.push(rootId);
+      onStack.add(rootId);
+
+      while (frames.length > 0) {
+        const frame = frames[frames.length - 1];
+        const nodeId = frame[0];
+        const neighbors = adjacency.get(nodeId) || [];
+
+        if (frame[1] < neighbors.length) {
+          const neighborId = neighbors[frame[1]++];
+          if (!indexMap.has(neighborId)) {
+            // Tree edge: descend
+            indexMap.set(neighborId, nextIndex);
+            lowLink.set(neighborId, nextIndex);
+            nextIndex++;
+            nodeStack.push(neighborId);
+            onStack.add(neighborId);
+            frames.push([neighborId, 0]);
+          } else if (onStack.has(neighborId)) {
+            // Neighbor is on the stack: update the low link
+            lowLink.set(nodeId, Math.min(lowLink.get(nodeId), indexMap.get(neighborId)));
+          }
+        } else {
+          // Node finished: propagate the low link to its parent, then check
+          // whether it is the root of a strongly connected component
+          frames.pop();
+          if (frames.length > 0) {
+            const parentId = frames[frames.length - 1][0];
+            lowLink.set(parentId, Math.min(lowLink.get(parentId), lowLink.get(nodeId)));
+          }
+          if (lowLink.get(nodeId) === indexMap.get(nodeId)) {
+            // SCC root: pop the component members off the stack
+            const component = [];
+            let memberId;
+            do {
+              memberId = nodeStack.pop();
+              onStack.delete(memberId);
+              component.push(memberId);
+            } while (memberId !== nodeId);
+            components.push(component);
+          }
         }
       }
+    };
 
-      // Continue BFS after breaking cycles
-      while (queue.length > 0) {
-        let currentId = queue.shift();
-        sorted.push(currentId);
-        dependents.get(currentId).forEach(depId => {
-          inDegree.set(depId, inDegree.get(depId) - 1);
-          if (inDegree.get(depId) === 0) queue.push(depId);
-        });
-      }
-
-      // If there are still unsorted actions, force them at the end (resilience against multi-edge cycles)
-      let forced = [];
-      flow.actions.forEach(a => {
-        if (!sorted.includes(a.id)) {
-          sorted.push(a.id);
-          forced.push(a.id);
-        }
-      });
-    }
-
-    // Reorder flow.actions according to topological order
-    let sortedMap = new Map();
-    sorted.forEach((id, index) => sortedMap.set(id, index));
-    flow.actions.sort((a, b) => (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0));
-
-    // Group actions: pre-auto (order < -1) → auto (is_automatic) → manual → terminal.
-    // Preserves topological order within each group but prevents actions
-    // from being interleaved across groups.
-    const preAutoActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order < -1);
-    const autoActions = flow.actions.filter(a => a.is_automatic);
-    const manualActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order >= -1);
-    const terminalActions = flow.actions.filter(a => a.is_terminal);
-    flow.actions = [...preAutoActions, ...autoActions, ...manualActions, ...terminalActions];
-
-    // Reassign order property.
-    // Pre-auto actions keep their original negative order (fixed, before saves).
-    // Automatic actions keep order -1 (before default manual actions).
-    // Manual actions stay at order 0 so is_fixed_order remains false (reorderable).
-    // Terminal actions keep their order (999).
-    flow.actions.forEach((a) => {
-      if (a.is_automatic) a.order = -1;
-      else if (a.is_terminal) { /* keep 999 */ }
-      else if (a.order < -1) { /* keep pre-auto negative order */ }
-      else a.order = 0;
+    adjacency.forEach((_, nodeId) => {
+      if (!indexMap.has(nodeId)) visit(nodeId);
     });
 
-    return deferred;
+    return components;
   }
 
   /**
