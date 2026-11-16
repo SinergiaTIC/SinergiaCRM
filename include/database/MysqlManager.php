@@ -835,7 +835,8 @@ class MysqlManager extends DBManager
         // STIC-Custom EPS 20261116: mediumtext (and other text/blob variants) are included so
         // that columns such as KReports.whereconditions do not keep a DEFAULT
         // value that MySQL/MariaDB reports back quoted, causing recurring
-        // repair mismatches. See stic issue.
+        // repair mismatches. See stic issue #1544 / PR #1545.
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1545
         // in_array($ref['colBaseType'], array('text', 'blob', 'longtext', 'longblob'))
             in_array($ref['colBaseType'], array('text', 'blob', 'longtext', 'longblob', 'mediumtext', 'mediumblob', 'tinytext', 'tinyblob'))
         // END STIC-Custom
@@ -1118,7 +1119,8 @@ class MysqlManager extends DBManager
                 // STIC-Custom EPS 20261116: mediumtext (and other text/blob variants) are included so
                 // that columns such as KReports.whereconditions do not keep a DEFAULT
                 // value that MySQL/MariaDB reports back quoted, causing recurring
-                // repair mismatches. See stic issue.
+                // repair mismatches. See stic issue #1544 / PR #1545.
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1545
                 || $fieldDef['dbType'] == 'mediumtext'
                 || $fieldDef['dbType'] == 'mediumblob'
                 || $fieldDef['dbType'] == 'tinytext'
