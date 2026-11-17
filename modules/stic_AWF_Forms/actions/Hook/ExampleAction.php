@@ -72,6 +72,9 @@ class ExampleAction extends HookActionDefinition
         // The prefix to use for multi-language labels used by the application
         // These labels should be defined in the language files of the stic_AWF_Forms module
         $this->baseLabel = 'LBL_EXAMPLE_ACTION';
+
+        // Set the supported form types for this action. (Empty = all form types, or specify ['web', 'crm'] for specific types)
+        $this->supportedFormTypes = ['web', 'crm'];
     }
 
     /**
@@ -320,7 +323,7 @@ class ExampleAction extends HookActionDefinition
         // VALUE (Field List) -> associative array ['Block.Field' => 'Resolved Value']
         $fieldsMap = $actionConfig->getResolvedParameter('fields_to_process') ?? [];
         foreach ($fieldsMap as $fieldKey => $fieldVal) {
-            $GLOBALS['log']->debug("Field List Item: $fieldKey = $fieldVal");
+            $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Field List Item: $fieldKey = $fieldVal");
         }
 
         // DATA_BLOCK -> DataBlockResolved object

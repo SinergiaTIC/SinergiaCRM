@@ -1,0 +1,1 @@
+SticUpdates/Migrations/20260917_hotfix_aggregatedAttendancesCount.sql

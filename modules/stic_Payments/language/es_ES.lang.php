@@ -80,6 +80,7 @@ $mod_strings = array(
     'LBL_IN_KIND_DESCRIPTION' => 'Descripción en especie',
     'LBL_GATEWAY_REJECTION_REASON' => 'Motivo de rechazo de la pasarela',
     'LBL_AGGREGATED_SERVICES_COMPLETE' => 'Pago agregado completo',
+    'LBL_ATTENDANCES_COUNT' => 'Número de asistencias agregadas',
     'LBL_GATEWAY_LOG' => 'Registro de la pasarela',
     'LBL_GATEWAY_LOG_INFO' => 'Información relativa al pago recibida de las pasarelas de pago (TPV Redsys o PayPal).',
     'LBL_STIC_PAYMENTS_STIC_PAYMENT_COMMITMENTS_FROM_STIC_PAYMENT_COMMITMENTS_TITLE' => 'Compromiso de pago',

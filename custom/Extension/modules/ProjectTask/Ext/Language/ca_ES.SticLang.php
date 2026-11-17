@@ -26,6 +26,7 @@ $mod_strings['LBL_ASSIGNED_TO'] = 'Assignat a';
 $mod_strings['LBL_LIST_ASSIGNED_TO_NAME'] = 'Assignat a';
 $mod_strings['LBL_LIST_ASSIGNED_USER'] = 'Assignat a';
 $mod_strings['LBL_ASSIGNED_USER_NAME'] = 'Assignat a';
+$mod_strings['LBL_ASSIGNED_USER_ID'] = 'Assignat a (ID)';
 $mod_strings['LBL_LIST_ASSIGNED_USER_ID'] = 'Assignat a (ID)';
 $mod_strings['LBL_CREATED'] = 'Creat per';
 $mod_strings['LBL_CREATED_USER'] = 'Creat per';

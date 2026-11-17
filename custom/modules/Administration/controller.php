@@ -152,6 +152,114 @@ class CustomAdministrationController extends AdministrationController
     }
 
 
+    public function action_sticSaveSdaConfig()
+    {
+        global $current_user, $mod_strings, $sugar_config;
+
+        if (!is_admin($current_user)) {
+            sugar_die("Unauthorized access to administration.");
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            SugarApplication::redirect("index.php?module=Administration&action=sticmanagesdaintegration");
+            return;
+        }
+
+        require_once 'modules/Configurator/Configurator.php';
+        require_once 'include/utils/array_utils.php';
+        $configurator = new Configurator();
+
+        $oldConfig = $sugar_config['stic_sinergiada'] ?? [];
+        $oldPublicUrl = $sugar_config['stic_sinergiada_public']['url'] ?? '';
+
+        // General settings
+        $configurator->config['stic_sinergiada']['enabled'] = !empty($_POST['enabled']);
+        $configurator->config['stic_sinergiada']['group_permissions_enabled'] = !empty($_POST['group_permissions_enabled']);
+        $configurator->config['stic_sinergiada']['auto_rebuild_on_studio_events'] = !empty($_POST['auto_rebuild_on_studio_events']);
+        $configurator->config['stic_sinergiada']['max_users_processed'] = ($_POST['max_users_processed'] ?? '') !== '' ? (int) $_POST['max_users_processed'] : '';
+
+        // publish_as_table: handle modules selected via multi-select.
+        // Always store an array (empty array when nothing is selected), so the value is
+        // consistent with how SinergiaDA consumes it.
+        $publish = $_POST['publish_as_table'] ?? [];
+        if (!is_array($publish)) {
+            $publish = [];
+        }
+        $configurator->config['stic_sinergiada']['publish_as_table'] = array_values($publish);
+
+        // Cache settings (known fields)
+        $knownCacheKeys = ['cache_enabled', 'cache_units', 'cache_quantity', 'cache_hours', 'cache_minutes'];
+        $cacheUnits = $_POST['cache_units'] ?? '';
+        $configurator->config['stic_sinergiada']['config']['cache_enabled'] = !empty($_POST['cache_enabled']);
+        $configurator->config['stic_sinergiada']['config']['cache_units'] = in_array($cacheUnits, ['days', 'hours'], true) ? $cacheUnits : 'days';
+        $configurator->config['stic_sinergiada']['config']['cache_quantity'] = ($_POST['cache_quantity'] ?? '') !== '' ? (int) $_POST['cache_quantity'] : '';
+        $configurator->config['stic_sinergiada']['config']['cache_hours'] = str_pad((string) max(0, min(23, (int) ($_POST['cache_hours'] ?? 0))), 2, '0', STR_PAD_LEFT);
+        $configurator->config['stic_sinergiada']['config']['cache_minutes'] = str_pad((string) max(0, min(59, (int) ($_POST['cache_minutes'] ?? 0))), 2, '0', STR_PAD_LEFT);
+
+        // Extra / unknown config keys (from "Otras configuraciones" section)
+        $extraConfig = $_POST['extra_config'] ?? [];
+        if (is_array($extraConfig)) {
+            foreach ($extraConfig as $ekey => $evalue) {
+                if (!in_array($ekey, $knownCacheKeys)) {
+                    $configurator->config['stic_sinergiada']['config'][$ekey] = $evalue;
+                }
+            }
+        }
+
+        // Public URL
+        // Only persist the URL when it has a value. If left empty, the key is removed so that
+        // no empty line is written to config_override.php and a URL defined elsewhere (config.php,
+        // manual override, etc.) is not silently overwritten.
+        $publicUrl = trim($_POST['public_url'] ?? '');
+        if ($publicUrl !== '') {
+            $configurator->config['stic_sinergiada_public']['url'] = $publicUrl;
+        } else {
+            unset($configurator->config['stic_sinergiada_public']['url']);
+        }
+
+        // Log changes
+        $userId = $current_user->id;
+        $changes = [];
+        $newConfig = $configurator->config['stic_sinergiada'];
+        foreach ($newConfig as $key => $newVal) {
+            $oldVal = $oldConfig[$key] ?? '';
+            if (json_encode($oldVal) !== json_encode($newVal)) {
+                $changes[] = "$key: " . json_encode($oldVal) . " -> " . json_encode($newVal);
+            }
+        }
+        $newPublicUrl = $configurator->config['stic_sinergiada_public']['url'] ?? '';
+        if ($oldPublicUrl !== $newPublicUrl) {
+            $changes[] = "public_url: $oldPublicUrl -> $newPublicUrl";
+        }
+
+        try {
+            // Read existing override, then only update our specific keys
+            $overrideArray = $configurator->readOverride();
+            $sdaConfig = $configurator->config['stic_sinergiada'];
+            $sdaPublicConfig = $configurator->config['stic_sinergiada_public'] ?? [];
+            $overrideArray['stic_sinergiada'] = $sdaConfig;
+            $overrideArray['stic_sinergiada_public'] = $sdaPublicConfig;
+            $overrideString = "<?php\n/***CONFIGURATOR***/\n";
+            foreach ($overrideArray as $key => $val) {
+                $overrideString .= override_value_to_string_recursive2('sugar_config', $key, $val);
+            }
+            $overrideString .= '/***CONFIGURATOR***/';
+            $configurator->saveOverride($overrideString);
+
+            if (!empty($changes)) {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "User $userId changed SinergiaDA config: " . implode('; ', $changes));
+            } else {
+                $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "User $userId saved SinergiaDA config (no changes detected)");
+            }
+            SugarApplication::appendErrorMessage('<div class="alert alert-success">' . $mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_SUCCESS'] . '</div>');
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "User $userId error saving SinergiaDA config: " . $e->getMessage());
+            SugarApplication::appendErrorMessage('<div class="alert alert-danger">' . $mod_strings['LBL_STIC_SINERGIADA_CONFIG_SAVE_ERROR'] . '</div>');
+        }
+
+        SugarApplication::redirect("index.php?module=Administration&action=sticmanagesdaintegration");
+    }
+
     public function action_configureMainMenu(){
         // Add specific logic for manage main menu
         require_once('custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.php');

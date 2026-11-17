@@ -24,6 +24,7 @@
 $mod_strings['LBL_DASHLET_STIC_NEWS'] = 'Noticias SinergiaCRM';
 
 // Acerca de
+$mod_strings['LBL_ABOUT_PAGE_TITLE'] = 'Acerca de';
 $mod_strings['LBL_ABOUT_SINERGIACRM_TITLE'] = 'SinergiaCRM - CRM de código aberto para organizacións non lucrativas';
 $mod_strings['LBL_ABOUT_SINERGIACRM'] = 'Acerca de SinergiaCRM';
 $mod_strings['LBL_ABOUT_SINERGIACRM_1'] = 'SinergiaCRM é un desenvolvemento da Asociación SinergiaTIC baeado en SuiteCRM e publicado baixo a licenza de código aberto AGPLv3.';
@@ -34,5 +35,16 @@ $mod_strings['LBL_ABOUT_SINERGIACRM_KREPORTER'] = 'Kreporter de Christian Knoll'
 $mod_strings['LBL_ABOUT_SINERGIACRM_MAIL_MERGE'] = 'Mail Merge Reports de Izertis';
 $mod_strings['LBL_ABOUT_SINERGIACRM_OTHER'] = 'Outras librarías de código aberto que se atopan nas carpetas <i>/vendor</i> e <i>/SticInclude/vendor</i>. A información de licenza destas librarías pódese atopar nos seus propios ficheiros.';
 
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL'] = 'Co apoio de';
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_SUPPORT'] = 'Parte da funcionalidade de SinergiaCRM foi desenvolvida co apoio financeiro de';
+$mod_strings['LBL_ABOUT_SINERGIACRM_FINANCIAL_ALT'] = 'Unión Europea - NextGenerationEU - Goberno de España - Plan de Recuperación, Transformación y Resiliencia - Next Generation Catalunya - Generalitat de Catalunya';
+
 // SinergiaDA
 $mod_strings['LBL_STIC_SINERGIADA_NOT_ALLOWED'] = 'No tiene habilitado el acceso a SinergiaDA. Contacte con el administrador.'; 
+
+// Accounts, Contacts, Leads and Opportunities
+$mod_strings['LBL_NEW_FORM_TITLE'] = 'Nova Persoa';
+$mod_strings['LNK_NEW_CONTACT'] = 'Nova Persoa';
+$mod_strings['LNK_NEW_ACCOUNT'] = 'Crear unha Organización';
+$mod_strings['LNK_NEW_OPPORTUNITY'] = 'Nova Subvención';
+$mod_strings['LNK_NEW_LEAD'] = 'Novo Interesado';

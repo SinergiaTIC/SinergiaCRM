@@ -55,10 +55,22 @@ class CustomContactsViewEdit extends ContactsViewEdit
         // We need to add manually to the frontend the required Incorpora fields
         require_once('modules/stic_Incorpora/utils/FieldsDef.php');
         $incorporaRequiredFieldsArray = json_encode(array_filter($contactDef, function ($var) { return $var['required'] ?? false; }));
-        echo <<<SCRIPT
-        <script>STIC.incorporaRequiredFieldsArray = $incorporaRequiredFieldsArray;</script>
-    SCRIPT;
 
+        // In SubpanelQuickCreate preDisplay() is not executed, so we need to ensure Utils.js is loaded here too
+        // Avoid loading it twice in regular EditView (where preDisplay() already includes it)
+        $isSubpanelQuickCreate = !empty($this->ev->formName) && strpos($this->ev->formName, 'form_Subpanel') === 0;
+        if ($isSubpanelQuickCreate) {
+            echo getVersionedScript("SticInclude/js/Utils.js");
+        }
+
+        echo <<<SCRIPT
+        <script>
+            if (typeof STIC === "undefined") {
+                var STIC = {};
+            }
+            STIC.incorporaRequiredFieldsArray = $incorporaRequiredFieldsArray;
+        </script>
+    SCRIPT;
         echo getVersionedScript("custom/modules/Contacts/SticUtils.js");
     }
 }

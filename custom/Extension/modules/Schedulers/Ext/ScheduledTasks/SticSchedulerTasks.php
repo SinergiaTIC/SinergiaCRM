@@ -156,6 +156,15 @@ function sticPurgeDatabase()
 
             while ($aDel = $db->fetchByAssoc($rDel, false)) {
                 $id = $db->quoted($aDel['id']);
+
+                // Clean recycle bin entries for this record (skip recycle bin tables themselves)
+                if ($table !== 'stic_recycle_bin' && $table !== 'stic_recycle_bin_relationships') {
+                    $db->query('DELETE FROM stic_recycle_bin_relationships
+                                WHERE related_record_id = ' . $id);
+                    $db->query('DELETE FROM stic_recycle_bin
+                                WHERE record_id = ' . $id);
+                }
+
                 if (!empty($custom_columns) && !empty($aDel['id'])) {
                     $db->query('DELETE FROM ' . $table . '_cstm WHERE id_c = '.$id );
                 }
@@ -179,4 +188,24 @@ function sticSendPhoneMessages() {
     require_once('modules/stic_MessagesMan/Utils.php');
 
     return stic_MessagesManUtils::sendQueuedMessages(false);
+}
+
+// Scheduled task to cancel expired AWF tickets 
+$job_strings[] = 'sticAwfCancelExpiredTickets';
+
+/**
+ * Cleans up AWF Deferred Tickets that have expired or are blocked (zombies).
+ */
+function sticAwfCancelExpiredTickets() {
+    require_once 'modules/stic_AWF_Forms/Utils.php';
+    
+    $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Running the task sticAwfCancelExpiredTickets');
+
+    try {
+        stic_AWF_FormsUtils::cancelExpiredTickets();
+        return true;
+    } catch (\Exception $e) {
+        $GLOBALS['log']->fatal('Line '.__LINE__.': '.__METHOD__.':  sticAwfCancelExpiredTickets Error: ' . $e->getMessage());
+        return false;
+    }
 }

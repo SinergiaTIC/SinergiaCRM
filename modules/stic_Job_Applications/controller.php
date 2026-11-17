@@ -28,7 +28,7 @@ class stic_Job_ApplicationsController extends SugarController
      * STIC#959
      */
     public function action_createMassJobApplications() {
-        global $db, $current_user;
+        global $db;
         $offerId = $_REQUEST['offerId'] ?? '';
         $offerName = $_REQUEST['offerName'] ?? '';
         $contactsIds = array();
@@ -63,6 +63,9 @@ class stic_Job_ApplicationsController extends SugarController
             $contactsIds = explode(',', $_REQUEST['uid']);
         }
         if (is_array($contactsIds) && !empty($contactsIds) && $offerId && $offerName) {
+            // Get the assigned user of the offer to inherit it in the created job applications
+            $offerBean = BeanFactory::getBean('stic_Job_Offers', $offerId);
+            $offerAssignedUserId = !empty($offerBean) && !empty($offerBean->id) ? $offerBean->assigned_user_id : '';
             // Create a job application for each selected contact
             foreach($contactsIds as $contactId) {
                 $jobApplicationBean = BeanFactory::newBean('stic_Job_Applications');
@@ -70,10 +73,32 @@ class stic_Job_ApplicationsController extends SugarController
                 $jobApplicationBean->status = 'expected_presentation';
                 $jobApplicationBean->stic_job_applications_contactscontacts_ida = $contactId;
                 $jobApplicationBean->stic_job_applications_stic_job_offersstic_job_offers_ida = $offerId;
-                $jobApplicationBean->assigned_user_id = $current_user->id;
+                $jobApplicationBean->assigned_user_id = $offerAssignedUserId;
                 $jobApplicationBean->save();
             }
             SugarApplication::redirect('index.php?module=stic_Job_Applications&action=index&query=true&searchFormTab=advanced_search&status_advanced=expected_presentation&range_start_date_advanced='.date('Y-m-d').'&stic_job_applications_stic_job_offers_name_advanced='.$offerName);
         } 
+    }
+
+    /**
+     * Action that returns the assigned user of a job offer.
+     * It is used from the edit view to prefill the assigned user of a new job application
+     * with the assigned user of the related offer.
+     *
+     * @return void
+     */
+    public function action_getOfferAssignedUser() {
+        $offerId = $_POST['offerId'] ?? '';
+        $response['code'] = 'No data';
+        if (!empty($offerId)) {
+            $offerBean = BeanFactory::getBean('stic_Job_Offers', $offerId);
+            if (!empty($offerBean) && !empty($offerBean->id)) {
+                $response['code'] = 'OK';
+                $response['data']['assigned_user_id'] = $offerBean->assigned_user_id ?? '';
+                $response['data']['assigned_user_name'] = $offerBean->assigned_user_name ?? '';
+            }
+        }
+        echo json_encode($response);
+        exit;
     }
 }

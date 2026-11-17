@@ -94,7 +94,9 @@ $mod_strings = array(
     'LBL_EXPIRATION_DATE_ERROR' => "La data de caducitat ha de ser posterior a la data d'activació.",
     'LBL_SIGNERS_ADDED_MSG' => 'firmant(s) afegit(s) correctament',
     'LBL_SIGNERS_ADDED_CLOSED_MSG' => "Per tal que els nous firmants puguin firmar el document cal canviar l'estat a Obert o Permanent.",
-    'LBL_SIGNERS_NOT_ADDED_MSG' => "Els firmants no s'han afegit: ja existeixen o s'ha produït un error.",
+    'LBL_SIGNERS_NOT_ADDED_MSG' => "Els firmants no s'han afegit.",
+    'LBL_SIGNERS_NOT_ADDED_SINGLE_MSG' => "Firmant(s) no afegit(s). Tal com està configurat aquest procés de firma, cada persona només es pot afegir una vegada. Per afegir la mateixa persona des d'un altre registre, activeu la casella \"Permet el mateix firmant diverses vegades\" a la configuració de la firma.",
+    'LBL_SIGNERS_NOT_ADDED_DUPLICATE_MSG' => "Firmant(s) no afegit(s). Una mateixa persona només es pot afegir una vegada al procés de firma des d'un mateix registre origen. Si necessiteu afegir la mateixa persona, seleccioneu un altre registre del mòdul %s.",
     'LBL_SIGNERS_NOT_ADDED_NOT_EXISTS' => "S'omet el següent registre perquè no s'han trobat firmants.",
     'LBL_NOTIFICATION_CAMPAIGN_CREATED_FROM_SIGNATURE' => "S'ha creat una campanya de notificació per a la firma: ",
     'LBL_NOTIFICATION_CAMPAIGN_ALREADY_EXISTS_FROM_SIGNATURE' => 'Ja existeix una campanya de notificació per a la firma: ',
@@ -218,4 +220,8 @@ $mod_strings = array(
     'LBL_EMAIL_TEMPLATE_SEND_DOCUMENT_HELP' => "Plantilla de correu per enviar el document firmat als firmants. Si no s'indica el contrari es fa servir la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70331&action=DetailView'>plantilla per defecte</a>.",
     'LBL_EMAIL_TEMPLATE_OTP_HELP' => "Plantilla de correu per enviar el codi d'un sol ús al correu electrònic dels firmants. Si no s'indica el contrari es fa servir la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70332&action=DetailView'>plantilla per defecte</a>.",
     'LBL_EMAIL_TEMPLATE_OTP_SMS_HELP' => "Plantilla de missatge SMS per enviar el codi d'un sol ús al telèfon dels firmants. Si no s'indica el contrari es fa servir la <a target='_blank' href='index.php?module=EmailTemplates&record=000005f1-2e4e-3b11-051f-68e3c9e70333&action=DetailView'>plantilla per defecte</a>.",
+
+    // Allow multiple signers
+    'LBL_ALLOW_MULTIPLE_SIGNERS' => 'Permet el mateix firmant diverses vegades',
+    'LBL_ALLOW_MULTIPLE_SIGNERS_HELP' => "<b>No (valor per defecte):</b> Cada persona només pot tenir un registre de firmant en el procés de firma.<br><b>Sí:</b> Una mateixa persona pot tenir múltiples registres de firmant, sempre que provinguin de registres origen diferents. Per exemple, si el procés està basat en el mòdul <i>Pagaments</i>, la persona podrà tenir un registre de firmant per cada pagament que tingui assignat.",
 );

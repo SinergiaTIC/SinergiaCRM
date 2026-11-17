@@ -132,10 +132,26 @@ class stic_Signatures extends Basic
      */
     public function getSticSignersForSignature()
     {
+        global $current_user;
+
         $signature_id = $_REQUEST['record'];
         if (empty($signature_id)) {
             return '';
         }
+
+        require_once 'modules/SecurityGroups/SecurityGroup.php';
+        require_once 'modules/ACL/ACLController.php';
+
+        $db = DBManagerFactory::getInstance();
+        $quotedSignatureId = $db->quote($signature_id);
+
+        // STIC custom - Only return the signers the current user is authorized to view (owner or security group).
+        // https://github.com/SinergiaTIC/SinergiaCRM/issues/1379
+        $accessWhere = '';
+        if (ACLController::requireSecurityGroup('stic_Signers', 'list')) {
+            $accessWhere = " AND (stic_signers.assigned_user_id = '" . $db->quote($current_user->id) . "' OR " . SecurityGroup::getGroupWhere('stic_signers', 'stic_Signers', $current_user->id) . ")";
+        }
+        // END STIC custom
 
         // Construct the SQL query
         $query = "
@@ -162,9 +178,10 @@ class stic_Signatures extends Basic
                 JOIN stic_signatures_stic_signers_c rel
                     ON rel.stic_signatures_stic_signersstic_signers_idb = stic_signers.id
                 LEFT JOIN contacts c1 ON c1.id = stic_signers.contact_id_c -- to get on_behalf_of_id
-                WHERE rel.stic_signatures_stic_signersstic_signatures_ida = '{$signature_id}'
+                WHERE rel.stic_signatures_stic_signersstic_signatures_ida = '{$quotedSignatureId}'
                     AND stic_signers.deleted = 0
                     AND rel.deleted = 0
+                    {$accessWhere}
                 ) AS stic_signers
         ";
         return $query;
