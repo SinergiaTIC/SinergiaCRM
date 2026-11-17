@@ -96,9 +96,10 @@ $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC_CUSTOM'] = 'SticCustom';
 
 // SinergiaCRM global links
-$app_strings['LBL_STIC_FORUMS_LINK'] = 'SinergiaTIC forums';
-$app_strings['LBL_STIC_WIKI_LINK'] = 'SinergiaTIC wiki';
-$app_strings['LBL_STIC_VIDEOS_LINK'] = 'SinergiaCRM videos';
+$app_strings['LBL_STIC_FORUMS_LINK'] = 'Forums';
+$app_strings['LBL_STIC_GUIA_LINK'] = 'GuIA (AI guide)';
+$app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki';
+$app_strings['LBL_STIC_VIDEOS_LINK'] = 'Videos';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
 // Messages: actions in recipient modules
@@ -188,6 +189,8 @@ $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Form Deferred Ti
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Form External Notifications';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversations';
 $app_list_strings['moduleList']['stic_Portal_Login_Audit'] = 'Portal Login Audit';
+$app_list_strings['moduleList']['stic_Recycle_Bin'] = 'Recycle Bin';
+$app_list_strings['moduleList']['stic_Recycle_Bin_Relationships'] = 'Recycle Bin Relationships';
 
 $app_list_strings['moduleListSingular']['Accounts'] = 'Account';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Contact';
@@ -254,6 +257,8 @@ $app_list_strings['moduleListSingular']['stic_AWF_Deferred_Tickets'] = 'Form Def
 $app_list_strings['moduleListSingular']['stic_AWF_Incoming_Events'] = 'Form External Notification';
 $app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversation';
 $app_list_strings['moduleListSingular']['stic_Portal_Login_Audit'] = 'Portal Login Audit';
+$app_list_strings['moduleListSingular']['stic_Recycle_Bin'] = 'Recycle Bin';
+$app_list_strings['moduleListSingular']['stic_Recycle_Bin_Relationships'] = 'Recycle Bin Relationship';
 
 $app_list_strings['parent_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['parent_type_display']['Contacts'] = 'Contacts';
@@ -301,6 +306,8 @@ $app_list_strings['parent_type_display']['stic_Transactions'] = 'Transactions';
 $app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['parent_type_display']['stic_Assets'] = 'Assets';
 $app_list_strings['parent_type_display']['stic_Conversations'] = 'Conversations';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin'] = 'Recycle Bin';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin_Relationships'] = 'Recycle Bin Relationships';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display']['Contacts'] = 'Contacts';
@@ -350,6 +357,8 @@ $app_list_strings['record_type_display']['stic_Transactions'] = 'Transactions';
 $app_list_strings['record_type_display']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['record_type_display']['stic_Assets'] = 'Assets';
 $app_list_strings['record_type_display']['stic_Conversations'] = 'Conversations';
+$app_list_strings['record_type_display']['stic_Recycle_Bin'] = 'Recycle Bin';
+$app_list_strings['record_type_display']['stic_Recycle_Bin_Relationships'] = 'Recycle Bin Relationships';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Accounts';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Contacts';
@@ -399,6 +408,8 @@ $app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transacti
 $app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Financial Products';
 $app_list_strings['record_type_display_notes']['stic_Assets'] = 'Assets';
 $app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Conversations';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin'] = 'Recycle Bin';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin_Relationships'] = 'Recycle Bin Relationships';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Opportunities';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Events';
@@ -3697,6 +3708,11 @@ $app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Contacts';
 $app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Leads';
 $app_list_strings['stic_messages_parent_type_display']['Employees'] = 'Employees';
 
+// Conversations: Types
+$app_list_strings['stic_conversations_types_list'][''] = '';
+$app_list_strings['stic_conversations_types_list']['type1'] = 'Type 1';
+$app_list_strings['stic_conversations_types_list']['type2'] = 'Type 2';
+
 // Custom Views: User Types
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Regular user';
 $app_list_strings['stic_custom_views_user_type_list']['administrator'] = 'Administrator';
@@ -4076,11 +4092,6 @@ $app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Skipped';
 $app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Processed';
 $app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Unchanged';
 
-// Conversations: Types
-$app_list_strings['stic_conversations_types_list'][''] = '';
-$app_list_strings['stic_conversations_types_list']['type1'] = 'Type 1';
-$app_list_strings['stic_conversations_types_list']['type2'] = 'Type 2';
-
 // Advanced Web Forms Deferred Tickets: status
 $app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
 $app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pending';
@@ -4095,6 +4106,18 @@ $app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pending';
 $app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Processed';
 $app_list_strings['stic_awf_incoming_events_status']['error'] = 'Failed';
 $app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignored';
+
+// Recycle Bin: Reasons for not restoring relationships
+$app_list_strings['stic_recycle_skip_reason_list'][''] = '';
+$app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Related record deleted';
+$app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Related record reassigned';
+
+// Recycle Bin: Deletion source
+$app_list_strings['stic_recycle_deletion_source_list'][''] = '';
+$app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Detail view';
+$app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Mass action';
+$app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Record merge';
+$app_list_strings['stic_recycle_deletion_source_list']['other'] = 'External action';
 
 // SuiteCRM Core modifications
 

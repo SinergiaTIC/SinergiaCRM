@@ -199,6 +199,12 @@ class SugarCache
     {
         if (extension_loaded('Zend OPcache')) {
             if (function_exists('opcache_get_status')) {
+                // STIC-Custom 20261015 AAM - Check if OPcache is restricted for this path
+                $restrictApi = ini_get('opcache.restrict_api');
+                if ($restrictApi && strpos(__FILE__, $restrictApi) !== 0) {
+                    return false; // OPcache API restricted for this path
+                }
+                // END STIC-Custom
                 $opcache_status = opcache_get_status(false);
                 return $opcache_status !== false && ($opcache_status['opcache_enabled'] ?? false);
             } else {

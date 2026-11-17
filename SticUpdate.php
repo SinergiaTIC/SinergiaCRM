@@ -92,6 +92,27 @@ $selectedActions = array(
 // Clear and rebuild database
 VardefManager::clearVardef();
 global $beanList, $beanFiles, $moduleList, $current_language;
+
+// Force OPcache revalidation for the rest of this request.
+// The merge and the rebuild below regenerate/rewrite PHP files (module registry
+// modules.ext.php, relationship metadata, per-module compiled vardefs,
+// TableDictionary). Until opcache.revalidate_freq elapses, PHP may keep
+// serving the previously compiled versions, so the rebuild and the repair
+// below would not see new modules, fields or relationships, and would still
+// finish with status success (empty repair).
+// opcache_reset()/opcache_invalidate() are blocked by opcache.restrict_api on
+// managed hosts, but ini_set() of the runtime opcache settings is not affected
+// by restrict_api: forcing revalidation on every include makes this worker
+// recompile the fresh content and update the shared OPcache entries, so every
+// other worker serves the new code from now on. ini_set values are
+// automatically restored when the request ends.
+if (extension_loaded('Zend OPcache')) {
+    @ini_set('opcache.validate_timestamps', '1');
+    @ini_set('opcache.revalidate_freq', '0');
+    @ini_set('opcache.file_update_protection', '0');
+    $infos[] = 'Forced OPcache revalidation for this request';
+}
+
 $mi->rebuild_all(true);
 require_once('modules/Administration/QuickRepairAndRebuild.php');
 $mod_strings = return_module_language($current_language, 'Administration');

@@ -251,7 +251,7 @@ array(
                     0 => 'name',
                     1 => array(
                         'name' => 'assigned_user_name',
-                        'label' => 'LBL_ASSIGNED_USER_ID',
+                        'label' => 'LBL_ASSIGNED_USER_NAME',
                     ),
                 ),
                 1 => array(

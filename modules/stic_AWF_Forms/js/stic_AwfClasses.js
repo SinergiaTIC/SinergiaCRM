@@ -379,8 +379,13 @@ class stic_AwfField {
     this.subtype_in_form = this.getAvailableSubtypesInForm()[0]?.id;
     this.value_type = this.getAvailableValueTypes()[0]?.id;
     if (this.value_type != 'selectable' && this.value_type != 'fixed') {
-      // Reset value_options
-      this.value_options = [];
+      // Reset value_options in place to keep the array reference live
+      // for wizard components bound to it
+      if (Array.isArray(this.value_options)) {
+        this.value_options.splice(0, this.value_options.length);
+      } else {
+        this.value_options = [];
+      }
     }
     if (fieldInfo.module) {
         this.related_module = fieldInfo.module;
@@ -644,7 +649,11 @@ class stic_AwfField {
   setValueOptions(originalOptions) {
     if (this.isSelectCustomOptions() && this.acceptValueOptions()) {
       if ((this.value_options?.length ?? 0) == 0) {
-        this.value_options = [new stic_AwfValueOption()];
+        // Push in place to keep the array reference live for wizard components bound to it
+        if (!Array.isArray(this.value_options)) {
+          this.value_options = [];
+        }
+        this.value_options.push(new stic_AwfValueOption());
       }
       return this.value_options;
     }
@@ -652,7 +661,12 @@ class stic_AwfField {
       return this.value_options;
     }
 
-    this.value_options = [];
+    // Clear in place to keep the array reference live for wizard components bound to it
+    if (Array.isArray(this.value_options)) {
+      this.value_options.splice(0, this.value_options.length);
+    } else {
+      this.value_options = [];
+    }
     if (originalOptions) {
       originalOptions.forEach(o => {
         this.value_options.push(new stic_AwfValueOption({
@@ -826,6 +840,7 @@ class stic_AwfValueOption{
       is_visible: true,   // Indicates if it will be shown
       text_original: '',  // Original option text
       text: '',           // Option text
+      score: null,        // Option score
     });
 
     // 2. Overwrite with provided data
@@ -1284,7 +1299,8 @@ class stic_AwfConfiguration {
   }
   static fromJSON(jsonString){
     const config = new stic_AwfConfiguration(JSON.parse(jsonString));
-    config._lastDataBlocksHash = config._computeDataBlocksHash();
+    config._lastDataBlocksHash = config._migratedLegacy ? '' : config._computeDataBlocksHash();
+    delete config._migratedLegacy;
     
     return config;
   }
@@ -1387,6 +1403,7 @@ class stic_AwfConfiguration {
         return;
       }
 
+      const orphanFieldsToRemove = [];
       block.fields.forEach(field => {
         // Only old-style relationship fields point to another data block
         if (field.type !== 'relate' || field.value_type !== 'dataBlock' || !field.value) {
@@ -1400,10 +1417,20 @@ class stic_AwfConfiguration {
         }
 
         // Resolve the relationship name from the module metadata
+        // For M-N relate fields with non-db id_name (e.g. Calls.contact_name),
+        // fieldInfo.options is empty, so fall back to resolving via fieldInfo.link_name.
         const fieldInfo = moduleInfo.fields[field.name];
-        const relName = fieldInfo?.options;
+        let relName = fieldInfo?.options;
+        const isNonDbRelate = !relName && !!fieldInfo?.link_name;
+        if (!relName && fieldInfo?.link_name && moduleInfo.relationships) {
+          const matchedRel = Object.values(moduleInfo.relationships).find(r => r.link_name === fieldInfo.link_name);
+          relName = matchedRel?.name || '';
+        }
         if (!relName) {
           return;
+        }
+        if (isNonDbRelate) {
+          orphanFieldsToRemove.push(field);
         }
 
         // Skip if the relationship has already been migrated in either direction
@@ -1426,6 +1453,18 @@ class stic_AwfConfiguration {
         // Use the existing relationship creation logic to add entries on both sides,
         // set initiator_id / role and create/update the relate field consistently.
         this.addDataBlockRelationship(block.id, relName, relatedBlockId, '');
+        this._migratedLegacy = true;
+      });
+
+      orphanFieldsToRemove.forEach(orphanField => {
+        if (orphanField.required) {
+          orphanField.value = '';
+          orphanField.value_text = '';
+          orphanField.value_type = 'fixed';
+        } else {
+          block.deleteField(orphanField.name);
+        }
+        this._migratedLegacy = true;
       });
     });
   }
@@ -1788,12 +1827,28 @@ class stic_AwfConfiguration {
     dataBlock.deleteField(field.name);
 
     if (field.type == 'relate' && field.value_type == 'dataBlock') {
+      let moduleInfo = dataBlock.getModuleInformation();
+      let fieldInfo = moduleInfo?.fields?.[field.name];
+      let relName = fieldInfo?.options || '';
+      if (!relName && fieldInfo?.link_name && moduleInfo?.relationships) {
+        let matchedRel = Object.values(moduleInfo.relationships).find(r => r.link_name === fieldInfo.link_name);
+        relName = matchedRel?.name || '';
+      }
+      if (!relName) {
+        let relEntry = dataBlock.relationships.find(r => r.related_datablock_id === field.value);
+        relName = relEntry?.name || '';
+      }
+      const validRelNames = new Set([relName, fieldInfo?.link_name].filter(Boolean));
+      const relInfo = relName ? moduleInfo?.relationships?.[relName] : null;
+      if (relInfo?.link_name) validRelNames.add(relInfo.link_name);
+
       // Remove Relationship Action
       const relateAction = this.flows.flatMap(f => f.actions).find(a => {
         if (a.name == 'RelateRecordsAction') {
-          return a.parameters.find(p => p.name == 'data_block_id' && p.value == dataBlock.id) &&
-                 a.parameters.find(p => p.name == 'target_object' && p.value == field.value) &&
-                 a.parameters.find(p => p.name == 'field_to_update' && p.value == `${dataBlock.name}.${field.name}`);
+          return a.parameters.find(p => p.name == 'data_block_id' && (p.value == dataBlock.id || p.value == field.value)) &&
+                 a.parameters.find(p => p.name == 'target_object' && p.selected_option != 'value' && (p.value == field.value || p.value == dataBlock.id)) &&
+                 (a.parameters.find(p => p.name == 'field_to_update' && p.value == `${dataBlock.name}.${field.name}`) ||
+                  a.parameters.find(p => p.name == 'relationship_name' && validRelNames.has(p.value)));
         }
         return false;
       });
@@ -1804,12 +1859,6 @@ class stic_AwfConfiguration {
       }
 
       // Remove the relationship from this block (N side)
-      let moduleInfo = dataBlock.getModuleInformation();
-      let relName = moduleInfo?.fields[field.name]?.options || '';
-      if (!relName) {
-        let relEntry = dataBlock.relationships.find(r => r.related_datablock_id === field.value);
-        relName = relEntry?.name || '';
-      }
       if (relName) {
         dataBlock.removeRelationship(relName, field.value);
         let targetBlock = this.data_blocks.find(d => d.id == field.value);
@@ -2011,14 +2060,22 @@ class stic_AwfConfiguration {
     if (!dataBlock) return;
     let relDatablock = this.data_blocks.find(d => d.id == relatedDatablockId);
 
+    // Collect both canonical relationship name and link field names on either block
+    const validRelNames = new Set([relName]);
+    const origRelInfo = dataBlock.getModuleInformation()?.relationships?.[relName];
+    if (origRelInfo?.link_name) validRelNames.add(origRelInfo.link_name);
+    const destRelInfo = relDatablock?.getModuleInformation()?.relationships?.[relName];
+    if (destRelInfo?.link_name) validRelNames.add(destRelInfo.link_name);
+
     // Find the auto-created relate field (if any) on either block
     let relateField = null;
     let relateFieldBlock = null;
     [dataBlock, relDatablock].forEach(block => {
       if (!block || relateField) return;
       let moduleInfo = block.getModuleInformation();
+      let blockRelLinkName = moduleInfo?.relationships?.[relName]?.link_name;
       let relateFieldNames = Object.values(moduleInfo?.fields || {}).filter(
-        f => f.type === 'relate' && f.options === relName
+        f => f.type === 'relate' && (f.options === relName || (blockRelLinkName && f.link_name === blockRelLinkName))
       ).map(f => f.name);
       relateField = block.fields.find(f =>
         relateFieldNames.includes(f.name) && f.value_type == 'dataBlock' &&
@@ -2046,8 +2103,9 @@ class stic_AwfConfiguration {
         flow.actions = flow.actions.filter(a => {
           if (a.name == 'RelateRecordsAction') {
             let p1 = a.parameters.find(p => p.name == 'data_block_id' && (p.value == datablockId || p.value == relatedDatablockId));
-            let p2 = a.parameters.find(p => p.name == 'relationship_name' && p.value == relName);
-            return !(p1 && p2);
+            let pTarget = a.parameters.find(p => p.name == 'target_object' && p.selected_option != 'value' && (p.value == datablockId || p.value == relatedDatablockId));
+            let p2 = a.parameters.find(p => p.name == 'relationship_name' && validRelNames.has(p.value));
+            return !(p1 && pTarget && p2);
           }
           return true;
         });
@@ -2118,7 +2176,8 @@ class stic_AwfConfiguration {
    * @returns {string} The module name
    */
   getRelationshipModule(datablockId, relationshipName) {
-    return this.getAllDataBlockRelationships()[datablockId].find(r => r.name==relationshipName)?.module;
+    if (!relationshipName) return undefined;
+    return this.getAllDataBlockRelationships()[datablockId]?.find(r => r.name==relationshipName || r.link_name == relationshipName)?.module;
   }
 
   /**
@@ -2159,6 +2218,22 @@ class stic_AwfConfiguration {
   regenerateAutomaticActions() {
     const mainFlow = this.flows.find(f => f.id == '0');
     if (!mainFlow) return;
+
+    // Capture the saved relative order of the actions (the order the user chose).
+    // It is passed to the topological sort so the regenerated flow keeps this
+    // order wherever the dependencies allow it (stable sort).
+    // Regenerated save/document actions keep their IDs (recoverable by ID);
+    // RelateRecordsAction are recreated with a new ID (recoverable by parameter
+    // signature).
+    const savedIndexById = new Map();
+    const actionSignature = (a) => (a.parameters || []).map(p => `${p.name}=${p.value}#${p.selectedOption ?? ''}`).join('|');
+    const savedIndexBySignature = new Map();
+    mainFlow.actions.forEach((action, index) => {
+      savedIndexById.set(String(action.id), index);
+      if (!savedIndexBySignature.has(actionSignature(action))) {
+        savedIndexBySignature.set(actionSignature(action), index);
+      }
+    });
 
     // Clean: Remove automatic SaveRecord, RelateRecords, and SaveDocumentBlock actions
     // (they will be regenerated below). Other automatic actions (e.g., CheckSessionAction)
@@ -2296,8 +2371,8 @@ class stic_AwfConfiguration {
           if (field.type === 'relate' && field.value_type === 'fixed' && field.value) {
             let relationshipName = '';
             const moduleFieldInfo = moduleInfo.fields[field.name];
-            if (moduleFieldInfo && moduleFieldInfo.type === 'relate' && moduleFieldInfo.options) {
-              relationshipName = moduleFieldInfo.options;
+            if (moduleFieldInfo && moduleFieldInfo.type === 'relate') {
+              relationshipName = moduleFieldInfo.options || moduleFieldInfo.link_name || '';
             }
             if (relationshipName) {
               const originalDef = utils.getDefinedAction('RelateRecordsAction');
@@ -2312,6 +2387,9 @@ class stic_AwfConfiguration {
                   'target_object': { value: field.value, valueText: field.value_text || field.value, selectedOption: 'value' },
                   'relationship_name': { value: relationshipName, valueText: relationshipName, selectedOption: '' }
                 };
+                if (moduleFieldInfo.options && moduleFieldInfo.id_name) {
+                  params['relation_id_name'] = { value: moduleFieldInfo.id_name, valueText: moduleFieldInfo.id_name, selectedOption: '' };
+                }
                 const newAction = this.addAction(actionDef, params, '0');
                 if (newAction) {
                   newAction.text = `${utils.translate('LBL_RELATE_RECORDS_ACTION_TITLE')}: ${block.text}.${field.text_original || field.name} = ${field.value_text || field.value}`;
@@ -2383,123 +2461,18 @@ class stic_AwfConfiguration {
       });
     });
 
-    // Sort actions topologically based on requisite_actions dependencies
-    this.sortFlowTopologically(mainFlow);
-  }
-
-  /**
-   * Sorts the actions of a flow topologically using Kahn's algorithm based on requisite_actions.
-   * Detects cycles and marks the closing edge as deferred (removes it from requisites) so the
-   * topological sort can complete. Deferred edges are returned so the caller knows which
-   * RelateRecordsAction dependencies were broken.
-   * @param {stic_AwfFlow} flow The flow to sort
-   * @returns {Array} List of deferred edges: { from: actionId, to: actionId }
-   */
-  sortFlowTopologically(flow) {
-    if (!flow || !flow.actions || flow.actions.length === 0) return [];
-
-    // Build action map for name resolution
-    let actionMap = new Map();
-    flow.actions.forEach(a => actionMap.set(a.id, a));
-
-    // Build adjacency list and in-degree count from requisite_actions
-    // Edge: requisite -> action (action depends on requisite)
-    let inDegree = new Map();
-    let dependents = new Map(); // actionId -> [actionIds that depend on it]
-    flow.actions.forEach(a => {
-      inDegree.set(a.id, 0);
-      dependents.set(a.id, []);
-    });
-
-    flow.actions.forEach(a => {
-      (a.requisite_actions || []).forEach(reqId => {
-        if (actionMap.has(reqId)) {
-          dependents.get(reqId).push(a.id);
-          inDegree.set(a.id, inDegree.get(a.id) + 1);
-        }
-      });
-    });
-
-    // Kahn's algorithm (BFS)
-    let sorted = [];
-    let queue = [];
-    inDegree.forEach((deg, id) => { if (deg === 0) queue.push(id); });
-
-    while (queue.length > 0) {
-      let currentId = queue.shift();
-      sorted.push(currentId);
-      dependents.get(currentId).forEach(depId => {
-        inDegree.set(depId, inDegree.get(depId) - 1);
-        if (inDegree.get(depId) === 0) queue.push(depId);
-      });
-    }
-
-    // Cycle detection: if sorted < total, there is a cycle
-    let deferred = [];
-    if (sorted.length < flow.actions.length) {
-      // Find actions in the cycle (those not yet sorted)
-      let remaining = new Set(flow.actions.filter(a => !sorted.includes(a.id)).map(a => a.id));
-
-      // For each remaining action, find a requisite that is also remaining (the cycle edge)
-      remaining.forEach(actionId => {
-        let action = actionMap.get(actionId);
-        let cycleReq = (action.requisite_actions || []).find(r => remaining.has(r));
-        if (cycleReq) {
-          deferred.push({ from: cycleReq, to: actionId });
-          // Remove the deferred edge so the sort can proceed
-          action.requisite_actions = action.requisite_actions.filter(r => r !== cycleReq);
-          inDegree.set(actionId, inDegree.get(actionId) - 1);
-          if (inDegree.get(actionId) === 0) queue.push(actionId);
-        }
-      });
-
-      // Continue BFS after breaking cycles
-      while (queue.length > 0) {
-        let currentId = queue.shift();
-        sorted.push(currentId);
-        dependents.get(currentId).forEach(depId => {
-          inDegree.set(depId, inDegree.get(depId) - 1);
-          if (inDegree.get(depId) === 0) queue.push(depId);
-        });
+    // Sort actions topologically based on requisite_actions dependencies,
+    // keeping (restoring) the saved relative order of the actions wherever
+    // the dependencies allow it.
+    const priority = new Map(); // actionId -> saved index (or Infinity when unknown)
+    mainFlow.actions.forEach((action) => {
+      let index = savedIndexById.get(String(action.id));
+      if (index === undefined) {
+        index = savedIndexBySignature.get(actionSignature(action));
       }
-
-      // If there are still unsorted actions, force them at the end (resilience against multi-edge cycles)
-      let forced = [];
-      flow.actions.forEach(a => {
-        if (!sorted.includes(a.id)) {
-          sorted.push(a.id);
-          forced.push(a.id);
-        }
-      });
-    }
-
-    // Reorder flow.actions according to topological order
-    let sortedMap = new Map();
-    sorted.forEach((id, index) => sortedMap.set(id, index));
-    flow.actions.sort((a, b) => (sortedMap.get(a.id) ?? 0) - (sortedMap.get(b.id) ?? 0));
-
-    // Group actions: pre-auto (order < -1) → auto (is_automatic) → manual → terminal.
-    // Preserves topological order within each group but prevents actions
-    // from being interleaved across groups.
-    const preAutoActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order < -1);
-    const autoActions = flow.actions.filter(a => a.is_automatic);
-    const manualActions = flow.actions.filter(a => !a.is_automatic && !a.is_terminal && a.order >= -1);
-    const terminalActions = flow.actions.filter(a => a.is_terminal);
-    flow.actions = [...preAutoActions, ...autoActions, ...manualActions, ...terminalActions];
-
-    // Reassign order property.
-    // Pre-auto actions keep their original negative order (fixed, before saves).
-    // Automatic actions keep order -1 (before default manual actions).
-    // Manual actions stay at order 0 so is_fixed_order remains false (reorderable).
-    // Terminal actions keep their order (999).
-    flow.actions.forEach((a) => {
-      if (a.is_automatic) a.order = -1;
-      else if (a.is_terminal) { /* keep 999 */ }
-      else if (a.order < -1) { /* keep pre-auto negative order */ }
-      else a.order = 0;
+      priority.set(String(action.id), index === undefined ? Infinity : index);
     });
-
-    return deferred;
+    this.sortFlowTopologically(mainFlow, priority);
   }
 
   /**
@@ -2507,10 +2480,18 @@ class stic_AwfConfiguration {
    * Detects cycles and marks the closing edge as deferred (removes it from requisites) so the
    * topological sort can complete. Deferred edges are returned so the caller knows which
    * RelateRecordsAction dependencies were broken.
+   * The sort is STABLE with respect to the saved relative order: when two actions have no
+   * pending dependency between them, the priority of each action (its saved array index,
+   * provided by the caller) — or its current array index by default — decides which one is
+   * sorted first. This keeps the order chosen by the user wherever the dependencies
+   * (requisite_actions) allow it.
    * @param {stic_AwfFlow} flow The flow to sort
+   * @param {Map<string, number>} priority Map actionId -> sort priority (lower sorts first,
+   *   e.g. the saved array index). Action ids without an entry fall back to their current
+   *   array index. Optional.
    * @returns {Array} List of deferred edges: { from: actionId, to: actionId }
    */
-  sortFlowTopologically(flow) {
+  sortFlowTopologically(flow, priority = null) {
     if (!flow || !flow.actions || flow.actions.length === 0) return [];
 
     // Build action map for name resolution
@@ -2535,17 +2516,37 @@ class stic_AwfConfiguration {
       });
     });
 
-    // Kahn's algorithm (BFS)
+    // Kahn's algorithm (BFS) with STABLE candidate selection: among the actions
+    // ready to be executed, the one with the lowest saved index goes first, so
+    // the user-defined relative order survives whenever the dependencies allow it.
+    // Sort keys: (saved priority, current array index, discovery order). The last
+    // one makes the result deterministic on any ECMAScript engine.
     let sorted = [];
-    let queue = [];
-    inDegree.forEach((deg, id) => { if (deg === 0) queue.push(id); });
+    let queue = []; // Entries: { id, value, fallback, seq }
+    let seq = 0;
+    let currentIndexOf = new Map();
+    flow.actions.forEach((a, index) => currentIndexOf.set(a.id, index));
+    const priorityValueOf = (id) =>
+      priority && priority.has(String(id)) ? priority.get(String(id)) : Infinity;
+    const enqueue = (id) => queue.push({
+      id: id,
+      value: priorityValueOf(id),
+      fallback: currentIndexOf.get(id) ?? Number.MAX_SAFE_INTEGER,
+      seq: seq++,
+    });
+    const dequeue = () => {
+      queue.sort((a, b) => (a.value - b.value) || (a.fallback - b.fallback) || (a.seq - b.seq));
+      return queue.shift().id;
+    };
+
+    inDegree.forEach((deg, id) => { if (deg === 0) enqueue(id); });
 
     while (queue.length > 0) {
-      let currentId = queue.shift();
+      let currentId = dequeue();
       sorted.push(currentId);
       dependents.get(currentId).forEach(depId => {
         inDegree.set(depId, inDegree.get(depId) - 1);
-        if (inDegree.get(depId) === 0) queue.push(depId);
+        if (inDegree.get(depId) === 0) enqueue(depId);
       });
     }
 
@@ -2564,17 +2565,17 @@ class stic_AwfConfiguration {
           // Remove the deferred edge so the sort can proceed
           action.requisite_actions = action.requisite_actions.filter(r => r !== cycleReq);
           inDegree.set(actionId, inDegree.get(actionId) - 1);
-          if (inDegree.get(actionId) === 0) queue.push(actionId);
+          if (inDegree.get(actionId) === 0) enqueue(actionId);
         }
       });
 
       // Continue BFS after breaking cycles
       while (queue.length > 0) {
-        let currentId = queue.shift();
+        let currentId = dequeue();
         sorted.push(currentId);
         dependents.get(currentId).forEach(depId => {
           inDegree.set(depId, inDegree.get(depId) - 1);
-          if (inDegree.get(depId) === 0) queue.push(depId);
+          if (inDegree.get(depId) === 0) enqueue(depId);
         });
       }
 
