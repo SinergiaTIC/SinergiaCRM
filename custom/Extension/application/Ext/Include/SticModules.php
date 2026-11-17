@@ -75,6 +75,10 @@ $moduleList[] = 'stic_Financial_Products';
 $moduleList[] = 'stic_Assets';
 $moduleList[] = 'stic_AWF_Forms';
 $moduleList[] = 'stic_Conversations';
+$moduleList[] = 'stic_Portal_Login_Audit';
+$moduleList[] = 'stic_Portal_Password_History';
+$moduleList[] = 'stic_Portal_Login_Attempts';
+$moduleList[] = 'stic_Portal_Magic_Rate_Limit';
 $moduleList[] = 'stic_Recycle_Bin';
 $moduleList[] = 'stic_Recycle_Bin_Relationships';
 
@@ -142,6 +146,10 @@ $beanList['stic_AWF_Response_Details'] = 'stic_AWF_Response_Details';
 $beanList['stic_AWF_Deferred_Tickets'] = 'stic_AWF_Deferred_Tickets';
 $beanList['stic_AWF_Incoming_Events'] = 'stic_AWF_Incoming_Events';
 $beanList['stic_Conversations'] = 'stic_Conversations';
+$beanList['stic_Portal_Login_Audit'] = 'stic_Portal_Login_Audit';
+$beanList['stic_Portal_Password_History'] = 'stic_Portal_Password_History';
+$beanList['stic_Portal_Login_Attempts'] = 'stic_Portal_Login_Attempts';
+$beanList['stic_Portal_Magic_Rate_Limit'] = 'stic_Portal_Magic_Rate_Limit';
 $beanList['stic_Recycle_Bin'] = 'stic_Recycle_Bin';
 $beanList['stic_Recycle_Bin_Relationships'] = 'stic_Recycle_Bin_Relationships';
 
@@ -208,10 +216,19 @@ $beanFiles['stic_AWF_Response_Details'] = 'modules/stic_AWF_Response_Details/sti
 $beanFiles['stic_AWF_Deferred_Tickets'] = 'modules/stic_AWF_Deferred_Tickets/stic_AWF_Deferred_Tickets.php';
 $beanFiles['stic_AWF_Incoming_Events'] = 'modules/stic_AWF_Incoming_Events/stic_AWF_Incoming_Events.php';
 $beanFiles['stic_Conversations'] = 'modules/stic_Conversations/stic_Conversations.php';
+$beanFiles['stic_Portal_Login_Audit'] = 'modules/stic_Portal_Login_Audit/stic_Portal_Login_Audit.php';
+$beanFiles['stic_Portal_Password_History'] = 'modules/stic_Portal_Password_History/stic_Portal_Password_History.php';
+$beanFiles['stic_Portal_Login_Attempts'] = 'modules/stic_Portal_Login_Attempts/stic_Portal_Login_Attempts.php';
+$beanFiles['stic_Portal_Magic_Rate_Limit'] = 'modules/stic_Portal_Magic_Rate_Limit/stic_Portal_Magic_Rate_Limit.php';
 $beanFiles['stic_Recycle_Bin'] = 'modules/stic_Recycle_Bin/stic_Recycle_Bin.php';
 $beanFiles['stic_Recycle_Bin_Relationships'] = 'modules/stic_Recycle_Bin_Relationships/stic_Recycle_Bin_Relationships.php';
 
 // Modules in $modInvisList are hidden in the main menu, in reporting and as subpanels
+// Internal portal infrastructure tables (created and maintained by their vardefs)
+$modInvisList[] = 'stic_Portal_Login_Audit';
+$modInvisList[] = 'stic_Portal_Password_History';
+$modInvisList[] = 'stic_Portal_Login_Attempts';
+$modInvisList[] = 'stic_Portal_Magic_Rate_Limit';
 $modInvisList[] = 'stic_Settings';
 $modInvisList[] = 'stic_Validation_Actions';
 $modInvisList[] = 'stic_Web_Forms';
@@ -246,6 +263,12 @@ $modules_exempt_from_availability_check['stic_Recycle_Bin_Relationships'] = 'sti
 $report_include_modules['stic_AWF_Response_Details'] = 'stic_AWF_Response_Details';
 
 // Modules that should be accessed only by administrators through the Admin page
+// Portal infrastructure tables: hidden AND admin-only (they carry security data,
+// e.g. bcrypt password hashes in stic_Portal_Password_History).
+$adminOnlyList['stic_Portal_Login_Audit'] = array('all' => 1);
+$adminOnlyList['stic_Portal_Password_History'] = array('all' => 1);
+$adminOnlyList['stic_Portal_Login_Attempts'] = array('all' => 1);
+$adminOnlyList['stic_Portal_Magic_Rate_Limit'] = array('all' => 1);
 $adminOnlyList['stic_Settings'] = array('all' => 1);
 $adminOnlyList['stic_Validation_Actions'] = array('all' => 1);
 $adminOnlyList['stic_Security_Groups_Rules'] = array('all' => 1);

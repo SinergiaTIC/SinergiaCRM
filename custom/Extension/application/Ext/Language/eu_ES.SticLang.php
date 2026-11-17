@@ -4258,5 +4258,17 @@ $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
 
+// Motivos de no restauración de relaciones de la papelera
+$app_list_strings['stic_recycle_skip_reason_list'][''] = '';
+$app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Registro relacionado eliminado';
+$app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Registro relacionado reasignado';
+
+// Procedencia de la eliminación en la papelera
+$app_list_strings['stic_recycle_deletion_source_list'][''] = '';
+$app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Vista de detalle';
+$app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acción masiva';
+$app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinación de registros';
+$app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acción externa';
+
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';

@@ -52,6 +52,7 @@ class stic_Contacts_Relationships extends Basic
     public $other_end_reasons;
     public $role;
     public $start_date;
+    public $decidim_excluded;
 
     public function bean_implements($interface)
     {

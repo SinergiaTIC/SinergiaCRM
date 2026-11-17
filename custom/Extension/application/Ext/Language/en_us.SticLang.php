@@ -112,6 +112,7 @@ $app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'New notification by message';
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_CONVERSATION_LABEL'] = 'Compose message (conversation)';
 
 // Mass emailing
+$app_strings['LBL_PORTAL_INVITATION_LIMIT_ALERT'] = 'The invitation limit has been exceeded.';
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only apply to records on the current page. For mass emailing it is recommended to use the Campaigns module.';
 
 // Many to Many filter fields
@@ -187,6 +188,7 @@ $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Advanced Web Forms';
 $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Form Deferred Tickets';
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Form External Notifications';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversations';
+$app_list_strings['moduleList']['stic_Portal_Login_Audit'] = 'Portal Login Audit';
 $app_list_strings['moduleList']['stic_Recycle_Bin'] = 'Recycle Bin';
 $app_list_strings['moduleList']['stic_Recycle_Bin_Relationships'] = 'Recycle Bin Relationships';
 
@@ -254,6 +256,7 @@ $app_list_strings['moduleListSingular']['stic_AWF_Forms'] = 'Advanced Web Form';
 $app_list_strings['moduleListSingular']['stic_AWF_Deferred_Tickets'] = 'Form Deferred Ticket';
 $app_list_strings['moduleListSingular']['stic_AWF_Incoming_Events'] = 'Form External Notification';
 $app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversation';
+$app_list_strings['moduleListSingular']['stic_Portal_Login_Audit'] = 'Portal Login Audit';
 $app_list_strings['moduleListSingular']['stic_Recycle_Bin'] = 'Recycle Bin';
 $app_list_strings['moduleListSingular']['stic_Recycle_Bin_Relationships'] = 'Recycle Bin Relationship';
 
@@ -4242,3 +4245,9 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
 
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+
+// Options for the portal login audit parent_type filter
+$app_list_strings['stic_portal_audit_parent_types'] = array(
+    'Contacts' => 'Contacts',
+    'Accounts' => 'Accounts',
+);

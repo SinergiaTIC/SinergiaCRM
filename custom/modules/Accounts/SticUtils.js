@@ -123,6 +123,15 @@ switch (viewType()) {
     createDetailViewButton(buttons.pdfEmail);
     createDetailViewButton(buttons.whatsappConversation);
 
+    // Portal Actions button (shown whenever the portal popup utilities were injected;
+    // the popup always offers a "Generic" target, so no client requirement here)
+    if (STIC.portalClients && typeof createDetailViewButton === 'function') {
+        createDetailViewButton({
+            id: 'bt_portal_actions',
+            title: SUGAR.language.get(module, 'LBL_STIC_PORTAL_ACTIONS') || 'Portal Actions',
+            onclick: 'openPortalActionsPopup()',
+        });
+    }
     break;
 
   case "list":
@@ -134,6 +143,16 @@ switch (viewType()) {
     };
 
     createListViewButton(button);
+
+    // Portal Actions bulk action: opens the same popup as the detail view
+    // (invitation / password reset + target app) for the selected records
+    var portalActionsListBtn = {
+        id: "bt_portal_actions_listview",
+        title: SUGAR.language.get(module, "LBL_STIC_PORTAL_ACTIONS") || "Portal Actions",
+        text: SUGAR.language.get(module, "LBL_STIC_PORTAL_ACTIONS") || "Portal Actions",
+        onclick: "openPortalActionsPopup()",
+    };
+    createListViewButton(portalActionsListBtn);
     break;
 
   default:
@@ -269,3 +288,7 @@ function setupPrivateAreaFields() {
   togglePassword();
   checkbox.addEventListener('change', togglePassword);
 }
+
+// Portal bulk actions (list view) are handled by openPortalActionsPopup() /
+// executePortalAction() in SticInclude/Portal/PortalActions.js, injected in both
+// detail and list views by PortalPopupUtils::echoPortalActionsPopup().

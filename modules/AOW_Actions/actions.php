@@ -45,6 +45,9 @@ $aow_actions_list[] = 'ComputeField';
 // STIC-Custom 20240909 EPS - Añadimos la acción de enviar mensaje al core para evitar tenerla en carpetas custom
 // https://github.com/SinergiaTIC/SinergiaCRM/pull/182
 $aow_actions_list[] = 'SendMessage';
+// STIC-Custom 20260927 AAM - Portal Actions workflow action (invitation / password reset)
+$aow_actions_list[] = 'PortalActions';
+// END STIC-Custom
 // END STIC-Custom 
 
 
