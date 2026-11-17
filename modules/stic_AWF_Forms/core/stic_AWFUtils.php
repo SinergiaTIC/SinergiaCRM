@@ -258,13 +258,13 @@ class stic_AWFUtils {
 
                             // NPS (0 to 10)
                             elseif ($subtype === 'rating_nps') {
+                                $primaryColor = $theme->primary_color ?? '#0d6efd';
+                                $primaryTextColor = self::getContrastColor($primaryColor);
                                 $displayValue = '<div style="display:flex; width:100%; gap:2px;">';
                                 for ($i = 0; $i <= 10; $i++) {
                                     $active = ($i === $rawNum);
                                     if ($active) {
-                                        if ($i <= 6) { $bg = '#dc3545'; $color = '#fff'; $border = '#dc3545'; }
-                                        elseif ($i <= 8) { $bg = '#ffc107'; $color = '#212529'; $border = '#ffc107'; }
-                                        else { $bg = '#198754'; $color = '#fff'; $border = '#198754'; }
+                                        $bg = $primaryColor; $color = $primaryTextColor; $border = $primaryColor;
                                     } else {
                                         $bg = 'transparent'; $color = '#6c757d'; $border = '#dee2e6';
                                     }
@@ -852,6 +852,32 @@ class stic_AWFUtils {
         }
         
         return "{$r}, {$g}, {$b}"; // Returns "255, 87, 51"
+    }
+
+    /**
+     * Calculates whether the text should be black or white according to the YIQ formula for a background color.
+     * @param string $hexColor The background color in hexadecimal format (e.g., '#ff0000' or '#f00')
+     * @return string '#000000' when the background is light, '#ffffff' when it is dark
+     */
+    public static function getContrastColor(string $hexColor): string
+    {
+        $hexColor = str_replace("#", "", $hexColor);
+
+        if (strlen($hexColor) == 3) {
+            $r = hexdec(substr($hexColor, 0, 1) . substr($hexColor, 0, 1));
+            $g = hexdec(substr($hexColor, 1, 1) . substr($hexColor, 1, 1));
+            $b = hexdec(substr($hexColor, 2, 1) . substr($hexColor, 2, 1));
+        } else {
+            $r = hexdec(substr($hexColor, 0, 2));
+            $g = hexdec(substr($hexColor, 2, 2));
+            $b = hexdec(substr($hexColor, 4, 2));
+        }
+
+        // YIQ Luminosity Formula
+        $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+        // Dark background (< 128) gets white text, light background gets black text
+        return ($yiq >= 128) ? '#000000' : '#ffffff';
     }
 
     /** 
