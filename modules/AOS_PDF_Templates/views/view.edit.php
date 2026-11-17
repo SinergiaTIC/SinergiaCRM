@@ -79,17 +79,19 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                         // STIC Custom 20250411 JBL - Fix Undefined key warning
                         // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                         // $options_array['$'.$module->table_name.'_'.$name] = translate($arr['vname'], $module->module_dir);
-                        $options_array['$'.$module->table_name.'_'.$name] = translate($arr['vname'] ?? '', $module->module_dir);
+                        // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                        // Fields added by the security_groups template (e.g. securitygroups_name)
+                        // have no 'vname' vardef but a 'label' one: use it as fallback so the option
+                        // shows its name (LBL_SECURITYGROUPS_NAME is defined in app strings) instead
+                        // of a blank entry
+                        $options_array['$'.$module->table_name.'_'.$name] = translate(($arr['vname'] ?? '') ?: ($arr['label'] ?? ''), $module->module_dir);
+                        // END STIC-Custom
                         // END STIC Custom
                     }
                 }
             } //End loop.
 
-            // STIC-Custom 20261117 ART - Alphabetical dropdowns
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-            // Sort field options alphabetically
-            asort($options_array);
-            // END STIC-Custom
             $options = json_encode($options_array);
             $mod_options_array[$module->module_dir] = translate('LBL_MODULE_NAME', $module->module_dir);
             $insert_fields_js2 .="'$moduleName':$options,\n";
@@ -125,10 +127,6 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                         }
                         // End STIC Custom 20230803 - JBL
 
-                        // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-                        asort($options_array);
-                        // END STIC-Custom
                         $options = json_encode($options_array);
 
                         // STIC-Custom 20260420 ART - Avoid "Undefined array key 'vname'" when field definition is not correct
@@ -166,10 +164,6 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                     }
                 }
 
-                // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-                asort($options_array);
-                // END STIC-Custom
                 $options = json_encode($options_array);
 
                 $line_module_name = $beanList['AOS_Line_Item_Groups'];
@@ -201,10 +195,6 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                     }
                 }
 
-                // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-                asort($options_array);
-                // END STIC-Custom
                 $options = json_encode($options_array);
 
                 $line_module_name = $beanList['AOS_Products_Quotes'];
@@ -222,10 +212,6 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                 $options_array['$aos_services_quotes_vat'] = translate('LBL_VAT', 'AOS_Quotes');
                 $options_array['$aos_services_quotes_service_total_price'] = translate('LBL_TOTAL_PRICE', 'AOS_Quotes');
 
-                // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-                asort($options_array);
-                // END STIC-Custom
                 $options = json_encode($options_array);
 
                 $s_line_module_name = 'AOS_Service_Quotes';
@@ -242,10 +228,6 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                         }
                     }
                 }
-                // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-                asort($options_array);
-                // END STIC-Custom
                 $options = json_encode($options_array);
 
                 $line_module_name = $beanList['Currencies'];
@@ -254,10 +236,6 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
             }
             array_multisort($fmod_options_array, SORT_ASC, $fmod_options_array);
             $mod_options_array = array_merge($mod_options_array, $fmod_options_array);
-            // STIC-Custom 20261117 ART - Sort module dropdown alphabetically
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-            asort($mod_options_array);
-            // END STIC-Custom
             $module_options = json_encode($mod_options_array);
 
 
