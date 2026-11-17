@@ -180,6 +180,19 @@ class stic_Custom_Views_ModuleView
         return $this->convertToSelectOptions($this->getTabs());
     }
 
+    private $subpanelList;
+    public function getSubpanels()
+    {
+        if ($this->subpanelList == null) {
+            $this->findSubpanelList();
+        }
+        return $this->subpanelList;
+    }
+    public function getSubpanels_as_select_options()
+    {
+        return $this->convertToSelectOptions($this->getSubpanels());
+    }
+
     /**
      * Constructor
      */
@@ -194,6 +207,7 @@ class stic_Custom_Views_ModuleView
         $this->onlyModuleViewFieldList = null;
 
         $this->panelList = null;
+        $this->subpanelList = null;
     }
 
     /**
@@ -425,6 +439,9 @@ class stic_Custom_Views_ModuleView
             case 'tab_modification':
                 $validActions = array('visible', 'fixed_text', 'color', 'background', 'bold', 'italic', 'underline', 'css_style');
                 break;
+            case 'subpanel_modification':
+                $validActions = array('visible');
+                break;
         }
         $actionsList = array();
         foreach ($validActions as $action) {
@@ -440,7 +457,12 @@ class stic_Custom_Views_ModuleView
     public function getActionTypes()
     {
         global $app_list_strings;
-        return $app_list_strings['stic_custom_views_action_type_list'];
+        $actionTypes = $app_list_strings['stic_custom_views_action_type_list'];
+        // Subpanels are only rendered in detail views
+        if ($this->view != 'detailview') {
+            unset($actionTypes['subpanel_modification']);
+        }
+        return $actionTypes;
     }
 
     public function getValidElements_as_select_options($actionType)
@@ -459,6 +481,9 @@ class stic_Custom_Views_ModuleView
                 break;
             case 'tab_modification':
                 $validElements = $this->getTabs();
+                break;
+            case 'subpanel_modification':
+                $validElements = $this->getSubpanels();
                 break;
         }
         return $validElements;
@@ -528,6 +553,9 @@ class stic_Custom_Views_ModuleView
                         break;
                 }
                 break;
+            case 'subpanel_modification':
+                $validSections = array('subpanel');
+                break;
         }
         $sectionsList = array();
         foreach ($validSections as $section) {
@@ -575,6 +603,38 @@ class stic_Custom_Views_ModuleView
                 $this->panelList[$panelKey] = translate($panelKey, $this->module);
             }
         }
+    }
+
+    /**
+     * Finds the subpanels rendered in the detail view of the module.
+     *
+     * Uses SuiteCRM's SubPanelDefinitions so the returned keys match the DOM ids
+     * used by the subpanel tiles (whole_subpanel_<key>) and are ACL filtered.
+     *
+     * @return void
+     */
+    private function findSubpanelList()
+    {
+        require_once 'include/SubPanel/SubPanelDefinitions.php';
+
+        $this->subpanelList = array();
+        if ($this->view != 'detailview' || $this->module == '') {
+            return;
+        }
+
+        $bean = BeanFactory::newBean($this->module);
+        if (!$bean) {
+            return;
+        }
+
+        $subpanelDefs = new SubPanelDefinitions($bean);
+        foreach ($subpanelDefs->get_available_tabs(true) as $subpanel) {
+            foreach ($subpanel as $key => $titleKey) {
+                $label = translate($titleKey, $this->module);
+                $this->subpanelList[$key] = ($label === $titleKey) ? translate($titleKey) : $label;
+            }
+        }
+        asort($this->subpanelList);
     }
 
     private function getEditorForCommonAction($action, $newEditorId)

@@ -103,6 +103,7 @@ $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Generar Candidaturas'
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Seleccione una oferta laboral en la ventana emergente';
 $mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Centro';
 $mod_strings['LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE'] = 'Activos';
+$mod_strings['LBL_STIC_SIGNERS_CONTACTS_FROM_STIC_SIGNERS_TITLE'] = 'Firmas';
 
 // Cadenas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
