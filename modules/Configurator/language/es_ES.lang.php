@@ -345,8 +345,7 @@ $mod_strings = array(
     'LBL_GOOGLE_AUTH_JSON_HELP' => 'Cargar el archivo JSON descargado desde consola de los desarrolladores de Google.',
     // STIC-Custom 20261117 ART - Alphabetical dropdowns
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
-    'LBL_STIC_SEARCH_SELECTS_THRESHOLD' => 'Buscador en los desplegables',
-    'LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC' => 'Mostrar un cuadro de búsqueda al abrir los desplegables: nunca, en todos, o sólo en las listas largas. Por defecto: sólo si tienen 20 opciones o más.',
+    'LBL_STIC_SEARCH_SELECTS_THRESHOLD' => 'Buscar en campos desplegables',
+    'LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC' => 'Esta opción permite establecer en qué campos de tipo desplegable se mostrará un cuadro de búsqueda al abrirlos. Las opciones son "Nunca", "Siempre" o a partir de un determinado número de elementos.',
     // END STIC-Custom
-
 );
