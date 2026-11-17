@@ -673,7 +673,13 @@ class UserViewHelper
             $this->bean->setPreference('timezone', $userTZ);
         }
 
-        if (!$this->bean->getPreference('ut')) {
+        // STIC Custom 20251024 JBL - Fix Reset User Preferences 
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/848
+        // if (!$this->bean->getPreference('ut')) {
+        $ut = $this->bean->getPreference('ut');
+
+        if ($ut === '0') {
+        // End STIC Custom 20251024 JBL
             $this->ss->assign('PROMPTTZ', ' checked');
         }
         $this->ss->assign('TIMEZONE_CURRENT', $userTZ);
