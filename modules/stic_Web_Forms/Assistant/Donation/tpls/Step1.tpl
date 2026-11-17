@@ -34,11 +34,7 @@
         			<tr>
         				<td style="width: 1%; max-width:150px; white-space:nowrap; text-align: left; padding-right: 2px; vertical-align: middle;">{$MOD.LBL_DONATION_WEB_MODULE}:&nbsp;</td>
         		        <td style="text-align: left;">
-							{* STIC-Custom 20261117 ART - Searchable module dropdown (SticAlphabeticalSelects.js) *}
-							{* https://github.com/SinergiaTIC/SinergiaCRM/pull/ *}
-							{* <select name="web_module" id="web_module"> *}
-			    			<select name="web_module" id="web_module" class="stic-searchable-select">
-							{* END STIC-Custom *}
+			    			<select name="web_module" id="web_module">
 								{html_options options=$MAP.MODULES selected=$MAP.WEB_MODULE}
 							</select>
 						</td>

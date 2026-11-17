@@ -389,9 +389,5 @@ class DonationController extends stic_Web_FormsAssistantController {
         foreach ($this->availableModules as $module) {
             $this->view_object_map['MODULES'][$module] = $app_list_strings['moduleList'][$module];
         }
-        // STIC-Custom 20261117 ART - Sort modules alphabetically
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-        uasort($this->view_object_map['MODULES'], 'strnatcasecmp');
-        // END STIC-Custom
     }
 }
