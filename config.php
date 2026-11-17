@@ -606,8 +606,17 @@ $sugar_config = array(
         0 => 'stic_datetime_combo_minute_interval',
         1 => 'stic_sinergiada_public',
         2 => 'stic_security_groups_rules_enabled',
+        // STIC-Custom 20261117 ART - Alphabetical dropdowns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        3 => 'stic_search_selects_threshold',
+        // END STIC-Custom
     ),
     // END STIC
+
+    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    'stic_search_selects_threshold' => 20,
+    // END STIC-Custom
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319

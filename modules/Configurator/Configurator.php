@@ -64,7 +64,14 @@ class Configurator
         'enable_line_editing_list',
         'enable_line_editing_detail',
         'hide_subpanels',
-        'stackTrace'
+        // STIC-Custom 20261117 ART - Alphabetical dropdowns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // 'stackTrace'
+        // Accept the searchable-selects threshold in installations whose
+        // config.php predates this setting
+        'stackTrace',
+        'stic_search_selects_threshold',
+        // END STIC-Custom
     ];
     public $errors = array('main' => '');
     public $logger = null;
@@ -103,6 +110,19 @@ class Configurator
                     continue;
                 }
             }
+
+            // STIC-Custom 20261117 ART - Alphabetical dropdowns
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // Keep the searchable-selects threshold as a clean integer. An
+            // empty input keeps the current value (0 would mean "every
+            // dropdown" and must be an explicit choice)
+            if ($key === 'stic_search_selects_threshold') {
+                if (trim((string) $value) === '') {
+                    continue;
+                }
+                $value = (int) $value;
+            }
+            // END STIC-Custom
 
             if (isset($this->config[$key]) || in_array($key, $this->allow_undefined)) {
                 if (strcmp((string)$value, 'true') == 0) {

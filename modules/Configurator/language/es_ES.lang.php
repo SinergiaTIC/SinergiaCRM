@@ -343,5 +343,10 @@ $mod_strings = array(
     'LBL_GOOGLE_AUTH_TITLE' => 'Autenticación de Google',
     'LBL_GOOGLE_AUTH_JSON' => 'Archivo JSON',
     'LBL_GOOGLE_AUTH_JSON_HELP' => 'Cargar el archivo JSON descargado desde consola de los desarrolladores de Google.',
+    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    'LBL_STIC_SEARCH_SELECTS_THRESHOLD' => 'Buscador en los desplegables',
+    'LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC' => 'Mostrar un cuadro de búsqueda al abrir los desplegables: nunca, en todos, o sólo en las listas largas. Por defecto: sólo si tienen 20 opciones o más.',
+    // END STIC-Custom
 
 );
