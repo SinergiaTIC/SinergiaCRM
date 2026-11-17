@@ -227,9 +227,10 @@ $mod_strings = array(
     'LBL_WELCOME' => 'Welcome' /*for 508 compliance fix*/,
     'LBL_LOGO' => 'Logo' /*for 508 compliance fix*/,
     'LBL_ENABLE_HISTORY_CONTACTS_EMAILS' => 'Show related contacts\' emails in History subpanel for modules',
+
     // STIC-Custom 20261117 ART - Alphabetical dropdowns
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
-    'LBL_STIC_SEARCH_SELECTS_THRESHOLD' => 'Search box in dropdowns',
-    'LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC' => 'Show a search box when opening the dropdowns: never, in all of them, or only in the long ones. Default: only if they have 20 options or more.',
+    'LBL_STIC_SEARCH_SELECTS_THRESHOLD' => 'Search in dropdown fields',
+    'LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC' => 'This option allows you to specify for which dropdown fields a search box will appear when they are opened. The options are "Never", "Always" or based on a specific number of items.',
     // END STIC-Custom
 );
