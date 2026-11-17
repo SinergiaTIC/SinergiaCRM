@@ -2080,6 +2080,27 @@ class FormHtmlGeneratorService {
             $rootPanel = $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar, $contentOuterVars);
             if ($rootPanel !== '') $inner = $rootPanel . $inner;
         }
+
+        // Older or manually edited configurations can leave the group template
+        // empty after a child block is assigned to its group. In that case the
+        // root fallback above makes $inner non-empty and would suppress the
+        // flat root + children fallback below, silently losing every child.
+        if ($section !== null && empty($section->elements)) {
+            foreach ($children as $childBlock) {
+                if (!self::groupSubtreeHasRenderableFields($childBlock, $config)
+                    && !self::isServerDataOptionalGroup($childBlock, $config)) {
+                    continue;
+                }
+                $childHasChildren = !empty($config->getGroupChildren($childBlock));
+                $childIsGroupHead = $childBlock->isRepeatable() || $childBlock->isOptional() || $childHasChildren;
+                if ($childIsGroupHead) {
+                    $inner .= $this->generateGroupHtml($childBlock, $theme, $config, $instanceVar, null, $contentOuterVars);
+                } else {
+                    $inner .= $this->renderBlockInstancePanel($childBlock, $theme, $instanceVar, $contentOuterVars);
+                }
+            }
+        }
+
         if (trim($inner) !== '') {
             return $inner;
         }
