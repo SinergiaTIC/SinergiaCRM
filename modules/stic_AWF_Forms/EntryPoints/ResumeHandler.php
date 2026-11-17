@@ -27,7 +27,8 @@ if (!defined('sugarEntry') || !sugarEntry) {
 require_once "modules/stic_AWF_Forms/core/includes.php";
 require_once "modules/stic_AWF_Forms/core/actiondefs/includes.php";
 require_once "modules/stic_AWF_Deferred_Tickets/stic_AWF_Deferred_Tickets.php";
-require_once "modules/stic_Web_Forms/Catcher/FormConfig.php";
+// STIC#awfSignerAction Fix: FormConfig was moved to the AWF core formdefs folder
+require_once "modules/stic_AWF_Forms/core/formdefs/FormConfig.php";
 
 /**
  * EntryPoint: stic_AWF_resumeHandler

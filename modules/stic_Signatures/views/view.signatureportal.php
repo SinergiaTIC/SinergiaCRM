@@ -59,6 +59,7 @@ class stic_SignaturePortal extends SugarView
 
         require_once 'modules/stic_Settings/Utils.php';
         require_once 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.php';
+        require_once 'modules/stic_Signatures/SignaturePortal/DeferredTicketResolver.php';
         require_once 'modules/stic_Signers/Utils.php';
 
         $documentHtmlContent = '';
@@ -85,6 +86,14 @@ class stic_SignaturePortal extends SugarView
             $dowwnloadPdfUrl = "{$uri}/index.php?entryPoint=sticSign&signatureAction=downloadSignedPdf&signerId={$signerBean->id}";
             $this->ss->assign('SIGNED_PDF_URL', $signedPdfUrl);
             $this->ss->assign('DOWNLOAD_URL', $dowwnloadPdfUrl);
+
+            // AWF integration: if the signer is already signed and this portal session comes
+            // from a deferred action (returnToken), resolve the deferred ticket and resume the
+            // deferred flow in the background, keeping the signer where they are.
+            $deferredResumeUrl = DeferredTicketResolver::resolve($_REQUEST['returnToken'] ?? '', $signerBean->id, false);
+            if ($deferredResumeUrl !== null) {
+                echo "<script>(function(){fetch(" . json_encode($deferredResumeUrl) . ",{credentials:'same-origin'}).catch(function(e){console.error('Error resuming deferred flow:',e);});})();</script>";
+            }
         }
 
         if ($signerBean->status === 'unnecessary') {

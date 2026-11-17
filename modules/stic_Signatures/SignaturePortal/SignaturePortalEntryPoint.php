@@ -34,6 +34,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
 
+require_once 'modules/stic_Signatures/SignaturePortal/DeferredTicketResolver.php';
+
+
 // If signatureId and targetId are provided, retrieve the corresponding signerId and redirect
 if (
     isset($_REQUEST['signatureId'])
@@ -47,10 +50,14 @@ if (
         $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Signature with ID {$_REQUEST['signatureId']} not found");
         sugar_die('Signature not found');
     }
-     $userOrContactsTargets = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " parent_id = '{$_REQUEST['targetId']}' ");
+     $userOrContactsTargets = $signatureBean->get_linked_beans('stic_signatures_stic_signers', 'stic_Signers', '', 0, 0, 0, " (parent_id = '{$_REQUEST['targetId']}' OR record_id = '{$_REQUEST['targetId']}') ");
 
      // Redirect to the signature portal with the signerId parameter
-     Header('Location: index.php?entryPoint=sticSign&signerId=' . $userOrContactsTargets[0]->id);
+     $redirectUrl = 'index.php?entryPoint=sticSign&signerId=' . $userOrContactsTargets[0]->id;
+     if (!empty($_REQUEST['returnToken'])) {
+         $redirectUrl .= '&returnToken=' . urlencode($_REQUEST['returnToken']);
+     }
+     Header('Location: ' . $redirectUrl);
      die();
 
 }
@@ -75,7 +82,7 @@ if (!empty($_REQUEST['signatureAction'])) {
     switch ($_REQUEST['signatureAction']) {
 
         case 'saveSignature':
-            // Save the signature data for the specified signer
+            // Save the signature data for the specified signer (canvas mode: the signing event)
             if (!empty($_REQUEST['signerId']) && !empty($_REQUEST['signatureData'])) {
                 $result = stic_SignaturePortalUtils::saveSignature($_REQUEST);
             } else {
@@ -83,6 +90,12 @@ if (!empty($_REQUEST['signatureAction'])) {
                     'success' => false,
                     'message' => 'No data provided',
                 ];
+            }
+
+            // AWF integration: resolve the deferred ticket related to this signing event
+            $actionResultRedirectUrl = DeferredTicketResolver::resolve($_REQUEST['returnToken'] ?? '', $_REQUEST['signerId'] ?? '', (bool)($result['success'] ?? false));
+            if ($actionResultRedirectUrl !== null) {
+                $result['redirectUrl'] = $actionResultRedirectUrl;
             }
             ob_clean();
             echo json_encode($result);
@@ -116,6 +129,12 @@ if (!empty($_REQUEST['signatureAction'])) {
                     'success' => false,
                     'message' => 'No data provided',
                 ];
+            }
+
+            // AWF integration: resolve the deferred ticket related to this signing event
+            $actionResultRedirectUrl = DeferredTicketResolver::resolve($_REQUEST['returnToken'] ?? '', $_REQUEST['signerId'] ?? '', (bool)($result['success'] ?? false));
+            if ($actionResultRedirectUrl !== null) {
+                $result['redirectUrl'] = $actionResultRedirectUrl;
             }
             ob_clean();
             echo json_encode($result);
@@ -183,3 +202,5 @@ if (!empty($_REQUEST['signatureAction'])) {
 }
 // Terminate script execution to ensure no additional SuiteCRM framework elements are loaded
 sugar_die('');
+
+

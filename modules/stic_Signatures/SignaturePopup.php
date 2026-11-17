@@ -98,19 +98,27 @@ class SelectSignatureTemplate
         $signatures = self::getModuleTemplates($module);
 
         if (!empty($signatures)) {
-            echo '    
+            echo '
             
             <div id="popup-div-signature" class="modal fade" style="display: none;">
-               <div class="modal-dialog">
+               <div class="modal-dialog" style="width: 760px;">
                   <div class="modal-content">
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         <h4 class="modal-title">' . $app_strings['LBL_SELECT_SIGNATURE'] . '</h4>
-
+                        <p style="margin:4px 0 0; font-size:13px; color:#555;">' . $app_strings['LBL_SIGNATURE_RECORDS_COUNT'] . ': <strong id="signature-count-lv">0</strong></p>
+ 
                      </div>
                      <div class="modal-body">
                         <div style="padding: 5px 5px; overflow: auto; height: auto;">
                               <table width="100%" class="list view table-responsive" cellspacing="0" cellpadding="0" border="0">
+                                 <thead>
+                                    <tr>
+                                       <th scope="col">' . $app_strings['LBL_NAME'] . '</th>
+                                       <th scope="col" width="90">' . $app_strings['LBL_STATUS'] . '</th>
+                                       <th scope="col" width="180" style="text-align:left;">' . $app_strings['LBL_SIGNATURE_ACTION'] . '</th>
+                                    </tr>
+                                 </thead>
                                  <tbody>';
             $iOddEven = 1;
             foreach ($signatures as $signatureId => $signature) {
@@ -118,12 +126,18 @@ class SelectSignatureTemplate
                 if ($iOddEven % 2 == 0) {
                     $iOddEvenCls = 'evenListRowS1';
                 }
+                $baseUrl = 'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect';
+                $addUrl = $baseUrl . '&signature-action=default';
+                $emailUrl = $baseUrl . '&signature-action=send_email';
+                $isDraft = ($signature['status'] === 'draft');
+                $emailBtn = $isDraft ? '' : '<a href="#" title="' . $app_strings['LBL_SIGNATURE_ACTION_SEND_EMAIL'] . '" onclick="$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module . '\', \'' . $emailUrl . '\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');" style="display:inline-block; margin:0 3px; padding:4px 8px; border-radius:4px; background:#e3f2fd; color:#1565c0; text-decoration:none;"><span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-envelope" style="margin-left:2px;"></span></a>';
                 echo '<tr height="20" class="' . $iOddEvenCls . '" >
-                                            <td width="17" valign="center"><a href="#" onclick="$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module .
-                    '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');"><img src="themes/SuiteP/images/insert-signature.png" width="16" height="16" /></a></td>
-                                            <td scope="row" align="left"><b><a href="#" onclick="$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module .
-                    '\', \'index.php?signature-id=' . $signatureId . '&entryPoint=sticSignatureSignersSelect\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');">' . $signature['name'] . '</a></b></td>
-                    <td>'.$app_list_strings['stic_signatures_status_list'][$signature['status']].'</td></tr>';
+                                            <td scope="row" align="left"><b>' . $signature['name'] . '</b></td>
+                                            <td>' . ($app_list_strings['stic_signatures_status_list'][$signature['status']] ?? $signature['status']) . '</td>
+                                            <td style="text-align:left; white-space:nowrap; padding:6px 4px;">
+                                                <a href="#" title="' . $app_strings['LBL_SIGNATURE_ACTION_ADD_ONLY'] . '" onclick="$(\'#popup-div-signature\').modal(\'hide\');sListView.send_form(true, \'' . $module . '\', \'' . $addUrl . '\',\'' . $app_strings['LBL_LISTVIEW_NO_SELECTED'] . '\');" style="display:inline-block; margin:0 3px; padding:4px 8px; border-radius:4px; background:#eaf4ea; color:#2e7d32; text-decoration:none;"><span class="glyphicon glyphicon-plus"></span></a>
+                                                ' . $emailBtn . '
+                                            </td></tr>';
                 $iOddEven++;
             }
             echo '</tbody></table>
@@ -143,6 +157,8 @@ class SelectSignatureTemplate
                     {
                         var ppd2=document.getElementById(\'popup-div-signature\');
                         if(ppd2!=null){
+                            var cntEl=document.getElementById(\'signature-count-lv\');
+                            if(cntEl!=null){ cntEl.textContent = sugarListView.get_checks_count(); }
                             $("#popup-div-signature").modal("show",{backdrop: "static"});
                         }else{
                             alert(\'Error!\');
@@ -183,17 +199,25 @@ class SelectSignatureTemplate
         if (!empty($signatures)) {
             echo '
             <div id="popup-div-signature" class="modal fade" style="display: none;">
-               <div class="modal-dialog">
+               <div class="modal-dialog" style="width: 760px;">
                   <div class="modal-content">
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         <h4 class="modal-title">' . $app_strings['LBL_SELECT_SIGNATURE'] . '</h4>
+                        <p style="margin:4px 0 0; font-size:13px; color:#555;">' . $app_strings['LBL_SIGNATURE_RECORDS_COUNT'] . ': <strong>1</strong></p>
                         
                      </div>
                      <div class="modal-body">
                         <div style="padding: 5px 5px; overflow: auto; height: auto;">
                            <form id="signatureForm" action="index.php?entryPoint=sticSignatureSignersSelect" method="post">
                               <table width="100%" class="list view table-responsive" cellspacing="0" cellpadding="0" border="0">
+                                 <thead>
+                                    <tr>
+                                       <th scope="col">' . $app_strings['LBL_NAME'] . '</th>
+                                       <th scope="col" width="90">' . $app_strings['LBL_STATUS'] . '</th>
+                                       <th scope="col" width="200" style="text-align:left;">' . $app_strings['LBL_SIGNATURE_ACTION'] . '</th>
+                                    </tr>
+                                 </thead>
                                  <tbody>';
             $iOddEven = 1;
             foreach ($signatures as $signatureId => $signature) {
@@ -201,15 +225,26 @@ class SelectSignatureTemplate
                 if ($iOddEven % 2 == 0) {
                     $iOddEvenCls = 'evenListRowS1';
                 }
-                $js = "$('#popup-div-signature').modal('hide');var form=document.getElementById('signatureForm');if(form!=null){console.log(form);form['signature-id'].value='" . $signatureId . "';form.submit();}else{alert('Error!');}";
+                $submitJs = "$('#popup-div-signature').modal('hide');var form=document.getElementById('signatureForm');if(form!=null){form['signature-id'].value='" . $signatureId . "';form['signature-action'].value='%s';form.submit();}else{alert('Error!');}";
+                $addJs = sprintf($submitJs, 'default');
+                $emailJs = sprintf($submitJs, 'send_email');
+                $portalJs = sprintf($submitJs, 'redirect_portal');
+                $isDraft = ($signature['status'] === 'draft');
+                $extraBtns = $isDraft ? '' :
+                    '<a href="#" title="' . $app_strings['LBL_SIGNATURE_ACTION_SEND_EMAIL'] . '" onclick="' . $emailJs . '" style="display:inline-block; margin:0 3px; padding:4px 8px; border-radius:4px; background:#e3f2fd; color:#1565c0; text-decoration:none;"><span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-envelope" style="margin-left:2px;"></span></a>' .
+                    '<a href="#" title="' . $app_strings['LBL_SIGNATURE_ACTION_REDIRECT_PORTAL'] . '" onclick="' . $portalJs . '" style="display:inline-block; margin:0 3px; padding:4px 8px; border-radius:4px; background:#fff3e0; color:#e65100; text-decoration:none;"><span class="glyphicon glyphicon-plus"></span><span class="glyphicon glyphicon-log-in" style="margin-left:2px;"></span></a>';
                 echo '<tr height="20" class="' . $iOddEvenCls . '">
-                                        <td width="17" valign="center"><a href="#" onclick="' . $js . '"><img src="themes/SuiteP/images/insert-signature.png" width="16" height="16" /></a></td>
-                                        <td scope="row" align="left"><b><a href="#" onclick="' . $js . '">' . $signature['name'] . '</a></b></td>
-                                        <td>' . $app_list_strings['stic_signatures_status_list'][$signature['status']] . '</td></tr>';
+                                        <td scope="row" align="left"><b>' . $signature['name'] . '</b></td>
+                                        <td>' . ($app_list_strings['stic_signatures_status_list'][$signature['status']] ?? $signature['status']) . '</td>
+                                        <td style="text-align:left; white-space:nowrap; padding:6px 4px;">
+                                            <a href="#" title="' . $app_strings['LBL_SIGNATURE_ACTION_ADD_ONLY'] . '" onclick="' . $addJs . '" style="display:inline-block; margin:0 3px; padding:4px 8px; border-radius:4px; background:#eaf4ea; color:#2e7d32; text-decoration:none;"><span class="glyphicon glyphicon-plus"></span></a>
+                                            ' . $extraBtns . '
+                                        </td></tr>';
                 $iOddEven++;
             }
             echo '</tbody></table>
                               <input type="hidden" name="signature-id" value="" />
+                              <input type="hidden" name="signature-action" value="default" />
                             <input type="hidden" name="module" value="' . $module . '" />
                             <input type="hidden" name="uid" value="' . clean_string($_REQUEST['record'],
                     'STANDARDSPACE') . '" />

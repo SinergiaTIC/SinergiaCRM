@@ -625,6 +625,20 @@ $mod_strings = array (
   'LBL_URL_VALIDATOR_ACTION_DESC' => 'Valida que un campo conteña unha URL válida.',
   'LBL_URL_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'A URL non é válida.',
 
+  // SignatureAction
+  'LBL_SIGNATURE_ACTION_TITLE' => 'Firmar documento',
+  'LBL_SIGNATURE_ACTION_DESC' => 'Añade al usuario como firmante a un proceso de firma y redirige al portal de firma.',
+  'LBL_SIGNATURE_ACTION_FLOW_SUCCESS' => 'Documento firmado',
+  'LBL_SIGNATURE_ACTION_FLOW_ERROR' => 'Error',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_TEXT' => 'Registro de origen',
+  'LBL_SIGNATURE_ACTION_RECIPIENT_BLOCK_DESC' => 'Bloque de datos del formulario que se usará como registro de origen. El selector de proceso de firma se pre-filtra según el módulo de este bloque. La acción detecta automáticamente el bloque adecuado si este no coincide.',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_TEXT' => 'Proceso de firma',
+  'LBL_SIGNATURE_ACTION_SIGNATURE_PROCESS_DESC' => 'Seleccione el proceso de firma al que se añadirá el usuario como firmante.',
+  'LBL_SIGNATURE_ACTION_DELIVERY_TEXT' => 'Modo de entrega',
+  'LBL_SIGNATURE_ACTION_DELIVERY_DESC' => 'Cómo llega la invitación de firma al firmante: redirigiendo directamente al portal al enviar el formulario, o enviando un email con el enlace al portal.',
+  'LBL_SIGNATURE_ACTION_DELIVERY_PORTAL_TEXT' => 'Redirigir al portal de firma',
+  'LBL_SIGNATURE_ACTION_DELIVERY_EMAIL_TEXT' => 'Enviar email al firmante',
+
   // MaxDocumentSizeValidatorAction
   'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_TITLE' => 'Tamaño máximo de ficheiro',
   'LBL_MAX_DOCUMENT_SIZE_VALIDATOR_ACTION_DESC' => 'Valida que o ficheiro subido non supere o tamaño máximo permitido.',

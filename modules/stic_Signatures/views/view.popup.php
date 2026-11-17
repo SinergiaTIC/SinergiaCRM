@@ -45,13 +45,68 @@ class stic_SignaturesViewPopup extends ViewPopup
     }
     public function display()
     {
-
+ 
         parent::display();
-
+ 
         SticViews::display($this);
-
+ 
         echo getVersionedScript("modules/stic_Signatures/Utils.js");
 
+        // Client-side filter for AWF wizard: only show signatures whose main_module
+        // matches the data blocks of the form. Uses window.opener (no AWF core changes).
+        global $db;
+        $sigMap = [];
+        $res = $db->query("SELECT id, main_module FROM stic_signatures WHERE deleted = 0");
+        while ($r = $db->fetchByAssoc($res)) {
+            $sigMap[$r['id']] = $r['main_module'];
+        }
+        $sigMapJson = json_encode($sigMap);
+        echo "<script>
+        (function() {
+            var sigMap = " . $sigMapJson . ";
+            function filterSignatures() {
+                try {
+                    var op = window.opener;
+                    if (!op || !op.Alpine) return;
+                    // Determine the module of the data block selected in the 'Firmante' dropdown
+                    var ae = op.Alpine.store('actionEditor');
+                    var selectedBlockId = '';
+                    if (ae && ae.action && ae.action.parameters) {
+                        var p = ae.action.parameters.find(function(x){ return x.name === 'data_block_id'; });
+                        if (p) selectedBlockId = p.value;
+                    }
+                    var blocks = (op.alpineComponent && op.alpineComponent.formConfig) ? (op.alpineComponent.formConfig.data_blocks || []) : [];
+                    var mods = {};
+                    if (selectedBlockId) {
+                        blocks.forEach(function(b){ if (b.id === selectedBlockId && b.module) mods[b.module] = true; });
+                    }
+                    // Fallback: if no block selected, use all data blocks' modules
+                    if (Object.keys(mods).length === 0) {
+                        blocks.forEach(function(b){ if (b.module) mods[b.module] = true; });
+                    }
+                    var modKeys = Object.keys(mods);
+                    if (modKeys.length === 0) return;
+                    var rows = document.querySelectorAll('tr');
+                    rows.forEach(function(tr) {
+                        var html = tr.innerHTML;
+                        var m = html.match(/send_back\\s*\\(\\s*'[^']*'\\s*,\\s*'([^']+)'/);
+                        var id = m ? m[1] : null;
+                        if (!id || !sigMap[id]) return;
+                        var mm = sigMap[id];
+                        if (mm && !mods[mm]) {
+                            tr.style.display = 'none';
+                        }
+                    });
+                } catch (e) { /* no-op */ }
+            }
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', filterSignatures);
+            } else {
+                setTimeout(filterSignatures, 100);
+            }
+        })();
+        </script>";
+ 
     }
 
 }

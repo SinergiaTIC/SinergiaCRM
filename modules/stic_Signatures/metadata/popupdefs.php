@@ -38,3 +38,19 @@ $popupMeta = array(
     'searchInputs' => array($_module_name . '_number', 'name', 'priority', 'status'),
 
 );
+
+// Dynamic filter by main_module (used by AWF wizard to show only relevant signatures)
+if (!empty($_REQUEST['main_module_filter'])) {
+    global $db;
+    $modules = explode(',', $_REQUEST['main_module_filter']);
+    $quoted = [];
+    foreach ($modules as $m) {
+        $m = trim($m);
+        if ($m !== '') {
+            $quoted[] = "'" . $db->quote($m) . "'";
+        }
+    }
+    if (!empty($quoted)) {
+        $popupMeta['whereStatement'] = "stic_signatures.main_module IN (" . implode(',', $quoted) . ")";
+    }
+}
