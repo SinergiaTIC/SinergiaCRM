@@ -60,6 +60,10 @@ class stic_Portal_Login_Audit extends Basic
 
     public function ACLAccess($view, $is_owner = 'not_set', $in_group = 'not_set')
     {
+        global $current_user;
+        // Admin-only module (see SticModules.php $adminOnlyList): admins always
+        // have full access; non-admins are rejected at the controller level.
+        if (is_admin($current_user)) return true;
         $view = strtolower((string) $view);
         if (in_array($view, array('edit', 'editview', 'popupeditview', 'save', 'delete', 'import', 'massupdate', 'duplicate'), true)) {
             return false;

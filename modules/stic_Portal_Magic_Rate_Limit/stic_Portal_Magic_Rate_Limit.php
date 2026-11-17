@@ -58,4 +58,13 @@ class stic_Portal_Magic_Rate_Limit extends Basic
         }
         return false;
     }
+
+    public function ACLAccess($view, $is_owner = 'not_set', $in_group = 'not_set')
+    {
+        global $current_user;
+        // Admin-only module (see SticModules.php \$adminOnlyList).
+        if (is_admin($current_user)) return true;
+        return parent::ACLAccess($view, $is_owner, $in_group);
+    }
+
 }
