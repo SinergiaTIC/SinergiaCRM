@@ -681,6 +681,14 @@ class EditView
                     // Bug 57472 - $this->fieldDefs[$name]['autocomplete_options' was set too late, it didn't retrieve
                     // the list's name, but the list itself (the developper comment show us that developper expected to
                     // retrieve list's name and not the options array)
+                    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // Keep the dropdown list name before it is replaced by the options array below: the
+                    // {stic_custom_dropdown} Smarty plugin used by the enum field templates needs the name to
+                    // mark administrator-customized dropdowns (data-stic-sort="false") so that
+                    // SticAlphabeticalSelects.js keeps their defined order
+                    $this->fieldDefs[$name]['stic_dropdown_name'] = $this->fieldDefs[$name]['options'];
+                    // END STIC-Custom
                     $this->fieldDefs[$name]['options'] = $app_list_strings[$this->fieldDefs[$name]['options']];
                 }
 

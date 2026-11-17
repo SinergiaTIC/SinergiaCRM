@@ -47,6 +47,13 @@
     <select name="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}"
             id="{{if empty($displayParams.idName)}}{{sugarvar key='name'}}{{else}}{{$displayParams.idName}}{{/if}}"
             title='{{$vardef.help}}' {{if !empty($tabindex)}} tabindex="{{$tabindex}}" {{/if}}
+            {* STIC-Custom 20261117 ART - Alphabetical dropdowns *}
+            {* https://github.com/SinergiaTIC/SinergiaCRM/pull/ *}
+            {* Custom dropdowns (defined in custom/include/language) keep the order defined by the administrator.
+               The sugarvar call emits the "$fields.<field>.stic_dropdown_name" expression (set by EditView2),
+               which is evaluated in the second pass, where the vardef name is still available as stic_dropdown_name *}
+            {stic_custom_dropdown dropdown={{sugarvar key='stic_dropdown_name' string=true}}}
+            {* END STIC-Custom *}
             {{if !empty($displayParams.accesskey)}}
             accesskey='{{$displayParams.accesskey}}' {{/if}} {{$displayParams.field}}
             {{if isset($displayParams.javascript)}}{{$displayParams.javascript}}{{/if}}>

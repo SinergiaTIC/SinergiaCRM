@@ -657,7 +657,13 @@ eoq;
                                 $newhtml .= $this->addStatusMulti(
                                     $displayname,
                                     $field["name"],
-                                    translate($field["options"])
+                                    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                                    // translate($field["options"])
+                                    // Administrator-customized dropdowns keep their defined order
+                                    translate($field["options"]),
+                                    sticIsCustomDropdown($field["options"] ?? '')
+                                    // END STIC-Custom
                                 );
                                 break;
                             }
@@ -672,6 +678,11 @@ eoq;
                                     //translate($field["options"])
                                     translate($field["options"]),
                                     $field["parentenum"] ?? null,
+                                    // END STIC-Custom
+                                    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                                    // Administrator-customized dropdowns keep their defined order
+                                    sticIsCustomDropdown($field["options"])
                                     // END STIC-Custom
                                 );
                                 break;
@@ -1281,10 +1292,21 @@ EOQ;
     // STIC-Custom 20230519 PCS - Enabling massupdate for dynamicenum
     // STIC#1109
     // public function addStatus($displayname, $varname, $options)
-    public function addStatus($displayname, $varname, $options, $parentname=Null)
+    // END STIC-Custom
+    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // public function addStatus($displayname, $varname, $options, $parentname=Null)
+    public function addStatus($displayname, $varname, $options, $parentname=Null, $customOrder = false)
     // END STIC-Custom
     {
         global $app_strings, $app_list_strings;
+
+        // STIC-Custom 20261117 ART - Alphabetical dropdowns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // Administrator-customized dropdowns keep their defined order in the
+        // mass update panel too (SticAlphabeticalSelects.js skips them)
+        $customOrderAttr = $customOrder ? ' data-stic-sort="false"' : '';
+        // END STIC-Custom
         
         // cn: added "mass_" to the id tag to differentiate from the status id in StoreQuery
         $html = '<td scope="row" width="15%">' . $displayname . '</td><td>';
@@ -1317,7 +1339,11 @@ EOQ;
                     $html .= <<<EOQ
                         {$dtscript}
 EOQ;
-                    $html .= '<select id="mass_' . $varname . '" name="' . $varname . '">' . $options . '</select>';
+                    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // $html .= '<select id="mass_' . $varname . '" name="' . $varname . '">' . $options . '</select>';
+                    $html .= '<select id="mass_' . $varname . '" name="' . $varname . '"' . $customOrderAttr . '>' . $options . '</select>';
+                    // END STIC-Custom
                     $html .= <<<EOQ
                     <script type="text/javascript">
                     if (typeof de_entries == 'undefined') {
@@ -1335,12 +1361,20 @@ EOQ;
 EOQ;
                 } else {
                     $options = array();
-                    $options['0'] = '';      
-                    $html .= '<select id="mass_' . $varname . '" name="' . $varname . '">' . $options . '</select>';
-          
+                    $options['0'] = '';
+                    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // $html .= '<select id="mass_' . $varname . '" name="' . $varname . '">' . $options . '</select>';   
+                    $html .= '<select id="mass_' . $varname . '" name="' . $varname . '"' . $customOrderAttr . '>' . $options . '</select>';
+                    // END STIC-Custom
+           
                 }
             } else {
-                $html .= '<select id="mass_' . $varname . '" name="' . $varname . '">' . $options . '</select>';
+                // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                // $html .= '<select id="mass_' . $varname . '" name="' . $varname . '">' . $options . '</select>';
+                $html .= '<select id="mass_' . $varname . '" name="' . $varname . '"' . $customOrderAttr . '>' . $options . '</select>';
+                // END STIC-Custom
             }
             // END STIC-Custom
         } else {
@@ -1361,12 +1395,28 @@ EOQ;
     {
         global $app_strings, $app_list_strings;
 
-        return $this->addStatus($displayname, $varname, $app_list_strings['checkbox_dom']);
+        // STIC-Custom 20261117 ART - Alphabetical dropdowns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // return $this->addStatus($displayname, $varname, $app_list_strings['checkbox_dom']);
+        // checkbox_dom can also be administrator-customized
+        return $this->addStatus($displayname, $varname, $app_list_strings['checkbox_dom'], null, sticIsCustomDropdown('checkbox_dom'));
+        // END STIC-Custom
     }
 
-    public function addStatusMulti($displayname, $varname, $options)
+    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // public function addStatusMulti($displayname, $varname, $options)
+    public function addStatusMulti($displayname, $varname, $options, $customOrder = false)
+    // END STIC-Custom
     {
         global $app_strings, $app_list_strings;
+
+        // STIC-Custom 20261117 ART - Alphabetical dropdowns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // Administrator-customized dropdowns keep their defined order in the
+        // mass update panel too (SticAlphabeticalSelects.js skips them)
+        $customOrderAttr = $customOrder ? ' data-stic-sort="false"' : '';
+        // END STIC-Custom
 
         if (!isset($options['']) && !isset($options['0'])) {
             $new_options = array();
@@ -1380,8 +1430,13 @@ EOQ;
         ;
 
         // cn: added "mass_" to the id tag to differentiate from the status id in StoreQuery
+        // STIC-Custom 20261117 ART - Alphabetical dropdowns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // $html = '<td scope="row" width="15%">' . $displayname . '</td>
+		// 	 <td><select id="mass_' . $varname . '" name="' . $varname . '[]" size="5" MULTIPLE>' . $options . '</select></td>';
         $html = '<td scope="row" width="15%">' . $displayname . '</td>
-			 <td><select id="mass_' . $varname . '" name="' . $varname . '[]" size="5" MULTIPLE>' . $options . '</select></td>';
+			 <td><select id="mass_' . $varname . '" name="' . $varname . '[]" size="5" MULTIPLE' . $customOrderAttr . '>' . $options . '</select></td>';
+        // END STIC-Custom
 
         return $html;
     }
