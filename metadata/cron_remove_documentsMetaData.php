@@ -58,7 +58,11 @@ $dictionary['cron_remove_documents'] = array(
         array(
             'name' => 'module',
             'type' => 'varchar',
-            'len' => '25'
+            // STIC-Custom 20261027 ART - Increase module length to 100 characters
+            // https://github.com/SinergiaTIC/SinergiaCRM/issues/40
+            // 'len' => '25'
+            'len' => '100'
+            // END STIC-Custom
         ),
         array(
             'name' =>'date_modified',
