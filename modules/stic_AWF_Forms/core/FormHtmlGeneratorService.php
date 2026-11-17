@@ -1490,7 +1490,7 @@ class FormHtmlGeneratorService {
         if ($instanceTitleExpression === false) $instanceTitleExpression = '""';
         $instanceTitleExpression = htmlspecialchars($instanceTitleExpression, ENT_QUOTES, 'UTF-8');
         $toggleLabel = htmlspecialchars(($section && $section->toggle_label !== '') ? $section->toggle_label : (translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $sectionTitle), ENT_QUOTES, 'UTF-8');
-        $addLabel = htmlspecialchars(($section && $section->add_button_label !== '') ? $section->add_button_label : translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT', 'stic_AWF_Forms'), ENT_QUOTES, 'UTF-8');
+        $addLabel = htmlspecialchars(($section && $section->add_button_label !== '') ? $section->add_button_label : str_replace('%s', $instanceBaseTitle, translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT', 'stic_AWF_Forms')), ENT_QUOTES, 'UTF-8');
         $removeLabel = htmlspecialchars(($section && $section->remove_button_label !== '') ? $section->remove_button_label : translate('LBL_DATABLOCK_REMOVE_LABEL_DEFAULT', 'stic_AWF_Forms'), ENT_QUOTES, 'UTF-8');
 
         $maxInstances = $rootBlock->max_instances !== null ? (int)$rootBlock->max_instances : 'null';
