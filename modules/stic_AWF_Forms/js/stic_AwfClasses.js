@@ -2469,12 +2469,19 @@ class stic_AwfLayout {
 
     // The home (top-level section) of every top-level root present in the layout
     const rootHomeSection = new Map();
-    this.structure.forEach(section => {
-      // Designated group sections are the canonical home of their group root,
-      // even when they hold no elements (e.g. all its content is unbundled field fragments elsewhere)
-      if (section.kind === 'group' && section.groupRootBlockId && !rootHomeSection.has(section.groupRootBlockId)) {
-        rootHomeSection.set(section.groupRootBlockId, section);
+    // Reserve homes for explicit group sections before inferring homes from
+    // their contents. Otherwise an earlier stale top-level section containing
+    // a group child can claim the root first and keep that child outside the
+    // designated group template on every sync.
+    eachDesignated(groupSection => {
+      const groupRoot = dataBlocks.find(b => b.id === groupSection.groupRootBlockId);
+      if (!groupRoot || groupRoot.group_root !== '') return;
+      const topSection = this.structure.find(section => sectionContainsSection(section, groupSection));
+      if (topSection && !rootHomeSection.has(groupRoot.id)) {
+        rootHomeSection.set(groupRoot.id, topSection);
       }
+    });
+    this.structure.forEach(section => {
       const first = firstBlockOf(section);
       if (!first) return;
       // A designated group section is the canonical home of ITS OWN root only
