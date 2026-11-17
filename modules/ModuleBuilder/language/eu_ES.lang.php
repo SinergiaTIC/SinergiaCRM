@@ -487,7 +487,11 @@ $mod_strings = array(
     'LBL_BTN_ADDROWS' => 'Agregar Filas',
     'LBL_BTN_ADDFIELD' => 'Agregar Campo',
     'LBL_BTN_ADDDROPDOWN' => 'Agregar Lista Desplegable',
-    'LBL_BTN_SORT_ASCENDING' => 'Ordenar Ascendete',
+    // STIC-Custom 20261117 ART - 
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // 'LBL_BTN_SORT_ASCENDING' => 'Ordenar Ascendete',
+    'LBL_BTN_SORT_ASCENDING' => 'Ordenar Ascendente',
+    // END STIC-Custom
     'LBL_BTN_SORT_DESCENDING' => 'Ordenar Descendente',
     'LBL_BTN_EDLABELS' => 'Editar Etiquetas',
     'LBL_BTN_UNDO' => 'Deshacer',
