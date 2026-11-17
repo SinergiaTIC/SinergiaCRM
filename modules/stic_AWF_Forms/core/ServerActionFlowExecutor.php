@@ -77,28 +77,10 @@ class ServerActionFlowExecutor {
                 $paramDefinitions = $actionExecutor->getParameters();
                 $paramConfigurations = $actionConfig->parameters;
 
-                // Detect motor block for repeatable/optional groups
-                $motorBlock = null;
-                if (!empty($paramDefinitions)) {
-                    $paramConfigMap = [];
-                    foreach ($paramConfigurations as $paramConfig) {
-                        $paramConfigMap[$paramConfig->name] = $paramConfig;
-                    }
-                    foreach ($paramDefinitions as $paramDef) {
-                        if ($paramDef->type !== ActionParameterType::DATA_BLOCK) continue;
-
-                        $paramConfig = $paramConfigMap[$paramDef->name] ?? null;
-                        $targetBlockId = $paramConfig->value ?? $paramDef->defaultValue;
-                        if ($targetBlockId === null || $targetBlockId === '') continue;
-                        
-                        $targetBlock = $this->context->formConfig->data_blocks[$targetBlockId] ?? null;
-                        if ($targetBlock === null || $targetBlock->getLoopDepth() === 0) continue;
-
-                        if ($motorBlock === null || $targetBlock->getLoopDepth() > $motorBlock->getLoopDepth()) {
-                            $motorBlock = $targetBlock;
-                        }
-                    }
-                }
+                // Detect the deepest group referenced by any parameter or condition.
+                // This mirrors the wizard's group binding: selectors and field-only
+                // actions must also execute once per referenced group instance.
+                $motorBlock = $this->resolveMotorBlock($paramDefinitions, $paramConfigurations, $actionConfig);
 
                 $isTerminal = $actionExecutor instanceof ITerminalAction;
                 // Build instance descriptors
@@ -232,6 +214,113 @@ class ServerActionFlowExecutor {
         }
         
         return $lastResult;
+    }
+
+    /**
+     * Finds the deepest data block referenced by an action parameter or
+     * execution condition. A DataBlock can be selected directly, through an
+     * option selector, or indirectly by a field/field-list parameter.
+     *
+     * @param ActionParameterDefinition[] $paramDefinitions
+     * @param FormActionParameter[] $paramConfigurations
+     * @param FormAction $actionConfig
+     * @return ?FormDataBlock
+     */
+    private function resolveMotorBlock(array $paramDefinitions, array $paramConfigurations, FormAction $actionConfig): ?FormDataBlock {
+        $parameterConfigs = [];
+        foreach ($paramConfigurations as $paramConfig) {
+            $parameterConfigs[$paramConfig->name] = $paramConfig;
+        }
+
+        $motorBlock = null;
+        $considerBlock = function ($blockId) use (&$motorBlock): void {
+            if (!is_string($blockId) || $blockId === '') {
+                return;
+            }
+            $block = $this->context->formConfig->data_blocks[$blockId] ?? null;
+            if ($block === null || $block->getLoopDepth() === 0) {
+                return;
+            }
+            if ($motorBlock === null || $block->getLoopDepth() > $motorBlock->getLoopDepth()) {
+                $motorBlock = $block;
+            }
+        };
+
+        $considerField = function ($fieldKey) use ($considerBlock): void {
+            if (!is_string($fieldKey) || $fieldKey === '') {
+                return;
+            }
+            $fieldKey = trim($fieldKey);
+            if (str_starts_with($fieldKey, '_detached.')) {
+                $fieldKey = substr($fieldKey, strlen('_detached.'));
+            }
+            $dotPosition = strpos($fieldKey, '.');
+            if ($dotPosition === false || $dotPosition === 0) {
+                return;
+            }
+            $blockName = substr($fieldKey, 0, $dotPosition);
+            foreach ($this->context->formConfig->data_blocks as $block) {
+                if ($block->name === $blockName) {
+                    $considerBlock($block->id);
+                    return;
+                }
+            }
+        };
+
+        $considerFieldList = function ($fieldList) use ($considerField): void {
+            if (!is_string($fieldList) || $fieldList === '') {
+                return;
+            }
+            foreach (explode(',', $fieldList) as $fieldKey) {
+                $considerField($fieldKey);
+            }
+        };
+
+        foreach ($paramDefinitions as $paramDef) {
+            $paramConfig = $parameterConfigs[$paramDef->name] ?? null;
+            $value = $paramConfig?->value ?? $paramDef->defaultValue;
+
+            switch ($paramDef->type) {
+                case ActionParameterType::DATA_BLOCK:
+                    $considerBlock($value);
+                    break;
+
+                case ActionParameterType::FIELD:
+                    $considerField($value);
+                    break;
+
+                case ActionParameterType::FIELD_LIST:
+                    $considerFieldList($value);
+                    break;
+
+                case ActionParameterType::OPTION_SELECTOR:
+                    $selectedOption = $paramConfig?->selectedOption ?? '';
+                    foreach ($paramDef->selectorOptions as $optionDef) {
+                        if ($optionDef->name !== $selectedOption) {
+                            continue;
+                        }
+                        switch ($optionDef->resolvedType) {
+                            case ActionParameterType::DATA_BLOCK:
+                                $considerBlock($value);
+                                break;
+                            case ActionParameterType::FIELD:
+                                $considerField($value);
+                                break;
+                            case ActionParameterType::FIELD_LIST:
+                                $considerFieldList($value);
+                                break;
+                        }
+                        break;
+                    }
+                    break;
+            }
+        }
+
+        foreach ($actionConfig->conditions as $condition) {
+            $considerField($condition->field_name ?? '');
+        }
+
+        return $motorBlock;
     }
 
     /**

@@ -938,8 +938,9 @@ class ResponseHandler
                 // Skip fixed fields
                 if ($field->type_field === DataBlockFieldType::FIXED) continue;
 
-                // Skip file upload fields — binary data is not stored as response details.
-                // For document blocks, store the uploaded file name as the detail record.
+                // Set default integer value to null
+                $answerInteger = null;
+
                 if ($field->type_in_form === 'file') {
                     if ($block->is_document_block) {
                         $instanceSuffix = $instanceIndexes !== [] ? '[' . implode('][', $instanceIndexes) . ']' : '';
@@ -958,7 +959,7 @@ class ResponseHandler
                         $detailBean->answer_value = $fileName;
                         $detailBean->answer_text = $fileName;
                         $detailBean->answer_type = 'file';
-                        $detailBean->answer_integer = 0;
+                        $detailBean->answer_integer = $answerInteger;
                         $detailBean->save();
                     }
                     continue;
@@ -994,11 +995,28 @@ class ResponseHandler
                     }
                     $storedValue = json_encode($rawValue, JSON_UNESCAPED_UNICODE); // Store JSON ["A","B"]
                     $readableText = implode(', ', $labels); // Text: "Option A, Option B"
+
+                    // Accumulate scores for selected options, including each group instance.
+                    $scoreSum = 0.0;
+                    $hasScore = false;
+                    foreach ($rawValue as $valItem) {
+                        $opt = $this->findOption($field->value_options, $valItem);
+                        if ($opt && $opt->score !== null && $opt->score !== '') {
+                            $scoreSum += (float)$opt->score;
+                            $hasScore = true;
+                        }
+                    }
+                    if ($hasScore) {
+                        $answerInteger = (int)round($scoreSum);
+                    }
                 } else {
                     // Single selection
                     $opt = $this->findOption($field->value_options, $rawValue);
                     if ($opt) {
                         $readableText = $opt->text;
+                        if ($opt->score !== null && $opt->score !== '') {
+                            $answerInteger = (int)round((float)$opt->score);
+                        }
                     }
                 }
             }
@@ -1007,6 +1025,7 @@ class ResponseHandler
                 $isTrue = ($rawValue === '1' || $rawValue === 'on' || $rawValue === 'true' || $rawValue === true);
                 $readableText = $isTrue ? $app_strings['LBL_YES'] : $app_strings['LBL_NO'];
                 $storedValue = $isTrue ? '1' : '0';
+                $answerInteger = $isTrue ? 1 : 0;
             }
             // Generic arrays that are not lists
             elseif (is_array($rawValue)) {
@@ -1047,13 +1066,13 @@ class ResponseHandler
                     $normalized = $rawNum * 20;
                 }
                 // Make sure to store a clean integer limited between 0 and 100
-                $detailBean->answer_integer = (int)max(0, min(100, round($normalized)));
-            } elseif (!is_array($rawValue) && is_numeric($rawValue)) {
+                $answerInteger = (int)max(0, min(100, round($normalized)));
+            } elseif ($answerInteger === null && !is_array($rawValue) && is_numeric($rawValue)) {
                 // Save the numeric value if applicable
-                $detailBean->answer_integer = (int)round((float)$rawValue);
-            } else {
-                $detailBean->answer_integer = 0;
+                $answerInteger = (int)round((float)$rawValue);
             }
+
+            $detailBean->answer_integer = $answerInteger;
 
             $detailBean->save();
         }

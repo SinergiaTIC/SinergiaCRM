@@ -155,6 +155,38 @@ class FormDataBlock {
     }
 
     /**
+     * Whether instances of this block can vary between executions.
+     * A block is instance-scoped when it is repeatable itself or belongs to a
+     * repeatable ancestor. Optional-only ancestry still represents one global
+     * instance (each optional level can contribute at most one).
+     */
+    public function hasRepeatableScope(): bool {
+        if ($this->isRepeatable()) {
+            return true;
+        }
+
+        $current = $this;
+        $visited = [$this->id => true];
+        while (!empty($current->group_root)) {
+            $parentId = $current->group_root;
+            if (isset($visited[$parentId])) {
+                break;
+            }
+            $visited[$parentId] = true;
+            $parent = $this->form_config->data_blocks[$parentId] ?? null;
+            if (!$parent) {
+                break;
+            }
+            if ($parent->isRepeatable()) {
+                return true;
+            }
+            $current = $parent;
+        }
+
+        return false;
+    }
+
+    /**
      * Sets the bean reference for this data block, optionally for a specific instance index.
      * @param string $beanId The ID of the bean
      * @param string|null $instanceIndex Optional instance index (e.g., "i" for depth-1, "i:j" for depth-2)
@@ -206,9 +238,9 @@ class FormDataBlock {
     }
 
     /**
-     * Resolves the reference for this block within the current execution context. 
-     * This is the key to N:1 resolution: If this block is scalar (non-repeatable),
-     * it must ALWAYS return the unique root instance, ignoring the index from the child context.
+     * Resolves the reference for this block within the current execution context.
+     * A block may be non-repeatable itself and still have one instance per
+     * repeatable ancestor.
      * 
      * @param ExecutionContext $context The execution context
      * @param string|null $instanceKey Optional instance key (e.g., "i" for depth-1, "i:j" for depth-2)
@@ -227,14 +259,14 @@ class FormDataBlock {
             return $this->getBeanReference($instanceKey);
         }
 
-        // N:1 — a NON-repeatable target (e.g. an optional 0..1 group shared by
-        // every child) has a single instance, so the global reference is
-        // authoritative regardless of the child's loop indexes.
-        if (!$this->isRepeatable()) {
+        // Blocks with no repeatable scope (including a root optional 0..1
+        // target) have one global reference. Group members under a repeatable
+        // ancestor resolve by instance, even when they are 0..1 themselves.
+        if (!$this->hasRepeatableScope()) {
             return $this->getBeanReference();
         }
 
-        // Repeatable target: address THIS instance via the first d indexes of
+        // Instance-scoped target: address THIS instance via the first d indexes of
         // the active context stack; if the stack is shallower the deeper
         // instance is not addressed by this execution (null).
         $stack = $context->getInstanceIndexes();

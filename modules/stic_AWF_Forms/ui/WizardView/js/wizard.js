@@ -1335,6 +1335,11 @@ class WizardStep2 {
         if (key === 'is_visible') {
           return val ? 1 : 0;
         }
+        if (key === 'score') {
+          if (val === null || val === undefined || val === '') return null;
+          const numericValue = Number(val);
+          return Number.isFinite(numericValue) ? numericValue : null;
+        }
         return (val ?? '').toString();
       },
 
@@ -1349,6 +1354,15 @@ class WizardStep2 {
             return (this.getSortValue(b, key) - this.getSortValue(a, key)) * (this.sortAsc ? 1 : -1);
           }
           const dir = this.sortAsc ? 1 : -1;
+          if (key === 'score') {
+            const valueA = this.getSortValue(a, key);
+            const valueB = this.getSortValue(b, key);
+            if (valueA === null || valueB === null) {
+              if (valueA === valueB) return 0;
+              return valueA === null ? 1 : -1;
+            }
+            return (valueA - valueB) * dir;
+          }
           return this.getSortValue(a, key).localeCompare(this.getSortValue(b, key), undefined, { sensitivity: 'base', numeric: true }) * dir;
         });
       },
@@ -1710,7 +1724,8 @@ class WizardStep2 {
 
       get relatedModule() {
         if (this.field && this.field.type == 'relate') {
-          return this.formConfig.getRelationshipModule(this.dataBlock.id, this.selectedFieldInfo?.options)
+          const relOrLink = this.selectedFieldInfo?.options || this.selectedFieldInfo?.link_name;
+          return this.formConfig.getRelationshipModule(this.dataBlock.id, relOrLink)
                  || this.selectedFieldInfo?.module || '';
         }
         return '';
