@@ -86,7 +86,7 @@ class Sugar_Smarty extends Smarty
         $this->registerPlugin("modifier", "file_exists", "file_exists");
         // End STIC Custom
         // STIC-Custom 20261117 ART - Alphabetical dropdowns
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
         $this->registerPlugin("function", "stic_custom_dropdown", ['Sugar_Smarty', 'sticCustomDropdownCheck']);
         // END STIC-Custom
 
@@ -364,7 +364,7 @@ class Sugar_Smarty extends Smarty
     }
 
     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
 
     /**
      * Smarty function plugin (registered in the constructor above):

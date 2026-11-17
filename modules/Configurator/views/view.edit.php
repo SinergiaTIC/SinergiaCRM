@@ -130,7 +130,7 @@ class ConfiguratorViewEdit extends ViewEdit
         $this->ss->assign('APP', $app_strings);
         $this->ss->assign('APP_LIST', $app_list_strings);
         // STIC-Custom 20261117 ART - Alphabetical dropdowns
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
         // Show the default threshold in installations whose config.php
         // predates this setting (the Configurator only saves keys already
         // present in config or listed in $allow_undefined)

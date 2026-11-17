@@ -65,7 +65,7 @@ class Configurator
         'enable_line_editing_detail',
         'hide_subpanels',
         // STIC-Custom 20261117 ART - Alphabetical dropdowns
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
         // 'stackTrace'
         // Accept the searchable-selects threshold in installations whose
         // config.php predates this setting
@@ -112,7 +112,7 @@ class Configurator
             }
 
             // STIC-Custom 20261117 ART - Alphabetical dropdowns
-            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
             // Keep the searchable-selects threshold as a clean integer. An
             // empty input keeps the current value (0 would mean "every
             // dropdown" and must be an explicit choice)

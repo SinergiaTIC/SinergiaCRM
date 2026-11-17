@@ -522,7 +522,7 @@ class stic_Web_FormsAssistantController extends stic_Web_FormsController
     		array_push($fields, $colArr);
     	}
         // STIC-Custom 20261117 ART - Sort fields alphabetically so it is easy to locate them
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
         uasort($fields, function($a, $b) {
             return strnatcasecmp($a[0], $b[0]);
         });

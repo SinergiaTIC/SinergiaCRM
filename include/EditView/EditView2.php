@@ -682,7 +682,7 @@ class EditView
                     // the list's name, but the list itself (the developper comment show us that developper expected to
                     // retrieve list's name and not the options array)
                     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
                     // Keep the dropdown list name before it is replaced by the options array below: the
                     // {stic_custom_dropdown} Smarty plugin used by the enum field templates needs the name to
                     // mark administrator-customized dropdowns (data-stic-sort="false") so that

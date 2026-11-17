@@ -706,7 +706,7 @@ class SearchForm
                 if (isset($this->fieldDefs[$fvName]['options']) && isset($GLOBALS['app_list_strings'][$this->fieldDefs[$fvName]['options']])) {
                     // fill in enums
                     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
                     // Keep the dropdown list name before it is replaced by the options array below: the
                     // {stic_custom_dropdown} Smarty plugin (emitted by the enum field templates, which are
                     // also used by the search views) needs the name to mark administrator-customized

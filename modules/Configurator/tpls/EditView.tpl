@@ -112,7 +112,7 @@
 		</td>
 	</tr>
 	<!-- STIC-Custom 20261117 ART - Alphabetical dropdowns -->
-	<!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/ -->
+	<!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/1551 -->
 	<tr>
 		<td scope="row" nowrap>{$MOD.LBL_STIC_SEARCH_SELECTS_THRESHOLD}: &nbsp;{sugar_help text=$MOD.LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC}</td>
 		<td>

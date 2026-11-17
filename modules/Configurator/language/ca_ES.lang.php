@@ -350,7 +350,7 @@ $mod_strings = array(
     'LBL_GOOGLE_AUTH_JSON' => 'Fitxer JSON',
     'LBL_GOOGLE_AUTH_JSON_HELP' => 'Carrega el fitxer JSON que heu descarregat de la consola de desenvolupadors de Google.',
     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
     'LBL_STIC_SEARCH_SELECTS_THRESHOLD' => 'Cerca en els desplegables',
     'LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC' => 'Mostrar un quadre de cerca en obrir els desplegables: mai, a tots, o només a les llistes llargues. Per defecte: només si tenen 20 opcions o més.',
     // END STIC-Custom

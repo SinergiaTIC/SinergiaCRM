@@ -607,14 +607,14 @@ $sugar_config = array(
         1 => 'stic_sinergiada_public',
         2 => 'stic_security_groups_rules_enabled',
         // STIC-Custom 20261117 ART - Alphabetical dropdowns
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
         3 => 'stic_search_selects_threshold',
         // END STIC-Custom
     ),
     // END STIC
 
     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
     'stic_search_selects_threshold' => 20,
     // END STIC-Custom
     

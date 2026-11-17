@@ -80,7 +80,7 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                         // https://github.com/SinergiaTIC/SinergiaCRM/pull/477
                         // $options_array['$'.$module->table_name.'_'.$name] = translate($arr['vname'], $module->module_dir);
                         // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
                         // Fields added by the security_groups template (e.g. securitygroups_name)
                         // have no 'vname' vardef but a 'label' one: use it as fallback so the option
                         // shows its name (LBL_SECURITYGROUPS_NAME is defined in app strings) instead
@@ -260,7 +260,7 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
 		$insert_fields_js
 		$insert_fields_js2
         <!-- STIC-Custom 20261117 ART - Sort module and field dropdowns alphabetically -->
-        <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/ -->
+        <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/1551 -->
         <!-- <select name='module_name' id='module_name' tabindex="50" onchange="populateVariables(this.options[this.selectedIndex].value);">
 		</select>
 		<select name='variable_name' id='variable_name' tabindex="50" onchange="showVariable(this.options[this.selectedIndex].value);"> -->

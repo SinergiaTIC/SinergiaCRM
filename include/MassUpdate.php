@@ -658,7 +658,7 @@ eoq;
                                     $displayname,
                                     $field["name"],
                                     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
                                     // translate($field["options"])
                                     // Administrator-customized dropdowns keep their defined order
                                     translate($field["options"]),
@@ -680,7 +680,7 @@ eoq;
                                     $field["parentenum"] ?? null,
                                     // END STIC-Custom
                                     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
                                     // Administrator-customized dropdowns keep their defined order
                                     \Sugar_Smarty::sticIsCustomDropdown($field["options"])
                                     // END STIC-Custom
@@ -1294,7 +1294,7 @@ EOQ;
     // public function addStatus($displayname, $varname, $options)
     // END STIC-Custom
     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
     // public function addStatus($displayname, $varname, $options, $parentname=Null)
     public function addStatus($displayname, $varname, $options, $parentname=Null, $customOrder = false)
     // END STIC-Custom
@@ -1302,7 +1302,7 @@ EOQ;
         global $app_strings, $app_list_strings;
 
         // STIC-Custom 20261117 ART - Alphabetical dropdowns
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
         // Administrator-customized dropdowns keep their defined order in the
         // mass update panel too (SticAlphabeticalSelects.js skips them)
         $customOrderAttr = $customOrder ? ' data-stic-sort="false"' : '';
@@ -1340,7 +1340,7 @@ EOQ;
                         {$dtscript}
 EOQ;
                     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
                     // $html .= '<select id="mass_' . $varname . '" name="' . $varname . '">' . $options . '</select>';
                     $html .= '<select id="mass_' . $varname . '" name="' . $varname . '"' . $customOrderAttr . '>' . $options . '</select>';
                     // END STIC-Custom
@@ -1363,7 +1363,7 @@ EOQ;
                     $options = array();
                     $options['0'] = '';
                     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
                     // $html .= '<select id="mass_' . $varname . '" name="' . $varname . '">' . $options . '</select>';   
                     $html .= '<select id="mass_' . $varname . '" name="' . $varname . '"' . $customOrderAttr . '>' . $options . '</select>';
                     // END STIC-Custom
@@ -1371,7 +1371,7 @@ EOQ;
                 }
             } else {
                 // STIC-Custom 20261117 ART - Alphabetical dropdowns
-                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
                 // $html .= '<select id="mass_' . $varname . '" name="' . $varname . '">' . $options . '</select>';
                 $html .= '<select id="mass_' . $varname . '" name="' . $varname . '"' . $customOrderAttr . '>' . $options . '</select>';
                 // END STIC-Custom
@@ -1396,7 +1396,7 @@ EOQ;
         global $app_strings, $app_list_strings;
 
         // STIC-Custom 20261117 ART - Alphabetical dropdowns
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
         // return $this->addStatus($displayname, $varname, $app_list_strings['checkbox_dom']);
         // checkbox_dom can also be administrator-customized
         return $this->addStatus($displayname, $varname, $app_list_strings['checkbox_dom'], null, \Sugar_Smarty::sticIsCustomDropdown('checkbox_dom'));
@@ -1404,7 +1404,7 @@ EOQ;
     }
 
     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
     // public function addStatusMulti($displayname, $varname, $options)
     public function addStatusMulti($displayname, $varname, $options, $customOrder = false)
     // END STIC-Custom
@@ -1412,7 +1412,7 @@ EOQ;
         global $app_strings, $app_list_strings;
 
         // STIC-Custom 20261117 ART - Alphabetical dropdowns
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
         // Administrator-customized dropdowns keep their defined order in the
         // mass update panel too (SticAlphabeticalSelects.js skips them)
         $customOrderAttr = $customOrder ? ' data-stic-sort="false"' : '';
@@ -1431,7 +1431,7 @@ EOQ;
 
         // cn: added "mass_" to the id tag to differentiate from the status id in StoreQuery
         // STIC-Custom 20261117 ART - Alphabetical dropdowns
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
         // $html = '<td scope="row" width="15%">' . $displayname . '</td>
 		// 	 <td><select id="mass_' . $varname . '" name="' . $varname . '[]" size="5" MULTIPLE>' . $options . '</select></td>';
         $html = '<td scope="row" width="15%">' . $displayname . '</td>

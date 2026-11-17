@@ -488,7 +488,7 @@ $mod_strings = array(
     'LBL_BTN_ADDFIELD' => 'Agregar Campo',
     'LBL_BTN_ADDDROPDOWN' => 'Agregar Lista Desplegable',
     // STIC-Custom 20261117 ART - 
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
     // 'LBL_BTN_SORT_ASCENDING' => 'Ordenar Ascendete',
     'LBL_BTN_SORT_ASCENDING' => 'Ordenar Ascendente',
     // END STIC-Custom

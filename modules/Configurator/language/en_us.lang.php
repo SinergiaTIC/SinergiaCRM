@@ -228,7 +228,7 @@ $mod_strings = array(
     'LBL_LOGO' => 'Logo' /*for 508 compliance fix*/,
     'LBL_ENABLE_HISTORY_CONTACTS_EMAILS' => 'Show related contacts\' emails in History subpanel for modules',
     // STIC-Custom 20261117 ART - Alphabetical dropdowns
-    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
     'LBL_STIC_SEARCH_SELECTS_THRESHOLD' => 'Search box in dropdowns',
     'LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC' => 'Show a search box when opening the dropdowns: never, in all of them, or only in the long ones. Default: only if they have 20 options or more.',
     // END STIC-Custom
