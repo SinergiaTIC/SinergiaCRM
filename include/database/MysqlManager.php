@@ -1115,12 +1115,13 @@ class MysqlManager extends DBManager
             ($fieldDef['dbType'] == 'text'
                 || $fieldDef['dbType'] == 'blob'
                 || $fieldDef['dbType'] == 'longtext'
-                || $fieldDef['dbType'] == 'longblob'
                 // STIC-Custom EPS 20261116: mediumtext (and other text/blob variants) are included so
                 // that columns such as KReports.whereconditions do not keep a DEFAULT
                 // value that MySQL/MariaDB reports back quoted, causing recurring
                 // repair mismatches. See stic issue #1544 / PR #1545.
                 // https://github.com/SinergiaTIC/SinergiaCRM/pull/1545
+                // || $fieldDef['dbType'] == 'longblob')
+                || $fieldDef['dbType'] == 'longblob'
                 || $fieldDef['dbType'] == 'mediumtext'
                 || $fieldDef['dbType'] == 'mediumblob'
                 || $fieldDef['dbType'] == 'tinytext'
