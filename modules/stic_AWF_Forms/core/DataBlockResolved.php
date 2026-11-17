@@ -41,8 +41,8 @@ class DataBlockResolved {
 
     /**
      * Full loop-index stack (outer to inner) addressing this instance in the
-     * n-dimensional POST matrix (one index per group-head loop in the block's
-     * chain: repeatable, optional and simple heads alike).
+     * n-dimensional POST matrix (one index per repeatable/optional head in the
+     * block's chain; simple groups render with static names).
      * Example (A -> B -> C, three group heads): C's instance = [i1, i2, i3].
      */
     public array $loopIndexes = [];
@@ -361,26 +361,23 @@ class DataBlockResolved {
     }
 
     /**
-     * Returns the BeanReference for this instance, if any. For scalar blocks,
-     * returns the global reference; for repeatable blocks, returns the
-     * per-instance reference (if set).
+     * Returns the BeanReference for this instance, if any. Blocks without a
+     * repeatable scope use the global reference; blocks inside a repeatable
+     * scope require the reference for their exact instance.
      */
     public function getInstanceBeanReference(): ?BeanReference {
-        // If the underlying block is scalar (1..1 or 0..1), it has a single global reference.
-        if (!$this->dataBlock->isRepeatable() && empty($this->dataBlock->group_root)) {
+        // A simple block or optional-only hierarchy has one global record.
+        if ($this->dataBlock->getLoopDepth() === 0 || !$this->dataBlock->hasRepeatableScope()) {
             return $this->dataBlock->getBeanReference();
         }
 
-        // If it's repeatable, search by instance key
+        // A non-repeatable child can still have one record per repeatable parent.
         $indexKey = $this->getInstanceIndexKey();
         if ($indexKey !== null) {
-            $ref = $this->dataBlock->getIndexedBeanReference($indexKey);
-            if ($ref !== null) {
-                return $ref;
-            }
+            return $this->dataBlock->getIndexedBeanReference($indexKey);
         }
 
-        return $this->dataBlock->getBeanReference();
+        return null;
     }
 
     /**

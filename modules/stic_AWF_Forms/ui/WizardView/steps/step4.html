@@ -591,7 +591,7 @@
                                                                             <i class="inline-help glyphicon glyphicon-info-sign"></i>
                                                                             <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_ADD_LABEL_DESC')"></div>
                                                                             <input type="text" :id="`sectionAddButtonLabel_${section.id}`" class="form-control form-control-sm" x-model="section.add_button_label"
-                                                                                   :placeholder="utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT')">
+                                                                                   :placeholder="utils.translate('LBL_DATABLOCK_ADD_LABEL_DEFAULT').replace('%s', getGroupTemplateTitle(section))">
                                                                         </div>
                                                                     </template>
 

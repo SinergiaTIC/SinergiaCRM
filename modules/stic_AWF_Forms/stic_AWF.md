@@ -387,13 +387,18 @@ No se admiten nombres cortos sin bloque (como `'first_name'`). Cualquier llamada
 
 ### 2. Métodos de la API global (`window.AWF`)
 
+> **⚠️ Ciclo de vida y timing:** el bloque de **JS Personalizado** se ejecuta en línea, **antes** de que Alpine.js (cargado con `defer`) inicialice el formulario. Los campos de grupos (repetibles/opcionales) se renderizan dentro de `<template x-for>`, por lo que **no existen en el DOM** durante la ejecución de primer nivel del `custom_js`: lecturas (`getValue`, `getText`) retornarán `null` y escrituras no tendrán efecto sobre controles aún no renderizados. Aplaza estas operaciones:
+> * Usa `AWF.onChange(target, callback, { immediate: true })`: el observador de mutaciones re-dispara los listeners sobre cada instancia cuando Alpine la renderiza (`awf:instance-added`).
+> * Para lecturas únicas, difiere con `window.addEventListener('load', ...)`.
+> * Nota: en el ámbito global (consola o `custom_js`) evita `var name = ...`: colisiona con la propiedad preexistente `window.name` (string), que distorsiona el resultado leído.
+
 #### AWF.getValue(target, [options])
 Obtiene el valor de datos (payload) actual de un control:
 * **Casillas de verificación individuales**: booleano (`true`/`false`).
 * **Listas de casillas o selects múltiples (`[]`)**: array de cadenas con los valores seleccionados.
 * **Botones de radio o selects simples**: valor de la opción seleccionada.
 * **Campos de texto / textarea**: cadena con el valor actual.
-* **Si el campo no existe**: retorna `null`.
+* **Si el campo no existe o no está renderizado**: retorna `null` (nunca `undefined`). Esto incluye: sección opcional inactiva o grupo sin instancias, instancia de grupo aún no renderizada por Alpine (ver ciclo de vida) y nombres no cualificados o inexistentes. Para depurar la resolución usa `AWF.resolve(target)`, que retorna `{ elements, element, card, parsed }`.
 
 ```javascript
 var email = AWF.getValue('Contacts0.email1');
@@ -436,6 +441,45 @@ Modifica dinámicamente el texto de la etiqueta principal del campo respetando y
 
 ```javascript
 AWF.setLabel('Contacts0.stic_identification_number_c', 'Número de pasaporte:');
+```
+
+#### AWF.getSectionTitle(target, [options])
+*(Alias: `scope.getSectionTitle`)*
+Obtiene el texto del **título visible de la sección** que renderiza el campo indicado. El título vive en un lugar distinto según la representación, y esta API lo abstrae: cabecera de sección (card o panel), pestaña (el título está en la pestaña, fuera del panel), acordeón (cabecera del item) o instancias de grupos repetibles (cabecera de la tarjeta/pestaña/acordeón de la instancia).
+
+* Retorna `null` si la sección no renderiza título (secciones sin cabecera).
+* **Bloques repetibles**: la llamada global sin índice lee la **primera instancia** (mismo contrato que `getValue`); dentro de un `onChange` usa `scope.getSectionTitle()` para el título de la instancia del evento.
+* En representaciones de instancia (grupos repetibles/opcionales) el título está enlazado a Alpine (`x-text`): la lectura siempre refleja el texto actual (`'Contacto #1'`).
+
+```javascript
+var titulo = AWF.getSectionTitle('Contacts0.first_name'); // 'Datos de contacto'
+```
+
+#### AWF.setSectionTitle(target, text, [options])
+*(Alias: `scope.setSectionTitle`)*
+Modifica dinámicamente el texto del título visible de la sección que renderiza el campo indicado, resolviendo automáticamente el elemento correcto en cada representación.
+
+* **Títulos estáticos (secciones card/panel, pestañas y acordeones de diseño)**: escribe el nuevo texto y retorna `true`.
+* **Títulos de instancias de grupos (repetibles/opcionales, con `x-text`)**: escribe la anulación a través del estado reactivo del grupo (`titleOverrides`, vía `Alpine.$data`), por lo que sobrevive a los re-renderizados (añadir/quitar instancias) y retorna `true`. Retorna `false` si no existe título visible o Alpine no está disponible.
+* **Título base original**: en títulos estáticos, en la primera escritura guarda el texto original en `data-awf-base-title`, de modo que nunca se pierde la base para componer textos tipo `"Base - Valor"`. En títulos de instancia la base es la propia expresión de plantilla (`'Contacto #N'`).
+* **Dirigir la instancia**: en bloques repetibles, la llamada global sin índice aplica el texto a **TODAS** las instancias (mismo contrato que `setValue`). Para escribir el título de la instancia del evento, usa `scope.setSectionTitle(...)` dentro del `onChange`; para una fila concreta, `AWF.setSectionTitle(target, text, { instanceIndex: N })`.
+* **Restaurar el original**: pasando `null` como texto se restaura el título original de la fila/la sección (en instancias, el de la plantilla: `'Persona #N'`).
+* **Nota**: las anulaciones se guardan por posición de la fila; al eliminar instancias pueden desalinearse.
+
+```javascript
+// Un título por instancia: la base es POR FILA (cada fila conserva su '#N')
+var baseTitles = {}; // base por índice de instancia, capturada lazy
+var updateTitle = function updateTitle(scope) {
+    var idx = scope.instanceIndex == null ? 0 : scope.instanceIndex;
+    if (baseTitles[idx] === undefined) baseTitles[idx] = scope.getSectionTitle() || '';
+    var nombre = (scope.getValue('Contacts0.first_name') + ' ' + scope.getValue('Contacts0.last_name')).trim();
+    scope.setSectionTitle(nombre ? baseTitles[idx] + ' - ' + nombre : baseTitles[idx]);
+};
+AWF.onChange('Contacts0.first_name', function (val, scope) { updateTitle(scope); }, { immediate: true });
+AWF.onChange('Contacts0.last_name', function (val, scope) { updateTitle(scope); }, { immediate: true });
+
+// Restaurar el título por defecto de la fila actual:
+// scope.setSectionTitle(null);
 ```
 
 #### AWF.getFieldContainer(target, [options])
@@ -523,6 +567,8 @@ Todos los métodos globales están disponibles en `scope` operando por defecto s
 * `scope.getText([target])`
 * `scope.getLabel([target])`
 * `scope.setLabel([target], text)`
+* `scope.getSectionTitle([target])`
+* `scope.setSectionTitle([target], text)`
 * `scope.getFieldContainer([target])`
 * `scope.getAttribute([target], attribute)`
 * `scope.setAttribute([target], attribute, value)`
