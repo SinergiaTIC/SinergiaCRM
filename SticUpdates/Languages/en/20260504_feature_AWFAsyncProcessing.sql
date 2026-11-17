@@ -1,0 +1,3 @@
+INSERT IGNORE INTO schedulers (id, deleted, date_entered, date_modified, created_by, modified_user_id, name, job, date_time_start, date_time_end, job_interval, time_from, time_to, last_run, status, catch_up) VALUES
+('a3c7e2b1-4d5f-11ef-b892-0242ac130003', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Async processing of web form responses', 'function::sticAWFProcessAsyncResponses', NOW(), NULL, '*::*::*::*::*', NULL, NULL, NULL, 'Active', 0),
+('b4d8f3c2-5e6a-11ef-c903-0242ac130004', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Cancellation of expired deferred tickets', 'function::sticAWFCancelExpiredTickets', NOW(), NULL, '*::*::*::*::*', NULL, NULL, NULL, 'Active', 0);
