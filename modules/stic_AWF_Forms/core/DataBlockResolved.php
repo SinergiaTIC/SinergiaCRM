@@ -48,7 +48,7 @@ class DataBlockResolved {
 
         // Load default values (fixed/hidden) from the configuration
         // These values can be overridden by form-submitted values
-        foreach ($config->fields as $fieldName => $fieldDef) {
+        foreach ($config->getFields() as $fieldName => $fieldDef) {
             if ($fieldDef->value_type === DataBlockFieldValueType::FIXED) {
                 // Get the CRM field type to perform casting
                 $castedValue = stic_AWFUtils::castCrmValue($fieldDef->value, $fieldDef->type, $context);
@@ -69,7 +69,7 @@ class DataBlockResolved {
 
         // Process the form data
         // Form-submitted values always take precedence over fixed/hidden defaults
-        $blockPrefix = $config->name . '_'; 
+        $blockPrefix = $config->getName() . '_'; 
         $detachedPrefix = '_detached_' . $blockPrefix;
         foreach ($fullFormData as $formKey => $value) {
             $fieldName = null;
@@ -86,14 +86,14 @@ class DataBlockResolved {
             // If the field belongs to this block, process it
             if ($fieldName) {
                 // Find the field configuration to determine its type; otherwise assume text
-                $definition = $config->fields[$fieldName] ?? null;
+                $definition = $config->getFieldByName($fieldName);
                 $crmFieldType = $definition?->type;
                 
                 // Cast the value to the appropriate type
                 $castedValue = stic_AWFUtils::castCrmValue($value, $crmFieldType, $context);
 
                 // Rebuild the original logical key
-                $logicalKey = ($isUnlinked ? '_detached.' : '') . $config->name . '.' . $fieldName;
+                $logicalKey = ($isUnlinked ? '_detached.' : '') . $config->getName() . '.' . $fieldName;
                 $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $definition, $castedValue);
 
                 // Store the field in the appropriate array
@@ -106,7 +106,7 @@ class DataBlockResolved {
         }
 
         // Handling unchecked checkboxes: HTML does not send unchecked checkboxes, so they would not be updated in the CRM when unchecked.
-        foreach ($config->fields as $fieldName => $fieldDef) {
+        foreach ($config->getFields() as $fieldName => $fieldDef) {
             if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
 
             $isUnlinked = ($fieldDef->type_field === DataBlockFieldType::UNLINKED);
@@ -116,7 +116,7 @@ class DataBlockResolved {
             // The field was expected but did NOT arrive in the POST.
             if ($fieldDef->type === 'bool' || $fieldDef->type === 'checkbox') {
                 // Rebuild the original logical key
-                $logicalKey = ($isUnlinked ? '_detached.' : '') . $config->name . '.' . $fieldName;
+                $logicalKey = ($isUnlinked ? '_detached.' : '') . $config->getName() . '.' . $fieldName;
                 $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, 0); // 0 = False en DB
                 
                 // Store the field in the appropriate array

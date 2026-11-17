@@ -46,7 +46,7 @@ class ServerActionFlowExecutor {
         $lastResult = new ActionResult(ResultStatus::OK, null);
         $lastActionConfig = null;
         try {
-            $actions = $flowConfig->actions ?? [];
+            $actions = $flowConfig->getActions();
 
             // Preprocess formData to fill in missing boolean/checkbox fields
             // (browsers don't send unchecked checkboxes, so without this the condition would
@@ -60,14 +60,14 @@ class ServerActionFlowExecutor {
                 // Backward compatibility: if a requisite action hasn't been executed (null),
                 // log a warning but let the action proceed. This preserves the pre-update
                 // behavior where no topological sort was performed server-side.
-                foreach ($actionConfig->requisite_actions as $reqActionId) {
+                foreach ($actionConfig->getRequisiteActions() as $reqActionId) {
                     $reqResult = $this->context->getActionResultById($reqActionId);
                     if ($reqResult === null) {
-                        $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' (id: {$actionConfig->id}) requires action with id '{$reqActionId}' but it was not executed. Continuing anyway for backward compatibility.");
+                        $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->getName()}' (id: {$actionConfig->getId()}) requires action with id '{$reqActionId}' but it was not executed. Continuing anyway for backward compatibility.");
                         continue;
                     }
                     if ($reqResult->isError()) {
-                        $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' skipped because requisite action '{$reqActionId}' failed.");
+                        $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->getName()}' skipped because requisite action '{$reqActionId}' failed.");
                         $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Requisite action failed.");
                         $this->context->addActionResult($skippedResult);
                         continue 2;
@@ -75,8 +75,8 @@ class ServerActionFlowExecutor {
                 }
 
                 // Check the Conditions (if any)
-                if(!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
-                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->text}' because condition failed.");
+                if(!stic_AWFUtils::evaluateConditions($actionConfig->getConditions(), $this->context->formData)) {
+                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->getText()}' because condition failed.");
                     
                     // Record the action as skipped
                     $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
@@ -90,7 +90,7 @@ class ServerActionFlowExecutor {
                 // Check form type compatibility
                 if (!empty($this->context->formType) && !empty($actionExecutor->supportedFormTypes)) {
                     if (!in_array($this->context->formType, $actionExecutor->supportedFormTypes)) {
-                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->text}' because it does not support form type '{$this->context->formType}'.");
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->getText()}' because it does not support form type '{$this->context->formType}'.");
                         $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Form type '{$this->context->formType}' not supported.");
                         $this->context->addActionResult($skippedResult);
                         continue;
@@ -99,7 +99,7 @@ class ServerActionFlowExecutor {
 
                 // Parameter resolution
                 $paramDefinitions  = $actionExecutor->getParameters();
-                $paramConfigurations = $actionConfig->parameters;
+                $paramConfigurations = $actionConfig->getParameters();
                 $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
                 $actionConfig->setResolvedParameters($resolvedParameters);
 
@@ -117,7 +117,7 @@ class ServerActionFlowExecutor {
                         $this->context->responseBean->save();
                     }
                     
-                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $lastResult->message);
+                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Flow paused by action '{$actionConfig->getName()}'. Reason: " . $lastResult->message);
 
                     // Return $lastResult to finish: the engine will be put on hold
                     return $lastResult; 
@@ -126,10 +126,10 @@ class ServerActionFlowExecutor {
                 // Error detection
                 if ($lastResult->isError()) {
                     // If the action is marked to continue on error, we log the error but we continue with the next actions of the flow.
-                    if ($actionConfig->continue_on_error) {
+                    if ($actionConfig->getContinueOnError()) {
                         $lastResult->status = ResultStatus::SKIPPED;
                         $lastResult->message = "Ignored Error: " . $lastResult->message;
-                        $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
+                        $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->getName()}' failed but is marked to continue. Error: " . $lastResult->message);
                         continue; 
                     }
 
@@ -170,11 +170,11 @@ class ServerActionFlowExecutor {
      * @param FormFlow $flowConfig The flow definition to evaluate.
      */
     public function executeTerminalActionOnly(FormFlow $flowConfig): void {
-        if (empty($flowConfig->actions)) {
+        if (empty($flowConfig->getActions())) {
             return;
         }
 
-        foreach ($flowConfig->actions as $actionConfig) {
+        foreach ($flowConfig->getActions() as $actionConfig) {
             try {
                 // Instantiate the action executor to check its type and interface
                 $actionExecutor = $this->factory->createAction($actionConfig);
@@ -185,16 +185,16 @@ class ServerActionFlowExecutor {
                 }
 
                 // Check the Conditions (if any)
-                if (!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
-                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping terminal action '{$actionConfig->text}' because conditions failed.");
+                if (!stic_AWFUtils::evaluateConditions($actionConfig->getConditions(), $this->context->formData)) {
+                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping terminal action '{$actionConfig->getText()}' because conditions failed.");
                     continue;
                 }
 
-                $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Executing terminal action '{$actionConfig->name}'.");
+                $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Executing terminal action '{$actionConfig->getName()}'.");
                 
                 // Parameter resolution
                 $paramDefinitions  = $actionExecutor->getParameters();
-                $paramConfigurations = $actionConfig->parameters;
+                $paramConfigurations = $actionConfig->getParameters();
                 $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
                 $actionConfig->setResolvedParameters($resolvedParameters);
 
@@ -204,8 +204,29 @@ class ServerActionFlowExecutor {
                 break;
 
             } catch (\Throwable $t) {
-                $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Failed to evaluate or execute terminal action '{$actionConfig->name}': " . $t->getMessage());
+                $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Failed to evaluate or execute terminal action '{$actionConfig->getName()}': " . $t->getMessage());
             }
         }
+    }
+
+    /**
+     * Executes a deferred sub-flow by its ID, optionally with its own error flow.
+     * @param string $flowId The ID of the sub-flow to execute.
+     * @param ?string $errorFlowId The ID of the error sub-flow (optional).
+     * @return ActionResult The result of the sub-flow execution.
+     */
+    public function executeSubFlow(string $flowId, ?string $errorFlowId = null): ActionResult {
+        $flow = $this->context->formConfig->getFlowById($flowId);
+        $errorFlow = null;
+        if ($errorFlowId !== null && $errorFlowId !== '') {
+            $errorFlow = $this->context->formConfig->getFlowById($errorFlowId);
+        }
+
+        if ($flow === null) {
+            $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Deferred sub-flow with id '{$flowId}' not found.");
+            return new ActionResult(ResultStatus::ERROR, null, "Deferred sub-flow with id '{$flowId}' not found.");
+        }
+
+        return $this->executeFlow($flow, $errorFlow);
     }
 }
