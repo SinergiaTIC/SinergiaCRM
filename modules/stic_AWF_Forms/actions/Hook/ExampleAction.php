@@ -376,7 +376,7 @@ class ExampleAction extends HookActionDefinition
         $newBean->description = "Option chosen: " . $selectValue;
         
         // We link it to the selected block (if it has a saved bean)
-        $parentRef = $block->dataBlock->getBeanReference();
+        $parentRef = $block->getInstanceBeanReference();
         if ($parentRef) {
             $newBean->parent_type = $parentRef->moduleName;
             $newBean->parent_id = $parentRef->beanId;
