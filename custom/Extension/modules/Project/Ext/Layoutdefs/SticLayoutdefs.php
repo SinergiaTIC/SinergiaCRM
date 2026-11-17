@@ -213,6 +213,73 @@ $layout_defs["Project"]["subpanel_setup"]['stic_centers_project'] = array(
         ),
     ),
 );
+// Resources subpanel
+$layout_defs["Project"]["subpanel_setup"]['stic_resources_project'] = array(
+    'order' => 100,
+    'module' => 'stic_Resources',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'name',
+    'title_key' => 'LBL_STIC_RESOURCES_PROJECT_FROM_STIC_RESOURCES_TITLE',
+    'get_subpanel_data' => 'stic_resources_project',
+    'top_buttons' => array(
+        0 =>
+        array (
+          'widget_class' => 'SubPanelTopButtonQuickCreate',
+        ),
+        1 =>
+        array (
+          'widget_class' => 'SubPanelTopSelectButton',
+          'mode' => 'MultiSelect',
+        ),
+    ),
+);
+
+// Job offers subpanel
+$layout_defs["Project"]["subpanel_setup"]['project_stic_job_offers'] = array (
+  'order' => 100,
+  'module' => 'stic_Job_Offers',
+  'subpanel_name' => 'default',
+  'sort_order' => 'asc',
+  'sort_by' => 'id',
+  'title_key' => 'LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE',
+  'get_subpanel_data' => 'project_stic_job_offers',
+  'top_buttons' => 
+  array (
+    0 => 
+    array (
+      'widget_class' => 'SubPanelTopButtonQuickCreate',
+    ),
+    1 => 
+    array (
+      'widget_class' => 'SubPanelTopSelectButton',
+      'mode' => 'MultiSelect',
+    ),
+  ),
+);
+
+// Assesment subpanel
+$layout_defs["Project"]["subpanel_setup"]['project_stic_assessments'] = array (
+  'order' => 100,
+  'module' => 'stic_Assessments',
+  'subpanel_name' => 'default',
+  'sort_order' => 'asc',
+  'sort_by' => 'id',
+  'title_key' => 'LBL_PROJECT_STIC_ASSESSMENTS_FROM_STIC_ASSESSMENTS_TITLE',
+  'get_subpanel_data' => 'project_stic_assessments',
+  'top_buttons' => 
+  array (
+    0 => 
+    array (
+      'widget_class' => 'SubPanelTopButtonQuickCreate',
+    ),
+    1 => 
+    array (
+      'widget_class' => 'SubPanelTopSelectButton',
+      'mode' => 'MultiSelect',
+    ),
+  ),
+);
 
 // Subpanels default sorting
 $layout_defs['Project']['subpanel_setup']['activities']['sort_order'] = 'asc';

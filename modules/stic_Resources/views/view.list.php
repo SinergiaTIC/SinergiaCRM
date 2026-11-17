@@ -45,17 +45,32 @@ class stic_ResourcesViewList extends ViewList
 
     public function display()
     {
+        $return_action = $_REQUEST['action'] ?? '';
+
         parent::display();
 
         SticViews::display($this);
         echo getVersionedScript("modules/stic_Resources/Utils.js");
 
+        // Sets the custom where for mass update to discrimate between places and resources. This is needed because mass update does not process the custom where added in listview and updates all the records instead of only places or non-places.
+        echo "<script>
+            $(document).ready(function(){
+                var massUpdateForm = $('#MassUpdate');
+                $(\"#MassUpdate [name='return_action']\").val('{$return_action}');
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'custom_where',
+                    value: ' AND (stic_resources.type <> \"place\" OR stic_resources.type IS NULL)'
+                }).appendTo(massUpdateForm);
+
+            });
+        </script>";
+
         // Write here you custom code
     }
     function listViewProcess() {
         $this->processSearchForm();
-        $this->params['custom_where'] = ' AND stic_resources.type <> "place" ';
-      
+        $this->params['custom_where'] = ' AND (stic_resources.type <> "place" OR stic_resources.type IS NULL)';
         if (empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false) {
             $this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params);
             echo $this->lv->display();

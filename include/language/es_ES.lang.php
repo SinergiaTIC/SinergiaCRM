@@ -58,7 +58,7 @@ $app_list_strings = array(
         'Cases' => 'Casos',
         'Notes' => 'Notas',
         'Calls' => 'Llamadas',
-        'TemplateSectionLine' => 'Línea de sección de plantilla',
+        'TemplateSectionLine' => 'Secciones de plantilla',
         'Calls_Reschedule' => 'Reprogramación de llamadas',
         'Emails' => 'Correos',
         'EAPM' => 'EAPM',
@@ -1117,6 +1117,12 @@ $app_list_strings = array(
         'not_equal' => 'Distinto de',
         'greater_than' => 'Después de',
         'less_than' => 'Antes de',
+        // STIC Custom 20260825 PCS - Add today, yesterday and tomorrow to date range search options
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1395
+        'today' => 'Hoy',
+        'yesterday' => 'Ayer',
+        'tomorrow' => 'Mañana',
+        // END STIC Custom
         'last_7_days' => 'Últimos 7 días',
         'next_7_days' => 'Próximos 7 días',
         'last_30_days' => 'Últimos 30 días',
@@ -1888,7 +1894,7 @@ $app_strings = array(
     'NTC_DELETE_SELECTED_RECORDS' => ' registro(s) seleccionado(s)?',
     'NTC_LOGIN_MESSAGE' => 'Por favor, introduzca su nombre de usuario y contraseña.',
     'NTC_NO_ITEMS_DISPLAY' => 'ninguno',
-    'NTC_REMOVE_CONFIRMATION' => '¿Está seguro de que desea quitar esta relación?',
+    'NTC_REMOVE_CONFIRMATION' => '¿Seguro que desea desvincular los registros? Tenga en cuenta que sólo se borrará la relación entre ellos pero los registros seguirán existiendo en los módulos respectivos y alguno de ellos podría quedar huérfano de algún valor necesario. Si lo que realmente necesita es eliminar completamente un registro, cancele esta acción, abra el registro en su vista de detalle y bórrelo mediante la acción correspondiente del menú de acciones.',
     'NTC_REQUIRED' => 'Indica un campo requerido',
     'NTC_TIME_FORMAT' => '(24:00)',
     'NTC_WELCOME' => 'Bienvenido',

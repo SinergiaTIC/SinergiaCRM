@@ -611,8 +611,8 @@ $sugar_config = array(
     
     // STIC Custom 20231124 JBL - SemVer in SinergiaCRM
     // STIC#1319
-    'sinergiacrm_version' => '2.3.0', 
-    'js_custom_version' => 20,
+    'sinergiacrm_version' => '2.13.1', 
+    'js_custom_version' => 45,
     'stic_show_update_alert' => 1,
     // END STIC
 
@@ -644,6 +644,12 @@ $sugar_config = array(
     'stic_remote_monitor_url' => '', 
     'stic_remote_monitor_duration_threshold' => null,
     'stic_remote_monitor_memory_threshold' => null,
+    'stic_remote_monitor_curlopt_connecttimeout' => null,
+    'stic_remote_monitor_curlopt_timeout' => null,
+    // END STIC
+
+    // STIC-Custom 20251222 AAM - Adding maintenance mode
+    'stic_maintenance_mode_enabled' => false,
     // END STIC
 
     // STIC Custom 20241016 ART - Tracker prune interval for the Scheduler
@@ -668,6 +674,21 @@ $sugar_config = array(
                 'redirectUri' => '',
                 'scopes' => '',
             ),
-    )
+    ),
+    // STIC-Custom XJO 20260707 - Update news dashlet URL
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1305
+    'stic_news_dashlet_url' => array(
+        'es_ES' => 'https://www.sinergiatic.org/es/sinergiatic-news/',
+        'ca_ES' => 'https://www.sinergiatic.org/sinergiatic-news/',
+        'en_us' => 'https://www.sinergiatic.org/sinergiatic-news/',
+    ),
+    // END STIC-Custom
+
+    // STIC-Custom 20260427 JBL - Config for redirection method in web forms (Lead or Person capture) (POST or GET)
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1079
+    'stic_webFormsRedirectMethod' => 'POST', // Possible values: 'POST' or 'GET'
+    // STIC-Custom 20260424 AAM - Async ListView count
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
+    'stic_async_list_count' => false, 
     // END STIC-Custom
 );

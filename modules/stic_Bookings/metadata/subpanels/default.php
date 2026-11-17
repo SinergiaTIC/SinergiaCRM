@@ -108,5 +108,8 @@ $subpanel_layout = array(
             'width' => '5%',
             'default' => true,
         ),
+        'all_day' => array(
+            'usage' => 'query_only',
+        ),
     ),
 );

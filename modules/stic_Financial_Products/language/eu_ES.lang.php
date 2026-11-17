@@ -1,0 +1,83 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+$mod_strings = array (
+  'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
+  'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
+  'LBL_ASSIGNED_TO' => 'Asignado a',
+  'LBL_LIST_ASSIGNED_USER' => 'Asignado a',
+  'LBL_LIST_ASSIGNED_TO_NAME' => 'Asignado a',
+  'LBL_SECURITYGROUPS' => 'Grupos de Seguridad',
+  'LBL_SECURITYGROUPS_SUBPANEL_TITLE' => 'Grupos de Seguridad',
+  'LBL_ID' => 'ID',
+  'LBL_DATE_ENTERED' => 'Fecha de Creación',
+  'LBL_DATE_MODIFIED' => 'Fecha de Modificación',
+  'LBL_MODIFIED' => 'Modificado por',
+  'LBL_MODIFIED_NAME' => 'Modificado por',
+  'LBL_MODIFIED_USER' => 'Modificado por',
+  'LBL_MODIFIED_ID' => 'Modificado por (ID)',
+  'LBL_CREATED' => 'Creado por',
+  'LBL_CREATED_USER' => 'Creado por',
+  'LBL_CREATED_ID' => 'Creado por (ID)',
+  'LBL_DESCRIPTION' => 'Descripción',
+  'LBL_DELETED' => 'Eliminado',
+  'LBL_NAME' => 'Nombre',
+  'LBL_LIST_NAME' => 'Nombre',
+  'LBL_EDIT_BUTTON' => 'Editar',
+  'LBL_QUICKEDIT_BUTTON' => '↙ Editar',
+  'LBL_REMOVE' => 'Quitar',
+  'LBL_ASCENDING' => 'Ascendente',
+  'LBL_DESCENDING' => 'Descendente',
+  'LBL_DEFAULT_PANEL' => 'Datos generales',
+  'LBL_LIST_FORM_TITLE' => 'Lista de Productos financieros',
+  'LBL_MODULE_NAME' => 'Productos financieros',
+  'LBL_MODULE_TITLE' => 'Productos financieros',
+  'LBL_HOMEPAGE_TITLE' => 'Mis Productos financieros',
+  'LNK_NEW_RECORD' => 'Crear Producto financiero',
+  'LNK_LIST' => 'Ver Productos financieros',
+  'LNK_IMPORT_STIC_FINANCIAL_PRODUCTS' => 'Importar Productos financieros',
+  'LBL_SEARCH_FORM_TITLE' => 'Buscar Productos financieros',
+  'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
+  'LBL_ACTIVITIES_SUBPANEL_TITLE' => 'Actividades',
+  'LBL_STIC_FINANCIAL_PRODUCTS_SUBPANEL_TITLE' => 'Productos financieros',
+  'LBL_NEW_FORM_TITLE' => 'Nuevo Producto financiero',
+  'LBL_ACTIVE' => 'Activo',
+  'LBL_IBAN' => 'IBAN',
+  'LBL_START_DATE' => 'Fecha de alta',
+  'LBL_INITIAL_BALANCE' => 'Saldo inicial',
+  'LBL_CURRENT_BALANCE' => 'Saldo actual',
+  'LBL_BALANCE_ERROR' => 'Error de saldo',
+  'LBL_TYPE' => 'Tipo',
+  'LBL_ENTITY' => 'Entidad financiera',
+  'LBL_HOLDERS' => 'Titulares',
+  'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
+  'LBL_INITIAL_BALANCE_INFO' => 'El saldo inicial se puede editar en tanto no haya transacciones asociadas al producto financiero. En caso de que la primera transacción asociada llegue mediante una importación de un fichero Norma 43, el valor se establecerá automáticamente a partir de la información del propio fichero.', 
+  'LBL_CURRENT_BALANCE_INFO' => 'El saldo del producto financiero se actualiza automáticamente cuando hay cambios en las transacciones relacionadas, ya sea porque se añaden nuevas, porque se eliminan o porque cambia su importe.',
+  'LBL_BALANCE_ERROR_INFO' => 'Este campo indica si el saldo obtenido de la importación no coincide con la suma del saldo inicial más todas las transacciones vinculadas.', 
+  'LBL_WARDED_PERSON_INFO' => 'Persona de la que se realiza la gestión de las cuentas bancarias y de las transacciones financieras.',
+  'LBL_ENTITY_INFO' => 'La entidad financiera se autocompletará a partir del IBAN introducido. Si el IBAN no es obligatorio, la entidad financiera se podrá introducir manualmente.',
+  'LBL_STIC_TRANSACTIONS_STIC_FINANCIAL_PRODUCTS_FROM_STIC_TRANSACTIONS_TITLE' => 'Transacciones',
+  'LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_CONTACTS_TITLE' => 'Persona asistida',
+  'LBL_INVALID_IBAN_ERROR' => 'El IBAN introducido no es válido.',
+  'LBL_IBAN_REQUIRED' => 'El IBAN es obligatorio para este tipo de producto financiero.',
+);

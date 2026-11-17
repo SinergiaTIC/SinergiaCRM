@@ -84,6 +84,7 @@ $mod_strings = array(
     'LBL_STIC_FOLLOWUPS_STIC_REGISTRATIONS_FROM_STIC_REGISTRATIONS_TITLE' => 'Registration',
     'LBL_STIC_GOALS_STIC_FOLLOWUPS_FROM_STIC_GOALS_TITLE' => 'Goals',
     'LBL_STIC_FAMILIES_STIC_FOLLOWUPS_FROM_STIC_FAMILIES_TITLE' => 'Family',
+    'LBL_STIC_ASSETS_STIC_FOLLOWUPS_FROM_STIC_ASSETS_TITLE' => 'Asset',
     'LBL_MUST_RELATE_TO_A_FAMILY_OR_A_CONTACT' => 'You must indicate a person or a family.',
     'LBL_COLOR_INFO' => 'The color with which the follow up will be displayed in the Activities Calendar.',
 );

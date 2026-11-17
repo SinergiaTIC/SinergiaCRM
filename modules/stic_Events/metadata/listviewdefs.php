@@ -222,6 +222,20 @@ array(
         'width' => '10%',
         'default' => false,
     ),
+    'VOLUNTEER_MODE' => 
+    array (
+        'type' => 'enum',
+        'label' => 'LBL_VOLUNTEER_MODE',
+        'width' => '10%',
+        'default' => false,
+    ),
+    'TARGET_AUDIENCE' => 
+    array (
+        'type' => 'enum',
+        'label' => 'LBL_TARGET_AUDIENCE',
+        'width' => '10%',
+        'default' => false,
+    ),        
     'DESCRIPTION' => array(
         'type' => 'text',
         'label' => 'LBL_DESCRIPTION',

@@ -33,17 +33,45 @@ $mod_strings['LBL_MODIFIED_NAME'] = 'Modificado por';
 $mod_strings['LBL_MODIFIED_USER'] = 'Modificado por';
 $mod_strings['LBL_MODIFIED_ID'] = 'Modificado por (ID)';
 $mod_strings['LBL_STIC_PROSPECT_LISTS_SUBPANEL_TITLE'] = 'Listas de Público Objetivo';
+
+// SinergiaCRM terminology
+$mod_strings['LBL_QUICK_ACCOUNT'] = 'Nueva Organización';
+$mod_strings['LBL_QUICK_CONTACT'] = 'Nueva Personas';
+$mod_strings['LBL_QUICK_LEAD'] = 'Nuevo Interesado';
+$mod_strings['LBL_QUICK_OPPORTUNITY'] = 'Nueva Subvención';
+$mod_strings['LBL_ACCOUNTS_SUBPANEL_TITLE'] = 'Organizaciones';
+$mod_strings['LBL_CONTACTS_SUBPANEL_TITLE'] = 'Personas';
+$mod_strings['LBL_OPPORTUNITY_SUBPANEL_TITLE'] = 'Subvenciones';
+$mod_strings['LBL_ACCOUNT_NAME'] = 'Organización';
+$mod_strings['LBL_CONTACT_NAME'] = 'Persona';
+$mod_strings['LBL_EMAILS_ACCOUNTS_REL'] = 'Emails:Organizaciones';
+$mod_strings['LBL_EMAILS_CONTACTS_REL'] = 'Emails:Personas';
+$mod_strings['LBL_EMAILS_LEADS_REL'] = 'Emails:Interesados';
+$mod_strings['LBL_EMAILS_OPPORTUNITIES_REL'] = 'Emails:Subvenciones';
+$mod_strings['LBL_LIST_CONTACT'] = 'Personas';
+$mod_strings['LBL_LIST_LEAD'] = 'Interesados';
+$mod_strings['LBL_CREATE_CONTACT'] = 'Nueva Persona';
+$mod_strings['LBL_CREATE_LEAD'] = 'Nuevo Interesado';
+$mod_strings['LBL_CREATE_CONTACTS'] = 'Crear Persona' /* for 508 compliance fix */;
+$mod_strings['LBL_CREATE_LEADS'] = 'Crear Interesado' /* for 508 compliance fix */;
+$mod_strings['LBL_CURRENCY_TEXT'] = 'Seleccione la moneda que será mostrada por defecto cuando cree nuevos registros. Esta será también la moneda mostrada en las columnas de cantidad en la vista de lista de Subvenciones.';     
+
+// Incorpora
 $mod_strings['LBL_INC_REFERENCE_GROUP'] = 'Grupo de referencia (Incorpora)';
 $mod_strings['LBL_INC_REFERENCE_ENTITY'] = 'Entidad de referencia (Incorpora)';
 $mod_strings['LBL_INC_REFERENCE_OFFICER'] = 'Técnico de referencia (Incorpora)';
 $mod_strings['LBL_INC_INCORPORA_USER'] = 'Identificador (Incorpora)';
 $mod_strings['LBL_INCORPORA_CONNECTION_PARAMS'] = 'Parámetros de conexión con Incorpora';
+
+// Work Calendar
 $mod_strings['LBL_STIC_WORK_CALENDAR'] = 'Calendario laboral';
 $mod_strings['LBL_STIC_WORK_CALENDAR_INFO'] = 'Indica si la funcionalidad de Calendario laboral está activada para el usuario.';
 $mod_strings['LBL_STIC_CLOCK'] = 'Registro horario';
 $mod_strings['LBL_STIC_CLOCK_INFO'] = 'Indica si la funcionalidad de Registro horario está activada para el usuario.';
+
+// SinergiaDA
 $mod_strings['LBL_SDA_ALLOWED'] = 'Acceso a SinergiaDA';
-$mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Indica si el usuario dispone de acceso a Sinergia Data Analytics';
+$mod_strings['LBL_SDA_ALLOWED_INFO'] = 'Indica el nivel de acceso del usuario a Sinergia Data Analytics.<ul><li><b>Sin acceso:</b> el usuario no podrá acceder.</li><li><b>Acceso completo:</b> el usuario podrá crear, modificar y ejecutar informes.</li><li><b>Acceso de solo lectura:</b> el usuario podrá ejecutar informes y ver sus resultados pero no podrá crear otros nuevos ni modificar los existentes. Esta opción solo aplica en usuarios normales, los administradores con acceso a SinergiaDA siempre tendrán acceso completo.</li></ul>';
 
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = 'Lista de direcciones de correo';
@@ -55,6 +83,8 @@ $mod_strings['LBL_PERIODIC_WORK_CALENDAR_BUTTON'] = 'Generar Calendario laboral'
 $mod_strings['LBL_OAUTH_AUTH_LOGIN_CONTAINER'] = '<h3>Inicio de sesión alternativo</h3>';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_1'] = 'La dirección de correo electrónico ';
 $mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_EMAIL_2'] = ' no pertenece a ningún usuario de SinergiaCRM. Si considera que se trata de un error, contacte con un administrador.';
+$mod_strings['LBL_OAUTH_AUTH_ERR_INACTIVE_USER'] = 'El usuario asociado a esta dirección de correo electrónico está inactivo. Si considera que se trata de un error, contacte con un administrador.';
+$mod_strings['LBL_OAUTH_AUTH_ERR_INVALID_USER_TYPE'] = 'El usuario asociado a esta dirección de correo electrónico no puede iniciar sesión mediante autenticación externa. Si considera que se trata de un error, contacte con un administrador.';
 
 // Autenticación OAuth - Google
 $mod_strings['LBL_OAUTH_AUTH_GOOGLE_AUTHENTICATION_TEXT'] = 'Iniciar sesión con Google';
@@ -79,3 +109,26 @@ $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI'] = 'URI de redirección';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_REDIRECT_URI_HELP'] = "URI de redirección de la aplicación registrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow' target='_blank'>Más información</a>.";
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES'] = 'Ámbitos';
 $mod_strings['LBL_OAUTH_AUTH_MICROSOFT_SCOPES_HELP'] = "Ámbitos de la aplicación registrada en Microsoft Azure Portal. <a href='https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent' target='_blank'>Más información</a>.";
+
+// Emulación de usuarios - Usuario emulador
+$mod_strings['LBL_IMPERSONATE_USER_BUTTON'] = 'Emular usuario';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_TITLE'] = 'Emulación de usuario';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_DESCRIPTION'] = '¡Atención! Está emulando al usuario: ';
+$mod_strings['LBL_IMPERSONATE_MESSAGE_STOP_DESCRIPTION'] = '<br>Para volver a su propio usuario haga clic <a href="index.php?module=Users&action=stopImpersonation" style="color: #fff; text-decoration: underline;">aquí</a>.';
+$mod_strings['LBL_IMPERSONATE_ORIGINAL_USER'] = 'Usuario original';
+$mod_strings['LBL_IMPERSONATE_TARGET_USER'] = 'Usuario emulado';
+$mod_strings['LBL_IMPERSONATE_STOP_BUTTON'] = 'Finalizar emulación';
+
+// Emulación de usuarios - Usuario emulado
+$mod_strings['LBL_IMPERSONATION_ALERT_HEADER'] = 'Emulación de usuario';
+$mod_strings['LBL_IMPERSONATION_START_ALERT_DESCRIPTION_TITLE'] = 'Un administrador está emulando su usuario.';
+$mod_strings['LBL_IMPERSONATION_STOP_ALERT_DESCRIPTION_TITLE'] = 'Un administrador ha finalizado la emulación de su usuario.';
+$mod_strings['LBL_IMPERSONATION_ALERT_USER'] = 'Usuario emulador: ';
+
+// Emulación de usuarios - Monitorización
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_1'] = 'Emulación del usuario ';
+$mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' con ID ';
+
+// Modelo 182
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Emisión del Modelo 182';
+$mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = 'Indica para qué organizaciones podrá el usuario generar el Modelo 182. La lista se genera dinámicamente a partir de los <a href="index.php?module=stic_Settings" target="_blank">parámetos de configuración</a>.';

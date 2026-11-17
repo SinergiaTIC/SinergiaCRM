@@ -85,5 +85,23 @@ $dashletData['stic_SkillsDashlet']['columns'] = array(
         'name' => 'assigned_user_name',
         'default' => false,
     ),
-
+    'certified_skill' => array(
+        'label' => 'LBL_CERTIFIED_SKILL',
+        'width' => '10%',
+        'default' => false,
+        'name' => 'certified_skill',
+    ),    
+    'evaluation_date' => array(
+        'label' => 'LBL_EVALUATION_DATE',
+        'width' => '10%',
+        'default' => false,
+        'name' => 'evaluation_date',
+    ),
+    'evaluation_stage' => array(
+        'studio' => 'visible',
+        'label' => 'LBL_EVALUATION_STAGE',
+        'width' => '10%',
+        'default' => false,
+        'name' => 'evaluation_stage',
+    ),
 );

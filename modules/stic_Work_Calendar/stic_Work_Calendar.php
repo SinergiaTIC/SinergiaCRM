@@ -75,15 +75,17 @@ class stic_Work_Calendar extends Basic
     public function save($check_notify = true)
     {
         global $app_list_strings, $current_user, $timedate;
-        if ($_REQUEST["action"] && $_REQUEST["action"] != "saveHTMLField") // Inline Edit
+        // $_REQUEST['action'] is not set in API method calls and "saveHTMLField" is the value for inline editing
+        if (!isset($_REQUEST['action']) || $_REQUEST["action"] != "saveHTMLField") 
         {
             $assignedUser = BeanFactory::getBean('Users', $this->assigned_user_id);
             $typeLabel = $app_list_strings['stic_work_calendar_types_list'][$this->type];
             $startDateInUTC = $timedate->fromDbFormat($this->start_date, TimeDate::DB_DATETIME_FORMAT);
             $startDateInUserFormat = clone $startDateInUTC;
-            if ($_REQUEST["action"] && $_REQUEST["action"] != "Save") // MassUpdate, API, Import..
+            $disableDateFormat = $GLOBALS['disable_date_format'];
+            if (!isset($_REQUEST['action']) || $_REQUEST["action"] != "Save")
             {
-                // Disable disable date_format so that $timedate object calculates start and end dates in user format when the action does not come from the user interface
+                // Disable disable_date_format so that $timedate object calculates start and end dates in user format when the action does not come from the edit form in user interface: MassUpdate, API, Import..
                 $GLOBALS['disable_date_format'] = false;
                 $startDateInUserFormat = $timedate->asUser($startDateInUserFormat, $current_user);
             } else {
@@ -124,10 +126,10 @@ class stic_Work_Calendar extends Basic
                 $this->name = $assignedUser->name . " - " . $typeLabel . " - " . substr($startDateInUserFormat, 0, 10);       
             }
 
-            if ($_REQUEST["action"] != "Save" && $_REQUEST["action"] != "runMassUpdateDates") // MassUpdate, API, Import..
+            if (!isset($_REQUEST['action']) || $_REQUEST["action"] != "Save") // MassUpdate, API, Import..
             {
-                // Reactivate disable date_format to work with the rest of the date type fields
-                $GLOBALS['disable_date_format'] = true;
+                // Restore the previous value of the disable_date_format
+                $GLOBALS['disable_date_format'] = $disableDateFormat;
             }
 
             // Set duration field

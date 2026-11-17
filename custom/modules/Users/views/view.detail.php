@@ -38,6 +38,8 @@ class CustomUsersViewDetail extends UsersViewDetail
         SticViews::preDisplay($this);
 
         // Write here the SinergiaCRM code that must be executed for this module and view
+        include_once "modules/stic_Remittances/Utils.php";
+        stic_RemittancesUtils::fillDynamicListForIssuingOrganizations(true);
     }
 
     public function display()

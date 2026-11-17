@@ -64,6 +64,20 @@ class stic_Payments extends Basic
     public $c19_rejected_reason;
     public $payment_date;
 
+    public function __construct()
+    {
+        global $app_list_strings;
+        parent::__construct();
+        require_once 'modules/stic_Payments/Utils.php';
+
+        $newPaymentsList = stic_PaymentsUtils::generatePaymentTypeOptionsFromUser();
+
+        if (isset($app_list_strings['stic_payments_types_list']['aggregated_services'])) {
+            $newPaymentsList['aggregated_services'] = $app_list_strings['stic_payments_types_list']['aggregated_services'];
+        }
+        $app_list_strings['stic_payments_types_list'] = $newPaymentsList;
+    }
+
     public function bean_implements($interface)
     {
         switch ($interface) {
@@ -166,17 +180,18 @@ class stic_Payments extends Basic
     {
         include_once 'SticInclude/Utils.php';
 
-        // If parent payment commitment has changed...
-        // STIC Custom 20250416 JBL - Fix Warnings and TypeErrors
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/315
-        // if (!empty($this->stic_paymebfe2itments_ida) && (trim($this->stic_paymebfe2itments_ida) != trim($this->rel_fields_before_value['stic_paymebfe2itments_ida']))) {
         if (!empty($this->stic_paymebfe2itments_ida)) {
+            // Get actual Payment Commitment ID
             $payment_commitment_id = '';
-            if (is_string($this->stic_paymebfe2itments_ida) || 
-                (is_object($this->stic_paymebfe2itments_ida) && 
-                 method_exists($this->stic_paymebfe2itments_ida, '__toString'))) {
-                $payment_commitment_id = (string)$this->stic_paymebfe2itments_ida;
+            if (isset($this->stic_paymebfe2itments_ida)) {
+                if ($this->stic_paymebfe2itments_ida instanceof Link2) {
+                    $PCBean = SticUtils::getRelatedBeanObject($this, 'stic_payments_stic_payment_commitments');
+                } else {
+                    $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
+                }
+                $payment_commitment_id = $PCBean->id;
             }
+            // Get past Payment Commintment ID
             $payment_commitment_id_before = '';
             if (isset($this->rel_fields_before_value['stic_paymebfe2itments_ida'])) {
                 if (is_string($this->rel_fields_before_value['stic_paymebfe2itments_ida']) ||
@@ -185,10 +200,8 @@ class stic_Payments extends Basic
                     $payment_commitment_id_before = (string)$this->rel_fields_before_value['stic_paymebfe2itments_ida'];
                 }
             }
+            // If parent Payment Commitment has changed...
             if (trim($payment_commitment_id) != trim($payment_commitment_id_before)) {
-        // END STIC Custom
-                // Get new parent payment commitment bean
-                $PCBean = BeanFactory::getBean('stic_Payment_Commitments', $this->stic_paymebfe2itments_ida);
                 // Get payment commmitment related contact (usual case)
                 $contactId = SticUtils::getRelatedBeanObject($PCBean, 'stic_payment_commitments_contacts')->id ?? null; ; 
                 if (!empty($contactId)) {

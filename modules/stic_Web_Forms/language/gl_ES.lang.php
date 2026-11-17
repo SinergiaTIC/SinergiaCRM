@@ -229,5 +229,5 @@ $mod_strings = array(
     'LBL_BIZUM_ERROR_9677' => 'Bizum. Saldo dispoñible insuficiente.',
     'LBL_BIZUM_ERROR_9966' => 'Bizum devolveu un KO na autorización.',
     'LBL_FIRST_PAYMENT_DATE_IS_BEFORE_TODAY' => 'A data do primeiro pago non pode ser anterior a día de hoxe.',
-    'LBL_RECAPTCHA_ERROR' => 'Erro na validación recaptcha ao enviar o formulario. Por favor contacte co administrador.',        
+    'LBL_RECAPTCHA_ERROR' => 'Erro na validación recaptcha ao enviar o formulario. Por favor contacte co administrador.',    
 );

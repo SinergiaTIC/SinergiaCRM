@@ -5,7 +5,7 @@ $popupMeta = array(
     'orderBy' => 'templatesectionline.name',
     'whereClauses' => array(
   'name' => 'templatesectionline.name',
-  'grp' => 'templatesectionline.grp',
+  // 'grp' => 'templatesectionline.grp',
   'description' => 'templatesectionline.description',
 ),
     'searchInputs' => array(
@@ -22,13 +22,13 @@ $popupMeta = array(
     'width' => '10%',
     'name' => 'name',
   ),
-  'grp' =>
-  array(
-    'type' => 'varchar',
-    'label' => 'LBL_GRP',
-    'width' => '10%',
-    'name' => 'grp',
-  ),
+  // 'grp' =>
+  // array(
+  //   'type' => 'varchar',
+  //   'label' => 'LBL_GRP',
+  //   'width' => '10%',
+  //   'name' => 'grp',
+  // ),
   'description' =>
   array(
     'type' => 'text',
@@ -47,13 +47,13 @@ $popupMeta = array(
     'width' => '10%',
     'default' => true,
   ),
-  'GRP' =>
-  array(
-    'type' => 'varchar',
-    'label' => 'LBL_GRP',
-    'width' => '10%',
-    'default' => true,
-  ),
+  // 'GRP' =>
+  // array(
+  //   'type' => 'varchar',
+  //   'label' => 'LBL_GRP',
+  //   'width' => '10%',
+  //   'default' => true,
+  // ),
   'DESCRIPTION' =>
   array(
     'type' => 'text',

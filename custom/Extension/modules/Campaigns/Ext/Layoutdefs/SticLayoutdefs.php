@@ -58,3 +58,28 @@ $layout_defs['Campaigns']['subpanel_setup']['emailmarketing']['sort_by'] = 'date
 // Hide SinergiaCRM history subpanel because there is a bug displaying it
 // STIC#624
 unset($layout_defs["Campaigns"]["subpanel_setup"]['history']);
+
+
+
+$layout_defs["Campaigns"]["subpanel_setup"]['campaigns_stic_message_marketing'] = array (
+    'order' => 100,
+    'module' => 'stic_Message_Marketing',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'id',
+    'title_key' => 'LBL_MESSAGE_MARKETING_SUBPANEL_TITLE',
+    'get_subpanel_data' => 'campaigns_stic_message_marketing',
+    'show_SubPanelTopButtonListView' => false,
+    'top_buttons' => 
+    array (
+      0 => 
+      array (
+        'widget_class' => 'SubPanelTopButtonQuickCreate',
+      ),
+      // 1 => 
+      // array (
+      //   'widget_class' => 'SubPanelTopSelectButton',
+      //   'mode' => 'MultiSelect',
+      // ),
+    ),
+);

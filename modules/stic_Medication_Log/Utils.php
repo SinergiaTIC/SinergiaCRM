@@ -27,7 +27,6 @@ class stic_Medication_LogUtils
      * createLogs Creates medication logs according to the parameters provided
      *
      * @param String $date String in Y-m-d format '2019-05-05' Optional, default null (apply current_date)
-     * @param String $prescriptionId Optional, default null
      * @return void
      */
     public static function createLogs($date = null)
@@ -49,7 +48,7 @@ class stic_Medication_LogUtils
 
         $sql =
             "select
-                concat(con.first_name, ' ', con.last_name, ' - ', med.name, ' - ', date_format(curdate(), '%d/%m/%Y'), ' - ') as name,
+                concat(ifnull(concat(con.first_name, ' '), ''), con.last_name, ' - ', med.name, ' - ',  date_format('$date', '%d/%m/%Y'), ' - ') as name,
                 con.id as contactId,
                 pre.id as prescriptionId,
                 med.name as medicamento,
@@ -71,7 +70,7 @@ class stic_Medication_LogUtils
                 (
                 select mlpre.stic_medication_log_stic_prescriptionstic_prescription_ida as prescriptionId, concat('^', GROUP_CONCAT(ml.schedule separator '^,^'), '^') as schedule
                 from stic_medication_log_stic_prescription_c mlpre
-                join stic_medication_log ml on ml.id = mlpre.stic_medication_log_stic_prescriptionstic_medication_log_idb and ml.deleted = 0 and ml.intake_date = curdate()
+                join stic_medication_log ml on ml.id = mlpre.stic_medication_log_stic_prescriptionstic_medication_log_idb and ml.deleted = 0 and ml.intake_date = '$date'
                 group by prescriptionId
                 ) existingLog on existingLog.prescriptionId = pre.id
             where
@@ -80,11 +79,11 @@ class stic_Medication_LogUtils
                 and precon.deleted = 0
                 and med.deleted = 0
                 and con.deleted = 0
-                and pre.start_date <= CURRENT_DATE()
+                and pre.start_date <= '$date'
                 and (pre.end_date is null
-                    or pre.end_date > CURRENT_DATE())
+                    or pre.end_date > '$date')
                 and pre.frequency = 'daily'
-                and (pre.skip_intake not like concat('%', mod(WEEKDAY(CURRENT_DATE())+ 1, 7), '%') or pre.skip_intake is null)
+                and (pre.skip_intake not like concat('%', mod(WEEKDAY('$date')+ 1, 7), '%') or pre.skip_intake is null)
                 and (pre.dont_create_logs is null or pre.dont_create_logs <> 1)
             ";
 

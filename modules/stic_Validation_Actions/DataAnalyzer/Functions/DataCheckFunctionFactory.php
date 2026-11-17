@@ -92,7 +92,6 @@ class DataCheckFunctionFactory {
 
             // We build the list of functions from the union of the two arrays
             self::$functionList = array_merge($defaultFuncs, $customFuncs);
-            self::$functionList = $defaultFuncs;
         }
 
         return self::$functionList;

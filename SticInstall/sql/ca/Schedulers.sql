@@ -13,6 +13,7 @@ INSERT INTO schedulers (id, deleted, date_entered, date_modified, created_by, mo
 ('4d0ac999-2bcb-cc4f-f65d-6192a21c4aff', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Validació i actualització mensual de dades', 'function::validationActions', NOW(), NULL, '*::3::1::*::*', NULL, NULL, NULL, 'Active', 0),
 ('ca564b47-9a06-987d-a115-6442356ca768', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Creació de registres de medicació', 'function::createMedicationLogs', NOW(), NULL, '*::1::*::*::*', NULL, NULL, NULL, 'Active', 0),
 ('c5f7d492-5a02-6fe1-1d6e-6540b28a4b21', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Reconstrucció de les fonts de dades de SinergiaDA', 'function::rebuildSDASources', NOW(), NULL, '*::2::*::*::*', NULL, NULL, NULL, 'Active', 0),
+('96c34b2d-d499-11ef-af33-0242ac120003', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Enviament de missatges a telèfons', 'function::sticSendPhoneMessages', NOW(), NULL, '*::9-21::*::*::*', NULL, NULL, NULL, 'Active', 0),
 ('56dca334-679c-266d-fd9a-660bcd6ed93e', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Validació i actualització setmanal de dades', 'function::validationActions', NOW(), NULL, '*::1::*::*::1', NULL, NULL, NULL, 'Active', 0);
 
 INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modified_user_id, created_by, description, deleted, assigned_user_id, last_execution, `function`, report_always, priority) VALUES
@@ -44,7 +45,8 @@ INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modi
 ('b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 'Ajuts - Càlcul de registre actiu/inactiu', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, 'b53a08c5-23dc-96b7-2b31-6582cf7dbebc', 0, 30),
 ('3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 'Registre horari - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '3b9f3cc9-3a16-8d5f-3822-660bc51215e0', 0, 90),
 ('7acc83f4-f72e-10d5-969c-660bcb36cb56', 'Registre horari - Revisió de les hores treballades durant la setmana anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '7acc83f4-f72e-10d5-969c-660bcb36cb56', 0, 95),
-('6eac6d58-ae3b-df60-261b-660e85c32b9a', 'Calendari laboral - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 0, 95);
+('6eac6d58-ae3b-df60-261b-660e85c32b9a', 'Calendari laboral - Revisió dels registres del dia anterior', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '6eac6d58-ae3b-df60-261b-660e85c32b9a', 0, 95),
+('02546e06-37d2-ffad-868b-685bc852ebdb', "Documents - Actualitzar l'estat de documents relacionats amb el voluntariat", NOW(), NOW(), '1', '1', NULL, 0, '1', NOW(), '02546e06-37d2-ffad-868b-685bc852ebdb', 0, 100);
 
 INSERT INTO stic_validation_actions_schedulers_c (id, date_modified, deleted, stic_validation_actions_schedulersstic_validation_actions_ida, stic_validation_actions_schedulersschedulers_idb) VALUES
 ('16085edd-15a4-e6df-c869-5b406a4611ed', NOW(), 0, 'f512af92-7518-4bbe-b583-5b43bc6223da', '7386c4b1-bcc2-4f6f-be88-7e2a2e5778b5'),

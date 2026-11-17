@@ -30,5 +30,10 @@ class CampaignsLogicHooks {
             include_once "custom/modules/Campaigns/SticUtils.php";
             CampaignsUtils::fillCampaignNotificationFields($bean);
         }
+        if ($bean->campaign_type == "NotifMsg") {
+            // Notifications need some non-db fields from related prospect_lists, email_marketing and email_templates
+            include_once "custom/modules/Campaigns/SticUtils.php";
+            CampaignsUtils::fillCampaignMessageNotificationFields($bean);
+        }
     }
 }

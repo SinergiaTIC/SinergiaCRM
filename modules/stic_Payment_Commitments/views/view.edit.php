@@ -47,6 +47,7 @@ class stic_Payment_CommitmentsViewEdit extends ViewEdit
 
     public function display()
     {
+        global $app_list_strings;
         parent::display();
 
         SticViews::display($this);
@@ -56,4 +57,5 @@ class stic_Payment_CommitmentsViewEdit extends ViewEdit
         echo getVersionedScript("modules/stic_Payment_Commitments/Utils.js");
     }
 
+    
 }

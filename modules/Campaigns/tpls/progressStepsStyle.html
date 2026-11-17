@@ -107,7 +107,11 @@
 
         var step;
 
-        if(campaignType == 'NewsLetter' || campaignType == 'Email' || campaignType == null) {
+        // STIC-Custom 20250708 MHP - Survey type campaigns can navigate through the wizard tabs once the campaign is created
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/714
+        // if(campaignType == 'NewsLetter' || campaignType == 'Email' || campaignType == null) {        
+        if(campaignType == 'NewsLetter' || campaignType == 'Email' || campaignType == 'Survey' || campaignType == null) {
+        // END STIC-Custom 
             if(step1Shows) {
                 if(typeof step3Shows == 'undefined') {
                     step = 1;

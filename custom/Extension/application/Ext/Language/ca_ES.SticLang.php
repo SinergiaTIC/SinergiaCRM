@@ -31,6 +31,13 @@ $app_strings['LBL_STIC_SINGULAR_VALIDATE_FIELDS_NOT_VISIBLE'] = "La validació d
 $app_strings['LBL_ADD_TO_PROSPECT_LIST_BUTTON_LABEL_ACCOUNTS_CONTACTS'] = 'Afegeix Organitzacions i Persones a una llista de públic objectiu';
 $app_strings['LBL_INCORPORA_BUTTON_TITTLE'] = 'Sincronització amb Incorpora';
 $app_strings['LBL_EMAIL_PDF_ACTION_BUTTON'] = 'Envia PDF per correu';
+$app_strings['LBL_WHATSAPP_CONVERSATION_BUTTON'] = 'Mostra la conversa de WhatsApp';
+$app_strings['LBL_ADD_TO_SIGNATURE_PROCESS'] = 'Afegeix al procés de firma';
+$app_strings['LBL_SELECT_SIGNATURE'] = 'Seleccioneu un procés de firma';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES'] = 'Mostra les firmes relacionades';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_TITLE'] = 'Firmes relacionades';
+$app_strings['LBL_SHOW_RELATED_SIGNATURES_INFO'] = 'Es mostren les firmes relacionades amb aquest registre del mòdul';
+$app_strings['LBL_NO_SIGNATURES_FOUND'] = "No s'han trobat firmes relacionades";
 $app_strings['LBL_IMPORT_VALIDATION'] = 'Valida la importació';
 $app_strings['LBL_ADDITIONAL_DETAILS_ERROR_GENERAL_TITLE'] = "S'ha produït un error";
 $app_strings['LBL_LIST_VIEW_SUBPANEL_BUTTON_TITLE'] = 'Mostra-ho a la vista de llista';
@@ -38,16 +45,27 @@ $app_strings['LBL_SINERGIACRM_NONPROFITIZED'] = 'Deslucrativitzat per SinergiaCR
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC1'] = 'SinergiaCRM ha estat desenvolupat per l\'Associació SinergiaTIC. El programari es proporciona TAL COM ÉS, sense cap garantia. Sota llicència AGPLv3. Per a més informació, visiteu el <a href="https://www.sinergiacrm.org">web de SinergiaCRM</a>.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC2'] = 'Aquest programa és programari lliure. Podeu redistribuir-lo i/o modificar-lo segons els termes de la Llicència Pública General Affero de GNU versió 3, publicada per la Free Software Foundation, incloent-hi qualsevol permís addicional indicat a la capçalera del codi font.';
 $app_strings['LBL_SINERGIACRM_NONPROFITIZED_DESC3'] = "Tots els noms d'altres empreses i productes esmentats poden ser marques registrades de les empreses amb les quals s'associen.";
+$app_strings['ERR_OPT_IN_RELATION_INCORRECT'] = 'Per autoritzar cal que el correu estigui relacionat amb una Organització/Persona/Interessat/Públic Objectiu';
+$app_strings['LBL_CONFIRM_OPT_IN_ONLY_FOR_PERSON'] = "Enviament de correu de confirmació d'autorització només per a Organitzacions/Persones/Interessats/Públic Objectiu";
+$app_strings['LBL_LIST_ACCOUNT_NAME'] = 'Organització';
 
 // Creació de registre horari via capçalera
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE'] = 'Es crearà un registre horari amb la informació següent:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Es tancarà el darrer registre horari obert avui:';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'amb la informació següent: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nom: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = "Data i hora d'inici: ";
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data i hora de finalització: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleat: ';
-$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentaris (opcional):';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_1'] = 'Crea un registre';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_CREATE_2'] = 'Es crearà un registre horari amb la informació següent';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_1'] = 'Tanca el registre';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_2'] = 'Es tancarà el darrer registre horari obert avui';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_UPDATE_3'] = 'amb la informació següent';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_NAME'] = 'Nom';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_START_DATE'] = "Data i hora d'inici";
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_END_DATE'] = 'Data i hora de finalització';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_EMPLOYEE'] = 'Empleat';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_QUESTION'] = 'Comentaris (opcional)';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_1'] = "Altres registres d'avui";
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_2'] = "Total d'hores treballades";
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_TODAY_RECORDS_3'] = 'No hi ha cap més registre.';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_INFO_RECORD_IN_PROGRESS'] = 'En curs';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_HOURS'] = 'hores';
+$app_strings['LBL_TIMETRACKER_POPUP_BOX_MINUTES'] = 'minuts';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_OK'] = 'Accepta';
 $app_strings['LBL_TIMETRACKER_POPUP_BOX_CANCEL'] = 'Cancel·la';
 
@@ -72,6 +90,7 @@ $app_strings['LBL_GROUPTAB_EXPLOITATION'] = 'Explotació';
 $app_strings['LBL_GROUPTAB_DC_PERSONALINFO'] = 'Informació personal';
 $app_strings['LBL_GROUPTAB_DC_WORKPLAN'] = 'Pla de treball';
 $app_strings['LBL_GROUPTAB_DC_MEDICATION'] = 'Medicació';
+$app_strings['LBL_GROUPTAB_FINANCIAL_MANAGEMENT'] = 'Finances de tercers';
 
 // Subtema propi de SinergiaCRM
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
@@ -80,17 +99,20 @@ $app_strings['LBL_SUBTHEME_OPTIONS_STIC'] = 'Stic';
 $app_strings['LBL_SUBTHEME_OPTIONS_STIC_CUSTOM'] = 'SticCustom';
 
 // Enllaços globals de SinergiaCRM
-$app_strings['LBL_STIC_FORUMS_LINK'] = 'Fòrums de SinergiaCRM';
-$app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki de SinergiaCRM';
-$app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos de SinergiaCRM';
+$app_strings['LBL_STIC_FORUMS_LINK'] = 'Fòrums';
+$app_strings['LBL_STIC_GUIA_LINK'] = 'GuIA';
+$app_strings['LBL_STIC_WIKI_LINK'] = 'Wiki';
+$app_strings['LBL_STIC_VIDEOS_LINK'] = 'Vídeos';
 $app_strings['LBL_STIC_SINERGIADA'] = 'SinergiaDA';
 
-// Missatges: accions subpanell
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_TITLE'] = 'Nou missatge';
-$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Nou missatge';
+// Missatges: accions en mòduls de destinataris
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_LABEL'] = 'Envia un missatge';
 $app_strings['LBL_CONFIRM_APPLY_MESSAGES_TEMPLATE_BODY'] = 'Aquesta operació esborrarà el contingut del missatge. Segur que voleu continuar?';
 $app_strings['LBL_TOO_MANY_RECORDS_SELECTED'] = "S'ha sobrepassat el límit de missatges que es poden enviar simultàniament.";
-$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Nou missatge';
+$app_strings['LBL_MASS_SENT_MESSAGE_BUTTON_TITTLE'] = 'Envia un missatge telefònic';
+$app_strings['LBL_NEW_NOTIFICATION'] = 'Nova notificació per correu';
+$app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nova notificació per missatge telefònic';
+$app_strings['LBL_SUBPANEL_NEW_MESSAGE_CONVERSATION_LABEL'] = 'Envia un missatge (conversa)';
 
 // Enviament massiu de correus
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = "L'enviament només s'aplicarà als registres de la pàgina actual. Per als enviaments massius es recomana fer servir el mòdul Campanyes.";
@@ -151,8 +173,26 @@ $app_list_strings['moduleList']['stic_Custom_View_Actions'] = 'Accions';
 $app_list_strings['moduleList']['stic_Custom_View_Customizations'] = 'Personalitzacions';
 $app_list_strings['moduleList']['stic_Custom_View_Conditions'] = 'Condicions';
 $app_list_strings['moduleList']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['moduleList']['stic_Message_Marketing'] = 'Enviaments de missatges';
+$app_list_strings['moduleList']['stic_MessagesMan'] = 'Cua de missatges';
 $app_list_strings['moduleList']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['moduleList']['stic_Places'] = 'Places';
+$app_list_strings['moduleList']['stic_Signature_Log'] = 'Registre de firmes';
+$app_list_strings['moduleList']['stic_Signatures'] = 'Firmes';
+$app_list_strings['moduleList']['stic_Signers'] = 'Firmants';
+$app_list_strings['moduleList']['stic_Transactions'] = 'Transaccions';
+$app_list_strings['moduleList']['stic_Financial_Products'] = 'Productes financers';
+$app_list_strings['moduleList']['stic_Assets'] = 'Actius';
+$app_list_strings['moduleList']['stic_AWF_Response_Details'] = 'Detalls de respostes a formularis';
+$app_list_strings['moduleList']['stic_AWF_Responses'] = 'Respostes a formularis';
+$app_list_strings['moduleList']['stic_AWF_Links'] = 'Enllaços de formularis';
+$app_list_strings['moduleList']['stic_AWF_Forms'] = 'Formularis Web Avançats';
+$app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Processos en espera de formularis';
+$app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Notificacions externes de formularis';
+$app_list_strings['moduleList']['stic_Conversations'] = 'Converses';
+$app_list_strings['moduleList']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
+$app_list_strings['moduleList']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
+
 $app_list_strings['moduleListSingular']['Accounts'] = 'Organització';
 $app_list_strings['moduleListSingular']['Contacts'] = 'Persona';
 $app_list_strings['moduleListSingular']['Leads'] = 'Interessat';
@@ -200,8 +240,26 @@ $app_list_strings['moduleListSingular']['stic_Custom_View_Actions'] = 'Acció';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Customizations'] = 'Personalització';
 $app_list_strings['moduleListSingular']['stic_Custom_View_Conditions'] = 'Condició';
 $app_list_strings['moduleListSingular']['stic_Group_Opportunities'] = 'Organització subvencionada';
+$app_list_strings['moduleListSingular']['stic_Message_Marketing'] = 'Enviament de missatges';
+$app_list_strings['moduleListSingular']['stic_MessagesMan'] = 'Cua de missatges';
 $app_list_strings['moduleListSingular']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['moduleListSingular']['stic_Places'] = 'Plaça';
+$app_list_strings['moduleListSingular']['stic_Signature_Log'] = 'Registre de firmes';
+$app_list_strings['moduleListSingular']['stic_Signatures'] = 'Firma';
+$app_list_strings['moduleListSingular']['stic_Signers'] = 'Firmant';
+$app_list_strings['moduleListSingular']['stic_Transactions'] = 'Transacció';
+$app_list_strings['moduleListSingular']['stic_Financial_Products'] = 'Producte financer';
+$app_list_strings['moduleListSingular']['stic_Assets'] = 'Actiu';
+$app_list_strings['moduleListSingular']['stic_AWF_Response_Details'] = 'Detall de resposta a formulari';
+$app_list_strings['moduleListSingular']['stic_AWF_Responses'] = 'Resposta a formulari';
+$app_list_strings['moduleListSingular']['stic_AWF_Links'] = 'Enllaç de formulari';
+$app_list_strings['moduleListSingular']['stic_AWF_Forms'] = 'Formulari Web Avançat';
+$app_list_strings['moduleListSingular']['stic_AWF_Deferred_Tickets'] = 'Procés en espera de formulari';
+$app_list_strings['moduleListSingular']['stic_AWF_Incoming_Events'] = 'Notificació externa de formulari';
+$app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversa';
+$app_list_strings['moduleListSingular']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
+$app_list_strings['moduleListSingular']['stic_Recycle_Bin_Relationships'] = 'Relació de la paperera';
+
 $app_list_strings['parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['parent_type_display']['Leads'] = 'Interessats';
@@ -241,8 +299,15 @@ $app_list_strings['parent_type_display']['stic_Work_Experience'] = 'Experiència
 $app_list_strings['parent_type_display']['stic_Skills'] = 'Competències';
 $app_list_strings['parent_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['parent_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['parent_type_display']['stic_Message_Marketing'] = 'Enviaments de missatges';
 $app_list_strings['parent_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['parent_type_display']['stic_Places'] = 'Places';
+$app_list_strings['parent_type_display']['stic_Transactions'] = 'Transaccions';
+$app_list_strings['parent_type_display']['stic_Financial_Products'] = 'Productes financers';
+$app_list_strings['parent_type_display']['stic_Assets'] = 'Actius';
+$app_list_strings['parent_type_display']['stic_Conversations'] = 'Converses';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
+$app_list_strings['parent_type_display']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
 
 $app_list_strings['record_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display']['Contacts'] = 'Persones';
@@ -283,8 +348,17 @@ $app_list_strings['record_type_display']['stic_Work_Experience'] = 'Experiència
 $app_list_strings['record_type_display']['stic_Skills'] = 'Competències';
 $app_list_strings['record_type_display']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['record_type_display']['stic_Message_Marketing'] = 'Enviaments de missatges';
 $app_list_strings['record_type_display']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display']['stic_Signatures'] = 'Firmes';
+$app_list_strings['record_type_display']['stic_Signers'] = 'Firmants';
+$app_list_strings['record_type_display']['stic_Transactions'] = 'Transaccions';
+$app_list_strings['record_type_display']['stic_Financial_Products'] = 'Productes financers';
+$app_list_strings['record_type_display']['stic_Assets'] = 'Actius';
+$app_list_strings['record_type_display']['stic_Conversations'] = 'Converses';
+$app_list_strings['record_type_display']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
+$app_list_strings['record_type_display']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
 
 $app_list_strings['record_type_display_notes']['Accounts'] = 'Organitzacions';
 $app_list_strings['record_type_display_notes']['Contacts'] = 'Persones';
@@ -325,11 +399,28 @@ $app_list_strings['record_type_display_notes']['stic_Work_Experience'] = 'Experi
 $app_list_strings['record_type_display_notes']['stic_Skills'] = 'Competències';
 $app_list_strings['record_type_display_notes']['stic_Messages'] = 'Missatges';
 $app_list_strings['record_type_display_notes']['stic_Group_Opportunities'] = 'Organitzacions subvencionades';
+$app_list_strings['record_type_display_notes']['stic_Message_Marketing'] = 'Enviaments de missatges';
 $app_list_strings['record_type_display_notes']['stic_Bookings_Places_Calendar'] = 'Calendari de Places';
 $app_list_strings['record_type_display_notes']['stic_Places'] = 'Places';
+$app_list_strings['record_type_display_notes']['stic_Signatures'] = 'Firmes';
+$app_list_strings['record_type_display_notes']['stic_Signers'] = 'Firmants';
+$app_list_strings['record_type_display_notes']['stic_Transactions'] = 'Transaccions';
+$app_list_strings['record_type_display_notes']['stic_Financial_Products'] = 'Productes financers';
+$app_list_strings['record_type_display_notes']['stic_Assets'] = 'Actius';
+$app_list_strings['record_type_display_notes']['stic_Conversations'] = 'Converses';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin'] = 'Paperera de reciclatge';
+$app_list_strings['record_type_display_notes']['stic_Recycle_Bin_Relationships'] = 'Relacions de la paperera';
 
 $app_list_strings['parent_type_display_notifications']['Opportunities'] = 'Subvencions';
 $app_list_strings['parent_type_display_notifications']['stic_Events'] = 'Esdeveniments';
+$app_list_strings['parent_type_display_notifications']['stic_Signatures'] = 'Firmes';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Applications'] = 'Candidatures';
+$app_list_strings['parent_type_display_notifications']['stic_Job_Offers'] = 'Ofertes laborals';
+$app_list_strings['parent_type_display_notifications']['stic_Conversations'] = 'Converses';
+$app_list_strings['parent_type_display_notifications']['stic_Messages'] = 'Missatges';
+
+// Creació dinàmica de Llistes de públic objectiu
+$app_list_strings['notification_auto_prospect_list_name_list'][''] = '';
 
 // Percentatges d'IVA vigents
 $app_list_strings['vat_list']['21'] = '21%';
@@ -531,6 +622,12 @@ $app_list_strings['stic_boolean_list'][''] = '';
 $app_list_strings['stic_boolean_list']['1'] = 'Sí';
 $app_list_strings['stic_boolean_list']['0'] = 'No';
 
+// Valors booleans triestat (Sí/No/Na)
+$app_list_strings['stic_yes_no_na_list'][''] = '';
+$app_list_strings['stic_yes_no_na_list']['yes'] = 'Sí';
+$app_list_strings['stic_yes_no_na_list']['no'] = 'No';
+$app_list_strings['stic_yes_no_na_list']['not_applicable'] = 'No pertoca';
+
 // Gèneres
 $app_list_strings['stic_genders_list'][''] = '';
 $app_list_strings['stic_genders_list']['male'] = 'Masculí';
@@ -697,6 +794,7 @@ $app_list_strings['stic_contacts_relationships_types_list']['board_directors'] =
 $app_list_strings['stic_contacts_relationships_types_list']['member'] = 'Soci/a';
 $app_list_strings['stic_contacts_relationships_types_list']['employee'] = 'Treballador/a';
 $app_list_strings['stic_contacts_relationships_types_list']['beneficiary'] = 'Usuari/a dels serveis';
+$app_list_strings['stic_contacts_relationships_types_list']['pre-volunteer'] = 'Prevoluntari/a';
 $app_list_strings['stic_contacts_relationships_types_list']['volunteer'] = 'Voluntari/a';
 
 // Relacions amb Persones: Rols en projectes
@@ -752,6 +850,27 @@ $app_list_strings['stic_project_locations_list'][''] = '';
 $app_list_strings['stic_project_locations_list']['sample_value_1'] = "Valor d'exemple 1";
 $app_list_strings['stic_project_locations_list']['sample_value_2'] = "Valor d'exemple 2";
 $app_list_strings['stic_project_locations_list']['sample_value_3'] = "Valor d'exemple 3";
+
+// Documents: Categories
+$app_list_strings['stic_documents_categories_list'][''] = '';
+$app_list_strings['stic_documents_categories_list']['identification'] = 'Identificació';
+$app_list_strings['stic_documents_categories_list']['certificate'] = 'Certificat';
+$app_list_strings['stic_documents_categories_list']['insurance'] = 'Assegurança';
+
+// Documents: Subcategories
+$app_list_strings['stic_documents_subcategories_list'][''] = '';
+$app_list_strings['stic_documents_subcategories_list']['identification_nif'] = 'NIF';
+$app_list_strings['stic_documents_subcategories_list']['identification_nie'] = 'NIE';
+$app_list_strings['stic_documents_subcategories_list']['identification_passport'] = 'Passaport';
+$app_list_strings['stic_documents_subcategories_list']['identification_other'] = 'Altres';
+$app_list_strings['stic_documents_subcategories_list']['certificate_disability'] = 'Discapacitat';
+$app_list_strings['stic_documents_subcategories_list']['certificate_dependency'] = 'Dependència';
+$app_list_strings['stic_documents_subcategories_list']['certificate_residence'] = 'Empadronament';
+$app_list_strings['stic_documents_subcategories_list']['certificate_sexual_offences'] = 'Delictes sexuals';
+$app_list_strings['stic_documents_subcategories_list']['certificate_other'] = 'Altres';
+$app_list_strings['stic_documents_subcategories_list']['insurance_volunteering'] = 'Voluntariat';
+$app_list_strings['stic_documents_subcategories_list']['insurance_travel'] = 'Viatge';
+$app_list_strings['stic_documents_subcategories_list']['insurance_other'] = 'Altres';
 
 // Compromisos de pagament: Periodicitats
 $app_list_strings['stic_payments_periodicities_list'][''] = '';
@@ -896,6 +1015,18 @@ $app_list_strings['stic_events_discard_reasons_list']['economic'] = 'Econòmic';
 $app_list_strings['stic_events_discard_reasons_list']['disinterest'] = 'Desinterès';
 $app_list_strings['stic_events_discard_reasons_list']['other'] = 'Altres';
 
+// Esdeveniments: Modalitats de voluntariat
+$app_list_strings['stic_events_volunteer_modes_list'][''] = '';
+$app_list_strings['stic_events_volunteer_modes_list']['no_volunteering'] = 'Sense voluntariat';
+$app_list_strings['stic_events_volunteer_modes_list']['mixed'] = 'Mixta';
+$app_list_strings['stic_events_volunteer_modes_list']['volunteering'] = 'Voluntariat';
+
+// Esdeveniments: Públic objectiu
+$app_list_strings['stic_events_target_audiences_list'][''] = '';
+$app_list_strings['stic_events_target_audiences_list']['service_users'] = 'Usuaris/es de serveis';
+$app_list_strings['stic_events_target_audiences_list']['volunteering'] = 'Voluntariat';
+$app_list_strings['stic_events_target_audiences_list']['institutional_relations'] = 'Relacions institucionals';
+
 // Inscripcions: Estats
 $app_list_strings['stic_registrations_status_list'][''] = '';
 $app_list_strings['stic_registrations_status_list']['uninvited'] = 'No convidat';
@@ -988,6 +1119,12 @@ $app_list_strings['stic_assessments_status_list']['decision_pending'] = 'Pendent
 $app_list_strings['stic_assessments_status_list']['completed'] = 'Completada';
 $app_list_strings['stic_assessments_status_list']['referred'] = 'Derivada';
 $app_list_strings['stic_assessments_status_list']['discarded'] = 'Descartada';
+
+// Valoracions: Tipus
+$app_list_strings['stic_assesments_types_list'][''] = '';
+$app_list_strings['stic_assesments_types_list']['service_user'] = 'Usuari/a de serveis';
+$app_list_strings['stic_assesments_types_list']['volunteering'] = 'Voluntariat';
+$app_list_strings['stic_assesments_types_list']['other'] = 'Altres';
 
 // Objectius: Orígens
 $app_list_strings['stic_goals_origins_list'][''] = '';
@@ -1136,6 +1273,7 @@ $app_list_strings['stic_job_offers_status_list']['closed_covered'] = 'Tancada (c
 $app_list_strings['stic_job_offers_status_list']['closed_partially_covered'] = 'Tancada (coberta parcialment)';
 $app_list_strings['stic_job_offers_status_list']['closed_not_covered'] = 'Tancada (no coberta)';
 $app_list_strings['stic_job_offers_status_list']['reopened'] = 'Reoberta';
+$app_list_strings['stic_job_offers_status_list']['review'] = 'En revisió';
 
 // Ofertes laborals: Orígens
 $app_list_strings['stic_job_offer_origin_list'][''] = '';
@@ -1145,9 +1283,35 @@ $app_list_strings['stic_job_offer_origin_list']['infojobs'] = 'Infojobs';
 $app_list_strings['stic_job_offer_origin_list']['orientation'] = 'Orientació';
 $app_list_strings['stic_job_offer_origin_list']['other'] = 'Altres';
 
+// Ofertes laborals: Tipus d'oferta
+$app_list_strings['stic_job_offers_types_list'][''] = '';
+$app_list_strings['stic_job_offers_types_list']['job'] = 'Feina';
+$app_list_strings['stic_job_offers_types_list']['external'] = 'Externa';
+$app_list_strings['stic_job_offers_types_list']['volunteering'] = 'Voluntariat';
+
+// Ofertes laborals: Modalitat de l'oferta
+$app_list_strings['stic_job_offers_modes_list'][''] = '';
+$app_list_strings['stic_job_offers_modes_list']['on_site'] = 'Presencial';
+$app_list_strings['stic_job_offers_modes_list']['remote'] = 'Teletreball';
+$app_list_strings['stic_job_offers_modes_list']['hybrid'] = 'Híbrid';
+
+// Ofertes laborals: Àmbit territorial
+$app_list_strings['stic_territorial_scopes_list'][''] = '';
+$app_list_strings['stic_territorial_scopes_list']['local'] = 'Local';
+$app_list_strings['stic_territorial_scopes_list']['district'] = 'Comarcal';
+$app_list_strings['stic_territorial_scopes_list']['provincial'] = 'Provincial';
+$app_list_strings['stic_territorial_scopes_list']['regional'] = 'Autonòmic';
+$app_list_strings['stic_territorial_scopes_list']['national'] = 'Estatal';
+
+// Ofertes laborals: Temporalitat
+$app_list_strings['stic_job_offers_temporalities_list'][''] = '';
+$app_list_strings['stic_job_offers_temporalities_list']['permanent'] = 'Indefinida';
+$app_list_strings['stic_job_offers_temporalities_list']['temporary'] = 'Temporal';
+
 // Candidatures: Estats
 $app_list_strings['stic_job_applications_status_list'][''] = '';
 $app_list_strings['stic_job_applications_status_list']['expected_presentation'] = 'Prevista presentació';
+$app_list_strings['stic_job_applications_status_list']['review'] = 'En revisió';
 $app_list_strings['stic_job_applications_status_list']['presented'] = 'Presentada';
 $app_list_strings['stic_job_applications_status_list']['pending_interview'] = 'Pendent entrevista';
 $app_list_strings['stic_job_applications_status_list']['interviewed'] = 'Entrevistada';
@@ -3515,8 +3679,17 @@ $app_list_strings['stic_skills_language_certificates_list']['french_dalf'] = 'DA
 $app_list_strings['stic_skills_language_certificates_list']['german_goethe'] = 'GZ - Goethe-Zertifikat';
 $app_list_strings['stic_skills_language_certificates_list']['chinese_hsk'] = 'HSK - Hanyu Shuiping Kaoshi';
 
+// Competències: Moments d'avaluació
+$app_list_strings['stic_skills_evaluation_stages_list'][''] = '';
+$app_list_strings['stic_skills_evaluation_stages_list']['initial'] = 'Inicial';
+$app_list_strings['stic_skills_evaluation_stages_list']['intermediate'] = 'Intermedi';
+$app_list_strings['stic_skills_evaluation_stages_list']['final'] = 'Final';
+
 // Missatges: Tipus
-$app_list_strings['stic_messages_type_list']['SevenSmsHelper'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['sms'] = 'SMS';
+$app_list_strings['stic_messages_type_list']['whatsapp_web'] = 'WhatsApp Web';
+$app_list_strings['stic_messages_type_list']['whatsapp'] = 'WhatsApp';
+$app_list_strings['stic_messages_type_list']['private_area'] = 'Àrea privada';
 
 // Missatges: Direcció
 $app_list_strings['stic_messages_direction_list']['inbound'] = 'Entrada';
@@ -3525,13 +3698,20 @@ $app_list_strings['stic_messages_direction_list']['outbound'] = 'Sortida';
 // Missatges: Estats
 $app_list_strings['stic_messages_status_list']['draft'] = 'Esborrany';
 $app_list_strings['stic_messages_status_list']['sent'] = 'Enviat';
+$app_list_strings['stic_messages_status_list']['received'] = 'Rebut';
 $app_list_strings['stic_messages_status_list']['error'] = 'Error';
+$app_list_strings['stic_messages_status_list']['redirected'] = 'Redirigit';
 
 // Missatges: Tipus de registres pare
 $app_list_strings['stic_messages_parent_type_display']['Accounts'] = 'Organitzacions';
 $app_list_strings['stic_messages_parent_type_display']['Contacts'] = 'Persones';
 $app_list_strings['stic_messages_parent_type_display']['Leads'] = 'Interessats';
 $app_list_strings['stic_messages_parent_type_display']['Employees'] = 'Empleats';
+
+// Converses: Tipus
+$app_list_strings['stic_conversations_types_list'][''] = '';
+$app_list_strings['stic_conversations_types_list']['type1'] = 'Tipus 1';
+$app_list_strings['stic_conversations_types_list']['type2'] = 'Tipus 2';
 
 // Vistes personalitzades: Tipus d'usuari
 $app_list_strings['stic_custom_views_user_type_list']['regular_user'] = 'Usuari regular';
@@ -3630,6 +3810,314 @@ $app_list_strings['trackers_actions_list']['deleted'] = 'Registre esborrat';
 $app_list_strings['trackers_actions_list']['login_ok'] = 'Usuari connectat';
 $app_list_strings['trackers_actions_list']['login_failed'] = 'Inici de sessió erroni';
 $app_list_strings['trackers_actions_list']['logout'] = 'Usuari desconnectat';
+$app_list_strings['trackers_actions_list']['impersonate_start'] = 'Inici de suplantació';
+$app_list_strings['trackers_actions_list']['impersonate_stop'] = 'Fi de suplantació';
+
+// Firmes: Estat
+$app_list_strings['stic_signatures_status_list'][''] = '';
+$app_list_strings['stic_signatures_status_list']['draft'] = 'Esborrany';
+$app_list_strings['stic_signatures_status_list']['open'] = 'Obert';
+$app_list_strings['stic_signatures_status_list']['permanent'] = 'Permanent';
+$app_list_strings['stic_signatures_status_list']['paused'] = 'Pausat';
+$app_list_strings['stic_signatures_status_list']['completed'] = 'Completat';
+$app_list_strings['stic_signatures_status_list']['cancelled'] = 'Cancel·lat';
+
+// Firmes: Mètodes d'autenticació
+$app_list_strings['stic_signatures_auth_methods_list'][''] = '';
+$app_list_strings['stic_signatures_auth_methods_list']['unique_link'] = 'Enllaç únic';
+$app_list_strings['stic_signatures_auth_methods_list']['otp'] = "Codi d'un sol ús (per SMS o correu electrònic)";
+$app_list_strings['stic_signatures_auth_methods_list']['otp_email'] = "Codi d'un sol ús (per correu electrònic)";
+$app_list_strings['stic_signatures_auth_methods_list']['otp_phone_message'] = "Codi d'un sol ús (per SMS)";
+$app_list_strings['stic_signatures_auth_methods_list']['phone'] = 'Telèfon';
+$app_list_strings['stic_signatures_auth_methods_list']['identification_number'] = "Número d'identificació";
+$app_list_strings['stic_signatures_auth_methods_list']['birthdate'] = 'Data de naixement';
+
+// Firmes: Tipus
+// $app_list_strings['stic_signatures_types_list'][''] = '';
+$app_list_strings['stic_signatures_types_list']['individual'] = 'Individual';
+// $app_list_strings['stic_signatures_types_list']['individual_custom'] = 'Individual (personalitzada)';
+// $app_list_strings['stic_signatures_types_list']['alternative'] = 'Alternativa';
+
+// Firmes: Modes
+$app_list_strings['stic_signatures_modes_list'][''] = '';
+$app_list_strings['stic_signatures_modes_list']['handwritten'] = 'Manuscrita';
+$app_list_strings['stic_signatures_modes_list']['button'] = 'Botó';
+
+// Firmes: En nom de...
+$app_list_strings['stic_signatures_on_behalf_of_list'][0] = 'No';
+$app_list_strings['stic_signatures_on_behalf_of_list'][1] = 'Sí, un sol representant';
+$app_list_strings['stic_signatures_on_behalf_of_list'][2] = 'Sí, tots els representants';
+
+// Firmants: Estat
+$app_list_strings['stic_signers_status_list'][''] = '';
+$app_list_strings['stic_signers_status_list']['pending'] = 'Pendent';
+$app_list_strings['stic_signers_status_list']['signed'] = 'Firmat';
+$app_list_strings['stic_signers_status_list']['unnecessary'] = 'Innecessari';
+
+// Registre de Firmes: Accions
+$app_list_strings['stic_signature_log_actions'][''] = '';    
+$app_list_strings['stic_signature_log_actions']['SIGNED_BUTTON_MODE'] =  'Document firmat amb botó';
+$app_list_strings['stic_signature_log_actions']['SIGNED_HANDWRITTEN_MODE'] = 'Document firmat amb firma manuscrita';
+$app_list_strings['stic_signature_log_actions']['ADD_SIGNER_TO_SIGNATURE'] =  "S'ha afegit un firmant a la firma";
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_EMAIL'] = "S'ha enviat un codi d'un sol ús al correu electrònic del firmant";
+$app_list_strings['stic_signature_log_actions']['OTP_SENT_PHONE'] = "S'ha enviat un codi d'un sol ús al telèfon del firmant";
+$app_list_strings['stic_signature_log_actions']['OTP_VERIFIED'] = "El firmant ha verificat el codi d'un sol ús";
+$app_list_strings['stic_signature_log_actions']['EMAIL_SENT'] = "S'ha enviat un correu electrònic al firmant";
+$app_list_strings['stic_signature_log_actions']['OPEN_PORTAL_BEFORE_SIGN'] = 'El firmant ha accedit al portal de firma';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_DOWNLOADED'] = 'El firmant ha descarregat el document firmat';
+$app_list_strings['stic_signature_log_actions']['SIGNED_PDF_SENT'] = "S'ha enviat el document firmat al firmant";  
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_EXPIRED'] = 'La firma ha caducat';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_NOT_NEEDED'] = 'Una altra persona autoritzada ha firmat el document';
+$app_list_strings['stic_signature_log_actions']['CRM_PDF_DOWNLOADED'] = 'El document ha estat descarregat internament';
+$app_list_strings['stic_signature_log_actions']['SIGNATURE_COMPLETED'] = 'Tots els firmants han firmat';
+
+// SinergiaDA: Nivells d'accés dels usuaris
+$app_list_strings['sda_users_access_list']['0'] = 'Sense accés';
+$app_list_strings['sda_users_access_list']['1'] = 'Accés complet';
+$app_list_strings['sda_users_access_list']['2'] = 'Accés de només lectura'; 
+
+// Productes financers: Tipus de productes
+$app_list_strings['stic_financial_products_types_list']['current_account'] = 'Compte corrent';
+$app_list_strings['stic_financial_products_types_list']['savings_account'] = "Compte d'estalvi";
+$app_list_strings['stic_financial_products_types_list']['investment_fund'] = "Fons d'inversió";
+$app_list_strings['stic_financial_products_types_list']['insurance'] = 'Assegurança';
+$app_list_strings['stic_financial_products_types_list']['prepaid_card'] = 'Targeta de prepagament';
+$app_list_strings['stic_financial_products_types_list']['shares'] = 'Accions';
+$app_list_strings['stic_financial_products_types_list']['other'] = 'Altres';
+
+// Transaccions: Estat
+$app_list_strings['stic_transactions_status_list']['completed'] = 'Completat';
+$app_list_strings['stic_transactions_status_list']['pending'] = 'Pendent';
+$app_list_strings['stic_transactions_status_list']['failed'] = 'Fallit';
+$app_list_strings['stic_transactions_status_list']['disputed'] = 'Disputat';
+
+// Transaccions: Categoria
+$app_list_strings['stic_transactions_categories_list'][''] = '';
+$app_list_strings['stic_transactions_categories_list']['income_salary'] = 'Sou';
+$app_list_strings['stic_transactions_categories_list']['income_investments'] = 'Inversions';
+$app_list_strings['stic_transactions_categories_list']['income_gifts'] = 'Regals';
+$app_list_strings['stic_transactions_categories_list']['income_sales'] = 'Vendes';
+$app_list_strings['stic_transactions_categories_list']['income_other'] = 'Altres';
+$app_list_strings['stic_transactions_categories_list']['expense_housing'] = 'Habitatge';
+$app_list_strings['stic_transactions_categories_list']['expense_transportation'] = 'Transport';
+$app_list_strings['stic_transactions_categories_list']['expense_food'] = 'Alimentació';
+$app_list_strings['stic_transactions_categories_list']['expense_services'] = 'Serveis';
+$app_list_strings['stic_transactions_categories_list']['expense_other'] = 'Altres';
+$app_list_strings['stic_transactions_categories_list']['withdrawal_withdrawal'] = 'Retirada';
+$app_list_strings['stic_transactions_categories_list']['withdrawal_other'] = 'Altres';
+$app_list_strings['stic_transactions_categories_list']['deposit_deposit'] = 'Dipòsit';
+$app_list_strings['stic_transactions_categories_list']['deposit_other'] = 'Altres';
+
+// Transaccions: Subcategoria
+$app_list_strings['stic_transactions_subcategories_list'][''] = '';
+$app_list_strings['stic_transactions_subcategories_list']['income_salary_salary'] = 'Sou';
+$app_list_strings['stic_transactions_subcategories_list']['income_salary_bonuses'] = 'Bons';
+$app_list_strings['stic_transactions_subcategories_list']['income_investments_dividends'] = 'Dividends';
+$app_list_strings['stic_transactions_subcategories_list']['income_investments_interest'] = 'Interessos';
+$app_list_strings['stic_transactions_subcategories_list']['income_sales_products'] = 'Productes';
+$app_list_strings['stic_transactions_subcategories_list']['income_sales_services'] = 'Serveis';
+$app_list_strings['stic_transactions_subcategories_list']['income_gifts_gifts'] = 'Regals';
+$app_list_strings['stic_transactions_subcategories_list']['income_gifts_refunds'] = 'Reemborsaments';
+$app_list_strings['stic_transactions_subcategories_list']['expense_housing_rent_mortgage'] = 'Lloguer/Hipoteca';
+$app_list_strings['stic_transactions_subcategories_list']['expense_housing_utilities'] = 'Serveis públics';
+$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_fuel'] = 'Combustible';
+$app_list_strings['stic_transactions_subcategories_list']['expense_transportation_transportation_public_transportation'] = 'Transport/Transport públic';
+$app_list_strings['stic_transactions_subcategories_list']['expense_services_telephone'] = 'Telefonia';
+$app_list_strings['stic_transactions_subcategories_list']['expense_services_subscriptions'] = 'Subscripcions';
+$app_list_strings['stic_transactions_subcategories_list']['expense_food_groceries'] = 'Supermercat';
+$app_list_strings['stic_transactions_subcategories_list']['expense_food_restaurants_bars'] = 'Restaurant/Bar';
+$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_atm'] = 'Caixer automàtic';
+$app_list_strings['stic_transactions_subcategories_list']['withdrawal_withdrawal_over_the_counter'] = 'A finestreta';
+$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_cash'] = 'En efectiu';
+$app_list_strings['stic_transactions_subcategories_list']['deposit_deposit_transfer'] = 'Transferència';
+
+// Gestió patrimonial: Tipus
+$app_list_strings['stic_asset_managment_types_list'][''] = '';
+$app_list_strings['stic_asset_managment_types_list']['housing'] = 'Habitatge';
+$app_list_strings['stic_asset_managment_types_list']['premises'] = 'Local';
+$app_list_strings['stic_asset_managment_types_list']['parking'] = 'Aparcament';
+$app_list_strings['stic_asset_managment_types_list']['land'] = 'Terreny';
+$app_list_strings['stic_asset_managment_types_list']['vehicle'] = 'Vehicle';
+$app_list_strings['stic_asset_managment_types_list']['jewel'] = 'Joia';
+$app_list_strings['stic_asset_managment_types_list']['financial'] = 'Actiu financer';
+$app_list_strings['stic_asset_managment_types_list']['other'] = 'Altres';
+
+// Gestió patrimonial: Titularitats
+$app_list_strings['stic_asset_managment_ownerships_list'][''] = '';
+$app_list_strings['stic_asset_managment_ownerships_list']['property'] = 'Propietat';
+$app_list_strings['stic_asset_managment_ownerships_list']['usufruct'] = 'Usdefruit';
+$app_list_strings['stic_asset_managment_ownerships_list']['rent'] = 'Lloguer';
+
+// Gestió patrimonial: Estats d'ocupació
+$app_list_strings['stic_asset_managment_occupancy_status_list'][''] = '';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['occupied'] = 'Ocupat';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['empty'] = 'Buit';
+$app_list_strings['stic_asset_managment_occupancy_status_list']['other'] = 'Altres';
+
+// Gestió patrimonial: Tipus d'ocupant
+$app_list_strings['stic_asset_managment_occupant_types_list'][''] = '';
+$app_list_strings['stic_asset_managment_occupant_types_list']['ward'] = 'Persona assistida';
+$app_list_strings['stic_asset_managment_occupant_types_list']['family'] = 'Família';
+$app_list_strings['stic_asset_managment_occupant_types_list']['rent'] = 'Lloguer de mercat';
+$app_list_strings['stic_asset_managment_occupant_types_list']['social_rent'] = 'Lloguer social';
+$app_list_strings['stic_asset_managment_occupant_types_list']['irregular'] = 'Irregular';
+
+// Advanced Web Forms: processing_mode
+$app_list_strings['stic_awf_forms_processing_mode_list']['sync'] = 'Síncron';
+$app_list_strings['stic_awf_forms_processing_mode_list']['async'] = 'Asíncron';
+
+// Advanced Web Forms: status
+$app_list_strings['stic_awf_forms_status_list']['draft'] = 'Esborrany';
+$app_list_strings['stic_awf_forms_status_list']['public'] = 'Públic';
+$app_list_strings['stic_awf_forms_status_list']['closed'] = 'Tancat';
+
+// Advanced Web Forms: types
+$app_list_strings['stic_awf_forms_types_list']['web'] = 'Formulari web';
+$app_list_strings['stic_awf_forms_types_list']['crm'] = "Formulari del CRM";
+
+// Advanced Web Forms: configuration->data_block->duplicate_detection->on_duplicate
+$app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['enrich'] = 'Amplia';
+$app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['update'] = 'Actualitza';
+$app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['skip'] = 'Ignora';
+$app_list_strings['stic_awf_forms_datablock_duplicate_action_list']['error'] = 'Error';
+
+// Advanced Web Forms: configuration->data_block->field->type_field
+$app_list_strings['stic_awf_forms_field_type_field_list']['unlinked'] = 'No enllaçat';
+$app_list_strings['stic_awf_forms_field_type_field_list']['form'] = 'Formulari';
+$app_list_strings['stic_awf_forms_field_type_field_list']['hidden'] = 'Valor fix';
+
+// Advanced Web Forms: configuration->data_block->field->type_in_form
+// Advanced Web Forms Response Details: answer_form_type
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['text'] = '➖ Text';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['textarea'] = '☰ Text llarg';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['number'] = '#️⃣ Numèrica';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['date'] = '🗓️ Temporal';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['select'] = '▼ Opcions predeterminades';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['rating'] = '🏅 Valoració';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['hidden'] = '🕵️ Oculta';
+$app_list_strings['stic_awf_forms_field_type_in_form_list']['file'] = '📄 Fitxer';
+
+// Advanced Web Forms: configuration->data_block->field->subtype_in_form
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text'] = '🔤 Text simple';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text_email'] = '✉️ Correu electrònic';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text_tel'] = '📞 Telèfon';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text_url'] = '🔗 Enllaç';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['text_password'] = '🔒 Contrasenya';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['textarea'] = '📃 Paràgraf';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['number'] = '🔢 Numèric';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['date'] = '📅 Data';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['date_time'] = '⏱️ Hora';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['date_datetime'] = '📅⏱️ Data i hora';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select'] = '🔻 Desplegable';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_multiple'] = '📑 Desplegable múltiple';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_checkbox_list'] = '☑️ Selecció múltiple';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_radio'] = "🔘 Selecció d'opció";
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_checkbox'] = '◻️ Casella de selecció';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['select_switch'] = '🎚️ Interruptor';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_stars'] = '⭐ Estrelles';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_emoji'] = '🙂 Cares';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_lights'] = '🚦 Semàfor';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_thumbs'] = '👍 Polzes';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['rating_nps']   = '🔟 Escala 0-10';
+$app_list_strings['stic_awf_forms_field_subtype_in_form_list']['file_upload'] = '📎 Fitxer adjunt';
+
+// Advanced Web Forms: configuration->data_block->field->value_type
+$app_list_strings['stic_awf_forms_field_value_type_list']['editable'] = 'Editable';
+$app_list_strings['stic_awf_forms_field_value_type_list']['selectable'] = 'Seleccionable';
+$app_list_strings['stic_awf_forms_field_value_type_list']['fixed'] = 'Valor fix';
+$app_list_strings['stic_awf_forms_field_value_type_list']['dataBlock'] = 'Bloc de dades';
+
+// Advanced Web Forms: configuration->layout->structure->containerType
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['panel'] = 'Panell (simple)';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['card'] = 'Targeta (amb vora)';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['tabs'] = 'Pestanyes';
+$app_list_strings['stic_awf_forms_layout_structure_container_type_list']['accordion'] = 'Acordió';
+
+// Advanced Web Forms: configuration->layout->theme->shadow_intensity
+$app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['none'] = 'Sense ombra (pla)';
+$app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['sm'] = 'Subtil';
+$app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['normal'] = 'Normal';
+$app_list_strings['stic_awf_forms_layout_theme_shadow_intensity_list']['lg'] = 'Elevat (flotant)';
+
+// Advanced Web Forms: configuration->layout->theme->input_style
+$app_list_strings['stic_awf_forms_layout_theme_input_style_list']['standard'] = 'Estàndard (vora)';
+$app_list_strings['stic_awf_forms_layout_theme_input_style_list']['flat'] = 'Pla (només línia)';
+$app_list_strings['stic_awf_forms_layout_theme_input_style_list']['filled'] = 'Omplert (material)';
+
+// Advanced Web Forms: configuration->layout->theme->form_width
+$app_list_strings['stic_awf_forms_layout_theme_form_width_list']['100%'] = 'Complet (100%)';
+$app_list_strings['stic_awf_forms_layout_theme_form_width_list']['1200px'] = 'Molt ample (1200px)';
+$app_list_strings['stic_awf_forms_layout_theme_form_width_list']['800px'] = 'Estàndard (800px)';
+$app_list_strings['stic_awf_forms_layout_theme_form_width_list']['600px'] = 'Estret / Mòbil (600px)';
+
+// Advanced Web Forms: configuration->layout->theme->field_spacing
+$app_list_strings['stic_awf_forms_layout_theme_field_spacing_list']['0rem'] = 'Molt compacte';
+$app_list_strings['stic_awf_forms_layout_theme_field_spacing_list']['0.5rem'] = 'Compacte';
+$app_list_strings['stic_awf_forms_layout_theme_field_spacing_list']['1rem'] = 'Normal';
+$app_list_strings['stic_awf_forms_layout_theme_field_spacing_list']['1.5rem'] = 'Espaiós';
+
+// Advanced Web Forms: ActionDefinition->category
+$app_list_strings['stic_awf_forms_action_definition_category_list']['security'] = '🔒 Seguretat';
+$app_list_strings['stic_awf_forms_action_definition_category_list']['data'] = '📦 Dades';
+$app_list_strings['stic_awf_forms_action_definition_category_list']['communication'] = '💬 Comunicació';
+$app_list_strings['stic_awf_forms_action_definition_category_list']['navigation'] = '➡️ Navegació';
+$app_list_strings['stic_awf_forms_action_definition_category_list']['integration'] = '🧩 Integració';
+$app_list_strings['stic_awf_forms_action_definition_category_list']['files'] = '📁 Fitxers';
+$app_list_strings['stic_awf_forms_action_definition_category_list']['validation'] = '🛡️ Validació';
+
+// Advanced Web Forms: Relative dates
+$app_list_strings['stic_awf_forms_date_relative_list']['today'] = 'Avui (data actual)';
+$app_list_strings['stic_awf_forms_date_relative_list']['now'] = 'Ara (data i hora actuals)';
+$app_list_strings['stic_awf_forms_date_relative_list']['+1_day'] = "D'aquí a un dia";
+$app_list_strings['stic_awf_forms_date_relative_list']['+1_week'] = "D'aquí a una setmana";
+$app_list_strings['stic_awf_forms_date_relative_list']['+1_month'] = "D'aquí a un mes";
+$app_list_strings['stic_awf_forms_date_relative_list']['last_day_of_this_month'] = "El darrer dia d'aquest mes";
+$app_list_strings['stic_awf_forms_date_relative_list']['first_day_of_next_month'] = 'El primer dia del mes que ve';
+$app_list_strings['stic_awf_forms_date_relative_list']['custom'] = 'Personalitzada...';
+
+// Advanced Web Forms Responses: status
+$app_list_strings['stic_awf_responses_status_list']['pending'] = 'Pendent';
+$app_list_strings['stic_awf_responses_status_list']['processing'] = 'Processant';
+$app_list_strings['stic_awf_responses_status_list']['awaiting_action'] = 'En espera';
+$app_list_strings['stic_awf_responses_status_list']['processed'] = 'Processada';
+$app_list_strings['stic_awf_responses_status_list']['rejected'] = 'Rebutjada';
+$app_list_strings['stic_awf_responses_status_list']['spam'] = 'Correu brossa';
+$app_list_strings['stic_awf_responses_status_list']['error'] = 'Error';
+
+// Advanced Web Forms Links: record_action
+$app_list_strings['stic_awf_links_record_action_list']['created'] = 'Creat';
+$app_list_strings['stic_awf_links_record_action_list']['updated'] = 'Actualitzat';
+$app_list_strings['stic_awf_links_record_action_list']['enriched'] = 'Ampliat';
+$app_list_strings['stic_awf_links_record_action_list']['skipped'] = 'Ignorat';
+$app_list_strings['stic_awf_links_record_action_list']['metadata'] = 'Tractat';
+$app_list_strings['stic_awf_links_record_action_list']['unchanged'] = 'Sense canvis';
+
+// Advanced Web Forms Deferred Tickets: status
+$app_list_strings['stic_awf_deferred_tickets_status'][''] = '';
+$app_list_strings['stic_awf_deferred_tickets_status']['pending'] = 'Pendent';
+$app_list_strings['stic_awf_deferred_tickets_status']['processing'] = 'Processant';
+$app_list_strings['stic_awf_deferred_tickets_status']['resolved'] = 'Resolt';
+$app_list_strings['stic_awf_deferred_tickets_status']['failed'] = 'Fallit';
+$app_list_strings['stic_awf_deferred_tickets_status']['cancelled'] = 'Cancel·lat';
+
+// Advanced Web Forms Incoming Events: status
+$app_list_strings['stic_awf_incoming_events_status'][''] = '';
+$app_list_strings['stic_awf_incoming_events_status']['new'] = 'Pendent';
+$app_list_strings['stic_awf_incoming_events_status']['processed'] = 'Processat';
+$app_list_strings['stic_awf_incoming_events_status']['error'] = 'Fallit';
+$app_list_strings['stic_awf_incoming_events_status']['ignored'] = 'Ignorat';
+
+// Paperera de reciclatge: Motius de no restauració de relacions de la paperera
+$app_list_strings['stic_recycle_skip_reason_list'][''] = '';
+$app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Registre relacionat eliminat';
+$app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Registre relacionat reassignat';
+
+// Paperera de reciclatge: Origen de l'eliminació
+$app_list_strings['stic_recycle_deletion_source_list'][''] = '';
+$app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Vista de detall';
+$app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acció massiva';
+$app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinació de registres';
+$app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acció externa';
 
 // Modificacions del core de SuiteCRM
 
@@ -3726,7 +4214,9 @@ $app_list_strings['campaign_type_dom']['Radio'] = 'Ràdio';
 $app_list_strings['campaign_type_dom']['Television'] = 'Televisió';
 $app_list_strings['campaign_type_dom']['NewsLetter'] = 'Butlletí de notícies';
 $app_list_strings['campaign_type_dom']['Survey'] = 'Enquesta';
-$app_list_strings['campaign_type_dom']['Notification'] = 'Notificació';
+$app_list_strings['campaign_type_dom']['Notification'] = 'Notificació per correu electrònic';
+$app_list_strings['campaign_type_dom']['Message'] = 'Missatge telefònic';
+$app_list_strings['campaign_type_dom']['NotifMsg'] = 'Notificació per missatge telefònic';
 
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list_no_workflow'][''] = '';
@@ -3736,6 +4226,7 @@ $app_list_strings['emailTemplates_type_list_no_workflow']['email'] = 'Correu ele
 $app_list_strings['emailTemplates_type_list_no_workflow']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list_no_workflow']['system'] = 'Sistema';
 $app_list_strings['emailTemplates_type_list_no_workflow']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list_no_workflow']['whatsapp'] = 'WhatsApp';
 
 // Plantilles de Correu electrònic: Tipus de plantilla
 $app_list_strings['emailTemplates_type_list'][''] = '';
@@ -3744,6 +4235,20 @@ $app_list_strings['emailTemplates_type_list']['notification'] = 'Notificació';
 $app_list_strings['emailTemplates_type_list']['email'] = 'Correu electrònic';
 $app_list_strings['emailTemplates_type_list']['event'] = 'Esdeveniment';
 $app_list_strings['emailTemplates_type_list']['sms'] = 'SMS';
+$app_list_strings['emailTemplates_type_list']['whatsapp'] = 'WhatsApp';
+
+// Plantilles de Correu electrònic: Tipus de categoria WhatsApp
+$app_list_strings['stic_whatsapp_category_list']['marketing'] = 'Màrqueting';
+$app_list_strings['stic_whatsapp_category_list']['utility'] = 'Utilitat';
+$app_list_strings['stic_whatsapp_category_list']['authentication'] = 'Autenticació';
+
+// Plantilles de Correu electrònic: Tipus d'estat d'aprovació WhatsApp
+$app_list_strings['stic_whatsapp_status_list'][''] = '';
+$app_list_strings['stic_whatsapp_status_list']['draft'] = 'Esborrany';
+$app_list_strings['stic_whatsapp_status_list']['pending'] = "Pendent d'aprovació";
+$app_list_strings['stic_whatsapp_status_list']['approved'] = 'Aprovada';
+$app_list_strings['stic_whatsapp_status_list']['rejected'] = 'Rebutjada';
+$app_list_strings['stic_whatsapp_status_list']['unsubmitted'] = 'Creada sense enviar';
 
 // Elements afegits a l'Historial
 $app_list_strings['collection_temp_list']['Tasks'] = 'Tasques';
@@ -3752,3 +4257,6 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Trucades';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notes';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correus electrònics';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
+
+// Llista dinàmica
+include 'modules/stic_Message_Marketing/dynamicLPOs.php';

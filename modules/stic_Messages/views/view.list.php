@@ -38,7 +38,7 @@ class stic_MessagesViewList extends ViewList
         parent::preDisplay();
 
         SticViews::preDisplay($this);
-         stic_MessagesUtils::fillDynamicListMessageTemplate();
+        stic_MessagesUtils::fillDynamicListMessageTemplate();
         // Write here you custom code
 
     }
@@ -50,7 +50,6 @@ class stic_MessagesViewList extends ViewList
         SticViews::display($this);
 
         echo getVersionedScript("modules/stic_Messages/Utils.js");
-        // echo getVersionedScript("modules/stic_Messages/stic_Messages.js");
 
         // Write here you custom code
     }

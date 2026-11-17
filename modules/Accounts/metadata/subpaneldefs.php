@@ -370,7 +370,6 @@ $layout_defs['Accounts'] = array(
                 array('widget_class' => 'SubPanelTopScheduleCallButton'),
                 array('widget_class' => 'SubPanelTopComposeEmailButton'),
             ),
-
             'collection_list' => array(
                 // STIC-Custom 20211217 - Put the Meetings module as the first module of the Activities subpanel
                 // STIC#510                   

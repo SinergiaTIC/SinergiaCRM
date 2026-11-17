@@ -53,15 +53,35 @@
     </tr>
 </table>
 
+{*ISSUING ORGANIZATION SELECTED*}
+{if $ISSUING_ORGANIZATION_LABEL ne ''}
+<br>
+<p style="text-align:left;color:#000000;" class="wizard_info letter13">{$MOD.LBL_M182_ISSUING_ORGANIZATION_SELECTED}: <strong>{$ISSUING_ORGANIZATION_LABEL}</strong></p>
+<br>
+{/if}
 
-{if $VAL.MISSING_SETTINGS|@count gt 0 }
-<p style="text-align:left;color:#d5061e;font-weight:bold;">{$MOD.LBL_M182_MISSING_SETTINGS}:
-    <br>
-<ul>
-    {foreach from=$VAL.MISSING_SETTINGS item=it}
-    <li>{$it}</li>
-    {/foreach}
-</ul>
+{if $VAL.MISSING_SETTINGS|@count gt 0 || $VAL.MISSING_FIELDS|@count gt 0 }
+
+    {if $VAL.MISSING_SETTINGS|@count gt 0}
+    <p style="text-align:left;color:#d5061e;font-weight:bold;" class="wizard_info letter13">{$MOD.LBL_M182_MISSING_SETTINGS}:</p>
+    <ul>
+        {foreach from=$VAL.MISSING_SETTINGS item=it}
+        <li>{$it}</li>
+        {/foreach}
+    </ul>
+    {/if}
+    {if $VAL.MISSING_SETTINGS|@count gt 0 && $VAL.MISSING_FIELDS|@count gt 0 }
+        <br>
+    {/if}
+    {if $VAL.MISSING_FIELDS|@count gt 0}
+    <p style="text-align:left;color:#d5061e;font-weight:bold;">{$MOD.LBL_M182_MISSING_FIELDS}:</p>
+    <ul>
+        {foreach from=$VAL.MISSING_FIELDS item=it}
+        <li>{$it}</li>
+        {/foreach}
+    </ul>
+    {/if}
+</p>
 {else}
 
 <br>
@@ -70,8 +90,11 @@
 <p style="text-align:left;color:#000000;" class="wizard_info letter13">{$MOD.LBL_M182_INSTRUCT}</p> {/if}
 {if $ERR.ERROR_TYPE== 1} <p style="text-align:left;color:#d5061e;" class="wizard_info letter13">{$MOD.LBL_M182_INSTRUCT}</p> {/if}
 
-<br>
 <form name="stic_Payments" method="POST">
+    {*ISSUING ORGANIZATION SELECTED*}
+    {if $ISSUING_ORGANIZATION_KEY ne ''}
+    <input type="hidden" id="issuing_organization_key" name="issuing_organization_key" value="{$ISSUING_ORGANIZATION_KEY}">
+    {/if}
     <input type="hidden" id="module" name="module" value="stic_Payments">
     <input type="hidden" id="action" name="action" value="createModel182">
 
@@ -88,7 +111,7 @@
         <tr>
             <br><br>
             <td align="left" style="padding-bottom: 2px;">
-                <input title="{$MOD.LBL_M182_BACK}" class="button" type="reset" value="{$MOD.LBL_M182_BACK}">
+                <input title="{$MOD.LBL_M182_BACK}" class="button" type="button" id="reset_wizard" onclick="location.reload();" value="{$MOD.LBL_M182_BACK}">
                 <input id="send_wizard" title="{$MOD.LBL_M182_NEXT}" class="button" type="submit" value="{$MOD.LBL_M182_NEXT}">
             </td>
         </tr>
@@ -103,6 +126,22 @@
             $('.wizard_info').css('color', 'red').fadeOut(300).fadeIn(300).fadeOut(300).fadeIn(300);
             return false;
         }
+    });
+
+    // Clear issuing organization selection and go back to selector before reloading
+    $('#reset_wizard').on('click', function() {
+        // If the issuing organization select exists on the page, clear it
+        if ($('#issuing_organization_selected').length) {
+            $('#issuing_organization_selected').val('');
+            $('#issuing_organization_selected').prop('selectedIndex', -1);
+            $('#issuing_organization_selected').trigger('change');
+        }
+        // Clear the hidden key on this form if present
+        if ($('#issuing_organization_key').length) {
+            $('#issuing_organization_key').val('');
+        }
+        // Redirect to the issuing organization selection action so server-side state is cleared
+        window.location.href = 'index.php?module=stic_Payments&action=m182SelectIssuingOrganization';
     });
 
                 {/literal}

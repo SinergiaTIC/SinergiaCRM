@@ -100,14 +100,16 @@ if (isset($focus->campaign_type) && $focus->campaign_type == "NewsLetter") {
     //     $smarty->assign("TRACK_DELETE_BUTTON", "<input title=\"{$mod_strings['LBL_TRACK_DELETE_BUTTON_TITLE']}\" class=\"button\" onclick=\"this.form.module.value='Campaigns'; this.form.action.value='Delete';this.form.return_module.value='Campaigns'; this.form.return_action.value='TrackDetailView';this.form.mode.value='Test';return confirm('{$mod_strings['LBL_TRACK_DELETE_CONFIRM']}');\" type=\"submit\" name=\"button\" value=\"  {$mod_strings['LBL_TRACK_DELETE_BUTTON_LABEL']}  \">");
     // }    
 // Customize buttons with Campaign_type
+// STIC Custom 20241105 EPS - Messages campaigns : Add NotifMsg and Message where needed
+// https://github.com/SinergiaTIC/SinergiaCRM/pull/473
 if (isset($focus->campaign_type)) {
-    if ($focus->campaign_type == "Email" || $focus->campaign_type == "NewsLetter" || $focus->campaign_type == "Notification") {
+    if ($focus->campaign_type == "Email" || $focus->campaign_type == "NewsLetter" || $focus->campaign_type == "Notification" || $focus->campaign_type == "NotifMsg") {
         $smarty->assign("TRACK_DELETE_BUTTON", "<input title=\"{$mod_strings['LBL_TRACK_DELETE_BUTTON_TITLE']}\" class=\"button\" onclick=\"this.form.module.value='Campaigns'; this.form.action.value='Delete';this.form.return_module.value='Campaigns'; this.form.return_action.value='TrackDetailView';this.form.mode.value='Test';return confirm('{$mod_strings['LBL_TRACK_DELETE_CONFIRM']}');\" type=\"submit\" name=\"button\" value=\"  {$mod_strings['LBL_TRACK_DELETE_BUTTON_LABEL']}  \">");
     }
-    if ($focus->campaign_type == "Notification") {
+    if ($focus->campaign_type == "Notification" || $focus->campaign_type == "NotifMsg") {
         $smarty->assign("DISABLE_LINK", "display:none");
     }
-    if ($focus->campaign_type != "Notification") {
+    if ($focus->campaign_type != "Notification" && $focus->campaign_type != "NotifMsg" && $focus->campaign_type != "Message") {
         $smarty->assign("TRACK_WIZARD_BUTTON", "<input type=\"button\" class=\"button\" id=\"launch_wizard_button\" onclick=\"javascript:window.location='index.php?module=Campaigns&action=WizardHome&record={$focus->id}';\" value=\"{$mod_strings['LBL_TO_WIZARD_TITLE']}\" />");
     }
 }
@@ -148,7 +150,16 @@ if (isset($focus->campaign_type)) {
 
         $options_str .= '<option value="all">'.$app_strings["LBL_CAMPAIGN_NONE"].'</option>';
         //query for all email marketing records related to this campaign
-        $latest_marketing_query = "select id, name, date_modified from email_marketing where campaign_id = '$focus->id' order by date_modified desc";
+        // $latest_marketing_query = "select id, name, date_modified from email_marketing where campaign_id = '$focus->id' order by date_modified desc";
+        $latest_marketing_query = 
+            "select id, name, date_modified from email_marketing where campaign_id = '$focus->id' 
+            union 
+            select smm.id, smm.name, smm.date_modified 
+            from stic_message_marketing smm 
+            join campaigns_stic_message_marketing_c csmmc on smm.id = csmmc.campaigns_stic_message_marketingmessage_idb
+            where csmmc.campaigns_stic_message_marketingcampaign_ida = '$focus->id' 
+            order by date_modified desc
+            ";
 
         //build string with value(s) retrieved
         $result =$focus->db->query($latest_marketing_query);

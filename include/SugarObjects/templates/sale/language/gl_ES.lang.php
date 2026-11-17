@@ -92,6 +92,6 @@ $mod_strings = array(
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/93
     'LBL_QUICKEDIT_BUTTON' => '↙ Editar',
     // END STIC-Custom
-    'LBL_REMOVE' => 'Quitar',
+   'LBL_REMOVE' => 'Quitar',
 
 );

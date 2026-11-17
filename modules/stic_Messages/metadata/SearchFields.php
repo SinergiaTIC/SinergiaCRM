@@ -38,6 +38,17 @@ $searchFields[$module_name] = array(
     'assigned_user_id' => array('query_type' => 'default'),
 
     //Range Search Support
+    'range_sent_date' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
+    'start_range_sent_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true,
+    ),
+    'end_range_sent_date' => array(
+        'query_type' => 'default',
+        'enable_range_search' => true,
+        'is_date_field' => true,
+    ),
     'range_date_entered' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
     'start_range_date_entered' => array(
         'query_type' => 'default',

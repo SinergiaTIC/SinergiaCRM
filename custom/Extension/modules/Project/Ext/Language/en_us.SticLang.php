@@ -45,6 +45,8 @@ $mod_strings['LBL_PROJECT_OPPORTUNITIES_1_FROM_OPPORTUNITIES_TITLE'] = 'Opportun
 $mod_strings['LBL_OPPORTUNITIES_SUBPANEL_TITLE'] = 'Opportunities';
 $mod_strings['LBL_STIC_FOLLOWUPS_PROJECT_FROM_STIC_FOLLOWUPS_TITLE'] = 'FollowUps';
 $mod_strings['LBL_STIC_GOALS_PROJECT_FROM_STIC_GOALS_TITLE'] = 'Goals';
+$mod_strings['LBL_PROJECT_STIC_JOB_OFFERS_FROM_STIC_JOB_OFFERS_TITLE'] = 'Job Offers';
+$mod_strings['LBL_PROJECT_STIC_ASSESSMENTS_FROM_STIC_ASSESSMENTS_TITLE'] = 'Assessments';
 $mod_strings['LBL_STIC_LOCATION'] = 'Locations';
 $mod_strings['LBL_ESTIMATED_END_DATE_ERROR'] = 'End date must be equal or after Start date.';
 $mod_strings['LBL_ESTIMATED_START_DATE_ERROR'] = 'Start date must be equal or before End date.';
@@ -60,3 +62,6 @@ $mod_strings['LBL_DELETE_TASK_CONFIRM'] = 'Are you sure you want to delete this 
 // Strings Grants
 $mod_strings['LBL_STIC_GRANTS_PROJECT_FROM_STIC_GRANTS_TITLE'] = 'Grants';
 $mod_strings['LBL_STIC_CENTERS_PROJECT_FROM_STIC_CENTERS_TITLE'] = 'Centers';
+
+// Strings Resources
+$mod_strings['LBL_STIC_RESOURCES_PROJECT_FROM_PROJECT_TITLE'] = 'Resources';

@@ -1,4 +1,25 @@
 <?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
 #[\AllowDynamicProperties]
 class SticUtils
 {
@@ -682,4 +703,370 @@ EOQ;
         }
     }
 
+    /**
+     * Parses a SuiteCRM email template by replacing variables
+     * with values from a provided set of Beans and special variables such $sugarurl.
+     *
+     * @param string $templateId The ID of the EmailTemplate to parse.
+     * @param array  $Beans      An array of SugarBean objects (e.g., a Contact, an Account, stic_Payments, etc.)
+     * whose data will be used for replacements.
+     *
+     * @return array An associative array with keys 'subject', 'body', and 'body_html'
+     * containing the parsed and cleaned content.
+     */
+    public static function parseEmailTemplate($templateId, $Beans)
+    {
+
+        // Load SuiteCRM global variables
+        global $app_list_strings, $sugar_config, $current_user;
+
+        // 1. Fetch the email template
+        // Using getBean instead of retrieveBean as requested
+        $template = BeanFactory::getBean('EmailTemplates', $templateId);
+
+        // Initialize the response array
+        $parsedTemplate = [
+            'subject' => '',
+            'body' => '',
+            'body_html' => '',
+        ];
+
+        // Check if the template was loaded successfully
+        if (!$template) {
+            // Use SuiteCRM logger
+            $GLOBALS['log']->error("parseEmailTemplate: Could not find EmailTemplate with ID: $templateId");
+            return $parsedTemplate; // Return empty array if template not found
+        }
+
+        // Load the original content to be parsed
+        $parsedTemplate['subject'] = $template->subject;
+        $parsedTemplate['body'] = $template->body;
+        $parsedTemplate['body_html'] = $template->body_html;
+
+        // --- SUBSTITUTION COLLECTION ---
+
+        // 2. Create collection arrays
+        // We use one for plain text (subject, body) and one for HTML (body_html)
+        // as the value formatting can differ (e.g., nl2br for textareas).
+        $replacements_text = [];
+        $replacements_html = [];
+
+        // 3. Iterate over each provided Bean (Contact, Account, Quote, etc.)
+        foreach ($Beans as $bean) {
+            if (!$bean || !isset($bean->module_dir)) {
+                continue; // Skip if it's not a valid bean
+            }
+
+            $moduleName = $bean->module_dir;
+            $prefix = '';
+
+            // 4. Determine the variable prefix based on the module
+            // Variable syntax is $<prefix>_<field_name>
+            switch ($moduleName) {
+                case 'Contacts':
+                    $prefix = '$contact_';
+                    break;
+                case 'Users':
+                    // $contact_user_ refers to a User Bean (e.g., "Assigned To")
+                    $prefix = '$contact_user_';
+                    break;
+                case 'Leads':
+                    $prefix = '$contact_lead_';
+                    break;
+                case 'Accounts':
+                    $prefix = '$contact_account_';
+                    break;
+                default:
+                    // Standard module (e.g., Quotes -> $quotes_)
+                    $prefix = '$' . strtolower($moduleName) . '_';
+                    break;
+            }
+
+            // 5. Iterate over the Bean's fields and collect values
+            foreach ($bean->field_defs as $fieldName => $def) {
+
+                $placeholder = $prefix . $fieldName;
+                $rawValue = $bean->$fieldName ?? '';
+                $displayValue = $rawValue;
+                $htmlValue = $rawValue;
+
+                // 6. Handle dropdown fields (enum)
+                // We want the display label (e.g., "In Progress") instead of the internal key (e.g., "in_progress")
+                if (isset($def['type']) && ($def['type'] == 'enum' || $def['type'] == 'multienum' || $def['type'] == 'radioenum') && isset($def['options'])) {
+
+                    $listName = $def['options']; // e.g., 'sales_stage_dom'
+
+                    if (isset($app_list_strings[$listName]) && isset($app_list_strings[$listName][$rawValue])) {
+                        // Found the corresponding label
+                        $displayValue = $app_list_strings[$listName][$rawValue];
+                        $htmlValue = $displayValue;
+                    }
+                }
+
+                // 7. Handle HTML formatting (e.g., newlines in textareas)
+                // 'text' type fields (textareas) store newlines as \n.
+                // In HTML, these must be converted to <br>.
+                if (isset($def['type']) && $def['type'] == 'text') {
+                    $htmlValue = nl2br((string) $htmlValue);
+                }
+
+                // Ensure values are scalar (not null, array, or object) before replacing
+                if (!is_scalar($displayValue)) {
+                    $displayValue = '';
+                }
+
+                if (!is_scalar($htmlValue)) {
+                    $htmlValue = '';
+                }
+
+                // 8. Add to the collection arrays (instead of replacing immediately)
+                $replacements_text[$placeholder] = "$@@{$displayValue}";
+                $replacements_html[$placeholder] = "$@@{$htmlValue}";
+            }
+        }
+
+        // 9. Collect Special and Global Substitutions
+
+        // 9.1. Static substitutions (like $sugarurl)
+        $specialSubstitutions = [
+            '$sugarurl' => $sugar_config['site_url'] ?? '',
+            // You can add more here:
+            // '$company_name' => $sugar_config['company_name'] ?? 'My Company',
+        ];
+
+        foreach ($specialSubstitutions as $placeholder => $value) {
+            if (!is_scalar($value)) {
+                $value = '';
+            }
+
+            $replacements_text[$placeholder] = $value;
+            $replacements_html[$placeholder] = $value;
+        }
+
+        // --- SUBSTITUTION APPLICATION ---
+
+        // 9. Sort the replacement arrays by key length (descending)
+        // This is CRUCIAL. It ensures that "$contact_user_first_name" is replaced
+        // BEFORE "$contact_user_", preventing partial, broken replacements.
+        uksort($replacements_text, function ($a, $b) {return strlen($b) - strlen($a);});
+        uksort($replacements_html, function ($a, $b) {return strlen($b) - strlen($a);});
+
+        // 10. Perform the replacement (only once)
+        // str_replace can take arrays of keys and values.
+        $parsedTemplate['subject'] = str_replace(
+            array_keys($replacements_text),
+            array_values($replacements_text),
+            $parsedTemplate['subject']
+        );
+
+        $parsedTemplate['body'] = str_replace(
+            array_keys($replacements_text),
+            array_values($replacements_text),
+            $parsedTemplate['body']
+        );
+
+        $parsedTemplate['body_html'] = str_replace(
+            array_keys($replacements_html),
+            array_values($replacements_html),
+            $parsedTemplate['body_html']
+        );
+
+        // 11. Final Cleanup: Remove any unreplaced variables
+        // This regex looks for any variable starting with $
+        // followed by letters/numbers/underscores (e.g., $contact_name, $quotes_total, $rare_variable)
+        // and replaces it with an empty string.
+        // We use [a-zA-Z_] at the start to avoid matching currency values like $500.
+
+        $final_cleanup_pattern = '/\$[a-zA-Z_][a-zA-Z0-9_]*/';
+
+        $parsedTemplate['subject'] = preg_replace($final_cleanup_pattern, '', $parsedTemplate['subject']);
+        $parsedTemplate['body'] = preg_replace($final_cleanup_pattern, '', $parsedTemplate['body']);
+        $parsedTemplate['body_html'] = preg_replace($final_cleanup_pattern, '', $parsedTemplate['body_html']);
+
+        // Remove intermediate markup ($@@)
+        $parsedTemplate['subject'] = str_replace('$@@', '', $parsedTemplate['subject']);
+        $parsedTemplate['body'] = str_replace('$@@', '', $parsedTemplate['body']);
+        $parsedTemplate['body_html'] = str_replace('$@@', '', $parsedTemplate['body_html']);
+
+        // 12. Return the parsed and cleaned array
+        return $parsedTemplate;
+    }
+
+    /**
+     * Encodes an array (normally the current $_REQUEST) to be used as the value of the hidden
+     * field "current_query_by_page" (mass updates, target lists, popups, bulk document
+     * generation, ...).
+     *
+     * Before JSON-encoding the data, any HTML entities in string values are decoded, and double
+     * quotes, single quotes, ampersands and tags are escaped as \u0022, \u0027, \u0026 and \u003C/\u003E
+     * (JSON_HEX_* flags). This way the JSON structure always remains valid after any
+     * html_entity_decode() / browser decoding round trip, which prevents broken payloads from
+     * generating an empty WHERE clause and triggering fully uncontrolled mass updates when any
+     * filter contains quotes or other special characters.
+     *
+     * The returned JSON string still needs to be transport encoded by the caller, depending on
+     * where it will be placed: htmlentities() for HTML attributes (hidden inputs and hidden
+     * fields built through JS templates) or base64_encode() when the consumer decodes it itself.
+     *
+     * @param array $requestArray Array to encode. Defaults to the current $_REQUEST.
+     * @return string JSON string with special characters escaped as \u0022, \u0027, \u0026, \u003C/\u003E.
+     */
+    public static function encodeCurrentQueryByPage($requestArray = null)
+    {
+        if ($requestArray === null) {
+            $requestArray = $_REQUEST;
+        }
+
+        $decodedArray = $requestArray;
+        array_walk_recursive($decodedArray, function (&$value) {
+            if (is_string($value)) {
+                $value = html_entity_decode($value, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            }
+        });
+
+        return json_encode($decodedArray, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG);
+    }
+
+    /**
+     * Output a JSON response with proper HTTP headers and buffer cleanup.
+     *
+     * Ensures clean output by ending and clearing any existing output buffers
+     * before sending the JSON response.
+     *
+     * @param string $status Status of the operation ('success' or 'error')
+     * @param array  $errors Array of error messages
+     * @param array  $infos  Array of information/success messages
+     *
+     * @return void
+     */
+    public static function outputJsonResponse($status, $errors, $infos) {
+        @ob_end_clean();
+        ob_start();
+        ob_clean();
+        header('Content-Type: application/json');
+        echo json_encode([
+            'status' => $status,
+            'errors' => $errors,
+            'infos' => $infos,
+        ]);
+        ob_flush();
+    }
+
+    /**
+     * Refresh OPcache shared memory entries for regenerated PHP files
+     *
+     * On hosts where opcache.restrict_api blocks opcache_invalidate(), PHP files that are
+     * regenerated by the application (e.g. custom/modules/<module>/logic_hooks.php) keep
+     * being served by OPcache in their old compiled version until opcache.revalidate_freq
+     * elapses, causing stale behaviour for every FPM worker during that window.
+     *
+     * This method removes that stale window:
+     * 1. If the OPcache API is not path-restricted, it calls opcache_invalidate() directly
+     *    on every file (invalidating never re-executes anything, so it is safe for any file).
+     * 2. Otherwise it applies the "self-refresh" pattern for re-executable files: temporarily
+     *    set opcache.validate_timestamps=1, opcache.revalidate_freq=0 and
+     *    opcache.file_update_protection=0 for the current process and include() each file,
+     *    which forces this worker to recompile the fresh content and update the shared
+     *    OPcache entry, so all other workers immediately serve the new version.
+     *    OPcache validates changes comparing mtimes with 1-second resolution, so each
+     *    file's mtime is forced to time()+1 before including it: a file rewritten twice
+     *    within the same second (e.g. remove+add flows) would otherwise validate as
+     *    "unchanged" and the stale entry would be served indefinitely, not just for
+     *    revalidate_freq.
+     *
+     * IMPORTANT: $files must only contain files that are safe to re-execute within the
+     * current request (files that only set variables/arrays, like logic_hooks.php or
+     * language files). Files declaring classes/functions MUST be passed through
+     * $invalidateOnlyFiles: they are only refreshed via the native API (never
+     * re-included), and on restricted hosts they cannot be refreshed (logged as error).
+     *
+     * Failures are logged (LoggerManager) and reflected in the return value, so callers
+     * can detect hosts where OPcache entries cannot be refreshed from PHP at all
+     * (php_admin_value locks, opcache.validate_timestamps=0 with restricted API, etc.).
+     *
+     * @param string|array $files Path(s) of regenerated PHP files safe to re-execute (variables/arrays only)
+     * @param string|array $invalidateOnlyFiles Optional path(s) of regenerated PHP files that must NOT be re-executed (classes/functions)
+     * @return bool True if every requested file was refreshed (or nothing was needed); false otherwise
+     */
+    public static function refreshPhpFilesInOpcache($files, $invalidateOnlyFiles = array())
+    {
+        if (!is_array($files)) {
+            $files = array($files);
+        }
+        if (!is_array($invalidateOnlyFiles)) {
+            $invalidateOnlyFiles = array($invalidateOnlyFiles);
+        }
+
+        // Resolve to real paths and drop nonexistent files
+        $files = array_values(array_unique(array_filter(array_map('realpath', $files), 'is_file')));
+        $invalidateOnlyFiles = array_values(array_unique(array_filter(array_map('realpath', $invalidateOnlyFiles), 'is_file')));
+        if (empty($files) && empty($invalidateOnlyFiles)) {
+            return true; // nothing to do
+        }
+
+        // Nothing can be done without Zend OPcache
+        if (!extension_loaded('Zend OPcache') || !function_exists('opcache_invalidate')) {
+            LoggerManager::getLogger()->error('SticUtils::refreshPhpFilesInOpcache: Zend OPcache is not loaded; regenerated PHP files may be served stale');
+            return false;
+        }
+
+        // First try the native API, when it is not restricted by opcache.restrict_api.
+        // Invalidating never re-executes anything, so it is safe for every file.
+        $restrictApi = ini_get('opcache.restrict_api');
+        $apiAvailable = !$restrictApi || strpos(__FILE__, $restrictApi) === 0;
+        if ($apiAvailable) {
+            $allInvalidated = true;
+            foreach (array_merge($files, $invalidateOnlyFiles) as $file) {
+                if (!@opcache_invalidate($file, true)) {
+                    $allInvalidated = false;
+                }
+            }
+            if ($allInvalidated) {
+                return true;
+            }
+        }
+
+        // Fallback: "self-refresh" pattern (include is not blocked by opcache.restrict_api).
+        // Only valid for the re-executable files: class/function-declaring files cannot be
+        // refreshed this way (re-including them would be a fatal "cannot redeclare").
+        if (!empty($invalidateOnlyFiles)) {
+            LoggerManager::getLogger()->error(
+                'SticUtils::refreshPhpFilesInOpcache: cannot refresh class/function-declaring files when opcache.restrict_api blocks the API: '
+                . implode(', ', $invalidateOnlyFiles)
+            );
+        }
+        if (empty($files)) {
+            return false;
+        }
+
+        // Without timestamp validation OPcache never re-checks files, so the fallback is
+        // useless. NOTE: this directive cannot be enabled at runtime (ini_set changes the
+        // ini value but not the behaviour, unlike revalidate_freq), verified empirically.
+        if (!(bool)ini_get('opcache.validate_timestamps')) {
+            LoggerManager::getLogger()->error('SticUtils::refreshPhpFilesInOpcache: opcache.validate_timestamps=0 and the OPcache API is blocked; entries can only be refreshed with opcache_reset/FPM restart or host configuration');
+            return false;
+        }
+        $oldFreq = @ini_set('opcache.revalidate_freq', '0');
+        if ($oldFreq === false) {
+            LoggerManager::getLogger()->error("SticUtils::refreshPhpFilesInOpcache: ini_set('opcache.revalidate_freq') is blocked (php_admin_value?); OPcache entries cannot be refreshed from PHP");
+            return false;
+        }
+        $oldProtection = @ini_set('opcache.file_update_protection', '0');
+        try {
+            foreach ($files as $file) {
+                // Force a mtime different from the currently cached entry timestamp: OPcache
+                // validates changes with 1-second mtime resolution, so a file rewritten within
+                // the same second its previous version was cached would validate as "unchanged"
+                // and the stale entry would be served indefinitely
+                @touch($file, time() + 1);
+                include $file;
+            }
+        } finally {
+            @ini_set('opcache.revalidate_freq', $oldFreq);
+            if ($oldProtection !== false) {
+                @ini_set('opcache.file_update_protection', $oldProtection);
+            }
+        }
+        return empty($invalidateOnlyFiles);
+    }
 }

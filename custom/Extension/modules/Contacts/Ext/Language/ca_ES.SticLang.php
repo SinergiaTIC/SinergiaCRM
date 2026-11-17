@@ -102,6 +102,7 @@ $mod_strings['LBL_PROJECTS_TEMPLATES_RESOURCES'] = 'Recursos de plantilles de pr
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Genera Candidatures';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Seleccioneu una oferta laboral a la finestra emergent';
 $mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Centre';
+$mod_strings['LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE'] = 'Actius';
 
 // Cadenes Inserció Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -165,6 +166,10 @@ $mod_strings['LBL_SEPE_DISABILITY'] = 'Indicador discapacitat (SEPE)';
 $mod_strings['LBL_SEPE_EDUCATION_LEVEL'] = 'Nivell formatiu (SEPE)';
 $mod_strings['LBL_SEPE_IMMIGRANT'] = 'Indicador immigrant (SEPE)';
 $mod_strings['LBL_SEPE_INSERTION_DIFFICULTIES'] = 'Indicador col·lectiu dificultats inserció (SEPE)';
+$mod_strings['LBL_STIC_CONFIDENTIALITY_AGREEMENT'] = 'Acord de confidencialitat';
+$mod_strings['LBL_STIC_CONDUCT_CODE'] = 'Codi de conducta';
+$mod_strings['LBL_STIC_OCCUPATIONAL_SAFETY'] = 'PRL';
+$mod_strings['LBL_STIC_TIME_AVAILABILITY'] = 'Disponibilitat horària';
 $mod_strings['LBL_STIC_JOB_APPLICATIONS_CONTACTS_FROM_STIC_JOB_APPLICATIONS_TITLE'] = 'Candidatures';
 $mod_strings['LBL_STIC_PROFESSIONAL_PROFILE'] = 'Perfil treballador/a';
 $mod_strings['LBL_STIC_SEPE_ACTIONS_CONTACTS_FROM_STIC_SEPE_ACTIONS_TITLE'] = 'Accions SEPE';
@@ -217,7 +222,7 @@ $mod_strings['LNK_IMPORT_CONTACTS'] = 'Importa Persones';
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Llista d'adreces de correu";
 
-// Medication
+// Medicació
 $mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = "Registre de medicació";
 $mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = "Prescripcions";
 
@@ -240,3 +245,15 @@ $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Competències
 $mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Llista de públic objectiu';
 $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Projecte actual';
 
+// Productes financers
+$mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productes financers';
+
+// Cadenes Àrea Privada
+$mod_strings['LBL_STIC_PA_USERNAME'] = "Usuari de l'àrea privada";
+$mod_strings['LBL_STIC_PA_PASSWORD'] = "Contrasenya de l'àrea privada";
+$mod_strings['LBL_STIC_PA_ENABLE'] = "Activa l'àrea privada";
+$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = "Per tal que la persona pugui accedir a l'àrea privada cal que aquest camp estigui marcat. Si no ho està, no s'hi podrà accedir encara que es disposi de nom d'usuari i contrasenya. En marcar aquest camp, si el paràmetre de configuració <a href='index.php?module=stic_Settings&action=DetailView&record=f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11' target='_blank'>PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE</a> està activat, s'enviaran automàticament a la persona les credencials d'accés. En cas contrari, caldrà fer-ho de forma manual.";
+$mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = "Per tal de poder editar la contrasenya cal que el camp 'Activa l'àrea privada' estigui marcat.";
+
+// Converses
+$mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Converses';

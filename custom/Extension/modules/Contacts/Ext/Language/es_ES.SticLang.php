@@ -102,6 +102,7 @@ $mod_strings['LBL_PROJECTS_TEMPLATES_RESOURCES'] = 'Recursos de plantillas de pr
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Generar Candidaturas';
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Seleccione una oferta laboral en la ventana emergente';
 $mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Centro';
+$mod_strings['LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE'] = 'Activos';
 
 // Cadenas Inserción Laboral
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';
@@ -165,6 +166,10 @@ $mod_strings['LBL_SEPE_DISABILITY'] = 'Indicador discapacidad (SEPE)';
 $mod_strings['LBL_SEPE_EDUCATION_LEVEL'] = 'Nivel formativo (SEPE)';
 $mod_strings['LBL_SEPE_IMMIGRANT'] = 'Indicador inmigrante (SEPE)';
 $mod_strings['LBL_SEPE_INSERTION_DIFFICULTIES'] = 'Indicador colectivo dificultades inserción (SEPE)';
+$mod_strings['LBL_STIC_CONFIDENTIALITY_AGREEMENT'] = 'Acuerdo de confidencialidad';
+$mod_strings['LBL_STIC_CONDUCT_CODE'] = 'Código de conducta';
+$mod_strings['LBL_STIC_OCCUPATIONAL_SAFETY'] = 'PRL';
+$mod_strings['LBL_STIC_TIME_AVAILABILITY'] = 'Disponibilidad horaria';
 $mod_strings['LBL_STIC_JOB_APPLICATIONS_CONTACTS_FROM_STIC_JOB_APPLICATIONS_TITLE'] = 'Candidaturas';
 $mod_strings['LBL_STIC_PROFESSIONAL_PROFILE'] = 'Perfil del trabajador';
 $mod_strings['LBL_STIC_SEPE_ACTIONS_CONTACTS_FROM_STIC_SEPE_ACTIONS_TITLE'] = 'Acciones SEPE';
@@ -217,25 +222,38 @@ $mod_strings['LNK_IMPORT_CONTACTS'] = 'Importar Personas';
 // Virtual Field Kreporter
 $mod_strings['LBL_KREPORTER_EMAILS_LIST'] = "Lista de direcciones de correo";
 
-// Medication
-$mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = "Registro de medicación";
-$mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = "Prescripciones";
+// Medicación
+$mod_strings['LBL_STIC_MEDICATION_LOG_CONTACTS_FROM_STIC_MEDICATION_LOG_TITLE'] = 'Registro de medicación';
+$mod_strings['LBL_STIC_PRESCRIPTION_CONTACTS_FROM_STIC_PRESCRIPTION_TITLE'] = 'Prescripciones';
 
-// Cadenas de Ayudas
+// Ayudas
 $mod_strings['LBL_STIC_GRANTS_CONTACTS_FROM_STIC_GRANTS_TITLE'] = 'Ayudas';
 
-// Cadenas de Diario
+// Diario
 $mod_strings['LBL_STIC_JOURNAL_CONTACTS_FROM_STIC_JOURNAL_TITLE'] = 'Diario';
 
-// Cadenas Formación
+// Formación
 $mod_strings['LBL_STIC_TRAINING_CONTACTS_FROM_STIC_TRAINING_TITLE'] = 'Formación';
 
-// Cadenas Experiencia laboral
+// Experiencia laboral
 $mod_strings['LBL_STIC_WORK_EXPERIENCE_CONTACTS_FROM_STIC_WORK_EXPERIENCE_TITLE'] = 'Experiencia laboral';
 
-// Cadenas Competencias
+// Competencias
 $mod_strings['LBL_STIC_SKILLS_CONTACTS_FROM_STIC_SKILLS_TITLE'] = 'Competencias';
 
 // Campos de filtro en relaciones muchos a muchos
 $mod_strings['LBL_STIC_PROSPECT_LIST_CONTACTS_NAME'] = 'Lista de público objectivo';
 $mod_strings['LBL_STIC_CURRENT_PROJECTS_CONTACTS_NAME'] = 'Proyecto actual';
+
+// Productos financieros
+$mod_strings['LBL_STIC_FINANCIAL_PRODUCTS_CONTACTS_FROM_STIC_FINANCIAL_PRODUCTS_TITLE'] = 'Productos financieros';
+
+// Cadenas Área Privada
+$mod_strings['LBL_STIC_PA_USERNAME'] = 'Usuario área privada';
+$mod_strings['LBL_STIC_PA_PASSWORD'] = 'Contraseña área privada';
+$mod_strings['LBL_STIC_PA_ENABLE'] = 'Activar área privada';
+$mod_strings['LBL_STIC_PA_ENABLE_HELP'] = 'Para que la persona pueda acceder al área privada es necesario que este campo esté marcado. Si no lo está, no se podrá acceder a ella aunque se disponga de nombre de usuario y contraseña. Al marcar este campo, si el parámetro de configuración <a href="index.php?module=stic_Settings&action=DetailView&record=f8b4a3a2-9f40-4c2e-9f8d-5e76a20f5d11" target="_blank">PRIVATEAREA_SEND_CREDENTIALS_ON_ENABLE</a> está activado, se enviarán automáticamente a la persona las credenciales de acceso. En caso contrario, será necesario hacerlo de forma manual.';
+$mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'Para editar la contraseña es necesario que el campo "Activar área privada" esté marcado.';
+
+// Conversaciones
+$mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Conversaciones';

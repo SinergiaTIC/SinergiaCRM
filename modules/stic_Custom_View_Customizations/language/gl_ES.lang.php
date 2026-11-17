@@ -22,7 +22,7 @@
  */
 
 $mod_strings = array(
-    // Cadeas comúns
+    // Cadenas comunes
     'LBL_ASSIGNED_TO_ID' => 'Asignado a (ID)',
     'LBL_ASSIGNED_TO_NAME' => 'Asignado a',
     'LBL_ASSIGNED_TO' => 'Asignado a',
@@ -49,7 +49,7 @@ $mod_strings = array(
     'LBL_ASCENDING' => 'Ascendente',
     'LBL_DESCENDING' => 'Descendente',
 
-    // Accións do módulo
+    // Acciones del módulo
     'LBL_LIST_FORM_TITLE' => 'Lista de Personalizacións',
     'LBL_MODULE_NAME' => 'Personalizacións',
     'LBL_MODULE_TITLE' => 'Personalizacións',
@@ -63,14 +63,14 @@ $mod_strings = array(
     'LBL_STIC_CUSTOM_VIEW_CUSTOMIZATIONS_SUBPANEL_TITLE' => 'Personalizacións',
     'LBL_NEW_FORM_TITLE' => 'Nova Personalización',
 
-    // Campos do módulo
+    // Campos del módulo
     'LBL_CUSTOMIZATION_ORDER' => 'Orde',
     'LBL_INIT' => 'Inicial',
     'LBL_CONDITIONS' => 'Condicións',
     'LBL_ACTIONS' => 'Accións',
     'LBL_STATUS' => 'Estado',
 
-    // Paneis das vistas
+    // Paneles de las vistas
     'LBL_DEFAULT_PANEL' => 'Datos xerais',
     'LBL_CONDITION_PANEL' => 'Condicións',
     'LBL_ACTION_PANEL' => 'Accións',

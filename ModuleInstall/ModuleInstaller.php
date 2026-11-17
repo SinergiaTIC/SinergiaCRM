@@ -214,6 +214,19 @@ class ModuleInstaller
             require_once("modules/Administration/upgrade_custom_relationships.php");
             upgrade_custom_relationships($this->installed_modules);
             $this->rebuild_all(true);
+
+            // STIC-Custom 20260819 ART - Export Customizations from Studio 
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1392
+            // Clear language cache for all modules so custom field labels appear immediately after customization-only packages
+            global $sugar_config;
+            require_once('include/SugarObjects/LanguageManager.php');
+            if (!empty($sugar_config['languages']) && is_array($sugar_config['languages'])) {
+                foreach ($sugar_config['languages'] as $language => $value) {
+                    LanguageManager::clearLanguageCache('', $language);
+                }
+            }
+            // END STIC-Custom
+
             require_once('modules/Administration/QuickRepairAndRebuild.php');
             $rac = new RepairAndClear();
             $rac->repairAndClearAll($selectedActions, $this->installed_modules, true, false);
@@ -290,11 +303,13 @@ class ModuleInstaller
 
         // STIC-Custom - 20230901 - jch - STIC#1204
         //               20230919 - jch - STIC#1223
+        //               20231124 - JCH - https://github.com/SinergiaTIC/SinergiaCRM/pull/876
         // Rebuild SinergiaDA views to avoid incorrect table references and errors in mysqldump if SDA is enabled
         $sdaEnabled = $sugar_config['stic_sinergiada']['enabled'] ?? false;
         $rebuildSDAFile = 'SticInclude/SinergiaDARebuild.php';
+        $sdaAutoRebuild = $sugar_config['stic_sinergiada']['auto_rebuild_on_studio_events'] ?? true;
 
-        if (file_exists($rebuildSDAFile) && $sdaEnabled) {
+        if (file_exists($rebuildSDAFile) && $sdaEnabled && $sdaAutoRebuild != false) {
             require_once $rebuildSDAFile;
             $GLOBALS['log']->stic('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . "Uninstalling module. {$this->base_dir}. Rebuilding SinergiaDA");
             SinergiaDARebuild::callApiRebuildSDA(true, 'views');
@@ -1334,6 +1349,64 @@ class ModuleInstaller
                     $fieldObject->populateFromRow($field);
                     $mod->custom_fields->use_existing_labels =  true;
                     $mod->custom_fields->addFieldObject($fieldObject);
+
+                    // STIC-Custom 20260819 ART - Export Customizations from Studio 
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1392
+                    // Ensure fields_meta_data exists after addFieldObject by inserting it if STIC update logic skipped saving
+                    // Check whether the metadata row was actually created
+                    $fmdCheck = BeanFactory::newBean('EditCustomFields');
+                    $fieldId = $field['module'] . $field['name'];
+                    $existingId = $fmdCheck->retrieve($fieldId, true, false);
+                    if (empty($existingId)) {
+                        $GLOBALS['log']->debug("Inserting missing fields_meta_data record for field {$fieldId}");
+
+                        // Allow only valid fields_meta_data columns
+                        $allowedColumns = array(
+                            'id', 'name', 'vname', 'comments', 'help', 'custom_module', 'type', 'len',
+                            'required', 'default_value', 'date_modified', 'deleted', 'audited',
+                            'massupdate', 'duplicate_merge', 'reportable', 'importable',
+                            'ext1', 'ext2', 'ext3', 'ext4', 'inline_edit',
+                        );
+
+                        // Map installer keys to DB column names
+                        $fieldMap = array(
+                            'module' => 'custom_module',
+                            'label' => 'vname',
+                            'require_option' => 'required',
+                            'mass_update' => 'massupdate',
+                            'max_size' => 'len',
+                        );
+
+                        // Build the INSERT payload from the field definition
+                        $columns = array();
+                        $values = array();
+                        foreach ($field as $key => $value) {
+                            $dbCol = isset($fieldMap[$key]) ? $fieldMap[$key] : $key;
+                            if (!in_array($dbCol, $allowedColumns)) {
+                                continue;
+                            }
+                            if ($dbCol === 'date_modified' && (empty($value) || $value === '0000-00-00 00:00:00')) {
+                                $value = gmdate('Y-m-d H:i:s');
+                            }
+                            $columns[] = $dbCol;
+                            $values[] = is_null($value) ? 'NULL' : "'" . $this->db->quote($value) . "'";
+                        }
+
+                        // Ensure required defaults for a new metadata row
+                        if (!in_array('deleted', $columns)) {
+                            $columns[] = 'deleted';
+                            $values[] = "'0'";
+                        }
+                        if (!in_array('date_modified', $columns)) {
+                            $columns[] = 'date_modified';
+                            $values[] = "'" . gmdate('Y-m-d H:i:s') . "'";
+                        }
+
+                        // Insert a fallback row so Studio labels are available immediately
+                        $insertSql = "INSERT INTO fields_meta_data (" . implode(',', $columns) . ") VALUES (" . implode(',', $values) . ")";
+                        $this->db->query($insertSql, true, 'Cannot insert fields_meta_data record');
+                    }
+                    // END STIC-Custom
                 }
             }
             if (!$installed) {
@@ -1701,6 +1774,11 @@ class ModuleInstaller
                 $this->modulesInPackage = $installed_modules;
                 $this->uninstall_beans($installed_modules);
                 $this->uninstall_customizations($installed_modules);
+                // STIC-Custom 20261014 ART - Uninstall module labels and images for renamed modules 
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/1453
+                $this->uninstall_renamed_module_labels($installed_modules);
+                $this->uninstall_module_images($installed_modules);
+                // END STIC-Custom
                 if (!$this->silent) {
                     $current_step++;
                     update_progress_bar('install', $total_steps, $total_steps);
@@ -2033,6 +2111,154 @@ class ModuleInstaller
             }
         }
     }
+
+    // STIC-Custom 20261014 ART - Uninstall module labels and images for renamed modules 
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1453
+    /**
+     * Remove moduleList and moduleListSingular entries from custom/include/language/<lang>.lang.php
+     * that were added when a module was renamed via "Rename Tabs"
+     */
+    public function uninstall_renamed_module_labels($beans)
+    {
+        global $sugar_config;
+        if (!isset($sugar_config['languages']) || !is_array($sugar_config['languages'])) {
+            return;
+        }
+
+        foreach (array_keys($sugar_config['languages']) as $language) {
+            $filename = "custom/include/language/$language.lang.php";
+            if (!file_exists($filename)) {
+                continue;
+            }
+
+            $contents = file_get_contents($filename);
+            $lines = explode("\n", $contents);
+            $modified = false;
+            $cleanedLines = array();
+
+            foreach ($lines as $line) {
+                $keep = true;
+                foreach ($beans as $bean) {
+                    $quotedBean = preg_quote($bean, '/');
+                    if (preg_match('/^\s*\$app_list_strings\s*\[\s*[\'"]moduleList[\'"]\s*\]\s*\[\s*[\'"]' . $quotedBean . '[\'"]\s*\]/', $line)) {
+                        $keep = false;
+                        $modified = true;
+                        break;
+                    }
+                    if (preg_match('/^\s*\$app_list_strings\s*\[\s*[\'"]moduleListSingular[\'"]\s*\]\s*\[\s*[\'"]' . $quotedBean . '[\'"]\s*\]/', $line)) {
+                        $keep = false;
+                        $modified = true;
+                        break;
+                    }
+                }
+                if ($keep) {
+                    $cleanedLines[] = $line;
+                }
+            }
+
+            if ($modified) {
+                $newContents = implode("\n", $cleanedLines);
+                $newContents = trim($newContents);
+
+                $stripped = str_replace(array('<?php', "\n", "\r", ' ', "\t"), '', $newContents);
+                if ($newContents === '<?php' || $newContents === '<?php' . "\n" || empty($stripped)) {
+                    unlink($filename);
+                    $this->log(translate('LBL_MI_UN_BEAN') . " Removed empty language file: $filename");
+                } else {
+                    sugar_file_put_contents($filename, $newContents);
+                    SugarCache::cleanFile($filename);
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove theme icon files associated with uninstalled modules
+     * from custom/themes/default/images/
+     */
+    public function uninstall_module_images($beans)
+    {
+        $themeDirs = array('custom/themes/default/images/');
+        if (is_dir('custom/themes/SuiteP/images/')) {
+            $themeDirs[] = 'custom/themes/SuiteP/images/';
+        }
+
+        $patterns = array(
+            'Create%s.gif',
+            'Create%s.svg',
+            'icon_%s_32.gif',
+            'icon_%s_32.svg',
+            'icon_%s.gif',
+            'icon_%s.svg',
+            '%s.gif',
+            '%s.svg',
+        );
+
+        foreach ($themeDirs as $themeDir) {
+            foreach ($beans as $bean) {
+                $beanLower = strtolower($bean);
+                $beanUcfirst = ucfirst($bean);
+
+                foreach ($patterns as $pattern) {
+                    $fileName = sprintf($pattern, $bean);
+                    $filePath = $themeDir . $fileName;
+                    if (file_exists($filePath)) {
+                        unlink($filePath);
+                    }
+                    $fileNameLower = sprintf($pattern, $beanLower);
+                    $filePathLower = $themeDir . $fileNameLower;
+                    if ($fileNameLower !== $fileName && file_exists($filePathLower)) {
+                        unlink($filePathLower);
+                    }
+                    $fileNameUcfirst = sprintf($pattern, $beanUcfirst);
+                    $filePathUcfirst = $themeDir . $fileNameUcfirst;
+                    if ($fileNameUcfirst !== $fileName && $fileNameUcfirst !== $fileNameLower && file_exists($filePathUcfirst)) {
+                        unlink($filePathUcfirst);
+                    }
+                }
+
+                $sidebarFile = $themeDir . 'sidebar/modules/' . $bean . '.svg';
+                if (file_exists($sidebarFile)) {
+                    unlink($sidebarFile);
+                }
+                $sidebarFileLower = $themeDir . 'sidebar/modules/' . $beanLower . '.svg';
+                if ($sidebarFileLower !== $sidebarFile && file_exists($sidebarFileLower)) {
+                    unlink($sidebarFileLower);
+                }
+                $sidebarFileUcfirst = $themeDir . 'sidebar/modules/' . $beanUcfirst . '.svg';
+                if ($sidebarFileUcfirst !== $sidebarFile && $sidebarFileUcfirst !== $sidebarFileLower && file_exists($sidebarFileUcfirst)) {
+                    unlink($sidebarFileUcfirst);
+                }
+
+                $subpanelFile = $themeDir . 'sub_panel/modules/' . $bean . '.svg';
+                if (file_exists($subpanelFile)) {
+                    unlink($subpanelFile);
+                }
+                $subpanelFileLower = $themeDir . 'sub_panel/modules/' . $beanLower . '.svg';
+                if ($subpanelFileLower !== $subpanelFile && file_exists($subpanelFileLower)) {
+                    unlink($subpanelFileLower);
+                }
+                $subpanelFileUcfirst = $themeDir . 'sub_panel/modules/' . $beanUcfirst . '.svg';
+                if ($subpanelFileUcfirst !== $subpanelFile && $subpanelFileUcfirst !== $subpanelFileLower && file_exists($subpanelFileUcfirst)) {
+                    unlink($subpanelFileUcfirst);
+                }
+
+                $subpanelFile2 = $themeDir . 'sub_panel/' . $bean . '.svg';
+                if (file_exists($subpanelFile2)) {
+                    unlink($subpanelFile2);
+                }
+                $subpanelFile2Lower = $themeDir . 'sub_panel/' . $beanLower . '.svg';
+                if ($subpanelFile2Lower !== $subpanelFile2 && file_exists($subpanelFile2Lower)) {
+                    unlink($subpanelFile2Lower);
+                }
+                $subpanelFile2Ucfirst = $themeDir . 'sub_panel/' . $beanUcfirst . '.svg';
+                if ($subpanelFile2Ucfirst !== $subpanelFile2 && $subpanelFile2Ucfirst !== $subpanelFile2Lower && file_exists($subpanelFile2Ucfirst)) {
+                    unlink($subpanelFile2Ucfirst);
+                }
+            }
+        }
+    }
+    // END STIC-Custom
 
     public function log($str)
     {

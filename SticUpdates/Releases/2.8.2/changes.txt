@@ -1,0 +1,4 @@
+M	config.php
+M	modules/stic_AWF_Incoming_Events/metadata/SearchFields.php
+M	modules/stic_AWF_Incoming_Events/metadata/metafiles.php
+M	modules/stic_AWF_Incoming_Events/metadata/searchdefs.php

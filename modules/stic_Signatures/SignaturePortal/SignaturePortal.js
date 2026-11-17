@@ -1,0 +1,482 @@
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+/*
+ * This file contains the JavaScript logic for the signature canvas
+ * and the (simulated) management of audit records.
+ */
+
+// Include utilities
+document.head.appendChild(Object.assign(document.createElement('script'), {
+    src: 'modules/stic_Signatures/SignaturePortal/SignaturePortalUtils.js'
+}));
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // General elements
+    const documentContentDiv = document.getElementById('documentContent');
+    const scrollInstructionMessage = document.getElementById('scrollInstructionMessage');
+
+    // Canvas signature elements
+    const signatureCanvas = document.getElementById('signatureCanvas');
+    let clearSignatureBtn, saveSignatureBtn, textSignatureInput, fontSelector, renderTextSignatureBtn, imageSignatureInput;
+
+    if (signatureCanvas) {
+        clearSignatureBtn = document.getElementById('clearSignatureBtn');
+        saveSignatureBtn = document.getElementById('saveSignatureBtn');
+        textSignatureInput = document.getElementById('textSignatureInput');
+        fontSelector = document.getElementById('fontSelector');
+        if (fontSelector) {
+            const updateFontSelectStyle = () => {
+                fontSelector.style.fontFamily = `"${fontSelector.value}", cursive`;
+            };
+            // Set initial font
+            updateFontSelectStyle();
+            // Update on change
+            fontSelector.addEventListener('change', updateFontSelectStyle);
+        }
+        renderTextSignatureBtn = document.getElementById('renderTextSignatureBtn');
+        imageSignatureInput = document.getElementById('imageSignatureInput');
+    }
+
+    // Button acceptance elements
+    const acceptDocumentBtn = document.getElementById('acceptDocumentBtn');
+
+    // Variable para controlar si el área de firma/aceptación está activa
+    let isAcceptanceAreaEnabled = false;
+    let initialCanvasData = null;
+
+    /**
+     * Enables the signature or acceptance area after the user scrolls to the bottom.
+     */
+    function enableAcceptanceArea() {
+        if (!isAcceptanceAreaEnabled) {
+            isAcceptanceAreaEnabled = true;
+
+            if (scrollInstructionMessage) {
+                scrollInstructionMessage.style.display = 'none';
+            }
+
+            if (signatureCanvas) {
+                signatureCanvas.classList.remove('canvas-disabled');
+                // Botones y campos de canvas
+                if (clearSignatureBtn) clearSignatureBtn.disabled = false;
+                if (saveSignatureBtn) saveSignatureBtn.disabled = false;
+                if (textSignatureInput) textSignatureInput.disabled = false;
+                if (fontSelector) fontSelector.disabled = false;
+                if (renderTextSignatureBtn) renderTextSignatureBtn.disabled = false;
+                if (imageSignatureInput) imageSignatureInput.disabled = false;
+            } else if (acceptDocumentBtn) {
+                acceptDocumentBtn.disabled = false;
+            }
+
+            // Remove the scroll listener once the area is activated
+            if (documentContentDiv) {
+                documentContentDiv.removeEventListener('scroll', checkScrollPosition);
+            }
+        }
+    }
+
+    /**
+     * Checks the scroll position of the document content to enable the signature area.
+     */
+    function checkScrollPosition() {
+        if (!documentContentDiv) return;
+        if (documentContentDiv.scrollTop + documentContentDiv.clientHeight >= documentContentDiv.scrollHeight - 1) {
+            enableAcceptanceArea();
+        }
+    }
+
+    // --- Lógica para el modo "handwritten" (canvas) ---
+    if (signatureCanvas) {
+        const ctx = signatureCanvas.getContext('2d');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        /**
+         * Adjusts the canvas size for sharp rendering on high-density screens
+         * and makes it responsive.
+         */
+        function resizeCanvas() {
+            const rect = signatureCanvas.getBoundingClientRect();
+            const calculatedWidthCSS = rect.width;
+            const calculatedHeightCSS = Math.min(250, window.innerHeight * 0.4);
+
+            signatureCanvas.style.width = `${calculatedWidthCSS}px`;
+            signatureCanvas.style.height = `${calculatedHeightCSS}px`;
+
+            signatureCanvas.width = calculatedWidthCSS;
+            signatureCanvas.height = calculatedHeightCSS;
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#333';
+            initialCanvasData = signatureCanvas.toDataURL('image/png');
+        }
+
+
+        // Initialize canvas
+        resizeCanvas();
+        window.addEventListener('resize', () => {
+            initialCanvasData = 'reset';
+            resizeCanvas();
+            checkScrollPosition();
+        });
+
+        // Helper function to get correct coordinates
+        function getMousePos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: (evt.clientX - rect.left) * (canvas.width / rect.width),
+                y: (evt.clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        function getTouchPos(canvas, evt) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = evt.touches[0];
+            return {
+                x: (touch.clientX - rect.left) * (canvas.width / rect.width),
+                y: (touch.clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        // --- Drawing Logic for Mouse ---
+        signatureCanvas.addEventListener('mousedown', (e) => {
+            if (!isAcceptanceAreaEnabled) return;
+            isDrawing = true;
+            const pos = getMousePos(signatureCanvas, e);
+            [lastX, lastY] = [pos.x, pos.y];
+        });
+
+        signatureCanvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing || !isAcceptanceAreaEnabled) return;
+            const pos = getMousePos(signatureCanvas, e);
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            [lastX, lastY] = [pos.x, pos.y];
+        });
+
+        signatureCanvas.addEventListener('mouseup', () => {
+            if (isDrawing) {
+                isDrawing = false;
+            }
+        });
+
+        signatureCanvas.addEventListener('mouseout', () => {
+            if (isDrawing) {
+                isDrawing = false;
+            }
+        });
+
+        // --- Drawing Logic for Touch (Mobile) ---
+        signatureCanvas.addEventListener('touchstart', (e) => {
+            if (!isAcceptanceAreaEnabled) return;
+            e.preventDefault();
+            isDrawing = true;
+            const pos = getTouchPos(signatureCanvas, e);
+            lastX = pos.x;
+            lastY = pos.y;
+        }, { passive: false });
+
+        signatureCanvas.addEventListener('touchmove', (e) => {
+            if (!isDrawing || !isAcceptanceAreaEnabled) return;
+            e.preventDefault();
+            const pos = getTouchPos(signatureCanvas, e);
+            const currentX = pos.x;
+            const currentY = pos.y;
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(currentX, currentY);
+            ctx.stroke();
+            [lastX, lastY] = [currentX, currentY];
+        }, { passive: false });
+
+        signatureCanvas.addEventListener('touchend', () => {
+            if (isDrawing) {
+                isDrawing = false;
+            }
+        });
+
+        // --- Button Functions for Canvas ---
+        if (clearSignatureBtn) {
+            clearSignatureBtn.addEventListener('click', () => {
+                if (!isAcceptanceAreaEnabled) return;
+                ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+                initialCanvasData = signatureCanvas.toDataURL('image/png');
+            });
+        }
+        if (saveSignatureBtn) {
+            saveSignatureBtn.addEventListener('click', () => {
+                if (!isAcceptanceAreaEnabled) return;
+                saveSignature();
+            });
+        }
+
+
+
+        // --- Text Signature Functionality ---
+        if (renderTextSignatureBtn) {
+            renderTextSignatureBtn.addEventListener('click', () => {
+                if (!isAcceptanceAreaEnabled) return;
+                const signatureText = textSignatureInput.value.trim();
+                const selectedFont = fontSelector.value;
+
+                if (signatureText === '') {
+                    showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_ENTER_NAME_TEXT);
+                    return;
+                }
+
+                const drawText = () => {
+                    ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+                    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+                    const canvasNativeWidth = signatureCanvas.width;
+                    const canvasNativeHeight = signatureCanvas.height;
+                    let fontSize = canvasNativeHeight * 0.8;
+                    ctx.font = `${fontSize}px "${selectedFont}", sans-serif`; 
+                    let textMetrics = ctx.measureText(signatureText);
+                    const targetWidth = canvasNativeWidth * 0.9;
+                    if (textMetrics.width > targetWidth) {
+                        fontSize = (targetWidth / textMetrics.width) * fontSize;
+                        ctx.font = `${fontSize}px "${selectedFont}", sans-serif`;
+                    }
+                    const estimatedTextHeight = fontSize * 1.2;
+                    const targetHeight = canvasNativeHeight * 0.9;
+                    if (estimatedTextHeight > targetHeight) {
+                        fontSize = (targetHeight / estimatedTextHeight) * fontSize;
+                    }
+                    ctx.font = `${fontSize}px "${selectedFont}", sans-serif`;
+                    ctx.fillStyle = '#333';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    const x = canvasNativeWidth / 2;
+                    const y = canvasNativeHeight / 2;
+                    ctx.fillText(signatureText, x, y);
+                };
+
+                // Ensure font is loaded before drawing
+                document.fonts.load(`10px "${selectedFont}"`).then(() => {
+                    drawText();
+                });
+
+            });
+        }
+
+        // --- Upload Image Signature Functionality ---
+        if (imageSignatureInput) {
+            imageSignatureInput.addEventListener('change', (e) => {
+                if (!isAcceptanceAreaEnabled) {
+                    e.target.value = '';
+                    return;
+                }
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        ctx.clearRect(0, 0, signatureCanvas.width, signatureCanvas.height);
+                        ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+                        const canvasNativeWidth = signatureCanvas.width;
+                        const canvasNativeHeight = signatureCanvas.height;
+                        const canvasAspectRatio = canvasNativeWidth / canvasNativeHeight;
+                        const imgAspectRatio = img.width / img.height;
+                        let drawWidth = canvasNativeWidth;
+                        let drawHeight = canvasNativeHeight;
+                        let offsetX = 0;
+                        let offsetY = 0;
+
+                        if (imgAspectRatio > canvasAspectRatio) {
+                            drawHeight = drawWidth / imgAspectRatio;
+                            offsetY = (canvasNativeHeight - drawHeight) / 2;
+                        } else {
+                            drawWidth = drawHeight * imgAspectRatio;
+                            offsetX = (canvasNativeWidth - drawWidth) / 2;
+                        }
+                        ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+                    };
+                    img.onerror = () => {
+                        console.error('Error loading signature image.');
+                        showAlert('error', MODS.LBL_PORTAL_ERROR, MODS.LBL_PORTAL_IMG_ERROR);
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Save function for canvas
+        function saveSignature() {
+            const currentCanvasData = signatureCanvas.toDataURL('image/png');
+            if (currentCanvasData === initialCanvasData) {
+                showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_DRAW_OR_USE_OTHER_OPTION);
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const url = 'index.php';
+            const signerId = urlParams.get('signerId');
+            const data = {
+                entryPoint: "sticSign",
+                signatureAction: "saveSignature",
+                signerId: signerId,
+                signatureData: currentCanvasData,
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(data),
+            }).then(response => {
+                if (!response.ok) {
+                    console.error('Server response was not ok:', response.status, response.statusText);
+                    throw new Error('Network or server error');
+                }
+                return response.json();
+            }).then(data => {
+                if (data.success === true) {
+                    console.log('Signature data sent successfully:', data);
+                    showAlert('success', MODS.LBL_PORTAL_SIGNATURE_SAVED, MODS.LBL_PORTAL_SIGNATURE_SAVED_SUCCESSFULLY, null, true);
+                } else {
+                    console.error('Signature data not saved:', data);
+                    showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_UNEXPECTED_SAVE_ERROR, null, true);
+                }
+            }).catch(error => {
+                console.error('Error sending signature data:', error);
+                showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_UNEXPECTED_SAVE_ERROR, null, true);
+            });
+        }
+
+
+
+
+    }
+    if (acceptDocumentBtn) {
+        acceptDocumentBtn.addEventListener('click', () => {
+            if (!isAcceptanceAreaEnabled) return;
+            acceptDocument();
+        });
+    }
+    // acceptDocument action
+    function acceptDocument() {
+
+        // if (currentCanvasData !== initialCanvasData) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const url = 'index.php';
+        const signerId = urlParams.get('signerId');
+        const data = {
+            entryPoint: "sticSign",
+            signatureAction: "acceptDocument",
+            signerId: signerId,
+        };
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(data),
+        }).then(response => {
+            if (!response.ok) throw new Error('Network or server error');
+            return response.json();
+        }).then(data => {
+            if (data.success === true) {
+                console.log('Signature data sent successfully:', data);
+                showAlert('success', MODS.LBL_PORTAL_SIGNATURE_SAVED, MODS.LBL_PORTAL_ACCEPTANCE_REGISTERED_SUCCESSFULLY, null, true);
+            } else {
+                console.error('Signature data not saved:', data);
+                showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_ACCEPTANCE_ERROR, null, true);
+            }
+        }).catch(error => {
+            console.error('Error sending acceptation data:', error);
+            showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_ACCEPTANCE_ERROR, null, true);
+        });
+        // }
+    }
+
+
+    // Disable areas initially if they exist
+    if (signatureCanvas) {
+        signatureCanvas.classList.add('canvas-disabled');
+        if (clearSignatureBtn) clearSignatureBtn.disabled = true;
+        if (saveSignatureBtn) saveSignatureBtn.disabled = true;
+        if (textSignatureInput) textSignatureInput.disabled = true;
+        if (fontSelector) fontSelector.disabled = true;
+        if (renderTextSignatureBtn) renderTextSignatureBtn.disabled = true;
+        if (imageSignatureInput) imageSignatureInput.disabled = true;
+    } else if (acceptDocumentBtn) {
+        acceptDocumentBtn.disabled = true;
+    }
+
+    // Initialize all common elements
+    if (documentContentDiv) {
+        documentContentDiv.addEventListener('scroll', checkScrollPosition);
+        checkScrollPosition();
+    }
+
+
+    // --- Lógica para enviar el PDF firmado por correo ---
+    const sendEmailBtn = document.getElementById('send-signed-pdf-by-email');
+    if (sendEmailBtn) {
+        sendEmailBtn.addEventListener('click', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const url = 'index.php';
+            const signerId = urlParams.get('signerId');
+            const data = {
+                entryPoint: "sticSign",
+                signatureAction: "sendSignedPdfByEmail",
+                signerId: signerId,
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(data),
+            }).then(response => {
+                if (!response.ok) throw new Error('Network or server error');
+                return response.json();
+            }).then(data => {
+                console.log('Request to send signed PDF by email was successful:', data);
+                showAlert('success', MODS.LBL_PORTAL_EMAIL_SENT, MODS.LBL_PORTAL_PDF_SENT_SUCCESSFULLY, () => {
+                    sendEmailBtn.disabled = true;
+                });
+
+            }).catch(error => {
+                console.error('Error sending request to send signed PDF by email:', error);
+                showAlert('warning', MODS.LBL_PORTAL_ATTENTION, MODS.LBL_PORTAL_PDF_SEND_ERROR);
+            });
+        });
+    }
+
+
+
+
+});

@@ -63,6 +63,10 @@ $mod_strings = array(
     'LBL_STATUS_DETAILS' => 'Status details',
     'LBL_MOTIVATIONS' => 'Application motivations',
     'LBL_PREINSERTION_OBSERVATIONS' => 'Pre-insertion observations',
+    'LBL_PREVIOUS_EXPERIENCE' => 'Previous experience',
+    'LBL_AVAILABLE_DAYS' => 'Available days',
+    'LBL_AVAILABLE_TIME' => 'Available time',
+    'LBL_ACCOUNT' => 'Account',
     'LBL_ATTENTION_DATE' => 'Attention date',
     'LBL_CONTRACT_START_DATE' => 'Placement/contract start date',
     'LBL_CONTRACT_END_DATE' => 'Placement/contract final date',
@@ -96,4 +100,6 @@ $mod_strings = array(
     'LBL_START_DATE_CONTRACT_START_DATE_ERROR' => 'Start date must be equal or before Contract start date',
     'LBL_CONTRACT_START_DATE_START_DATE_ERROR' => 'Contract start date must be equal or after Start date',
     'LBL_WORK_EXPERIENCE_SUBJECT' => 'Job application accepted',
+    'LBL_INTERLOCUTOR' => 'Interlocutor',
+    'LBL_INTERLOCUTOR_HELP' => 'Contact person of the hiring account.',
 );

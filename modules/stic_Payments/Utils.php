@@ -51,12 +51,8 @@ class stic_PaymentsUtils
         $callBean->parent_id = $paymentBean->id;
         $callBean->parent_type = 'stic_Payments';
 
-        // STIC NOTE - $_REQUEST variable is not the same when saving a record from EDIT_VIEW as from INLINE_EDIT.
-        // In order to generate the relationship between the contact and the call, it is necessary to enter the following properties in $_REQUEST
-        if ($_REQUEST['action'] == 'saveHTMLField') {
-            $_REQUEST['relate_to'] = 'Contacts';
-            $_REQUEST['relate_id'] = $paymentBean->stic_payments_contactscontacts_ida;
-        }
+        $_REQUEST['relate_to'] = 'Contacts';
+        $_REQUEST['relate_id'] = $paymentBean->stic_payments_contactscontacts_ida;
 
         $callBean->save();
     }
@@ -212,4 +208,114 @@ class stic_PaymentsUtils
         }
         return true;
     }
+    /**
+     * Get the M182 Issuing Organization keys for the current user
+     *
+     * @return array Array of issuing organization keys with underscore prefix
+     */
+    public static function getM182IssuingOrganizationKeyForCurrentUser() {
+        global $current_user;
+        $orgKeyArray = array();
+
+        if (!empty($current_user->stic_m182_issuing_organization_c)) {
+            $orgValuesArray = unencodeMultienum($current_user->stic_m182_issuing_organization_c);
+            // Adding underscore to values for settings retrieval
+            foreach ($orgValuesArray as $value) {
+                if ($value == '') {
+                    continue;
+                }
+                $orgKeyArray[] = $value;
+            }
+        }
+        return $orgKeyArray;
+    }
+
+
+    /**
+     * Filter movement class list for default issuing organization selection.
+     *
+     * @param array $movementClassList
+     * @param array $app_list_strings
+     * @return array
+     */
+    public static function filterMovementClassListForDefaultOrg($movementClassList, $dynamicIssuingOrganizationList)
+    {
+        $suffixes = array();
+        foreach ($dynamicIssuingOrganizationList as $key => $value) {
+            if ($key !== '__default__' && $key !== "") {
+                $suffixes[] = '_' . strtolower($key);
+            }
+        }
+
+        if (empty($suffixes)) {
+            return $movementClassList;
+        }
+
+        $filteredMovementClassList = array();
+        foreach ($movementClassList as $x => $xValue) {
+            if ($x === '') {
+                continue;
+            }
+            $xLower = strtolower($x);
+            $skip = false;
+            foreach ($suffixes as $suf) {
+                $sufLen = strlen($suf);
+                if ($sufLen > 0 && $sufLen <= strlen($xLower) && substr($xLower, -$sufLen) === $suf) {
+                    $skip = true;
+                    break;
+                }
+            }
+            if ($skip) {
+                continue;
+            }
+            $filteredMovementClassList[$x] = $xValue;
+        }
+        return $filteredMovementClassList;
+    }
+
+    public static function filterMovementClassListForSelectedOrg($movementClassList, $selectedOrgKey)
+    {
+        $suf = strtolower($selectedOrgKey);
+        // Keep only movement types that end with the organization's suffix (case-insensitive)
+        $filteredMovementClassList = array();
+        foreach ($movementClassList as $x => $xValue) {
+            if ($x === '') {
+                continue;
+            }
+            $xLower = strtolower($x);
+            $sufLen = strlen($suf);
+            if ($sufLen > 0 && $sufLen <= strlen($xLower) && substr($xLower, -$sufLen) === $suf) {
+                $filteredMovementClassList[$x] = $xValue;
+            }
+        }
+        return $filteredMovementClassList;
+    }
+
+    /**
+     * Generate payment type options based on the current user's issuing organization settings
+     */
+    public static function generatePaymentTypeOptionsFromUser() {
+        global $app_list_strings, $current_user;
+        require_once 'modules/stic_Payments/Utils.php';
+        $orgKeyArray = stic_PaymentsUtils::getM182IssuingOrganizationKeyForCurrentUser();
+        if (count($orgKeyArray) == 0 || (count($orgKeyArray) == 1 && $orgKeyArray[0] === '') || $current_user->is_admin) {
+            return $app_list_strings['stic_payments_types_list'];
+        }
+            
+        include_once "modules/stic_Remittances/Utils.php";
+        stic_RemittancesUtils::fillDynamicListForIssuingOrganizations(true);   
+        $movementClassList = $app_list_strings['stic_payments_types_list'];
+        require_once 'modules/stic_Payments/Utils.php';
+        $filteredMovementClassList = array("" => "");
+        foreach ($orgKeyArray as $orgKey) {
+            if ($orgKey === '__default__') {
+                $filteredMovementClassList = array_merge($filteredMovementClassList, stic_PaymentsUtils::filterMovementClassListForDefaultOrg($movementClassList, $app_list_strings['dynamic_issuing_organization_list']));
+                continue;
+            }
+            $filteredMovementClassList = array_merge($filteredMovementClassList, stic_PaymentsUtils::filterMovementClassListForSelectedOrg($movementClassList, $orgKey));
+        }
+
+        return $filteredMovementClassList;
+    }
+
 }

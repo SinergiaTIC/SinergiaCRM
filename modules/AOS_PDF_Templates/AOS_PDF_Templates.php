@@ -91,6 +91,14 @@ class AOS_PDF_Templates extends AOS_PDF_Templates_sugar
         }
         // END STIC-Custom
 
+        // STIC-Custom 20250716 JCH - Add 'Users' module to the list if the user is admin (for  Signatures)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/726
+        if($current_user->is_admin) {
+            // Include 'Users' module in the list if the user is admin
+            $modules['Users'] = $app_list_strings['moduleList']['Users'];
+        }
+        // END STIC-Custom
+
         asort($modules);
         return $modules;
     }

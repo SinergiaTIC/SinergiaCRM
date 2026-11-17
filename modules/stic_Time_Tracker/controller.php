@@ -135,4 +135,26 @@ class stic_Time_TrackerController extends SugarController {
         }
         $bean->save(false);
     }
+
+    /**
+     *
+     * @return void 
+     */
+    public function action_getTodayTimeTrackerRecords()
+    {
+        // Check if the user has started any time registration today
+        $GLOBALS['log']->debug('Line '.__LINE__.': '.__METHOD__.':  Checking time tracker registration status.');
+        global $current_user;
+        
+        // Check if there is a time tracker record for the employee in today
+        $data = stic_Time_Tracker::getTodayTimeTrackerRecords($current_user->id) ?? [];
+
+        // return the json result
+        ob_clean();
+        $json = json_encode($data);
+        header('Content-Type: application/json');
+        echo $json;
+        ob_flush();
+        die();
+    }
 }

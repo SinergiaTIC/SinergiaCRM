@@ -311,6 +311,41 @@ $dashletData['ContactsDashlet']['columns'] = array(
         'default' => false,
         'name' => 'lawful_basis',
     ),
+    'stic_confidentiality_agreement_c' => 
+    array (
+        'type' => 'bool',
+        'default' => false,
+        'studio' => 'visible',
+        'label' => 'LBL_STIC_CONFIDENTIALITY_AGREEMENT',
+        'width' => '10%',
+        'name' => 'stic_confidentiality_agreement_c',
+    ),
+    'stic_conduct_code_c' => 
+    array (
+        'type' => 'bool',
+        'default' => false,
+        'studio' => 'visible',
+        'label' => 'LBL_STIC_CONDUCT_CODE',
+        'width' => '10%',
+        'name' => 'stic_conduct_code_c',
+    ),
+    'stic_occupational_safety_c' => 
+    array (
+        'type' => 'bool',
+        'default' => false,
+        'studio' => 'visible',
+        'label' => 'LBL_STIC_OCCUPATIONAL_SAFETY',
+        'width' => '10%',
+        'name' => 'stic_occupational_safety_c',
+    ),
+    'stic_time_availability_c' => 
+    array (
+        'type' => 'varchar',
+        'label' => 'LBL_STIC_TIME_AVAILABILITY',
+        'width' => '10%',
+        'default' => false,
+        'name' => 'stic_time_availability_c',
+    ),
     'date_reviewed' => array(
         'type' => 'date',
         'label' => 'LBL_DATE_REVIEWED',

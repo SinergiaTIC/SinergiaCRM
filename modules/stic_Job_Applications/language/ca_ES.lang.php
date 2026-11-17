@@ -63,6 +63,10 @@ $mod_strings = array(
     'LBL_STATUS_DETAILS' => "Detalls de l'estat",
     'LBL_MOTIVATIONS' => 'Motivació de la candidatura',
     'LBL_PREINSERTION_OBSERVATIONS' => 'Observacions pre-inserció',
+    'LBL_PREVIOUS_EXPERIENCE' => 'Experiència prèvia',
+    'LBL_AVAILABLE_DAYS' => 'Dies disponibles',
+    'LBL_AVAILABLE_TIME' => 'Disponibilitat horària',
+    'LBL_ACCOUNT' => 'Organització',
     'LBL_ATTENTION_DATE' => "Data d'atenció",
     'LBL_CONTRACT_START_DATE' => 'Data inici de contracte o col·locació',
     'LBL_CONTRACT_END_DATE' => 'Data final de contracte o col·locació',
@@ -96,4 +100,6 @@ $mod_strings = array(
     'LBL_START_DATE_CONTRACT_START_DATE_ERROR' => "La data d'alta ha de ser igual o anterior a la data d'inici de contracte",
     'LBL_CONTRACT_START_DATE_START_DATE_ERROR' => "La data d'inici de contracte ha de ser igual o posterior a la data d'alta",
     'LBL_WORK_EXPERIENCE_SUBJECT' => 'Candidatura acceptada',
+    'LBL_INTERLOCUTOR' => 'Interlocutor',
+    'LBL_INTERLOCUTOR_HELP' => "Persona de contacte de l'organització oferent.",
 );

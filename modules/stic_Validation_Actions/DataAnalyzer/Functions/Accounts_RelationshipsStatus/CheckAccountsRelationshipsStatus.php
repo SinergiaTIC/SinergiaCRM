@@ -133,7 +133,7 @@ class CheckAccountsRelationshipsStatus extends DataCheckFunction
 				GROUP BY
 					c.id
 				HAVING
-					(actuales != activas) -- 2) Secondly, we join a query that gives us back organizations that have something indicated in relationship type, but that have no related record in redk_relacion accounts, or that is deleted = 0
+					(actuales != activas) -- 2) Secondly, we join a query that gives us back accounts that have something indicated in relationship type, but that have no related record in stic_Accounts_Relationships or that is deleted
 				UNION
 				SELECT
 					id AS organizacion,

@@ -90,7 +90,8 @@ class stic_Registrations extends Basic
                 // On new records, inherit amount from related event
                 if (empty($this->session_amount) && !$is_update) {
                     $eventBean = BeanFactory::getBean('stic_Events', $this->stic_registrations_stic_eventsstic_events_ida);
-                    $this->session_amount = $eventBean->session_amount;
+                    require_once 'SticInclude/Utils.php';
+                    $this->session_amount = SticUtils::formatDecimalInConfigSettings($eventBean->session_amount, true);
                 }
             }
         }

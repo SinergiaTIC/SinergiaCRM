@@ -26,6 +26,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 require_once 'include/MVC/View/views/view.edit.php';
 require_once 'SticInclude/Views.php';
+require_once 'modules/stic_Settings/Utils.php';
 
 #[\AllowDynamicProperties]
 class CustomCampaignsViewEdit extends ViewEdit
@@ -104,10 +105,49 @@ class CustomCampaignsViewEdit extends ViewEdit
                 ),
             ),
         );
+
+        // Adding the SMS Notification panel dinamically.
+        $this->ev->defs['panels']['templateMeta']['tabdefs']['LBL_SMS_NOTIFICATION_INFORMATION_PANEL'] = array(
+            'newTab' => false,
+            'panelDefault' => 'expanded',
+        );
+
+        $this->ev->defs['panels']['LBL_MSG_NOTIFICATION_INFORMATION_PANEL'] = array(
+            0 => array(
+                0 => array(
+                    'name' => 'parent_field_placeholder',
+                    // 'label' => 'LBL_FLEX_RELATE',
+                ),
+                1 => '',
+            ),
+            1 => array(
+                0 => array(
+                    'name' => 'msg_notification_prospect_list_ids',
+                    'label' => 'LBL_NOTIFICATION_PROSPECT_LIST_ID',
+                ),
+                1 => array(
+                    'name' => 'msg_notification_template_id',
+                    // 'label' => 'LBL_NOTIFICATION_TEMPLATE_ID',
+                ),
+            ),
+            2 => array(
+                0 => array(
+                    'name' => 'sender',
+                    'label' => 'LBL_NOTIFICATION_FROM_NAME',
+                ),
+                1 => array(
+                    'name' => 'notification_message_type',
+                    // 'label' => 'LBL_TYPE',
+                ),
+            ),
+        );
+
+        $this->bean->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';
     }
 
     public function display()
     {
+        $this->bean->sender = stic_SettingsUtils::getSetting('messages_sender') ?? '';
         parent::display();
 
         SticViews::display($this);
