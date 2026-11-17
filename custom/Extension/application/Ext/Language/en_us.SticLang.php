@@ -117,11 +117,11 @@ $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only 
 // Many to Many filter fields
 $app_strings['LBL_SECURITYGROUPS_NAME'] = 'Security Group';
 
-// Searchable selects (SticAlphabeticalSelects.js)
+// Search in dropdowns
 $app_strings['LBL_STIC_SEARCH_SELECT_PLACEHOLDER'] = 'Type to search...';
-$app_strings['LBL_STIC_SEARCH_SELECT_INPUT_LABEL'] = 'Search this list';
+$app_strings['LBL_STIC_SEARCH_SELECT_INPUT_LABEL'] = 'Search';
 $app_strings['LBL_STIC_SEARCH_SELECT_NO_RESULTS'] = 'No results found';
-$app_strings['LBL_STIC_SEARCH_SELECT_MASSUPDATE_CLEAR'] = 'Clear the current value';
+$app_strings['LBL_STIC_SEARCH_SELECT_MASSUPDATE_CLEAR'] = 'Clear';
 
 // SinergiaCRM own modules and SuiteCRM renamed modules
 $app_list_strings['moduleList']['Accounts'] = 'Accounts';
@@ -4122,14 +4122,14 @@ $app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Mass action';
 $app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Record merge';
 $app_list_strings['stic_recycle_deletion_source_list']['other'] = 'External action';
 
-// Administration: Options of the searchable-selects threshold setting
-$app_list_strings['stic_search_selects_options']['-1'] = 'Never (no search box)';
-$app_list_strings['stic_search_selects_options']['0'] = 'In every dropdown';
-$app_list_strings['stic_search_selects_options']['10'] = 'Only if it has 10 options or more';
-$app_list_strings['stic_search_selects_options']['20'] = 'Only if it has 20 options or more';
-$app_list_strings['stic_search_selects_options']['30'] = 'Only if it has 30 options or more';
-$app_list_strings['stic_search_selects_options']['50'] = 'Only if it has 50 options or more';
-$app_list_strings['stic_search_selects_options']['100'] = 'Only if it has 100 options or more';
+// Administration: Search options in dropdown fields
+$app_list_strings['stic_search_selects_options']['-1'] = 'Never';
+$app_list_strings['stic_search_selects_options']['0'] = 'Always';
+$app_list_strings['stic_search_selects_options']['10'] = 'From 10 options';
+$app_list_strings['stic_search_selects_options']['20'] = 'From 20 options';
+$app_list_strings['stic_search_selects_options']['30'] = 'From 30 options';
+$app_list_strings['stic_search_selects_options']['50'] = 'From 50 options';
+$app_list_strings['stic_search_selects_options']['100'] = 'From 100 options';
 
 // SuiteCRM Core modifications
 
