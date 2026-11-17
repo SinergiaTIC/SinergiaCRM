@@ -217,14 +217,25 @@ class CustomAdministrationController extends AdministrationController
             unset($configurator->config['stic_sinergiada_public']['url']);
         }
 
-        // Log changes
+        // SSO secret: an empty field keeps the current value, so saving the form
+        // never wipes a configured secret by accident. Rotate by typing a new one.
+        $ssoSecret = trim($_POST['sso_secret'] ?? '');
+        if ($ssoSecret !== '') {
+            $configurator->config['stic_sinergiada']['sso_secret'] = $ssoSecret;
+        }
+
+        // Log changes (secret values are never written to the log)
         $userId = $current_user->id;
         $changes = [];
         $newConfig = $configurator->config['stic_sinergiada'];
         foreach ($newConfig as $key => $newVal) {
             $oldVal = $oldConfig[$key] ?? '';
             if (json_encode($oldVal) !== json_encode($newVal)) {
-                $changes[] = "$key: " . json_encode($oldVal) . " -> " . json_encode($newVal);
+                if ($key === 'sso_secret') {
+                    $changes[] = 'sso_secret: <changed>';
+                } else {
+                    $changes[] = "$key: " . json_encode($oldVal) . " -> " . json_encode($newVal);
+                }
             }
         }
         $newPublicUrl = $configurator->config['stic_sinergiada_public']['url'] ?? '';
