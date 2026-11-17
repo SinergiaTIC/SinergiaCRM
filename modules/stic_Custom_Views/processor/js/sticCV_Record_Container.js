@@ -76,6 +76,7 @@ var sticCV_Record_Container = class sticCV_Record_Container {
         return this.content ? this.content.applyAction(action) : null;
       case "tab":
       case "panel":
+      case "subpanel":
       case "field":
       case "container":
         this.container && this.container.applyAction(action);

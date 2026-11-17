@@ -3724,6 +3724,7 @@ $app_list_strings['stic_custom_views_views_list']['quickcreate'] = 'Quickcreate 
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Field';
 $app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Panel';
 $app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'Tab';
+$app_list_strings['stic_custom_views_action_type_list']['subpanel_modification'] = 'Subpanel';
 
 // Custom Views: Actions
 $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
@@ -3749,6 +3750,7 @@ $app_list_strings['stic_custom_views_element_list']['panel_content'] = 'Panel co
 $app_list_strings['stic_custom_views_element_list']['tab'] = 'Whole tab';
 $app_list_strings['stic_custom_views_element_list']['tab_header'] = 'Tab header';
 $app_list_strings['stic_custom_views_element_list']['tab_content'] = 'Tab content';
+$app_list_strings['stic_custom_views_element_list']['subpanel'] = 'Whole subpanel';
 
 // Custom Views: Status
 $app_list_strings['stic_custom_views_status_list']['active'] = 'Active';

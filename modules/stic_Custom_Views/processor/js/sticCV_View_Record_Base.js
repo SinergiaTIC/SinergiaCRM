@@ -37,6 +37,7 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
     this._fields = [];
     this._panels = [];
     this._tabs = [];
+    this._subpanels = [];
   }
 
   field(fieldName, forceReloadField = false) {
@@ -58,6 +59,13 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
       this._tabs[tabName] = new sticCV_Record_Tab(this, tabName);
     }
     return this._tabs[tabName];
+  }
+
+  subpanel(subpanelName) {
+    if (subpanelName in this._subpanels === false) {
+      this._subpanels[subpanelName] = new sticCV_Record_Subpanel(this, subpanelName);
+    }
+    return this._subpanels[subpanelName];
   }
 
   /**
@@ -127,6 +135,8 @@ var sticCV_View_Record_Base = class sticCV_View_Record_Base {
         return this.panel(action.element).exists() ? this.panel(action.element).applyAction(action) : false;
       case "tab_modification":
         return this.tab(action.element).exists() ? this.tab(action.element).applyAction(action) : false;
+      case "subpanel_modification":
+        return this.subpanel(action.element).exists() ? this.subpanel(action.element).applyAction(action) : false;
     }
   }
 
