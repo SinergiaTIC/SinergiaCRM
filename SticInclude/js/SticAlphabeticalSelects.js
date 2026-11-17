@@ -494,16 +494,26 @@
         function optionEntries() {
             var entries = [];
             var clearLabel = languageString('LBL_STIC_SEARCH_SELECT_MASSUPDATE_CLEAR', 'Vaciar el valor');
-            // Blank options ("' ' => ''" entries) are shown with the application
+            // Blank options ("'' => ''" entries) are shown with the application
             // "none" string so they are identifiable in the search list
             var noneLabel = languageString('LBL_NONE', '—');
             var push = function (option, groupLabel) {
                 var value = norm(option.value);
                 var text = (value === MASSUPDATE_CLEAR_MARKER)
                     ? clearLabel
-                    : (textOf(option) || value);
+                    : textOf(option);
                 var isEmpty = text === '';
-                var display = isEmpty ? noneLabel : text;
+                var display;
+                if (isEmpty && value === '') {
+                    display = noneLabel;
+                } else if (isEmpty) {
+                    // Option with a value but no label (e.g. a field without a
+                    // translatable vardef): never show the raw internal value,
+                    // just a neutral dash, like the native blank row
+                    display = '—';
+                } else {
+                    display = text;
+                }
                 entries.push({
                     value: value,
                     label: (groupLabel ? groupLabel + ' — ' : '') + display,
