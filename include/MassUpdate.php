@@ -662,7 +662,7 @@ eoq;
                                     // translate($field["options"])
                                     // Administrator-customized dropdowns keep their defined order
                                     translate($field["options"]),
-                                    sticIsCustomDropdown($field["options"] ?? '')
+                                    \Sugar_Smarty::sticIsCustomDropdown($field["options"] ?? '')
                                     // END STIC-Custom
                                 );
                                 break;
@@ -682,7 +682,7 @@ eoq;
                                     // STIC-Custom 20261117 ART - Alphabetical dropdowns
                                     // https://github.com/SinergiaTIC/SinergiaCRM/pull/
                                     // Administrator-customized dropdowns keep their defined order
-                                    sticIsCustomDropdown($field["options"])
+                                    \Sugar_Smarty::sticIsCustomDropdown($field["options"])
                                     // END STIC-Custom
                                 );
                                 break;
@@ -1399,7 +1399,7 @@ EOQ;
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/
         // return $this->addStatus($displayname, $varname, $app_list_strings['checkbox_dom']);
         // checkbox_dom can also be administrator-customized
-        return $this->addStatus($displayname, $varname, $app_list_strings['checkbox_dom'], null, sticIsCustomDropdown('checkbox_dom'));
+        return $this->addStatus($displayname, $varname, $app_list_strings['checkbox_dom'], null, \Sugar_Smarty::sticIsCustomDropdown('checkbox_dom'));
         // END STIC-Custom
     }
 

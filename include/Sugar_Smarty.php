@@ -87,7 +87,7 @@ class Sugar_Smarty extends Smarty
         // End STIC Custom
         // STIC-Custom 20261117 ART - Alphabetical dropdowns
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/
-        $this->registerPlugin("function", "stic_custom_dropdown", "stic_custom_dropdown_check");
+        $this->registerPlugin("function", "stic_custom_dropdown", ['Sugar_Smarty', 'sticCustomDropdownCheck']);
         // END STIC-Custom
 
 
@@ -362,114 +362,116 @@ class Sugar_Smarty extends Smarty
 
         return get_custom_file_if_exists($template);
     }
-}
 
-// STIC-Custom 20261117 ART - Alphabetical dropdowns
-// https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
 
-/**
- * Smarty function plugin (registered in the Sugar_Smarty constructor above):
- * checks whether a dropdown list is defined in the custom language files
- * ("custom/include/language/<language>.lang.php", the ones written by the
- * Dropdown Editor of Studio). Customized dropdowns keep the order defined by
- * the administrator, so the plugin returns the attribute
- * 'data-stic-sort="false"' used by SticAlphabeticalSelects.js to skip them.
- *
- * Usage (enum field templates): {stic_custom_dropdown dropdown=$vardef.options}
- *
- * @param array $params 'dropdown' => name of the dropdown list
- *
- * @return string The attribute or an empty string
- */
-function stic_custom_dropdown_check($params)
-{
-    static $customDropdowns = null;
-    static $loadedLanguage = '';
+    /**
+     * Smarty function plugin (registered in the constructor above):
+     * checks whether a dropdown list is defined in the custom language files
+     * ("custom/include/language/<language>.lang.php", the ones written by the
+     * Dropdown Editor of Studio). Customized dropdowns keep the order defined
+     * by the administrator, so the plugin returns the attribute
+     * 'data-stic-sort="false"' used by SticAlphabeticalSelects.js to skip them.
+     *
+     * Usage (enum field templates): {stic_custom_dropdown dropdown=$vardef.options}
+     *
+     * @param array $params 'dropdown' => name of the dropdown list
+     *
+     * @return string The attribute or an empty string
+     */
+    public static function sticCustomDropdownCheck($params)
+    {
+        static $customDropdowns = null;
+        static $loadedLanguage = '';
 
-    // The plugin expects the dropdown list name (string). Any other type
-    // (e.g. an undefined template variable) means "not applicable".
-    if (!isset($params['dropdown']) || !is_string($params['dropdown']) || $params['dropdown'] === '') {
+        // The plugin expects the dropdown list name (string). Any other type
+        // (e.g. an undefined template variable) means "not applicable".
+        if (!isset($params['dropdown']) || !is_string($params['dropdown']) || $params['dropdown'] === '') {
+            return '';
+        }
+        $dropdown = $params['dropdown'];
+
+        $language = (string) ($GLOBALS['current_language'] ?? 'en_us');
+        if ($language === '') {
+            $language = 'en_us';
+        }
+
+        if ($customDropdowns === null || $loadedLanguage !== $language) {
+            $customDropdowns = self::sticGetCustomDropdownNames($language);
+            $loadedLanguage = $language;
+        }
+
+        if (isset($customDropdowns[$dropdown])) {
+            return ' data-stic-sort="false"';
+        }
+
         return '';
     }
-    $dropdown = $params['dropdown'];
 
-    $language = (string) ($GLOBALS['current_language'] ?? 'en_us');
-    if ($language === '') {
-        $language = 'en_us';
-    }
+    /**
+     * Returns the names of the dropdown lists defined in the custom language
+     * files of the given language. The result is cached for the current
+     * request.
+     *
+     * @param string $language Current session language (e.g. 'es_ES')
+     *
+     * @return array Keys are the dropdown names; values are irrelevant (set to true)
+     */
+    public static function sticGetCustomDropdownNames($language)
+    {
+        $names = [];
 
-    if ($customDropdowns === null || $loadedLanguage !== $language) {
-        $customDropdowns = sticGetCustomDropdownNames($language);
-        $loadedLanguage = $language;
-    }
+        // Files written by the Dropdown Editor of Studio. The include runs
+        // inside this method scope, so its variables never touch the globals.
+        $files = [
+            'custom/include/language/' . $language . '.lang.php',
+            'custom/include/language/' . $language . '.php',
+        ];
 
-    if (isset($customDropdowns[$dropdown])) {
-        return ' data-stic-sort="false"';
-    }
-
-    return '';
-}
-
-/**
- * Returns the names of the dropdown lists defined in the custom language files
- * of the given language. The result is cached for the current request.
- *
- * @param string $language Current session language (e.g. 'es_ES')
- *
- * @return array Keys are the dropdown names; values are irrelevant (set to true)
- */
-function sticGetCustomDropdownNames($language)
-{
-    $names = [];
-
-    // Files written by the Dropdown Editor of Studio. The include runs inside
-    // this function scope, so its variables never touch the globals.
-    $files = [
-        'custom/include/language/' . $language . '.lang.php',
-        'custom/include/language/' . $language . '.php',
-    ];
-
-    foreach ($files as $file) {
-        if (!is_file($file)) {
-            continue;
-        }
-        $app_list_strings = [];
-        include $file;
-        if (is_array($app_list_strings)) {
-            foreach ($app_list_strings as $name => $value) {
-                if (is_array($value)) {
-                    $names[$name] = true;
+        foreach ($files as $file) {
+            if (!is_file($file)) {
+                continue;
+            }
+            $app_list_strings = [];
+            include $file;
+            if (is_array($app_list_strings)) {
+                foreach ($app_list_strings as $name => $value) {
+                    if (is_array($value)) {
+                        $names[$name] = true;
+                    }
                 }
             }
+            $app_list_strings = [];
         }
-        $app_list_strings = [];
+
+        return $names;
     }
 
-    return $names;
+    /**
+     * Returns whether a dropdown list is defined in the custom language files
+     * of the current session language (administrator-customized via the
+     * Dropdown Editor of Studio / ModuleBuilder, which write to
+     * custom/include/language).
+     *
+     * @param string $dropdown Name of the dropdown list
+     *
+     * @return bool
+     */
+    public static function sticIsCustomDropdown($dropdown)
+    {
+        static $checked = [];
+
+        if (!is_string($dropdown) || $dropdown === '') {
+            return false;
+        }
+        if (!array_key_exists($dropdown, $checked)) {
+            $language = (string) ($GLOBALS['current_language'] ?? 'en_us');
+            $customDropdowns = self::sticGetCustomDropdownNames($language !== '' ? $language : 'en_us');
+            $checked[$dropdown] = isset($customDropdowns[$dropdown]);
+        }
+
+        return $checked[$dropdown];
+    }
+    // END STIC-Custom
 }
-
-/**
- * Returns whether a dropdown list is defined in the custom language files of
- * the current session language (administrator-customized via the Dropdown
- * Editor of Studio / ModuleBuilder, which write to custom/include/language).
- *
- * @param string $dropdown Name of the dropdown list
- *
- * @return bool
- */
-function sticIsCustomDropdown($dropdown)
-{
-    static $checked = [];
-
-    if (!is_string($dropdown) || $dropdown === '') {
-        return false;
-    }
-    if (!array_key_exists($dropdown, $checked)) {
-        $language = (string) ($GLOBALS['current_language'] ?? 'en_us');
-        $customDropdowns = sticGetCustomDropdownNames($language !== '' ? $language : 'en_us');
-        $checked[$dropdown] = isset($customDropdowns[$dropdown]);
-    }
-
-    return $checked[$dropdown];
-}
-// END STIC-Custom
