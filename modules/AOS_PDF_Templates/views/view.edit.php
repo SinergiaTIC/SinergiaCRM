@@ -85,6 +85,11 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                 }
             } //End loop.
 
+            // STIC-Custom 20261117 ART - Alphabetical dropdowns
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            // Sort field options alphabetically
+            asort($options_array);
+            // END STIC-Custom
             $options = json_encode($options_array);
             $mod_options_array[$module->module_dir] = translate('LBL_MODULE_NAME', $module->module_dir);
             $insert_fields_js2 .="'$moduleName':$options,\n";
@@ -120,6 +125,10 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                         }
                         // End STIC Custom 20230803 - JBL
 
+                        // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                        asort($options_array);
+                        // END STIC-Custom
                         $options = json_encode($options_array);
 
                         // STIC-Custom 20260420 ART - Avoid "Undefined array key 'vname'" when field definition is not correct
@@ -157,6 +166,10 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                     }
                 }
 
+                // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                asort($options_array);
+                // END STIC-Custom
                 $options = json_encode($options_array);
 
                 $line_module_name = $beanList['AOS_Line_Item_Groups'];
@@ -188,6 +201,10 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                     }
                 }
 
+                // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                asort($options_array);
+                // END STIC-Custom
                 $options = json_encode($options_array);
 
                 $line_module_name = $beanList['AOS_Products_Quotes'];
@@ -205,6 +222,10 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                 $options_array['$aos_services_quotes_vat'] = translate('LBL_VAT', 'AOS_Quotes');
                 $options_array['$aos_services_quotes_service_total_price'] = translate('LBL_TOTAL_PRICE', 'AOS_Quotes');
 
+                // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                asort($options_array);
+                // END STIC-Custom
                 $options = json_encode($options_array);
 
                 $s_line_module_name = 'AOS_Service_Quotes';
@@ -221,6 +242,10 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
                         }
                     }
                 }
+                // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                asort($options_array);
+                // END STIC-Custom
                 $options = json_encode($options_array);
 
                 $line_module_name = $beanList['Currencies'];
@@ -229,6 +254,10 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
             }
             array_multisort($fmod_options_array, SORT_ASC, $fmod_options_array);
             $mod_options_array = array_merge($mod_options_array, $fmod_options_array);
+            // STIC-Custom 20261117 ART - Sort module dropdown alphabetically
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+            asort($mod_options_array);
+            // END STIC-Custom
             $module_options = json_encode($mod_options_array);
 
 
@@ -252,9 +281,15 @@ class AOS_PDF_TemplatesViewEdit extends ViewEdit
 
 		$insert_fields_js
 		$insert_fields_js2
-		<select name='module_name' id='module_name' tabindex="50" onchange="populateVariables(this.options[this.selectedIndex].value);">
+        <!-- STIC-Custom 20261117 ART - Sort module and field dropdowns alphabetically -->
+        <!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/ -->
+        <!-- <select name='module_name' id='module_name' tabindex="50" onchange="populateVariables(this.options[this.selectedIndex].value);">
 		</select>
-		<select name='variable_name' id='variable_name' tabindex="50" onchange="showVariable(this.options[this.selectedIndex].value);">
+		<select name='variable_name' id='variable_name' tabindex="50" onchange="showVariable(this.options[this.selectedIndex].value);"> -->
+		<select name='module_name' id='module_name' tabindex="50" class="stic-searchable-select" onchange="populateVariables(this.options[this.selectedIndex].value);">
+		</select>
+		<select name='variable_name' id='variable_name' tabindex="50" class="stic-searchable-select" onchange="showVariable(this.options[this.selectedIndex].value);">
+        <!-- END STIC-Custom -->
 		</select>
 		<input type="text" size="30" tabindex="60" name="variable_text" id="variable_text" />
 		<input type='button' tabindex="70" onclick='insert_variable(document.EditView.variable_text.value, "email_template_editor");' class='button' value='{$mod_strings['LBL_BUTTON_INSERT']}'>
