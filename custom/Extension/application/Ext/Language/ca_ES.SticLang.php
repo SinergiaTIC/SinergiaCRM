@@ -120,11 +120,11 @@ $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = "L'enviament només s'apl
 // Camps de filtre en relacions molts a molts
 $app_strings['LBL_SECURITYGROUPS_NAME'] = 'Grup de seguretat';
 
-// Busca en els desplegables (SticAlphabeticalSelects.js)
-$app_strings['LBL_STIC_SEARCH_SELECT_PLACEHOLDER'] = 'Escriu per cercar...';
-$app_strings['LBL_STIC_SEARCH_SELECT_INPUT_LABEL'] = 'Cerca en la llista';
-$app_strings['LBL_STIC_SEARCH_SELECT_NO_RESULTS'] = 'No s\'ha trobat res';
-$app_strings['LBL_STIC_SEARCH_SELECT_MASSUPDATE_CLEAR'] = 'Buida el valor';
+// Cerca als camps desplegables
+$app_strings['LBL_STIC_SEARCH_SELECT_PLACEHOLDER'] = 'Escriviu per cercar...';
+$app_strings['LBL_STIC_SEARCH_SELECT_INPUT_LABEL'] = 'Cerca';
+$app_strings['LBL_STIC_SEARCH_SELECT_NO_RESULTS'] = "No s'ha trobat res";
+$app_strings['LBL_STIC_SEARCH_SELECT_MASSUPDATE_CLEAR'] = 'Buida';
 
 // Mòduls propis de SinergiaCRM i mòduls de SuiteCRM reanomenats
 $app_list_strings['moduleList']['Accounts'] = 'Organitzacions';
@@ -4125,14 +4125,14 @@ $app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acció massiva
 $app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinació de registres';
 $app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acció externa';
 
-// Administració: Opcions de cerca en els desplegables
-$app_list_strings['stic_search_selects_options']['-1'] = 'Mai (sense quadre de cerca)';
-$app_list_strings['stic_search_selects_options']['0'] = 'A tots els desplegables';
-$app_list_strings['stic_search_selects_options']['10'] = 'Només si tenen 10 opcions o més';
-$app_list_strings['stic_search_selects_options']['20'] = 'Només si tenen 20 opcions o més';
-$app_list_strings['stic_search_selects_options']['30'] = 'Només si tenen 30 opcions o més';
-$app_list_strings['stic_search_selects_options']['50'] = 'Només si tenen 50 opcions o més';
-$app_list_strings['stic_search_selects_options']['100'] = 'Només si tenen 100 opcions o més';
+// Administració: Opcions de cerca als camps desplegables
+$app_list_strings['stic_search_selects_options']['-1'] = 'Mai';
+$app_list_strings['stic_search_selects_options']['0'] = 'Sempre';
+$app_list_strings['stic_search_selects_options']['10'] = 'A partir de 10 opcions';
+$app_list_strings['stic_search_selects_options']['20'] = 'A partir de 20 opcions';
+$app_list_strings['stic_search_selects_options']['30'] = 'A partir de 30 opcions';
+$app_list_strings['stic_search_selects_options']['50'] = 'A partir de 50 opcions';
+$app_list_strings['stic_search_selects_options']['100'] = 'A partir de 100 opcions';
 
 // Modificacions del core de SuiteCRM
 
