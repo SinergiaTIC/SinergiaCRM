@@ -17,7 +17,7 @@ jobs:
       - name: Launch Semaphore task to update instance
         env:
           SEMAPHORE_URL: ${{ secrets.SEMAPHORE_URL }}
-          SEMAPHORE_DST_HOST: beta.sinergiacrm.org
+          SEMAPHORE_DST_HOST: ${{ vars.SEMAPHORE_DST_HOST }}
           SEMAPHORE_TOKEN: ${{ secrets.SEMAPHORE_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUM: ${{ github.event.pull_request.number }}
