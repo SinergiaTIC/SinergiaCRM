@@ -135,7 +135,7 @@ class DashletsDialog
                     $displayDashlet = true;
                     //check ACL ACCESS
                     // STIC-Custom 20261118 ART - Calendar dashlet also requires access check
-                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1561
                     // If Calendar ever gets its own ACL-enabled bean, this special case can be removed
                     // if (!empty($dashletMeta[$files['class']]['module']) && ACLController::moduleSupportsACL($dashletMeta[$files['class']]['module'])) {
                     //     $type = 'module';

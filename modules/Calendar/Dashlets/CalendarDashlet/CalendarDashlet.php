@@ -98,7 +98,7 @@ class CalendarDashlet extends Dashlet
     public function display()
     {
         // STIC-Custom 20261118 ART - Avoid redirect loop: just show a no-access message
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1561
         if (!ACLController::checkAccess('Calendar', 'list', true)) {
             return parent::display() . '<p class="error">' . translate('LBL_NO_ACCESS', 'ACL') . '</p>';
         }
@@ -117,7 +117,7 @@ class CalendarDashlet extends Dashlet
         $cal_strings = return_module_language($current_language, 'Calendar');
 
         // STIC-Custom 20261118 ART - Remove access check for Calendar dashlet, avoid redirect loop: just show a no-access message
-        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1561
         // if (!ACLController::checkAccess('Calendar', 'list', true)) {
         //     ACLController::displayNoAccess(true);
         // }
