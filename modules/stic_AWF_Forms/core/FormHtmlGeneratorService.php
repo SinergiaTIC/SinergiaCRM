@@ -3052,9 +3052,16 @@ class FormHtmlGeneratorService {
 const AWFDynamicEnums = {
   ATTR: 'data-awf-de-parent',
 
-  // Trailing CRM field name of an input name ("Block[i].field" -> "field")
+  // Trailing CRM field name of an input name. Supports both notations used
+  // in the generated forms: "Block.field" (scalar fields) and
+  // "Block[i][field]" / "Block[i][field][]" (repeatable group instances).
+  // STIC#1322
   fieldNameOf(name) {
-    return name ? name.replace(/\[\]$/, '').split('.').pop() : '';
+    if (!name) return '';
+    name = name.replace(/\[\]$/, ''); // multi-select array suffix
+    const bracket = name.match(/^(.*)\[([^\[\]]+)\]$/);
+    if (bracket) return bracket[2];
+    return name.split('.').pop();
   },
 
   // Value of the parent element (select, hidden input, checkbox or radio group)
@@ -3069,7 +3076,10 @@ const AWFDynamicEnums = {
     return el.value || '';
   },
 
-  // Finds the parent element of a child
+  // Finds the parent element of a child: among the inputs whose trailing field
+  // name matches, the one sharing the CLOSEST common ancestor with the child
+  // wins (fewest ancestor steps = same group instance preferred over
+  // form-level fields). STIC#1322
   pickParent(form, child, parentField) {
     const selector = 'select, input[type="hidden"], input[type="radio"], input[type="checkbox"]';
     const candidates = Array.from(form.querySelectorAll(selector)).filter(el => el !== child && this.fieldNameOf(el.name) === parentField);
@@ -3083,7 +3093,7 @@ const AWFDynamicEnums = {
         ancestor = ancestor.parentElement;
         depth++;
       }
-      if (ancestor && depth > bestDepth) {
+      if (ancestor && (best === null || depth < bestDepth)) {
         best = candidate;
         bestDepth = depth;
       }
@@ -3098,6 +3108,17 @@ const AWFDynamicEnums = {
     if (!parentField) return;
     const form = child.closest('form');
     if (!form) return;
+    // A freshly cloned group instance may be observed before Alpine applies
+    // its bindings (its fields have no name yet): retry shortly, otherwise
+    // the child could be filtered with ANOTHER instance's parent value.
+    if (!child.name) {
+      const retries = parseInt(child.dataset.awfDeRetries || '0', 10) + 1;
+      if (child.isConnected && retries <= 10) {
+        child.dataset.awfDeRetries = String(retries);
+        setTimeout(() => this.applyFilter(child), 0);
+      }
+      return;
+    }
     const parent = this.pickParent(form, child, parentField);
     // No parent displayed in the form: all options remain visible
     if (!parent) return;
@@ -3157,9 +3178,11 @@ const AWFDynamicEnums = {
     // Fields of newly added group instances
     if (window.MutationObserver) {
       const observer = new MutationObserver((mutations) => {
-        mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
-          if (node.nodeType === 1) this.applyFilterInScope(node);
-        }));
+        setTimeout(() => {
+          mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
+            if (node.nodeType === 1) this.applyFilterInScope(node);
+          }));
+        }, 0);
       });
       observer.observe(form, { childList: true, subtree: true });
     }
