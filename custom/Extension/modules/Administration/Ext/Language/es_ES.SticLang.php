@@ -156,9 +156,9 @@ $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Al activar esta opción los usuari
 // User lockout settings
 $mod_strings['LBL_USER_LOCKOUT'] = 'Bloqueo de usuarios';
 $mod_strings['LBL_ENABLE_USER_LOCKOUT'] = 'Habilitar el bloqueo de usuarios';
-$mod_strings['LBL_ENABLE_USER_LOCKOUT_HELP'] = 'Si se activa esta opción, el sistema bloqueará las cuentas de los usuarios después de que superen un cierto número de intentos consecutivos de autenticación fallidos. Las cuentas bloqueadas se podrán desbloquear tanto automáticamente, pasado un cierto tiempo, como manualmente, por parte de un administrador.';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT_HELP'] = 'Si se activa esta opción, el sistema bloqueará las cuentas de los usuarios cuando alcancen un cierto número de intentos consecutivos de autenticación fallidos. Las cuentas bloqueadas se podrán desbloquear tanto automáticamente, pasado un cierto tiempo, como manualmente, por parte de un administrador.';
 $mod_strings['LBL_MAX_FAILED_LOGINS'] = 'Número máximo de intentos fallidos';
-$mod_strings['LBL_MAX_FAILED_LOGINS_HELP'] = 'Al usuario se le bloqueará la cuenta si supera este número de intentos consecutivos de autenticación fallidos.';
+$mod_strings['LBL_MAX_FAILED_LOGINS_HELP'] = 'Al usuario se le bloqueará la cuenta si alcanza este número de intentos consecutivos de autenticación fallidos.';
 $mod_strings['ERR_MAX_FAILED_LOGINS'] = 'Especifique un valor válido para el número máximo de intentos fallidos.';
 $mod_strings['LBL_AUTO_UNLOCK'] = 'Desbloquear automáticamente los usuarios bloqueados';
 $mod_strings['LBL_AUTO_UNLOCK_HELP'] = 'Si se activa esta opción, el sistema desbloqueará automáticamente las cuentas de los usuarios bloqueados una vez transcurrido el tiempo indicado desde el bloqueo.';
