@@ -550,7 +550,6 @@
                             {foreach from=$quickCreateMenu key=quickCreateModule item=quickCreateModuleLabel}
                                 <li><a href="index.php?module={$quickCreateModule}&action=EditView&return_module={$quickCreateModule}&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module=$quickCreateModule label="LBL_MODULE_NAME"}</a></li>
                             {/foreach}
-                            {* END STIC *}
                         {/if}
                         {* END STIC *}
                     </ul>
@@ -649,7 +648,6 @@
                             {foreach from=$quickCreateMenu key=quickCreateModule item=quickCreateModuleLabel}
                                 <li><a href="index.php?module={$quickCreateModule}&action=EditView&return_module={$quickCreateModule}&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module=$quickCreateModule label="LBL_MODULE_NAME"}</a></li>
                             {/foreach}
-                            {* END STIC *}
                             {/if}
                             {* END STIC *}
                         </ul>
@@ -748,7 +746,6 @@
                             {foreach from=$quickCreateMenu key=quickCreateModule item=quickCreateModuleLabel}
                                 <li><a href="index.php?module={$quickCreateModule}&action=EditView&return_module={$quickCreateModule}&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module=$quickCreateModule label="LBL_MODULE_NAME"}</a></li>
                             {/foreach}
-                            {* END STIC *}
                                 {/if}
                                 {* END STIC *}
                             </ul>
