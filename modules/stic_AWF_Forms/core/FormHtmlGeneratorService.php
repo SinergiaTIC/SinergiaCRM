@@ -2279,6 +2279,51 @@ class FormHtmlGeneratorService {
         return $classes;
     }
 
+    /** Cache of module field_defs used by getDynamicEnumParentFieldName */
+    private static $dynamicEnumVardefsCache = [];
+
+    /**
+     * Gets the name of the parent field (parentenum) of a dynamicenum
+     * field, resolved from the real module vardefs. The rendered form uses it to
+     * filter the child options with the same rule as SuiteCRM EditViews.
+     * @param FormDataBlockField $field The form field
+     * @return string The parent field name ('' when not applicable)
+     */
+    private function getDynamicEnumParentFieldName(FormDataBlockField $field): string {
+        if ($field->type !== 'dynamicenum' || empty($field->data_block->module)) {
+            return '';
+        }
+        $moduleName = $field->data_block->module;
+        if (!array_key_exists($moduleName, self::$dynamicEnumVardefsCache)) {
+            try {
+                $bean = BeanFactory::newBean($moduleName);
+                self::$dynamicEnumVardefsCache[$moduleName] = $bean ? $bean->field_defs : [];
+            } catch (\Throwable $e) {
+                $GLOBALS['log']->warn(__METHOD__ . ": Error loading vardefs for '{$moduleName}': " . $e->getMessage());
+                self::$dynamicEnumVardefsCache[$moduleName] = [];
+            }
+        }
+        $def = self::$dynamicEnumVardefsCache[$moduleName][$field->name] ?? null;
+        if (!$def || ($def['type'] ?? '') !== 'dynamicenum') {
+            return '';
+        }
+        return $def['parentenum'] ?? '';
+    }
+
+    /**
+     * Builds the data attribute that links a dynamicenum field with
+     * its parent field, so the form JS can filter its options at runtime.
+     * @param FormDataBlockField $field The form field
+     * @return string The attribute ('' when the field is not a dynamicenum with parent)
+     */
+    private function getDynamicEnumParentAttr(FormDataBlockField $field): string {
+        $parentField = $this->getDynamicEnumParentFieldName($field);
+        if ($parentField === '') {
+            return '';
+        }
+        return " data-awf-de-parent='" . htmlspecialchars($parentField, ENT_QUOTES, 'UTF-8') . "'";
+    }
+
     /**
      * Internal field renderer that supports both scalar and instance-aware rendering.
      * Depth-2 fields receive the enclosing loop variables in $outerIndexVars
@@ -2463,7 +2508,9 @@ class FormHtmlGeneratorService {
                     $groupRequired = ($field->required_in_form && $isMulti) ? 'true' : 'false';
                     $requiredMessage = ($field->required_in_form && $isMulti) ? htmlspecialchars(translate('LBL_ERROR_REQUIRED_FIELD', 'stic_AWF_Responses'), ENT_QUOTES, 'UTF-8') : '';
 
-                    $controlHtml .= "<div class='awf-option-group pt-1' data-required='{$groupRequired}' data-required-message='{$requiredMessage}'>" .$this->newLine('+');
+                    $deParentAttr = $this->getDynamicEnumParentAttr($field);
+
+                    $controlHtml .= "<div class='awf-option-group pt-1' data-required='{$groupRequired}' data-required-message='{$requiredMessage}'{$deParentAttr}>" .$this->newLine('+');
                     {
                         foreach ($field->value_options as $opt) {
                             if ($opt->is_visible) {
@@ -2505,7 +2552,9 @@ class FormHtmlGeneratorService {
                     $selectNameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
                     $multipleAttr = $isMultipleSelect ? 'multiple' : '';
                     
-                    $controlHtml .= "<select {$validationsAttr} {$selectNameAttr} class='form-select' {$idExpr} {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" . $this->newLine('+');
+                    $deParentAttr = $this->getDynamicEnumParentAttr($field);
+
+                    $controlHtml .= "<select {$validationsAttr} {$selectNameAttr} class='form-select' {$idExpr} {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}{$deParentAttr}>" . $this->newLine('+');
                     {
                         // Check if a visible empty option already exists in configuration
                         $hasVisibleEmptyOption = false;
@@ -2997,6 +3046,126 @@ class FormHtmlGeneratorService {
     private function getAlpineComponentsJs(bool $hasRating, bool $hasFile): string {
         $js = <<<'JS'
 // --- Alpine.js COMPONENTS ---
+
+// --- Dynamic enum (parent-child dropdowns) support ---
+
+const AWFDynamicEnums = {
+  ATTR: 'data-awf-de-parent',
+
+  // Trailing CRM field name of an input name ("Block[i].field" -> "field")
+  fieldNameOf(name) {
+    return name ? name.replace(/\[\]$/, '').split('.').pop() : '';
+  },
+
+  // Value of the parent element (select, hidden input, checkbox or radio group)
+  readValue(el) {
+    if (el.type === 'radio') {
+      const form = el.form || el.closest('form');
+      const radioName = (window.CSS && CSS.escape) ? CSS.escape(el.name) : el.name;
+      const checked = form && form.querySelector('input[type="radio"][name="' + radioName + '"]:checked');
+      return checked ? checked.value : '';
+    }
+    if (el.type === 'checkbox') return el.checked ? (el.value || '1') : '';
+    return el.value || '';
+  },
+
+  // Finds the parent element of a child
+  pickParent(form, child, parentField) {
+    const selector = 'select, input[type="hidden"], input[type="radio"], input[type="checkbox"]';
+    const candidates = Array.from(form.querySelectorAll(selector)).filter(el => el !== child && this.fieldNameOf(el.name) === parentField);
+    if (candidates.length === 0) return null;
+    let best = null;
+    let bestDepth = -1;
+    for (const candidate of candidates) {
+      let ancestor = child.parentElement;
+      let depth = 0;
+      while (ancestor && !ancestor.contains(candidate)) {
+        ancestor = ancestor.parentElement;
+        depth++;
+      }
+      if (ancestor && depth > bestDepth) {
+        best = candidate;
+        bestDepth = depth;
+      }
+    }
+    return best;
+  },
+
+  // Hides the options that do not belong to the current parent value and
+  // resets the child selection if it is no longer visible.
+  applyFilter(child) {
+    const parentField = child.getAttribute(this.ATTR);
+    if (!parentField) return;
+    const form = child.closest('form');
+    if (!form) return;
+    const parent = this.pickParent(form, child, parentField);
+    // No parent displayed in the form: all options remain visible
+    if (!parent) return;
+    const parentValue = this.readValue(parent);
+    const hasParentValue = parentValue !== '';
+
+    if (child.tagName === 'SELECT') {
+      let selectionChanged = false;
+      Array.from(child.options).forEach(option => {
+        const visible = option.value === '' || (hasParentValue && option.value.startsWith(parentValue + '_'));
+        option.hidden = !visible;
+        if (!visible && option.selected) {
+          option.selected = false;
+          selectionChanged = true;
+        }
+      });
+      // Propagate to nested dynamicenums (this field may be another one's parent)
+      if (selectionChanged) {
+        child.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    } else if (child.classList.contains('awf-option-group')) {
+      child.querySelectorAll(':scope > .form-check').forEach(item => {
+        const input = item.querySelector('input');
+        const visible = !!input && input.value !== '' && hasParentValue && input.value.startsWith(parentValue + '_');
+        item.style.display = visible ? '' : 'none';
+        if (!visible && input && input.checked) {
+          input.checked = false;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+    }
+  },
+
+  // Applies the current filter to every dynamicenum child found inside scope
+  applyFilterInScope(scope) {
+    const children = (scope.matches && scope.matches('[' + this.ATTR + ']')) ? [scope] : Array.from(scope.querySelectorAll('[' + this.ATTR + ']'));
+    children.forEach(child => this.applyFilter(child));
+  },
+
+  setup(form) {
+    if (!form || form.dataset.awfDeInit) return;
+    form.dataset.awfDeInit = 'true';
+
+    // React to any parent change
+    form.addEventListener('change', (e) => {
+      const target = e.target;
+      if (!target || !target.name) return;
+      const fieldName = this.fieldNameOf(target.name);
+      form.querySelectorAll('[' + this.ATTR + ']').forEach(child => {
+        if (child.getAttribute(this.ATTR) === fieldName) this.applyFilter(child);
+      });
+    }, true);
+
+    // Initial filtering, once Alpine has applied its bindings (defaults, prefills...)
+    setTimeout(() => this.applyFilterInScope(form), 0);
+
+    // Fields of newly added group instances
+    if (window.MutationObserver) {
+      const observer = new MutationObserver((mutations) => {
+        mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
+          if (node.nodeType === 1) this.applyFilterInScope(node);
+        }));
+      });
+      observer.observe(form, { childList: true, subtree: true });
+    }
+  },
+};
+
 document.addEventListener('alpine:init', () => {
 
   // Main Component of the Form
@@ -3024,6 +3193,8 @@ document.addEventListener('alpine:init', () => {
           }
         }).catch(e => console.error(e));
       }
+      // dynamic enum (parent-child) filtering support
+      AWFDynamicEnums.setup(this.$refs.form);
       this.prefillFromUrl();
     },
     

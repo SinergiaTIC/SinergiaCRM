@@ -1232,7 +1232,7 @@ class stic_AwfField {
     }
     if (this.type_in_form == "select" && 
         this.type != "relate" && 
-        this.type != "enum" && this.type != "radioenum" && this.type != "multienum" && this.type != "bool" && this.type != "checkbox") {
+        this.type != "enum" && this.type != "radioenum" && this.type != "multienum" && this.type != "bool" && this.type != "checkbox" && this.type != "dynamicenum") {
       return true;
     }
     return false;
@@ -1250,7 +1250,7 @@ class stic_AwfField {
     }
 
     // Form or unlinked
-    if (this.type == 'relate' || this.type == 'enum' || this.type == 'multienum') {
+    if (this.type == 'relate' || this.type == 'enum' || this.type == 'multienum' || this.type == 'dynamicenum') {
       return stic_AwfField.value_typeList().filter(t => t.id == 'selectable');
     }
 
@@ -1272,7 +1272,7 @@ class stic_AwfField {
     let availableTypes = [];
 
     // text, textarea, number, date, select, hidden
-    if (this.type == "enum" || this.type == "radioenum" || this.type == "multienum" || this.type == "bool" || this.type == "checkbox") {
+    if (this.type == "enum" || this.type == "radioenum" || this.type == "multienum" || this.type == "bool" || this.type == "checkbox" || this.type == "dynamicenum") {
       availableTypes = stic_AwfField.type_in_formList().filter(t => t.id == "select" || t.id == "hidden");
     } 
     else if (this.type == "relate") {
@@ -1391,7 +1391,8 @@ class stic_AwfField {
       list.push(base_subtypes.find(s => s.id == "date_datetime"));
       list.push(base_subtypes.find(s => s.id == "date"));
 
-    } else if (this.type == "enum" || this.type == "radioenum" || this.type == "relate") {
+    // STIC#1322 - dynamicenum is single-valued like enum: dropdown or radio list
+    } else if (this.type == "enum" || this.type == "radioenum" || this.type == "dynamicenum" || this.type == "relate") {
       list.push(base_subtypes.find(s => s.id == "select"));
       list.push(base_subtypes.find(s => s.id == "select_radio"));
 

@@ -95,6 +95,7 @@ class stic_AWFUtils {
             case 'text':
             case 'relate':
             case 'enum':
+            case 'dynamicenum':
             case 'multienum':
             case 'tel':
             case 'url':

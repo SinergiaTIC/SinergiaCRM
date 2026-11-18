@@ -111,7 +111,7 @@ class utils {
     if (fieldInfo.type == "bool") {
       return utils.getList("stic_boolean_list", asString);
     }
-    if (fieldInfo.options && (fieldInfo.type == "enum" || fieldInfo.type == "multienum")) {
+    if (fieldInfo.options && (fieldInfo.type == "enum" || fieldInfo.type == "multienum" || fieldInfo.type == "dynamicenum")) {
       return utils.getList(fieldInfo.options, asString);
     }
     return asString ? "" : [];

@@ -808,6 +808,7 @@ class ResponseHandler
 
                 case 'enum':
                 case 'radioenum':
+                case 'dynamicenum':
                 case 'select': // type_in_form
                 case 'select_radio': // type_in_form
                     // Validate that the option actually exists in the CRM
