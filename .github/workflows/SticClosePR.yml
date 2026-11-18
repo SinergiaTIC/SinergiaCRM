@@ -1,0 +1,127 @@
+name: SticClosePR - Delete instance on closed PR via curl-semaphore
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+            - '**'
+  workflow_dispatch:
+
+jobs:
+  delete_instance:
+    # Estos workflows se replican al repo general, pero solo deben ejecutarse
+    # en los repositorios de instancia (SCRM_*).
+    if: github.repository != 'SinergiaTIC/SinergiaCRM'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Launch Semaphore task to delete instance
+        env:
+          SEMAPHORE_URL: ${{ secrets.SEMAPHORE_URL }}
+          SEMAPHORE_DST_HOST: beta.sinergiacrm.org
+          SEMAPHORE_TOKEN: ${{ secrets.SEMAPHORE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUM: ${{ github.event.pull_request.number }}
+          PROJECT_ID: 7
+          TEMPLATE_ID: 97
+          MAX_ATTEMPTS: "60"
+          POLL_INTERVAL: "5"
+        run: |
+          SRC_INSTANCE="${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/SCRM_}"
+          
+          PAYLOAD=$(jq -n \
+            --argjson tid "${TEMPLATE_ID}" \
+            --arg src "${SRC_INSTANCE}" \
+            --arg dst "${SEMAPHORE_DST_HOST}" \
+            --arg opt_clone "3" \
+            --arg opt_commit "0" \
+            --arg opt_delete "0" \
+            --arg refspec_origin "${GITHUB_HEAD_REF:-main}" \
+            '{
+              template_id: $tid,
+              environment: (
+                {
+                  src_instance: $src, 
+                  test_instance: $dst, 
+                  option_clone: $opt_clone, 
+                  option_commit: $opt_commit, 
+                  option_delete: $opt_delete,
+                  refspec_origin: $refspec_origin
+                } | tostring
+              )
+            }')
+
+          http_call() {
+            local method="$1" url="$2" token="$3" data="$4"
+            local response
+            response=$(curl -s -w "\n%{http_code}" -X "$method" "$url" \
+              -H "Authorization: Bearer $token" -H "Content-Type: application/json" -d "$data")
+            
+            HTTP_CODE=$(echo "$response" | tail -n1)
+            BODY=$(echo "$response" | sed '$d')
+            echo "$HTTP_CODE $BODY"
+          }
+
+          post_comment() {
+            new_comment="[ $(date '+%Y-%m-%d %H:%M:%S') ] $1"
+            old_comment=$(gh pr view "$PR_NUM" --repo="$GITHUB_REPOSITORY" --json comments --jq '[.comments[] | select(.author.login == "github-actions")][-1].body // ""')
+            full_comment=${old_comment:+${old_comment}$'\n\n'}${new_comment}
+            
+            gh pr comment $PR_NUM --repo "$GITHUB_REPOSITORY" --create-if-none --edit-last --body "$full_comment" > /dev/null
+          }
+
+          message="🚀 Iniciando flujo $GITHUB_WORKFLOW..."
+          echo $message
+          post_comment "$message"
+
+          message="🚦 Lanzando tarea en Semaphore..."
+          echo "$message"
+          post_comment "$message"
+
+          res=$(http_call "POST" "${SEMAPHORE_URL}/api/project/${PROJECT_ID}/tasks" "$SEMAPHORE_TOKEN" "$PAYLOAD")
+          code=$(echo "$res" | cut -d' ' -f1)
+          body=$(echo "$res" | cut -d' ' -f2-)
+
+          if [ "$code" != "201" ] && [ "$code" != "200" ]; then
+            echo "::error::Semaphore rechazó la tarea (HTTP $code). Respuesta: $body"
+            post_comment "❌ **Error Crítico**: Semaphore devolvió HTTP $code."
+            exit 1
+          fi
+
+          TASK_ID=$(echo "$body" | jq -r '.id')
+          if [ -z "$TASK_ID" ] || [ "$TASK_ID" == "null" ]; then
+            echo "::error::Respuesta inválida de Semaphore: $body"
+            exit 1
+          fi
+
+          task_link="${SEMAPHORE_URL}/project/${PROJECT_ID}/history?t=${TASK_ID}"
+          post_comment "Puedes seguir tarea $TASK_ID en [Semaphore]($task_link)"
+
+          attempt=0
+          status="running"
+          while [[ "$status" == "running" || "$status" == "waiting" ]]; do
+            attempt=$((attempt + 1))
+            [ $attempt -gt $MAX_ATTEMPTS ] && { echo "::error::Timeout"; post_comment "⏱️ **Timeout** en tarea $TASK_ID"; exit 1; }
+            sleep $POLL_INTERVAL
+            
+            res=$(http_call "GET" "${SEMAPHORE_URL}/api/project/${PROJECT_ID}/tasks/${TASK_ID}" "$SEMAPHORE_TOKEN" "")
+            code=$(echo "$res" | cut -d' ' -f1)
+            [ "$code" != "200" ] && { echo "::warning::Error consultando estado (HTTP $code). Reintentando..."; continue; }
+            
+            status=$(echo "$res" | cut -d' ' -f2- | jq -r '.status')
+            echo "🔍 Comprobando tarea, intento $attempt, estado: $status"
+            if (( attempt % 3 == 0 )); then
+              time=$(( POLL_INTERVAL * attempt ))
+              post_comment "⏱️ Esperando finalización de tarea..."
+            fi
+          done
+
+          if [ "$status" == "success" ]; then
+            post_comment "✅ **Éxito**"$'\n'"Tarea $TASK_ID completada correctamente. Puedes ver el log en [Semaphore]($task_link)" 
+            echo "🎉 Éxito."
+          else
+            post_comment "❌ **Fallo**"$'\n'"Tarea $TASK_ID falló con estado: $status. Puedes ver el log en [Semaphore]($task_link)"
+            echo "💥 Fallo."
+            exit 1
+          fi
+
+          post_comment "---"
