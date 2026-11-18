@@ -158,7 +158,7 @@ class FormHtmlGeneratorService {
             // Styles and Content
             $htmlRaw .= $this->generateCss($config, $wrapperId);
             $htmlRaw .= $this->generateBody($config, $wrapperId, $actionUrl, $isPreview);
-            $htmlRaw .= $this->generateJs($config, $formId);
+            $htmlRaw .= $this->generateJs($config, $formId, $wrapperId);
         }
         $htmlRaw .= "</div>" .$this->newLine('-');
 
@@ -1550,7 +1550,7 @@ class FormHtmlGeneratorService {
         // user can see. Same contract as the regular tabs container: the pane
         // publishes its instance index and the owner of `activeTab` switches.
         $paneActivation = "@invalid.capture=\"const gp = \$event.target.closest('[data-awf-group-pane]'); if (gp && gp.closest('.awf-group-container') === \$el) activeTab = +gp.dataset.awfGroupPane; const gi = \$event.target.closest('[data-awf-group-item]'); if (gi && gi.closest('.awf-group-container') === \$el) openItem = +gi.dataset.awfGroupItem\" @awf-show-group-pane=\"if (\$event.target.closest('.awf-group-container') === \$el) activeTab = +\$event.detail\" @awf-show-group-item=\"if (\$event.target.closest('.awf-group-container') === \$el) openItem = +\$event.detail\"";
-        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0, openItem: 0 }\" {$paneActivation}>" . $this->newLine('+');
+        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0, openItem: 0, titleOverrides: {}, titleOverrideFor: function (index, fallback) { var o = this.titleOverrides[index]; return (o === undefined || o === null) ? fallback : o; } }\" {$paneActivation}>" . $this->newLine('+');
         {
             // The group section's header (title/subtitle) is rendered by the
             // loop paths below (stacked cards) or by the tabs chrome — both
@@ -1578,7 +1578,7 @@ class FormHtmlGeneratorService {
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === index ? 'active' : ''\" @click=\"activeTab = index; \$el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })\" x-text=\"{$instanceTitle}\"></button>" . $this->newLine();
+                            $tabsHtml .= "<button type='button' class='nav-link' :class=\"activeTab === index ? 'active' : ''\" @click=\"activeTab = index; \$el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })\" x-text=\"titleOverrideFor(index, {$instanceTitle})\"></button>" . $this->newLine();
                         }
                         $tabsHtml .= "</template>" . $this->newLine('-');
                         if ($isRepeatable) {
@@ -1597,7 +1597,7 @@ class FormHtmlGeneratorService {
                     {
                         $tabsHtml .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $tabsHtml .= "<div class='tab-pane' x-data=\"{ {$instanceVar}: index }\" :data-awf-group-pane='index' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
+                            $tabsHtml .= "<div class='tab-pane awf-instance-card' :data-awf-instance=\"{$instanceVar}\" x-data=\"{ {$instanceVar}: index }\" :data-awf-group-pane='index' :style=\"'display: ' + (activeTab === index ? 'block' : 'none')\">" . $this->newLine('+');
                             {
                                 // The pane content is boxed in the SAME card a
                                 // plain tab pane uses, with the subtitle as the
@@ -1727,7 +1727,7 @@ class FormHtmlGeneratorService {
                             {
                                 $accHtml .= "<div class='awf-accordion-header' :class=\"openItem === index ? 'is-open' : ''\" @click=\"openItem = (openItem === index ? null : index)\" style='cursor: pointer;'>" . $this->newLine('+');
                                 {
-                                    $accHtml .= "<span class='awf-accordion-title' x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
+                                    $accHtml .= "<span class='awf-accordion-title' x-text=\"titleOverrideFor(index, {$instanceTitle})\"></span>" . $this->newLine();
                                     $accHtml .= "<span class='d-flex align-items-center gap-2'>" . $this->newLine();
                                     if ($isRepeatable) {
                                         $accHtml .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click.stop=\"instances = instances.filter(i => i !== instance); if (activeTab >= instances.length) activeTab = Math.max(0, instances.length - 1); if (openItem >= instances.length) openItem = Math.max(0, instances.length - 1)\">" . $this->newLine('+');
@@ -1740,7 +1740,7 @@ class FormHtmlGeneratorService {
                                     $accHtml .= "</span>" . $this->newLine();
                                 }
                                 $accHtml .= "</div>" . $this->newLine('-');
-                                $accHtml .= "<div class='awf-accordion-body' x-show='openItem === index' x-transition x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                                $accHtml .= "<div class='awf-accordion-body awf-instance-card' :data-awf-instance=\"{$instanceVar}\" x-show='openItem === index' x-transition x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
                                 {
                                     if ($accSubtitle !== '') $accHtml .= "<div class='awf-section-subtitle text-muted mb-2' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$accSubtitle}</div>" . $this->newLine();
                                     $accHtml .= $this->renderGroupInstanceContent($rootBlock, $templateSection, $children, $config, $theme, $instanceVar, $contentOuterVars) . $this->newLine();
@@ -1909,7 +1909,7 @@ class FormHtmlGeneratorService {
                         // "idx_lN is not defined") when the group was nested.
                         $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $html .= "<div x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                            $html .= "<div class='awf-instance-card' :data-awf-instance=\"{$instanceVar}\" x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
                             {
                                 $contentSection = reset($templateContentSections);
                                 if ($contentSection instanceof FormLayoutSection) {
@@ -1942,7 +1942,7 @@ class FormHtmlGeneratorService {
                     $instanceTitle = $isRepeatable ? "{$instanceTitleExpression} + ' #' + ({$instanceVar} + 1)" : $instanceTitleExpression;
                 $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                 {
-                    $html .= "<div class='card " . ($tIsCard ? 'awf-section-card' : 'awf-section-panel') . " mb-3' {$instanceXData}{$instanceStyleAttr}>" . $this->newLine('+');
+                    $html .= "<div class='card " . ($tIsCard ? 'awf-section-card' : 'awf-section-panel') . " awf-instance-card mb-3' :data-awf-instance=\"{$instanceVar}\" {$instanceXData}{$instanceStyleAttr}>" . $this->newLine('+');
                     {
                         if ($templateSection !== null) {
                             // Template chrome as the instance chrome
@@ -1972,7 +1972,7 @@ class FormHtmlGeneratorService {
                                 {
                                     $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
                                     {
-                                        $html .= "<span x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
+                                        $html .= "<span x-text=\"titleOverrideFor(index, {$instanceTitle})\"></span>" . $this->newLine();
                                         if ($tSubtitle !== '') $html .= "<span class='awf-section-subtitle text-muted d-block mt-1' style='font-size: 0.85em; font-weight: normal; line-height: 1.4;'>{$tSubtitle}</span>" . $this->newLine();
                                     }
                                     $html .= "</div>" . $this->newLine('-');
@@ -1989,7 +1989,7 @@ class FormHtmlGeneratorService {
                                 {
                                     $html .= "<div class='awf-section-title-wrapper'>" . $this->newLine('+');
                                     {
-                                        $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0' x-text=\"{$instanceTitle}\"></h4>" . $this->newLine();
+                                        $html .= "<h4 class='awf-section-title-panel mb-0 border-0 pb-0' x-text=\"titleOverrideFor(index, {$instanceTitle})\"></h4>" . $this->newLine();
                                         if ($tSubtitle !== '') $html .= "<div class='awf-section-subtitle text-muted mt-1' style='font-size: 0.9em; font-weight: normal; line-height: 1.4;'>{$tSubtitle}</div>" . $this->newLine();
                                     }
                                     $html .= "</div>" . $this->newLine('-');
@@ -2014,7 +2014,7 @@ class FormHtmlGeneratorService {
                             // without a tinted background)
                             $html .= "<div class='card-header d-flex justify-content-between align-items-center py-2'>" . $this->newLine('+');
                             {
-                                $html .= "<span class='fw-bold text-secondary' x-text=\"{$instanceTitle}\"></span>" . $this->newLine();
+                                $html .= "<span class='fw-bold text-secondary' x-text=\"titleOverrideFor(index, {$instanceTitle})\"></span>" . $this->newLine();
                                 if ($isRepeatable) {
                                     $html .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance)\">" . $this->newLine('+');
                                     {
@@ -2961,7 +2961,7 @@ class FormHtmlGeneratorService {
         return $html;
     }
 
-    private function generateJs(FormConfig $config, string $formId): string {
+    private function generateJs(FormConfig $config, string $formId, string $wrapperId = ''): string {
         $js = "";
 
         // == VALIDATORS ==
@@ -3031,11 +3031,20 @@ class FormHtmlGeneratorService {
         // == ALPINE CORE COMPONENTS ==
         $js .= "<script>\n" . $this->getAlpineComponentsJs($hasRating, $hasFile).$this->newLine()."</script>" . $this->newLine();
 
+        // == AWF CLIENT HELPERS (window.AWF) ==
+        // Emitted BEFORE custom_js so it can use AWF.getValue/setValue/onChange.
+        $js .= "<script>\n" . $this->getAwfHelperJs($wrapperId, $formId) . $this->newLine() . "</script>" . $this->newLine();
+
         // == CUSTOM JS ==
         // Add custom JS from layout
         $customJs = $this->decode($config->layout->custom_js);
         if (!empty($customJs)) {
-            $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n{$customJs}\n});".$this->newLine()."</script>" .$this->newLine();
+            // Expose THIS form's scoped helper as a local `AWF` inside custom_js,
+            // so multiple AWF forms on the same page do not clobber each other.
+            $safeFormId = json_encode((string)$formId, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+            $js .= "<script>\ndocument.addEventListener('DOMContentLoaded', function() {\n"
+                 . "var AWF = (window.AWF && window.AWF.for) ? (window.AWF.for({$safeFormId}) || window.AWF) : window.AWF;\n"
+                 . "{$customJs}\n});".$this->newLine()."</script>" .$this->newLine();
         }
         return $js;
     }
@@ -3599,7 +3608,1194 @@ JS;
 
         $js .= "\n});";
         return $js;
-    }    
+    }
+
+    /**
+     * Client-side helper exposed as `window.AWF` for custom_js / frontend actions.
+     * Resolves fields using strictly canonical internal names across scalar and repeatable blocks.
+     */
+    private function getAwfHelperJs(string $wrapperId = '', string $formId = ''): string {
+        $js = <<<'JS'
+// --- AWF CLIENT HELPERS (window.AWF) ---
+// Read/write fields and attributes of scalar and repeatable/optional blocks from custom_js.
+// Strictly scoped to canonical internal names: 'Block.field' and '_detached.Block.field'.
+(function () {
+  'use strict';
+
+  var FORM_ID = __AWF_FORM_ID__;
+  var WRAPPER_ID = __AWF_WRAPPER_ID__;
+  var INSTANCE_SELECTOR = '.awf-instance-card';
+
+  function getWrapper() {
+    return WRAPPER_ID ? document.getElementById(WRAPPER_ID) : null;
+  }
+  function getForm() {
+    var wrapper = getWrapper();
+    return wrapper ? wrapper.querySelector('form') : null;
+  }
+
+  // Fast memoization cache for parsed field names
+  var parseCache = Object.create(null);
+
+  // Parse a control name into { detached, block, indexes, field, multi }.
+  function parseFieldName(name) {
+    if (name == null) return null;
+    var n = String(name).trim();
+    if (n === '') return null;
+    if (n in parseCache) return parseCache[n];
+
+    var multi = false;
+    var raw = n;
+    if (raw.slice(-2) === '[]') { multi = true; raw = raw.slice(0, -2); }
+    var detached = false;
+    if (raw.indexOf('_detached.') === 0) { detached = true; raw = raw.slice(10); }
+
+    // Matches indexed group: Block[0][field] or Block[0][1][field]
+    var m = raw.match(/^([^\[\].]+)((?:\[\d+\])+)\[(.*)\]$/);
+    if (m) {
+      return (parseCache[n] = {
+        detached: detached,
+        block: m[1],
+        indexes: (m[2].match(/\d+/g) || []).map(Number),
+        field: m[3],
+        multi: multi
+      });
+    }
+
+    var dot = raw.indexOf('.');
+    if (dot >= 0) {
+      return (parseCache[n] = {
+        detached: detached,
+        block: raw.slice(0, dot),
+        indexes: [],
+        field: raw.slice(dot + 1),
+        multi: multi
+      });
+    }
+
+    return (parseCache[n] = null);
+  }
+
+  function getMatchSpecificity(parsed, targetName) {
+    var t = parseFieldName(targetName);
+    if (!parsed || !t) return 0;
+    if (!t.block) return 0;
+    if (parsed.detached !== t.detached) return 0;
+    if (parsed.block !== t.block) return 0;
+    if (parsed.field !== t.field) return 0;
+
+    if (t.indexes.length > 0) {
+      if (parsed.indexes.length !== t.indexes.length) return 0;
+      for (var i = 0; i < t.indexes.length; i++) {
+        if (parsed.indexes[i] !== t.indexes[i]) return 0;
+      }
+    }
+    return 2;
+  }
+
+  function controls(scope) {
+    var root = scope || getForm();
+    if (!root) return [];
+    var all = Array.prototype.slice.call(root.querySelectorAll('input[name], select[name], textarea[name]'));
+    if (scope) {
+      return all.filter(function (el) {
+        return el.closest(INSTANCE_SELECTOR) === scope;
+      });
+    }
+    return all;
+  }
+
+  function matches(parsed, target, options) {
+    if (!parsed) return 0;
+    var specificity = getMatchSpecificity(parsed, target);
+    if (specificity === 0) return 0;
+
+    if (options && options.instanceIndex != null) {
+      var idx = parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null;
+      if (String(idx) !== String(options.instanceIndex)) return 0;
+    }
+    return specificity;
+  }
+
+  function resolve(target, options) {
+    options = options || {};
+    var scope = options.card || options.scope || null;
+    if (target && target.nodeType === 1) {
+      return {
+        elements: [target],
+        element: target,
+        card: target.closest(INSTANCE_SELECTOR),
+        parsed: parseFieldName(target.name)
+      };
+    }
+    if (target && typeof target === 'object' && target.element) {
+      return {
+        elements: [target.element],
+        element: target.element,
+        card: target.element.closest(INSTANCE_SELECTOR),
+        parsed: parseFieldName(target.element.name)
+      };
+    }
+
+    var targetStr = String(target || '');
+    var elements = controls(scope).filter(function (el) {
+      return matches(parseFieldName(el.name), targetStr, options) > 0;
+    });
+
+    return {
+      elements: elements,
+      element: elements[0] || null,
+      card: scope || (elements[0] ? elements[0].closest(INSTANCE_SELECTOR) : null),
+      parsed: parseFieldName(targetStr)
+    };
+  }
+
+  function resolveForInfo(target, card, parsedCurrent) {
+    if (target && target.nodeType === 1) {
+      return resolve(target);
+    }
+
+    var t = parseFieldName(target);
+    if (!t) return { elements: [], element: null, card: null, parsed: null };
+
+    if (t.indexes.length > 0) {
+      return resolve(target, { card: null });
+    }
+
+    if (parsedCurrent && t.block === parsedCurrent.block && t.detached === parsedCurrent.detached) {
+      if (card) {
+        var local = resolve(target, { card: card });
+        if (local.elements.length > 0) return local;
+        return { elements: [], element: null, card: card, parsed: t };
+      }
+
+      var scalarSameBlock = resolve(target, { card: null }).elements.filter(function (el) {
+        var p = parseFieldName(el.name);
+        return p && p.indexes.length === 0;
+      });
+      return {
+        elements: scalarSameBlock,
+        element: scalarSameBlock[0] || null,
+        card: null,
+        parsed: t
+      };
+    }
+
+    if (card) {
+      var ancestorCard = card.parentElement ? card.parentElement.closest(INSTANCE_SELECTOR) : null;
+      while (ancestorCard) {
+        var ancestorMatches = controls(ancestorCard).filter(function (el) {
+          return matches(parseFieldName(el.name), target) > 0;
+        });
+
+        if (ancestorMatches.length > 0) {
+          var firstP = parseFieldName(ancestorMatches[0].name);
+          var prefixOk = true;
+          if (parsedCurrent && firstP && firstP.indexes.length > 0) {
+            for (var k = 0; k < firstP.indexes.length; k++) {
+              if (firstP.indexes[k] !== parsedCurrent.indexes[k]) {
+                prefixOk = false;
+                break;
+              }
+            }
+          }
+          if (prefixOk) {
+            return {
+              elements: ancestorMatches,
+              element: ancestorMatches[0],
+              card: ancestorCard,
+              parsed: t
+            };
+          }
+        }
+        ancestorCard = ancestorCard.parentElement ? ancestorCard.parentElement.closest(INSTANCE_SELECTOR) : null;
+      }
+    }
+
+    if (card) {
+      var allDescendants = Array.prototype.slice.call(card.querySelectorAll('input[name], select[name], textarea[name]'));
+      var matchedInSubtree = allDescendants.filter(function (el) {
+        var p = parseFieldName(el.name);
+        if (!p || matches(p, target) === 0) return false;
+        if (parsedCurrent && parsedCurrent.indexes.length > 0) {
+          for (var i = 0; i < parsedCurrent.indexes.length; i++) {
+            if (p.indexes[i] !== parsedCurrent.indexes[i]) return false;
+          }
+        }
+        return true;
+      });
+
+      if (matchedInSubtree.length > 0) {
+        var firstCard = matchedInSubtree[0].closest(INSTANCE_SELECTOR);
+        var firstBaseName = matchedInSubtree[0].name.replace(/\[\]$/, '');
+        var isAmbiguous = false;
+        for (var m = 1; m < matchedInSubtree.length; m++) {
+          var curBaseName = matchedInSubtree[m].name.replace(/\[\]$/, '');
+          if (curBaseName !== firstBaseName || matchedInSubtree[m].closest(INSTANCE_SELECTOR) !== firstCard) {
+            isAmbiguous = true;
+            break;
+          }
+        }
+        if (isAmbiguous) {
+          console.warn('AWF: Ambiguous resolution for "' + target + '" across multiple nested instances. Specify instance index.');
+          return { elements: [], element: null, card: null, parsed: t };
+        }
+        return {
+          elements: matchedInSubtree,
+          element: matchedInSubtree[0],
+          card: firstCard,
+          parsed: t
+        };
+      }
+    }
+
+    var globalRes = resolve(target, { card: null });
+    var scalarElements = globalRes.elements.filter(function (el) {
+      var p = parseFieldName(el.name);
+      return p && p.indexes.length === 0;
+    });
+
+    if (scalarElements.length > 0) {
+      return {
+        elements: scalarElements,
+        element: scalarElements[0],
+        card: null,
+        parsed: t
+      };
+    }
+
+    return { elements: [], element: null, card: null, parsed: t };
+  }
+
+  function containerOf(elements) {
+    if (!elements || elements.length === 0) return null;
+    return elements[0].closest('.awf-field') || elements[0].closest('.form-check') || elements[0].parentElement;
+  }
+
+  function findLabelFor(el) {
+    if (!el) return null;
+    if (el.id) {
+      var wrapper = el.closest('.awf-field') || el.closest('.form-check') || el.parentElement;
+      if (wrapper) {
+        var labels = wrapper.querySelectorAll('label');
+        for (var i = 0; i < labels.length; i++) {
+          if (labels[i].htmlFor === el.id) return labels[i];
+        }
+      }
+      try {
+        var escapedId = (window.CSS && CSS.escape) ? CSS.escape(el.id) : el.id.replace(/([ #;&,.+*~':"!^$[\]()=>|\/@])/g, '\\$1');
+        var docLbl = document.querySelector('label[for="' + escapedId + '"]');
+        if (docLbl) return docLbl;
+      } catch (e) {}
+    }
+    return el.closest('.form-check') ? el.closest('.form-check').querySelector('label') : null;
+  }
+
+  function labelTextOf(container) {
+    if (!container) return '';
+    var lbl = container.querySelector('label.form-label') || container.querySelector('label');
+    if (!lbl) return '';
+    var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
+      return n.nodeType === 3;
+    })[0];
+    if (textNode) {
+      return textNode.nodeValue.trim();
+    }
+    var clone = lbl.cloneNode(true);
+    var req = clone.querySelector('.awf-required');
+    if (req) req.remove();
+    return clone.textContent.trim();
+  }
+
+  function setLabelTextOn(container, text) {
+    if (!container) return false;
+    var lbl = container.querySelector('label.form-label') || container.querySelector('label');
+    if (!lbl) return false;
+
+    var strVal = (text === null || text === undefined) ? '' : String(text);
+    var formatted = strVal.trim() ? strVal.trim() + ' ' : '';
+
+    var textNode = Array.prototype.slice.call(lbl.childNodes).filter(function (n) {
+      return n.nodeType === 3;
+    })[0];
+
+    if (textNode) {
+      textNode.nodeValue = formatted;
+    } else {
+      lbl.insertBefore(document.createTextNode(formatted), lbl.firstChild);
+    }
+    return true;
+  }
+
+  function valueOf(elements) {
+    if (!elements || elements.length === 0) return null;
+    var first = elements[0];
+    var tag = first.tagName.toLowerCase();
+    var type = (first.type || '').toLowerCase();
+    var multi = String(first.name).slice(-2) === '[]';
+
+    if (type === 'checkbox') {
+      if (multi) {
+        return elements.filter(function (el) { return el.checked; }).map(function (el) { return el.value; });
+      }
+      return Boolean(first.checked);
+    }
+    if (type === 'radio') {
+      var checked = elements.filter(function (el) { return el.checked; })[0];
+      return checked ? checked.value : '';
+    }
+    if (tag === 'select') {
+      if (first.multiple) {
+        return Array.prototype.slice.call(first.selectedOptions).map(function (o) { return o.value; });
+      }
+      return first.value;
+    }
+    return first.value;
+  }
+
+  function textOf(elements) {
+    if (!elements || elements.length === 0) return '';
+    var first = elements[0];
+    var tag = first.tagName.toLowerCase();
+    var type = (first.type || '').toLowerCase();
+    var multi = String(first.name).slice(-2) === '[]';
+
+    if (tag === 'select') {
+      if (first.multiple) {
+        return Array.prototype.slice.call(first.selectedOptions).map(function (opt) {
+          return opt.text.trim();
+        });
+      }
+      var sel = first.selectedOptions[0];
+      return sel ? sel.text.trim() : '';
+    }
+
+    if (type === 'radio') {
+      var checked = elements.filter(function (el) { return el.checked; })[0];
+      if (!checked) return '';
+      var lbl = findLabelFor(checked);
+      return lbl ? lbl.textContent.trim() : checked.value;
+    }
+
+    if (type === 'checkbox') {
+      if (multi) {
+        return elements.filter(function (el) { return el.checked; }).map(function (el) {
+          var elLbl = findLabelFor(el);
+          return elLbl ? elLbl.textContent.trim() : el.value;
+        });
+      }
+      var singleLbl = findLabelFor(first);
+      return singleLbl ? singleLbl.textContent.trim() : (first.checked ? 'true' : 'false');
+    }
+
+    return first.value;
+  }
+
+  function fire(el) {
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  function isTruthyBool(val) {
+    if (val === false || val === null || val === undefined || val === 0 || val === '0' || val === 'false' || val === '') {
+      return false;
+    }
+    return true;
+  }
+
+  function parseScoreValue(val) {
+    if (val === null || val === undefined || val === '') return null;
+    var num = parseFloat(val);
+    return isNaN(num) ? null : num;
+  }
+
+  function setValueOn(elements, value) {
+    if (!elements || elements.length === 0) return false;
+    var first = elements[0];
+    var tag = first.tagName.toLowerCase();
+    var type = (first.type || '').toLowerCase();
+    var multi = String(first.name).slice(-2) === '[]';
+
+    if (type === 'checkbox') {
+      if (multi) {
+        var arr = Array.isArray(value) ? value.map(String) : [String(value)];
+        elements.forEach(function (el) { el.checked = arr.indexOf(String(el.value)) !== -1; });
+        fire(first);
+      } else {
+        var boolVal = isTruthyBool(value);
+        elements.forEach(function (el) {
+          el.checked = boolVal;
+          fire(el);
+        });
+      }
+      return true;
+    }
+    if (type === 'radio') {
+      var v = (value == null) ? '' : String(value);
+      var fired = false;
+      elements.forEach(function (el) {
+        el.checked = (String(el.value) === v);
+        if (el.checked && !fired) { fire(el); fired = true; }
+      });
+      if (!fired) fire(first);
+      return true;
+    }
+    if (tag === 'select') {
+      if (first.multiple) {
+        var arrSel = Array.isArray(value) ? value.map(String) : [String(value)];
+        Array.prototype.slice.call(first.options).forEach(function (o) {
+          o.selected = arrSel.indexOf(String(o.value)) !== -1;
+        });
+      } else {
+        first.value = value == null ? '' : String(value);
+      }
+      fire(first);
+      return true;
+    }
+
+    elements.forEach(function (el) {
+      el.value = value == null ? '' : String(value);
+      fire(el);
+    });
+    return true;
+  }
+
+  function getAttributeOn(elements, attr) {
+    if (!elements || elements.length === 0 || !attr) return null;
+    var first = elements[0];
+    var attrLower = String(attr).toLowerCase();
+
+    if (attrLower === 'disabled' || attrLower === 'readonly') {
+      return Boolean(first[attrLower] !== undefined ? first[attrLower] : first.hasAttribute(attrLower));
+    }
+    if (attrLower === 'required') {
+      if (first.getAttribute('aria-required') === 'true') {
+        return true;
+      }
+      return Boolean(first.required || first.hasAttribute('required'));
+    }
+    if (attrLower === 'checked' && (first.type === 'checkbox' || first.type === 'radio')) {
+      return Boolean(first.checked);
+    }
+    if (attrLower === 'value') {
+      return valueOf(elements);
+    }
+
+    // Special resolution for data-score / score
+    if (attrLower === 'data-score' || attrLower === 'score') {
+      if (first.tagName.toLowerCase() === 'select') {
+        if (first.multiple) {
+          return Array.prototype.slice.call(first.selectedOptions).map(function (opt) {
+            return parseScoreValue(opt.getAttribute('data-score') || opt.getAttribute('score'));
+          });
+        }
+        var selOpt = first.selectedOptions[0];
+        if (!selOpt) return null;
+        return parseScoreValue(selOpt.getAttribute('data-score') || selOpt.getAttribute('score'));
+      }
+
+      if (first.type === 'radio') {
+        var checkedRadio = elements.filter(function (el) { return el.checked; })[0];
+        if (!checkedRadio) return null;
+        return parseScoreValue(checkedRadio.getAttribute('data-score') || checkedRadio.getAttribute('score'));
+      }
+
+      if (first.type === 'checkbox' && String(first.name).slice(-2) === '[]') {
+        return elements.filter(function (el) { return el.checked; }).map(function (el) {
+          return parseScoreValue(el.getAttribute('data-score') || el.getAttribute('score'));
+        });
+      }
+
+      return parseScoreValue(first.getAttribute('data-score') || first.getAttribute('score'));
+    }
+
+    return first.getAttribute(attr);
+  }
+
+  function setAttributeOn(elements, attr, value) {
+    if (!elements || elements.length === 0 || !attr) return false;
+    var first = elements[0];
+    var attrLower = String(attr).toLowerCase();
+    var multi = String(first.name).slice(-2) === '[]';
+
+    if (attrLower === 'value') {
+      return setValueOn(elements, value);
+    }
+
+    if (attrLower === 'data-score' || attrLower === 'score') {
+      var validatedScore = parseScoreValue(value);
+      var scoreStr = validatedScore !== null ? String(validatedScore) : null;
+
+      var setScoreAttr = function(targetEl) {
+        if (scoreStr !== null) {
+          targetEl.setAttribute('data-score', scoreStr);
+        } else {
+          targetEl.removeAttribute('data-score');
+        }
+        targetEl.removeAttribute('score');
+      };
+
+      if (first.tagName.toLowerCase() === 'select') {
+        var optsToUpdate = first.multiple ? Array.prototype.slice.call(first.selectedOptions) : [first.selectedOptions[0]];
+        optsToUpdate.forEach(function(opt) { if (opt) setScoreAttr(opt); });
+        return true;
+      }
+
+      if (first.type === 'radio') {
+        var activeRadio = elements.filter(function(el) { return el.checked; })[0];
+        if (activeRadio) setScoreAttr(activeRadio);
+        return true;
+      }
+
+      if (first.type === 'checkbox' && multi) {
+        elements.filter(function(el) { return el.checked; }).forEach(function(chk) { setScoreAttr(chk); });
+        return true;
+      }
+
+      elements.forEach(function(el) { setScoreAttr(el); });
+      return true;
+    }
+
+    var isBoolAttr = (attrLower === 'disabled' || attrLower === 'readonly' || attrLower === 'required');
+    var isTruthy = isTruthyBool(value);
+
+    if (attrLower === 'checked') {
+      if (first.type === 'radio') {
+        elements.forEach(function (el) {
+          var shouldCheck = isTruthy && (value === true ? el === first : String(el.value) === String(value));
+          el.checked = shouldCheck;
+          if (shouldCheck) el.setAttribute('checked', 'checked');
+          else el.removeAttribute('checked');
+          fire(el);
+        });
+        return true;
+      }
+      elements.forEach(function (el) {
+        el.checked = isTruthy;
+        if (isTruthy) {
+          el.setAttribute('checked', 'checked');
+        } else {
+          el.removeAttribute('checked');
+        }
+        fire(el);
+      });
+      return true;
+    }
+
+    if (attrLower === 'required' && multi && first.type === 'checkbox') {
+      if (isTruthy) {
+        first.setAttribute('aria-required', 'true');
+        updateAsterisk(first, true);
+      } else {
+        first.removeAttribute('aria-required');
+        updateAsterisk(first, false);
+      }
+      return true;
+    }
+
+    var forbiddenProps = ['id', 'name', 'type', 'form', 'tagname'];
+
+    elements.forEach(function (el) {
+      if (isBoolAttr) {
+        if (isTruthy) {
+          el.setAttribute(attrLower, attrLower);
+          if (attrLower in el) el[attrLower] = true;
+          if (attrLower === 'required') {
+            el.setAttribute('aria-required', 'true');
+            updateAsterisk(el, true);
+          }
+        } else {
+          el.removeAttribute(attrLower);
+          if (attrLower in el) el[attrLower] = false;
+          if (attrLower === 'required') {
+            el.removeAttribute('aria-required');
+            updateAsterisk(el, false);
+          }
+        }
+      } else {
+        if (value === null || value === undefined) {
+          el.removeAttribute(attr);
+        } else {
+          el.setAttribute(attr, String(value));
+          if (attrLower in el && typeof el[attrLower] !== 'function' && forbiddenProps.indexOf(attrLower) === -1) {
+            try { el[attrLower] = String(value); } catch (e) {}
+          }
+        }
+      }
+    });
+
+    return true;
+  }
+
+  function updateAsterisk(el, isRequired) {
+    var wrapper = el.closest('.awf-field') || el.closest('.form-check') || el.parentElement;
+    if (!wrapper) return;
+    var label = wrapper.querySelector('label.form-label') || wrapper.querySelector('label');
+    if (!label) return;
+
+    var asterisk = label.querySelector('.awf-required');
+    if (isRequired) {
+      if (!asterisk) {
+        var span = document.createElement('span');
+        span.className = 'awf-required ms-1';
+        span.setAttribute('aria-hidden', 'true');
+        span.textContent = '*';
+        label.appendChild(span);
+      }
+    } else if (asterisk) {
+      asterisk.remove();
+    }
+  }
+
+  function helpTextOf(container) {
+    if (!container) return '';
+    var helpEl = container.querySelector('.awf-help-text');
+    return helpEl ? helpEl.textContent.trim() : '';
+  }
+
+  function setHelpTextOn(container, text) {
+    if (!container) return false;
+    var helpEl = container.querySelector('.awf-help-text');
+    var strVal = (text === null || text === undefined) ? '' : String(text);
+
+    // Fallback: if container doesn't have .awf-help-text (e.g. legacy/custom templates), create it
+    if (!helpEl) {
+      helpEl = document.createElement('div');
+      helpEl.className = 'form-text awf-help-text';
+      container.appendChild(helpEl);
+    }
+
+    helpEl.textContent = strVal;
+    return true;
+  }
+
+  // --- Section title (getSectionTitle / setSectionTitle) -----------------
+  // Locates the VISIBLE title element of the section that renders a field.
+  // The title "lives" in a different place per representation: section header
+  // (card/panel), layout tab label, layout accordion header, or group
+  // instance chrome (stacked card header, tab button, accordion header).
+  // Returns null when the field's section renders no title (chrome-less).
+
+  function sectionTitleElOf(elements) {
+    var field = containerOf(elements);
+    if (!field || !field.closest) return null;
+
+    // Repeatable/optional groups: per-instance chrome
+    var inst = field.closest('.awf-instance-card');
+    if (inst) {
+      if (inst.dataset.awfGroupPane !== undefined && inst.dataset.awfGroupPane !== '') {
+        // Group tabs: the title is the tab button, outside the pane
+        var gWrap = inst.closest('.awf-group-container');
+        var gNav = gWrap ? gWrap.querySelector('.nav-tabs') : null;
+        return gNav ? (gNav.querySelectorAll('.nav-link')[Number(inst.dataset.awfGroupPane)] || null) : null;
+      }
+      var gItem = inst.closest('.awf-accordion-item');
+      if (gItem) return gItem.querySelector('.awf-accordion-title');
+      // Stacked instance cards: header inside the instance card itself
+      var own = inst.querySelector('.awf-section-title-wrapper > :not(.awf-section-subtitle), .card-header .fw-bold');
+      if (own) return own;
+      // Suppressed instance chrome (single-block optional groups): the visible
+      // title is the ancestor group section's static header — climb to it
+      var outer = inst.parentElement ? inst.parentElement.closest('.card') : null;
+      var depth = 0;
+      while (outer && depth < 5) {
+        var hdr = outer.querySelector(':scope > .card-header .awf-section-title-wrapper > :not(.awf-section-subtitle), :scope > .awf-section-header-panel .awf-section-title-wrapper > :not(.awf-section-subtitle)');
+        if (hdr) return hdr;
+        outer = outer.parentElement ? outer.parentElement.closest('.card') : null;
+        depth++;
+      }
+      return null;
+    }
+
+    // Layout tabs: the title is the tab label, outside the pane
+    var pane = field.closest('[data-awf-pane]');
+    if (pane) {
+      var wrap = pane.closest('.awf-tabs-container');
+      var nav = wrap ? wrap.querySelector('.nav-tabs') : null;
+      if (!nav) return null;
+      var paneIdx = Array.prototype.indexOf.call(pane.parentElement.children, pane);
+      return nav.querySelectorAll('.nav-link')[paneIdx] || null;
+    }
+
+    // Layout accordion: the title is the item header, outside the body
+    var accItem = field.closest('.awf-accordion-item');
+    if (accItem) return accItem.querySelector('.awf-accordion-title');
+
+    // Plain section (card or panel flavor): nearest card owning a header,
+    // climbing over chrome-less nested cards
+    var sec = field.closest('.card');
+    var depth = 0;
+    while (sec && depth < 5) {
+      var own = sec.querySelector(':scope > .card-header .awf-section-title-wrapper > :not(.awf-section-subtitle), :scope > .awf-section-header-panel .awf-section-title-wrapper > :not(.awf-section-subtitle)');
+      if (own) return own;
+      sec = sec.parentElement ? sec.parentElement.closest('.card') : null;
+      depth++;
+    }
+    return null;
+  }
+
+  function getSectionTitleFrom(elements) {
+    var el = sectionTitleElOf(elements);
+    return el ? el.textContent.trim() : null;
+  }
+
+  // Writes one title element: static titles directly (keeping the original in
+  // data-awf-base-title), Alpine-bound titles through the group container's
+  // reactive `titleOverrides` state so the override survives re-renders.
+  function writeSectionTitleEl(el, text) {
+    if (el.hasAttribute('x-text')) {
+      var owner = null;
+      var idx = null;
+      var item = el.closest('.awf-accordion-item');
+      if (item && item.dataset.awfGroupItem !== undefined) {
+        // Group accordion: header and body share the accordion item
+        owner = item.closest('.awf-group-container');
+        idx = item.dataset.awfGroupItem;
+      } else {
+        var inst = el.closest('.awf-instance-card');
+        if (inst && inst.dataset.awfInstance !== undefined) {
+          // Stacked instance cards: the header lives inside the instance card
+          owner = inst.closest('.awf-group-container');
+          idx = inst.dataset.awfInstance;
+        } else {
+          var nav = el.closest('.nav-tabs');
+          if (nav) {
+            // Group tabs: tab buttons and panes iterate `instances` in parallel
+            idx = String(Array.prototype.indexOf.call(nav.querySelectorAll('.nav-link'), el));
+            owner = nav.closest('.awf-group-container');
+          }
+        }
+      }
+      if (owner === null || idx === null || idx < 0) return false;
+      if (!window.Alpine || typeof window.Alpine.$data !== 'function') return false;
+      var groupData = window.Alpine.$data(owner);
+      if (!groupData || !groupData.titleOverrides) return false;
+      groupData.titleOverrides[idx] = text;
+      return true;
+    }
+    // Static titles: `null` restores the original text (cached on first write);
+    // any other value is written, keeping the original for later restores
+    if (text === null) {
+      if (el.dataset.awfBaseTitle !== undefined) el.textContent = el.dataset.awfBaseTitle;
+      return true;
+    }
+    if (el.dataset.awfBaseTitle === undefined) el.dataset.awfBaseTitle = el.textContent.trim();
+    el.textContent = text;
+    return true;
+  }
+
+  function setSectionTitleOn(elements, text) {
+    if (!elements || elements.length === 0) return false;
+    // Global calls on repeatable blocks resolve EVERY instance (same contract
+    // as setValue): each row's title receives the text. Per-instance writes
+    // come from scope.setSectionTitle, scoped to the event's card.
+    var applied = false;
+    var seen = [];
+    elements.forEach(function (control) {
+      var el = sectionTitleElOf([control]);
+      if (!el || seen.indexOf(el) !== -1) return;
+      seen.push(el);
+      if (writeSectionTitleEl(el, text)) applied = true;
+    });
+    return applied;
+  }
+
+  var listeners = [];
+  var delegatedForm = null;
+
+  function buildInfo(el, card, parsed) {
+    var currentCanonical = parsed ? ((parsed.detached ? '_detached.' : '') + parsed.block + '.' + parsed.field) : null;
+    var rawIndex = (card && card.dataset && card.dataset.awfInstance !== undefined)
+      ? Number(card.dataset.awfInstance)
+      : (parsed && parsed.indexes.length ? parsed.indexes[parsed.indexes.length - 1] : null);
+
+    var info = {
+      element: el,
+      card: card,
+      block: parsed ? parsed.block : null,
+      field: parsed ? parsed.field : null,
+      detached: parsed ? parsed.detached : false,
+      instanceIndexes: parsed && parsed.indexes ? parsed.indexes.slice() : [],
+      instanceIndex: rawIndex,
+      getFieldContainer: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return containerOf(res.elements);
+      },
+      getValue: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return valueOf(res.elements);
+      },
+      setValue: function (target, val) {
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var v = (arguments.length === 1) ? target : val;
+        var res = resolveForInfo(t, card, parsed);
+        return setValueOn(res.elements, v);
+      },
+      getLabel: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return labelTextOf(containerOf(res.elements));
+      },
+      setLabel: function (target, text) {
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var val = (arguments.length === 1) ? target : text;
+        var res = resolveForInfo(t, card, parsed);
+        return setLabelTextOn(containerOf(res.elements), val);
+      },
+      getHelp: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return helpTextOf(containerOf(res.elements));
+      },
+      setHelp: function (target, text) {
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var val = (arguments.length === 1) ? target : text;
+        var res = resolveForInfo(t, card, parsed);
+        return setHelpTextOn(containerOf(res.elements), val);
+      },
+      getSectionTitle: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return getSectionTitleFrom(res.elements);
+      },
+      setSectionTitle: function (target, text) {
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var val = (arguments.length === 1) ? target : text;
+        var res = resolveForInfo(t, card, parsed);
+        return setSectionTitleOn(res.elements, val);
+      },
+      getText: function (target) {
+        var res = resolveForInfo(target || currentCanonical, card, parsed);
+        return textOf(res.elements);
+      },
+      getAttribute: function (target, attr) {
+        var t = (arguments.length === 1) ? currentCanonical : target;
+        var a = (arguments.length === 1) ? target : attr;
+        var res = resolveForInfo(t, card, parsed);
+        return getAttributeOn(res.elements, a);
+      },
+      setAttribute: function (target, attr, val) {
+        var t = (arguments.length === 2) ? currentCanonical : target;
+        var a = (arguments.length === 2) ? target : attr;
+        var v = (arguments.length === 2) ? attr : val;
+        var res = resolveForInfo(t, card, parsed);
+        return setAttributeOn(res.elements, a, v);
+      },
+      getAttributeValue: function (target, attr) {
+        return this.getAttribute.apply(this, arguments);
+      },
+      setAttributeValue: function (target, attr, val) {
+        return this.setAttribute.apply(this, arguments);
+      }
+    };
+
+    Object.defineProperty(info, 'fieldContainer', {
+      get: function () {
+        return containerOf([el]);
+      },
+      enumerable: true,
+      configurable: true
+    });
+
+    return info;
+  }
+
+  function triggerListenerImmediate(listener, targetCard) {
+    var form = getForm();
+    if (!form) return;
+    if (!parseFieldName(listener.fieldName)) return;
+
+    if (targetCard) {
+      targetCard._awfRanListeners = targetCard._awfRanListeners || [];
+      if (targetCard._awfRanListeners.indexOf(listener) !== -1) {
+        return;
+      }
+      targetCard._awfRanListeners.push(listener);
+
+      var cardControls = controls(targetCard).filter(function (el) {
+        return matches(parseFieldName(el.name), listener.fieldName, listener.options) > 0;
+      });
+      if (cardControls.length > 0) {
+        var firstEl = cardControls[0];
+        var cardParsed = parseFieldName(firstEl.name);
+        var val = valueOf(cardControls);
+        try {
+          listener.callback(val, buildInfo(firstEl, targetCard, cardParsed));
+        } catch (err) {
+          console.error('AWF.onChange immediate instance error', err);
+        }
+      }
+      return;
+    }
+
+    var cards = Array.prototype.slice.call(form.querySelectorAll(INSTANCE_SELECTOR));
+    var executedOnAnyCard = false;
+
+    if (cards.length > 0) {
+      cards.forEach(function (card) {
+        var cardControls = controls(card).filter(function (el) {
+          return matches(parseFieldName(el.name), listener.fieldName, listener.options) > 0;
+        });
+        if (cardControls.length > 0) {
+          executedOnAnyCard = true;
+          card._awfRanListeners = card._awfRanListeners || [];
+          if (card._awfRanListeners.indexOf(listener) === -1) {
+            card._awfRanListeners.push(listener);
+            var firstEl = cardControls[0];
+            var cardParsed = parseFieldName(firstEl.name);
+            var val = valueOf(cardControls);
+            try {
+              listener.callback(val, buildInfo(firstEl, card, cardParsed));
+            } catch (err) {
+              console.error('AWF.onChange immediate card error', err);
+            }
+          }
+        }
+      });
+    }
+
+    if (!executedOnAnyCard) {
+      var resolved = resolve(listener.fieldName, listener.options);
+      if (resolved.element) {
+        var val = valueOf(resolved.elements);
+        try {
+          listener.callback(val, buildInfo(resolved.element, resolved.card, resolved.parsed));
+        } catch (err) {
+          console.error('AWF.onChange immediate scalar error', err);
+        }
+      }
+    }
+  }
+
+  function initMutationObserver(form) {
+    if (typeof MutationObserver === 'undefined' || form._awfObserverInitialized) return;
+    form._awfObserverInitialized = true;
+
+    function collectCards(node, acc) {
+      if (!node || node.nodeType !== 1) return;
+      if (node.matches && node.matches(INSTANCE_SELECTOR)) {
+        acc.push(node);
+      }
+      if (node.querySelectorAll) {
+        var sub = node.querySelectorAll(INSTANCE_SELECTOR);
+        for (var i = 0; i < sub.length; i++) {
+          acc.push(sub[i]);
+        }
+      }
+    }
+
+    var observer = new MutationObserver(function (mutations) {
+      var addedCards = [];
+
+      mutations.forEach(function (mutation) {
+        if (!mutation.addedNodes || mutation.addedNodes.length === 0) return;
+        for (var i = 0; i < mutation.addedNodes.length; i++) {
+          collectCards(mutation.addedNodes[i], addedCards);
+        }
+      });
+
+      if (addedCards.length > 0) {
+        var uniqueCards = addedCards.filter(function (c, idx, arr) {
+          return arr.indexOf(c) === idx;
+        });
+
+        setTimeout(function () {
+          uniqueCards.forEach(function (card) {
+            listeners.forEach(function (listener) {
+              if (listener.options && listener.options.immediate) {
+                triggerListenerImmediate(listener, card);
+              }
+            });
+          });
+        }, 0);
+      }
+    });
+
+    observer.observe(form, { childList: true, subtree: true });
+
+    form.addEventListener('awf:instance-added', function (ev) {
+      var card = ev.detail && ev.detail.card ? ev.detail.card : ev.target;
+      if (card && card.nodeType === 1) {
+        var cardsToInit = [];
+        collectCards(card, cardsToInit);
+        var uniqueCards = cardsToInit.filter(function (c, idx, arr) {
+          return arr.indexOf(c) === idx;
+        });
+
+        setTimeout(function () {
+          uniqueCards.forEach(function (c) {
+            listeners.forEach(function (listener) {
+              if (listener.options && listener.options.immediate) {
+                triggerListenerImmediate(listener, c);
+              }
+            });
+          });
+        }, 0);
+      }
+    });
+  }
+
+  function ensureDelegation() {
+    var form = getForm();
+    if (!form || delegatedForm === form) return;
+    delegatedForm = form;
+    
+    var handler = function (event) {
+      var el = event.target;
+      if (!el || !el.name) return;
+      var parsed = parseFieldName(el.name);
+      if (!parsed) return;
+
+      var card = el.closest(INSTANCE_SELECTOR);
+      var canonical = (parsed.detached ? '_detached.' : '') + parsed.block + '.' + parsed.field;
+
+      listeners.slice().forEach(function (listener) {
+        if (matches(parsed, listener.fieldName, listener.options) === 0) return;
+        
+        var groupEls = controls(card).filter(function (e) {
+          return matches(parseFieldName(e.name), canonical, listener.options) > 0;
+        });
+
+        var value = valueOf(groupEls.length ? groupEls : [el]);
+
+        listener._lastValues = listener._lastValues || Object.create(null);
+        var controlKey = el.name;
+        var serializedVal = JSON.stringify(value);
+
+        if (listener._lastValues[controlKey] === serializedVal) {
+          return;
+        }
+        listener._lastValues[controlKey] = serializedVal;
+
+        try { 
+          listener.callback(value, buildInfo(el, card, parsed)); 
+        } catch (err) { 
+          console.error('AWF.onChange callback error', err); 
+        }
+      });
+    };
+       
+    form.addEventListener('change', handler);
+    form.addEventListener('input', handler);
+
+    initMutationObserver(form);
+  }
+
+  var api = {
+    form: getForm(),
+    wrapper: getWrapper(),
+    parseFieldName: parseFieldName,
+    resolve: function (target, options) { return resolve(target, options); },
+    getFieldContainer: function (target, options) { return containerOf(resolve(target, options).elements); },
+    getValue: function (target, options) { return valueOf(resolve(target, options).elements); },
+    setValue: function (target, value, options) { return setValueOn(resolve(target, options).elements, value); },
+    getText: function (target, options) { return textOf(resolve(target, options).elements); },
+    getLabel: function (target, options) { return labelTextOf(containerOf(resolve(target, options).elements)); },
+    setLabel: function (target, text, options) { return setLabelTextOn(containerOf(resolve(target, options).elements), text); },
+    getHelp: function (target, options) { return helpTextOf(containerOf(resolve(target, options).elements)); },
+    setHelp: function (target, text, options) { return setHelpTextOn(containerOf(resolve(target, options).elements), text); },
+    getSectionTitle: function (target, options) { return getSectionTitleFrom(resolve(target, options).elements); },
+    setSectionTitle: function (target, text, options) { return setSectionTitleOn(resolve(target, options).elements, text); },
+    getAttribute: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
+    setAttribute: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
+    getAttributeValue: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
+    setAttributeValue: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
+    onChange: function (fieldName, callback, options) {
+      if (typeof callback !== 'function') return function () {};
+      var opts = options || {};
+      var listener = { fieldName: fieldName, callback: callback, options: opts };
+      listeners.push(listener);
+      ensureDelegation();
+
+      if (opts.immediate) {
+        triggerListenerImmediate(listener);
+      }
+
+      return function off() {
+        var i = listeners.indexOf(listener);
+        if (i >= 0) listeners.splice(i, 1);
+      };
+    }
+  };
+
+  window.AWF_FORMS = window.AWF_FORMS || {};
+  window.AWF_LIST = window.AWF_LIST || [];
+  window.AWF_FORMS[FORM_ID] = api;
+  if (WRAPPER_ID) window.AWF_FORMS[WRAPPER_ID] = api;
+  if (window.AWF_LIST.indexOf(api) < 0) window.AWF_LIST.push(api);
+  if (api.wrapper) api.wrapper.AWF = api;
+
+  function findApi(target) {
+    if (target == null) {
+      return window.AWF_LIST.length === 1 ? window.AWF_LIST[0] : null;
+    }
+    if (typeof target === 'string') {
+      return window.AWF_FORMS[target] || null;
+    }
+    if (target.nodeType === 1) {
+      var f = target.closest ? target.closest('form') : null;
+      if (f) {
+        for (var i = 0; i < window.AWF_LIST.length; i++) {
+          if (window.AWF_LIST[i].form === f) return window.AWF_LIST[i];
+        }
+      }
+      var w = target.closest ? target.closest('[id^="stic-awf-"]') : null;
+      if (w && window.AWF_FORMS[w.id]) return window.AWF_FORMS[w.id];
+    }
+    return null;
+  }
+
+  function scoped(method, args, options) {
+    var formTarget = options && typeof options === 'object' ? options.form : null;
+    var resolved = findApi(formTarget);
+    if (!resolved) {
+      console.error('AWF: no form resolved. With several AWF forms on a page pass options.form (or use AWF.for(formId)).');
+      return null;
+    }
+    return resolved[method].apply(resolved, args);
+  }
+
+  if (!window.AWF) {
+    window.AWF = {
+      forms: window.AWF_FORMS,
+      list: window.AWF_LIST,
+      for: function (target) { return findApi(target); },
+      resolve: function (target, options) { return scoped('resolve', [target, options], options); },
+      getFieldContainer: function (target, options) { return scoped('getFieldContainer', [target, options], options); },
+      getValue: function (target, options) { return scoped('getValue', [target, options], options); },
+      setValue: function (target, value, options) { return scoped('setValue', [target, value, options], options); },
+      getText: function (target, options) { return scoped('getText', [target, options], options); },
+      getLabel: function (target, options) { return scoped('getLabel', [target, options], options); },
+      setLabel: function (target, text, options) { return scoped('setLabel', [target, text, options], options); },
+      getHelp: function (target, options) { return helpTextOf(containerOf(resolve(target, options).elements)); },
+      setHelp: function (target, text, options) { return setHelpTextOn(containerOf(resolve(target, options).elements), text); },
+      getAttribute: function (target, attr, options) { return scoped('getAttribute', [target, attr, options], options); },
+      setAttribute: function (target, attr, value, options) { return scoped('setAttribute', [target, attr, value, options], options); },
+      getAttributeValue: function (target, attr, options) { return scoped('getAttributeValue', [target, attr, options], options); },
+      setAttributeValue: function (target, attr, value, options) { return scoped('setAttributeValue', [target, attr, value, options], options); },
+      onChange: function (fieldName, callback, options) { return scoped('onChange', [fieldName, callback, options], options); },
+      getSectionTitle: function (target, options) { return scoped('getSectionTitle', [target, options], options); },
+      setSectionTitle: function (target, text, options) { return scoped('setSectionTitle', [target, text, options], options); },
+      parseFieldName: parseFieldName
+    };
+  } else {
+    window.AWF.forms = window.AWF_FORMS;
+    window.AWF.list = window.AWF_LIST;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', ensureDelegation);
+  } else {
+    ensureDelegation();
+  }
+})();
+JS;
+        return str_replace(
+            ['__AWF_FORM_ID__', '__AWF_WRAPPER_ID__'],
+            [
+                json_encode((string)$formId, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP),
+                json_encode((string)$wrapperId, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP)
+            ],
+            $js
+        );
+    }
 
     /**
      * Helper to decode Base64 safely
