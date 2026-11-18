@@ -97,6 +97,12 @@ class CalendarDashlet extends Dashlet
      */
     public function display()
     {
+        // STIC-Custom 20261118 ART - Avoid redirect loop: just show a no-access message
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        if (!ACLController::checkAccess('Calendar', 'list', true)) {
+            return parent::display() . '<p class="error">' . translate('LBL_NO_ACCESS', 'ACL') . '</p>';
+        }
+        // END STIC-Custom
         ob_start();
 
         if (isset($GLOBALS['cal_strings'])) {
@@ -110,9 +116,11 @@ class CalendarDashlet extends Dashlet
         global $cal_strings, $current_language;
         $cal_strings = return_module_language($current_language, 'Calendar');
 
-        if (!ACLController::checkAccess('Calendar', 'list', true)) {
-            ACLController::displayNoAccess(true);
-        }
+        // STIC-Custom 20261118 ART - Remove access check for Calendar dashlet, avoid redirect loop: just show a no-access message
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+        // if (!ACLController::checkAccess('Calendar', 'list', true)) {
+        //     ACLController::displayNoAccess(true);
+        // }
         // STIC-Custom 20230807 PCS - Adding Stic activities in calendar dashlet
         // STIC#1181
         // $cal = new Calendar($this->view);

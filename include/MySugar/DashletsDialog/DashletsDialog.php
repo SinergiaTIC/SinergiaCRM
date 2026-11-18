@@ -134,18 +134,36 @@ class DashletsDialog
                 } else {
                     $displayDashlet = true;
                     //check ACL ACCESS
-                    if (!empty($dashletMeta[$files['class']]['module']) && ACLController::moduleSupportsACL($dashletMeta[$files['class']]['module'])) {
+                    // STIC-Custom 20261118 ART - Calendar dashlet also requires access check
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+                    // If Calendar ever gets its own ACL-enabled bean, this special case can be removed
+                    // if (!empty($dashletMeta[$files['class']]['module']) && ACLController::moduleSupportsACL($dashletMeta[$files['class']]['module'])) {
+                    //     $type = 'module';
+                    //     if ($dashletMeta[$files['class']]['module'] == 'Trackers') {
+                    //         $type = 'Tracker';
+                    //     }
+                    //     if (!ACLController::checkAccess($dashletMeta[$files['class']]['module'], 'view', true, $type)) {
+                    //         $displayDashlet = false;
+                    //     }
+                    //     if (!ACLController::checkAccess($dashletMeta[$files['class']]['module'], 'list', true, $type)) {
+                    //         $displayDashlet = false;
+                    //     }
+                    // }
+                    $dashletModule = !empty($dashletMeta[$files['class']]['module']) ? $dashletMeta[$files['class']]['module'] : '';
+                    $supportsAcl = !empty($dashletModule) && (ACLController::moduleSupportsACL($dashletModule) || $dashletModule === 'Calendar');
+                    if ($supportsAcl) {
                         $type = 'module';
-                        if ($dashletMeta[$files['class']]['module'] == 'Trackers') {
+                        if ($dashletModule == 'Trackers') {
                             $type = 'Tracker';
                         }
-                        if (!ACLController::checkAccess($dashletMeta[$files['class']]['module'], 'view', true, $type)) {
+                        if (!ACLController::checkAccess($dashletModule, 'view', true, $type)) {
                             $displayDashlet = false;
                         }
-                        if (!ACLController::checkAccess($dashletMeta[$files['class']]['module'], 'list', true, $type)) {
+                        if (!ACLController::checkAccess($dashletModule, 'list', true, $type)) {
                             $displayDashlet = false;
                         }
                     }
+                    // END STIC-Custom
                 }
 
                 if ($dashletMeta[$files['class']]['category'] == 'Charts') {
