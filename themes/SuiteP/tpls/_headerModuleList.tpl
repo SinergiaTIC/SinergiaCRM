@@ -497,7 +497,7 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         {* STIC-Custom 20261118 ART - Quick create menu is built in SugarView (filtered by menu visibility and ACL) *}
-                        {* https://github.com/SinergiaTIC/SinergiaCRM/pull/ *}
+                        {* https://github.com/SinergiaTIC/SinergiaCRM/pull/1557 *}
                         {* <li><a href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a></li>
                         <li><a href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a></li>
                         <li><a href="index.php?module=Opportunities&action=EditView&return_module=Opportunities&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Opportunities" label="LBL_MODULE_NAME"}</a></li>
@@ -592,7 +592,7 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         {* STIC-Custom 20261118 ART - Quick create menu is built in SugarView (filtered by menu visibility and ACL) *}
-                        {* https://github.com/SinergiaTIC/SinergiaCRM/pull/ *}
+                        {* https://github.com/SinergiaTIC/SinergiaCRM/pull/1557 *}
                         {* <li><a href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a></li>
                         <li><a href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a></li>
                         <li><a href="index.php?module=Opportunities&action=EditView&return_module=Opportunities&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Opportunities" label="LBL_MODULE_NAME"}</a></li>
@@ -688,7 +688,7 @@
                     </a>
                     <ul class="dropdown-menu" role="menu">
                         {* STIC-Custom 20261118 ART - Quick create menu is built in SugarView (filtered by menu visibility and ACL) *}
-                        {* https://github.com/SinergiaTIC/SinergiaCRM/pull/ *}
+                        {* https://github.com/SinergiaTIC/SinergiaCRM/pull/1557 *}
                         {* <li><a href="index.php?module=Accounts&action=EditView&return_module=Accounts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Accounts" label="LBL_MODULE_NAME"}</a></li>
                         <li><a href="index.php?module=Contacts&action=EditView&return_module=Contacts&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Contacts" label="LBL_MODULE_NAME"}</a></li>
                         <li><a href="index.php?module=Opportunities&action=EditView&return_module=Opportunities&return_action=DetailView">{$APP.LBL_QUICK_CREATE}{sugar_translate module="Opportunities" label="LBL_MODULE_NAME"}</a></li>
