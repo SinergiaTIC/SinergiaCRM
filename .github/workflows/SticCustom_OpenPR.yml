@@ -1,4 +1,4 @@
-name: SticOpenPR - Clone instance on opened PR via curl-semaphore
+name: SticCustom - Clone instance on opened PR via curl-semaphore
 
 on:
   pull_request:

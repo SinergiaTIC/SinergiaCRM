@@ -1,20 +1,20 @@
-name: SticOpenPR - Update instance on synchronized PR via curl-semaphore
+name: SticCustom - Delete instance on closed PR via curl-semaphore
 
 on:
   pull_request:
-    types: [synchronize]
+    types: [closed]
     branches:
             - '**'
   workflow_dispatch:
 
 jobs:
-  update_instance:
+  delete_instance:
     # Estos workflows se replican al repo general, pero solo deben ejecutarse
     # en los repositorios de instancia (SCRM_*).
     if: github.repository != 'SinergiaTIC/SinergiaCRM'
     runs-on: ubuntu-latest
     steps:
-      - name: Launch Semaphore task to update instance
+      - name: Launch Semaphore task to delete instance
         env:
           SEMAPHORE_URL: ${{ secrets.SEMAPHORE_URL }}
           SEMAPHORE_DST_HOST: ${{ vars.SEMAPHORE_DST_HOST }}
@@ -23,9 +23,8 @@ jobs:
           PR_NUM: ${{ github.event.pull_request.number }}
           PROJECT_ID: 7
           TEMPLATE_ID: 97
-          TEMPLATE_BD_ID: 135
           MAX_ATTEMPTS: "60"
-          POLL_INTERVAL: "10"
+          POLL_INTERVAL: "5"
         run: |
           SRC_INSTANCE="${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/SCRM_}"
           
@@ -33,7 +32,7 @@ jobs:
             --argjson tid "${TEMPLATE_ID}" \
             --arg src "${SRC_INSTANCE}" \
             --arg dst "${SEMAPHORE_DST_HOST}" \
-            --arg opt_clone "1" \
+            --arg opt_clone "3" \
             --arg opt_commit "0" \
             --arg opt_delete "0" \
             --arg refspec_origin "${GITHUB_HEAD_REF:-main}" \
@@ -69,7 +68,7 @@ jobs:
             
             gh pr comment $PR_NUM --repo "$GITHUB_REPOSITORY" --create-if-none --edit-last --body "$full_comment" > /dev/null
           }
-          
+
           message="🚀 Iniciando flujo $GITHUB_WORKFLOW..."
           echo $message
           post_comment "$message"
@@ -117,7 +116,7 @@ jobs:
           done
 
           if [ "$status" == "success" ]; then
-            post_comment "✅ **Éxito**"$'\n'"Tarea $TASK_ID completada correctamente. Puedes ver el log en [Semaphore]($task_link)"
+            post_comment "✅ **Éxito**"$'\n'"Tarea $TASK_ID completada correctamente. Puedes ver el log en [Semaphore]($task_link)" 
             echo "🎉 Éxito."
           else
             post_comment "❌ **Fallo**"$'\n'"Tarea $TASK_ID falló con estado: $status. Puedes ver el log en [Semaphore]($task_link)"
@@ -125,6 +124,4 @@ jobs:
             exit 1
           fi
 
-          bd_task_link="${SEMAPHORE_URL}/project/${PROJECT_ID}/templates/${TEMPLATE_BD_ID}"
-          post_comment "Si quieres restaurar BD completa, puedes hacerlo mediante tarea en [Semaphore]($bd_task_link)"
           post_comment "---"

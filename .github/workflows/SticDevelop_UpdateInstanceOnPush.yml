@@ -1,18 +1,19 @@
-name: Develop - Delete instance On Closed Pull Request
+name: SticDevelop - Update develop instance
 on:
     pull_request:
-        types: [closed]
+        types: [synchronize]
         branches: # https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
             - '**' # matches every branch
     workflow_dispatch:
 env:
-    DEVELOP_HOST: ${{ secrets.DEVELOP_HOST}}
-    DEVELOP_SSH_USERNAME: ${{ secrets.DEVELOP_SSH_USERNAME}}
-    DEVELOP_DB_USERNAME: ${{ secrets.DEVELOP_DB_USERNAME }}
-    DEVELOP_DB_PASSWORD: ${{ secrets.DEVELOP_DB_PASSWORD }}
+  DEVELOP_HOST: ${{ secrets.DEVELOP_HOST}}
+  DEVELOP_SSH_USERNAME: ${{ secrets.DEVELOP_SSH_USERNAME}}
+  DEVELOP_DOMAIN_NAME: ${{ secrets.DEVELOP_DOMAIN_NAME}}
+  MAIN_HOST: ${{ secrets.MAIN_HOST}}
+  MAIN_SSH_USERNAME: ${{ secrets.MAIN_SSH_USERNAME}}
 jobs:
-    delete_instance:
-        name: Delete Develop instance
+    update_develop_instance:
+        name: Update develop instance
         # Este workflow se replica a los repositorios de instancia, pero solo debe ejecutarse
         # en el repositorio público de SinergiaCRM.
         if: github.repository == 'SinergiaTIC/SinergiaCRM'
@@ -25,6 +26,8 @@ jobs:
                 known_hosts: unnecessary
             # - name: Adding Known Hosts Develop
             #   run: ssh-keyscan -H $DEVELOP_HOST  >> ~/.ssh/known_hosts
+            # - name: Adding Known Hosts Main
+            #   run: ssh-keyscan -H $MAIN_HOST  >> ~/.ssh/known_hosts
             - name: Extract branch name
               run: echo ${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}} && echo 'BRANCH='${GITHUB_HEAD_REF:-${GITHUB_REF#refs/heads/}} >> $GITHUB_ENV
             - name: Extract branch clean
@@ -35,8 +38,12 @@ jobs:
               run: echo 'NOW='$(date +'%Y-%m-%d %H:%M:%S') >> $GITHUB_ENV
             - name: echo environment variables
               run: echo ${{ env }}
-            - name: Delete develop instance
-              run: ssh -o "StrictHostKeyChecking no" $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "test -e /web/${{ env.BRANCH_CLEAN }}" && (echo "Directory branch exists" && ssh -o "StrictHostKeyChecking no" $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "rm -rf /web/${{ env.BRANCH_CLEAN }} && mysql -h 127.0.0.1 -u $DEVELOP_DB_USERNAME --password=$DEVELOP_DB_PASSWORD -e 'drop database if exists ${{ env.DATABASE_NAME }}; create database ${{ env.DATABASE_NAME }};'") || echo "Branch doesn't exist in develop"
+            - name: Update develop instance
+              run: ssh -o "StrictHostKeyChecking no" $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "test -e /web/${{ env.BRANCH_CLEAN }}" && (echo "Directory branch exists" && ssh -o "StrictHostKeyChecking no" $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "cd /web/${{ env.BRANCH_CLEAN }} && git stash && git pull && rm -rf /web/${{ env.BRANCH_CLEAN }}/cache") || echo "Branch doesn't exist in develop"
+            - name: Repair develop instance
+              run: ssh -o "StrictHostKeyChecking no" $MAIN_SSH_USERNAME@$MAIN_HOST "scp ~/scripts/common/SticRepair.php $DEVELOP_SSH_USERNAME@$DEVELOP_HOST:/web/${{ env.BRANCH_CLEAN }}/SticRepair.php" && 
+                   wget -O - --no-check-certificate https://$DEVELOP_DOMAIN_NAME/${{ env.BRANCH_CLEAN }}/SticRepair.php &&
+                   ssh -o "StrictHostKeyChecking no" $DEVELOP_SSH_USERNAME@$DEVELOP_HOST "rm -rf /web//${{ env.BRANCH_CLEAN }}/SticRepair.php"
             - name: Create or Edit PR comment
               uses: thollander/actions-comment-pull-request@v1
               with:
