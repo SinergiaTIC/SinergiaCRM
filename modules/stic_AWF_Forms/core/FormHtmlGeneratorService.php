@@ -3029,7 +3029,23 @@ class FormHtmlGeneratorService {
         }
 
         // == ALPINE CORE COMPONENTS ==
-        $js .= "<script>\n" . $this->getAlpineComponentsJs($hasRating, $hasFile).$this->newLine()."</script>" . $this->newLine();
+        // Mappings of the dynamicenum fields (block, field, parent) used by the client-side parent-child filtering
+        $deMappings = [];
+        foreach ($config->data_blocks as $block) {
+            foreach ($block->fields as $field) {
+                if ($field->type_in_form !== 'select') continue; // only editors with options
+                $parentField = $this->getDynamicEnumParentFieldName($field);
+                if ($parentField === '') continue;
+                $deMappings[] = [
+                    'block' => $block->name,
+                    'field' => $field->name,
+                    'parent' => $parentField,
+                    'detached' => $field->type_field === DataBlockFieldType::UNLINKED,
+                ];
+            }
+        }
+        $deMappingsJson = json_encode($deMappings, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+        $js .= "<script>\n" . str_replace('__AWF_DE_MAPPINGS__', $deMappingsJson, $this->getAlpineComponentsJs($hasRating, $hasFile)).$this->newLine()."</script>" . $this->newLine();
 
         // == AWF CLIENT HELPERS (window.AWF) ==
         // Emitted BEFORE custom_js so it can use AWF.getValue/setValue/onChange.
@@ -3058,80 +3074,24 @@ class FormHtmlGeneratorService {
 
 // --- Dynamic enum (parent-child dropdowns) support ---
 
+// Dynamicenum fields of the form: [{ block, field, parent, detached }]
+const AWFDYNAMIC_ENUM_MAPPINGS = __AWF_DE_MAPPINGS__;
+
 const AWFDynamicEnums = {
   ATTR: 'data-awf-de-parent',
+  INSTANCE_SELECTOR: '.awf-instance-card',
 
-  // Trailing CRM field name of an input name. Supports both notations used
-  // in the generated forms: "Block.field" (scalar fields) and
-  // "Block[i][field]" / "Block[i][field][]" (repeatable group instances).
-  // STIC#1322
-  fieldNameOf(name) {
-    if (!name) return '';
-    name = name.replace(/\[\]$/, ''); // multi-select array suffix
-    const bracket = name.match(/^(.*)\[([^\[\]]+)\]$/);
-    if (bracket) return bracket[2];
-    return name.split('.').pop();
+  // Canonical name ("Block.field" / "_detached.Block.field") of a mapping field
+  canonical(mapping, fieldName) {
+    return (mapping.detached ? '_detached.' : '') + mapping.block + '.' + fieldName;
   },
 
-  // Value of the parent element (select, hidden input, checkbox or radio group)
-  readValue(el) {
-    if (el.type === 'radio') {
-      const form = el.form || el.closest('form');
-      const radioName = (window.CSS && CSS.escape) ? CSS.escape(el.name) : el.name;
-      const checked = form && form.querySelector('input[type="radio"][name="' + radioName + '"]:checked');
-      return checked ? checked.value : '';
-    }
-    if (el.type === 'checkbox') return el.checked ? (el.value || '1') : '';
-    return el.value || '';
-  },
-
-  // Finds the parent element of a child: among the inputs whose trailing field
-  // name matches, the one sharing the CLOSEST common ancestor with the child
-  // wins (fewest ancestor steps = same group instance preferred over
-  // form-level fields). STIC#1322
-  pickParent(form, child, parentField) {
-    const selector = 'select, input[type="hidden"], input[type="radio"], input[type="checkbox"]';
-    const candidates = Array.from(form.querySelectorAll(selector)).filter(el => el !== child && this.fieldNameOf(el.name) === parentField);
-    if (candidates.length === 0) return null;
-    let best = null;
-    let bestDepth = -1;
-    for (const candidate of candidates) {
-      let ancestor = child.parentElement;
-      let depth = 0;
-      while (ancestor && !ancestor.contains(candidate)) {
-        ancestor = ancestor.parentElement;
-        depth++;
-      }
-      if (ancestor && (best === null || depth < bestDepth)) {
-        best = candidate;
-        bestDepth = depth;
-      }
-    }
-    return best;
-  },
-
-  // Hides the options that do not belong to the current parent value and
-  // resets the child selection if it is no longer visible.
-  applyFilter(child) {
-    const parentField = child.getAttribute(this.ATTR);
-    if (!parentField) return;
-    const form = child.closest('form');
-    if (!form) return;
-    // A freshly cloned group instance may be observed before Alpine applies
-    // its bindings (its fields have no name yet): retry shortly, otherwise
-    // the child could be filtered with ANOTHER instance's parent value.
-    if (!child.name) {
-      const retries = parseInt(child.dataset.awfDeRetries || '0', 10) + 1;
-      if (child.isConnected && retries <= 10) {
-        child.dataset.awfDeRetries = String(retries);
-        setTimeout(() => this.applyFilter(child), 0);
-      }
-      return;
-    }
-    const parent = this.pickParent(form, child, parentField);
-    // No parent displayed in the form: all options remain visible
-    if (!parent) return;
-    const parentValue = this.readValue(parent);
+  // Hides the options that do not belong to the given parent value and resets
+  // the child selection if it is no longer visible
+  applyFilter(child, parentValue) {
+    if (parentValue === null || parentValue === undefined) return; // no parent control: no filtering
+    if (parentValue === true) parentValue = '1';
+    if (parentValue === false) parentValue = '';
     const hasParentValue = parentValue !== '';
 
     if (child.tagName === 'SELECT') {
@@ -3161,40 +3121,78 @@ const AWFDynamicEnums = {
     }
   },
 
-  // Applies the current filter to every dynamicenum child found inside scope
-  applyFilterInScope(scope) {
-    const children = (scope.matches && scope.matches('[' + this.ATTR + ']')) ? [scope] : Array.from(scope.querySelectorAll('[' + this.ATTR + ']'));
-    children.forEach(child => this.applyFilter(child));
+  // Finds the dynamicenum children of a mapping that live in the SAME scope
+  // as the changed parent element (same instance card, or scalar fields)
+  childrenInScope(form, mapping, card) {
+    const children = [];
+    form.querySelectorAll('[' + this.ATTR + ']').forEach(child => {
+      if (child.getAttribute(this.ATTR) !== mapping.parent) return;
+      const parsed = window.AWF.parseFieldName(child.name);
+      if (!parsed) return;
+      if (parsed.block !== mapping.block || parsed.detached !== mapping.detached) return;
+      const childCard = child.closest(this.INSTANCE_SELECTOR);
+      if (card) {
+        if (childCard !== card) return;
+      } else if (childCard) {
+        return; // parent changed at scalar level: skip instance children
+      }
+      children.push(child);
+    });
+    return children;
   },
 
   setup(form) {
     if (!form || form.dataset.awfDeInit) return;
     form.dataset.awfDeInit = 'true';
+    const awf = (window.AWF && window.AWF.for) ? window.AWF.for(form) : null;
+    if (!awf) {
+      console.warn('AWFDynamicEnums: window.AWF helper not available');
+      return;
+    }
 
-    // React to any parent change
-    form.addEventListener('change', (e) => {
-      const target = e.target;
-      if (!target || !target.name) return;
-      const fieldName = this.fieldNameOf(target.name);
-      form.querySelectorAll('[' + this.ATTR + ']').forEach(child => {
-        if (child.getAttribute(this.ATTR) === fieldName) this.applyFilter(child);
-      });
-    }, true);
+    // One listener per parent field
+    AWFDYNAMIC_ENUM_MAPPINGS.forEach(mapping => {
+      const parentCanonical = this.canonical(mapping, mapping.parent);
+      awf.onChange(parentCanonical, (value, info) => {
+        const children = this.childrenInScope(form, mapping, info ? info.card : null);
+        children.forEach(child => this.applyFilter(child, value));
+      }, { immediate: true });
+    });
 
-    // Initial filtering, once Alpine has applied its bindings (defaults, prefills...)
-    setTimeout(() => this.applyFilterInScope(form), 0);
-
-    // Fields of newly added group instances
+    // Initial filtering of the fields of group instances
     if (window.MutationObserver) {
       const observer = new MutationObserver((mutations) => {
         setTimeout(() => {
           mutations.forEach(mutation => mutation.addedNodes.forEach(node => {
-            if (node.nodeType === 1) this.applyFilterInScope(node);
+            if (node.nodeType !== 1) return;
+            const cards = (node.matches && node.matches(this.INSTANCE_SELECTOR)) ? [node] : Array.from(node.querySelectorAll(this.INSTANCE_SELECTOR));
+            cards.forEach(card => this.filterInstanceWhenReady(awf, card, 0));
           }));
         }, 0);
       });
       observer.observe(form, { childList: true, subtree: true });
     }
+  },
+
+  // Applies the filter to the dynamicenum children of a (newly added or not
+  // yet initialized) instance card, waiting until Alpine binds their names
+  filterInstanceWhenReady(awf, card, attempt) {
+    if (!card.isConnected) return;
+    const controls = Array.from(card.querySelectorAll('select, input, textarea'));
+    const allBound = controls.every(el => !!el.name);
+    if (!allBound && attempt < 10) {
+      setTimeout(() => this.filterInstanceWhenReady(awf, card, attempt + 1), 0);
+      return;
+    }
+    AWFDYNAMIC_ENUM_MAPPINGS.forEach(mapping => {
+      Array.from(card.querySelectorAll('[' + this.ATTR + ']')).forEach(child => {
+        if (child.getAttribute(this.ATTR) !== mapping.parent) return;
+        const parsed = awf.parseFieldName(child.name);
+        if (!parsed || parsed.block !== mapping.block || parsed.detached !== mapping.detached) return;
+        const parentValue = awf.getValue(this.canonical(mapping, mapping.parent), { card: card });
+        this.applyFilter(child, parentValue);
+      });
+    });
   },
 };
 
