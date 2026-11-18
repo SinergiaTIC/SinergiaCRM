@@ -156,9 +156,9 @@ $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = "Si activeu aquesta opció, els usu
 // User lockout settings
 $mod_strings['LBL_USER_LOCKOUT'] = "Bloqueig d'usuaris";
 $mod_strings['LBL_ENABLE_USER_LOCKOUT'] = "Habilita el bloqueig d'usuaris";
-$mod_strings['LBL_ENABLE_USER_LOCKOUT_HELP'] = "Si activeu aquesta opció, el sistema bloquejarà els comptes dels usuaris després que superin un cert nombre d'intents consecutius d'autenticació fallits. Els comptes bloquejats es podran desbloquejar tant automàticament, passat un cert temps, com manualment, per part d'un administrador.";
+$mod_strings['LBL_ENABLE_USER_LOCKOUT_HELP'] = "Si activeu aquesta opció, el sistema bloquejarà els comptes dels usuaris quan es produeixi un cert nombre d'intents consecutius d'autenticació fallits. Els comptes bloquejats es podran desbloquejar tant automàticament, passat un cert temps, com manualment, per part d'un administrador.";
 $mod_strings['LBL_MAX_FAILED_LOGINS'] = "Nombre màxim d'intents fallits";
-$mod_strings['LBL_MAX_FAILED_LOGINS_HELP'] = "A l'usuari se li bloquejarà el compte si supera aquest nombre d'intents consecutius d'autenticació fallits.";
+$mod_strings['LBL_MAX_FAILED_LOGINS_HELP'] = "A l'usuari se li bloquejarà el compte si realitza aquest nombre d'intents consecutius d'autenticació fallits.";
 $mod_strings['ERR_MAX_FAILED_LOGINS'] = "Especifiqueu un valor vàlid per al nombre màxim d'intents fallits.";
 $mod_strings['LBL_AUTO_UNLOCK'] = 'Desbloqueja automàticament els usuaris bloquejats';
 $mod_strings['LBL_AUTO_UNLOCK_HELP'] = 'Si activeu aquesta opció, el sistema desbloquejarà automàticament els comptes dels usuaris bloquejats un cop transcorregut el temps indicat des del bloqueig.';
