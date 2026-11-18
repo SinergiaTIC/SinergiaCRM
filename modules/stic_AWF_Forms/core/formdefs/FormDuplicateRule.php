@@ -33,7 +33,7 @@ enum OnDuplicateAction: string {
 }
 
 class FormDuplicateRule {
-    public FormDataBlock $data_block;          // The data block it belongs to
+    public FormDataBlock $data_block;         // The data block it belongs to
 
     /** @var string[] */
     public array $fields;                     // Array with the field names for duplicate detection
