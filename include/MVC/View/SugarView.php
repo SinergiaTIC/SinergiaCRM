@@ -608,6 +608,11 @@ class SugarView
         }
 
         $bakModStrings = $mod_strings;
+        // STIC-Custom 20261118 ART - Quick create menu options ("Create" button), filtered in PHP
+        // by module visibility and ACL (built below, once the module menu is computed)
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1557
+        $quickCreateMenu = array();
+        // END STIC-Custom
         if (isset($_SESSION["authenticated_user_id"])) {
             // get the module list
             $moduleTopMenu = array();
@@ -809,7 +814,25 @@ class SugarView
             // This is here for backwards compatibility, someday, somewhere, it will be able to be removed
             $ss->assign("moduleTopMenu", $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules']);
             $ss->assign("moduleExtraMenu", $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['extra']);
+        // STIC-Custom 20261118 ART - Build the "Create" menu in PHP, filtered by module menu
+        // visibility and ACL 'edit' access (no 'create' ACL action exists). List customizable via $sugar_config['quick_create_modules']
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1557
+        // }
+            $quickCreateModules = $sugar_config['quick_create_modules']
+                ?? array('Accounts', 'Contacts', 'Leads', 'stic_Events', 'Campaigns', 'Project', 'Meetings', 'KReports', 'AOW_WorkFlow');
+            $allMenuModules = $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['modules'] + $groupTabs[$app_strings['LBL_TABGROUP_ALL']]['extra'];
+            foreach ($quickCreateModules as $createModule) {
+                $quickCreateAccess = !ACLController::moduleSupportsACL($createModule)
+                    || ACLController::checkAccess($createModule, 'edit', true);
+                if (isset($allMenuModules[$createModule]) && $quickCreateAccess) {
+                    $quickCreateMenu[$createModule] = $allMenuModules[$createModule];
+                }
+            }
         }
+
+        // Assign the (already filtered) quick create menu to the theme templates
+        $ss->assign('quickCreateMenu', $quickCreateMenu);
+        // END STIC-Custom
 
         if (isset($extraTabs) && is_array($extraTabs)) {
             // Adding shortcuts array to extra menu array for displaying shortcuts associated with each module
