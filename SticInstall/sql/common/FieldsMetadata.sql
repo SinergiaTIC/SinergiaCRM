@@ -232,4 +232,6 @@ INSERT INTO `fields_meta_data` (`id`, `custom_module`, `name`) VALUES
 -- EmailTemplates
 ('EmailTemplatestic_whatsapp_twilio_id_c', 'EmailTemplates', 'stic_whatsapp_twilio_id_c'),
 ('EmailTemplatestic_whatsapp_status_c', 'EmailTemplates', 'stic_whatsapp_status_c'),
-('EmailTemplatestic_whatsapp_category_c', 'EmailTemplates', 'stic_whatsapp_category_c');
+('EmailTemplatestic_whatsapp_category_c', 'EmailTemplates', 'stic_whatsapp_category_c'),
+-- PDFTemplates
+('AOS_PDF_Templatesstic_file_name_c', 'AOS_PDF_Templates', 'stic_file_name_c');

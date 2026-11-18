@@ -44,6 +44,9 @@ class CustomAOS_PDF_TemplatesViewDetail extends AOS_PDF_TemplatesViewDetail
         SticViews::preDisplay($this);
 
         // Write here you custom code
+        // When the view metadata is Studio-customized and lacks the field, inject it before rendering
+        include_once 'custom/modules/AOS_PDF_Templates/SticUtils.php';
+        AOS_PDF_TemplatesUtils::ensureFileNameFieldInView($this);
     }
 
     public function display()

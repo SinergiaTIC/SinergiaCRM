@@ -71,7 +71,18 @@ $viewdefs [$module_name] =
                             'label' => 'LBL_ACTIVE',
                         ),
                     ),
+                    // STIC-Custom 20261111 ART - Field for the file name pattern with {{variables}} placeholders
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1514
                     2 =>
+                    array(
+                        0 =>
+                        array(
+                            'name' => 'stic_file_name_c',
+                            'label' => 'LBL_STIC_FILE_NAME',
+                        ),
+                    ),
+                    // END STIC-Custom
+                    3 =>
                     array(
                         0 =>
                         array(
@@ -84,7 +95,7 @@ $viewdefs [$module_name] =
                             'label' => 'LBL_ORIENTATION',
                         ),
                     ),
-                    3 =>
+                    4 =>
                     array(
                         0 =>
                         array(
@@ -93,7 +104,7 @@ $viewdefs [$module_name] =
                             'customCode' => '{$fields.pdfheader.value}',
                         ),
                     ),
-                    4 =>
+                    5 =>
                     array(
                         0 =>
                         array(
@@ -102,7 +113,7 @@ $viewdefs [$module_name] =
                             'customCode' => '{$fields.description.value}',
                         ),
                     ),
-                    5 =>
+                    6 =>
                     array(
                         0 =>
                         array(
