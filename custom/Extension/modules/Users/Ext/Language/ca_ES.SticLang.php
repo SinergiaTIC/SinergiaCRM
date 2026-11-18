@@ -139,4 +139,4 @@ $mod_strings['LBL_USER_LOCKOUT_COUNTDOWN'] = "⛔ Usuari bloquejat per haver ass
 $mod_strings['LBL_USER_LOCKOUT_FINISHED_REFRESHING'] = "✅ El temps de bloqueig ha finalitzat. Desbloquejant l'usuari...";
 $mod_strings['LBL_USER_UNLOCKED_REFRESHING'] = '✅ Usuari desbloquejat. Actualitzant...';
 $mod_strings['ERR_USER_IS_LOCKED_OUT_DETAILVIEW'] = "⛔ Usuari bloquejat per haver assolit el nombre màxim d'intents fallits d'inici de sessió. Podeu desbloquejar-lo mitjançant l'acció 'Desbloqueja l'usuari'.";
-$mod_strings['ERR_INVALID_PASSWORD_OR_USER_LOCKED_OUT'] = "Heu d'indicar un usuari i una contrasenya vàlids. Si heu superat el nombre màxim d'intents fallits, el vostre compte pot estar bloquejat.";
+$mod_strings['ERR_INVALID_PASSWORD_OR_USER_LOCKED_OUT'] = "Heu d'indicar un usuari i una contrasenya vàlids. Si heu assolit el nombre màxim d'intents fallits, el vostre compte pot estar bloquejat.";
