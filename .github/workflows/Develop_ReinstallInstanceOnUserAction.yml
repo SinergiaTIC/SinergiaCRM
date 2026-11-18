@@ -10,6 +10,9 @@ env:
 jobs:
     reinstall_instance:
         name: Reinstall Instance on User Action
+        # Este workflow se replica a los repositorios de instancia, pero solo debe ejecutarse
+        # en el repositorio público de SinergiaCRM.
+        if: github.repository == 'SinergiaTIC/SinergiaCRM'
         runs-on: ubuntu-latest
         steps:
             - name: Extract branch name

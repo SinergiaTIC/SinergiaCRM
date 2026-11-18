@@ -14,6 +14,9 @@ env:
 jobs:
     update_develop_instance:
         name: Update develop instance
+        # Este workflow se replica a los repositorios de instancia, pero solo debe ejecutarse
+        # en el repositorio público de SinergiaCRM.
+        if: github.repository == 'SinergiaTIC/SinergiaCRM'
         runs-on: ubuntu-latest
         steps:
             - name: Install SSH Key
