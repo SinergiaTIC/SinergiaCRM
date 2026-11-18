@@ -111,6 +111,16 @@
 			<input name='use_real_names'  type="checkbox" value="true" {$use_real_names}>
 		</td>
 	</tr>
+	<!-- STIC-Custom 20261117 ART - Alphabetical dropdowns -->
+	<!-- https://github.com/SinergiaTIC/SinergiaCRM/pull/1551 -->
+	<tr>
+		<td scope="row" nowrap>{$MOD.LBL_STIC_SEARCH_SELECTS_THRESHOLD}: &nbsp;{sugar_help text=$MOD.LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC}</td>
+		<td>
+			<select name='stic_search_selects_threshold' id='ConfigureSettings_stic_search_selects_threshold'>{$STIC_SEARCH_SELECTS_OPTIONS}</select>
+		</td>
+		<td colspan="2"></td>
+	</tr>
+	<!-- END STIC-Custom -->
 	<tr>
 		<td  scope="row">{$MOD.DISPLAY_RESPONSE_TIME}: </td>
 		{if !empty($config.calculate_response_time )}

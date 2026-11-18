@@ -344,4 +344,7 @@ $mod_strings = array(
     'LBL_GOOGLE_AUTH_JSON' => 'Archivo JSON',
     'LBL_GOOGLE_AUTH_JSON_HELP' => 'Cargar el archivo JSON descargado desde consola de los desarrolladores de Google.',
 
+    // Alphabetical dropdowns
+    'LBL_STIC_SEARCH_SELECTS_THRESHOLD' => 'Buscar en campos desplegables',
+    'LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC' => 'Esta opción permite establecer en qué campos de tipo desplegable se mostrará un cuadro de búsqueda al abrirlos. Las opciones son "Nunca", "Siempre" o a partir de un determinado número de elementos.',
 );

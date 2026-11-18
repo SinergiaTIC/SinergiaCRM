@@ -129,6 +129,21 @@ class ConfiguratorViewEdit extends ViewEdit
         $this->ss->assign('MOD', $mod_strings);
         $this->ss->assign('APP', $app_strings);
         $this->ss->assign('APP_LIST', $app_list_strings);
+        // STIC-Custom 20261117 ART - Alphabetical dropdowns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
+        // Show the default threshold in installations whose config.php
+        // predates this setting (the Configurator only saves keys already
+        // present in config or listed in $allow_undefined)
+        if (!isset($configurator->config['stic_search_selects_threshold'])) {
+            $configurator->config['stic_search_selects_threshold'] = 20;
+        }
+        // Options of the searchable-selects threshold select, following the
+        // same pattern as dashlet_auto_refresh_min
+        $this->ss->assign('STIC_SEARCH_SELECTS_OPTIONS', get_select_options_with_id(
+            $app_list_strings['stic_search_selects_options'],
+            $configurator->config['stic_search_selects_threshold']
+        ));
+        // END STIC-Custom
         $this->ss->assign('config', $configurator->config);
         $this->ss->assign('error', $configurator->errors);
         $this->ss->assign("AUTO_REFRESH_INTERVAL_OPTIONS", get_select_options_with_id($app_list_strings['dashlet_auto_refresh_options_admin'], isset($configurator->config['dashlet_auto_refresh_min']) ? $configurator->config['dashlet_auto_refresh_min'] : 30));

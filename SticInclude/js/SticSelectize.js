@@ -7,6 +7,10 @@ function applySelectizeInSearchForms() {
   $emptyString = "[" + SUGAR.language.get("app_strings", "LBL_STIC_EMPTY") + "]";
 
   // We mark the controls that we do not want to process, to avoid incompatibilities
+  // Note: this list is the Selectize-side mirror of the exclusions implemented
+  // in SticAlphabeticalSelects.js (shouldSkip / isSearchCandidate, plus the
+  // date, range and saved-search selectors). Keep both lists in sync when a
+  // new exclusion is added.
   var unSelectize = [];
   unSelectize.push("table.dateTime select"); // Time controls
   unSelectize.push("select.datetimecombo_time"); // Time controls
@@ -33,6 +37,14 @@ function applySelectizeInSearchForms() {
         }
       }
 
+
+      // Sort the dropdown options alphabetically
+      // before Selectize transforms the control (Selectize keeps the source
+      // order). The STICSelects comparator is locale aware and already skips
+      // the excluded controls (datetime, ranges, ...)
+      if (window.STICSelects && typeof STICSelects.sortSelect === "function") {
+        STICSelects.sortSelect(this);
+      }
 
       $(this).selectize(selectizeOptions || {});
     }

@@ -120,6 +120,12 @@ $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'El envío sólo se aplic
 // Campos de filtro en relaciones muchos a muchos
 $app_strings['LBL_SECURITYGROUPS_NAME'] = 'Grupo de seguridad';
 
+// Buscar en campos desplegables
+$app_strings['LBL_STIC_SEARCH_SELECT_PLACEHOLDER'] = 'Escriba para buscar...';
+$app_strings['LBL_STIC_SEARCH_SELECT_INPUT_LABEL'] = 'Buscar';
+$app_strings['LBL_STIC_SEARCH_SELECT_NO_RESULTS'] = 'No se encontró nada';
+$app_strings['LBL_STIC_SEARCH_SELECT_MASSUPDATE_CLEAR'] = 'Vaciar';
+
 // Módulos propios de SinergiaCRM y módulos de SuiteCRM renombrados
 $app_list_strings['moduleList']['Accounts'] = 'Organizaciones';
 $app_list_strings['moduleList']['Contacts'] = 'Personas';
@@ -4118,6 +4124,15 @@ $app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Vista de det
 $app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acción masiva';
 $app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinación de registros';
 $app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acción externa';
+
+// Administración: Opciones de búsqueda en campos desplegables
+$app_list_strings['stic_search_selects_options']['-1']  = 'Nunca';
+$app_list_strings['stic_search_selects_options']['0']   = 'Siempre';
+$app_list_strings['stic_search_selects_options']['10']  = 'A partir de 10 opciones';
+$app_list_strings['stic_search_selects_options']['20']  = 'A partir de 20 opciones';
+$app_list_strings['stic_search_selects_options']['30']  = 'A partir de 30 opciones';
+$app_list_strings['stic_search_selects_options']['50']  = 'A partir de 50 opciones';
+$app_list_strings['stic_search_selects_options']['100'] = 'A partir de 100 opciones';
 
 // Modificaciones del core de SuiteCRM
 

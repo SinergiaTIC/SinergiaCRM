@@ -100,3 +100,9 @@ $js_groupings[] = $newGrouping = array(
     'SticInclude/vendor/smartmenus/dist/jquery.smartmenus.min.js' => 'include/javascript/sugar_grp1.js',
     'SticInclude/js/SticSmartmenus.js' => 'include/javascript/sugar_grp1.js',
 );
+
+// Sort alphabetically all the <select> dropdowns and add a search box to the
+// field/module lists (class "stic-searchable-select")
+$js_groupings[] = $newGrouping = array(
+    'SticInclude/js/SticAlphabeticalSelects.js' => 'include/javascript/sugar_grp1.js',
+);
