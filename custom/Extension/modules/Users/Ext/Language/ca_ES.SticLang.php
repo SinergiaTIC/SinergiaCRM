@@ -135,8 +135,8 @@ $mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = "Indica per a quines o
 
 // User lockout
 $mod_strings['ERR_USER_IS_LOCKED_OUT'] = '⛔ Aquest usuari ha estat bloquejat i no pot iniciar la sessió utilitzant la seva contrasenya actual. Si voleu ser desbloquejat, aviseu l\'administrador.';
-$mod_strings['LBL_USER_LOCKOUT_COUNTDOWN'] = '⛔ Usuari bloquejat. Es desbloquejarà automàticament en {minutes} min {seconds} seg.';
-$mod_strings['LBL_USER_LOCKOUT_FINISHED_REFRESHING'] = '✅ El temps de bloqueig ha finalitzat. Actualitzant...';
+$mod_strings['LBL_USER_LOCKOUT_COUNTDOWN'] = "⛔ Usuari bloquejat per haver assolit el nombre màxim d'intents fallits d'inici de sessió. Es desbloquejarà automàticament en {minutes} minuts i {seconds} segons.";
+$mod_strings['LBL_USER_LOCKOUT_FINISHED_REFRESHING'] = "✅ El temps de bloqueig ha finalitzat. Desbloquejant l'usuari...";
 $mod_strings['LBL_USER_UNLOCKED_REFRESHING'] = '✅ Usuari desbloquejat. Actualitzant...';
-$mod_strings['ERR_USER_IS_LOCKED_OUT_DETAILVIEW'] = '⛔ Aquest usuari ha estat bloquejat a causa de múltiples intents fallits d\'inici de sessió. Podeu desbloquejar-lo utilitzant l\'acció "Desbloquejar usuari".';
+$mod_strings['ERR_USER_IS_LOCKED_OUT_DETAILVIEW'] = "⛔ Usuari bloquejat per haver assolit el nombre màxim d'intents fallits d'inici de sessió. Podeu desbloquejar-lo mitjançant l'acció 'Desbloqueja l'usuari'.";
 $mod_strings['ERR_INVALID_PASSWORD_OR_USER_LOCKED_OUT'] = "Heu d'indicar un usuari i una contrasenya vàlids. Si heu superat el nombre màxim d'intents fallits, el vostre compte pot estar bloquejat.";
