@@ -683,8 +683,11 @@ $mod_strings = array(
     'ERR_USER_FACTOR_SMTP_REQUIRED' => 'En primer lugar es necesario configurar el servidor SMTP.',
     'ERR_USER_FACTOR_CHANGE_DISABLED' => 'El usuario actual no es capaz de cambiar la configuración de autenticación de factor dos.',
     'LNK_IMPORT_CAMPAIGNS' => 'Importar Campaña',
-    'LBL_UNLOCK_USER' => 'Desbloquear usuario',  // PR 2897
-    'LBL_USER_UNLOCKED_MSG' => 'Usuario desbloqueado',  // PR 2897
+    // STIC-Custom 20260612 ART - User Lockout Settings 
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+    // 'LBL_UNLOCK_USER' => 'Desbloquear usuario',  // PR 2897
+    // 'LBL_USER_UNLOCKED_MSG' => 'Usuario desbloqueado',  // PR 2897
+    // END STIC-Custom
     // for Google Token/Synchronization settings
     'LBL_GOOGLE_API_SETTINGS' => 'Sincronización de la cuenta de Google',
     'LBL_GOOGLE_API_TOKEN' => 'Token de la API de Google',

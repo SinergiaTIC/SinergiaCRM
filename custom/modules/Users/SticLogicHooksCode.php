@@ -35,7 +35,18 @@ class UsersLogicHooks
                 // setPreferences function because they will be overriden by the default global preferences set by the wizard.
                 $_POST['user_count_collapsed_subpanels'] = 'on';
                 $_POST['fdow'] = 1;
-            }   
+            }
+
+            // STIC-Custom 20261028 ART - Clear the lockout when an inactive user is reactivated
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+            if (!empty($bean->fetched_row)
+                && ($bean->fetched_row['status'] ?? '') !== 'Active'
+                && $bean->status === 'Active'
+            ) {
+                require_once 'custom/modules/Users/SticUserLockoutUtils.php';
+                SticUserLockoutUtils::clearLockoutPreferencesAndSession($bean->id, $bean->user_name);
+            }
+            // END STIC-Custom
         }
     }
 

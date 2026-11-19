@@ -152,3 +152,17 @@ $mod_strings['LBL_STIC_SINERGIADA_ACTIONS_SECTION'] = 'Actions';
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth authentication';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Enable OAuth authentication';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'When enabling this option users will be able to authenticate using OAuth 2.0, in addition to using a username and password. After enabling it at least one of the external providers must be configured. For more information, see the <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentation</a>.';
+
+// User lockout settings
+$mod_strings['LBL_USER_LOCKOUT'] = 'User lockout';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT'] = 'Enable user lockout';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT_HELP'] = 'On enabling this option, the system will lock user accounts after a certain number of consecutive failed authentication attempts. Locked accounts can be unlocked either automatically after a set period of time or manually by an administrator.';
+$mod_strings['LBL_MAX_FAILED_LOGINS'] = 'Maximum number of failed attempts';
+$mod_strings['LBL_MAX_FAILED_LOGINS_HELP'] = "A user's account will be locked when reaching this number of consecutive failed authentication attempts.";
+$mod_strings['ERR_MAX_FAILED_LOGINS'] = 'Please set a valid value for the maximum number of failed attempts.';
+$mod_strings['LBL_AUTO_UNLOCK'] = 'Automatically unlock locked users';
+$mod_strings['LBL_AUTO_UNLOCK_HELP'] = 'On enabling this option, the system will automatically unlock locked user accounts once the specified time has elapsed since the accounts were locked.';
+$mod_strings['LBL_AUTO_UNLOCK_TIME'] = 'Automatic unlock time';
+$mod_strings['LBL_AUTO_UNLOCK_TIME_HELP'] = 'The number of minutes it takes for a user account to be automatically unlocked.';
+$mod_strings['LBL_AUTO_UNLOCK_TIME_UNITS'] = 'minutes';
+$mod_strings['ERR_AUTOMATIC_UNLOCK_TIME'] = 'Please set a valid value for the automatic unlock time.';
