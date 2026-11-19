@@ -29,7 +29,7 @@ jobs:
         run: |
           SRC_INSTANCE="${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/SCRM_}"
           BRANCH="${REFSPEC_ORIGIN:-main}"
-          PR_NUM=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --state open --limit 1 --jq '.[0].number // empty')
+          PR_NUM=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --state open --limit 1 --json number --jq '.[0].number // empty')
 
           PAYLOAD=$(jq -n \
             --argjson tid "${TEMPLATE_ID}" \
