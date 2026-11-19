@@ -3,6 +3,11 @@ name: SticCustom - Clone production database only
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   clone_database:
     # Este workflow se replica al repo general, pero solo debe ejecutarse
@@ -15,6 +20,7 @@ jobs:
           SEMAPHORE_URL: ${{ secrets.SEMAPHORE_URL }}
           SEMAPHORE_DST_HOST: ${{ vars.SEMAPHORE_DST_HOST }}
           SEMAPHORE_TOKEN: ${{ secrets.SEMAPHORE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REFSPEC_ORIGIN: ${{ github.ref_name }}
           PROJECT_ID: 7
           TEMPLATE_ID: 97
@@ -22,6 +28,8 @@ jobs:
           POLL_INTERVAL: "10"
         run: |
           SRC_INSTANCE="${GITHUB_REPOSITORY#$GITHUB_REPOSITORY_OWNER/SCRM_}"
+          BRANCH="${REFSPEC_ORIGIN:-main}"
+          PR_NUM=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH" --state open --limit 1 --jq '.[0].number // empty')
 
           PAYLOAD=$(jq -n \
             --argjson tid "${TEMPLATE_ID}" \
@@ -58,9 +66,21 @@ jobs:
             echo "$HTTP_CODE $BODY"
           }
 
-          echo "🚀 Iniciando flujo $GITHUB_WORKFLOW..."
-          echo "📦 Instancia origen: ${SRC_INSTANCE} -> destino: ${SEMAPHORE_DST_HOST} (rama ${REFSPEC_ORIGIN:-main})"
-          echo "🚦 Lanzando tarea en Semaphore..."
+          post_comment() {
+            [ -z "$PR_NUM" ] && { echo "$1"; return 0; }
+            new_comment="[ $(date '+%Y-%m-%d %H:%M:%S') ] $1"
+            old_comment=$(gh pr view "$PR_NUM" --repo="$GITHUB_REPOSITORY" --json comments --jq '[.comments[] | select(.author.login == "github-actions")][-1].body // ""')
+            full_comment=${old_comment:+${old_comment}$'\n\n'}${new_comment}
+            gh pr comment "$PR_NUM" --repo "$GITHUB_REPOSITORY" --create-if-none --edit-last --body "$full_comment" > /dev/null
+          }
+
+          message="🚀 Iniciando flujo $GITHUB_WORKFLOW..."
+          echo "$message"
+          post_comment "$message"
+          echo "📦 Instancia origen: ${SRC_INSTANCE} -> destino: ${SEMAPHORE_DST_HOST} (rama ${BRANCH})"
+          message="🚦 Lanzando tarea en Semaphore..."
+          echo "$message"
+          post_comment "$message"
 
           res=$(http_call "POST" "${SEMAPHORE_URL}/api/project/${PROJECT_ID}/tasks" "$SEMAPHORE_TOKEN" "$PAYLOAD")
           code=$(echo "$res" | cut -d' ' -f1)
@@ -68,6 +88,7 @@ jobs:
 
           if [ "$code" != "201" ] && [ "$code" != "200" ]; then
             echo "::error::Semaphore rechazó la tarea (HTTP $code). Respuesta: $body"
+            post_comment "❌ Error: Semaphore devolvió HTTP $code."
             exit 1
           fi
 
@@ -78,7 +99,7 @@ jobs:
           fi
 
           task_link="${SEMAPHORE_URL}/project/${PROJECT_ID}/history?t=${TASK_ID}"
-          echo "Puedes seguir la tarea $TASK_ID en [Semaphore]($task_link)"
+          post_comment "Puedes seguir la tarea $TASK_ID en [Semaphore]($task_link)"
 
           attempt=0
           status="running"
@@ -96,8 +117,10 @@ jobs:
           done
 
           if [ "$status" == "success" ]; then
+            post_comment "✅ **Éxito**"$'\n'"Tarea $TASK_ID completada correctamente. Log en [Semaphore]($task_link)"
             echo "🎉 Éxito. Tarea $TASK_ID completada correctamente. Log en $task_link"
           else
+            post_comment "❌ **Fallo**"$'\n'"Tarea $TASK_ID terminó con estado: $status. Log en [Semaphore]($task_link)"
             echo "💥 Fallo. Tarea $TASK_ID terminó con estado: $status. Log en $task_link"
             exit 1
           fi
