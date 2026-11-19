@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="Default avatar">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dfe9f5"/>
+      <stop offset="100%" stop-color="#b9cee6"/>
+    </linearGradient>
+    <clipPath id="circle"><circle cx="48" cy="48" r="48"/></clipPath>
+  </defs>
+  <g clip-path="url(#circle)">
+    <rect width="96" height="96" fill="url(#bg)"/>
+    <!-- shoulders -->
+    <path d="M12 96c0-19 16-31 36-31s36 12 36 31z" fill="#7d97b5"/>
+    <path d="M40 60h16v14a8 8 0 0 1-16 0z" fill="#e8b48f"/>
+    <!-- head -->
+    <circle cx="48" cy="40" r="20" fill="#f0c19c"/>
+    <!-- hair -->
+    <path d="M28 40c0-14 9-22 20-22s20 8 20 22c0-2-4-9-11-10-4 5-14 7-22 4-3 2-7 3-7 6z" fill="#4a3b34"/>
+    <!-- eyes -->
+    <circle cx="41" cy="39" r="2.2" fill="#3a2e28"/>
+    <circle cx="55" cy="39" r="2.2" fill="#3a2e28"/>
+    <!-- smile -->
+    <path d="M42 48c3 3 9 3 12 0" fill="none" stroke="#a86b52" stroke-width="2.2" stroke-linecap="round"/>
+  </g>
+  <circle cx="48" cy="48" r="47" fill="none" stroke="#9fb6d0" stroke-width="2"/>
+</svg>

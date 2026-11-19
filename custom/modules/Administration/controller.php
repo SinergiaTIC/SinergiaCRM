@@ -311,4 +311,61 @@ class CustomAdministrationController extends AdministrationController
         exit;
     }
 
+    /**
+     * Save the module -> EmailTemplates header title mapping in config_override.php.
+     */
+    public function action_sticSaveRecordTitles()
+    {
+        global $current_user, $mod_strings, $sugar_config, $app_list_strings;
+
+        if (!is_admin($current_user)) {
+            sugar_die('Unauthorized access to administration.');
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            SugarApplication::redirect('index.php?module=Administration&action=sticmanagerecordtitles');
+            return;
+        }
+
+        require_once 'modules/Configurator/Configurator.php';
+        require_once 'include/utils/array_utils.php';
+        $configurator = new Configurator();
+
+        $posted = isset($_POST['templates']) && is_array($_POST['templates']) ? $_POST['templates'] : array();
+        $mapping = array();
+
+        foreach ($posted as $moduleName => $templateId) {
+            if (!isset($app_list_strings['moduleList'][$moduleName])) {
+                continue;
+            }
+            $templateId = trim((string) $templateId);
+            if ($templateId === '') {
+                continue;
+            }
+            $template = BeanFactory::getBean('EmailTemplates', $templateId);
+            if (!$template || $template->deleted || $template->type !== 'header_title') {
+                continue;
+            }
+            $mapping[$moduleName] = $templateId;
+        }
+
+        try {
+            $overrideArray = $configurator->readOverride();
+            $overrideArray['detailview_header_templates'] = $mapping;
+            $overrideString = "<?php\n/***CONFIGURATOR***/\n";
+            foreach ($overrideArray as $key => $val) {
+                $overrideString .= override_value_to_string_recursive2('sugar_config', $key, $val);
+            }
+            $overrideString .= '/***CONFIGURATOR***/';
+            $configurator->saveOverride($overrideString);
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ': User ' . $current_user->id . ' updated header title templates mapping');
+            SugarApplication::appendErrorMessage('<div class="alert alert-success">' . $mod_strings['LBL_STIC_RECORD_TITLES_SAVED'] . '</div>');
+        } catch (Exception $e) {
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': ' . $e->getMessage());
+            SugarApplication::appendErrorMessage('<div class="alert alert-danger">' . $mod_strings['LBL_STIC_RECORD_TITLES_SAVE_ERROR'] . '</div>');
+        }
+
+        SugarApplication::redirect('index.php?module=Administration&action=sticmanagerecordtitles');
+    }
+
 }
