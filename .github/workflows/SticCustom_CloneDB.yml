@@ -2,11 +2,6 @@ name: SticCustom - Clone production database only
 
 on:
   workflow_dispatch:
-    inputs:
-      refspec_origin:
-        description: 'Rama de la instancia ya clonada (nombre de la carpeta destino)'
-        required: true
-        default: 'main'
 
 jobs:
   clone_database:
@@ -20,7 +15,7 @@ jobs:
           SEMAPHORE_URL: ${{ secrets.SEMAPHORE_URL }}
           SEMAPHORE_DST_HOST: ${{ vars.SEMAPHORE_DST_HOST }}
           SEMAPHORE_TOKEN: ${{ secrets.SEMAPHORE_TOKEN }}
-          REFSPEC_ORIGIN: ${{ inputs.refspec_origin }}
+          REFSPEC_ORIGIN: ${{ github.ref_name }}
           PROJECT_ID: 7
           TEMPLATE_ID: 97
           MAX_ATTEMPTS: "60"

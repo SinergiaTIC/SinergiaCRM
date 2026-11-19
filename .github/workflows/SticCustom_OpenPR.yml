@@ -138,5 +138,5 @@ jobs:
           post_comment "ℹ️ $final"
 
           db_action_link="https://github.com/${GITHUB_REPOSITORY}/actions/workflows/SticCustom_CloneDB.yml"
-          post_comment "Si quieres restaurar solo la BD de producción, lanza [SticCustom - Clone production database only]($db_action_link) y elige la rama **${GITHUB_HEAD_REF:-main}**."
+          post_comment "Si quieres restaurar solo la BD de producción, lanza [SticCustom - Clone production database only]($db_action_link) y selecciona **${GITHUB_HEAD_REF:-main}** en el selector *Use workflow from*."
           post_comment "---"
