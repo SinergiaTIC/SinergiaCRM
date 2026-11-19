@@ -687,8 +687,6 @@ $mod_strings = array(
     'ERR_USER_FACTOR_SMTP_REQUIRED' => 'Configuració del servidor SMTP son requerits primer.',
     'ERR_USER_FACTOR_CHANGE_DISABLED' => "L'usuari actual no és capaç de canviar la configuració de l'autenticació de factor dos.",
     'LNK_IMPORT_CAMPAIGNS' => 'Importar Campanya',
-    'LBL_UNLOCK_USER' => "Desbloqueja l'usuari",  // PR 2897
-    'LBL_USER_UNLOCKED_MSG' => 'Usuari desbloquejat',  // PR 2897
     // for Google Token/Synchronization settings
     'LBL_GOOGLE_API_SETTINGS' => 'Sincronització del compte de Google',
     'LBL_GOOGLE_API_TOKEN' => "Token de l'API de Google",
