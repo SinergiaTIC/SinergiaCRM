@@ -19,15 +19,14 @@ jobs:
     if: github.repository != 'SinergiaTIC/SinergiaCRM'
     runs-on: ubuntu-latest
     steps:
-      - name: Commit manual previo en producción (plantilla 92)
+      - name: Commit manual previo en producción (plantilla 145)
         env:
           SEMAPHORE_URL: ${{ secrets.SEMAPHORE_URL }}
           SEMAPHORE_TOKEN: ${{ secrets.SEMAPHORE_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUM_EVENT: ${{ github.event.pull_request.number }}
-          GIT_EMAIL: ${{ vars.GIT_EMAIL }}
           PROJECT_ID: 7
-          TEMPLATE_ID: 92
+          TEMPLATE_ID: 145
           MAX_ATTEMPTS: "60"
           POLL_INTERVAL: "10"
         run: |
@@ -39,7 +38,6 @@ jobs:
             --arg inst "${SRC_INSTANCE}" \
             --arg msg "Commit previo a merge PR #${PR_NUM:-manual}" \
             --arg backups "0" \
-            --arg email "${GIT_EMAIL}" \
             '{
               template_id: $tid,
               message: $msg,
@@ -48,7 +46,7 @@ jobs:
                   instance: $inst,
                   commit_message: $msg,
                   backups_db: $backups
-                } + (if $email == "" then {} else {email: $email} end) | tostring
+                } | tostring
               )
             }')
 
