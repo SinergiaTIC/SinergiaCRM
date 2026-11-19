@@ -36,9 +36,11 @@ jobs:
             --arg opt_clone "4" \
             --arg opt_commit "0" \
             --arg opt_delete "0" \
+            --arg msg "Sincronización con rama — ${SRC_INSTANCE}" \
             --arg refspec_origin "${GITHUB_HEAD_REF:-main}" \
             '{
               template_id: $tid,
+              message: $msg,
               environment: (
                 {
                   src_instance: $src, 

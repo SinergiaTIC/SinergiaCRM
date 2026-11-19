@@ -35,9 +35,11 @@ jobs:
             --arg opt_clone "5" \
             --arg opt_commit "0" \
             --arg opt_delete "0" \
+            --arg msg "Clonar solo BD de producción — ${SRC_INSTANCE}" \
             --arg refspec_origin "${REFSPEC_ORIGIN:-main}" \
             '{
               template_id: $tid,
+              message: $msg,
               environment: (
                 {
                   src_instance: $src,

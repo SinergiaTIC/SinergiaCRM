@@ -35,9 +35,11 @@ jobs:
             --arg opt_clone "3" \
             --arg opt_commit "0" \
             --arg opt_delete "0" \
+            --arg msg "Limpieza de clonación previa — ${SRC_INSTANCE}" \
             --arg refspec_origin "${GITHUB_HEAD_REF:-main}" \
             '{
               template_id: $tid,
+              message: $msg,
               environment: (
                 {
                   src_instance: $src, 
