@@ -98,6 +98,12 @@ class CustomUsersController extends UsersController
 
         $GLOBALS['log']->debug(__METHOD__ . '(' . __LINE__ . ') ### User ' . $user->user_name . ' unlocked manually ###');
 
+        // Set a one-shot flag so the DetailView shows a confirmation message after
+        // the page reload. The message is not appended here as a flash message nor
+        // redirected, because the fetch request sent by the unlock button follows
+        // redirects and would consume the message before the browser reloads the view.
+        $_SESSION['stic_user_unlocked_flash'] = true;
+
         return;
     }
 }

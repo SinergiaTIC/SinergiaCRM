@@ -48,7 +48,13 @@ class CustomUsersViewDetail extends UsersViewDetail
         global $current_user, $sugar_config;
 
         echo '<script> editACL = '. ACLController::checkAccess('stic_Work_Calendar', 'edit', true) .' </script>';
-        
+
+        // One-shot confirmation message after unlocking the user manually
+        if (!empty($_SESSION['stic_user_unlocked_flash'])) {
+            unset($_SESSION['stic_user_unlocked_flash']);
+            echo '<p class="success">' . translate('LBL_USER_UNLOCKED_MSG', 'Users') . '</p>';
+        }
+
         // Show lockout status with countdown timer or unlock message for admins.
         // The lockout/unlock system only applies to active users and to the enabled feature
         if (is_admin($current_user) && $this->bean->status === 'Active' && !empty($sugar_config['userlockout']['enabled'])) {

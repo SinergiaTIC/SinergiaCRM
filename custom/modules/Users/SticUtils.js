@@ -221,12 +221,6 @@ function sticPerformUnlockUser() {
     // Remove the unlock button immediately
     $('#unlock_user_button').remove();
 
-    // Show a brief transitional message before the page navigates away
-    var $countdownNode = $('#stic-user-lockout-countdown');
-    if ($countdownNode.length) {
-        $countdownNode.text(getUsersLang('LBL_USER_UNLOCKED_REFRESHING', '✅ User unlocked. Refreshing...'));
-    }
-
     var $form = $('form[name="DetailView"]');
     var record = $form.find('[name="record"]').val() || STIC.record.id;
     var sugarToken = $form.find('[name="sugar_token"]').val() || '';
