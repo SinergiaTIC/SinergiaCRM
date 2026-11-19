@@ -23,7 +23,6 @@ jobs:
           PR_NUM: ${{ github.event.pull_request.number }}
           PROJECT_ID: 7
           TEMPLATE_ID: 97
-          TEMPLATE_BD_ID: 135
           MAX_ATTEMPTS: "60"
           POLL_INTERVAL: "10"
         run: |
@@ -127,6 +126,6 @@ jobs:
             exit 1
           fi
 
-          bd_task_link="${SEMAPHORE_URL}/project/${PROJECT_ID}/templates/${TEMPLATE_BD_ID}"
-          post_comment "Si quieres restaurar BD completa, puedes hacerlo mediante tarea en [Semaphore]($bd_task_link)"
+          db_action_link="https://github.com/${GITHUB_REPOSITORY}/actions/workflows/SticCustom_CloneDB.yml"
+          post_comment "Si quieres restaurar solo la BD de producción, lanza [SticCustom - Clone production database only]($db_action_link) y elige la rama **${GITHUB_HEAD_REF:-main}**."
           post_comment "---"
