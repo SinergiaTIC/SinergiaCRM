@@ -3635,7 +3635,11 @@ class WizardStep4 {
           ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
           : this.getStandaloneSections();
         // The internal group template is never a move target (it is hidden)
-        const targets = candidates.filter(s => !excluded.has(s.id) && !this.isGroupTemplateSection(s) && (!parent || s.id !== parent.id));
+        let targets = candidates.filter(s => !excluded.has(s.id) && !this.isGroupTemplateSection(s) && (!parent || s.id !== parent.id));
+        const template = groupRoot ? this.getGroupTemplate(groupRoot) : null;
+        if (groupRoot && template && parent && parent.id === template.id) {
+          targets = targets.filter(s => s.id !== groupRoot.id);
+        }
         return this.canMoveSectionOut(section) ? [...targets, this.getFormMoveTarget()] : targets;
       },
 
@@ -3664,17 +3668,28 @@ class WizardStep4 {
         const arr = parent ? parent.elements : this.sections;
         const idx = arr.findIndex(el => el.id === section.id);
         if (idx >= 0) arr.splice(idx, 1);
-        target.elements.push(section);
+        // A designated group section holds ONLY its element template: 
+        // a move into "the group's top level" lands at the end of the
+        // template, where the content is actually rendered. Pushing a section
+        // directly into the group section (outside its template) left it
+        // unrendered, so the section seemed to vanish from the wizard.
+        let dest = target;
+        if (this.isGroupSection(target)) {
+          const groupTemplate = this.getGroupTemplate(target);
+          if (groupTemplate) dest = groupTemplate;
+        }
+        dest.elements.push(section);
 
-        // Container-type coherence: a section moved INTO a tabs/accordion
-        // container becomes the matching item (title on, collapse off); an item
-        // moved out of it reverts to a plain panel.
-        if (this.isTabsContainer(target)) {
+        // Container-type coherence against the REAL destination: a section
+        // moved INTO a tabs/accordion container becomes the matching item
+        // (title on, collapse off); an item moved out of it (or into a plain
+        // section, e.g. a group's element template) reverts to a plain panel.
+        if (this.isTabsContainer(dest)) {
           section.containerType = 'tab_item';
           section.showTitle = true;
           section.isCollapsible = false;
           section.isCollapsed = false;
-        } else if (this.isAccordionContainer(target)) {
+        } else if (this.isAccordionContainer(dest)) {
           section.containerType = 'accordion_item';
           section.showTitle = true;
           section.isCollapsible = false;
@@ -3712,9 +3727,12 @@ class WizardStep4 {
       getMoveTargets(element, fromSection) {
         if (!fromSection) return [];
         const groupRoot = this.getGroupScopeRoot(fromSection);
-        const candidates = groupRoot
-          ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
-          : this.getStandaloneSections();
+        let candidates;
+        if (groupRoot) {
+          candidates = this.getSectionsWithin(groupRoot);
+        } else {
+          candidates = this.getStandaloneSections();
+        }
         return candidates.filter(s => s.id !== fromSection.id && !this.isTabsContainer(s) && !this.isAccordionContainer(s) && !this.isGroupTemplateSection(s));
       },
 
@@ -3855,9 +3873,15 @@ class WizardStep4 {
         // The dropdown already shows only valid targets; this is the enforcement.
         if (!this.getMoveTargets(element, fromSection).some(s => s.id === toSection.id)) return;
 
+        let dest = toSection;
+        if (this.isGroupSection(toSection)) {
+          const groupTemplate = this.getGroupTemplate(toSection);
+          if (groupTemplate) dest = groupTemplate;
+        }
+
         // Move the element itself
         fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
-        toSection.elements.push(element);
+        dest.elements.push(element);
       },
 
       resetTheme() {

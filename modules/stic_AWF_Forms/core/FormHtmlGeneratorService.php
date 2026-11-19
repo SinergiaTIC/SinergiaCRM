@@ -57,6 +57,36 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * Counts the visible inputs a section subtree actually draws in the form:
+     * a whole block element contributes ALL its visible fields, an unbundled
+     * field element contributes its own, and nested sections are walked too.
+     * Fixed and hidden fields draw no input (same rule as
+     * blockHasRenderableFields). Used to decide whether a group renders its
+     * bare single-field representation for BOTH optional and repeatable.
+     */
+    private static function countContentSectionVisibleFields(FormLayoutSection $section, FormConfig $config): int {
+        $count = 0;
+        foreach ($section->elements as $el) {
+            if ($el instanceof FormLayoutSection) {
+                $count += self::countContentSectionVisibleFields($el, $config);
+                continue;
+            }
+            if (!($el instanceof FormLayoutElement)) continue;
+            $block = $config->data_blocks[$el->ref_id] ?? null;
+            if (!$block) continue;
+            if ($el->type === 'field') {
+                $field = $block->fields[$el->field_name] ?? null;
+                if ($field !== null && $field->type_field !== DataBlockFieldType::FIXED && $field->type_in_form !== 'hidden') $count++;
+            } else if ($el->type === 'datablock') {
+                foreach ($block->fields as $field) {
+                    if ($field->type_field !== DataBlockFieldType::FIXED && $field->type_in_form !== 'hidden') $count++;
+                }
+            }
+        }
+        return $count;
+    }
+
+    /**
      * Helper to check if a block or ANY of its descendants (subgroup tree)
      * has renderable fields. Mirrors the design-side filtering: a group head is
      * kept if the root OR any descendant has at least one visible field.
@@ -1527,13 +1557,29 @@ class FormHtmlGeneratorService {
             return $this->renderServerDataOptionalGroup($rootBlock, $section, $contentOuterVars, $config, $theme);
         }
 
-        // A single-block OPTIONAL, non-repeatable group: the group container IS the only box. 
-        // The root block's fields render directly inside the group container.
+        // Chrome-less single-box groups (STACKED panel/card flavor only): the
+        // group container IS the only box — the internal "element" template
+        // card and the block's host card are suppressed, so the fields render
+        // directly inside the group container. Two cases share this
+        // representation:
+        //  - A single-block OPTIONAL group (spec §1.35): one possible instance,
+        //    no instance identity is needed (any number of fields).
+        //  - A single-VISIBLE-FIELD group: when the whole group draws exactly
+        //    ONE input, the per-instance card would be the only wrapper around
+        //    a lone field; the field's own label identifies the instances and
+        //    a compact inline remove control replaces the card's one. This
+        //    unifies the representation with the optional-only flavor, which
+        //    already rendered the field bare.
+        // Groups whose designated section is TABS or ACCORDION keep their own
+        // instance navigation (tab bar / accordion items) in every case: that
+        // chrome is the point of those flavors, single visible field or not.
         $templateContentSections = ($templateSection !== null)
             ? array_filter($templateSection->elements, fn ($el) => $el instanceof FormLayoutSection)
             : [];
-        $singleBlockOptionalGroup = $isOptional && !$isRepeatable
-            && count($children) === 0 && count($templateContentSections) === 1;
+        $singleContentSection = count($children) === 0 && count($templateContentSections) === 1;
+        $isSingleVisibleFieldGroup = $singleContentSection
+            && self::countContentSectionVisibleFields(reset($templateContentSections), $config) === 1;
+        $singleBoxGroup = ($isOptional && !$isRepeatable && $singleContentSection) || $isSingleVisibleFieldGroup;
 
         // Alpine initialization:
         // - Optional: start inactive with empty instances []
@@ -1891,12 +1937,14 @@ class FormHtmlGeneratorService {
                     $groupShowAttr = $isCollapsibleGroup ? "id='{$groupBodyId}' x-show='open' x-transition" : "";
                     $html .= "<div class='card-body' {$groupShowAttr}>" . $this->newLine('+');
                     {
-                    if ($singleBlockOptionalGroup) {
-                        // Single-block optional group (spec §1.35): the group
-                        // container is the ONLY box for the root block — the
-                        // internal "element" template card and the block's host
-                        // card are suppressed, so the root fields render directly.
-                        // The single content section renders CHROME-LESS (not
+                    if ($singleBoxGroup) {
+                        // Single-box group: the group container is the ONLY box for the
+                        // root block — the internal "element" template card and the
+                        // block's host card are suppressed, so the root fields render
+                        // directly. Two flavors share this representation (see the
+                        // $singleBoxGroup condition above): single-block OPTIONAL
+                        // groups and single-VISIBLE-FIELD groups (repeatable included).
+                        // The content section renders CHROME-LESS (not
                         // `renderBlockInstanceFields`) so its NESTED subsections
                         // (user structure inside the host) are still rendered with
                         // their own chrome instead of being dropped.
@@ -1909,18 +1957,53 @@ class FormHtmlGeneratorService {
                         // "idx_lN is not defined") when the group was nested.
                         $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $html .= "<div x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
-                            {
-                                $contentSection = reset($templateContentSections);
-                                if ($contentSection instanceof FormLayoutSection) {
-                                    $html .= $this->renderSectionNode($contentSection, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars, false);
-                                } else {
-                                    $html .= $this->renderBlockInstanceFields($rootBlock, $theme, $instanceVar, $contentOuterVars);
+                            if ($isRepeatable) {
+                                // Repeatable single-field group: the lone field renders
+                                // bare, with a compact inline remove control for
+                                // instances beyond the first — the per-instance card
+                                // chrome that used to carry the remove button is
+                                // suppressed in this representation, and without the
+                                // inline control an added instance could never be removed
+                                $html .= "<div class='d-flex align-items-start gap-2' x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                                {
+                                    $html .= "<div class='flex-grow-1'>" . $this->newLine('+');
+                                    {
+                                        $contentSection = reset($templateContentSections);
+                                        if ($contentSection instanceof FormLayoutSection) {
+                                            $html .= $this->renderSectionNode($contentSection, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars, false);
+                                        } else {
+                                            $html .= $this->renderBlockInstanceFields($rootBlock, $theme, $instanceVar, $contentOuterVars);
+                                        }
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
+                                    $html .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance)\">{$removeLabel}</button>" . $this->newLine();
                                 }
+                                $html .= "</div>" . $this->newLine('-');
+                            } else {
+                                $html .= "<div x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                                {
+                                    $contentSection = reset($templateContentSections);
+                                    if ($contentSection instanceof FormLayoutSection) {
+                                        $html .= $this->renderSectionNode($contentSection, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars, false);
+                                    } else {
+                                        $html .= $this->renderBlockInstanceFields($rootBlock, $theme, $instanceVar, $contentOuterVars);
+                                    }
+                                }
+                                $html .= "</div>" . $this->newLine('-');
                             }
-                            $html .= "</div>" . $this->newLine('-');
                         }
                         $html .= "</template>" . $this->newLine('-');
+                        if ($isRepeatable) {
+                            // Add-instances button: in this bare representation it lives
+                            // right after the instances, like in the card path
+                            $html .= "<button type='button' class='btn btn-sm btn-outline-primary awf-add-instance-btn mt-1' " .
+                                    "@click=\"instances.push({ id: nextInstanceId++ })\" " .
+                                    "x-show=\"!{$maxInstances} || instances.length < {$maxInstances}\">" . $this->newLine('+');
+                            {
+                                $html .= "<span>{$addLabel}</span>" . $this->newLine();
+                            }
+                            $html .= "</button>" . $this->newLine('-');
+                        }
                     } else {
                     // Per-instance chrome: the element TEMPLATE's own card IS the
                     // instance card — the header shows the instance title
@@ -2045,7 +2128,7 @@ class FormHtmlGeneratorService {
                     }
                     $html .= "</button>" . $this->newLine('-');
                 }
-                    } // end single-block-optional-group else
+                    } // end single-box-group else
                     }
                     $html .= "</div>" . $this->newLine('-');
                 }

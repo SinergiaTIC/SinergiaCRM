@@ -1959,10 +1959,17 @@ class stic_AwfLayout {
     this.structure.forEach(cleanElements);
 
     // ---- 2. Normalization of unbundled blocks (field fragments) ----
-    // A block stays unbundled only when it is FULLY unbundled (every rendered
-    // field has exactly one fragment — any block can be unbundled in step 4,
-    // the "group head" concept does not apply there). Otherwise the fragments
-    // are re-grouped into a single block element: no field is lost.
+    // A block stays unbundled when every rendered field has exactly one
+    // fragment — any block can be unbundled in step 4, the "group head"
+    // concept does not apply there. When the block is ALSO represented by a
+    // whole block element elsewhere, the fragments are redundant: dropped.
+    // Otherwise (typically a field added in step 2 AFTER the user unbundled
+    // the block in step 4) the user's field distribution is PRESERVED: the
+    // missing fields are appended as new fragments right after the block's
+    // last fragment in the FIRST section (tree order) that already holds a
+    // fragment of the block. Collapsing every fragment back into one whole
+    // block element would move ALL the fields into a single section, wiping
+    // out the sections the user split the block into.
     fragmentsByBlock.forEach((fragments, blockId) => {
       const block = dataBlocks.find(b => b.id === blockId);
       if (!block) return;
@@ -1971,23 +1978,37 @@ class stic_AwfLayout {
         && renderedFields.every(f => fragmentKeys.has(blockId + '::' + f.name));
       if (fullyUnbundled) return; // Keep the fragments
 
-      const first = fragments[0];
-      const firstSection = first.section;
-      const firstIndex = firstSection.elements.indexOf(first.el);
-      // Remove every fragment of the block
-      fragments.forEach(({ section, el }) => {
-        const i = section.elements.indexOf(el);
-        if (i >= 0) section.elements.splice(i, 1);
-      });
-      // Insert a whole block element at the position of the first fragment
-      // (unless the block already has a whole block element elsewhere)
-      if (!wholeBlockPlaced.has(blockId)) {
-        firstSection.elements.splice(
-          Math.min(firstIndex, firstSection.elements.length), 0,
-          new stic_AwfLayoutElement({ type: 'datablock', ref_id: blockId })
-        );
-        wholeBlockPlaced.add(blockId);
+      // The block already has a whole element representing it: fragments are
+      // redundant (they would render the fields twice)
+      if (wholeBlockPlaced.has(blockId)) {
+        fragments.forEach(({ section, el }) => {
+          const i = section.elements.indexOf(el);
+          if (i >= 0) section.elements.splice(i, 1);
+        });
+        fragmentsByBlock.delete(blockId);
+        return;
       }
+
+      // Partially unbundled: keep every fragment where it is and append the
+      // missing fields as new fragments in the first section that holds one
+      const anchorSection = fragments[0].section;
+      // Position right after the block's LAST fragment in that section (the
+      // new fields extend the block's own fragment run, never other blocks')
+      let insertIndex = -1;
+      anchorSection.elements.forEach((el, i) => {
+        if (el.type === 'field' && el.ref_id === blockId) insertIndex = i;
+      });
+      if (insertIndex < 0) insertIndex = anchorSection.elements.indexOf(fragments[0].el);
+      // Missing rendered fields, in the block's own field order
+      renderedFields.filter(f => !fragmentKeys.has(blockId + '::' + f.name)).forEach(field => {
+        const fragment = new stic_AwfLayoutElement({ type: 'field', ref_id: blockId, field_name: field.name });
+        anchorSection.elements.splice(Math.min(++insertIndex, anchorSection.elements.length), 0, fragment);
+        fragmentKeys.add(blockId + '::' + field.name);
+        // Register the new fragment so the group-fragment adoption pass below
+        // re-homes it together with the pre-existing ones
+        fragments.push({ section: anchorSection, el: fragment });
+        placedBlockIds.add(blockId);
+      });
     });
 
     // ---- Helpers over (possibly nested) section content ----
@@ -4732,34 +4753,32 @@ class stic_AwfConfiguration {
     const visited = new Set();
 
     /**
-     * Gets all direct relational children and group members for a parent block
+     * Gets the direct GROUP MEMBERS of a parent block.
+     * Only group membership (group_root) nests a block under its parent in the
+     * Step 2 tree: a block that is merely relationally dependent (relate field
+     * or relationship, with no group) is rendered as a standalone top-level
+     * card, so it must NOT be pulled next to its parent — repositioning
+     * ungrouped blocks made them change order "without apparent reason" and
+     * also kept them in the wrong place after leaving a group.
      */
-    const getChildrenAndMembers = (parent) => {
-      return this.data_blocks.filter(candidate => {
-        if (candidate.id === parent.id) return false;
-
-        // 1. Direct member of the group
-        if (candidate.group_root === parent.id) return true;
-
-        // 2. Relational child (without explicit external group)
-        if (!candidate.group_root && candidate.isRelationalChild(parent.id, this.data_blocks)) return true;
-
-        return false;
-      });
+    const getGroupMembers = (parent) => {
+      return this.data_blocks.filter(candidate => candidate.id !== parent.id && candidate.group_root === parent.id);
     };
 
     /**
-     * DFS Traversal helper
+     * DFS Traversal helper. `chain` guards against malformed group_root
+     * cycles (a corrupted config would otherwise recurse forever).
      */
-    const traverse = (block) => {
+    const traverse = (block, chain = new Set()) => {
       if (!block || visited.has(block.id)) return;
 
       // GUARANTEE: If block belongs to a group root that hasn't been visited yet,
       // force traversal of the group root FIRST.
       if (block.group_root && block.group_root !== block.id && !visited.has(block.group_root)) {
         const rootBlock = this.data_blocks.find(b => b.id === block.group_root);
-        if (rootBlock) {
-          traverse(rootBlock);
+        if (rootBlock && !chain.has(rootBlock.id)) {
+          chain.add(block.id);
+          traverse(rootBlock, chain);
           return; // The root traversal will recursively visit this child in correct order
         }
       }
@@ -4767,40 +4786,26 @@ class stic_AwfConfiguration {
       visited.add(block.id);
       ordered.push(block);
 
-      // Get children and group members
-      const children = getChildrenAndMembers(block);
+      // Get the group members of this block
+      const members = getGroupMembers(block);
 
-      // Sort children/members Top-Down (parents before their children)
-      children.sort((a, b) => {
+      // Sort members Top-Down (parents before their children)
+      members.sort((a, b) => {
         if (a.isRelationalChild(b.id, this.data_blocks)) return 1;  // 'b' is parent of 'a' -> 'b' comes first
         if (b.isRelationalChild(a.id, this.data_blocks)) return -1; // 'a' is parent of 'b' -> 'a' comes first
         return this.data_blocks.indexOf(a) - this.data_blocks.indexOf(b);
       });
 
-      // Recurse into children
-      children.forEach(child => traverse(child));
+      // Recurse into members
+      members.forEach(child => traverse(child, chain));
     };
 
-    // 1. Dynamically compute true top-level root blocks
-    const rootBlocks = this.data_blocks.filter(candidate => {
-      if (candidate.group_root && candidate.group_root !== candidate.id) {
-        return false; // Belongs to a group -> NOT a top-level root
-      }
-      const hasParentInList = this.data_blocks.some(parent => 
-        parent.id !== candidate.id && candidate.isRelationalChild(parent.id, this.data_blocks)
-      );
-      return !hasParentInList;
-    });
-
-    // 2. Process top-level root blocks first
-    rootBlocks.forEach(root => traverse(root));
-
-    // 3. Fallback for orphan cycles or unvisited blocks
-    this.data_blocks.forEach(block => {
-      if (!visited.has(block.id)) {
-        traverse(block);
-      }
-    });
+    // Single pass in creation order: top-level blocks keep the order in which
+    // they were created (same order as before a group/relationship exists),
+    // and each group's members are visited right after their root. The old
+    // version walked top-level roots FIRST and appended the rest at the end,
+    // which silently reordered blocks that only had a relationship.
+    this.data_blocks.forEach(block => traverse(block));
 
     return ordered;
   }
