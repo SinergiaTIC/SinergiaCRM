@@ -109,4 +109,5 @@ $mod_strings = array(
 
     'LBL_AOS_CONTRACTS' => 'Contractes',
     'LBL_AOS_QUOTES' => 'Pressupostos',
+
 );
