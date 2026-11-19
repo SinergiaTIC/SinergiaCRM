@@ -327,3 +327,35 @@ $dictionary['Document']['fields']['selected_revision_filename']['massupdate'] = 
 $dictionary['Document']['fields']['aos_contracts']['massupdate'] = 0;
 $dictionary['Document']['fields']['stic_shared_document_link_c']['massupdate'] = 0;
 $dictionary['Document']['fields']['stic_sessions_documents_name']['massupdate'] = 0;
+
+// Link fields for the stic_Whistleblowing <-> Documents relationship (join table defined in custom/metadata/SticRelationshipsMetaData.php)
+$dictionary['Document']['fields']['stic_whistleblowing_documents'] = array(
+  'name' => 'stic_whistleblowing_documents',
+  'type' => 'link',
+  'relationship' => 'stic_whistleblowing_documents',
+  'source' => 'non-db',
+  'module' => 'stic_Whistleblowing',
+  'bean_name' => false,
+  'vname' => 'LBL_STIC_WHISTLEBLOWING_DOCUMENTS_FROM_STIC_WHISTLEBLOWING_TITLE',
+);
+$dictionary['Document']['fields']['stic_whistleblowing_documents_name'] = array(
+  'name' => 'stic_whistleblowing_documents_name',
+  'type' => 'relate',
+  'source' => 'non-db',
+  'vname' => 'LBL_STIC_WHISTLEBLOWING_DOCUMENTS_FROM_STIC_WHISTLEBLOWING_TITLE',
+  'save' => true,
+  'id_name' => 'stic_whistleblowing_documentsstic_whistleblowing_ida',
+  'link' => 'stic_whistleblowing_documents',
+  'table' => 'stic_whistleblowing',
+  'module' => 'stic_Whistleblowing',
+  'rname' => 'name',
+);
+$dictionary['Document']['fields']['stic_whistleblowing_documentsstic_whistleblowing_ida'] = array(
+  'name' => 'stic_whistleblowing_documentsstic_whistleblowing_ida',
+  'type' => 'link',
+  'relationship' => 'stic_whistleblowing_documents',
+  'source' => 'non-db',
+  'reportable' => false,
+  'side' => 'right',
+  'vname' => 'LBL_STIC_WHISTLEBLOWING_DOCUMENTS_FROM_DOCUMENTS_TITLE',
+);

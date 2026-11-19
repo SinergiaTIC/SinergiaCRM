@@ -264,6 +264,46 @@ class CustomAdministrationController extends AdministrationController
         // Add specific logic for manage main menu
         require_once('custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.php');
 
-    } 
+    }
+
+    /**
+     * Save the Whistleblowing channel configuration (enabled/reCaptcha + the 3 tab texts).
+     * Target action of the form rendered by ViewWhistleblowingConfigAdmin
+     * (custom/modules/Administration/views/view.whistleblowingconfigadmin.php).
+     * NOTE: this action must be DIFFERENT from 'WhistleblowingConfig_Admin':
+     * the latter is mapped to the view through action_view_map.php, and a controller
+     * method with the same name would prevent the view map from being applied
+     * (the framework would consider the action already handled).
+     *
+     * @return void
+     */
+    public function action_whistleblowingconfigsave()
+    {
+        global $app_strings, $current_user;
+
+        if (!is_admin($current_user)) {
+            sugar_die('Unauthorized access to administration.');
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_REQUEST['do'] ?? '') === 'save') {
+            require_once 'modules/Configurator/Configurator.php';
+            $cfg = new Configurator();
+
+            $cfg->config['whistleblowing_enabled'] = (isset($_POST['whistleblowing_enabled']) && $_POST['whistleblowing_enabled'] === '1') ? '1' : '0';
+            $cfg->config['whistleblowing_recaptcha_enabled'] = (isset($_POST['whistleblowing_recaptcha_enabled']) && $_POST['whistleblowing_recaptcha_enabled'] === '1') ? '1' : '0';
+            $cfg->config['whistleblowing_text_about'] = $_POST['whistleblowing_text_about'] ?? '';
+            $cfg->config['whistleblowing_text_confidentiality'] = $_POST['whistleblowing_text_confidentiality'] ?? '';
+            $cfg->config['whistleblowing_text_security'] = $_POST['whistleblowing_text_security'] ?? '';
+
+            // Save the new values in config_override.php
+            $cfg->handleOverride();
+
+            SugarApplication::appendSuccessMessage($app_strings['LBL_SAVE_BUTTON_LABEL']);
+            SugarApplication::redirect('index.php?module=Administration&action=WhistleblowingConfig_Admin');
+        }
+
+        // Without POST save parameters, go back to the configuration view
+        SugarApplication::redirect('index.php?module=Administration&action=WhistleblowingConfig_Admin');
+    }
 
 }

@@ -152,3 +152,18 @@ $mod_strings['LBL_STIC_SINERGIADA_ACTIONS_SECTION'] = 'Actions';
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'OAuth authentication';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Enable OAuth authentication';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'When enabling this option users will be able to authenticate using OAuth 2.0, in addition to using a username and password. After enabling it at least one of the external providers must be configured. For more information, see the <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentation</a>.';
+
+// Whistleblowing configuration
+$mod_strings['LBL_WHISTLEBLOWING_CONFIG_TITLE'] = 'Whistleblowing Channel';
+$mod_strings['LBL_WHISTLEBLOWING_CONFIG_DESCRIPTION'] = 'Whistleblowing Channel Configuration';
+$mod_strings['LBL_WHISTLEBLOWING_LINK_TITLE'] = 'Access the whistleblowing channel';
+$mod_strings['LBL_WHISTLEBLOWING_LINK_HELP'] = 'Only authorized users will be able to access.';
+$mod_strings['LBL_WHISTLEBLOWING_TITLE'] = 'Whistleblowing Channel Administration';
+$mod_strings['LBL_WHISTLEBLOWING_STATUS_HEADER'] = 'Integration Status';
+$mod_strings['LBL_WHISTLEBLOWING_ENABLE_LABEL'] = 'Enable Whistleblowing Channel:';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_ABOUT'] = 'About the Channel';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_CONFID'] = 'Confidentiality';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_SECURITY'] = 'Security';
+$mod_strings['LBL_WHISTLEBLOWING_DESC'] = 'Text management and channel activation.';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_LABEL'] = 'Enable reCaptcha in the channel:';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_HELP'] = 'When enabled, the public channel validates the “(General)” reCaptcha defined in Study Settings (GENERAL_RECAPTCHA).';
