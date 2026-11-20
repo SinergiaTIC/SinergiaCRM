@@ -7,6 +7,10 @@ on:
             - '**'
   workflow_dispatch:
 
+concurrency:
+  group: instance-${{ github.repository }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   clone_instance:
     # Estos workflows se replican al repo general, pero solo deben ejecutarse
