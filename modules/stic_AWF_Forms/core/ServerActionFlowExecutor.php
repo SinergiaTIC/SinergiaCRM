@@ -48,43 +48,20 @@ class ServerActionFlowExecutor {
         try {
             $actions = $flowConfig->actions ?? [];
 
-            // Preprocess formData to fill in missing boolean/checkbox fields
-            // (browsers don't send unchecked checkboxes, so without this the condition would
-            // compare null vs '0' and fail)
+            // Preprocess formData to fill in missing boolean/checkbox fields (browsers don't send unchecked checkboxes)
             stic_AWFUtils::fillMissingBooleanFields($this->context->formConfig, $this->context->formData);
 
             foreach ($actions as $actionConfig) {
                 $lastActionConfig = $actionConfig;
 
-                // Check that all requisite_actions have been executed successfully
-                // Backward compatibility: if a requisite action hasn't been executed (null),
-                // log a warning but let the action proceed. This preserves the pre-update
-                // behavior where no topological sort was performed server-side.
+                // Requisite actions verification
                 foreach ($actionConfig->requisite_actions as $reqActionId) {
-                    $reqResult = $this->context->getActionResultById($reqActionId);
-                    if ($reqResult === null) {
+                    if ($this->context->getResultForAction($reqActionId) === null) {
                         $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' (id: {$actionConfig->id}) requires action with id '{$reqActionId}' but it was not executed. Continuing anyway for backward compatibility.");
-                        continue;
-                    }
-                    if ($reqResult->isError()) {
-                        $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' skipped because requisite action '{$reqActionId}' failed.");
-                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Requisite action failed.");
-                        $this->context->addActionResult($skippedResult);
-                        continue 2;
                     }
                 }
 
-                // Check the Conditions (if any)
-                if(!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
-                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping action '{$actionConfig->text}' because condition failed.");
-                    
-                    // Record the action as skipped
-                    $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
-                    $this->context->addActionResult($skippedResult);
-                    continue; 
-                }
-
-                // Find the action executor (throws if not found)
+                // Action executor creation
                 $actionExecutor = $this->factory->createAction($actionConfig);
 
                 // Check form type compatibility
@@ -97,49 +74,125 @@ class ServerActionFlowExecutor {
                     }
                 }
 
-                // Parameter resolution
-                $paramDefinitions  = $actionExecutor->getParameters();
+                $paramDefinitions = $actionExecutor->getParameters();
                 $paramConfigurations = $actionConfig->parameters;
-                $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
-                $actionConfig->setResolvedParameters($resolvedParameters);
 
-                // Execute the action
-                $lastResult = $actionExecutor->execute($this->context, $actionConfig);
-                $lastResult->setAction($actionExecutor);
+                // Detect the deepest group referenced by any parameter or condition.
+                // This mirrors the wizard's group binding: selectors and field-only
+                // actions must also execute once per referenced group instance.
+                $motorBlock = $this->resolveMotorBlock($paramDefinitions, $paramConfigurations, $actionConfig);
+
+                $isTerminal = $actionExecutor instanceof ITerminalAction;
+                // Build instance descriptors
+                $instanceDescriptors = null;
+                if ($motorBlock !== null && !$isTerminal) {
+                    $resolvedInstances = DataBlockResolved::resolveInstances($motorBlock, $this->context->formData, $this->context);
+                    if (empty($resolvedInstances)) {
+                        // Repeatable group with zero instances: skip the action.
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Repeatable group '{$motorBlock->name}' has no instances.");
+                        $this->context->addActionResult($skippedResult);
+                        $lastResult = $skippedResult;
+                        continue;
+                    }
+                    // Convert the resolved instances to their loop-index vectors (one per instance: [i1], [i1, i2], ...)
+                    $instanceDescriptors = array_map(fn($instance) => $instance->loopIndexes, $resolvedInstances);
+                }
                 
-                // Context update
-                $this->context->addActionResult($lastResult);
-
-                if ($lastResult->isWait()) {
-                    // Mark the response as waiting
-                    if ($this->context->responseBean) {
-                        $this->context->responseBean->status = 'awaiting_action';
-                        $this->context->responseBean->save();
+                // Condition gating by scope (Scalar vs Instance)
+                if ($instanceDescriptors !== null) {
+                    // Repeatable action: scalar conditions gate the whole action before entering the loop
+                    if (!stic_AWFUtils::evaluateScalarConditions($actionConfig->conditions, $this->context->formConfig, $this->context->formData)) {
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Skipping repeatable action '{$actionConfig->text}' because scalar condition failed.");
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
+                        $this->context->addActionResult($skippedResult);
+                        continue;
                     }
-                    
-                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $lastResult->message);
-
-                    // Return $lastResult to finish: the engine will be put on hold
-                    return $lastResult; 
+                } else {
+                    // Scalar action: evaluate all conditions at global scope once
+                    if (!stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, [])) {
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Skipping scalar action '{$actionConfig->text}' because condition failed.");
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met.");
+                        $this->context->addActionResult($skippedResult);
+                        continue;
+                    }
+                    $instanceDescriptors = [[]];
                 }
 
-                // Error detection
-                if ($lastResult->isError()) {
-                    // If the action is marked to continue on error, we log the error but we continue with the next actions of the flow.
-                    if ($actionConfig->continue_on_error) {
-                        $lastResult->status = ResultStatus::SKIPPED;
-                        $lastResult->message = "Ignored Error: " . $lastResult->message;
-                        $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
-                        continue; 
+                
+                // 7. Execution loop
+                foreach ($instanceDescriptors as $descriptor) {
+                    $this->context->setInstanceIndexes($descriptor);
+
+                    // Requisite check per instance
+                    if (!$this->requisiteAllowsInstance($actionConfig, $descriptor)) {
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Requisite action failed.");
+                        $this->context->addActionResult($skippedResult);
+                        $lastResult = $skippedResult;
+                        continue;
                     }
 
-                    // If there's an error flow: immediately switch to the error flow
-                    if ($errorFlowConfig !== null) {
-                        return $this->executeFlow($errorFlowConfig);
+                    // Per-instance conditions evaluation (inside loop)
+                    if ($motorBlock !== null && !stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, $this->context->getInstanceIndexes())) {
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Skipping instance of action '{$actionConfig->text}' (" . implode(':', $descriptor) . ") because condition failed.");
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Condition not met for instance " . implode(':', $descriptor) . ".");
+                        $this->context->addActionResult($skippedResult);
+                        $lastResult = $skippedResult;
+                        continue;
                     }
-                    // If there is no error flow, finish
-                    return $lastResult; 
+
+                    // Parameter resolution
+                    try {
+                        $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
+                        $actionConfig->setResolvedParameters($resolvedParameters);
+                    } catch (UnactivatedOptionalBlockException $e) {
+                        // Skip the action if a required parameter references an unactivated optional DataBlock
+                        $GLOBALS['log']->info("Line " . __LINE__ . ": " . __METHOD__ . ": Action '{$actionConfig->name}' skipped: " . $e->getMessage());
+                        $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Action skipped because required parameter '{$e->parameterName}' references unactivated optional DataBlock '{$e->blockName}'.");
+                        $this->context->addActionResult($skippedResult);
+                        continue;
+                    }
+
+                    // Execute the action
+                    $lastResult = $actionExecutor->execute($this->context, $actionConfig);
+                    $lastResult->setAction($actionExecutor);
+
+                    // Context update
+                    $this->context->addActionResult($lastResult);
+
+                    if ($lastResult->isWait()) {
+                        // Mark the response as waiting
+                        if ($this->context->responseBean) {
+                            $this->context->responseBean->status = 'awaiting_action';
+                            $this->context->responseBean->save();
+                        }
+
+                        $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Flow paused by action '{$actionConfig->name}'. Reason: " . $lastResult->message);
+
+                        // Return $lastResult to finish: the engine will be put on hold
+                        return $lastResult;
+                    }
+
+                    // Error detection
+                    if ($lastResult->isError()) {
+                        // If the action is marked to continue on error, we log the error but we continue with the next actions of the flow.
+                        if ($actionConfig->continue_on_error) {
+                            $lastResult->status = ResultStatus::SKIPPED;
+                            $lastResult->message = "Ignored Error: " . $lastResult->message;
+                            $GLOBALS['log']->warn('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Action '{$actionConfig->name}' failed but is marked to continue. Error: " . $lastResult->message);
+                            continue 2;
+                        }
+
+                        // If there's an error flow: immediately switch to the error flow
+                        if ($errorFlowConfig !== null) {
+                            return $this->executeFlow($errorFlowConfig);
+                        }
+                        // If there is no error flow, finish
+                        return $lastResult;
+                    }
                 }
+
+                // Reset the instance indexes after the action execution
+                $this->context->setInstanceIndexes([]);
             }
         } catch (\Throwable $t) {
             // Catch any Exception or PHP Fatal Error and convert it into a context error
@@ -164,6 +217,113 @@ class ServerActionFlowExecutor {
     }
 
     /**
+     * Finds the deepest data block referenced by an action parameter or
+     * execution condition. A DataBlock can be selected directly, through an
+     * option selector, or indirectly by a field/field-list parameter.
+     *
+     * @param ActionParameterDefinition[] $paramDefinitions
+     * @param FormActionParameter[] $paramConfigurations
+     * @param FormAction $actionConfig
+     * @return ?FormDataBlock
+     */
+    private function resolveMotorBlock(array $paramDefinitions, array $paramConfigurations, FormAction $actionConfig): ?FormDataBlock {
+        $parameterConfigs = [];
+        foreach ($paramConfigurations as $paramConfig) {
+            $parameterConfigs[$paramConfig->name] = $paramConfig;
+        }
+
+        $motorBlock = null;
+        $considerBlock = function ($blockId) use (&$motorBlock): void {
+            if (!is_string($blockId) || $blockId === '') {
+                return;
+            }
+            $block = $this->context->formConfig->data_blocks[$blockId] ?? null;
+            if ($block === null || $block->getLoopDepth() === 0) {
+                return;
+            }
+            if ($motorBlock === null || $block->getLoopDepth() > $motorBlock->getLoopDepth()) {
+                $motorBlock = $block;
+            }
+        };
+
+        $considerField = function ($fieldKey) use ($considerBlock): void {
+            if (!is_string($fieldKey) || $fieldKey === '') {
+                return;
+            }
+            $fieldKey = trim($fieldKey);
+            if (str_starts_with($fieldKey, '_detached.')) {
+                $fieldKey = substr($fieldKey, strlen('_detached.'));
+            }
+            $dotPosition = strpos($fieldKey, '.');
+            if ($dotPosition === false || $dotPosition === 0) {
+                return;
+            }
+            $blockName = substr($fieldKey, 0, $dotPosition);
+            foreach ($this->context->formConfig->data_blocks as $block) {
+                if ($block->name === $blockName) {
+                    $considerBlock($block->id);
+                    return;
+                }
+            }
+        };
+
+        $considerFieldList = function ($fieldList) use ($considerField): void {
+            if (!is_string($fieldList) || $fieldList === '') {
+                return;
+            }
+            foreach (explode(',', $fieldList) as $fieldKey) {
+                $considerField($fieldKey);
+            }
+        };
+
+        foreach ($paramDefinitions as $paramDef) {
+            $paramConfig = $parameterConfigs[$paramDef->name] ?? null;
+            $value = $paramConfig?->value ?? $paramDef->defaultValue;
+
+            switch ($paramDef->type) {
+                case ActionParameterType::DATA_BLOCK:
+                    $considerBlock($value);
+                    break;
+
+                case ActionParameterType::FIELD:
+                    $considerField($value);
+                    break;
+
+                case ActionParameterType::FIELD_LIST:
+                    $considerFieldList($value);
+                    break;
+
+                case ActionParameterType::OPTION_SELECTOR:
+                    $selectedOption = $paramConfig?->selectedOption ?? '';
+                    foreach ($paramDef->selectorOptions as $optionDef) {
+                        if ($optionDef->name !== $selectedOption) {
+                            continue;
+                        }
+                        switch ($optionDef->resolvedType) {
+                            case ActionParameterType::DATA_BLOCK:
+                                $considerBlock($value);
+                                break;
+                            case ActionParameterType::FIELD:
+                                $considerField($value);
+                                break;
+                            case ActionParameterType::FIELD_LIST:
+                                $considerFieldList($value);
+                                break;
+                        }
+                        break;
+                    }
+                    break;
+            }
+        }
+
+        foreach ($actionConfig->conditions as $condition) {
+            $considerField($condition->field_name ?? '');
+        }
+
+        return $motorBlock;
+    }
+
+    /**
      * Iterates through all actions in a flow, skips non-terminal ones,
      * and executes the first terminal action that satisfies its execution conditions.
      *
@@ -185,8 +345,8 @@ class ServerActionFlowExecutor {
                 }
 
                 // Check the Conditions (if any)
-                if (!stic_AWFUtils::evaluateConditions($actionConfig->conditions, $this->context->formData)) {
-                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Skipping terminal action '{$actionConfig->text}' because conditions failed.");
+                if (!stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, $this->context->getInstanceIndexes())) {
+                    $GLOBALS['log']->info('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Skipping terminal action '{$actionConfig->text}' because conditions failed.");
                     continue;
                 }
 
@@ -195,8 +355,17 @@ class ServerActionFlowExecutor {
                 // Parameter resolution
                 $paramDefinitions  = $actionExecutor->getParameters();
                 $paramConfigurations = $actionConfig->parameters;
-                $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
-                $actionConfig->setResolvedParameters($resolvedParameters);
+
+                try {
+                    $resolvedParameters = $this->resolver->resolveAll($actionConfig, $paramDefinitions, $paramConfigurations, $this->context);
+                    $actionConfig->setResolvedParameters($resolvedParameters);
+                } catch (UnactivatedOptionalBlockException $e) {
+                    // Skip the action if a required parameter references an unactivated optional DataBlock
+                    $GLOBALS['log']->info("Line " . __LINE__ . ": " . __METHOD__ . ": Action '{$actionConfig->name}' skipped: " . $e->getMessage());
+                    $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Action skipped because required parameter '{$e->parameterName}' references unactivated optional DataBlock '{$e->blockName}'.");
+                    $this->context->addActionResult($skippedResult);
+                    continue;
+                }
 
                 // Execute the action
                 $executionResult = $actionExecutor->execute($this->context, $actionConfig);
@@ -207,5 +376,27 @@ class ServerActionFlowExecutor {
                 $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.': '. "Advanced Web Forms: Failed to evaluate or execute terminal action '{$actionConfig->name}': " . $t->getMessage());
             }
         }
+    }
+
+    /**
+     * Per-instance requisite gate. The result of an unrolled action is stored
+     * under a per-instance key ({id}_{i} / {id}_{i}_{j}), so the lookup must
+     * use the current descriptor; the plain-id lookup (kept as a fallback for
+     * non-unrolled requisites) always returns instance 0's outcome.
+     */
+    private function requisiteAllowsInstance($actionConfig, array $descriptor): bool {
+        $instanceKey = $this->context->getInstanceIndexKey();
+        foreach ($actionConfig->requisite_actions as $reqActionId) {
+            $reqResult = $this->context->getResultForAction($reqActionId, $instanceKey);
+            if ($reqResult === null) {
+                // Not executed at all: keep the legacy backward-compatible behaviour.
+                $reqResult = $this->context->getResultForAction($reqActionId);
+            }
+            if ($reqResult !== null && $reqResult->isError()) {
+                $GLOBALS['log']->warning('Line '.__LINE__.': '.__METHOD__.': '."Advanced Web Forms: Action '{$actionConfig->name}' skipped for instance " . (empty($descriptor) ? 'global' : implode(':', $descriptor)) . " because requisite action '{$reqActionId}' failed.");
+                return false;
+            }
+        }
+        return true;
     }
 }

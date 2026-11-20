@@ -197,6 +197,7 @@ $mod_strings = array (
   'LBL_FIELD_VALUE_OPTIONS' => 'Valores posibles',
   'LBL_FIELD_VALUE_OPTION_SHOW_NAME' => 'Mostrar valores internos',
   'LBL_FIELD_VALUE_OPTION_NAME' => 'Valor interno',
+  'LBL_FIELD_VALUE_OPTION_SCORE' => 'Puntuación',
   'LBL_FIELD_VALUE_OPTION_ORIGINAL_LABEL' => 'Texto orixinal',
   'LBL_FIELD_VALUE_OPTION_LABEL' => 'Texto',
   'LBL_FIELD_VALUE_OPTION_SHOW' => 'Mostrar',
@@ -636,4 +637,5 @@ $mod_strings = array (
   'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_DESC' => 'Valida que o ficheiro subido teña unha extensión permitida.',
   'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_EXTENSIONS_TEXT' => 'Extensións permitidas (separadas por comas)',
   'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'A extensión do ficheiro non está permitida.',
+
 );

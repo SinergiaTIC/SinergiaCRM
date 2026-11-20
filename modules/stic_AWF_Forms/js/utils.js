@@ -131,8 +131,10 @@ class utils {
    *   }
    */
   static getModuleInformation(moduleName) {
-    // Do not get info of not enabled modules
-    if (!moduleName || !STIC.enabledModules.hasOwnProperty(moduleName)) {
+    // Do not get info of not enabled modules. STIC/enabledModules are guarded:
+    // some views (e.g. the DetailView) do not define STIC.enabledModules, and a
+    // crash here aborts the whole config load (fromJSON -> _migrateLegacyRelationships).
+    if (!moduleName || typeof STIC === 'undefined' || !STIC.enabledModules || !STIC.enabledModules.hasOwnProperty(moduleName)) {
       return null;
     }
 
@@ -320,6 +322,102 @@ class utils {
     
     const local = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
     return local.toISOString().slice(0, 16);
+  }
+
+  /**
+   * Validates the syntax of an arithmetic formula with {field} placeholders,
+   * mirroring the server-side evaluator rules (tokenizer + grammar):
+   *   - Balanced parentheses and closed/non-empty {placeholders}
+   *   - Every binary operator must sit between two operands
+   *   - Unary +/- only allowed before a number or a {placeholder}
+   *   - No characters outside the arithmetic syntax
+   * An empty text is considered valid (required-ness is checked separately).
+   * @param {string} text The formula to validate
+   * @returns {string|null} null when the syntax is valid, or an error code:
+   *   'paren' (unbalanced parentheses), 'braces' (unclosed/empty placeholder),
+   *   'operator' (misplaced operator) or 'char' (unexpected character)
+   */
+  static validateFormulaSyntax(text) {
+    if (!text || String(text).trim() === '') return null;
+    const expr = String(text);
+    let i = 0;
+    let expectOperand = true; // true = an operand (number, {placeholder}, '(' or unary sign) is expected
+    let depth = 0;
+
+    while (i < expr.length) {
+      const ch = expr[i];
+      if (/\s/.test(ch)) { i++; continue; }
+
+      // {placeholder}
+      if (ch === '{') {
+        if (!expectOperand) return 'operator';
+        const close = expr.indexOf('}', i);
+        if (close === -1) return 'braces';
+        if (expr.substring(i + 1, close).trim() === '') return 'braces';
+        expectOperand = false;
+        i = close + 1;
+        continue;
+      }
+      if (ch === '}') return 'braces';
+
+      // Number
+      if (/[0-9.]/.test(ch)) {
+        if (!expectOperand) return 'operator';
+        const m = expr.substring(i).match(/^(?:\d+(?:\.\d+)?|\.\d+)/);
+        if (!m) return 'char';
+        expectOperand = false;
+        i += m[0].length;
+        continue;
+      }
+
+      // + and - : unary (before an operand) or binary (between operands)
+      if (ch === '+' || ch === '-') {
+        if (!expectOperand) {
+          // Binary: an operand must follow
+          expectOperand = true;
+          i++;
+          continue;
+        }
+        // Unary: the sign must be immediately followed by a number or a {placeholder}
+        let j = i + 1;
+        while (j < expr.length && /\s/.test(expr[j])) j++;
+        const next = expr[j];
+        if (next === '{' || (next !== undefined && /[0-9.]/.test(next))) {
+          i = j;
+          continue;
+        }
+        return 'operator';
+      }
+
+      // * and / : strictly binary
+      if (ch === '*' || ch === '/') {
+        if (expectOperand) return 'operator';
+        expectOperand = true;
+        i++;
+        continue;
+      }
+
+      // Parentheses
+      if (ch === '(') {
+        if (!expectOperand) return 'operator';
+        depth++;
+        i++;
+        continue;
+      }
+      if (ch === ')') {
+        if (expectOperand || depth === 0) return 'paren';
+        depth--;
+        i++;
+        continue;
+      }
+
+      // Anything else is not allowed
+      return 'char';
+    }
+
+    if (depth !== 0) return 'paren';     // Unclosed parentheses
+    if (expectOperand) return 'operator'; // Ends with an operator (or is empty besides signs)
+    return null;
   }
   
 }
