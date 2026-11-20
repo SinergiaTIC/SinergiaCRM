@@ -44,13 +44,22 @@
 
 global $mod_strings, $app_strings, $sugar_config;
  
-if(ACLController::checkAccess('stic_AWF_Links', 'list', true)){
+if(ACLController::checkAccess('stic_AWF_Forms', 'edit', true)){
+    $module_menu[] =
+    array(
+        'index.php?module=stic_AWF_Forms&action=EditView&return_module=stic_AWF_Links&return_action=index',
+        translate('LNK_NEW_RECORD', 'stic_AWF_Forms'),
+        'Add',
+        'stic_AWF_Forms'
+    );
+}
+if(ACLController::checkAccess('stic_AWF_Forms', 'list', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_AWF_Links&action=index&return_module=stic_AWF_Links&return_action=DetailView', 
-        $mod_strings['LNK_LIST'],
+        'index.php?module=stic_AWF_Forms&action=index&return_module=stic_AWF_Links&return_action=index', 
+        translate('LNK_LIST', 'stic_AWF_Forms'),
         'View', 
-        'stic_AWF_Links'
+        'stic_AWF_Forms'
     );
 }
 if(ACLController::checkAccess('stic_AWF_Responses', 'list', true)){
@@ -71,12 +80,12 @@ if(ACLController::checkAccess('stic_AWF_Response_Details', 'list', true)){
         'stic_AWF_Response_Details'
     );
 }
-if(ACLController::checkAccess('stic_AWF_Forms', 'list', true)){
+if(ACLController::checkAccess('stic_AWF_Links', 'list', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_AWF_Forms&action=index&return_module=stic_AWF_Links&return_action=index', 
-        translate('LNK_LIST', 'stic_AWF_Forms'),
+        'index.php?module=stic_AWF_Links&action=index&return_module=stic_AWF_Links&return_action=index', 
+        translate('LNK_LIST', 'stic_AWF_Links'),
         'View', 
-        'stic_AWF_Forms'
+        'stic_AWF_Links'
     );
 }

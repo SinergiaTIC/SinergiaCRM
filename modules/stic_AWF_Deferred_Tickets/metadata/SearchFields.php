@@ -1,18 +1,12 @@
 <?php
 /**
- *
- * SugarCRM Community Edition is a customer relationship management program developed by
- * SugarCRM, Inc. Copyright (C) 2004-2013 SugarCRM Inc.
- *
- * SuiteCRM is an extension to SugarCRM Community Edition developed by SalesAgility Ltd.
- * Copyright (C) 2011 - 2018 SalesAgility Ltd.
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License version 3 as published by the
- * Free Software Foundation with the addition of the following permission added
- * to Section 15 as permitted in Section 7(a): FOR ANY PART OF THE COVERED WORK
- * IN WHICH THE COPYRIGHT IS OWNED BY SUGARCRM, SUGARCRM DISCLAIMS THE WARRANTY
- * OF NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ * Free Software Foundation.
  *
  * This program is distributed in the hope that it will be useful, but WITHOUT
  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
@@ -24,20 +18,10 @@
  * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301 USA.
  *
- * You can contact SugarCRM, Inc. headquarters at 10050 North Wolfe Road,
- * SW2-130, Cupertino, CA 95014, USA. or at email address contact@sugarcrm.com.
- *
- * The interactive user interfaces in modified source and object code versions
- * of this program must display Appropriate Legal Notices, as required under
- * Section 5 of the GNU Affero General Public License version 3.
- *
- * In accordance with Section 7(b) of the GNU Affero General Public License version 3,
- * these Appropriate Legal Notices must retain the display of the "Powered by
- * SugarCRM" logo and "Supercharged by SuiteCRM" logo. If the display of the logos is not
- * reasonably feasible for technical reasons, the Appropriate Legal Notices must
- * display the words "Powered by SugarCRM" and "Supercharged by SuiteCRM".
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+//prevents directly accessing this file from a web browser
 if (!defined('sugarEntry') || !sugarEntry) {
     die('Not A Valid Entry Point');
 }
@@ -45,14 +29,25 @@ if (!defined('sugarEntry') || !sugarEntry) {
 $module_name = 'stic_AWF_Deferred_Tickets';
 $searchFields[$module_name] = array(
     'name' => array('query_type' => 'default'),
-    'current_user_only' => array(
-        'query_type' => 'default',
-        'db_field' => array('assigned_user_id'),
-        'my_items' => true,
-        'vname' => 'LBL_CURRENT_USER_FILTER',
-        'type' => 'bool'
+
+    // Filter by the Form related through the Response. 
+    // There is no direct relationship between Tickets and Forms: the value is resolved with a subquery
+    'form_name' => array(
+        'query_type' => 'format',
+        'operator' => 'subquery',
+        'subquery' => 'SELECT k.id FROM stic_awf_deferred_tickets k
+                INNER JOIN stic_awf_responses r
+                    ON r.id = k.stic_awf_responses_id_c AND r.deleted = 0
+                INNER JOIN stic_awf_forms_stic_awf_responses_c fr
+                    ON fr.stic_awf_forms_stic_awf_responsesresponses_idb = r.id AND fr.deleted = 0
+                INNER JOIN stic_awf_forms f
+                    ON f.id = fr.stic_awf_forms_stic_awf_responsesforms_ida AND f.deleted = 0
+                WHERE k.deleted = 0
+                    AND f.name LIKE \'{0}%\'',
+        'db_field' => array(
+            0 => 'id',
+        ),
     ),
-    'assigned_user_id' => array('query_type' => 'default'),
 
     //Range Search Support
     'range_date_entered' => array('query_type' => 'default', 'enable_range_search' => true, 'is_date_field' => true),
