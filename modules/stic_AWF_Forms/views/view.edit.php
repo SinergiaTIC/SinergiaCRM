@@ -44,6 +44,10 @@ class stic_AWF_FormsViewEdit extends ViewEdit
         echo "<link rel='stylesheet' href='". getVersionedPath("SticInclude/vendor/bootstrap/css/bootstrap.scoped.min.css"). "'>";
         echo getVersionedScript("SticInclude/vendor/bootstrap/js/bootstrap.bundle.min.js");
 
+        // Apply the corporate base color (stic_Settings: GENERAL_CUSTOM_THEME_COLOR) to the Bootstrap primary elements
+        require_once "modules/stic_AWF_Forms/Utils.php";
+        echo stic_AWF_FormsUtils::getBootstrapPrimaryColorCss();
+
         // Alpinejs
         // echo '<script src="//unpkg.com/alpinejs" defer></script>';
         echo '<script src="' . getVersionedPath('SticInclude/vendor/alpine/alpine.min.js') . '" defer></script>';

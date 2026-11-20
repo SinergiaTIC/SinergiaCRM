@@ -67,4 +67,60 @@ class FormConfig {
         }
         return $dto;
     }
+
+
+
+    /**
+     * Returns the direct children of the block passed as a parameter.
+     * @param FormDataBlock $block The block whose children are to be retrieved
+     * @return FormDataBlock[] An array of FormDataBlock instances that are direct children of the given block
+     */
+    public function getGroupChildren(FormDataBlock $block): array {
+        return array_values(array_filter($this->data_blocks, fn($b) => $b->group_root === $block->id));
+    }
+
+
+    /**
+     * Returns all descendants of the block passed as a parameter, including children, grandchildren, etc.
+     * @param FormDataBlock $rootBlock The root block whose descendants are to be retrieved
+     * @return FormDataBlock[] An array of FormDataBlock instances that are descendants of the given root block
+     */
+    public function getGroupDescendants(FormDataBlock $rootBlock): array {
+        $descendants = [];
+        $queue = [$rootBlock->id];
+        $visited = [$rootBlock->id => true];
+
+        while (!empty($queue)) {
+            $parentId = array_shift($queue);
+            foreach ($this->data_blocks as $candidate) {
+                if ($candidate->group_root === $parentId && !isset($visited[$candidate->id])) {
+                    $visited[$candidate->id] = true;
+                    $descendants[] = $candidate;
+                    $queue[] = $candidate->id;
+                }
+            }
+        }
+
+        return $descendants;
+    }
+
+
+    /**
+     * Gets the root block of a group for a given block. If the block is not part of a group, it returns the block itself.
+     * @param FormDataBlock $block The block whose group root is to be retrieved
+     * @return FormDataBlock The root block of the group or the block itself if it is not part of a group
+     */
+    public function getGroupRootBlock(FormDataBlock $block): ?FormDataBlock {
+        $current = $block;
+        $visited = [$current->id => true];
+
+        while (!empty($current->group_root)) {
+            $parent = $this->data_blocks[$current->group_root] ?? null;
+            if ($parent === null || isset($visited[$parent->id])) break; // Missing parent or cycle guard
+            $visited[$parent->id] = true;
+            $current = $parent;
+        }
+
+        return $current;
+    }
 }
