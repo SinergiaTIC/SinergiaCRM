@@ -69,6 +69,13 @@ class stic_AWF_Deferred_Tickets extends Basic
     public $context_data;
     public $expiration_date;
 	
+    // Related Form (through the Response). Values are computed in the bean so the detail view
+    // and the list can link to the Form record and the search filter can resolve its widget.
+    public $form_id;
+    public $form_name;
+    // Editing from the UI is disabled
+    public $is_automated_save = false;
+
     public function bean_implements($interface)
     {
         switch($interface)
@@ -80,4 +87,94 @@ class stic_AWF_Deferred_Tickets extends Basic
         return false;
     }
 	
+    /**
+     * Enable "edit" only in automated saving.
+     * @param string $view
+     * @param string $is_owner
+     * @param string $in_group
+     */
+    public function ACLAccess($view, $is_owner = 'not_set', $in_group = 'not_set')
+    {
+        $editViews = ['edit', 'editview', 'save'];
+        if (in_array(strtolower($view), $editViews)) {
+            if ($this->is_automated_save) {
+                return true;
+            }
+            return false;
+        }
+        return parent::ACLAccess($view, $is_owner, $in_group);
+    }
+
+    /**
+     * Adds the Form related through the Response to the list view data.
+     * There is no direct relationship between Tickets and Forms (the chain is
+     * Ticket -> Response -> Form), so the value is computed here and exposed
+     * through the non-db "form_name"/"form_id" fields.
+     *
+     * @param array $filter_fields
+     * @return array
+     */
+    public function get_list_view_data($filter_fields = array())
+    {
+        $data = parent::get_list_view_data();
+        $this->computeRelatedForm();
+        $data['FORM_NAME'] = $this->form_name;
+        $data['FORM_ID'] = $this->form_id;
+
+        return $data;
+    }
+
+    /**
+     * Fills in the Form related through the Response, also used by the detail view.
+     */
+    public function fill_in_additional_detail_fields()
+    {
+        parent::fill_in_additional_detail_fields();
+        $this->computeRelatedForm();
+    }
+
+    /**
+     * Computes the id and name of the Form(s) related to the Response of this ticket.
+     * Results are cached per response id within the request.
+     */
+    protected function computeRelatedForm()
+    {
+        static $formsByResponse = array();
+
+        if (!isset($this->form_name)) {
+            $this->form_name = '';
+            $this->form_id = '';
+        }
+
+        // The response id may be missing from the row when the Response column is
+        // not displayed, so it is fetched from the database when needed.
+        if (empty($this->stic_awf_responses_id_c) && !empty($this->id)) {
+            $result = $this->db->query('SELECT stic_awf_responses_id_c FROM stic_awf_deferred_tickets WHERE id = ' . $this->db->quoted($this->id));
+            $row = $this->db->fetchByAssoc($result);
+            $this->stic_awf_responses_id_c = $row['stic_awf_responses_id_c'] ?? '';
+        }
+
+        if (empty($this->stic_awf_responses_id_c) || !empty($this->form_id)) {
+            return;
+        }
+
+        $responseId = $this->stic_awf_responses_id_c;
+        if (!array_key_exists($responseId, $formsByResponse)) {
+            $query = "SELECT f.id, f.name 
+                      FROM stic_awf_forms_stic_awf_responses_c fr 
+                        INNER JOIN stic_awf_forms f ON f.id = fr.stic_awf_forms_stic_awf_responsesforms_ida AND f.deleted = 0 
+                      WHERE fr.deleted = 0 AND fr.stic_awf_forms_stic_awf_responsesresponses_idb = " . $this->db->quoted($responseId);
+            $result = $this->db->query($query);
+            $names = array();
+            $firstId = '';
+            while ($row = $this->db->fetchByAssoc($result)) {
+                $names[] = $row['name'];
+                if ($firstId === '') {
+                    $firstId = $row['id'];
+                }
+            }
+            $formsByResponse[$responseId] = array(implode(', ', $names), $firstId);
+        }
+        list($this->form_name, $this->form_id) = $formsByResponse[$responseId];
+    }
 }

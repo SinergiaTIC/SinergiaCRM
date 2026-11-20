@@ -54,6 +54,9 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'Els meus processos en espera de formularis',
   'LNK_NEW_RECORD' => 'Crear un procés en espera de formulari',
   'LNK_LIST' => 'Mostra els processos en espera de formularis',
+  'LBL_DEFAULT_PANEL' => 'Dades generals',
+  'LBL_PANEL_DEFERRED_PROCESS' => 'Procés en espera',
+  'LBL_PANEL_RECORD_DETAILS' => 'Detalls del registre',
   'LNK_IMPORT_STIC_AWF_DEFERRED_TICKETS' => 'Importa processos en espera de formularis',
   'LBL_SEARCH_FORM_TITLE' => 'Cerca processos en espera de formularis',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
@@ -61,6 +64,7 @@ $mod_strings = array (
   'LBL_NEW_FORM_TITLE' => 'Nou procés en espera de formulari',
 
   'LBL_RESPONSE' => 'Resposta de formulari',
+  'LBL_FORM' => 'Formulari',
   'LBL_TOKEN_HASH' => 'Token',
   'LBL_EXTERNAL_TRANSACTION_ID' => 'Id extern de transacció',
   'LBL_STATUS' => 'Estat',

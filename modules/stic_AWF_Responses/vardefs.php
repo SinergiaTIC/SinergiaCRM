@@ -276,6 +276,19 @@ $dictionary["stic_AWF_Responses"]["fields"]["stic_awf_forms_stic_awf_responsesfo
   'vname' => 'LBL_STIC_AWF_FORMS_STIC_AWF_RESPONSES_FROM_STIC_AWF_RESPONSES_TITLE',
 );
 
+// Relate field used by the "Form" search filter.
+$dictionary["stic_AWF_Responses"]["fields"]["form_name"] = array (
+  'name' => 'form_name',
+  'type' => 'relate',
+  'source' => 'non-db',
+  'inline_edit' => false,
+  'vname' => 'LBL_FORM',
+  'id_name' => 'stic_awf_forms_stic_awf_responsesforms_ida',
+  'module' => 'stic_AWF_Forms',
+  'rname' => 'name',
+  'studio' => false,
+);
+
 $dictionary['stic_AWF_Responses']['fields']['details_link'] = array(
     'name' => 'details_link',
     'type' => 'link',

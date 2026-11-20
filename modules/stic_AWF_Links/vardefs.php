@@ -136,6 +136,30 @@ $dictionary['stic_AWF_Links'] = array(
     'studio' => false,
     'inline_edit' => false,
   ),
+  // Name of the Form related through the Response.
+  // There is no direct relationship between Links and Forms, so the values are
+  // computed in the bean 
+  'form_id' =>
+  array(
+    'name' => 'form_id',
+    'vname' => 'LBL_FORM',
+    'type' => 'id',
+    'source' => 'non-db',
+    'studio' => false,
+    'inline_edit' => false,
+  ),
+  'form_name' =>
+  array(
+    'name' => 'form_name',
+    'vname' => 'LBL_FORM',
+    'type' => 'relate',
+    'source' => 'non-db',
+    'id_name' => 'form_id',
+    'module' => 'stic_AWF_Forms',
+    'rname' => 'name',
+    'studio' => false,
+    'inline_edit' => false,
+  ),
   'parent_id' => 
   array (
     'required' => false,

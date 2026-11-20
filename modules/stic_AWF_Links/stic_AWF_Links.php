@@ -102,4 +102,61 @@ class stic_AWF_Links extends Basic
         }
         return parent::ACLAccess($view, $is_owner, $in_group);
     }
+
+    /**
+     * Adds the name of the Form related through the Response to the list view data.
+     * There is no direct relationship between Links and Forms (the chain is
+     * Link -> Response -> Form), so the value is computed here and exposed
+     * through the non-db "form_name" field.
+     *
+     * @param array $filter_fields
+     * @return array
+     */
+    public function get_list_view_data($filter_fields = array())
+    {
+        $data = parent::get_list_view_data();
+        list($data['FORM_NAME'], $data['FORM_ID']) = $this->getRelatedForm();
+
+        return $data;
+    }
+
+    /**
+     * Returns the name(s) and the id of the Form(s) related to the Response(s) of
+     * this link. Results are cached per record id within the request.
+     *
+     * @return array [0] => comma separated list of form names, [1] => form id
+     *               (the first one when there are several), empty when there is none.
+     */
+    protected function getRelatedForm()
+    {
+        static $formsByLink = array();
+
+        if (empty($this->id)) {
+            return array('', '');
+        }
+
+        if (!array_key_exists($this->id, $formsByLink)) {
+            $query = "SELECT f.id, f.name 
+                      FROM stic_awf_responses_stic_awf_links_c lr 
+                        INNER JOIN stic_awf_forms_stic_awf_responses_c fr 
+                            ON fr.stic_awf_forms_stic_awf_responsesresponses_idb = lr.stic_awf_responses_stic_awf_linksresponses_ida 
+                            AND fr.deleted = 0 
+                        INNER JOIN stic_awf_forms f 
+                            ON f.id = fr.stic_awf_forms_stic_awf_responsesforms_ida 
+                            AND f.deleted = 0 
+                      WHERE lr.deleted = 0 AND lr.stic_awf_responses_stic_awf_linkslinks_idb = " . $this->db->quoted($this->id);
+            $result = $this->db->query($query);
+            $names = array();
+            $firstId = '';
+            while ($row = $this->db->fetchByAssoc($result)) {
+                $names[] = $row['name'];
+                if ($firstId === '') {
+                    $firstId = $row['id'];
+                }
+            }
+            $formsByLink[$this->id] = array(implode(', ', $names), $firstId);
+        }
+
+        return $formsByLink[$this->id];
+    }
 }
