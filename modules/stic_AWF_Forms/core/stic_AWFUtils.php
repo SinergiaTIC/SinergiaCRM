@@ -704,6 +704,8 @@ class stic_AWFUtils {
         $textColor = $theme->text_color ?? '#212529';
         $formBg = $theme->form_bg_color ?? '#ffffff';
         $primaryColor = $theme->primary_color ?? '#0d6efd';
+        // Primary color as text: light colors are unreadable on the light page background, use the darkened variant
+        $primaryAsText = (self::getYiq($primaryColor) >= 140) ? self::darkenColor($primaryColor, 60) : $primaryColor;
         $customCss = $config?->layout?->custom_css ?? '';
         $customJs = $config?->layout?->custom_js ?? '';
         
@@ -717,7 +719,7 @@ class stic_AWFUtils {
         <style>
             body { font-family: {$fontFamily}; background-color: {$bgColor}; color: {$textColor}; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
             .message-card { background-color: {$formBg}; padding: 40px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 600px; width: 90%; text-align: center; }
-            h1 { color: {$primaryColor}; margin-bottom: 20px; }
+            h1 { color: {$primaryAsText}; margin-bottom: 20px; }
             .btn-primary { background-color: {$primaryColor}; border-color: {$primaryColor}; color: {$textColor}; }
             {$customCss}
         </style>
@@ -1063,12 +1065,12 @@ class stic_AWFUtils {
         return "{$r}, {$g}, {$b}"; // Returns "255, 87, 51"
     }
 
-    /** 
-     * Calculates whether the text should be black or white according to the font color using the YIQ formula.
-     * @param string $hexColor The background color in hexadecimal format (e.g., '#ff0000' or '#f00')
-     * @return string The recommended text color ('#000000' or '#ffffff')
+    /**
+     * Calculates the YIQ luminosity of a hexadecimal color.
+     * @param string $hexColor The color in hexadecimal format (e.g., '#ff0000' or '#f00')
+     * @return float The YIQ value (0 = black, 255 = white)
      */
-    public static function getContrastColor(string $hexColor): string
+    public static function getYiq(string $hexColor): float
     {
         $hexColor = str_replace('#', '', $hexColor);
 
@@ -1083,10 +1085,18 @@ class stic_AWFUtils {
         }
 
         // YIQ Luminosity Formula
-        $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+        return (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+    }
 
+    /**
+     * Calculates whether the text should be black or white according to the font color using the YIQ formula.
+     * @param string $hexColor The background color in hexadecimal format (e.g., '#ff0000' or '#f00')
+     * @return string The recommended text color ('#000000' or '#ffffff')
+     */
+    public static function getContrastColor(string $hexColor): string
+    {
         // If it is dark (<128), white text. If it is clear, black text.
-        return ($yiq >= 128) ? '#000000' : '#ffffff';
+        return (self::getYiq($hexColor) >= 128) ? '#000000' : '#ffffff';
     }
 
     /**

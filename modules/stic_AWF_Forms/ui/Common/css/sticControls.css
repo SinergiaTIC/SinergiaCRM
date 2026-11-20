@@ -206,35 +206,35 @@
 }
 
 .card.groupdatablock .card-header {
-  background-color: #e9f2ff;
+  background-color: var(--stic-header-tint, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.09));
 }
 
 .card.groupdatablock {
-  border-color: #80abec; 
+  border-color: var(--stic-border-accent, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.55));
 }
 
 /* Group container cards (step 2, 2-level group tree): a group card holds
    the data block cards of the group (root block included) */
 .card.group-card {
-  border-color: #80abec;
+  border-color: var(--stic-border-accent, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.55));
 }
 .card.group-card > .awf-group-header > .card-header {
-  background-color: #e9f2ff;
+  background-color: var(--stic-header-tint, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.09));
 }
 .card.group-card .awf-group-body {
-  background-color: #f7fafd;
+  background-color: var(--stic-body-tint, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.03));
 }
 .card.group-card.subgroup-card {
-  border-color: #9ec1f0;
+  border-color: var(--stic-subborder-accent, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.40));
 }
 .card.group-card.subgroup-card > .awf-group-header > .card-header {
-  background-color: #f0f6ff;
+  background-color: var(--stic-subheader-tint, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.06));
 }
 .card.awf-wizard-section-card {
-  border-color: #80abec;
+  border-color: var(--stic-border-accent, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.55));
 }
 .card.awf-wizard-section-card > .card-header {
-  background-color: #e9f2ff;
+  background-color: var(--stic-header-tint, rgba(var(--bs-primary-rgb, 13, 110, 253), 0.09));
 }
 .datablock-group-badge {
   margin-left:-10px; 
@@ -569,7 +569,7 @@ h4 {
     margin-top: 5px;
 }
 .wizard-step-item.active .wizard-step-label {
-    color: var(--bs-primary, #0d6efd);
+    color: var(--bs-link-color, #0d6efd);
 }
 
 .stic_panel .mark, .stic_panel mark {
