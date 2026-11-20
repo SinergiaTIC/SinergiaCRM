@@ -399,7 +399,7 @@ h4 {
 /* Selected tab */
 .stic-tab input:checked + label {
   background-color: #fff;
-  border-color: #0d6efd #dee2e6 #fff;
+  border-color: var(--bs-primary, #0d6efd) #dee2e6 #fff;
   border-top-width: 2px;
   color: #495057;
   font-weight: 500;
@@ -504,9 +504,9 @@ h4 {
 }
 /* Current step */
 .wizard-step-item.active .wizard-step-icon {
-    background: #0d6efd; /* Primary Color */
-    color: #fff;
-    box-shadow: 0 0 0 2px #0d6efd;
+    background: var(--bs-primary, #0d6efd); /* Primary Color */
+    color: var(--bs-primary-contrast, #fff);
+    box-shadow: 0 0 0 2px var(--bs-primary, #0d6efd);
     transform: scale(1.1);
 }
 /* Completed steps */
@@ -521,7 +521,7 @@ h4 {
     margin-top: 5px;
 }
 .wizard-step-item.active .wizard-step-label {
-    color: #0d6efd;
+    color: var(--bs-primary, #0d6efd);
 }
 
 .stic_panel .mark, .stic_panel mark {

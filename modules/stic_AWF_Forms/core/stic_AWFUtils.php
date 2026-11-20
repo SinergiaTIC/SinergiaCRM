@@ -855,6 +855,57 @@ class stic_AWFUtils {
     }
 
     /** 
+     * Calculates whether the text should be black or white according to the font color using the YIQ formula.
+     * @param string $hexColor The background color in hexadecimal format (e.g., '#ff0000' or '#f00')
+     * @return string The recommended text color ('#000000' or '#ffffff')
+     */
+    public static function getContrastColor(string $hexColor): string
+    {
+        $hexColor = str_replace('#', '', $hexColor);
+
+        if (strlen($hexColor) == 3) {
+            $r = hexdec(substr($hexColor, 0, 1) . substr($hexColor, 0, 1));
+            $g = hexdec(substr($hexColor, 1, 1) . substr($hexColor, 1, 1));
+            $b = hexdec(substr($hexColor, 2, 1) . substr($hexColor, 2, 1));
+        } else {
+            $r = hexdec(substr($hexColor, 0, 2));
+            $g = hexdec(substr($hexColor, 2, 2));
+            $b = hexdec(substr($hexColor, 4, 2));
+        }
+
+        // YIQ Luminosity Formula
+        $yiq = (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+        // If it is dark (<128), white text. If it is clear, black text.
+        return ($yiq >= 128) ? '#000000' : '#ffffff';
+    }
+
+    /**
+     * Darkens a hexadecimal color by mixing it with a given percentage of black.
+     * @param string $hex The color in hexadecimal format (e.g., '#FF5733' or '#F57')
+     * @param int $percent Percentage of black to mix in (e.g., 10 to darken by 10%)
+     * @return string The darkened color in hexadecimal format (e.g., '#e64d2e')
+     */
+    public static function darkenColor(string $hex, int $percent): string
+    {
+        $hex = str_replace('#', '', $hex);
+
+        if (strlen($hex) == 3) {
+            $r = hexdec(substr($hex, 0, 1) . substr($hex, 0, 1));
+            $g = hexdec(substr($hex, 1, 1) . substr($hex, 1, 1));
+            $b = hexdec(substr($hex, 2, 1) . substr($hex, 2, 1));
+        } else {
+            $r = hexdec(substr($hex, 0, 2));
+            $g = hexdec(substr($hex, 2, 2));
+            $b = hexdec(substr($hex, 4, 2));
+        }
+
+        $factor = max(0, min(100, $percent)) / 100;
+
+        return sprintf('#%02x%02x%02x', (int) round($r * (1 - $factor)), (int) round($g * (1 - $factor)), (int) round($b * (1 - $factor)));
+    }
+
+    /** 
      * Parse a link in Markdown format [text](url) and convert it to an HTML anchor tag.
      * We allow a whitelist of URL schemes (http, https, mailto, tel, sms) and also relative links or anchors starting with /, ? or #.
      * For security reasons, all links will have target="_blank" and rel="noopener noreferrer" to prevent tabnabbing. 

@@ -708,6 +708,38 @@ class stic_AWF_FormsUtils {
     }
 
     /**
+     * Returns the CSS overrides needed to apply the corporate base color (stic_Settings:
+     * GENERAL_CUSTOM_THEME_COLOR) to the primary Bootstrap elements of the AWF internal UI (wizard).
+     * It replicates the technique used to theme the generated public forms
+     * (FormHtmlGeneratorService::generateCss) and everything is scoped to .stic_panel
+     * to avoid interfering with the rest of the CRM styles.
+     * @return string A <style> block ready to be echoed, or an empty string if there is no valid color
+     */
+    public static function getBootstrapPrimaryColorCss(): string
+    {
+        $color = self::getCustomBaseColor();
+
+        if (!preg_match('/#([a-fA-F0-9]{3}){1,2}\b/m', $color)) {
+            return '';
+        }
+
+        require_once 'modules/stic_AWF_Forms/core/stic_AWFUtils.php';
+        $rgb = stic_AWFUtils::hex2rgb($color);
+        $contrast = stic_AWFUtils::getContrastColor($color);
+        $darker = stic_AWFUtils::darkenColor($color, 10);
+
+        return "<style>
+/* Corporate color (stic_Settings: GENERAL_CUSTOM_THEME_COLOR) applied to Bootstrap primary elements */
+.stic_panel { --bs-primary: {$color}; --bs-primary-rgb: {$rgb}; --bs-primary-contrast: {$contrast}; --bs-link-color: {$color}; --bs-link-hover-color: {$darker}; }
+.stic_panel .btn-primary { --bs-btn-color: {$contrast}; --bs-btn-bg: var(--bs-primary); --bs-btn-border-color: var(--bs-primary); --bs-btn-hover-color: {$contrast}; --bs-btn-hover-bg: {$darker}; --bs-btn-hover-border-color: {$darker}; --bs-btn-active-color: {$contrast}; --bs-btn-active-bg: {$darker}; --bs-btn-active-border-color: {$darker}; --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb); --bs-btn-disabled-color: {$contrast}; --bs-btn-disabled-bg: var(--bs-primary); --bs-btn-disabled-border-color: var(--bs-primary); }
+.stic_panel .btn-outline-primary { --bs-btn-color: var(--bs-primary); --bs-btn-border-color: var(--bs-primary); --bs-btn-hover-color: {$contrast}; --bs-btn-hover-bg: var(--bs-primary); --bs-btn-hover-border-color: var(--bs-primary); --bs-btn-active-color: {$contrast}; --bs-btn-active-bg: var(--bs-primary); --bs-btn-active-border-color: var(--bs-primary); --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb); --bs-btn-disabled-color: var(--bs-primary); --bs-btn-disabled-border-color: var(--bs-primary); }
+.stic_panel .form-control:focus, .stic_panel .form-select:focus, .stic_panel .form-check-input:focus { border-color: var(--bs-primary); box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25); }
+.stic_panel .form-check-input:checked { background-color: var(--bs-primary); border-color: var(--bs-primary); }
+.stic_panel .pagination { --bs-pagination-active-color: {$contrast}; --bs-pagination-active-bg: var(--bs-primary); --bs-pagination-active-border-color: var(--bs-primary); --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25); }
+</style>";
+    }
+
+    /**
      * Checks if a bean was newly created during the current execution flow.
      */
     public static function wasBeanCreatedInThisContext(string $beanId, ExecutionContext $context): bool 
