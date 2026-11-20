@@ -27,19 +27,23 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
+require_once "modules/stic_AWF_Forms/actions/Common/ScaleActionUtils.php";
+
 /**
  * ScaleCalculationAction
  *
- * Action that computes a scale result from one or more form fields, writes it
- * to a numeric target field and, optionally, applies a formula. The selected
- * operation (sum, average, product, minimum, maximum, count of answered items
- * or a custom arithmetic formula) is calculated live in the browser and is
- * recalculated and overwritten by the server on submission, so the saved value
- * never depends exclusively on client-side JavaScript.
+ * Action that applies a single operation (sum, average, product, minimum,
+ * maximum or count of answered items) to a set of form fields and writes the
+ * result to a numeric target field. The calculation runs live in the browser
+ * and is recalculated and overwritten by the server on submission, so the
+ * saved value never depends exclusively on client-side JavaScript.
+ *
+ * For custom arithmetic formulas use the ScaleFormulaAction, and for the
+ * interpretation of the result (baremos) use the ScaleInterpretationAction.
  */
 class ScaleCalculationAction extends HookActionDefinition implements IFrontendAction
 {
-    /** @var string[] Numeric action data types allowed for the source and target fields */
+    /** @var string[] Numeric action data types allowed for the target field */
     private const NUMERIC_TYPES = ['integer', 'float'];
 
     public function __construct()
@@ -88,22 +92,10 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
             new ActionParameterOption('min', $this->translate('OPERATION_OPTION_MIN')),
             new ActionParameterOption('max', $this->translate('OPERATION_OPTION_MAX')),
             new ActionParameterOption('count', $this->translate('OPERATION_OPTION_COUNT')),
-            new ActionParameterOption('custom', $this->translate('OPERATION_OPTION_CUSTOM')),
         ];
         $paramOperation->required = true;
 
-        // 4. Custom formula (only used when the operation is "custom")
-        $paramFormula = new ActionParameterDefinition();
-        $paramFormula->name = 'custom_formula';
-        $paramFormula->text = $this->translate('CUSTOM_FORMULA_TEXT');
-        $paramFormula->description = $this->translate('CUSTOM_FORMULA_DESC');
-        $paramFormula->type = ActionParameterType::VALUE;
-        $paramFormula->dataType = ActionDataType::TEXT;
-        $paramFormula->example = "({Bloque.item1} + {Bloque.item2} + {Bloque.item3}) * 2";
-        $paramFormula->fieldKeysHint = true;
-        $paramFormula->required = false;
-
-        // 5. Rounding decimals
+        // 4. Rounding decimals
         $paramDecimals = new ActionParameterDefinition();
         $paramDecimals->name = 'decimals';
         $paramDecimals->text = $this->translate('DECIMALS_TEXT');
@@ -118,7 +110,6 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
             $paramTarget,
             $paramSources,
             $paramOperation,
-            $paramFormula,
             $paramDecimals,
         ];
     }
@@ -135,31 +126,27 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
         /** @var array $sourceValues [formKey => submitted raw value] */
         $sourceValues = $actionConfig->getResolvedParameter('source_fields', []);
         $operation = (string)($actionConfig->getResolvedParameter('operation', 'sum') ?: 'sum');
-        $formula = (string)$actionConfig->getResolvedParameter('custom_formula', '');
         $decimals = (int)($actionConfig->getResolvedParameter('decimals', 2) ?: 0);
 
         if (empty($targetKey)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Parameter 'target_field' is missing.");
         }
 
+        // Read the value sent by the browser for the target field (before overwriting it)
+        $targetDef = ScaleActionUtils::resolveFieldDefinition($context->formConfig, $targetKey);
+        $submittedRaw = ScaleActionUtils::getSubmittedFieldValue($context->formConfig, $context->formData, $targetKey, $context->getInstanceIndexes());
+        $submittedNumber = ScaleActionUtils::computeFieldNumericValue($targetDef, $submittedRaw);
+
         // Compute the numeric value of every source field (option scores are applied)
         $numericValues = [];
         foreach ($sourceValues as $formKey => $rawValue) {
-            $fieldDef = stic_AWFUtils::resolveFieldDefinition($context->formConfig, (string)$formKey);
-            $numericValues[(string)$formKey] = stic_AWFUtils::computeFieldNumericValue($fieldDef, $rawValue);
+            $fieldDef = ScaleActionUtils::resolveFieldDefinition($context->formConfig, (string)$formKey);
+            $numericValues[(string)$formKey] = ScaleActionUtils::computeFieldNumericValue($fieldDef, $rawValue);
         }
 
-        // Read the value sent by the browser for the target field (before overwriting it)
-        $targetDef = stic_AWFUtils::resolveFieldDefinition($context->formConfig, $targetKey);
-        $submittedRaw = stic_AWFUtils::getSubmittedFieldValue($context->formConfig, $context->formData, $targetKey, $context->getInstanceIndexes());
-        $submittedNumber = stic_AWFUtils::computeFieldNumericValue($targetDef, $submittedRaw);
-
-        $result = $this->computeResult($operation, $formula, $numericValues, $sourceValues);
+        $result = $this->computeResult($operation, $numericValues);
         if ($result === null) {
-            // No source value at all (or an invalid formula): nothing to recalculate
-            if ($operation === 'custom' && !empty($numericValues)) {
-                return new ActionResult(ResultStatus::ERROR, $actionConfig, $this->translate('INVALID_FORMULA_MESSAGE'));
-            }
+            // No source value at all: nothing to recalculate
             return new ActionResult(ResultStatus::OK, $actionConfig, $this->translate('NO_VALUES_MESSAGE'));
         }
 
@@ -172,7 +159,7 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
 
         // Write the recalculated value into the raw form data, so later actions
         // (data block saves, ...) use the server-computed value
-        $written = stic_AWFUtils::setSubmittedFieldValue(
+        $written = ScaleActionUtils::setSubmittedFieldValue(
             $context->formConfig,
             $context->formData,
             $targetKey,
@@ -188,13 +175,11 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
 
     /**
      * Applies the selected operation to the numeric values of the source fields.
-     * @param string $operation Selected operation (sum, average, product, min, max, count, custom)
-     * @param string $formula Custom formula (only for the "custom" operation)
+     * @param string $operation Selected operation (sum, average, product, min, max, count)
      * @param array $numericValues Numeric values of the source fields [formKey => ?float]
-     * @param array $sourceValues Raw submitted values [formKey => mixed]
      * @return ?float The computed result (null when there is nothing to compute)
      */
-    private function computeResult(string $operation, string $formula, array $numericValues, array $sourceValues): ?float
+    private function computeResult(string $operation, array $numericValues): ?float
     {
         $present = array_filter($numericValues, fn($value) => $value !== null);
         $countPresent = count($present);
@@ -235,14 +220,6 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
                     return null;
                 }
                 return (float)$countPresent;
-
-            case 'custom':
-                if (trim($formula) === '') {
-                    return null;
-                }
-                // Empty values are evaluated as 0 inside the formula
-                $placeholderValues = array_map(fn($value) => $value ?? 0.0, $numericValues);
-                return stic_AWFUtils::evaluateNumericExpression($formula, $placeholderValues);
         }
 
         $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Unknown operation '{$operation}'.");
@@ -262,7 +239,6 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
         $targetField = '';
         $sourceFields = [];
         $operation = 'sum';
-        $customFormula = '';
         $decimals = 2;
 
         foreach ($params as $p) {
@@ -276,9 +252,6 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
                 case 'operation':
                     $operation = (string)($p->value ?: 'sum');
                     break;
-                case 'custom_formula':
-                    $customFormula = (string)$p->value;
-                    break;
                 case 'decimals':
                     $decimals = (int)($p->value ?: 2);
                     break;
@@ -286,14 +259,8 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
         }
 
         $sourceFields = array_values(array_filter(array_map('trim', $sourceFields), fn($f) => !empty($f) && $f !== $targetField));
-        if (empty($targetField) || ($operation !== 'custom' && empty($sourceFields)) || ($operation === 'custom' && trim($customFormula) === '')) {
+        if (empty($targetField) || empty($sourceFields)) {
             return [];
-        }
-
-        // Placeholders used by the custom formula
-        $formulaFields = [];
-        if ($operation === 'custom' && preg_match_all('/\{([^}]+)\}/', $customFormula, $matches)) {
-            $formulaFields = array_values(array_filter(array_map('trim', $matches[1]), fn($f) => !empty($f) && $f !== $targetField));
         }
 
         $jsConfig = json_encode([
@@ -301,8 +268,6 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
             'targetField' => $targetField,
             'sourceFields' => $sourceFields,
             'operation' => $operation,
-            'formula' => $customFormula,
-            'formulaFields' => $formulaFields,
             'decimals' => $decimals,
         ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
@@ -346,106 +311,8 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'min': return Math.min.apply(null, present);
             case 'max': return Math.max.apply(null, present);
             case 'count': return count;
-            case 'custom': return evaluateFormula(CFG.formula, values);
             default: return null;
         }
-    }
-
-    // Safe arithmetic evaluator (+, -, *, /, parentheses and {field} placeholders).
-    // Mirrors the server-side evaluator (no eval is used).
-    function evaluateFormula(expression, placeholderValues) {
-        var tokens = [];
-        var offset = 0;
-        while (offset < expression.length) {
-            var ch = expression.charAt(offset);
-            if (ch === ' ' || ch === '\\t' || ch === '\\n' || ch === '\\r') { offset++; continue; }
-            if (ch === '{') {
-                var close = expression.indexOf('}', offset);
-                if (close === -1) return null;
-                var name = expression.substring(offset + 1, close).trim();
-                if (name === '') return null;
-                tokens.push({ type: 'number', value: placeholderValues[name] || 0 });
-                offset = close + 1;
-                continue;
-            }
-            var numberMatch = expression.substring(offset).match(/^(?:\\d+(?:\\.\\d+)?|\\.\\d+)/);
-            if (numberMatch) {
-                tokens.push({ type: 'number', value: parseFloat(numberMatch[0]) });
-                offset += numberMatch[0].length;
-                continue;
-            }
-            if ('+-*/()'.indexOf(ch) !== -1) {
-                // Unary +/-: at the start or right after another operator or an open parenthesis
-                var previous = tokens[tokens.length - 1];
-                if ((ch === '-' || ch === '+') && (!previous || (previous.type === 'operator' && previous.value !== ')'))) {
-                    var sign = (ch === '-') ? -1 : 1;
-                    offset++;
-                    while (offset < expression.length && /\\s/.test(expression.charAt(offset))) { offset++; }
-                    if (offset >= expression.length) return null;
-                    var nextChar = expression.charAt(offset);
-                    if (nextChar === '{') {
-                        var closeSign = expression.indexOf('}', offset);
-                        if (closeSign === -1) return null;
-                        var signName = expression.substring(offset + 1, closeSign).trim();
-                        if (signName === '') return null;
-                        tokens.push({ type: 'number', value: sign * (placeholderValues[signName] || 0) });
-                        offset = closeSign + 1;
-                    } else {
-                        var signMatch = expression.substring(offset).match(/^(?:\\d+(?:\\.\\d+)?|\\.\\d+)/);
-                        if (!signMatch) return null;
-                        tokens.push({ type: 'number', value: sign * parseFloat(signMatch[0]) });
-                        offset += signMatch[0].length;
-                    }
-                    continue;
-                }
-                tokens.push({ type: 'operator', value: ch });
-                offset++;
-                continue;
-            }
-            return null;
-        }
-        if (tokens.length === 0) return null;
-
-        var precedence = { '+': 1, '-': 1, '*': 2, '/': 2 };
-        var output = [];
-        var operators = [];
-        for (var i = 0; i < tokens.length; i++) {
-            var token = tokens[i];
-            if (token.type === 'number') { output.push(token); continue; }
-            if (token.value === '(') { operators.push(token); continue; }
-            if (token.value === ')') {
-                while (operators.length && operators[operators.length - 1].value !== '(') {
-                    output.push(operators.pop());
-                }
-                if (!operators.length) return null;
-                operators.pop();
-                continue;
-            }
-            while (operators.length && operators[operators.length - 1].value !== '(' &&
-                   precedence[operators[operators.length - 1].value] >= precedence[token.value]) {
-                output.push(operators.pop());
-            }
-            operators.push(token);
-        }
-        while (operators.length) {
-            var op = operators.pop();
-            if (op.value === '(') return null;
-            output.push(op);
-        }
-
-        var stack = [];
-        for (var j = 0; j < output.length; j++) {
-            var tok = output[j];
-            if (tok.type === 'number') { stack.push(tok.value); continue; }
-            if (stack.length < 2) return null;
-            var right = stack.pop();
-            var left = stack.pop();
-            if (tok.value === '+') stack.push(left + right);
-            else if (tok.value === '-') stack.push(left - right);
-            else if (tok.value === '*') stack.push(left * right);
-            else if (tok.value === '/') { if (right === 0) return null; stack.push(left / right); }
-        }
-        return stack.length === 1 ? stack[0] : null;
     }
 
     // Recalculates the target field. When the change comes from a repeatable
@@ -455,14 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var getValue = function(key) { return info ? info.getValue(key) : api.getValue(key); };
         var getAttr = function(key, attr) { return info ? info.getAttribute(key, attr) : api.getAttribute(key, attr); };
 
-        var values;
-        if (CFG.operation === 'custom') {
-            values = {};
-            CFG.formulaFields.forEach(function(key) { values[key] = numericOf(getValue, getAttr, key); });
-        } else {
-            values = CFG.sourceFields.map(function(key) { return numericOf(getValue, getAttr, key); });
-        }
-
+        var values = CFG.sourceFields.map(function(key) { return numericOf(getValue, getAttr, key); });
         var result = computeResult(values);
         if (result === null || isNaN(result)) return;
         result = Number(result.toFixed(CFG.decimals));
@@ -475,9 +335,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Listen for changes in the involved fields (sources or formula placeholders)
-    var listened = CFG.operation === 'custom' ? CFG.formulaFields : CFG.sourceFields;
-    listened.forEach(function(key) {
+    // Listen for changes in the source fields
+    CFG.sourceFields.forEach(function(key) {
         api.onChange(key, function(value, info) { recalculate(info); }, { immediate: true });
     });
 

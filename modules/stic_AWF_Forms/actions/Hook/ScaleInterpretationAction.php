@@ -27,15 +27,21 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 include_once "modules/stic_AWF_Forms/actions/coreActions.php";
 
+require_once "modules/stic_AWF_Forms/actions/Common/ScaleActionUtils.php";
+
 /**
  * ScaleInterpretationAction
  *
- * Action that interprets a scale result (score) using one or more "baremos"
- * (normative tables). Each baremo may define an optional population condition
- * (a numeric field within a min/max range, typically the age) and its own
- * ranges ("min-max: Label"). The label of the first matching baremo (in the
- * declared order) is written to a target label field, both live in the browser
- * and recalculated and overwritten by the server on submission.
+ * Action that interprets a scale result (score) with a normative table
+ * ("baremo"): reads the score field, finds the label of the first matching
+ * range ("min-max: Label") and writes it to a target label field. The
+ * interpretation runs live in the browser and is recalculated and overwritten
+ * by the server on submission, so the saved value never depends exclusively on
+ * client-side JavaScript.
+ *
+ * Keep it simple: one baremo per action. When several normative tables are
+ * needed (e.g. one per age range), add one action per baremo and use the
+ * standard action execution conditions to decide which one applies.
  */
 class ScaleInterpretationAction extends HookActionDefinition implements IFrontendAction
 {
@@ -68,71 +74,21 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
         $paramTargetLabel->type = ActionParameterType::FIELD;
         $paramTargetLabel->required = true;
 
-        // 3. Baremos (multiple, each one with an optional population condition)
-        $paramBaremos = new ActionParameterDefinition();
-        $paramBaremos->name = 'baremos';
-        $paramBaremos->text = $this->translate('BAREMOS_TEXT');
-        $paramBaremos->description = $this->translate('BAREMOS_DESC');
-        $paramBaremos->type = ActionParameterType::ITEM_LIST;
-        $paramBaremos->required = true;
-        $paramBaremos->colSize = 'col-12';
-
-        $itemTitle = new ActionParameterDefinition();
-        $itemTitle->name = 'title';
-        $itemTitle->text = $this->translate('BAREMO_ITEM_TITLE_TEXT');
-        $itemTitle->description = $this->translate('BAREMO_ITEM_TITLE_DESC');
-        $itemTitle->type = ActionParameterType::VALUE;
-        $itemTitle->dataType = ActionDataType::TEXT;
-        $itemTitle->example = 'Adultos (18-64)';
-        $itemTitle->colSize = 'col-4';
-
-        $itemConditionField = new ActionParameterDefinition();
-        $itemConditionField->name = 'condition_field';
-        $itemConditionField->text = $this->translate('BAREMO_ITEM_CONDITION_FIELD_TEXT');
-        $itemConditionField->description = $this->translate('BAREMO_ITEM_CONDITION_FIELD_DESC');
-        $itemConditionField->type = ActionParameterType::FIELD;
-        $itemConditionField->colSize = 'col-4';
-
-        $itemConditionMin = new ActionParameterDefinition();
-        $itemConditionMin->name = 'condition_min';
-        $itemConditionMin->text = $this->translate('BAREMO_ITEM_CONDITION_MIN_TEXT');
-        $itemConditionMin->description = $this->translate('BAREMO_ITEM_CONDITION_MIN_DESC');
-        $itemConditionMin->type = ActionParameterType::VALUE;
-        $itemConditionMin->dataType = ActionDataType::FLOAT;
-        $itemConditionMin->example = '18';
-        $itemConditionMin->colSize = 'col-2';
-
-        $itemConditionMax = new ActionParameterDefinition();
-        $itemConditionMax->name = 'condition_max';
-        $itemConditionMax->text = $this->translate('BAREMO_ITEM_CONDITION_MAX_TEXT');
-        $itemConditionMax->description = $this->translate('BAREMO_ITEM_CONDITION_MAX_DESC');
-        $itemConditionMax->type = ActionParameterType::VALUE;
-        $itemConditionMax->dataType = ActionDataType::FLOAT;
-        $itemConditionMax->example = '64';
-        $itemConditionMax->colSize = 'col-2';
-
-        $itemRanges = new ActionParameterDefinition();
-        $itemRanges->name = 'ranges';
-        $itemRanges->text = $this->translate('BAREMO_ITEM_RANGES_TEXT');
-        $itemRanges->description = $this->translate('BAREMO_ITEM_RANGES_DESC');
-        $itemRanges->type = ActionParameterType::VALUE;
-        $itemRanges->dataType = ActionDataType::TEXTAREA;
-        $itemRanges->required = true;
-        $itemRanges->example = "0-20: Bajo | 21-60: Medio | >60: Alto";
-        $itemRanges->colSize = 'col-12';
-
-        $paramBaremos->itemParameters = [
-            $itemTitle,
-            $itemConditionField,
-            $itemConditionMin,
-            $itemConditionMax,
-            $itemRanges,
-        ];
+        // 3. Ranges of the baremo
+        $paramRanges = new ActionParameterDefinition();
+        $paramRanges->name = 'ranges';
+        $paramRanges->text = $this->translate('RANGES_TEXT');
+        $paramRanges->description = $this->translate('RANGES_DESC');
+        $paramRanges->type = ActionParameterType::VALUE;
+        $paramRanges->dataType = ActionDataType::TEXTAREA;
+        $paramRanges->example = "0-20: Bajo | 21-60: Medio | >60: Alto";
+        $paramRanges->required = true;
+        $paramRanges->colSize = 'col-12';
 
         return [
             $paramScoreField,
             $paramTargetLabel,
-            $paramBaremos,
+            $paramRanges,
         ];
     }
 
@@ -146,26 +102,25 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
     {
         $scoreKey = (string)$actionConfig->getResolvedParameter('score_field', '');
         $targetKey = (string)$actionConfig->getResolvedParameter('target_label_field', '');
-        /** @var array[] $baremos */
-        $baremos = $actionConfig->getResolvedParameter('baremos', []);
+        $rangesRaw = (string)$actionConfig->getResolvedParameter('ranges', '');
 
         if (empty($scoreKey) || empty($targetKey)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Parameters 'score_field' and 'target_label_field' are required.");
         }
 
         // Read the value sent by the browser for the target field (before overwriting it)
-        $submittedRaw = stic_AWFUtils::getSubmittedFieldValue($context->formConfig, $context->formData, $targetKey, $context->getInstanceIndexes());
+        $submittedRaw = ScaleActionUtils::getSubmittedFieldValue($context->formConfig, $context->formData, $targetKey, $context->getInstanceIndexes());
 
         // Numeric score of the source field (option scores are applied)
-        $scoreFieldDef = stic_AWFUtils::resolveFieldDefinition($context->formConfig, $scoreKey);
-        $scoreRaw = stic_AWFUtils::getSubmittedFieldValue($context->formConfig, $context->formData, $scoreKey, $context->getInstanceIndexes());
-        $score = stic_AWFUtils::computeFieldNumericValue($scoreFieldDef, $scoreRaw);
+        $scoreFieldDef = ScaleActionUtils::resolveFieldDefinition($context->formConfig, $scoreKey);
+        $scoreRaw = ScaleActionUtils::getSubmittedFieldValue($context->formConfig, $context->formData, $scoreKey, $context->getInstanceIndexes());
+        $score = ScaleActionUtils::computeFieldNumericValue($scoreFieldDef, $scoreRaw);
 
         if ($score === null) {
             return new ActionResult(ResultStatus::OK, $actionConfig, $this->translate('NO_SCORE_MESSAGE'));
         }
 
-        $label = $this->interpret($context, $baremos, $score);
+        $label = ScaleActionUtils::findRangeLabel(ScaleActionUtils::parseRangeDefinition($rangesRaw), $score);
 
         // Warn when the label sent by the browser differs from the server result
         if ((string)$submittedRaw !== $label) {
@@ -174,8 +129,8 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
 
         // Write the recalculated label into the raw form data, so later actions
         // (data block saves, ...) use the server-computed value
-        $targetFieldDef = stic_AWFUtils::resolveFieldDefinition($context->formConfig, $targetKey);
-        $written = stic_AWFUtils::setSubmittedFieldValue(
+        $targetFieldDef = ScaleActionUtils::resolveFieldDefinition($context->formConfig, $targetKey);
+        $written = ScaleActionUtils::setSubmittedFieldValue(
             $context->formConfig,
             $context->formData,
             $targetKey,
@@ -190,62 +145,6 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
     }
 
     /**
-     * Interprets a score using the configured baremos: returns the label of
-     * the first range of the first baremo whose population condition matches
-     * the submitted data (baremos without condition always match and act as
-     * the default/fallback interpretation when placed last).
-     * @param ExecutionContext $context The execution context
-     * @param array[] $baremos The configured baremos
-     * @param float $score The score to interpret
-     * @return string The interpretation label ('' when nothing matches)
-     */
-    private function interpret(ExecutionContext $context, array $baremos, float $score): string
-    {
-        foreach ($baremos as $baremo) {
-            if (!$this->baremoConditionMatches($context, $baremo)) {
-                continue;
-            }
-            $ranges = stic_AWFUtils::parseRangeDefinition((string)($baremo['ranges'] ?? ''));
-            return stic_AWFUtils::findRangeLabel($ranges, $score);
-        }
-        return '';
-    }
-
-    /**
-     * Evaluates the population condition of a baremo against the submitted
-     * form data. A baremo without a condition field always matches.
-     * @param ExecutionContext $context The execution context
-     * @param array $baremo The baremo configuration
-     * @return bool True when the condition matches (or there is no condition)
-     */
-    private function baremoConditionMatches(ExecutionContext $context, array $baremo): bool
-    {
-        $conditionField = trim((string)($baremo['condition_field'] ?? ''));
-        if ($conditionField === '') {
-            return true; // Baremo without condition: always applies (default)
-        }
-
-        $conditionFieldDef = stic_AWFUtils::resolveFieldDefinition($context->formConfig, $conditionField);
-        $conditionRaw = stic_AWFUtils::getSubmittedFieldValue($context->formConfig, $context->formData, $conditionField, $context->getInstanceIndexes());
-        $conditionValue = stic_AWFUtils::computeFieldNumericValue($conditionFieldDef, $conditionRaw);
-
-        if ($conditionValue === null) {
-            return false; // Condition field has no value: the baremo does not apply
-        }
-
-        $min = $baremo['condition_min'] ?? null;
-        $max = $baremo['condition_max'] ?? null;
-        $min = ($min !== null && $min !== '' && is_numeric($min)) ? (float)$min : null;
-        $max = ($max !== null && $max !== '' && is_numeric($max)) ? (float)$max : null;
-
-        if ($min !== null && $max !== null && $min > $max) {
-            [$min, $max] = [$max, $min];
-        }
-
-        return ($min === null || $conditionValue >= $min) && ($max === null || $conditionValue <= $max);
-    }
-
-    /**
      * Returns the assets (CSS/JS) that should be injected into the frontend for this action.
      *
      * @param array $params Action parameters (unresolved)
@@ -257,7 +156,7 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
     {
         $scoreField = '';
         $targetLabelField = '';
-        $baremos = [];
+        $rangesRaw = '';
 
         foreach ($params as $p) {
             switch ($p->name) {
@@ -267,31 +166,21 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
                 case 'target_label_field':
                     $targetLabelField = (string)$p->value;
                     break;
-                case 'baremos':
-                    $decoded = is_array($p->value) ? $p->value : json_decode((string)$p->value, true);
-                    if (is_array($decoded)) {
-                        $baremos = $decoded;
-                    }
+                case 'ranges':
+                    $rangesRaw = (string)$p->value;
                     break;
             }
         }
 
-        if (empty($scoreField) || empty($targetLabelField) || empty($baremos)) {
+        if (empty($scoreField) || empty($targetLabelField) || trim($rangesRaw) === '') {
             return [];
         }
-
-        // Collect the condition fields used by the baremos (also watched for changes)
-        $conditionFields = array_values(array_unique(array_filter(array_map(
-            fn($b) => trim((string)($b['condition_field'] ?? '')),
-            $baremos
-        ), fn($f) => !empty($f))));
 
         $jsConfig = json_encode([
             'formId' => $formId,
             'scoreField' => $scoreField,
             'targetLabelField' => $targetLabelField,
-            'baremos' => $baremos,
-            'conditionFields' => $conditionFields,
+            'ranges' => $rangesRaw,
         ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
         $script = <<<JS
@@ -302,34 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var updating = false;
 
-    // Checks the population condition of a baremo against the submitted data
-    function conditionMatches(getValue, getAttribute, baremo) {
-        var conditionField = String(baremo.condition_field || '').trim();
-        if (conditionField === '') return true; // Baremo without condition: default
-
-        var raw = getValue(conditionField);
-        var scoreAttr = getAttribute(conditionField, 'score');
-        var value;
-        if (scoreAttr !== null && scoreAttr !== undefined && String(scoreAttr).trim() !== '') {
-            value = parseFloat(scoreAttr);
-        } else {
-            var list = (raw === null || raw === undefined) ? [] : (Array.isArray(raw) ? raw : [raw]);
-            value = null;
-            for (var i = 0; i < list.length; i++) {
-                if (list[i] === '' || list[i] === null || list[i] === undefined) continue;
-                var n = parseFloat(list[i]);
-                if (!isNaN(n)) { value = (value === null ? 0 : value) + n; }
-            }
-        }
-        if (value === null || isNaN(value)) return false;
-
-        var min = (baremo.condition_min !== '' && baremo.condition_min !== null && baremo.condition_min !== undefined && !isNaN(parseFloat(baremo.condition_min))) ? parseFloat(baremo.condition_min) : null;
-        var max = (baremo.condition_max !== '' && baremo.condition_max !== null && baremo.condition_max !== undefined && !isNaN(parseFloat(baremo.condition_max))) ? parseFloat(baremo.condition_max) : null;
-        if (min !== null && max !== null && min > max) { var t = min; min = max; max = t; }
-        return (min === null || value >= min) && (max === null || value <= max);
-    }
-
-    // Parses the ranges of a baremo ("min-max: Label" entries)
+    // Parses the ranges of the baremo ("min-max: Label" entries)
     function parseRanges(raw) {
         var ranges = [];
         String(raw || '').split(/[\\r\\n|]+/).forEach(function(line) {
@@ -364,23 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return ranges;
     }
 
-    // Computes the label for a score using the first matching baremo
-    function interpret(getValue, getAttribute, score) {
-        for (var i = 0; i < CFG.baremos.length; i++) {
-            var baremo = CFG.baremos[i];
-            if (!conditionMatches(getValue, getAttribute, baremo)) continue;
-            var ranges = parseRanges(baremo.ranges);
-            for (var j = 0; j < ranges.length; j++) {
-                var r = ranges[j];
-                if ((r.min === null || score >= r.min) && (r.max === null || score <= r.max)) {
-                    return r.label;
-                }
-            }
-            return '';
-        }
-        return '';
-    }
-
     // Numeric value of a field within an instance: uses the score configured
     // for the selected option when available, otherwise the plain value
     function numericOf(getValue, getAttribute, key) {
@@ -401,6 +246,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return any ? sum : null;
     }
 
+    // Recalculates the interpretation label. When the change comes from a
+    // repeatable instance (info provided), reads and writes are scoped to it.
     function recalculate(info) {
         if (updating) return;
         var getValue = function(key) { return info ? info.getValue(key) : api.getValue(key); };
@@ -409,7 +256,15 @@ document.addEventListener('DOMContentLoaded', function() {
         var score = numericOf(getValue, getAttr, CFG.scoreField);
         if (score === null) return;
 
-        var label = interpret(getValue, getAttr, score);
+        var label = '';
+        var ranges = parseRanges(CFG.ranges);
+        for (var i = 0; i < ranges.length; i++) {
+            var r = ranges[i];
+            if ((r.min === null || score >= r.min) && (r.max === null || score <= r.max)) {
+                label = r.label;
+                break;
+            }
+        }
 
         updating = true;
         try {
@@ -419,11 +274,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Listen for changes in the score and in the baremo condition fields
-    var watched = [CFG.scoreField].concat(CFG.conditionFields);
-    watched.forEach(function(key) {
-        api.onChange(key, function(value, info) { recalculate(info); }, { immediate: true });
-    });
+    // Listen for changes in the score field
+    api.onChange(CFG.scoreField, function(value, info) { recalculate(info); }, { immediate: true });
 
     // Initial calculation
     recalculate(null);

@@ -72,6 +72,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
         // Assessment Scores: fill the system fields (form ID and submission JSON)
         // with the data of the current submission when the form does not set them
         if ($module === 'stic_Assessments_Scores') {
+            require_once 'modules/stic_AWF_Forms/actions/Common/ScaleActionUtils.php';
             $this->fillAssessmentScoreSystemFields($context, $block);
         }
 
@@ -391,7 +392,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
      */
     private function fillAssessmentScoreSystemFields(ExecutionContext $context, DataBlockResolved $block): void
     {
-        foreach (['form_id' => $context->formId, 'submission_data' => stic_AWFUtils::buildSubmissionJson($context)] as $fieldName => $value) {
+        foreach (['form_id' => $context->formId, 'submission_data' => ScaleActionUtils::buildSubmissionJson($context)] as $fieldName => $value) {
             // Only when the block actually includes the field and the form does not set it
             if (!isset($block->dataBlock->fields[$fieldName])) {
                 continue;
