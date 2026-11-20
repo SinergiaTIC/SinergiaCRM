@@ -73,6 +73,64 @@ class stic_AwfDataBlock {
 
   get is_child() { return !this.is_root; }
 
+  /**
+   * Group exclusions of this block: the ids of the group roots the user has
+   * explicitly removed this block from. A SET (array) so that a block related
+   * to several group roots (e.g. a central block shared by two optional
+   * groups) can stay out of ALL of them: removing it from group C must keep
+   * the previous exclusion of group B, otherwise the next adoption pass would
+   * bounce it back into B (the "ping-pong" bug).
+   * Legacy configs stored a single string id; it is normalized here.
+   * @returns {string[]}
+   */
+  getGroupExclusions() {
+    const v = this.group_excluded_from;
+    if (Array.isArray(v)) return v.filter(x => typeof x === 'string' && x !== '');
+    if (typeof v === 'string' && v !== '') return [v];
+    return [];
+  }
+
+  /**
+   * Marks this block as excluded from the given group root (idempotent).
+   * @param {string} groupRootId
+   */
+  addGroupExclusion(groupRootId) {
+    if (!groupRootId) return;
+    const list = this.getGroupExclusions();
+    if (!list.includes(groupRootId)) list.push(groupRootId);
+    this.group_excluded_from = list;
+    delete this.group_excluded; // Clean up legacy boolean if present
+  }
+
+  /**
+   * Clears this block's exclusion for one group root (it is (re-)joining it),
+   * keeping the exclusions of OTHER groups.
+   * @param {string} groupRootId
+   */
+  removeGroupExclusion(groupRootId) {
+    if (!groupRootId) return;
+    this.group_excluded_from = this.getGroupExclusions().filter(x => x !== groupRootId);
+  }
+
+  /** Clears ALL exclusions (the block becomes a free/uncategorized block again). */
+  clearGroupExclusions() {
+    delete this.group_excluded_from;
+    delete this.group_excluded;
+  }
+
+  /** Removes only the legacy boolean exclusion flag (the exclusion set is kept). */
+  clearLegacyGroupExcluded() {
+    delete this.group_excluded;
+  }
+
+  /**
+   * Whether this block was explicitly removed from the given group root.
+   * @param {string} groupRootId
+   */
+  isExcludedFromGroup(groupRootId) {
+    return !!groupRootId && this.getGroupExclusions().includes(groupRootId);
+  }
+
   get custom_group_title() { return this.group_title; }
   set custom_group_title(value) {
     this.is_custom_group_title = true;
@@ -4251,8 +4309,7 @@ class stic_AwfConfiguration {
         if (visited.has(candidate.id)) return;
 
         // Do not re-adopt if the candidate was explicitly excluded from THIS group
-        if (candidate.group_excluded_from && 
-           (candidate.group_excluded_from === thisGroupRootId || candidate.group_excluded_from === parentBlock.id)) {
+        if (candidate.isExcludedFromGroup(thisGroupRootId) || candidate.isExcludedFromGroup(parentBlock.id)) {
           return;
         }
 
@@ -4270,9 +4327,11 @@ class stic_AwfConfiguration {
           if (current.hasAncestor(candidate, this.data_blocks)) return; // Cycle guard
 
           candidate.group_root = parentBlock.id;
-          // Once successfully adopted into a group, reset its exclusion flag
-          delete candidate.group_excluded_from;
-          delete candidate.group_excluded;
+          // The candidate joins THIS group: clear only THIS group's exclusion,
+          // keeping the exclusions of other groups (e.g. a central block shared
+          // by two optional groups stays excluded from the other one)
+          candidate.removeGroupExclusion(parentBlock.id);
+          candidate.removeGroupExclusion(thisGroupRootId);
 
           visited.add(candidate.id);
           queue.push(candidate);
@@ -4304,8 +4363,11 @@ class stic_AwfConfiguration {
 
     descendants.forEach(child => {
       child.group_root = releaseTo;
-      delete child.group_excluded_from;
-      delete child.group_excluded;
+      // The disbanded group no longer exists: drop only ITS exclusion, keeping
+      // the exclusions the user made against other groups
+      child.removeGroupExclusion(parentBlock.id);
+      child.removeGroupExclusion(releaseTo);
+      child.clearLegacyGroupExcluded();
     });
 
     // Reset limits and clear group metadata
@@ -4313,8 +4375,7 @@ class stic_AwfConfiguration {
     parentBlock.max_instances = 1;
     parentBlock.group_title = '';
     parentBlock.is_custom_group_title = false;
-    delete parentBlock.group_excluded_from;
-    delete parentBlock.group_excluded;
+    parentBlock.clearGroupExclusions();
   }
 
   /**
@@ -4330,8 +4391,7 @@ class stic_AwfConfiguration {
       block.max_instances = null; // Unlimited (>1)
 
       // Clean exclusion: this block is now an independent group head
-      delete block.group_excluded_from;
-      delete block.group_excluded;
+      block.clearGroupExclusions();
 
       // Auto-adopt orphan dependent blocks
       this.adoptRelatedOrphans(block);
@@ -4376,8 +4436,7 @@ class stic_AwfConfiguration {
       block.min_instances = 0;
 
       // Clean exclusion: this block is now an independent group head
-      delete block.group_excluded_from;
-      delete block.group_excluded;
+      block.clearGroupExclusions();
 
       // Auto-adopt orphan dependent blocks
       this.adoptRelatedOrphans(block);
@@ -4448,16 +4507,20 @@ class stic_AwfConfiguration {
 
     if (!parent.isGroupHead(this.data_blocks) || parent.getDepth(this.data_blocks) > 1) return;
 
-    // Reset exclusion flag so it is a full-fledged group member again
-    delete child.group_excluded_from;
-    delete child.group_excluded;
+    // The child explicitly (re-)joins THIS group: clear only THIS group's
+    // exclusion, keeping the exclusions the user made against OTHER groups
+    // (e.g. a central block shared by two optional groups)
+    child.removeGroupExclusion(parent.id);
+    child.removeGroupExclusion(parentGroupRoot);
+    child.clearLegacyGroupExcluded();
     child.group_root = parent.id;
 
-    // Re-adopt relational descendants and clear their exclusion flags as well
+    // Re-adopt relational descendants and clear THEIR exclusion for this group
     const descendants = child.getRelationalDescendants(this.data_blocks);
     descendants.forEach(d => {
-      delete d.group_excluded_from;
-      delete d.group_excluded;
+      d.removeGroupExclusion(parent.id);
+      d.removeGroupExclusion(parentGroupRoot);
+      d.clearLegacyGroupExcluded();
 
       if ((d.is_root || (parentGroupRoot && d.group_root === parentGroupRoot))
           && !d.is_repeatable && !d.is_optional && !d.isGroupHead(this.data_blocks)) {
@@ -4480,17 +4543,18 @@ class stic_AwfConfiguration {
     // The group root they are being unlinked from
     const currentGroupRootId = child.group_root;
 
-    // Mark the target child as excluded from THIS specific group
-    child.group_excluded_from = currentGroupRootId;
-    delete child.group_excluded; // Clean up old boolean if present
+    // Mark the target child as excluded from THIS specific group. The exclusion
+    // is ADDED to the block's exclusion set (never overwritten): a block related
+    // to several group roots keeps the exclusions of the other groups, so it
+    // cannot be bounced back into them by the next adoption pass.
+    child.addGroupExclusion(currentGroupRootId);
     child.group_root = '';
 
     // Descendants in the same group leave with the child and are excluded from that root
     const relationalDescendants = child.getRelationalDescendants(this.data_blocks);
     relationalDescendants.forEach(descendant => {
       if (descendant.group_root === currentGroupRootId || descendant.group_root === child.id) {
-        descendant.group_excluded_from = currentGroupRootId;
-        delete descendant.group_excluded;
+        descendant.addGroupExclusion(currentGroupRootId);
         descendant.group_root = '';
       }
     });
