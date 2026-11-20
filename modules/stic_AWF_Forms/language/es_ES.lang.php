@@ -721,6 +721,7 @@ $mod_strings = array (
   'LBL_SCALE_INTERPRETATION_ACTION_EXECUTE_MESSAGE' => 'Interpretación recalculada en el servidor:',
   'LBL_SCALE_INTERPRETATION_ACTION_NO_SCORE_MESSAGE' => 'El campo de puntuación está vacío: no se calcula ninguna interpretación.',
   'LBL_ACTION_PARAM_EXAMPLE' => 'Ejemplo',
+  'LBL_ACTION_PARAM_FORMULA_INVALID' => 'Fórmula no válida: revisa los paréntesis, las llaves de los campos, los operadores entre operandos y los caracteres no permitidos.',
   'LBL_ACTION_PARAM_FIELD_KEYS' => 'IDs de campos disponibles (para usar en fórmulas)',
   'LBL_ACTION_PARAM_FIELD_KEYS_COPY' => 'Copiar',
 );

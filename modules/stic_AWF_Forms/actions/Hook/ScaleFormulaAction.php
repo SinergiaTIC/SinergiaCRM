@@ -75,7 +75,7 @@ class ScaleFormulaAction extends HookActionDefinition implements IFrontendAction
         $paramFormula->text = $this->translate('FORMULA_TEXT');
         $paramFormula->description = $this->translate('FORMULA_DESC');
         $paramFormula->type = ActionParameterType::VALUE;
-        $paramFormula->dataType = ActionDataType::TEXT;
+        $paramFormula->dataType = ActionDataType::FORMULA;
         $paramFormula->example = "({Bloque.item1} + {Bloque.item2} + {Bloque.item3}) * 2";
         $paramFormula->fieldKeysHint = true;
         $paramFormula->required = true;

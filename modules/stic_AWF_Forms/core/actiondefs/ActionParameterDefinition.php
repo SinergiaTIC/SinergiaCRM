@@ -59,6 +59,9 @@ enum ActionDataType: string {
     // Simple list of options
     case SELECT        = 'select';
 
+    // Arithmetic formula with {field} placeholders (validated in the wizard)
+    case FORMULA       = 'formula';
+
     // Related (for filtering fields)
     case RELATE        = 'relate';
 

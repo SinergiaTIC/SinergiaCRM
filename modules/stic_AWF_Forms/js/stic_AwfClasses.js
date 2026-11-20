@@ -1770,6 +1770,13 @@ class stic_AwfAction {
     const actionDef = allActions.find(a => a.name === this.name);
     return this.parameters.every(param => {
       if (!param.required) return true;
+      if (actionDef) {
+        const paramDef = actionDef.parameters.find(p => p.name === param.name);
+        // Formula parameters: the syntax must be valid to save the action
+        if (paramDef?.dataType === 'formula' && param.value && utils.validateFormulaSyntax(param.value) !== null) {
+          return false;
+        }
+      }
       if (param.type === 'optionSelector' && actionDef) {
         const paramDef = actionDef.parameters.find(p => p.name === param.name);
         const optDef = (paramDef?.selectorOptions || []).find(o => o.name === param.selectedOption);

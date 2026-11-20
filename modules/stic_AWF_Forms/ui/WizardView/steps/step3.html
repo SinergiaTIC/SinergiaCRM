@@ -387,6 +387,17 @@
                                                                     </template>
                                                                 </select>
                                                             </template>
+
+                                                            <!-- Type: Value, DataType: formula (with live syntax validation) -->
+                                                            <template x-if="paramDef.dataType === 'formula'">
+                                                                <div x-data="{ error: '' }" x-effect="error = utils.validateFormulaSyntax(param.value)">
+                                                                    <input :id="'ModalAction-param-'+paramDef.name" type="text" class="form-control"
+                                                                        :class="error != '' ? 'is-invalid' : ''"
+                                                                        x-model="param.value" :required="paramDef.required">
+                                                                    <div class="invalid-feedback d-block" x-show="error != ''"
+                                                                        x-text="utils.translate('LBL_ACTION_PARAM_FORMULA_INVALID')"></div>
+                                                                </div>
+                                                            </template>
                                                         </div>
                                                     </template>
 
