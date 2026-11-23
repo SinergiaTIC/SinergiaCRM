@@ -369,7 +369,15 @@ class actionPortalActions extends actionSendEmail
             'reply_to_name' => (string) ($params['reply_to_name'] ?? ''),
         );
 
+        // Prevent logic hooks (including the AOW workflow engine) from
+        // re-triggering on the save performed inside send(), which would
+        // cascade into another invitation with an invalidated link. Follows
+        // the same pattern as actionCreateRecord.php: save/restore the
+        // processed flag around the save.
+        $was_processed = isset($bean->processed) ? $bean->processed : false;
+        $bean->processed = true;
         $result = SticPortalActionsUtils::send($action, $bean, $params['portal_app'] ?? '', $options);
+        $bean->processed = $was_processed;
         if (empty($result['success'])) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ': Portal action "' . $action . '" failed for ' . $bean->module_dir . ':' . $bean->id
                 . ' - ' . ($result['error'] ?? 'unknown error'));
