@@ -376,6 +376,7 @@ class actionPortalActions extends actionSendEmail
         // processed flag around the save.
         $was_processed = isset($bean->processed) ? $bean->processed : false;
         $bean->processed = true;
+
         $result = SticPortalActionsUtils::send($action, $bean, $params['portal_app'] ?? '', $options);
         $bean->processed = $was_processed;
         if (empty($result['success'])) {

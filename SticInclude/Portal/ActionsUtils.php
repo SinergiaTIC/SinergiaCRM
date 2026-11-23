@@ -87,7 +87,6 @@ class SticPortalActionsUtils
             $username = self::resolveDefaultUsername($bean);
             if ($username !== '') {
                 $bean->stic_portal_username_c = $username;
-                $bean->save();
             }
         }
         return (string) $bean->stic_portal_username_c;
@@ -141,6 +140,8 @@ class SticPortalActionsUtils
         $bean->stic_portal_reset_token_c    = hash('sha256', $token);
         $bean->stic_portal_reset_expires_c = $expires;
         $bean->stic_portal_enabled_c = 1; // Auto-enable portal when invitation is sent
+        $bean->new_with_id = false;
+        $bean->process_save_dates = false;
         $bean->save();
 
         $resetLink = $portalUrl . '/index.php?entryPoint=sticPortalResetConfirm&token=' . urlencode($token) . '&id=' . urlencode($bean->id);
@@ -259,6 +260,8 @@ class SticPortalActionsUtils
         $bean->stic_portal_reset_token_c   = hash('sha256', $token);
         $bean->stic_portal_reset_expires_c = SticPortalAuthUtils::futureDb(86400); // UTC, consistent with validateResetToken() UTC_TIMESTAMP() comparison
         $bean->stic_portal_enabled_c = 1; // Auto-enable portal when reset request is sent
+        $bean->new_with_id = false;
+        $bean->process_save_dates = false;
         $bean->save();
 
         $link = $portalUrl . '/index.php?entryPoint=sticPortalResetConfirm&token=' . urlencode($token) . '&id=' . urlencode($bean->id);
