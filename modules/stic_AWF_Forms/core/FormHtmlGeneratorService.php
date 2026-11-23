@@ -1390,7 +1390,7 @@ class FormHtmlGeneratorService {
             $switchIdAttr = "id='switch_{$rootBlock->id}'";
             $switchForAttr = "for='switch_{$rootBlock->id}'";
         }
-        $html = "<div class='form-check form-switch mb-3'>" . $this->newLine('+');
+        $html = "<div class='form-check form-switch mb-3 awf-optional-switch'>" . $this->newLine('+');
         {
             $html .= "<input class='form-check-input' type='checkbox' role='switch' {$switchIdAttr} {$switchNameAttr} value='1' x-model='active' " .
                     "@change=\"if (!active) { instances = []; } else if (instances.length === 0) { instances.push({ id: nextInstanceId++ }); }\">" . $this->newLine();
@@ -1414,7 +1414,10 @@ class FormHtmlGeneratorService {
     private function renderServerDataOptionalGroup(FormDataBlock $rootBlock, ?FormLayoutSection $section, array $contentOuterVars, FormConfig $config, FormTheme $theme): string {
         $sectionTitle = ($section && $section->title !== '') ? $section->title : ($rootBlock->group_title ?: $rootBlock->text);
         $toggleLabel = htmlspecialchars(($section && $section->toggle_label !== '') ? $section->toggle_label : (translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $sectionTitle), ENT_QUOTES, 'UTF-8');
-        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: false, nextInstanceId: 1, instances: [] }\">" . $this->newLine('+');
+        // Stable JS hooks for AWF.setGroupOptional / isGroupOptional: server-data
+        // groups are ALWAYS Wizard-optional (min_instances = 0 by definition)
+        $safeBlockName = htmlspecialchars($rootBlock->name, ENT_QUOTES, 'UTF-8');
+        $html = "<div class='awf-group-container mb-4' data-awf-group='{$safeBlockName}' data-awf-optional='1' x-data=\"{ active: false, nextInstanceId: 1, instances: [] }\">" . $this->newLine('+');
         {
             $html .= $this->renderOptionalToggleSwitch($rootBlock, $toggleLabel, $contentOuterVars);
             // Instance materialization: the server discovers group instances from
@@ -1596,7 +1599,12 @@ class FormHtmlGeneratorService {
         // user can see. Same contract as the regular tabs container: the pane
         // publishes its instance index and the owner of `activeTab` switches.
         $paneActivation = "@invalid.capture=\"const gp = \$event.target.closest('[data-awf-group-pane]'); if (gp && gp.closest('.awf-group-container') === \$el) activeTab = +gp.dataset.awfGroupPane; const gi = \$event.target.closest('[data-awf-group-item]'); if (gi && gi.closest('.awf-group-container') === \$el) openItem = +gi.dataset.awfGroupItem\" @awf-show-group-pane=\"if (\$event.target.closest('.awf-group-container') === \$el) activeTab = +\$event.detail\" @awf-show-group-item=\"if (\$event.target.closest('.awf-group-container') === \$el) openItem = +\$event.detail\"";
-        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0, openItem: 0, titleOverrides: {}, titleOverrideFor: function (index, fallback) { var o = this.titleOverrides[index]; return (o === undefined || o === null) ? fallback : o; } }\" {$paneActivation}>" . $this->newLine('+');
+        // Stable JS hooks for AWF.setGroupOptional / isGroupOptional: the block
+        // name plus the Wizard-optional flag (only optional groups may be
+        // toggled programmatically — see getAwfHelperJs)
+        $safeBlockName = htmlspecialchars($rootBlock->name, ENT_QUOTES, 'UTF-8');
+        $optionalAttr = $isOptional ? " data-awf-optional='1'" : '';
+        $html = "<div class='awf-group-container mb-4' data-awf-group='{$safeBlockName}'{$optionalAttr} x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0, openItem: 0, titleOverrides: {}, titleOverrideFor: function (index, fallback) { var o = this.titleOverrides[index]; return (o === undefined || o === null) ? fallback : o; } }\" {$paneActivation}>" . $this->newLine('+');
         {
             // The group section's header (title/subtitle) is rendered by the
             // loop paths below (stacked cards) or by the tabs chrome — both
@@ -4289,6 +4297,101 @@ JS;
     return applied;
   }
 
+  // --- Optional group control (setGroupOptional / isGroupOptional) -------
+  // Only groups flagged `data-awf-optional="1"` (Wizard-defined optional,
+  // min_instances = 0) may be toggled programmatically: the server contract
+  // for mandatory blocks expects their rows to always be posted.
+
+  function findGroupContainers(groupName, card, options) {
+    var name = String(groupName || '').trim();
+    if (name === '') return [];
+    var search = function (root) {
+      if (!root || !root.querySelectorAll) return [];
+      // Compare the dataset value directly: no CSS-escaping pitfalls
+      var found = Array.prototype.slice.call(root.querySelectorAll('[data-awf-group]'))
+        .filter(function (el) { return el.dataset.awfGroup === name; });
+      var idx = options && options.instanceIndex;
+      if (idx != null) {
+        // Optional subgroups render one container per parent row: keep only
+        // the copy living inside the requested parent instance
+        found = found.filter(function (el) {
+          var inst = el.closest('.awf-instance-card');
+          return inst && inst.dataset.awfInstance === String(idx);
+        });
+      }
+      return found;
+    };
+    // Prefer the instance card scope when called from inside an instance
+    var local = (card && card.querySelectorAll) ? search(card) : [];
+    return local.length > 0 ? local : search(getForm());
+  }
+
+  function applyGroupOptionalState(container, isOptional, resetWhenOptional) {
+    if (!container || !container.querySelectorAll) return false;
+    if (container.dataset.awfOptional !== '1') return false;
+    var state = (container._x_dataStack && container._x_dataStack[0]) || null;
+    if (!state) {
+      // Alpine not initialized yet: re-apply once it is
+      document.addEventListener('alpine:initialized', function () {
+        applyGroupOptionalState(container, isOptional, resetWhenOptional);
+      }, { once: true });
+      return false;
+    }
+    var switchWrap = container.querySelector('.awf-optional-switch');
+    var switchInput = container.querySelector('input[name^="_toggle_"]');
+
+    if (!isOptional) {
+      // Force MANDATORY: hide the switch (display:none keeps the input in the
+      // POST), check it and make sure at least one instance row is rendered.
+      // Setting `active` through x-model mirrors the checked state.
+      if (switchWrap) switchWrap.style.display = 'none';
+      if (switchInput && !switchInput.checked) switchInput.checked = true;
+      state.active = true;
+      if (Array.isArray(state.instances) && state.instances.length === 0) {
+        state.instances.push({ id: state.nextInstanceId++ });
+      }
+      container.dataset.awfForcedMandatory = '1';
+      return true;
+    }
+
+    // Back to OPTIONAL: show the switch again. Rendered rows and the values
+    // the user already typed are NEVER touched unless resetWhenOptional.
+    if (switchWrap) switchWrap.style.display = '';
+    if (resetWhenOptional) {
+      state.active = false;
+      if (Array.isArray(state.instances)) state.instances = [];
+      if (switchInput) switchInput.checked = false;
+    }
+    delete container.dataset.awfForcedMandatory;
+    return true;
+  }
+
+  function setGroupOptional(groupName, isOptional, options) {
+    var opts = options || {};
+    var containers = findGroupContainers(groupName, opts.card, opts);
+    var eligible = containers.filter(function (c) { return c.dataset.awfOptional === '1'; });
+    if (eligible.length === 0) {
+      console.warn('AWF.setGroupOptional: no Wizard-optional group "' + groupName + '" found' +
+        (containers.length > 0 ? ' (the group is not optional: min_instances > 0)' : ''));
+      return false;
+    }
+    var applied = false;
+    eligible.forEach(function (c) {
+      if (applyGroupOptionalState(c, !!isOptional, !!opts.resetWhenOptional)) applied = true;
+    });
+    return applied;
+  }
+
+  function isGroupOptional(groupName, options) {
+    var opts = options || {};
+    var containers = findGroupContainers(groupName, opts.card, opts);
+    if (containers.length === 0) return false;
+    var c = containers[0];
+    if (c.dataset.awfOptional !== '1') return false;
+    // `data-awf-forced-mandatory="1"` marks a group a rule forced mandatory
+    return c.dataset.awfForcedMandatory !== '1';
+  }
+
   var listeners = [];
   var delegatedForm = null;
 
@@ -4349,6 +4452,19 @@ JS;
         var val = (arguments.length === 1) ? target : text;
         var res = resolveForInfo(t, card, parsed);
         return setSectionTitleOn(res.elements, val);
+      },
+      setGroupOptional: function (groupName, isOptional, options) {
+        // From inside an instance, prefer the optional groups of THIS card
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        return setGroupOptional(groupName, isOptional, o);
+      },
+      isGroupOptional: function (groupName, options) {
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        return isGroupOptional(groupName, o);
       },
       getText: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
@@ -4582,6 +4698,8 @@ JS;
     setHelp: function (target, text, options) { return setHelpTextOn(containerOf(resolve(target, options).elements), text); },
     getSectionTitle: function (target, options) { return getSectionTitleFrom(resolve(target, options).elements); },
     setSectionTitle: function (target, text, options) { return setSectionTitleOn(resolve(target, options).elements, text); },
+    setGroupOptional: function (groupName, isOptional, options) { return setGroupOptional(groupName, isOptional, options); },
+    isGroupOptional: function (groupName, options) { return isGroupOptional(groupName, options); },
     getAttribute: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
     setAttribute: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
     getAttributeValue: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
@@ -4662,6 +4780,8 @@ JS;
       onChange: function (fieldName, callback, options) { return scoped('onChange', [fieldName, callback, options], options); },
       getSectionTitle: function (target, options) { return scoped('getSectionTitle', [target, options], options); },
       setSectionTitle: function (target, text, options) { return scoped('setSectionTitle', [target, text, options], options); },
+      setGroupOptional: function (groupName, isOptional, options) { return scoped('setGroupOptional', [groupName, isOptional, options], options); },
+      isGroupOptional: function (groupName, options) { return scoped('isGroupOptional', [groupName, options], options); },
       parseFieldName: parseFieldName
     };
   } else {

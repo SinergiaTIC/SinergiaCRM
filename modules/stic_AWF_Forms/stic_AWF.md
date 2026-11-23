@@ -472,6 +472,32 @@ AWF.onChange('Contacts0.last_name', function (val, scope) { updateTitle(scope); 
 // scope.setSectionTitle(null);
 ```
 
+#### AWF.setGroupOptional(groupName, isOptional, [options])
+*(Alias: `scope.setGroupOptional`)*
+Alterna programáticamente un **grupo de bloques definido como opcional en el Wizard** (`min_instances = 0`). Por seguridad del contrato con el servidor, solo actúa sobre grupos con el flag del Wizard: retorna `false` con `console.warn` si el grupo no existe o no es opcional.
+
+* **`isOptional = false` (obligatorio)**: oculta el interruptor de activación (`display: none`, el input sigue enviándose en el POST), lo marca como activado y garantiza que exista al menos una instancia renderizada. El servidor recibe siempre la señal `_toggle_{BlockName}=1` y las filas del grupo.
+* **`isOptional = true` (opcional)**: vuelve a mostrar el interruptor. **Nunca toca las filas renderizadas ni los datos ya introducidos**, salvo que se pase `options.resetWhenOptional = true`, que desactiva el grupo y elimina sus instancias (nada se envía al servidor).
+* **`options.instanceIndex`**: para subgrupos opcionales dentro de un grupo repetible, dirige la copia de la fila indicada del padre. Llamado desde `scope`, resuelve preferentemente dentro de la instancia del evento.
+* Si se invoca antes de que Alpine inicialice (p. ej. en el `custom_js` de primer nivel con ciertas configuraciones), la aplicación queda en cola hasta `alpine:initialized`.
+
+```javascript
+// Mostrar el grupo opcional solo si el usuario acepta las condiciones:
+AWF.onChange('_detached.Checks0.acepto', function (val, scope) {
+    scope.setGroupOptional('Contacts0', !!val);
+});
+
+// Volver a hacerlo opcional descartando lo introducido:
+AWF.setGroupOptional('Contacts0', true, { resetWhenOptional: true });
+
+// Subgrupo opcional, solo en la fila 1 del padre:
+AWF.setGroupOptional('Alergias0', false, { instanceIndex: 1 });
+```
+
+#### AWF.isGroupOptional(groupName, [options])
+*(Alias: `scope.isGroupOptional`)*
+Retorna `true` si el grupo está definido como opcional en el Wizard y ninguna regla lo ha forzado obligatorio; `false` si el grupo no existe, no es opcional, o fue forzado a obligatorio mediante `AWF.setGroupOptional(..., false)`.
+
 #### AWF.getFieldContainer(target, [options])
 *(Alias: `scope.getFieldContainer` y propiedad `scope.fieldContainer`)*
 Retorna el elemento DOM contenedor del campo (`.awf-field` o `.form-check`). Resulta indispensable para ocultar o mostrar bloques de entrada completos (input, etiqueta y textos de ayuda) sin dejar etiquetas huérfanas ni desalinear la cuadrícula visual de Bootstrap.
@@ -559,6 +585,8 @@ Todos los métodos globales están disponibles en `scope` operando por defecto s
 * `scope.setLabel([target], text)`
 * `scope.getSectionTitle([target])`
 * `scope.setSectionTitle([target], text)`
+* `scope.setGroupOptional(groupName, isOptional, [options])`
+* `scope.isGroupOptional(groupName, [options])`
 * `scope.getFieldContainer([target])`
 * `scope.getAttribute([target], attribute)`
 * `scope.setAttribute([target], attribute, value)`
