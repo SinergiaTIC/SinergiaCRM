@@ -4326,17 +4326,18 @@ JS;
     return local.length > 0 ? local : search(getForm());
   }
 
-  function applyGroupOptionalState(container, isOptional, resetWhenOptional) {
+  function applyGroupOptionalState(container, isOptional, resetWhenOptional, keepForcedMarker) {
     if (!container || !container.querySelectorAll) return false;
     if (container.dataset.awfOptional !== '1') return false;
-    var state = (container._x_dataStack && container._x_dataStack[0]) || null;
+    var state = groupState(container);
     if (!state) {
       // Alpine not initialized yet: re-apply once it is
       document.addEventListener('alpine:initialized', function () {
-        applyGroupOptionalState(container, isOptional, resetWhenOptional);
+        applyGroupOptionalState(container, isOptional, resetWhenOptional, keepForcedMarker);
       }, { once: true });
       return false;
     }
+    var prevActive = !!state.active;
     var switchWrap = container.querySelector('.awf-optional-switch');
     var switchInput = container.querySelector('input[name^="_toggle_"]');
 
@@ -4351,18 +4352,22 @@ JS;
         state.instances.push({ id: state.nextInstanceId++ });
       }
       container.dataset.awfForcedMandatory = '1';
-      return true;
+    } else {
+      // Back to OPTIONAL: show the switch again. Rendered rows and the values
+      // the user already typed are NEVER touched unless resetWhenOptional.
+      if (switchWrap) switchWrap.style.display = '';
+      if (resetWhenOptional) {
+        state.active = false;
+        if (Array.isArray(state.instances)) state.instances = [];
+        if (switchInput) switchInput.checked = false;
+      }
+      // A temporary deactivation (e.g. setGroupVisible hiding the group) keeps
+      // the forced-mandatory intent so the group reactivates when shown again
+      if (!keepForcedMarker) delete container.dataset.awfForcedMandatory;
     }
-
-    // Back to OPTIONAL: show the switch again. Rendered rows and the values
-    // the user already typed are NEVER touched unless resetWhenOptional.
-    if (switchWrap) switchWrap.style.display = '';
-    if (resetWhenOptional) {
-      state.active = false;
-      if (Array.isArray(state.instances)) state.instances = [];
-      if (switchInput) switchInput.checked = false;
-    }
-    delete container.dataset.awfForcedMandatory;
+    // Broadcast the change (only when the state actually changed)
+    var nowActive = !!state.active;
+    if (nowActive !== prevActive) notifyGroupChange(container, nowActive);
     return true;
   }
 
@@ -4390,6 +4395,165 @@ JS;
     if (c.dataset.awfOptional !== '1') return false;
     // `data-awf-forced-mandatory="1"` marks a group a rule forced mandatory
     return c.dataset.awfForcedMandatory !== '1';
+  }
+
+  // --- Group visibility & group change events ------------------------------
+  // setGroupVisible / isGroupVisible / onGroupChange work on ANY group
+  // container (data-awf-group), optional or not. Hiding an optional group
+  // deactivates it (unless options.preserveState) so nothing residual reaches
+  // the POST; hiding a non-optional group disables its inner controls (marked
+  // with data-awf-vis-disabled) so hidden required fields cannot block the
+  // HTML5 submit. State changes are broadcast to onGroupChange subscribers.
+
+  var groupListeners = [];
+
+  function groupState(container) {
+    return (container._x_dataStack && container._x_dataStack[0]) || null;
+  }
+
+  function dispatchGroupListener(listener, container, isActive) {
+    var opts = listener.options || {};
+    var parentCard = container.closest('.awf-instance-card');
+    if (opts.instanceIndex != null) {
+      var idx = parentCard ? parentCard.dataset.awfInstance : null;
+      if (String(idx) !== String(opts.instanceIndex)) return;
+    }
+    var swInput = container.querySelector('input[name^="_toggle_"]');
+    var parentIndexes = (parentCard && parentCard.dataset.awfInstance !== undefined)
+      ? [Number(parentCard.dataset.awfInstance)] : [];
+    // Same context object onChange delivers: scope.card / scope.instanceIndex
+    // point at the PARENT row for nested optional groups
+    var scope = buildInfo(swInput || container, parentCard, {
+      detached: false, block: container.dataset.awfGroup, field: '', indexes: parentIndexes, multi: false
+    });
+    try { listener.callback(isActive, scope); } catch (err) { console.error('AWF.onGroupChange callback error', err); }
+  }
+
+  function notifyGroupChange(container, isActive) {
+    var name = container.dataset.awfGroup;
+    if (!name) return;
+    // Manual toggles reach the delegated handler twice (input + change):
+    // only broadcast actual state transitions
+    if (container._awfGroupLastActive === isActive) return;
+    container._awfGroupLastActive = isActive;
+    groupListeners.slice().forEach(function (listener) {
+      if (listener.groupName !== name) return;
+      dispatchGroupListener(listener, container, isActive);
+    });
+  }
+
+  function triggerGroupListenersImmediate(listener) {
+    var run = function () {
+      findGroupContainers(listener.groupName, listener.options && listener.options.card, listener.options)
+        .forEach(function (c) {
+          var st = groupState(c);
+          if (st) dispatchGroupListener(listener, c, !!st.active);
+        });
+    };
+    // Wait for Alpine when it has not initialized the groups yet
+    var form = getForm();
+    var first = form ? form.querySelector('[data-awf-group]') : null;
+    if (!first || !groupState(first)) {
+      document.addEventListener('alpine:initialized', run, { once: true });
+      return;
+    }
+    run();
+  }
+
+  function applyGroupVisibility(container, makeVisible, options) {
+    if (!container || !container.querySelectorAll) return false;
+    var opts = options || {};
+    var state = groupState(container);
+    var needsState = container.dataset.awfOptional === '1' || container.dataset.awfForcedMandatory === '1';
+    if (!state && needsState) {
+      // Alpine not initialized yet: re-apply once it is
+      document.addEventListener('alpine:initialized', function () {
+        applyGroupVisibility(container, makeVisible, opts);
+      }, { once: true });
+      return false;
+    }
+
+    if (makeVisible) {
+      container.dataset.awfHidden = '0';
+      container.style.display = '';
+      // Re-enable ONLY the controls this API disabled when hiding
+      var reenable = container.querySelectorAll('[data-awf-vis-disabled]');
+      for (var i = 0; i < reenable.length; i++) {
+        reenable[i].disabled = false;
+        delete reenable[i].dataset.awfVisDisabled;
+      }
+      // A group a rule forced mandatory becomes active again
+      if (container.dataset.awfForcedMandatory === '1' && state && !state.active) {
+        applyGroupOptionalState(container, false);
+      }
+      return true;
+    }
+
+    container.dataset.awfHidden = '1';
+    container.style.display = 'none';
+    if (container.dataset.awfOptional === '1') {
+      // Deactivate so nothing residual reaches the POST (unless preserved).
+      // keepForcedMarker: hiding must not drop the forced-mandatory intent,
+      // so the group reactivates automatically when shown again
+      if (!opts.preserveState) applyGroupOptionalState(container, true, true, true);
+    } else {
+      // Non-optional group: disable its controls (keeping a marker so only
+      // these are re-enabled later; pre-existing disabled ones are untouched)
+      var controls = container.querySelectorAll('input, select, textarea');
+      for (var j = 0; j < controls.length; j++) {
+        var ctl = controls[j];
+        if (!ctl.disabled) { ctl.disabled = true; ctl.dataset.awfVisDisabled = '1'; }
+      }
+    }
+    return true;
+  }
+
+  function setGroupVisible(groupName, isVisible, options) {
+    var opts = options || {};
+    var containers = findGroupContainers(groupName, opts.card, opts);
+    if (containers.length === 0) {
+      console.warn('AWF.setGroupVisible: no group "' + groupName + '" found');
+      return false;
+    }
+    var applied = false;
+    containers.forEach(function (c) {
+      if (applyGroupVisibility(c, !!isVisible, opts)) applied = true;
+    });
+    return applied;
+  }
+
+  function isGroupVisible(groupName, options) {
+    var opts = options || {};
+    var containers = findGroupContainers(groupName, opts.card, opts);
+    if (containers.length === 0) return null;
+    var c = containers[0];
+    return c.dataset.awfHidden !== '1' && c.style.display !== 'none';
+  }
+
+  function isGroupActive(groupName, options) {
+    var opts = options || {};
+    var containers = findGroupContainers(groupName, opts.card, opts);
+    if (containers.length === 0) return null;
+    var c = containers[0];
+    var state = groupState(c);
+    if (state) return !!state.active;
+    // Pre-Alpine fallback: the switch mirrors the initial activation state
+    var sw = c.querySelector('input[name^="_toggle_"]');
+    if (sw) return !!sw.checked;
+    // Groups without a switch are mandatory: always active
+    return true;
+  }
+
+  function onGroupChange(groupName, callback, options) {
+    if (typeof callback !== 'function') return function () {};
+    var opts = options || {};
+    var listener = { groupName: String(groupName || '').trim(), callback: callback, options: opts };
+    groupListeners.push(listener);
+    if (opts.immediate) triggerGroupListenersImmediate(listener);
+    return function off() {
+      var i = groupListeners.indexOf(listener);
+      if (i >= 0) groupListeners.splice(i, 1);
+    };
   }
 
   var listeners = [];
@@ -4465,6 +4629,34 @@ JS;
         if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
         o.card = o.card || card;
         return isGroupOptional(groupName, o);
+      },
+      setGroupVisible: function (groupName, isVisible, options) {
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        return setGroupVisible(groupName, isVisible, o);
+      },
+      isGroupVisible: function (groupName, options) {
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        return isGroupVisible(groupName, o);
+      },
+      isGroupActive: function (groupName, options) {
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        return isGroupActive(groupName, o);
+      },
+      onGroupChange: function (groupName, callback, options) {
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        // Subscriptions from inside an instance only follow THAT parent row
+        if (o.instanceIndex == null && card && card.dataset.awfInstance !== undefined) {
+          o.instanceIndex = card.dataset.awfInstance;
+        }
+        return onGroupChange(groupName, callback, o);
       },
       getText: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
@@ -4631,6 +4823,16 @@ JS;
                 triggerListenerImmediate(listener, c);
               }
             });
+            // A new instance card may carry optional subgroups: run immediate
+            // group listeners for the copies living inside the new card
+            groupListeners.forEach(function (gl) {
+              if (gl.options && gl.options.immediate) {
+                findGroupContainers(gl.groupName, c, gl.options).forEach(function (gc) {
+                  var st = groupState(gc);
+                  if (st) dispatchGroupListener(gl, gc, !!st.active);
+                });
+              }
+            });
           });
         }, 0);
       }
@@ -4645,6 +4847,14 @@ JS;
     var handler = function (event) {
       var el = event.target;
       if (!el || !el.name) return;
+      // Group activation switches (_toggle_{Block}[i]...): notify onGroupChange
+      // subscribers about the manual activation state change
+      if (/^_toggle_([^\[\]]+)((?:\[\d+\])*)$/.test(el.name)) {
+        var groupContainer = el.closest('.awf-group-container');
+        if (groupContainer && groupContainer.dataset.awfGroup) {
+          notifyGroupChange(groupContainer, !!el.checked);
+        }
+      }
       var parsed = parseFieldName(el.name);
       if (!parsed) return;
 
@@ -4700,6 +4910,10 @@ JS;
     setSectionTitle: function (target, text, options) { return setSectionTitleOn(resolve(target, options).elements, text); },
     setGroupOptional: function (groupName, isOptional, options) { return setGroupOptional(groupName, isOptional, options); },
     isGroupOptional: function (groupName, options) { return isGroupOptional(groupName, options); },
+    setGroupVisible: function (groupName, isVisible, options) { return setGroupVisible(groupName, isVisible, options); },
+    isGroupVisible: function (groupName, options) { return isGroupVisible(groupName, options); },
+    isGroupActive: function (groupName, options) { return isGroupActive(groupName, options); },
+    onGroupChange: function (groupName, callback, options) { return onGroupChange(groupName, callback, options); },
     getAttribute: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
     setAttribute: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
     getAttributeValue: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
@@ -4782,6 +4996,10 @@ JS;
       setSectionTitle: function (target, text, options) { return scoped('setSectionTitle', [target, text, options], options); },
       setGroupOptional: function (groupName, isOptional, options) { return scoped('setGroupOptional', [groupName, isOptional, options], options); },
       isGroupOptional: function (groupName, options) { return scoped('isGroupOptional', [groupName, options], options); },
+      setGroupVisible: function (groupName, isVisible, options) { return scoped('setGroupVisible', [groupName, isVisible, options], options); },
+      isGroupVisible: function (groupName, options) { return scoped('isGroupVisible', [groupName, options], options); },
+      isGroupActive: function (groupName, options) { return scoped('isGroupActive', [groupName, options], options); },
+      onGroupChange: function (groupName, callback, options) { return scoped('onGroupChange', [groupName, callback, options], options); },
       parseFieldName: parseFieldName
     };
   } else {
