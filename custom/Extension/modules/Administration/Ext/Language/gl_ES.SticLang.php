@@ -152,3 +152,18 @@ $mod_strings['LBL_STIC_SINERGIADA_ACTIONS_SECTION'] = 'Accións';
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Aa activar esta opción os usuarios poderán autenticarse mediante OAuth 2.0, ademais de facelo con usuario e contraseña. Despois de activala deberase configurar polo menos un dos proveedores externos. Para máis información, consulte a <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentación</a>.';
+
+// Canle de Denuncias
+$mod_strings['LBL_WHISTLEBLOWING_CONFIG_TITLE'] = 'Canle de Denuncias';
+$mod_strings['LBL_WHISTLEBLOWING_CONFIG_DESCRIPTION'] = 'Configuración da Canle de Denuncias (Whistleblowing)';
+$mod_strings['LBL_WHISTLEBLOWING_LINK_TITLE'] = 'Acceder á canle de denuncias';
+$mod_strings['LBL_WHISTLEBLOWING_LINK_HELP'] = 'Só os usuarios habilitados poderán ter acceso.';
+$mod_strings['LBL_WHISTLEBLOWING_TITLE'] = 'Administración da Canle de Denuncias';
+$mod_strings['LBL_WHISTLEBLOWING_STATUS_HEADER'] = 'Estado da Integración';
+$mod_strings['LBL_WHISTLEBLOWING_ENABLE_LABEL'] = 'Activar Canle de Denuncias:';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_ABOUT'] = 'Sobre a Canle';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_CONFID'] = 'Confidencialidade';
+$mod_strings['LBL_WHISTLEBLOWING_SECTION_SECURITY'] = 'Seguridade';
+$mod_strings['LBL_WHISTLEBLOWING_DESC'] = 'Xestión de textos e activación da canle.';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_LABEL'] = 'Activar reCaptcha no canal:';
+$mod_strings['LBL_WHISTLEBLOWING_RECAPTCHA_HELP'] = 'Se está activado, o canal público validará o reCaptcha «(Xeral)» definido en Etiquetas de Estudo (GENERAL_RECAPTCHA).';

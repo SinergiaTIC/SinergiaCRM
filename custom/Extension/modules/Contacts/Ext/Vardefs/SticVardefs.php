@@ -753,6 +753,18 @@ $dictionary["Contact"]["fields"]["stic_followups_contacts"] = array(
     'vname' => 'LBL_STIC_FOLLOWUPS_CONTACTS_FROM_STIC_FOLLOWUPS_TITLE',
 );
 
+// stic_Whistleblowing link field
+$dictionary["Contact"]["fields"]["stic_whistleblowing_contacts"] = array(
+    'name' => 'stic_whistleblowing_contacts',
+    'type' => 'link',
+    'relationship' => 'stic_whistleblowing_contacts',
+    'source' => 'non-db',
+    'module' => 'stic_Whistleblowing',
+    'bean_name' => 'stic_Whistleblowing',
+    'side' => 'right',
+    'vname' => 'LBL_STIC_WHISTLEBLOWING_CONTACTS_FROM_STIC_WHISTLEBLOWING_TITLE',
+);
+
 $dictionary["Contact"]["fields"]["stic_registrations_contacts"] = array(
     'name' => 'stic_registrations_contacts',
     'type' => 'link',

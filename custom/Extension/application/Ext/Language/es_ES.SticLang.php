@@ -183,6 +183,7 @@ $app_list_strings['moduleList']['stic_Places'] = 'Plazas';
 $app_list_strings['moduleList']['stic_Transactions'] = 'Transacciones';
 $app_list_strings['moduleList']['stic_Financial_Products'] = 'Productos financieros';
 $app_list_strings['moduleList']['stic_Assets'] = 'Activos';
+$app_list_strings['moduleList']['stic_Whistleblowing'] = 'Denuncias';
 $app_list_strings['moduleList']['stic_AWF_Response_Details'] = 'Detalles de respuestas a formularios';
 $app_list_strings['moduleList']['stic_AWF_Responses'] = 'Respuestas a formularios';
 $app_list_strings['moduleList']['stic_AWF_Links'] = 'Vínculos de formularios';
@@ -4257,6 +4258,29 @@ $app_list_strings['collection_temp_list']['Calls'] = 'Llamadas';
 $app_list_strings['collection_temp_list']['Notes'] = 'Notas';
 $app_list_strings['collection_temp_list']['Emails'] = 'Correos';
 $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
+
+// Estados del canal de denuncias
+$app_list_strings['stic_whistleblowing_status_list']['new'] = 'Nuevo';
+$app_list_strings['stic_whistleblowing_status_list']['working'] = 'En proceso de revisión';
+$app_list_strings['stic_whistleblowing_status_list']['solved'] = 'Resuelto';
+$app_list_strings['stic_whistleblowing_status_list']['archived'] = 'Archivado';
+
+// Tipos del canal de denuncias
+$app_list_strings['stic_whistleblowing_type_list']['fraud'] = 'Fraude';
+$app_list_strings['stic_whistleblowing_type_list']['harassment'] = 'Acoso';
+$app_list_strings['stic_whistleblowing_type_list']['data_privacy'] = 'Protección de datos';
+$app_list_strings['stic_whistleblowing_type_list']['others'] = 'Otros';
+// Motivos de no restauración de relaciones de la papelera
+$app_list_strings['stic_recycle_skip_reason_list'][''] = '';
+$app_list_strings['stic_recycle_skip_reason_list']['related_deleted'] = 'Registro relacionado eliminado';
+$app_list_strings['stic_recycle_skip_reason_list']['reassigned'] = 'Registro relacionado reasignado';
+
+// Procedencia de la eliminación en la papelera
+$app_list_strings['stic_recycle_deletion_source_list'][''] = '';
+$app_list_strings['stic_recycle_deletion_source_list']['detail'] = 'Vista de detalle';
+$app_list_strings['stic_recycle_deletion_source_list']['mass'] = 'Acción masiva';
+$app_list_strings['stic_recycle_deletion_source_list']['merge'] = 'Combinación de registros';
+$app_list_strings['stic_recycle_deletion_source_list']['other'] = 'Acción externa';
 
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
