@@ -313,7 +313,22 @@ array (
             'label' => 'LBL_ACTIVE',
           ),
         ),
+        // STIC-Custom 20261111 ART - Field for the file name pattern with {{variables}} placeholders
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1514
+        // The customCode renders the input and the selector assigned in preDisplay, coming from
+        // AOS_PDF_TemplatesUtils::getFileNameSelector(). Literal "{{" sequences are avoided in the
+        // customCode; the data of the selector reaches it as PHP variables
         2 => 
+        array (
+          0 => 
+          array (
+            'name' => 'stic_file_name_c',
+            'label' => 'LBL_STIC_FILE_NAME',
+            'customCode' => '<div style="display:flex;align-items:center;gap:8px"><input type="text" name="stic_file_name_c" id="stic_file_name_c" maxlength="255" value="{$fields.stic_file_name_c.value}" style="flex:1 1 auto;min-width:200px"> {$FILE_NAME_SELECTOR}</div>',
+          ),
+        ),
+        // END STIC-Custom
+        3 => 
         array (
           0 => 
           array (
@@ -326,7 +341,7 @@ array (
             'label' => 'LBL_ORIENTATION',
           ),
         ),
-        3 => 
+        4 => 
         array (
           0 => 
           array (
@@ -335,7 +350,7 @@ array (
             'customCode' => '{$INSERT_FIELDS}',
           ),
         ),
-        4 => 
+        5 => 
         array (
           0 => 
           array (
@@ -343,7 +358,7 @@ array (
             'label' => 'LBL_DESCRIPTION',
           ),
         ),
-        5 => 
+        6 => 
         array (
           0 => 
           array (
@@ -351,7 +366,7 @@ array (
             'label' => 'LBL_HEADER',
           ),
         ),
-        6 => 
+        7 => 
         array (
           0 => 
           array (

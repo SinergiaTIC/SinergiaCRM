@@ -24,3 +24,19 @@
 $mod_strings['LBL_BODY_DESCRIPTION_PDF_URL'] = 'Use this link to download the PDF file:<br>';
 $mod_strings['LBL_AUTHORIZED_SIGNER'] = 'Authorized Signer';
 $mod_strings['LBL_AUTHORIZED_SIGNERS'] = 'Authorized Signers';
+$mod_strings['LBL_STIC_FILE_NAME'] = 'File name';
+$mod_strings['LBL_STIC_FILE_NAME_HELP'] = 'Name of the downloaded PDF file. It accepts fixed text and variables '
+    . 'in double braces: {{field}} of a record field, {{relate.field}} of a related record '
+    . '(including the assigned user: {{assigned_user_link.field}}), '
+    . 'and {{record_id}}, {{template_name}}, {{now_date}} or {{now_datetime}}. The variables {{nombre}}, '
+    . '{{apellidos}} and {{nif}} are filled with the record name, surnames and NIF. Do not write '
+    . 'the .pdf extension: it is added automatically. Characters not accepted by the file system and '
+    . 'variables without data are replaced by "_".';
+$mod_strings['LBL_STIC_FILE_NAME_SELECTOR_PLACEHOLDER'] = 'Select a variable to insert it in the name';
+$mod_strings['LBL_STIC_FILE_NAME_GROUP_RECORD'] = 'Module fields';
+$mod_strings['LBL_STIC_FILE_NAME_GROUP_CONTEXT'] = 'Generation data';
+$mod_strings['LBL_STIC_FILE_NAME_RELATED_NAME'] = 'Related record name';
+$mod_strings['LBL_STIC_FILE_NAME_VAR_RECORD_ID'] = 'Record ID';
+$mod_strings['LBL_STIC_FILE_NAME_VAR_TEMPLATE_NAME'] = 'Template name';
+$mod_strings['LBL_STIC_FILE_NAME_VAR_NOW_DATE'] = 'Generation date';
+$mod_strings['LBL_STIC_FILE_NAME_VAR_NOW_DATETIME'] = 'Generation date and time';
