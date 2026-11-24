@@ -40,6 +40,7 @@ include_once __DIR__."/DeferredContextData.php";
 include_once __DIR__."/ExecutionContext.php";
 
 include_once __DIR__."/RequiredParameterException.php";
+include_once __DIR__."/UnactivatedOptionalBlockException.php";
 include_once __DIR__."/ParameterResolverService.php";
 
 include_once __DIR__."/ServerActionFactory.php";

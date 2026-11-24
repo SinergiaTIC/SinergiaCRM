@@ -112,7 +112,9 @@ class stic_AWF_FormsUtils {
 
             $result['fields'][$fieldName] = [
                 'name' => $fieldName,
-                'text' => rtrim(trim(translate($arr['vname'] ?? '', $moduleName)), ":"),
+                // Decode HTML entities so the client stores pure text in the JSON config
+                // (see getRecordsTextById for details)
+                'text' => html_entity_decode(rtrim(trim(translate($arr['vname'] ?? '', $moduleName)), ":"), ENT_QUOTES, 'UTF-8'),
                 'type' => $arr['type'],
                 'required' => isset($arr['required']) && $arr['required'],
                 'default' => $arr['default'] ?? null,
@@ -642,6 +644,12 @@ class stic_AWF_FormsUtils {
 
             $displayField = self::detectDisplayField($bean);
             $text = isset($bean->$displayField) ? $bean->$displayField : $bean->id;
+            // The DB layer entity-encodes the value ("&quot;", "&#039;"...). If this text
+            // is stored as is in the form configuration and the configuration is saved
+            // again, from_html() (applied by the DB layer on save) decodes those entities
+            // to raw characters, producing invalid JSON. Decode here so the client always
+            // receives pure text.
+            $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
 
             $results[] = [
                 'id' => $bean->id,
@@ -719,6 +727,57 @@ class stic_AWF_FormsUtils {
         } else {
             return '#b5bc31';
         }
+    }
+
+    /**
+     * Returns the CSS overrides needed to apply the corporate base color (stic_Settings:
+     * GENERAL_CUSTOM_THEME_COLOR) to the primary Bootstrap elements of the AWF internal UI (wizard).
+     * It replicates the technique used to theme the generated public forms
+     * (FormHtmlGeneratorService::generateCss) and everything is scoped to .stic_panel
+     * to avoid interfering with the rest of the CRM styles.
+     * @return string A <style> block ready to be echoed, or an empty string if there is no valid color
+     */
+    public static function getBootstrapPrimaryColorCss(): string
+    {
+        $color = self::getCustomBaseColor();
+
+        if (!preg_match('/#([a-fA-F0-9]{3}){1,2}\b/m', $color)) {
+            return '';
+        }
+
+        require_once 'modules/stic_AWF_Forms/core/stic_AWFUtils.php';
+        $rgb = stic_AWFUtils::hex2rgb($color);
+        $contrast = stic_AWFUtils::getContrastColor($color);
+        $darker = stic_AWFUtils::darkenColor($color, 10);
+
+        // Light corporate colors (YIQ >= 140) need adapted tones to keep the same visual weight that
+        // Bootstrap's default palette gets: text switches to a darkened variant, surfaces use stronger
+        // tints and borders use a darkened solid tone instead of a washed-out rgba tint
+        $isLightColor = stic_AWFUtils::getYiq($color) >= 140;
+        $primaryEmphasis = stic_AWFUtils::darkenColor($color, 60);
+        $primaryAsText = $isLightColor ? $primaryEmphasis : $color;
+        $linkHover = stic_AWFUtils::darkenColor($primaryAsText, 10);
+        $headerTint = 'rgba(' . $rgb . ', ' . ($isLightColor ? '0.18' : '0.09') . ')';
+        $subHeaderTint = 'rgba(' . $rgb . ', ' . ($isLightColor ? '0.10' : '0.06') . ')';
+        $bodyTint = 'rgba(' . $rgb . ', ' . ($isLightColor ? '0.06' : '0.03') . ')';
+        $borderAccent = $isLightColor ? $darker : 'rgba(' . $rgb . ', 0.55)';
+        $subBorderAccent = 'rgba(' . $rgb . ', ' . ($isLightColor ? '0.80' : '0.40') . ')';
+
+        // Active chevron for accordion buttons, rebuilt with the emphasis color (Bootstrap ships it hardcoded in blue)
+        $accordionIcon = 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'none\' stroke=\'' . str_replace('#', '%23', $primaryEmphasis) . '\' stroke-linecap=\'round\' stroke-linejoin=\'round\'%3e%3cpath d=\'m2 5 6 6 6-6\'/%3e%3c/svg%3e")';
+
+        return "<style>
+/* Corporate color (stic_Settings: GENERAL_CUSTOM_THEME_COLOR) applied to Bootstrap primary elements */
+.stic_panel { --bs-primary: {$color}; --bs-primary-rgb: {$rgb}; --bs-primary-contrast: {$contrast}; --bs-link-color: {$primaryAsText}; --bs-link-hover-color: {$linkHover}; --stic-header-tint: {$headerTint}; --stic-subheader-tint: {$subHeaderTint}; --stic-body-tint: {$bodyTint}; --stic-border-accent: {$borderAccent}; --stic-subborder-accent: {$subBorderAccent}; }
+.stic_panel .btn-primary { --bs-btn-color: {$contrast}; --bs-btn-bg: var(--bs-primary); --bs-btn-border-color: var(--bs-primary); --bs-btn-hover-color: {$contrast}; --bs-btn-hover-bg: {$darker}; --bs-btn-hover-border-color: {$darker}; --bs-btn-active-color: {$contrast}; --bs-btn-active-bg: {$darker}; --bs-btn-active-border-color: {$darker}; --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb); --bs-btn-disabled-color: {$contrast}; --bs-btn-disabled-bg: var(--bs-primary); --bs-btn-disabled-border-color: var(--bs-primary); }
+.stic_panel .btn-outline-primary { --bs-btn-color: {$primaryAsText}; --bs-btn-border-color: var(--bs-primary); --bs-btn-hover-color: {$contrast}; --bs-btn-hover-bg: var(--bs-primary); --bs-btn-hover-border-color: var(--bs-primary); --bs-btn-active-color: {$contrast}; --bs-btn-active-bg: var(--bs-primary); --bs-btn-active-border-color: var(--bs-primary); --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb); --bs-btn-disabled-color: {$primaryAsText}; --bs-btn-disabled-border-color: var(--bs-primary); }
+.stic_panel .form-control:focus, .stic_panel .form-select:focus, .stic_panel .form-check-input:focus { border-color: var(--bs-primary); box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25); }
+.stic_panel .form-check-input:checked { background-color: var(--bs-primary); border-color: var(--bs-primary); }
+.stic_panel .badge.bg-primary, .stic_panel .badge.text-bg-primary { color: {$contrast} !important; }
+.stic_panel .text-primary { color: {$primaryAsText} !important; }
+.stic_panel .accordion { --bs-accordion-active-color: {$primaryEmphasis}; --bs-accordion-active-bg: {$headerTint}; --bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25); --bs-accordion-btn-active-icon: {$accordionIcon}; }
+.stic_panel .pagination { --bs-pagination-active-color: {$contrast}; --bs-pagination-active-bg: var(--bs-primary); --bs-pagination-active-border-color: var(--bs-primary); --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25); }
+</style>";
     }
 
     /**
@@ -841,6 +900,72 @@ class stic_AWF_FormsUtils {
                 $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::UNCHANGED, $newValue, $oldValue);
             }
         }
+        return $modifications;
+    }
+
+    /**
+     * Fills a bean only with empty fields (enriches).
+     * @param SugarBean $bean The bean to enrich
+     * @param DataBlockResolved $block The resolved data block
+     * @return array<string, FieldModification> List of modifications indexed by field name
+     */
+    public static function enrichBeanFromBlock(SugarBean $bean, DataBlockResolved $block): array
+    {
+        require_once 'modules/stic_AWF_Forms/core/FieldModification.php';
+
+        /** @var FieldModification[] $modifications */
+        $modifications = [];
+
+        foreach ($block->formData as $fieldName => $fieldResolved) {
+            if ($fieldResolved === null) {
+                continue;
+            }
+
+            $newValue = $fieldResolved->value;
+            $fieldDef = $bean->field_defs[$fieldName] ?? null;
+
+            // If it is a related field, the real field that changes in the database is the id_name
+            $isRelate = ($fieldDef && isset($fieldDef['type']) && $fieldDef['type'] === 'relate' && !empty($fieldDef['id_name']));
+            $targetField = $isRelate ? $fieldDef['id_name'] : $fieldName;
+
+            if (isset($bean->field_defs[$targetField]) && self::isEmailField($bean->field_defs[$targetField], $targetField)) {
+                if ($targetField === 'email') {
+                    $targetField = 'email1';
+                }
+                $oldValue = $bean->$targetField ?? null;
+            } else {
+                $oldValue = isset($bean->$targetField) ? $bean->$targetField : null;
+            }
+
+            // Check if the field in the bean is empty or null
+            $isEmpty = ($oldValue === null || $oldValue === '' || $oldValue === '^^');
+
+            // Check if the field is boolean (in that case, consider false as empty)
+            $isBoolean = ($fieldDef && isset($fieldDef['type']) && ($fieldDef['type'] === 'bool' || $fieldDef['type'] === 'boolean'));
+            if ($isBoolean) {
+                // Normalize new value to boolean true if it is sent as checked (otherside, consider it false)
+                $newValue = ($newValue === true || $newValue === 1 || $newValue === '1');
+
+                // If the field has value, consider empty old value false or null
+                if ($newValue) {
+                    $isEmpty = ($isEmpty || $oldValue === false || $oldValue === 0 || $oldValue === '0');
+                }
+            }
+
+            if ($isEmpty && $newValue !== null && $newValue !== '') {
+                // The current field is empty.
+                $bean->$targetField = $newValue;
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::APPLIED, $newValue, $oldValue);
+                
+            } elseif (!$isEmpty && $newValue !== null && $newValue !== '' && $oldValue != $newValue) {
+                // The form sends a value but there is already another one
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::IGNORED_ENRICH, $newValue, $oldValue);
+            } else {
+                // Both values ​​are equal or null
+                $modifications[$targetField] = new FieldModification($targetField, FieldModificationStatus::UNCHANGED, $newValue, $oldValue);
+            }
+        }
+
         return $modifications;
     }
 }

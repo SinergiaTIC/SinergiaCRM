@@ -18,9 +18,13 @@
  * 02110-1301 USA.
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- *}
+*}
  
- <div class="clear"></div>
+<script type="text/javascript" language="JavaScript">
+    STIC.enabledModules = {$enabledModules};
+</script>
+
+<div class="clear"></div>
 
 <div id="stic_panel" class="stic_panel panel-auto-height" x-data="DetailsForm()" x-init="initDetails()">
     <div class="container-fluid wizard-container" style="height: inherit;">
