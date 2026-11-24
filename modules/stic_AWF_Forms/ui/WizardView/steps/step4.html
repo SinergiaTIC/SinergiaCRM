@@ -614,7 +614,7 @@
                                                 <!-- Section Body (the group's internal element template is flattened: its children render directly) -->
                                                 <div class="card-body p-2" x-show="!isCollapsed" x-transition>
                                                     <!-- Content: data blocks and (level < 2) nested sections -->
-                                                    <template x-for="(element, index) in getSectionBodyElements(section)" :key="element.id">
+                                                    <template x-for="(element, index) in getVisibleSectionBodyElements(section)" :key="element.id">
                                                         <div>
                                                             <template x-if="element.type === 'section'">
                                                                 <div x-data="{ section: element, level: level + 1 }" x-init="sticControls.mountTemplate($el, 'awfTplLayoutSection')"></div>
@@ -625,7 +625,7 @@
                                                             </template>
                                                         </div>
                                                     </template>
-                                                    <template x-if="getSectionBodyElements(section).length === 0">
+                                                    <template x-if="getVisibleSectionBodyElements(section).length === 0">
                                                         <div class="text-center text-muted small fst-italic py-2" x-text="utils.translate('LBL_SECTION_EMPTY_DESC')"></div>
                                                     </template>
                                                 </div>
@@ -737,7 +737,7 @@
                                                 <template x-if="element.type === 'datablock'">
                                                     <div class="card-body p-0" x-show="!isCollapsed" x-transition>
                                                         <template x-if="element.type !== 'section'">
-                                                            <template x-for="field in getFields(element)" :key="field.name">
+                                                            <template x-for="field in getVisibleBlockFields(element)" :key="field.name">
                                                                 <div class="border rounded px-2 py-1 m-2 d-inline-flex align-items-center gap-1" x-data="{ open: false }">
                                                                     <span :id="`sectionFieldLabelEdit-${element.groupRootBlockId}.${field.name}`" data-model="field.label" x-init="sticControls.editableText($el);"></span>
                                                                     <button class="btn btn-sm" :class="open ? 'active' : ''"
