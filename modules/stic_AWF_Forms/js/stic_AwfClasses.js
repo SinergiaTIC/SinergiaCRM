@@ -2408,11 +2408,16 @@ class stic_AwfConfiguration {
       const blockRels = allRels[blockId];
       const activeRels = blockRels.filter(r => r.datablock_orig && r.datablock_dest);
       
-      // Skip relationships already handled by SaveRecordAction.
+      // Skip relationships already handled by SaveRecordAction (FK pre-injection).
       // Both directions are skipped since the initiator's FK injection is sufficient.
+      // IMPORTANT: match the usage, not just the relationship name. The same relationship
+      // name can be FK-handled for a different pair of blocks (A informs B) while a
+      // self-referencing usage (B informs B) still needs its own RelateRecordsAction,
+      // because self-references are never FK-injected (the target is not saved yet).
+      // See SinergiaTIC/SinergiaCRM#1345.
       activeRels.forEach(rel => {
         if (rel.datablock_orig === blockId) {
-          if (handledRelationshipNames.has(rel.name)) return;
+          if (handledRelationshipNames.has(rel.name) && rel.datablock_orig !== rel.datablock_dest) return;
           // Skip non-initiator: N-M is bidirectional (one action suffices),
           // 1-N fallback FK injection is done on the initiator side.
           if (rel.initiator_id && rel.initiator_id !== blockId) return;
