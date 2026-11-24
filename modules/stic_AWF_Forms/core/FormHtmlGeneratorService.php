@@ -1149,6 +1149,12 @@ class FormHtmlGeneratorService {
                 return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar, $outerIndexVars);
             }
             if ($currentGroupRootId === null) {
+                // The group section already renders the head block's fields inside its own loop, so the head block element is redundant and skipped.
+                $alreadyInGroup = $parentSection instanceof FormLayoutGroupSection && $parentSection->groupRootBlockId === $block->id;
+                $siblingGroup = $parentSection !== null && self::sectionHasGroupForBlock($parentSection, $block->id);
+                if ($alreadyInGroup || $siblingGroup) {
+                    return "<!-- Group head '{$block->name}' is already rendered by its group section -->" . $this->newLine();
+                }
                 $labelSection = $parentSection ? $this->topLevelAncestorSection($config, $parentSection) : $parentSection;
                 return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $labelSection, $outerIndexVars);
             }
@@ -1200,6 +1206,14 @@ class FormHtmlGeneratorService {
         foreach ($section->elements as $element) {
             if ($element instanceof FormLayoutElement && $element->ref_id === $blockId) return true;
             if ($element instanceof FormLayoutSection && self::sectionContainsElementForBlock($element, $blockId)) return true;
+        }
+        return false;
+    }
+
+    /** Whether a direct child section already renders `blockId` as its group root. */
+    private static function sectionHasGroupForBlock(FormLayoutSection $section, string $blockId): bool {
+        foreach ($section->elements as $element) {
+            if ($element instanceof FormLayoutGroupSection && $element->groupRootBlockId === $blockId) return true;
         }
         return false;
     }
