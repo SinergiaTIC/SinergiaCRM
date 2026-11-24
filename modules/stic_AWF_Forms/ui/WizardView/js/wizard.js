@@ -3141,6 +3141,28 @@ class WizardStep4 {
         return template ? template.elements : (section ? section.elements : []);
       },
 
+      // Hidden fields render as bare <input type="hidden"> in the final form:
+      // they have no visual position, so step 4 does not draw them. They are
+      // still configurable in step 3 and the layout re-syncs them on change.
+      isHiddenFieldElement(element) {
+        const field = this.getField(element);
+        return !!field && field.type_in_form === 'hidden';
+      },
+      getVisibleSectionBodyElements(section) {
+        return this.getSectionBodyElements(section).filter(e => !this.isHiddenFieldElement(e));
+      },
+      getHiddenFieldCount(section) {
+        const elements = this.getSectionBodyElements(section);
+        let count = elements.filter(e => this.isHiddenFieldElement(e)).length;
+        elements.forEach(e => {
+          if (e.type === 'datablock') count += this.getFields(e).filter(f => f.type_in_form === 'hidden').length;
+        });
+        return count;
+      },
+      getVisibleBlockFields(element) {
+        return this.getFields(element).filter(f => f.type_in_form !== 'hidden');
+      },
+
       // True when `section` is the SOLE content section of its group: the group
       // has exactly one data-block host, so its title is hidden and the singular
       // record name comes from its block — its own configuration panel has no
