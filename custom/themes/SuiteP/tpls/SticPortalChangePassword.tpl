@@ -27,6 +27,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Change Password</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700&display=swap">
     <style>
       * {
         box-sizing: border-box;
@@ -35,8 +36,8 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background: #f0f2f5;
+        font-family: "Lato", Lato, Arial, sans-serif;
+        background: #f5f5f5;
         color: #333;
         display: flex;
         justify-content: center;
@@ -97,15 +98,15 @@
 
       input:focus {
         outline: none;
-        border-color: #1976d2;
-        box-shadow: 0 0 0 2px rgba(25, 118, 210, .2);
+        border-color: #b5bc31;
+        box-shadow: 0 0 0 2px rgba(181, 188, 49, .2);
       }
 
       .btn {
         display: block;
         width: 100%;
         padding: 12px;
-        background: #1976d2;
+        background: #b5bc31;
         color: #fff;
         border: none;
         border-radius: 4px;
@@ -115,7 +116,7 @@
       }
 
       .btn:hover {
-        background: #1565c0;
+        background: #8a8f27;
       }
 
       .links {
@@ -125,7 +126,7 @@
       }
 
       .links a {
-        color: #1976d2;
+        color: #b5bc31;
         text-decoration: none;
       }
 
