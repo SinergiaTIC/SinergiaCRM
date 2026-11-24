@@ -1812,6 +1812,16 @@ EOHTML;
             $config_js[] =
                 $this->prepareConfigVarForJs('quicksearch_querydelay', $sugar_config['quicksearch_querydelay']);
         }
+        // STIC-Custom 20261117 ART - Alphabetical dropdowns
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
+        // Expose the searchable-selects threshold so SticAlphabeticalSelects.js
+        // honors the value set in Administration / System Settings, even in
+        // installations whose config.php predates this setting
+        if (isset($sugar_config['stic_search_selects_threshold'])) {
+            $config_js[] =
+                $this->prepareConfigVarForJs('stic_search_selects_threshold', $sugar_config['stic_search_selects_threshold']);
+        }
+        // END STIC-Custom
         if (empty($sugar_config['disableAjaxUI'])) {
             $config_js[] = "SUGAR.config.disableAjaxUI = false;";
         } else {

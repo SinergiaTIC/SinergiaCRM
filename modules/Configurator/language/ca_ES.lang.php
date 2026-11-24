@@ -349,5 +349,8 @@ $mod_strings = array(
     'LBL_GOOGLE_AUTH_TITLE' => 'Autenticació de Google',
     'LBL_GOOGLE_AUTH_JSON' => 'Fitxer JSON',
     'LBL_GOOGLE_AUTH_JSON_HELP' => 'Carrega el fitxer JSON que heu descarregat de la consola de desenvolupadors de Google.',
-
+    
+    // Alphabetical dropdowns
+    'LBL_STIC_SEARCH_SELECTS_THRESHOLD' => 'Cerca als camps desplegables',
+    'LBL_STIC_SEARCH_SELECTS_THRESHOLD_DESC' => "Aquesta opció permet establir en quins camps de tipus desplegable es mostrarà un quadre de cerca en obrir-los. Les opcions són 'Mai', 'Sempre' o a partir d'un determinat nombre d'elements.",
 );

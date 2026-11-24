@@ -705,6 +705,15 @@ class SearchForm
 
                 if (isset($this->fieldDefs[$fvName]['options']) && isset($GLOBALS['app_list_strings'][$this->fieldDefs[$fvName]['options']])) {
                     // fill in enums
+                    // STIC-Custom 20261117 ART - Alphabetical dropdowns
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1551
+                    // Keep the dropdown list name before it is replaced by the options array below: the
+                    // {stic_custom_dropdown} Smarty plugin (emitted by the enum field templates, which are
+                    // also used by the search views) needs the name to mark administrator-customized
+                    // dropdowns (data-stic-sort="false") so that SticAlphabeticalSelects.js keeps their
+                    // defined order
+                    $this->fieldDefs[$fvName]['stic_dropdown_name'] = $this->fieldDefs[$fvName]['options'];
+                    // END STIC-Custom
                     $this->fieldDefs[$fvName]['options'] = $GLOBALS['app_list_strings'][$this->fieldDefs[$fvName]['options']];
                     //Hack to add blanks for parent types on search views
                     //53131 - add blank option for SearchField options with def 'options_add_blank' set to true
