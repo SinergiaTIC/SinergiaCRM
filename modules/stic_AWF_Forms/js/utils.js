@@ -111,7 +111,7 @@ class utils {
     if (fieldInfo.type == "bool") {
       return utils.getList("stic_boolean_list", asString);
     }
-    if (fieldInfo.options && (fieldInfo.type == "enum" || fieldInfo.type == "multienum")) {
+    if (fieldInfo.options && (fieldInfo.type == "enum" || fieldInfo.type == "multienum" || fieldInfo.type == "dynamicenum")) {
       return utils.getList(fieldInfo.options, asString);
     }
     return asString ? "" : [];
@@ -131,8 +131,10 @@ class utils {
    *   }
    */
   static getModuleInformation(moduleName) {
-    // Do not get info of not enabled modules
-    if (!moduleName || !STIC.enabledModules.hasOwnProperty(moduleName)) {
+    // Do not get info of not enabled modules. STIC/enabledModules are guarded:
+    // some views (e.g. the DetailView) do not define STIC.enabledModules, and a
+    // crash here aborts the whole config load (fromJSON -> _migrateLegacyRelationships).
+    if (!moduleName || typeof STIC === 'undefined' || !STIC.enabledModules || !STIC.enabledModules.hasOwnProperty(moduleName)) {
       return null;
     }
 
