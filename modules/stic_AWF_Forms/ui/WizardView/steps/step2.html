@@ -56,7 +56,14 @@
 
       <!-- DataBlocks: 2-level tree — groups are container cards holding their data block cards -->
       <div class="work-area-container" style="position: relative; padding-bottom: 20px;">
-        <template x-for="node in blockTree" :key="node.block.id">
+        <template x-for="node in blockTree" :key="node.block.id + (node.isGroup ? '::group' : '::single')">
+          <!-- The key includes the SHAPE (group/standalone): when a block switches
+               between standalone card and group container (or back), the key CHANGES
+               and Alpine runs a clean remove+create cycle for the item. With the bare
+               block.id key, the same keyed item is PATCHED across the structural flip
+               of the two sibling x-if templates, and the old x-if branch can be left
+               orphaned in the DOM (the block renders DUPLICATED: the stale member card
+               next to the new subgroup container). -->
           <div>
             <!-- Standalone block: plain card -->
             <template x-if="!node.isGroup">
@@ -73,7 +80,9 @@
                   <!-- Group root data block (a normal card inside the group) -->
                   <div x-init="sticControls.mountTemplate($el, 'awfTplDataBlockCard')"></div>
                   <!-- Level-1 members -->
-                  <template x-for="child in node.members" :key="child.block.id">
+                  <template x-for="child in node.members" :key="child.block.id + (child.isGroup ? '::group' : '::single')">
+                      <!-- Same reason as the root loop: the member -> subgroup-head flip
+                           must rebuild the item cleanly (see the root x-for comment). -->
                     <div>
                       <!-- Subgroup container card (level 2) -->
                       <template x-if="child.isGroup">
@@ -85,7 +94,7 @@
                             <!-- Subgroup root data block -->
                             <div x-init="sticControls.mountTemplate($el, 'awfTplDataBlockCard')"></div>
                             <!-- Level-2 members -->
-                            <template x-for="gc in child.members" :key="gc.block.id">
+                            <template x-for="gc in child.members" :key="gc.block.id + (gc.isGroup ? '::group' : '::single')">
                               <div x-data="{ item: gc.block }" x-init="sticControls.mountTemplate($el, 'awfTplDataBlockCard')"></div>
                             </template>
                           </div>
