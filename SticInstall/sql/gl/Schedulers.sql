@@ -14,7 +14,9 @@ INSERT INTO schedulers (id, deleted, date_entered, date_modified, created_by, mo
 ('ca564b47-9a06-987d-a115-6442356ca768', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Xeración de rexistros de medicamentos', 'function::createMedicationLogs', NOW(), NULL, '*::1::*::*::*', NULL, NULL, NULL, 'Active', 0),
 ('c5f7d492-5a02-6fe1-1d6e-6540b28a4b21', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Reconstrución das fontes de datos de SinergiaDA', 'function::rebuildSDASources', NOW(), NULL, '*::2::*::*::*', NULL, NULL, NULL, 'Active', 0),
 ('96c34b2d-d499-11ef-af33-0242ac120003', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Envío de mensajes a teléfonos', 'function::sticSendPhoneMessages', NOW(), NULL, '*::9-21::*::*::*', NULL, NULL, NULL, 'Active', 0),
-('56dca334-679c-266d-fd9a-660bcd6ed93e', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Validación y actualización semanal de datos', 'function::validationActions', NOW(), NULL, '*::1::*::*::1', NULL, NULL, NULL, 'Active', 0);
+('56dca334-679c-266d-fd9a-660bcd6ed93e', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Validación y actualización semanal de datos', 'function::validationActions', NOW(), NULL, '*::1::*::*::1', NULL, NULL, NULL, 'Active', 0),
+('a3c7e2b1-4d5f-11ef-b892-0242ac130003', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Procesamento asíncrono de respostas de formularios web', 'function::sticAWFProcessAsyncResponses', NOW(), NULL, '*::*::*::*::*', NULL, NULL, NULL, 'Active', 0),
+('b4d8f3c2-5e6a-11ef-c903-0242ac130004', 0, NOW(), NOW(), '1', '1', 'SinergiaCRM - Cancelación de tickets diferidos caducados', 'function::sticAWFCancelExpiredTickets', NOW(), NULL, '*::*::*::*::*', NULL, NULL, NULL, 'Active', 0);
 
 INSERT INTO stic_validation_actions (id, name, date_entered, date_modified, modified_user_id, created_by, description, deleted, assigned_user_id, last_execution, `function`, report_always, priority) VALUES
 ('0b5b5d41-ae84-11eb-9b56-0242ac180004', 'Compromisos de pago - Cálculo de rexistro activo/inactivo', NOW(), NOW(), '1', '1', NULL, 0, '1', NULL, '0b5b5d41-ae84-11eb-9b56-0242ac180004', 0, 30),

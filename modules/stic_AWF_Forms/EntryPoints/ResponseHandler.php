@@ -368,7 +368,10 @@ class ResponseHandler
             stic_AWFUtils::renderGenericResponse($formConfig, $title, $msg);                
 
         } else {
-            // Sync mode - Execute Flow 0: 'mainFlow' immediately
+            // Sync mode - Call ResponseProcessingService
+            require_once 'modules/stic_AWF_Forms/core/ResponseProcessingService.php';
+            
+            // Update status to processing
             $responseBean->status = 'processing';
             $responseBean->save();
 
