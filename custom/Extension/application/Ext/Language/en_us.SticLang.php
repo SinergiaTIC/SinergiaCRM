@@ -4242,3 +4242,8 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Messages';
 
 // Dynamic list
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+
+// SinergiaDA CRM links
+$app_strings['LBL_STIC_SDA_LINK_DETAIL'] = 'Detail link';
+$app_strings['LBL_STIC_SDA_LINK_EDIT'] = 'Edit link';
+
