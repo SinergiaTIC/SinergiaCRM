@@ -21,6 +21,9 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 class stic_AWF_Forms extends Basic
 {
     public $new_schema = true;
@@ -72,13 +75,64 @@ class stic_AWF_Forms extends Basic
         return false;
     }
 
+    public function cleanBean()
+    {
+        // Protect the configuration JSON from HTML sanitization.
+        // cleanBean() runs purify_html() on every text-like field, treating the JSON as HTML
+        // (structural quotes encoded, entities double-encoded); temporarily clearing the
+        // property makes it skip the sanitization and it is restored before the write.
+
+        $configurationBackup = $this->configuration ?? null;
+        $this->configuration = null;
+        parent::cleanBean();
+        if ($configurationBackup !== null) {
+            $this->configuration = $configurationBackup;
+        }
+    }
+
     public function save($check_notify = false)
     {
+        // Persist the configuration JSON bit-for-bit.
+        // The generic write applies from_html() (entities double-decoded) to every field:
+        // entity-like or quoted sequences inside JSON values would corrupt the stored JSON.
+        // When a new configuration is set on the bean (differs from fetched_row), entity-like
+        // sequences inside JSON values are normalized first, and the pristine bytes are
+        // restored with a targeted UPDATE after the standard write (raw MySQL escaping,
+        // since DBManager::quote() decodes entities). Unrelated saves keep the standard write.
+
         if ($this->new_with_id && empty($this->fetched_row['id'])) {
             $this->reset_analytics_and_public_url();
         }
 
-        return parent::save($check_notify);
+        $configurationPristine = is_string($this->configuration ?? null) ? $this->configuration : null;
+        // New records have no fetched value, so any set configuration counts as new.
+        $configurationModified = $configurationPristine !== null && 
+                                 $configurationPristine !== ($this->fetched_row['configuration'] ?? null);
+
+        // Normalize entity-like sequences inside JSON values (e.g. AJAX-provided record
+        // names containing &quot;) so the single html_entity_decode of the read paths
+        // cannot break the JSON structure on the next editor load.
+        if ($configurationModified) {
+            require_once "modules/stic_AWF_Forms/Utils.php";
+            $configurationPristine = stic_AWF_FormsUtils::normalizeConfigurationJson($configurationPristine);
+            $this->configuration = $configurationPristine;
+        }
+
+        $saveResult = parent::save($check_notify);
+
+        // Restore pristine JSON bytes only when the configuration was explicitly set on the bean (new record or wizard save).
+        if ($configurationModified) {
+            global $db;
+            $mysqli = $db->getDatabase();
+            $escape = function_exists("mysqli_real_escape_string") && $mysqli !== null
+                ? fn (string $v): string => mysqli_real_escape_string($mysqli, $v)
+                : fn (string $v): string => addslashes($v);
+            $safeId = $escape($this->id);
+            $safeConfiguration = $escape($configurationPristine);
+            $db->query("UPDATE stic_awf_forms SET configuration = '$safeConfiguration' WHERE id = '$safeId' AND deleted = 0");
+        }
+
+        return $saveResult;
     }
 
     public function reset_analytics_and_public_url()
