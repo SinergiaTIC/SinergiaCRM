@@ -216,7 +216,6 @@ $popupMeta = array(
       'billing_address_country' => 'accounts.billing_address_country',
       'campaign_name' => 'accounts.campaign_name',
       'stic_total_annual_donations_c' => 'accounts_cstm.stic_total_annual_donations_c',
-      'parent_name' => 'accounts.parent_name',
   ),
   'searchInputs' => array(
       0 => 'name',
@@ -243,7 +242,7 @@ $popupMeta = array(
       28 => 'billing_address_country',
       29 => 'campaign_name',
       30 => 'stic_total_annual_donations_c',
-      31 => 'parent_name',
+      // 31 => 'parent_name',
   ),
   'searchdefs' => array(
       'name' => array(
@@ -305,14 +304,14 @@ $popupMeta = array(
           'width' => '10%',
           'name' => 'stic_identification_number_c',
       ),
-      'parent_name' => array(
-          'type' => 'relate',
-          'link' => true,
-          'label' => 'LBL_MEMBER_OF',
-          'id' => 'PARENT_ID',
-          'width' => '10%',
-          'name' => 'parent_name',
-      ),
+      // 'parent_name' => array(
+      //     'type' => 'relate',
+      //     'link' => true,
+      //     'label' => 'LBL_MEMBER_OF',
+      //     'id' => 'PARENT_ID',
+      //     'width' => '10%',
+      //     'name' => 'parent_name',
+      // ),
       'stic_language_c' => array(
           'type' => 'enum',
           'studio' => 'visible',

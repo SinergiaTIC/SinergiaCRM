@@ -91,10 +91,13 @@ class MyAccountsDashlet extends DashletGeneric
                                       . ' LEFT JOIN email_addresses ea ON ea.deleted = 0 AND ea.id = eabr.email_address_id';
         }
 
-        if (isset($this->displayColumns) && array_search('parent_name', $this->displayColumns, true) !== false) {
-            $lvsParams['custom_select'] = empty($lvsParams['custom_select']) ? ', a1.name as parent_name ' : $lvsParams['custom_select'] . ', a1.name as parent_name ';
-            $lvsParams['custom_from'] = empty($lvsParams['custom_from']) ? ' LEFT JOIN accounts a1 on a1.id = accounts.parent_id' : $lvsParams['custom_from'] . ' LEFT JOIN accounts a1 on a1.id = accounts.parent_id';
-        }
+        // STIC-Custom - XJO - 20261124 - Remove member of field in accounts - Organizational Environment
+
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1426
+        // if (isset($this->displayColumns) && array_search('parent_name', $this->displayColumns, true) !== false) {
+        //     $lvsParams['custom_select'] = empty($lvsParams['custom_select']) ? ', a1.name as parent_name ' : $lvsParams['custom_select'] . ', a1.name as parent_name ';
+        //     $lvsParams['custom_from'] = empty($lvsParams['custom_from']) ? ' LEFT JOIN accounts a1 on a1.id = accounts.parent_id' : $lvsParams['custom_from'] . ' LEFT JOIN accounts a1 on a1.id = accounts.parent_id';
+        // }
 
         parent::process($lvsParams);
     }

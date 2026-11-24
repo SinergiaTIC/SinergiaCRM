@@ -274,11 +274,7 @@ array (
             'name' => 'stic_identification_number_c',
             'label' => 'LBL_STIC_IDENTIFICATION_NUMBER',
           ),
-          1 => 
-          array (
-            'name' => 'parent_name',
-            'label' => 'LBL_MEMBER_OF',
-          ),
+          1 => '',
         ),
         4 => 
         array (

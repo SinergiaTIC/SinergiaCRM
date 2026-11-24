@@ -323,7 +323,7 @@ array (
             'name' => 'stic_identification_number_c',
             'label' => 'LBL_STIC_IDENTIFICATION_NUMBER',
           ),
-          1 => 'parent_name',
+          1 => '',
         ),
         4 => 
         array (

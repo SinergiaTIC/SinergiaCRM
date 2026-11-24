@@ -352,15 +352,6 @@ $searchdefs['Accounts'] = array(
                 'width' => '10%',
                 'name' => 'stic_identification_number_c',
             ),
-            9 => array(
-                'type' => 'relate',
-                'link' => true,
-                'label' => 'LBL_MEMBER_OF',
-                'id' => 'PARENT_ID',
-                'width' => '10%',
-                'default' => true,
-                'name' => 'parent_name',
-            ),
             10 => array(
                 'type' => 'enum',
                 'default' => true,

@@ -2018,7 +2018,6 @@ $dictionary['Account']['fields']['description']['rows'] = '2'; // Make textarea 
 $dictionary['Account']['fields']['description']['massupdate'] = 0;
 
 $dictionary['Account']['fields']['campaign_name']['massupdate'] = 1;
-$dictionary['Account']['fields']['parent_name']['massupdate'] = 1;
 
 $dictionary['Account']['fields']['billing_address_city']['massupdate'] = 0;
 $dictionary['Account']['fields']['billing_address_country']['massupdate'] = 0;

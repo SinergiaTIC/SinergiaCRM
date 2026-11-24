@@ -192,14 +192,16 @@ $dashletData['MyAccountsDashlet']['columns'] =  array(
     'name' => 'email1',
     'default' => false,
   ),
-  'parent_name' =>
-  array(
-    'width' => '15%',
-    'label' => 'LBL_MEMBER_OF',
-    'sortable' => false,
-    'name' => 'parent_name',
-    'default' => false,
-  ),
+  // STIC-Custom - XJO - 20261124 - Remove member of field in accounts - Organizational Environment
+  // https://github.com/SinergiaTIC/SinergiaCRM/pull/1426
+  // 'parent_name' =>
+  // array(
+  //   'width' => '15%',
+  //   'label' => 'LBL_MEMBER_OF',
+  //   'sortable' => false,
+  //   'name' => 'parent_name',
+  //   'default' => false,
+  // ),
   'date_entered' =>
   array(
     'width' => '15%',

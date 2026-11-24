@@ -267,7 +267,6 @@ $layout_defs["Accounts"]["subpanel_setup"]['stic_group_opportunities_accounts'] 
 $layout_defs['Accounts']['subpanel_setup']['contacts']['override_subpanel_name'] = 'SticDefault';
 $layout_defs['Accounts']['subpanel_setup']['leads']['override_subpanel_name'] = 'SticDefault';
 $layout_defs['Accounts']['subpanel_setup']['opportunities']['override_subpanel_name'] = 'SticDefault';
-$layout_defs['Accounts']['subpanel_setup']['accounts']['override_subpanel_name'] = 'SticDefault';
 $layout_defs['Accounts']['subpanel_setup']['documents']['override_subpanel_name'] = 'SticDefault';
 
 // Subpanels default sorting
@@ -279,8 +278,6 @@ $layout_defs['Accounts']['subpanel_setup']['campaigns']['sort_order'] = 'desc';
 $layout_defs['Accounts']['subpanel_setup']['campaigns']['sort_by'] = 'activity_date';
 $layout_defs['Accounts']['subpanel_setup']['opportunities']['sort_order'] = 'desc';
 $layout_defs['Accounts']['subpanel_setup']['opportunities']['sort_by'] = 'stic_presentation_date_c';
-$layout_defs['Accounts']['subpanel_setup']['accounts']['sort_order'] = 'asc';
-$layout_defs['Accounts']['subpanel_setup']['accounts']['sort_by'] = 'name';
 $layout_defs['Accounts']['subpanel_setup']['contacts']['sort_order'] = 'asc';
 $layout_defs['Accounts']['subpanel_setup']['contacts']['sort_by'] = 'last_name, first_name';
 $layout_defs['Accounts']['subpanel_setup']['leads']['sort_order'] = 'asc';
@@ -288,6 +285,7 @@ $layout_defs['Accounts']['subpanel_setup']['leads']['sort_by'] = 'last_name, fir
 
 // Hide SinergiaCRM unudes project subpanel
 unset($layout_defs["Accounts"]["subpanel_setup"]['project']);
+unset($layout_defs["Accounts"]["subpanel_setup"]['accounts']);
 
 //Grants subpanel
 $layout_defs["Accounts"]["subpanel_setup"]['stic_grants_accounts'] = array(
@@ -308,7 +306,6 @@ $layout_defs["Accounts"]["subpanel_setup"]['stic_grants_accounts'] = array(
         ),
     ),
 );
-
 
 // New collection in activities/history
 $layout_defs['Accounts']['subpanel_setup']['activities']['top_buttons'][] = array('widget_class' => 'SubPanelEditMessagesButton');
