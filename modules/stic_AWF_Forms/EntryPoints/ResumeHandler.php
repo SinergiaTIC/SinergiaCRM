@@ -69,7 +69,7 @@ class ResumeHandler
             $contextData = $deferredData->toArray();
 
             $specificErrorFlowId = $contextData['flow_error_id'] ?? '-1';
-            $errorFlow = $context->formConfig->flows[$specificErrorFlowId] ?? $context->formConfig->flows['-1'] ?? null;
+            $errorFlow = $context->getFormConfig()->getFlowById($specificErrorFlowId) ?? $context->getFormConfig()->getFlowById('-1') ?? null;
 
             $executor = new ServerActionFlowExecutor($context);
 
@@ -82,9 +82,9 @@ class ResumeHandler
                     $ticket->save();
                 }
 
-                if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
-                    $context->responseBean->status = 'error';
-                    $context->responseBean->save();
+                if ($context->getResponseBean() && $context->getResponseBean()->status === 'awaiting_action') {
+                    $context->getResponseBean()->status = 'error';
+                    $context->getResponseBean()->save();
                 }
 
                 if ($errorFlow) {
@@ -94,47 +94,50 @@ class ResumeHandler
                         $lastAction->performTerminal($context, $lastResult);
                     }
                 }
-                stic_AWFUtils::renderGenericResponseError($context->formConfig);
+                stic_AWFUtils::renderGenericResponseError($context->getFormConfig());
                 return;
             }
 
             // Ok case: Execute the action's flow
             $originFlow = null;
-            foreach ($context->formConfig->flows as $flow) {
-                if (isset($flow->actions[$ticket->handler_action_id])) {
+            foreach ($context->getFormConfig()->getFlows() as $flow) {
+                if ($flow->getActionById($ticket->handler_action_id) !== null) {
                     $originFlow = $flow;
                     break;
                 }
             }
             if (!$originFlow) {
                 $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": Origin flow containing action '{$ticket->handler_action_id}' not found.");
-                stic_AWFUtils::renderGenericResponseError($context->formConfig);
+                stic_AWFUtils::renderGenericResponseError($context->getFormConfig());
                 return;
             }
 
-            // Get remaining actions, after current deferred action
-            $remainingActions = [];
+            // Get remaining action IDs, after current deferred action
+            $remainingActionIds = [];
             $foundPausingAction = false;
-            foreach ($originFlow->actions as $action) {
+            foreach ($originFlow->getActions() as $action) {
                 if ($foundPausingAction) {
-                    $remainingActions[$action->id] = $action;
+                    $remainingActionIds[] = $action->getId();
                 }
-                if ($action->id === $ticket->handler_action_id) {
+                if ($action->getId() === $ticket->handler_action_id) {
                     $foundPausingAction = true;
                 }
             }
 
             // Build a virtual flow to resume
-            $virtualFlow = new FormFlow();
-            $virtualFlow->id = 'virtual_resume_flow';
-            $virtualFlow->actions = $remainingActions;
+            $virtualFlow = $originFlow->createVirtual(
+                'virtual_resume_flow',
+                'virtual_resume_flow',
+                '',
+                $remainingActionIds
+            );
 
             if ($ticket->status === 'processed') {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The ticket has already been processed previously. Delegating the terminal action exclusively.");
                 if (!$isCli) {
                     $executor->executeTerminalActionOnly($virtualFlow);
                 }
-                stic_AWFUtils::renderGenericResponseSuccess($context->formConfig);
+                stic_AWFUtils::renderGenericResponseSuccess($context->getFormConfig());
                 return;
             }
             
@@ -148,11 +151,11 @@ class ResumeHandler
                     $ticket->status = 'failed';
                     $ticket->save();
 
-                    if ($context->responseBean) {
-                        $context->responseBean->status = 'error';
-                        $context->responseBean->save();
+                    if ($context->getResponseBean()) {
+                        $context->getResponseBean()->status = 'error';
+                        $context->getResponseBean()->save();
                     }
-                    stic_AWFUtils::renderGenericResponseError($context->formConfig);
+                    stic_AWFUtils::renderGenericResponseError($context->getFormConfig());
                     return;
                 }
             }
@@ -160,9 +163,9 @@ class ResumeHandler
             $ticket->status = 'processed';
             $ticket->save();
 
-            if ($context->responseBean && !$lastResult->isError()) {
-                $context->responseBean->status = 'processed';
-                $context->responseBean->save();
+            if ($context->getResponseBean() && !$lastResult->isError()) {
+                $context->getResponseBean()->status = 'processed';
+                $context->getResponseBean()->save();
             }
 
             $lastAction = $lastResult->getAction();
@@ -170,13 +173,13 @@ class ResumeHandler
                 try {
                     $lastAction->performTerminal($context, $lastResult);
                 } catch (\Throwable $t) {
-                    $context->addError($t, $lastResult->actionConfig);
+                    $context->addError($t, $lastResult->getActionConfig());
                     $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Error executing sequential terminal action: " . $t->getMessage());
                 }
             }
 
             // Visual Fallback
-            stic_AWFUtils::renderGenericResponseSuccess($context->formConfig);
+            stic_AWFUtils::renderGenericResponseSuccess($context->getFormConfig());
         } catch (Exception $e) {
             $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResumeHandler exception: " . $e->getMessage());
             stic_AWFUtils::renderGenericResponseError(null);

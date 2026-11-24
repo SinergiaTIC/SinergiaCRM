@@ -330,7 +330,7 @@ class ExampleAction extends HookActionDefinition
         /** @var DataBlockResolved $block */
         $block = $actionConfig->getResolvedParameter('target_block');
         // Data access: $block->formData['crm_field']
-        // Definition access: $block->dataBlock->module
+        // Definition access: $block->dataBlock->getModule()
 
         // FIELD -> DataBlockFieldResolved object
         /** @var DataBlockFieldResolved $field */
