@@ -1292,8 +1292,18 @@ class FormHtmlGeneratorService {
                 $block = $config->data_blocks[$el->ref_id] ?? null;
                 if (!$block) continue;
                 $isHead = $block->isRepeatable() || $block->isOptional() || !empty($config->getGroupChildren($block));
-                if ($isHead && $block->id !== $currentGroupRootId
-                    && ($currentGroupRootId === null || self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId))) {
+                if (!$isHead) continue;
+                if ($block->id === $currentGroupRootId) continue;
+                // An element can only announce its subgroup FROM INSIDE the
+                // block's OWN designated group section. An element moved into a
+                // FOREIGN host (manual edit, cross-host move or corruption)
+                // would otherwise hijack that host as the subgroup's loop and
+                // REPLACE the host block's own fields (content lost). Without
+                // this guard, a fully-unbundled nested head would also lose
+                // its instance loop.
+                $ownDesignated = $this->findDesignatedGroupSectionFor($config->layout, $block->id);
+                if ($ownDesignated !== null && !$this->sectionIsInsideSubtree($ownDesignated, $section)) continue;
+                if ($currentGroupRootId === null || self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) {
                     return $block;
                 }
             } elseif ($el instanceof FormLayoutSection) {
@@ -1302,6 +1312,42 @@ class FormHtmlGeneratorService {
             }
         }
         return null;
+    }
+
+    /**
+     * Finds the designated group section of a block (the FormLayoutGroupSection
+     * whose groupRootBlockId is the block's id), wherever it lives in the layout.
+     */
+    private function findDesignatedGroupSectionFor(FormLayout $layout, string $blockId): ?FormLayoutSection {
+        foreach ($layout->structure ?? [] as $section) {
+            $found = $this->findDesignatedGroupSectionInSection($section, $blockId);
+            if ($found) return $found;
+        }
+        return null;
+    }
+
+    private function findDesignatedGroupSectionInSection(FormLayoutSection $section, string $blockId): ?FormLayoutSection {
+        if ($section instanceof FormLayoutGroupSection && $section->groupRootBlockId === $blockId) return $section;
+        foreach ($section->elements ?? [] as $el) {
+            if ($el instanceof FormLayoutSection) {
+                $found = $this->findDesignatedGroupSectionInSection($el, $blockId);
+                if ($found) return $found;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Whether $section lives inside the subtree of $subtreeRoot (itself included).
+     */
+    private function sectionIsInsideSubtree(FormLayoutSection $subtreeRoot, FormLayoutSection $section): bool {
+        if ($subtreeRoot === $section) return true;
+        foreach ($subtreeRoot->elements ?? [] as $el) {
+            if ($el instanceof FormLayoutSection) {
+                if ($el === $section || $this->sectionIsInsideSubtree($el, $section)) return true;
+            }
+        }
+        return false;
     }
 
     /**

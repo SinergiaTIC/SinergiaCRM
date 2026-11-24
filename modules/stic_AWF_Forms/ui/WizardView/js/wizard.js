@@ -3733,7 +3733,57 @@ class WizardStep4 {
         } else {
           candidates = this.getStandaloneSections();
         }
+
+        // An ELEMENT carries its data block: a whole block element or a field
+        // fragment must render inside its OWN block's instance loop (its host
+        // subtree). Dropping them into ANOTHER block's host corrupts the
+        // layout: the render misreads the foreign host as a subgroup of the
+        // moved block and REPLACES the host's own content (its fields lost).
+        // GROUPED blocks are therefore restricted to their block's host
+        // subtree; STANDALONE blocks keep the section reordering behaviour.
+        const movedBlock = (element && (element.type === 'datablock' || element.type === 'field'))
+          ? this.getDataBlock(element) : null;
+        const hostScope = (movedBlock && !movedBlock.is_root)
+          ? this.getBlockHostScope(element.ref_id)
+          : null;
+        if (hostScope) {
+          candidates = candidates.filter(s => s.id === hostScope.id
+            || this.getSectionsWithin(hostScope).some(w => w.id === s.id));
+        }
+
         return candidates.filter(s => s.id !== fromSection.id && !this.isTabsContainer(s) && !this.isAccordionContainer(s) && !this.isGroupTemplateSection(s));
+      },
+
+      // Innermost section whose subtree renders inside the given block's
+      // instance loop: the section containing the block's WHOLE element (for a
+      // fully unbundled block, the one holding its field fragments). Null for
+      // blocks with no layout representation.
+      getBlockHostScope(blockId) {
+        if (!blockId) return null;
+        let host = null;
+        const findHost = (section) => {
+          if (host) return;
+          for (const el of (section.elements || [])) {
+            if (el.type === 'datablock' && el.ref_id === blockId) { host = section; return; }
+          }
+          for (const el of (section.elements || [])) {
+            if (el.type === 'section') findHost(el);
+          }
+        };
+        this.sections.forEach(findHost);
+        if (host) return host;
+        let frag = null;
+        const findFrag = (section) => {
+          if (frag) return;
+          for (const el of (section.elements || [])) {
+            if (el.type === 'field' && el.ref_id === blockId) { frag = section; return; }
+          }
+          for (const el of (section.elements || [])) {
+            if (el.type === 'section') findFrag(el);
+          }
+        };
+        this.sections.forEach(findFrag);
+        return frag;
       },
 
       // Adds a new (empty) nested section to ANY section,

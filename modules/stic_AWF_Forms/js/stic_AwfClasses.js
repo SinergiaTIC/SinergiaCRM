@@ -73,6 +73,64 @@ class stic_AwfDataBlock {
 
   get is_child() { return !this.is_root; }
 
+  /**
+   * Group exclusions of this block: the ids of the group roots the user has
+   * explicitly removed this block from. A SET (array) so that a block related
+   * to several group roots (e.g. a central block shared by two optional
+   * groups) can stay out of ALL of them: removing it from group C must keep
+   * the previous exclusion of group B, otherwise the next adoption pass would
+   * bounce it back into B (the "ping-pong" bug).
+   * Legacy configs stored a single string id; it is normalized here.
+   * @returns {string[]}
+   */
+  getGroupExclusions() {
+    const v = this.group_excluded_from;
+    if (Array.isArray(v)) return v.filter(x => typeof x === 'string' && x !== '');
+    if (typeof v === 'string' && v !== '') return [v];
+    return [];
+  }
+
+  /**
+   * Marks this block as excluded from the given group root (idempotent).
+   * @param {string} groupRootId
+   */
+  addGroupExclusion(groupRootId) {
+    if (!groupRootId) return;
+    const list = this.getGroupExclusions();
+    if (!list.includes(groupRootId)) list.push(groupRootId);
+    this.group_excluded_from = list;
+    delete this.group_excluded; // Clean up legacy boolean if present
+  }
+
+  /**
+   * Clears this block's exclusion for one group root (it is (re-)joining it),
+   * keeping the exclusions of OTHER groups.
+   * @param {string} groupRootId
+   */
+  removeGroupExclusion(groupRootId) {
+    if (!groupRootId) return;
+    this.group_excluded_from = this.getGroupExclusions().filter(x => x !== groupRootId);
+  }
+
+  /** Clears ALL exclusions (the block becomes a free/uncategorized block again). */
+  clearGroupExclusions() {
+    delete this.group_excluded_from;
+    delete this.group_excluded;
+  }
+
+  /** Removes only the legacy boolean exclusion flag (the exclusion set is kept). */
+  clearLegacyGroupExcluded() {
+    delete this.group_excluded;
+  }
+
+  /**
+   * Whether this block was explicitly removed from the given group root.
+   * @param {string} groupRootId
+   */
+  isExcludedFromGroup(groupRootId) {
+    return !!groupRootId && this.getGroupExclusions().includes(groupRootId);
+  }
+
   get custom_group_title() { return this.group_title; }
   set custom_group_title(value) {
     this.is_custom_group_title = true;
@@ -2983,6 +3041,74 @@ class stic_AwfLayout {
     };
     this.structure.forEach(normalizeContainerSections);
 
+    // ---- 8b. Healing pass: elements (whole blocks / field fragments) of a
+    //          GROUPED block must live inside the block's OWN home subtree (the
+    //          section rendered inside its instance loop). A manual edit or a
+    //          cross-host move leaves them elsewhere (e.g. a subgroup member's
+    //          field inside the parent group's host); the render would then
+    //          misread that host as a subgroup head and REPLACE its own
+    //          content with the subgroup loop (the host block's fields lost).
+    //          Relocate any such element to the block's home.
+    //          NOTE: the destination is resolved FRAGMENT-BLIND — counting a
+    //          field fragment as a host reference would chase the corruption
+    //          instead of healing it.
+    const designatedById = new Map();  // groupRootId -> its designated group section
+    const indexLayout = (section) => {
+      for (const el of section.elements) {
+        if (el.type === 'section') {
+          if (el.kind === 'group' && el.groupRootBlockId && !designatedById.has(el.groupRootBlockId)) {
+            designatedById.set(el.groupRootBlockId, el);
+          }
+          indexLayout(el);
+        }
+      }
+    };
+    this.structure.forEach(indexLayout);
+
+    const misplaced = [];
+    const heal = (section) => {
+      const keep = [];
+      for (const el of section.elements) {
+        if (el.type === 'section') { heal(el); keep.push(el); continue; }
+        if (el.type !== 'datablock' && el.type !== 'field') { keep.push(el); continue; }
+        const block = dataBlocks.find(b => b.id === el.ref_id);
+        if (!block) { keep.push(el); continue; }
+        const rootId = topRootIdOf(block);
+        if (!rootId) { keep.push(el); continue; }   // Standalone block: placement is user structure
+        let dest = null;
+        const ownDesignated = designatedById.get(block.id) || null;
+        if (el.type === 'datablock') {
+          // The WHOLE element is the home when it already sits inside the
+          // block's own scope (its designated subtree for heads, the root
+          // group subtree for plain members)
+          if (!ownDesignated || sectionContainsSection(ownDesignated, section)) { keep.push(el); continue; }
+        } else {
+          // Field fragment: must render inside its block's instance loop —
+          // inside its block's own designated subtree. Ambiguous placements
+          // (no designated subtree for the block) stay untouched.
+          if (!ownDesignated || sectionContainsSection(ownDesignated, section)) { keep.push(el); continue; }
+        }
+        // Destination: the innermost section WITHIN the block's own designated
+        // subtree that already holds elements of the block (co-locate), else
+        // its element template, else the designated section itself.
+        let inner = null;
+        const findInner = (w) => {
+          if (inner) return;
+          for (const e of (w.elements || [])) {
+            if (e !== el && (e.type === 'datablock' || e.type === 'field') && e.ref_id === block.id) { inner = w; return; }
+            if (e.type === 'section') findInner(e);
+          }
+        };
+        findInner(ownDesignated);
+        dest = inner || (ownDesignated.elements || []).find(e => e.type === 'section' && e.groupTemplate === true) || ownDesignated;
+        if (dest === section || sectionContainsSection(dest, section)) { keep.push(el); continue; }
+        misplaced.push({ el, dest });
+      }
+      section.elements = keep;
+    };
+    this.structure.forEach(heal);
+    misplaced.forEach(({ el, dest }) => dest.elements.push(el));
+
     // ---- 9. Integrity guard: Alpine's x-for keys top-level sections by id, so
     //         the structure must NEVER end a sync with a repeated or missing
     //         id. Exact duplicate references (the same object pushed twice by a
@@ -3776,6 +3902,11 @@ class stic_AwfConfiguration {
         d.group_root = '';
       }
     });
+
+    // Refresh groups: the group root's title must drop the deleted member
+    // (otherwise the badge keeps e.g. "Persona + Tasca" after deleting Tasca),
+    // and the layout must drop the deleted block's sections right away
+    this.refreshGroups();
   }
 
   deleteDataBlockField(dataBlock, field) {
@@ -4212,17 +4343,21 @@ class stic_AwfConfiguration {
    * @param {stic_AwfDataBlock} parentBlock
    * @returns {boolean}
    */
-  canAdoptHeadIntoGroup(head, parentBlock) {
-    if (!head || !parentBlock) return false;
-    // N×M: temporarily join and evaluate the in-place rule
+  canAdoptHeadIntoGroup(head, joinUnder) {
+    if (!head || !joinUnder) return false;
+    // N×M: temporarily join and evaluate the in-place rule — AT THE REAL
+    // JOINING POINT (`joinUnder`): with nested groups, a head joining under a
+    // DEEPER member lands one level deeper than the group's root, and the
+    // depth/N×M rule must be evaluated there (joining under the root would
+    // underestimate the depth and allow 3-level repeatable chains).
     const prevGroupRoot = head.group_root;
-    head.group_root = parentBlock.id;
+    head.group_root = joinUnder.id;
     const branchOk = head.canBeRepeatable(this.data_blocks);
     head.group_root = prevGroupRoot;
     if (!branchOk) return false;
     // Nesting depth: the head lands at parentDepth + 1; its own members one
     // level deeper — the whole nesting must stay within 2 levels
-    const parentDepth = parentBlock.getDepth(this.data_blocks);
+    const parentDepth = joinUnder.getDepth(this.data_blocks);
     const subtreeHeight = head.getChildren(this.data_blocks).length > 0 ? 1 : 0;
     return parentDepth + 1 + subtreeHeight <= 2;
   }
@@ -4251,28 +4386,53 @@ class stic_AwfConfiguration {
         if (visited.has(candidate.id)) return;
 
         // Do not re-adopt if the candidate was explicitly excluded from THIS group
-        if (candidate.group_excluded_from && 
-           (candidate.group_excluded_from === thisGroupRootId || candidate.group_excluded_from === parentBlock.id)) {
+        if (candidate.isExcludedFromGroup(thisGroupRootId) || candidate.isExcludedFromGroup(parentBlock.id)) {
           return;
         }
 
         // Adopt if: (a) candidate is an orphan (is_root), OR
-        //           (b) candidate is in the same parent group (reparenting into subgroup)
+        //           (b) candidate is in the same parent group (reparenting into subgroup), OR
+        //           (c) candidate is a DIRECT member of `current` (existing member of
+        //               the group hierarchy: the BFS must keep expanding THROUGH it,
+        //               otherwise transitive dependencies (member -> orphan) are never
+        //               reached — e.g. Org -> Persona -> Tarea with the group already
+        //               formed: Tarea depends on the MEMBER (Persona), not on the head,
+        //               and would never be adopted).
         const isOrphan = candidate.is_root;
         const isSameGroupChild = parentGroupRoot && candidate.group_root === parentGroupRoot
           && candidate.id !== parentBlock.id;
-        if (!isOrphan && !isSameGroupChild) return;
+        const isCurrentChild = candidate.id !== current.id && candidate.group_root === current.id;
+        if (!isOrphan && !isSameGroupChild && !isCurrentChild) return;
 
+        // Existing members are already part of the hierarchy: expand through
+        // them WITHOUT touching their group_root (re-parenting a correctly
+        // nested member would flatten the group)
+        if (isCurrentChild) {
+          visited.add(candidate.id);
+          queue.push(candidate);
+          return;
+        }
+
+        // The N×M + depth rule is evaluated AT THE REAL JOINING POINT
+        // (`current`): a head joining under a deeper member lands one level
+        // deeper than the group root, and must respect the same limits the
+        // in-place switch would enforce there.
         if ((candidate.is_repeatable || candidate.is_optional)
-          && !this.canAdoptHeadIntoGroup(candidate, parentBlock)) return;
+          && !this.canAdoptHeadIntoGroup(candidate, current)) return;
 
         if (this.isBlockDependentOnParent(candidate, current)) {
           if (current.hasAncestor(candidate, this.data_blocks)) return; // Cycle guard
 
-          candidate.group_root = parentBlock.id;
-          // Once successfully adopted into a group, reset its exclusion flag
-          delete candidate.group_excluded_from;
-          delete candidate.group_excluded;
+          // The candidate depends on `current` (the member the BFS expanded
+          // through), so it nests under IT: at the first level current IS the
+          // head (same as the old parentBlock.id), at deeper levels it nests
+          // under the member (per-instance FK direction)
+          candidate.group_root = current.id;
+          // The candidate joins THIS group: clear only THIS group's exclusion,
+          // keeping the exclusions of other groups (e.g. a central block shared
+          // by two optional groups stays excluded from the other one)
+          candidate.removeGroupExclusion(parentBlock.id);
+          candidate.removeGroupExclusion(thisGroupRootId);
 
           visited.add(candidate.id);
           queue.push(candidate);
@@ -4304,8 +4464,11 @@ class stic_AwfConfiguration {
 
     descendants.forEach(child => {
       child.group_root = releaseTo;
-      delete child.group_excluded_from;
-      delete child.group_excluded;
+      // The disbanded group no longer exists: drop only ITS exclusion, keeping
+      // the exclusions the user made against other groups
+      child.removeGroupExclusion(parentBlock.id);
+      child.removeGroupExclusion(releaseTo);
+      child.clearLegacyGroupExcluded();
     });
 
     // Reset limits and clear group metadata
@@ -4313,8 +4476,7 @@ class stic_AwfConfiguration {
     parentBlock.max_instances = 1;
     parentBlock.group_title = '';
     parentBlock.is_custom_group_title = false;
-    delete parentBlock.group_excluded_from;
-    delete parentBlock.group_excluded;
+    parentBlock.clearGroupExclusions();
   }
 
   /**
@@ -4330,8 +4492,7 @@ class stic_AwfConfiguration {
       block.max_instances = null; // Unlimited (>1)
 
       // Clean exclusion: this block is now an independent group head
-      delete block.group_excluded_from;
-      delete block.group_excluded;
+      block.clearGroupExclusions();
 
       // Auto-adopt orphan dependent blocks
       this.adoptRelatedOrphans(block);
@@ -4376,8 +4537,7 @@ class stic_AwfConfiguration {
       block.min_instances = 0;
 
       // Clean exclusion: this block is now an independent group head
-      delete block.group_excluded_from;
-      delete block.group_excluded;
+      block.clearGroupExclusions();
 
       // Auto-adopt orphan dependent blocks
       this.adoptRelatedOrphans(block);
@@ -4448,16 +4608,20 @@ class stic_AwfConfiguration {
 
     if (!parent.isGroupHead(this.data_blocks) || parent.getDepth(this.data_blocks) > 1) return;
 
-    // Reset exclusion flag so it is a full-fledged group member again
-    delete child.group_excluded_from;
-    delete child.group_excluded;
+    // The child explicitly (re-)joins THIS group: clear only THIS group's
+    // exclusion, keeping the exclusions the user made against OTHER groups
+    // (e.g. a central block shared by two optional groups)
+    child.removeGroupExclusion(parent.id);
+    child.removeGroupExclusion(parentGroupRoot);
+    child.clearLegacyGroupExcluded();
     child.group_root = parent.id;
 
-    // Re-adopt relational descendants and clear their exclusion flags as well
+    // Re-adopt relational descendants and clear THEIR exclusion for this group
     const descendants = child.getRelationalDescendants(this.data_blocks);
     descendants.forEach(d => {
-      delete d.group_excluded_from;
-      delete d.group_excluded;
+      d.removeGroupExclusion(parent.id);
+      d.removeGroupExclusion(parentGroupRoot);
+      d.clearLegacyGroupExcluded();
 
       if ((d.is_root || (parentGroupRoot && d.group_root === parentGroupRoot))
           && !d.is_repeatable && !d.is_optional && !d.isGroupHead(this.data_blocks)) {
@@ -4480,17 +4644,18 @@ class stic_AwfConfiguration {
     // The group root they are being unlinked from
     const currentGroupRootId = child.group_root;
 
-    // Mark the target child as excluded from THIS specific group
-    child.group_excluded_from = currentGroupRootId;
-    delete child.group_excluded; // Clean up old boolean if present
+    // Mark the target child as excluded from THIS specific group. The exclusion
+    // is ADDED to the block's exclusion set (never overwritten): a block related
+    // to several group roots keeps the exclusions of the other groups, so it
+    // cannot be bounced back into them by the next adoption pass.
+    child.addGroupExclusion(currentGroupRootId);
     child.group_root = '';
 
     // Descendants in the same group leave with the child and are excluded from that root
     const relationalDescendants = child.getRelationalDescendants(this.data_blocks);
     relationalDescendants.forEach(descendant => {
       if (descendant.group_root === currentGroupRootId || descendant.group_root === child.id) {
-        descendant.group_excluded_from = currentGroupRootId;
-        delete descendant.group_excluded;
+        descendant.addGroupExclusion(currentGroupRootId);
         descendant.group_root = '';
       }
     });
