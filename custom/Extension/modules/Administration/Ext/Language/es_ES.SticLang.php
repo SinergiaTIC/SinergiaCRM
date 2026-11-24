@@ -24,34 +24,23 @@
 // Sección de administración de SinergiaCRM
 $mod_strings['LBL_SINERGIACRM_TAB_TITLE'] = 'SinergiaCRM';
 $mod_strings['LBL_SINERGIACRM_TAB_DESCRIPTION'] = 'Opciones de administración de SinergiaCRM';
-
-// Elementos de la sección de administración (títulos y descripciones cortas)
 $mod_strings['LBL_STIC_VALIDATION_ACTIONS_LINK_TITLE'] = 'Acciones de validación';
 $mod_strings['LBL_STIC_VALIDATION_ACTIONS_DESCRIPTION'] = 'Gestiona las acciones de validación y permite vincularlas a las tareas programadas.';
-
 $mod_strings['LBL_STIC_VALIDATION_RESULTS_LINK_TITLE'] = 'Resultados de validación';
 $mod_strings['LBL_STIC_VALIDATION_RESULTS_DESCRIPTION'] = 'Gestiona y revisa los resultados de las acciones de validación.';
-
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_LINK_TITLE'] = 'Vistas personalizadas';
 $mod_strings['LBL_STIC_CUSTOM_VIEWS_DESCRIPTION'] = 'Personalización condicional de las vistas de los módulos.';
-
 $mod_strings['LBL_STIC_MESSAGES_QUEUE_LINK_TITLE'] = 'Cola de mensajes de teléfono';
 $mod_strings['LBL_STIC_MESSAGES_QUEUE_DESCRIPTION'] = 'Gestión de la cola de mensajes de teléfono (SMS).';
-
 $mod_strings['LBL_STIC_SETTINGS_LINK_TITLE'] = 'Configuración';
 $mod_strings['LBL_STIC_SETTINGS_DESCRIPTION'] = 'Opciones de configuración de SinergiaCRM.';
-
 $mod_strings['LBL_STIC_TEST_DATA_LINK_TITLE'] = 'Datos de prueba';
 $mod_strings['LBL_STIC_TEST_DATA_DESCRIPTION'] = 'Cargar o eliminar datos de prueba.';
-
 $mod_strings['LBL_STIC_SINERGIADA_LINK_TITLE'] = 'Sinergia Data Analytics';
 $mod_strings['LBL_STIC_SINERGIADA_DESCRIPTION'] = 'Reconstruye la integración con Sinergia Data Analytics.';
 $mod_strings['LBL_STIC_SINERGIADA_MAX_USERS_ERROR'] = 'Se ha excedido el límite de usuarios no administradores en SinergiaDA. Máximo permitido: <b>__max_users__</b>. Valor actual: <b>__enabled_users__</b>. Desactive los usuarios de más y reinténtelo.';
-
 $mod_strings['LBL_STIC_MAIN_MENU_LINK_TITLE'] = 'Menú principal';
 $mod_strings['LBL_STIC_MAIN_MENU_DESCRIPTION'] = 'Configuración de la estructura y el contenido del menú';
-
-// Datos de prueba
 $mod_strings['LBL_STIC_TEST_DATA_NOTICE'] = '<strong>Importante:</strong> Los registros de prueba cargados en los diferentes módulos no deben usarse para almacenar datos reales, ya que pueden ser eliminados en el futuro.';
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_LINK_TITLE'] = 'Cargar el conjunto de datos de prueba';
 $mod_strings['LBL_STIC_TEST_DATA_INSERT_DESCRIPTION'] = 'Cargar un conjunto de datos de prueba para facilitar el aprendizaje del uso de SinergiaCRM. Estos datos podrán ser eliminados a voluntad en cualquier momento posterior.';
@@ -61,8 +50,6 @@ $mod_strings['LBL_STIC_TEST_DATA_REMOVE_LINK_TITLE'] = 'Eliminar el conjunto de 
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_DESCRIPTION'] = 'Eliminar el conjunto de datos de prueba previamente cargado.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_SUCCESS'] = 'Se han eliminado los datos de prueba correctamente.';
 $mod_strings['LBL_STIC_TEST_DATA_REMOVE_ERROR'] = 'Se han producido errores al eliminar los datos de prueba. Revise el <a target="_blank" href="index.php?action=LogView&module=Configurator&doaction=all&filter=action_removeSticData">log</a>.';
-
-// SinergiaDA
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_LINK_TITLE'] = 'Reconstruir ahora';
 $mod_strings['LBL_STIC_RUN_SDA_ACTIONS_DESCRIPTION'] = 'Reconstruye y repara las vistas y los elementos necesarios para la integración con Sinergia Data Analytics. Añade nuevos campos si los hay.';
 $mod_strings['LBL_STIC_RUN_SDA_DEBUG_CHECK_LABEL'] = 'Activar modo de depuración';
@@ -70,8 +57,6 @@ $mod_strings['LBL_STIC_GO_TO_SDA_LINK_TITLE'] = 'Ir a Sinergia Data Analytics';
 $mod_strings['LBL_STIC_GO_TO_SDA_DESCRIPTION'] = 'Abre la instancia de SinergiaDA en una nueva pestaña.';
 $mod_strings['LBL_STIC_RUN_SDA_SUCCESS_MSG'] = 'La reconstrucción de Sinergia Data Analytics se ha completado con éxito.';
 $mod_strings['LBL_STIC_RUN_SDA_ERROR_MSG'] = 'Durante la reconstrucción de Sinergia Data Analytics se han encontrado los siguientes errores. Contacte con el soporte técnico de SinergiaTIC si lo considera necesario.';
-
-// Menú principal avanzado
 $mod_strings['LBL_STIC_MENU_CONFIGURE_TITLE'] = 'Configuración del menú principal';
 $mod_strings['LBL_STIC_MENU_ENABLED_NOT_INCLUDED'] = 'Módulos habilitados no incluidos en el menú';
 $mod_strings['LBL_STIC_MENU_ENABLED_INCLUDED'] = 'Configuración del menú';
@@ -92,18 +77,18 @@ $mod_strings['LBL_STIC_MENU_COMMAND_DUPLICATE'] = 'Duplicar';
 $mod_strings['LBL_STIC_MENU_COMMAND_NEW_MAIN_NODE'] = 'Nuevo nodo principal';
 $mod_strings['LBL_STIC_MENU_COMMAND_EXPAND'] = 'Expandir árbol';
 $mod_strings['LBL_STIC_MENU_COMMAND_COLLAPSE'] = 'Contraer árbol';
-
-// Cadenas de SuiteCRM modificadas
 $mod_strings['LBL_CONFIGURE_GROUP_TABS'] = 'Agrupación de subpaneles';
 $mod_strings['LBL_CONFIGURE_GROUP_TABS_DESC'] = 'Configuración de la agrupación de los subpaneles en las vistas de detalle';
-
-// Otras cadenas
 $mod_strings['LBL_TRACKERS_TITLE'] = 'Monitorización';
 $mod_strings['LBL_TRACKERS_DESCRIPTION'] = 'Registro de las sesiones de usuario y de las acciones sobre registros.';
 $mod_strings['LBL_ADMIN_ACTIONS'] = 'Acciones de Administración';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_SENT_ONE'] = 'portal invitation sent successfully';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_SENT_MANY'] = 'portal invitations sent successfully';
+$mod_strings['LBL_STIC_PORTAL_RESET_SENT_ONE'] = 'password reset email sent successfully';
+$mod_strings['LBL_STIC_PORTAL_RESET_SENT_MANY'] = 'password reset emails sent successfully';
+$mod_strings['LBL_STIC_PORTAL_ACTION_ERROR_ONE'] = 'record could not be processed:';
+$mod_strings['LBL_STIC_PORTAL_ACTION_ERROR_MANY'] = 'records could not be processed:';
 $mod_strings['ERR_SYS_GEN_PWD_TPL_NOT_SELECTED'] = 'Especificar la plantilla de correo que se usará cuando el sistema genere la contraseña de un nuevo usuario.';
-
-// Configuración de SinergiaDA
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_SECTION'] = 'Configuración de SinergiaDA';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_GENERAL'] = 'Configuración general';
 $mod_strings['LBL_STIC_SINERGIADA_CONFIG_CACHE'] = 'Caché de SinergiaDA';
@@ -147,23 +132,112 @@ $mod_strings['LBL_STIC_DA_DEBUG_HIDE'] = 'Ocultar';
 $mod_strings['LBL_STIC_DA_DEBUG_SHOW'] = 'Mostrar';
 $mod_strings['LBL_STIC_DA_DEBUG_LOADING'] = 'Reconstruyendo con depuración...';
 $mod_strings['LBL_STIC_SINERGIADA_ACTIONS_SECTION'] = 'Acciones';
-
-// Autenticación OAuth
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Al activar esta opción los usuarios podrán autenticarse mediante OAuth 2.0, además de hacerlo con usuario y contraseña. Después de activarla se deberá configurar por lo menos uno de los proveedores externos. Para más información, consulte la <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentación</a>.';
-
-// Portal Login Audit Log - etiquetas de visualización
+$mod_strings['LBL_STIC_PORTAL_CONFIG_LINK_TITLE'] = 'Portal Configuration';
+$mod_strings['LBL_STIC_PORTAL_CONFIG_DESCRIPTION'] = 'Configure portal authentication, security, branding, and email templates';
+$mod_strings['LBL_STIC_PORTAL_GENERAL'] = 'General Settings';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_POLICIES'] = 'Password Policies';
+$mod_strings['LBL_STIC_PORTAL_SECURITY'] = 'Security Settings';
+$mod_strings['LBL_STIC_PORTAL_MAGIC_LINK'] = 'Magic Link Settings';
+$mod_strings['LBL_STIC_PORTAL_EMAIL_TEMPLATES'] = 'Email Templates';
+$mod_strings['LBL_STIC_PORTAL_NOTIFICATIONS'] = 'Security Notifications';
+$mod_strings['LBL_STIC_PORTAL_BULK_ACTIONS'] = 'Bulk Actions';
+$mod_strings['LBL_STIC_PORTAL_LOGIN_AUDIT'] = 'Registro de auditoría de inicio de sesión';
+$mod_strings['LBL_STIC_PORTAL_TITLE'] = 'Portal Title';
+$mod_strings['LBL_STIC_PORTAL_HOME_URL'] = 'Home URL';
+$mod_strings['LBL_STIC_PORTAL_LOGO'] = 'Logo del portal';
+$mod_strings['LBL_PORTAL_ACTIONS_TEMPLATE_DEFAULT'] = 'Default (from Portal Configuration)';
+$mod_strings['LBL_STIC_PORTAL_CURRENT_LOGO'] = 'Logo actual';
+$mod_strings['LBL_STIC_PORTAL_CURRENT_LOGO_HELP'] = 'El logo que se muestra actualmente en la página de login del portal.';
+$mod_strings['LBL_STIC_PORTAL_NO_LOGO'] = 'Sin logo personalizado (usando el predeterminado).';
+$mod_strings['LBL_STIC_PORTAL_LOGO_HELP'] = 'Formatos permitidos: solo PNG y JPEG. El tamaño máximo depende de la configuración del servidor.';
+$mod_strings['LBL_STIC_PORTAL_LOGO_WIDTH'] = 'Ancho máximo del logo';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_MIN_LENGTH'] = 'Password minimum length';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_HISTORY'] = 'Password history count';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_UPPER'] = 'Password should contain uppercase characters';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_LOWER'] = 'Password should contain lowercase characters';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_NUMBER'] = 'Password should contain numbers';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_SPECIAL'] = 'Password should contain special characters';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRATION'] = 'Password expiration';
+$mod_strings['LBL_STIC_PORTAL_MAX_ATTEMPTS'] = 'Max Failed Attempts';
+$mod_strings['LBL_STIC_PORTAL_LOCKOUT_DURATION'] = 'Lockout Duration';
+$mod_strings['LBL_STIC_PORTAL_REMEMBER_ME'] = 'Remember Me Days';
+$mod_strings['LBL_STIC_PORTAL_SESSION_TIMEOUT'] = 'Session Timeout';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RETENTION'] = 'Audit Retention';
+$mod_strings['LBL_STIC_PORTAL_CONCURRENT_SESSIONS'] = 'Concurrent Sessions';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_LIMIT'] = 'Invitation Batch Limit';
+$mod_strings['LBL_STIC_PORTAL_RECORDS'] = 'Records';
+$mod_strings['LBL_STIC_PORTAL_MAGIC_ENABLED'] = 'Enable Magic Link';
+$mod_strings['LBL_STIC_PORTAL_MAGIC_EXPIRATION'] = 'Magic Link Expiration';
+$mod_strings['LBL_STIC_PORTAL_CHARACTERS'] = 'Characters';
+$mod_strings['LBL_STIC_PORTAL_ATTEMPTS'] = 'Attempts';
+$mod_strings['LBL_STIC_PORTAL_MINUTES'] = 'Minutes';
+$mod_strings['LBL_STIC_PORTAL_DAYS'] = 'Days';
+$mod_strings['LBL_STIC_PORTAL_DISABLED'] = '(0 = disabled)';
+$mod_strings['LBL_STIC_PORTAL_NEVER'] = '(0 = never)';
+$mod_strings['LBL_STIC_PORTAL_TEMPLATE_CONTACTS'] = 'Portal credentials (Contacts):';
+$mod_strings['LBL_STIC_PORTAL_TEMPLATE_ACCOUNTS'] = 'Portal credentials (Accounts):';
+$mod_strings['LBL_STIC_PORTAL_TEMPLATE_RESET'] = 'Password reset:';
+$mod_strings['LBL_STIC_PORTAL_TEMPLATE_MAGIC'] = 'Magic link:';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_PASSWORD_CHANGED'] = 'Enable password changed notification:';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_NEW_LOGIN'] = 'Enable new login notification:';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_ACCOUNT_LOCKED'] = 'Enable account locked notification:';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_REQUESTED'] = 'Enable reset requested notification:';
+$mod_strings['LBL_STIC_PORTAL_CREATE'] = 'Create';
+$mod_strings['LBL_STIC_PORTAL_EDIT'] = 'Edit';
+$mod_strings['LBL_STIC_PORTAL_VIEW_LOG'] = 'View Log';
+$mod_strings['LBL_STIC_PORTAL_CLEAR_LOCKOUTS'] = 'Clear All Lockouts';
+$mod_strings['LBL_STIC_PORTAL_CLEAR_LOCKOUTS_HELP'] = 'Remove all portal account lockouts at once. Locked accounts are automatically unlocked after the configured lockout duration. Use this to manually unlock all accounts immediately.';
+$mod_strings['LBL_STIC_PORTAL_CLEAR_SESSIONS'] = 'Clear All Sessions';
+$mod_strings['LBL_STIC_PORTAL_CLEAR_SESSIONS_HELP'] = 'Force logout of all active portal sessions. This invalidates all current portal login sessions. Users will need to log in again.';
+$mod_strings['LBL_STIC_PORTAL_CONFIRM_CLEAR_LOCKOUTS'] = 'Are you sure you want to clear all portal lockouts?';
+$mod_strings['LBL_STIC_PORTAL_CONFIRM_CLEAR_SESSIONS'] = 'Are you sure you want to clear all portal sessions?';
+$mod_strings['LBL_STIC_PORTAL_TITLE_HELP'] = 'Portal name shown on login page and emails.';
+$mod_strings['LBL_STIC_PORTAL_HOME_URL_HELP'] = 'A donde llegan los usuarios tras iniciar sesión directamente en el portal (sin aplicación OAuth). Los inicios de sesión desde una aplicación OAuth vuelven siempre a la URL de callback de esa aplicación. Si se deja vacío, se muestra la página de bienvenida.';
 $mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_CONTACTS'] = 'Usuario del portal por defecto (Personas)';
 $mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_ACCOUNTS'] = 'Usuario del portal por defecto (Organizaciones)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_HELP'] = 'Campo utilizado para asignar el usuario del portal cuando se envía una invitación o un restablecimiento de contraseña y el registro aún no tiene usuario. Por defecto se usa el email principal.';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_EMAIL'] = 'Email (dirección principal)';
+$mod_strings['LBL_STIC_PORTAL_LOGO_WIDTH_HELP'] = 'Ancho máximo en píxeles para el logo en la página de login del portal.';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_MIN_LENGTH_HELP'] = 'Minimum number of characters required for portal passwords.';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_HISTORY_HELP'] = 'Prevent reuse of the last N passwords. Set to 0 to disable.';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRATION_HELP'] = 'Number of days before a password expires and must be changed. Set to 0 to disable.';
+$mod_strings['LBL_STIC_PORTAL_MAX_ATTEMPTS_HELP'] = 'Number of consecutive failed login attempts before account is locked.';
+$mod_strings['LBL_STIC_PORTAL_LOCKOUT_DURATION_HELP'] = 'Number of minutes an account remains locked after exceeding max failed attempts.';
+$mod_strings['LBL_STIC_PORTAL_REMEMBER_ME_HELP'] = 'Number of days the Remember Me cookie remains valid.';
+$mod_strings['LBL_STIC_PORTAL_SESSION_TIMEOUT_HELP'] = 'Number of minutes of inactivity before the portal session expires.';
+$mod_strings['LBL_STIC_PORTAL_AUDIT_RETENTION_HELP'] = 'Number of days to keep login audit records before purging.';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_LIMIT_HELP'] = 'Maximum number of records that can be invited at once from the list view mass action. Prevents timeouts when sending large batches of invitation emails synchronously.';
+$mod_strings['LBL_STIC_PORTAL_MAGIC_ENABLED_HELP'] = 'Allow users to log in via a one-time link sent to their email, without entering a password.';
+$mod_strings['LBL_STIC_PORTAL_MAGIC_EXPIRATION_HELP'] = 'Number of minutes the magic link remains valid after being sent.';
+$mod_strings['LBL_STIC_PORTAL_LOGIN_AUDIT_HELP'] = 'View login attempts (success and failure) with IP, user agent, and timestamp.';
 $mod_strings['LBL_STIC_PORTAL_TEMPLATE_CONTACTS_HELP'] = 'Variables: cualquier campo del módulo Personas (incluidos los campos personalizados creados en Estudio) funciona con la sintaxis estándar de plantillas de SinergiaCRM: $contact_<nombre_campo>. Además, están disponibles estas variables de portal:<br><br>Variables de portal:<br><b>$portal_address</b> — URL del portal/aplicación<br><b>$portal_app_name</b> — Nombre de la aplicación destino (si no hay, el título del portal)<br><b>$portal_reset_link</b> — Enlace para establecer la contraseña (válido 24 h)<br><b>$portal_title</b> — Título del portal';
 $mod_strings['LBL_STIC_PORTAL_TEMPLATE_ACCOUNTS_HELP'] = 'Variables: cualquier campo del módulo Organizaciones (incluidos los campos personalizados creados en Estudio) funciona con la sintaxis estándar de plantillas de SinergiaCRM: $account_<nombre_campo>. Además, están disponibles estas variables de portal:<br><br>Variables de portal:<br><b>$portal_address</b> — URL del portal/aplicación<br><b>$portal_app_name</b> — Nombre de la aplicación destino (si no hay, el título del portal)<br><b>$portal_reset_link</b> — Enlace para establecer la contraseña (válido 24 h)<br><b>$portal_title</b> — Título del portal';
 $mod_strings['LBL_STIC_PORTAL_TEMPLATE_RESET_HELP'] = 'Variables de portal:<br><b>$portal_reset_link</b> — Enlace para restablecer la contraseña (válido 1 hora)<br><b>$portal_app_name</b> — Nombre de la aplicación destino (si no hay, el título del portal)<br><b>$portal_title</b> — Título del portal';
+$mod_strings['LBL_STIC_PORTAL_ACTION_LIMIT'] = 'Demasiados registros seleccionados: el máximo es 100 registros por petición.';
 $mod_strings['LBL_STIC_PORTAL_TEMPLATE_MAGIC_HELP'] = 'Variables de portal:<br><b>$portal_magic_link</b> — Enlace de acceso con un clic<br><b>$portal_title</b> — Título del portal';
+$mod_strings['LBL_STIC_PORTAL_NOTIFICATIONS_HELP'] = 'Security notifications inform portal users about important account events via email. Tick a checkbox to enable a notification, then optionally choose an email template to customise the message. If no template is selected a built-in default is used. Notifications that are not ticked will never be sent.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_PASSWORD_CHANGED_HELP'] = 'Sent when the user successfully changes their portal password. Tick the checkbox to enable this notification, then optionally choose a custom email template. Available variables: <b>$notification_time</b>, <b>$notification_ip</b>, <b>$notification_ua</b>, <b>$notification_event</b>, <b>$portal_title</b>, <b>$contact_full_name</b> / <b>$account_name</b>.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_NEW_LOGIN_HELP'] = 'Sent on every successful portal login so the user can monitor account access. Tick the checkbox to enable, then optionally choose a template. Available variables: <b>$notification_time</b>, <b>$notification_ip</b>, <b>$notification_ua</b>, <b>$notification_event</b>, <b>$portal_title</b>, <b>$contact_full_name</b> / <b>$account_name</b>.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_ACCOUNT_LOCKED_HELP'] = 'Sent when the account is locked after too many failed login attempts. The user cannot log in until the lockout expires or an admin clears it. Tick the checkbox to enable, then optionally choose a template. Available variables: <b>$notification_time</b>, <b>$notification_ip</b>, <b>$notification_ua</b>, <b>$notification_event</b>, <b>$portal_title</b>, <b>$contact_full_name</b> / <b>$account_name</b>.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_REQUESTED_HELP'] = 'Sent when a password reset is requested via the Forgot Password link. Alerts the user if someone else tries to reset their password. Tick the checkbox to enable, then optionally choose a template. Available variables: <b>$notification_time</b>, <b>$notification_ip</b>, <b>$notification_ua</b>, <b>$notification_event</b>, <b>$portal_title</b>, <b>$contact_full_name</b> / <b>$account_name</b>.';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_SUBJECT'] = 'SinergiaCRM Portal - Access your portal';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_BODY'] = 'Hello,<br><br>Your SinergiaCRM portal account has been created. This is your first time accessing it.<br><br><strong>First step: Set your password before signing in.</strong> You must complete this step before you can access the portal.<br><a href=\"$portal_reset_link\">Set Password</a><br><br>After setting your password, open the application: <a href=\"$portal_address\">$portal_address</a><br>Portal username: $contact_stic_portal_username_c<br><br>The password setup link expires in 24 hours. If you did not expect this email, contact your organization.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_PWCHG_SUBJECT'] = '$portal_title - Your password was changed';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_PWCHG_BODY'] = 'Your portal password was changed at $notification_time from IP $notification_ip. Contact support if not you.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_LOGIN_SUBJECT'] = '$portal_title - New login detected';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_LOGIN_BODY'] = 'New login at $notification_time. IP: $notification_ip. Browser: $notification_ua. Contact support if not you.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_LOCK_SUBJECT'] = '$portal_title - Account locked';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_LOCK_BODY'] = 'Account locked due to failed attempts at $notification_time from IP $notification_ip. Will unlock automatically or contact support.';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_SUBJECT'] = '$portal_title - Password reset requested';
+$mod_strings['LBL_STIC_PORTAL_NOTIFY_RESET_BODY'] = 'Reset requested at $notification_time from IP $notification_ip. Contact support if not you.';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_CONTACTS'] = 'Usuario del portal por defecto (Personas)';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_ACCOUNTS'] = 'Usuario del portal por defecto (Organizaciones)';
 $mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_HELP'] = 'Campo utilizado para asignar el usuario del portal cuando se envía una invitación o un restablecimiento de contraseña y el registro aún no tiene usuario. Por defecto se usa el email principal.';
 $mod_strings['LBL_STIC_PORTAL_USERNAME_FIELD_EMAIL'] = 'Email (dirección principal)';
 $mod_strings['LBL_STIC_PORTAL_BACK_CONFIG'] = 'Volver a la configuración del portal';
-$mod_strings['LBL_STIC_PORTAL_LOGIN_AUDIT'] = 'Registro de auditoría de inicio de sesión';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_DATE'] = 'Fecha';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_USERNAME'] = 'Usuario';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_TYPE'] = 'Tipo';
@@ -185,5 +259,3 @@ $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_PASSWORD'] = 'Contraseña';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_INVITATION'] = 'Invitación';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_MAGIC_LINK'] = 'Enlace mágico';
 $mod_strings['LBL_STIC_PORTAL_AUDIT_METHOD_ADMIN_RESET'] = 'Restablecimiento por administrador';
-$mod_strings['LBL_STIC_PORTAL_ACTION_LIMIT'] = 'Demasiados registros seleccionados: el máximo es 100 registros por petición.';
-$mod_strings['LBL_STIC_PORTAL_HOME_URL_HELP'] = 'A donde llegan los usuarios tras iniciar sesión directamente en el portal (sin aplicación OAuth). Los inicios de sesión desde una aplicación OAuth vuelven siempre a la URL de callback de esa aplicación. Si se deja vacío, se muestra la página de bienvenida.';

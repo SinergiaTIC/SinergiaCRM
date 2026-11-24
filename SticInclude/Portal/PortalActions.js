@@ -96,7 +96,6 @@ function portalActionSyncTemplateSelect() {
     var defOpt = document.createElement("option");
     defOpt.value = "";
     var _tplDef = SUGAR.language.get("Administration", "LBL_PORTAL_ACTIONS_TEMPLATE_DEFAULT");
-    if (!_tplDef || _tplDef === "undefined") _tplDef = SUGAR.language.get("AOW_Actions", "LBL_PORTAL_ACTIONS_TEMPLATE_DEFAULT");
     defOpt.textContent = (_tplDef && _tplDef !== "undefined") ? _tplDef : "Default (Portal Configuration)";
     tplSel.appendChild(defOpt);
     (STIC.portalTemplates || []).forEach(function(t) {
