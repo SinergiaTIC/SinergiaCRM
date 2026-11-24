@@ -202,7 +202,13 @@ class SticPortalConfigUtils
             return false;
         }
         // Raster formats only: SVG served same-origin is an XSS vector
-        // (scripts can be embedded in SVG files).
+        // (scripts can be embedded in SVG files). Use verify_uploaded_image()
+        // (same validation as the Configurator company logo upload) to ensure
+        // the file is a genuine image, not just a renamed script.
+        if (!verify_uploaded_image($fileField['tmp_name'])) {
+            $GLOBALS['log']->error(__METHOD__ . " - Invalid image file: " . $fileField['name']);
+            return false;
+        }
         $allowed = array('image/png' => 'png', 'image/jpeg' => 'jpg');
         $finfo   = function_exists('mime_content_type') ? mime_content_type($fileField['tmp_name']) : $fileField['type'];
         if (!isset($allowed[$finfo])) {

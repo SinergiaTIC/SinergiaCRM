@@ -22,3 +22,4 @@
  */
 
 $mod_strings['LNK_NEW_OAUTH2_PORTAL_CLIENT'] = 'New Portal Client (Authorization Code)';
+$mod_strings['LBL_SECRET_HASHED'] = 'Client Secret';

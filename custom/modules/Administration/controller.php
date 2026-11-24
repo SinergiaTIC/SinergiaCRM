@@ -281,7 +281,13 @@ class CustomAdministrationController extends AdministrationController
         // Logo upload goes through handleLogoUpload() which validates the MIME type
         // (rejects arbitrary/scriptable files) and stores via the portal config.
         if (!empty($_FILES['portal_logo_file']['tmp_name'])) {
-            SticPortalConfigUtils::handleLogoUpload($_FILES['portal_logo_file']);
+            $logoResult = SticPortalConfigUtils::handleLogoUpload($_FILES['portal_logo_file']);
+            if ($logoResult === false) {
+                // Invalid image: do not overwrite the existing logo, inform the admin
+                $_SESSION['stic_portal_config_error'] = 'Invalid logo image. Only PNG and JPEG files are allowed.';
+                header('Location: index.php?module=Administration&action=sticportalconfig');
+                exit;
+            }
         }
         header('Location: index.php?module=Administration&action=index');
         exit;

@@ -121,7 +121,7 @@ class SticPortalActionsUtils
 
         $username = self::ensurePortalUsername($bean);
         if ($username === '') {
-            return array('success' => false, 'error' => 'no portal username available');
+            return array('success' => false, 'error' => 'no email address available');
         }
 
         $allConfig   = SticPortalConfigUtils::getAll();
@@ -238,7 +238,7 @@ class SticPortalActionsUtils
 
         $username = self::ensurePortalUsername($bean);
         if ($username === '') {
-            return array('success' => false, 'error' => 'no portal username available');
+            return array('success' => false, 'error' => 'no email address available');
         }
 
         $portalUrl   = rtrim(SticPortalConfigUtils::get('PORTAL_HOME_URL', $sugar_config['site_url']), '/');

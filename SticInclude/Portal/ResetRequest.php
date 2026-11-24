@@ -46,7 +46,7 @@ $idList = array_filter(array_map('trim', explode(',', $idRaw)));
 if (count($idList) > 100) {
     $message = translate('LBL_STIC_PORTAL_ACTION_LIMIT', 'Administration');
     SugarApplication::appendErrorMessage("<p class='msg-error'><strong>"
-        . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</strong></p>');
+        . count($idList) . ' ' . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . '</strong></p>');
     SugarApplication::redirect('index.php?module=' . urlencode($module) . '&action=' . urlencode($returnAction));
 }
 
@@ -71,7 +71,8 @@ foreach ($idList as $id) {
     if ($result['success']) {
         $sentCount++;
     } else {
-        $errors[] = "$id: " . $result['error'];
+        $recordName = !empty($bean->name) ? $bean->name : $id;
+        $errors[] = "$recordName: " . $result['error'];
     }
 }
 

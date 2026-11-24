@@ -55,7 +55,7 @@ function openPortalActionsPopup() {
         }
         var limit = (typeof getPortalInvitationLimit === "function") ? getPortalInvitationLimit() : 0;
         if (limit > 0 && sugarListView.get_checks_count() > limit) {
-            alert(SUGAR.language.get("app_strings", "LBL_PORTAL_INVITATION_LIMIT_ALERT") || "The invitation limit has been exceeded.");
+            alert((SUGAR.language.get("app_strings", "LBL_PORTAL_INVITATION_LIMIT_ALERT") || "The invitation limit has been exceeded.") + " (max: " + limit + ")");
             return false;
         }
     }
@@ -95,7 +95,9 @@ function portalActionSyncTemplateSelect() {
     tplSel.innerHTML = "";
     var defOpt = document.createElement("option");
     defOpt.value = "";
-    defOpt.textContent = SUGAR.language.get("Administration", "LBL_PORTAL_ACTIONS_TEMPLATE_DEFAULT") || "Default (Portal Configuration)";
+    var _tplDef = SUGAR.language.get("Administration", "LBL_PORTAL_ACTIONS_TEMPLATE_DEFAULT");
+    if (!_tplDef || _tplDef === "undefined") _tplDef = SUGAR.language.get("AOW_Actions", "LBL_PORTAL_ACTIONS_TEMPLATE_DEFAULT");
+    defOpt.textContent = (_tplDef && _tplDef !== "undefined") ? _tplDef : "Default (Portal Configuration)";
     tplSel.appendChild(defOpt);
     (STIC.portalTemplates || []).forEach(function(t) {
         var opt = document.createElement("option");
@@ -104,7 +106,7 @@ function portalActionSyncTemplateSelect() {
         tplSel.appendChild(opt);
     });
     var action = document.getElementById("portalActionType").value;
-    var defaultId = defaults[action] || "";
+    var defaultId = (defaults[action] && defaults[action] !== "undefined") ? defaults[action] : "";
     // Follow the action's default unless the user picked a custom template
     if (previous === "" || previous === defaults.invitation || previous === defaults.pwreset) {
         tplSel.value = defaultId;
@@ -116,6 +118,16 @@ function portalActionSyncTemplateSelect() {
 function closePortalActionsPopup() {
     document.getElementById("portalActionsPopup").style.display = "none";
 }
+
+// Close the popup on ESCAPE key (accessibility)
+document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape" || e.key === "Esc") {
+        var popup = document.getElementById("portalActionsPopup");
+        if (popup && popup.style.display === "flex") {
+            closePortalActionsPopup();
+        }
+    }
+});
 
 function executePortalAction() {
     var action = document.getElementById("portalActionType").value;

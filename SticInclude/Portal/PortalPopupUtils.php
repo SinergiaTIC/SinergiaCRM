@@ -125,7 +125,7 @@ class SticPortalPopupUtils
     </div>
     <div class="pap-actions">
         <button onclick="closePortalActionsPopup()" class="pap-btn-cancel">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_CANCEL'] ?? 'Cancel') . '</button>
-        <button onclick="executePortalAction()" class="pap-btn-execute">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_EXECUTE'] ?? 'Execute') . '</button>
+        <button onclick="executePortalAction()" class="pap-btn-execute">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_EXECUTE'] ?? 'Send') . '</button>
     </div>
 </div></div>
 <script>

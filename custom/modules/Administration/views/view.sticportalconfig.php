@@ -53,6 +53,10 @@ class AdministrationViewSticportalconfig extends SugarView
         $this->ss->assign('APP', $app_strings);
         $this->ss->assign('SETTINGS', $settings);
         $this->ss->assign('LOGO_URL', $logoUrl);
+        // One-time error message from a failed logo upload
+        $logoError = $_SESSION['stic_portal_config_error'] ?? '';
+        unset($_SESSION['stic_portal_config_error']);
+        $this->ss->assign('PORTAL_LOGO_ERROR', $logoError);
         $this->ss->assign('EMAIL_TEMPLATES', $emailTemplates);
         $this->ss->assign('USERNAME_FIELDS_CONTACTS', $this->getUsernameFieldOptions('Contacts'));
         $this->ss->assign('USERNAME_FIELDS_ACCOUNTS', $this->getUsernameFieldOptions('Accounts'));

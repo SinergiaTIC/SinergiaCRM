@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $violations = SticPortalAuthUtils::validatePasswordPolicy($newPassword);
             if (!empty($violations)) {
-                $error = 'Password policy: ' . implode('; ', $violations);
+                $error = implode('; ', $violations);
             } else {
                 // Set hashed_c directly with plaintext — processBeforeSave validates policy, checks history, and hashes
                 $bean->stic_portal_hashed_c = $newPassword;
