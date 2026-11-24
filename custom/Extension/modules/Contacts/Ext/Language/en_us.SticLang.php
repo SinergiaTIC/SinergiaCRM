@@ -86,6 +86,7 @@ $mod_strings['LBL_MASS_JOB_APPLICATIONS_BUTTON_TITTLE'] = 'Generate Job Applicat
 $mod_strings['LBL_MASS_JOB_APPLICATIONS_INFO_ALERT'] = 'Select a job offer in the popup window';
 $mod_strings['LBL_STIC_CENTERS_CONTACTS_FROM_STIC_CENTERS_TITLE'] = 'Center';
 $mod_strings['LBL_STIC_ASSETS_CONTACTS_FROM_STIC_ASSETS_TITLE'] = 'Assets';
+$mod_strings['LBL_STIC_SIGNERS_CONTACTS_FROM_STIC_SIGNERS_TITLE'] = 'Signatures';
 
 // Labour Insertion Strings
 $mod_strings['LBL_STIC_PANEL_INCORPORA'] = 'Incorpora';

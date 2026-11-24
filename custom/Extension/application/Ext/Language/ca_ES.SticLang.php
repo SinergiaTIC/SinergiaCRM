@@ -3727,6 +3727,7 @@ $app_list_strings['stic_custom_views_views_list']['quickcreate'] = 'Vista de cre
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Camp';
 $app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Panell';
 $app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'Pestanya';
+$app_list_strings['stic_custom_views_action_type_list']['subpanel_modification'] = 'Subpanell';
 
 // Vistes personalitzades: Accions
 $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
@@ -3752,6 +3753,7 @@ $app_list_strings['stic_custom_views_element_list']['panel_content'] = 'Només e
 $app_list_strings['stic_custom_views_element_list']['tab'] = 'Tota la pestanya';
 $app_list_strings['stic_custom_views_element_list']['tab_header'] = 'Només la capçalera de la pestanya';
 $app_list_strings['stic_custom_views_element_list']['tab_content'] = 'Només el contingut de la pestanya';
+$app_list_strings['stic_custom_views_element_list']['subpanel'] = 'Tot el subpanell';
 
 // Vistes personalitzades: Estat
 $app_list_strings['stic_custom_views_status_list']['active'] = 'Actiu';

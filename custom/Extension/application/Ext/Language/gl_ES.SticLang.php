@@ -3727,6 +3727,7 @@ $app_list_strings['stic_custom_views_views_list']['quickcreate'] = 'Vista de cre
 $app_list_strings['stic_custom_views_action_type_list']['field_modification'] = 'Campo';
 $app_list_strings['stic_custom_views_action_type_list']['panel_modification'] = 'Panel';
 $app_list_strings['stic_custom_views_action_type_list']['tab_modification'] = 'Pestana';
+$app_list_strings['stic_custom_views_action_type_list']['subpanel_modification'] = 'Subpanel';
 
 // Vistas personalizadas: Acciones
 $app_list_strings['stic_custom_views_action_list']['visible'] = 'Visible';
@@ -3752,6 +3753,7 @@ $app_list_strings['stic_custom_views_element_list']['panel_content'] = 'Só o co
 $app_list_strings['stic_custom_views_element_list']['tab'] = 'Toda a pestana';
 $app_list_strings['stic_custom_views_element_list']['tab_header'] = 'Só a cabeceira da pestana';
 $app_list_strings['stic_custom_views_element_list']['tab_content'] = 'Só o contido da pestana';
+$app_list_strings['stic_custom_views_element_list']['subpanel'] = 'Todo o subpanel';
 
 // Vistas personalizadas: Estado
 $app_list_strings['stic_custom_views_status_list']['active'] = 'Activo';
