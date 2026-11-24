@@ -124,8 +124,14 @@ class stic_AWF_FormsUtils {
             ];
 
             // For relate fields with 'link' property: always expose link_name so fixed-value
-            // relate fields can resolve the link in RelateRecordsAction, but only populate
-            // 'options' when id_name is a real db-backed column (suitable for 1-N FK injection).
+            // relate fields can resolve the link in RelateRecordsAction. Populate 'options'
+            // (relationship name, drives the wizard's 1-N classification and relate-field
+            // detection) when the id_name is a real db-backed column (suitable for 1-N FK
+            // injection), or when the relationship is semantically 1-N even though it is
+            // implemented through a join table (true_relationship_type = 'one-to-many', e.g.
+            // Contacts <-> stic_Contacts_Relationships). Genuine many-to-many relationships
+            // with a denormalized non-db relate field (e.g. Calls.contact_name) keep 'options'
+            // empty so they are classified as N-M.
             if ($arr['type'] === 'relate' && isset($arr['link'])) {
                 $linkName = $arr['link'];
                 $linkRelName = $fieldDefs[$linkName]['relationship'] ?? '';
@@ -134,7 +140,8 @@ class stic_AWF_FormsUtils {
                     $idName = $arr['id_name'] ?? '';
                     $idFieldDef = ($idName !== '' && isset($fieldDefs[$idName])) ? $fieldDefs[$idName] : null;
                     $isDbBacked = $idFieldDef && (($idFieldDef['source'] ?? 'db') !== 'non-db');
-                    if ($isDbBacked) {
+                    $isTrueOneToMany = (($result['relationships'][$linkRelName]['true_relationship_type'] ?? '') === 'one-to-many');
+                    if ($isDbBacked || $isTrueOneToMany) {
                         $result['fields'][$fieldName]['options'] = $linkRelName;
                     }
                 }
@@ -237,6 +244,9 @@ class stic_AWF_FormsUtils {
                     $vname = $def['vname'] ?? '';
                     $linkFieldName = '';
                     $relType = $def['relationship_type'] ?? 'many-to-many';
+                    // Semantic type: vardefs-defined relationships carry it in their own def;
+                    // TableDictionary-defined ones expose it as a flat $dictionary[<relName>] entry.
+                    $trueRelType = $def['true_relationship_type'] ?? ($dictionary[$relName]['true_relationship_type'] ?? '');
 
                     // Ignore parent_type relationships
                     if (($def['relationship_role_column'] ?? '') === 'parent_type') {
@@ -250,6 +260,9 @@ class stic_AWF_FormsUtils {
                     $vname = $def['vname'] ?? '';
                     $linkFieldName = $def['name'] ?? $key;
                     $relType = $def['relationship_type'] ?? 'many-to-many';
+                    // Link fields do not carry the semantic type: look it up in the
+                    // relationship definition (module vardefs or flat TableDictionary entry).
+                    $trueRelType = $relDefs[$relName]['true_relationship_type'] ?? ($dictionary[$relName]['true_relationship_type'] ?? '');
 
                     if (empty($rhs)) {
                         try {
@@ -326,6 +339,7 @@ class stic_AWF_FormsUtils {
                     'relationship'      => $relName,
                     'link_name'         => $linkFieldName,
                     'relationship_type' => $relType,
+                    'true_relationship_type' => $trueRelType,
                 ];
             }
         }
