@@ -1,4 +1,4 @@
-name: Develop - Create Instance on Opened or Reopened PR
+name: SticDevelop - Create Instance on Opened or Reopened PR
 on:
     pull_request:
         types: [opened, reopened]
@@ -14,6 +14,9 @@ env:
 jobs:
     create_instance:
         name: Create Instance on Opened or Reopened PR
+        # Este workflow se replica a los repositorios de instancia, pero solo debe ejecutarse
+        # en el repositorio público de SinergiaCRM.
+        if: github.repository == 'SinergiaTIC/SinergiaCRM'
         runs-on: ubuntu-latest
         steps:
             - name: Extract branch name
