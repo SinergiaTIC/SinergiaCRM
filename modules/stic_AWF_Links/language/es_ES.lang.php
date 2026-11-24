@@ -63,6 +63,7 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Datos generales',
   'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
 
+  'LBL_FORM' => 'Formulario',
   'LBL_RESPONSE' => 'Respuesta a formulario',
   'LBL_SEQUENCE_NUMBER' => 'Número de secuencia',
   'LBL_PARENT_TYPE' => 'Tipo de registro relacionado',

@@ -54,6 +54,9 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'Mis procesos en espera de Formularios',
   'LNK_NEW_RECORD' => 'Crear un proceso en espera de Formularios',
   'LNK_LIST' => 'Ver procesos en espera de Formularios',
+  'LBL_DEFAULT_PANEL' => 'Datos generales',
+  'LBL_PANEL_DEFERRED_PROCESS' => 'Proceso en espera',
+  'LBL_PANEL_RECORD_DETAILS' => 'Detalles del registro',
   'LNK_IMPORT_STIC_AWF_DEFERRED_TICKETS' => 'Importar procesos en espera de Formularios',
   'LBL_SEARCH_FORM_TITLE' => 'Buscar procesos en espera de Formularios',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'Historial',
@@ -61,6 +64,7 @@ $mod_strings = array (
   'LBL_NEW_FORM_TITLE' => 'Nuevo proceso en espera de Formulario',
 
   'LBL_RESPONSE' => 'Respuesta de formulario',
+  'LBL_FORM' => 'Formulario',
   'LBL_TOKEN_HASH' => 'Token',
   'LBL_EXTERNAL_TRANSACTION_ID' => 'Id externo de transacción',
   'LBL_STATUS' => 'Estado',

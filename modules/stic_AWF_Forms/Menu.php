@@ -56,9 +56,9 @@ if(ACLController::checkAccess('stic_AWF_Forms', 'edit', true)){
 if(ACLController::checkAccess('stic_AWF_Forms', 'list', true)){
     $module_menu[] = 
     array(
-        'index.php?module=stic_AWF_Forms&action=index&return_module=stic_AWF_Forms&return_action=DetailView', 
-        $mod_strings['LNK_LIST'],
-        'View', 
+        'index.php?module=stic_AWF_Forms&action=index&return_module=stic_AWF_Forms&return_action=index',
+        translate('LNK_LIST', 'stic_AWF_Forms'),
+        'View',
         'stic_AWF_Forms'
     );
 }

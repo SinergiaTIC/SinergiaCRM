@@ -44,6 +44,67 @@
 
 global $mod_strings, $app_strings, $sugar_config;
  
+if(ACLController::checkAccess('stic_AWF_Forms', 'edit', true)){
+    $module_menu[] =
+    array(
+        'index.php?module=stic_AWF_Forms&action=EditView&return_module=stic_AWF_Deferred_Tickets&return_action=index',
+        translate('LNK_NEW_RECORD', 'stic_AWF_Forms'),
+        'Add',
+        'stic_AWF_Forms'
+    );
+}
+
 if(ACLController::checkAccess('stic_AWF_Deferred_Tickets', 'list', true)){
-    $module_menu[]=array('index.php?module=stic_AWF_Deferred_Tickets&action=index&return_module=stic_AWF_Deferred_Tickets&return_action=DetailView', $mod_strings['LNK_LIST'],'View', 'stic_AWF_Deferred_Tickets');
+    $module_menu[]=
+    array(
+        'index.php?module=stic_AWF_Deferred_Tickets&action=index&return_module=stic_AWF_Deferred_Tickets&return_action=DetailView',
+        $mod_strings['LNK_LIST'],
+        'View',
+        'stic_AWF_Deferred_Tickets'
+    );
+}
+if (ACLController::checkAccess('stic_AWF_Incoming_Events', 'list', true)) {
+    $module_menu[] =
+    array(
+        'index.php?module=stic_AWF_Incoming_Events&action=index&return_module=stic_AWF_Deferred_Tickets&return_action=index',
+        translate('LNK_LIST', 'stic_AWF_Incoming_Events'),
+        'View',
+        'stic_AWF_Incoming_Events'
+    );
+}
+if (ACLController::checkAccess('stic_AWF_Forms', 'list', true)) {
+    $module_menu[] =
+    array(
+        'index.php?module=stic_AWF_Forms&action=index&return_module=stic_AWF_Deferred_Tickets&return_action=index',
+        translate('LNK_LIST', 'stic_AWF_Forms'),
+        'View',
+        'stic_AWF_Forms'
+    );
+}
+if (ACLController::checkAccess('stic_AWF_Responses', 'list', true)) {
+    $module_menu[] =
+    array(
+        'index.php?module=stic_AWF_Responses&action=index&return_module=stic_AWF_Deferred_Tickets&return_action=index',
+        translate('LNK_LIST', 'stic_AWF_Responses'),
+        'View',
+        'stic_AWF_Responses'
+    );
+}
+if (ACLController::checkAccess('stic_AWF_Response_Details', 'list', true)) {
+    $module_menu[] =
+    array(
+        'index.php?module=stic_AWF_Response_Details&action=index&return_module=stic_AWF_Deferred_Tickets&return_action=index',
+        translate('LNK_LIST', 'stic_AWF_Response_Details'),
+        'View',
+        'stic_AWF_Response_Details'
+    );
+}
+if (ACLController::checkAccess('stic_AWF_Links', 'list', true)) {
+    $module_menu[] =
+    array(
+        'index.php?module=stic_AWF_Links&action=index&return_module=stic_AWF_Deferred_Tickets&return_action=index',
+        translate('LNK_LIST', 'stic_AWF_Links'),
+        'View',
+        'stic_AWF_Links'
+    );
 }

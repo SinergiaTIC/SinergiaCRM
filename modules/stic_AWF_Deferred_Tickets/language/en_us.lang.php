@@ -54,6 +54,9 @@ $mod_strings = array (
   'LBL_HOMEPAGE_TITLE' => 'My Form Deferred Tickets',
   'LNK_NEW_RECORD' => 'Create Form Deferred Ticket',
   'LNK_LIST' => 'View Form Deferred Tickets',
+  'LBL_DEFAULT_PANEL' => 'Overview',
+  'LBL_PANEL_DEFERRED_PROCESS' => 'Deferred process',
+  'LBL_PANEL_RECORD_DETAILS' => 'Record details',
   'LNK_IMPORT_STIC_AWF_DEFERRED_TICKETS' => 'Import Form Deferred Tickets',
   'LBL_SEARCH_FORM_TITLE' => 'Search Form Deferred Tickets',
   'LBL_HISTORY_SUBPANEL_TITLE' => 'View History',
@@ -61,6 +64,7 @@ $mod_strings = array (
   'LBL_NEW_FORM_TITLE' => 'New Form Deferred Ticket',
 
   'LBL_RESPONSE' => 'Form Response',
+  'LBL_FORM' => 'Form',
   'LBL_TOKEN_HASH' => 'Token',
   'LBL_EXTERNAL_TRANSACTION_ID' => 'External Transaction Id',
   'LBL_STATUS' => 'Status',

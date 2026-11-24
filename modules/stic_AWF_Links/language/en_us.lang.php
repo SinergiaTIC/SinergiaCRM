@@ -63,6 +63,7 @@ $mod_strings = array (
   'LBL_DEFAULT_PANEL' => 'Overview',
   'LBL_PANEL_RECORD_DETAILS' => 'Record details',
 
+  'LBL_FORM' => 'Form',
   'LBL_RESPONSE' => 'Form response',
   'LBL_SEQUENCE_NUMBER' => 'Sequence number',
   'LBL_PARENT_TYPE' => 'Related record type',
