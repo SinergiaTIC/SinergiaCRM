@@ -141,6 +141,8 @@ class stic_Assessments_Scores_DocumentTemplatesCalculatedFields extends DHA_Docu
                     continue;
                 }
                 $preguntas = [];
+                $partialTotal = 0.0;
+                $partialHasScores = false;
                 foreach ($block['fields'] ?? [] as $field) {
                     if (!is_array($field)) {
                         continue;
@@ -155,12 +157,23 @@ class stic_Assessments_Scores_DocumentTemplatesCalculatedFields extends DHA_Docu
                     if ($answer === null || $answer === '' || is_array($answer)) {
                         continue; // Unanswered items
                     }
+                    $score = $field['score'] ?? null;
+                    $hasScore = ($score !== null && $score !== '');
+                    if ($hasScore) {
+                        $partialTotal += (float)$score;
+                        $partialHasScores = true;
+                    }
                     $preguntas[] = [
                         'pregunta' => rtrim(trim((string)($field['label'] ?? '')), " :\t"),
-                        'respuesta' => (string)$answer,
+                        'respuesta' => (string)$answer . ($hasScore ? ' (puntuació: ' . $score . ')' : ''),
+                        'puntuacio' => $hasScore ? (string)$score : '',
                     ];
                 }
                 $child['cf_preguntas'] = $preguntas;
+                // Pre-formatted partial score line (empty when the form items have no scores)
+                $child['cf_puntuacio_parcial'] = $partialHasScores
+                    ? 'Puntuació parcial: ' . (($partialTotal == (int)$partialTotal) ? (string)(int)$partialTotal : (string)round($partialTotal, 2))
+                    : '';
             }
         }
     }
