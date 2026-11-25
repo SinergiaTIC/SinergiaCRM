@@ -1273,7 +1273,11 @@ class stic_AwfField {
         }
       }
     } else {
-      if (this.value == '') {
+      // Fixed/server fields: only flag as error when the field is required in
+      // the module. Fields that are auto-filled at runtime (form_id,
+      // submission_data, parent FK injections...) are intentionally empty in
+      // the config and are filled when the submission is processed.
+      if (this.required && this.value == '') {
         errors.push(utils.translate('LBL_ERROR_FIELD_FIXED_EMPTY'));
       }
     }
@@ -1828,13 +1832,6 @@ class stic_AwfAction {
     const actionDef = allActions.find(a => a.name === this.name);
     return this.parameters.every(param => {
       if (!param.required) return true;
-      if (actionDef) {
-        const paramDef = actionDef.parameters.find(p => p.name === param.name);
-        // Formula parameters: the syntax must be valid to save the action
-        if (paramDef?.dataType === 'formula' && param.value && utils.validateFormulaSyntax(param.value) !== null) {
-          return false;
-        }
-      }
       if (param.type === 'optionSelector' && actionDef) {
         const paramDef = actionDef.parameters.find(p => p.name === param.name);
         const optDef = (paramDef?.selectorOptions || []).find(o => o.name === param.selectedOption);

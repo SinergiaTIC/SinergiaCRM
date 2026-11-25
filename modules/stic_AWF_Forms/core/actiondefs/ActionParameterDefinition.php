@@ -59,9 +59,6 @@ enum ActionDataType: string {
     // Simple list of options
     case SELECT        = 'select';
 
-    // Arithmetic formula with {field} placeholders (validated in the wizard)
-    case FORMULA       = 'formula';
-
     // Related (for filtering fields)
     case RELATE        = 'relate';
 
@@ -86,8 +83,6 @@ class ActionParameterDefinition {
     public array $supportedModules = [];   // Supported modules if the destination is a CRM record
     /** @var ActionDataType[] */
     public array $supportedDataTypes = []; // List of data types of the fields pointed to, if applicable (for FIELD or FIELD_LIST)
-    public string $example = '';           // Usage example displayed under the parameter input
-    public bool $fieldKeysHint = false;    // When true, the wizard shows the available field IDs (e.g. to build formulas)
     public string $colSize = 'col-4';      // The size of the column in the UI (Bootstrap grid classes)
 }
 

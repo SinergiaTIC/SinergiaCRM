@@ -81,7 +81,6 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
         $paramRanges->description = $this->translate('RANGES_DESC');
         $paramRanges->type = ActionParameterType::VALUE;
         $paramRanges->dataType = ActionDataType::TEXTAREA;
-        $paramRanges->example = "0-20: Bajo | 21-60: Medio | >60: Alto";
         $paramRanges->required = true;
         $paramRanges->colSize = 'col-12';
 
@@ -100,8 +99,10 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
-        $scoreKey = (string)$actionConfig->getResolvedParameter('score_field', '');
-        $targetKey = (string)$actionConfig->getResolvedParameter('target_label_field', '');
+        $scoreResolved = $actionConfig->getResolvedParameter('score_field');
+        $scoreKey = ($scoreResolved instanceof DataBlockFieldResolved) ? $scoreResolved->formKey : (string)($scoreResolved ?? '');
+        $targetResolved = $actionConfig->getResolvedParameter('target_label_field');
+        $targetKey = ($targetResolved instanceof DataBlockFieldResolved) ? $targetResolved->formKey : (string)($targetResolved ?? '');
         $rangesRaw = (string)$actionConfig->getResolvedParameter('ranges', '');
 
         if (empty($scoreKey) || empty($targetKey)) {

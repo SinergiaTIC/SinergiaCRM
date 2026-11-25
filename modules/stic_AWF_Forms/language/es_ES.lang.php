@@ -681,7 +681,7 @@ $mod_strings = array (
   'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_EXTENSIONS_TEXT' => 'Extensiones permitidas (separadas por comas)',
   'LBL_ALLOWED_EXTENSIONS_VALIDATOR_ACTION_ERROR_MESSAGE_TEXT' => 'La extensión del fichero no está permitida.',
 
-  // ScaleCalculationAction + ScaleFormulaAction + ScaleInterpretationAction (baremos)
+  // ScaleCalculationAction + ScaleInterpretationAction (baremos)
   'LBL_SCALE_CALCULATION_ACTION_TITLE' => 'Cálculo de escalas',
   'LBL_SCALE_CALCULATION_ACTION_DESC' => 'Aplica una operación (suma, media, producto, mínimo, máximo o recuento de respondidos) a uno o más campos del formulario y vuelca el resultado en un campo numérico destino. El servidor recalcula y valida el resultado al enviar el formulario.',
   'LBL_SCALE_CALCULATION_ACTION_TARGET_FIELD_TEXT' => 'Campo de resultado numérico',
@@ -700,16 +700,8 @@ $mod_strings = array (
   'LBL_SCALE_CALCULATION_ACTION_DECIMALS_DESC' => 'Número de decimales con los que se redondeará el resultado. Por defecto, 2.',
   'LBL_SCALE_CALCULATION_ACTION_EXECUTE_MESSAGE' => 'Resultado recalculado en el servidor:',
   'LBL_SCALE_CALCULATION_ACTION_NO_VALUES_MESSAGE' => 'No hay valores en los campos fuente: no se recalcula nada.',
-  'LBL_SCALE_FORMULA_ACTION_TITLE' => 'Fórmula de cálculo de escala',
-  'LBL_SCALE_FORMULA_ACTION_DESC' => 'Evalúa una fórmula aritmética personalizada con campos del formulario como operandos y vuelca el resultado en un campo numérico destino. El servidor recalcula y valida el resultado al enviar el formulario.',
-  'LBL_SCALE_FORMULA_ACTION_TARGET_FIELD_TEXT' => 'Campo de resultado numérico',
-  'LBL_SCALE_FORMULA_ACTION_TARGET_FIELD_DESC' => 'Campo donde se volcará el resultado de la fórmula.',
-  'LBL_SCALE_FORMULA_ACTION_FORMULA_TEXT' => 'Fórmula',
-  'LBL_SCALE_FORMULA_ACTION_FORMULA_DESC' => 'Expresión aritmética con los campos entre llaves: +, -, *, / y paréntesis. Ej.: ({Bloque.campo1} + {Bloque.campo2}) * 2',
-  'LBL_SCALE_FORMULA_ACTION_DECIMALS_TEXT' => 'Decimales del resultado',
-  'LBL_SCALE_FORMULA_ACTION_DECIMALS_DESC' => 'Número de decimales con los que se redondeará el resultado. Por defecto, 2.',
-  'LBL_SCALE_FORMULA_ACTION_EXECUTE_MESSAGE' => 'Resultado recalculado en el servidor:',
-  'LBL_SCALE_FORMULA_ACTION_INVALID_FORMULA_MESSAGE' => 'La fórmula no es válida.',
+  'LBL_SCALE_CALCULATION_ACTION_SCALAR_TEXT' => 'Escalar (multiplicador)',
+  'LBL_SCALE_CALCULATION_ACTION_SCALAR_DESC' => 'Número entero opcional por el que se multiplica el resultado de la operación. Si se deja vacío no se multiplica (equivale a 1).',
   'LBL_SCALE_INTERPRETATION_ACTION_TITLE' => 'Interpretación de escala (baremos)',
   'LBL_SCALE_INTERPRETATION_ACTION_DESC' => 'Interpreta la puntuación obtenida con un baremo ("min-max: Etiqueta") y vuelca la etiqueta resultante en un campo destino. El servidor recalcula y valida la interpretación al enviar el formulario. Para varias tablas normativas (p. ej. por edad), añade una acción por baremo y usa las condiciones de ejecución de las acciones para decidir cuál se aplica.',
   'LBL_SCALE_INTERPRETATION_ACTION_SCORE_FIELD_TEXT' => 'Campo con la puntuación',
@@ -720,8 +712,4 @@ $mod_strings = array (
   'LBL_SCALE_INTERPRETATION_ACTION_RANGES_DESC' => 'Formato: "min-max: Etiqueta", separado por saltos de línea o barras. Admite valores sueltos y rangos abiertos. Ej.: 0-20: Dependencia total | 21-60: Severa | >60: Independiente',
   'LBL_SCALE_INTERPRETATION_ACTION_EXECUTE_MESSAGE' => 'Interpretación recalculada en el servidor:',
   'LBL_SCALE_INTERPRETATION_ACTION_NO_SCORE_MESSAGE' => 'El campo de puntuación está vacío: no se calcula ninguna interpretación.',
-  'LBL_ACTION_PARAM_EXAMPLE' => 'Ejemplo',
-  'LBL_ACTION_PARAM_FORMULA_INVALID' => 'Fórmula no válida: revisa los paréntesis, las llaves de los campos, los operadores entre operandos y los caracteres no permitidos.',
-  'LBL_ACTION_PARAM_FIELD_KEYS' => 'IDs de campos disponibles (para usar en fórmulas)',
-  'LBL_ACTION_PARAM_FIELD_KEYS_COPY' => 'Copiar',
 );

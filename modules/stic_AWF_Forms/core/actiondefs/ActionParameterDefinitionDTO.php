@@ -45,8 +45,6 @@ class ActionParameterDefinitionDTO {
     public array $supportedModules;
     /** @var ActionDataType[] */
     public array $supportedDataTypes;
-    public string $example = '';        // Usage example displayed under the parameter input
-    public bool $fieldKeysHint = false; // When true, the wizard shows the available field IDs (e.g. to build formulas)
     public string $colSize; // The size of the column in the UI (Bootstrap grid classes)
         
     public function __construct(ActionParameterDefinition $def) {
@@ -75,8 +73,5 @@ class ActionParameterDefinitionDTO {
             fn($dt) => $dt->value, 
             $def->supportedDataTypes
         );
-
-        $this->example = $def->example;
-        $this->fieldKeysHint = $def->fieldKeysHint;
     }
 }
