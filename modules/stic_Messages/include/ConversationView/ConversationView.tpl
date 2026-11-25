@@ -1,5 +1,4 @@
-<?php
-/**
+{*
  * This file is part of SinergiaCRM.
  * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
  * Copyright (C) 2013 - 2023 SinergiaTIC Association
@@ -19,35 +18,14 @@
  * 02110-1301 USA.
  *
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
- */
-
-use SuiteCRM\Utility\SuiteValidator;
-
-$timedate = $GLOBALS['timedate'];
-
-$lbl = function (string $key) use ($mod_strings): string {
-    return htmlspecialchars($mod_strings[$key] ?? $key);
-};
-
-$messageIds = array_column($messages, 'id');
-$notesByMessage = [];
-if (!empty($messageIds)) {
-    $db = DBManagerFactory::getInstance();
-    $idList = implode("','", array_map([$db, 'quote'], $messageIds));
-    $notesSql = "SELECT id, parent_id, name, filename, file_mime_type FROM notes WHERE parent_id IN ('{$idList}') AND deleted = 0";
-    $notesResult = $db->query($notesSql);
-    while ($note = $db->fetchByAssoc($notesResult)) {
-        $notesByMessage[$note['parent_id']][] = $note;
-    }
-}
-
-?><!DOCTYPE html>
+ *}
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $lbl('LBL_CONVERSATION_TITLE') ?> — <?= htmlspecialchars($parentName) ?></title>
-    <style>
+    <title>{$MOD.LBL_CONVERSATION_TITLE|escape:'html':'UTF-8'} — {$parentName|escape:'html':'UTF-8'}</title>
+    {literal}<style>
         *{box-sizing:border-box;margin:0;padding:0}
         body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#e5ddd5;display:flex;flex-direction:column;height:100vh;overflow:hidden}
         .wa-header{background:#075e54;color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,.3)}
@@ -99,142 +77,132 @@ if (!empty($messageIds)) {
         .bubble-new.in{background:#a8e6a8;border-left:3px solid #25d366;animation:newMsgSlide 0.4s ease-out}
         .bubble-new.out{background:#a8e6a8;border-right:3px solid #25d366;animation:newMsgSlide 0.4s ease-out}
         .bubble-new.error{background:#a8e6a8;border-right:3px solid #25d366;animation:newMsgSlide 0.4s ease-out}
-    </style>
+    </style>{/literal}
 </head>
 <body>
 
 <div class="wa-header">
-    <div class="avatar"><?= mb_strtoupper(mb_substr($parentName, 0, 1)) ?></div>
+    <div class="avatar">{$parentNameInitial|escape:'html':'UTF-8'}</div>
     <div class="info">
-        <div class="name"><?= htmlspecialchars($parentName) ?></div>
-        <?php if (!empty($messages)): ?>
-            <div class="phone"><?= htmlspecialchars($messages[0]['phone'] ?? '') ?></div>
-        <?php endif; ?>
+        <div class="name">{$parentName|escape:'html':'UTF-8'}</div>
+        {if !empty($messages) && !empty($messages[0].phone)}
+            <div class="phone">{$messages[0].phone|escape:'html':'UTF-8'}</div>
+        {/if}
     </div>
 </div>
 
 <div class="wa-body" id="waBody">
-<?php if (empty($messages)): ?>
-    <div class="empty-state"><?= $lbl('LBL_CONVERSATION_NO_MESSAGES') ?></div>
-<?php else:
-    $lastDate = null;
-    foreach ($messages as $msg):
-        $direction = strtolower($msg['direction'] ?? '');
-        $type = strtolower($msg['type'] ?? '');
-        $status = strtolower($msg['status'] ?? 'sent');
+{if empty($messages)}
+    <div class="empty-state">{$MOD.LBL_CONVERSATION_NO_MESSAGES|escape:'html':'UTF-8'}</div>
+{else}
+    {foreach from=$messages item=msg}
+        {if $msg.show_date_separator}
+            <div class="date-separator"><span>{$msg.display_date|escape:'html':'UTF-8'}</span></div>
+        {/if}
 
-        if (empty($direction)) {
-            $direction = 'outbound';
-        }
-
-        $isOut = ($direction === 'outbound' || $direction === 'out');
-        $isError = ($status === 'error');
-        $msgNotes = $notesByMessage[$msg['id']] ?? [];
-
-        $msgDate = $timedate->to_display_date($msg['date_entered']);
-        $msgTime = $timedate->to_display_time($msg['date_entered']);
-
-        if ($msgDate !== $lastDate):
-            $lastDate = $msgDate;
-?>
-    <div class="date-separator"><span><?= htmlspecialchars($msgDate) ?></span></div>
-<?php endif; ?>
-
-    <div class="bubble <?= $isError ? 'error' : ($isOut ? 'out' : 'in') ?>">
-        <div class="text"><?= nl2br(htmlspecialchars($msg['message'] ?? '')) ?></div>
-        <?php if (!empty($msgNotes)): ?>
-            <?php foreach ($msgNotes as $note): ?>
-                <?php
-                $isImage = strpos($note['file_mime_type'], 'image/') === 0;
-                $noteUrl = 'index.php?module=Notes&action=DetailView&record=' . $note['id'];
-                ?>
-                <?php if ($isImage): ?>
-                    <div class="bubble-attachment">
-                        <img class="attachment-bubble-img" src="upload/<?= $note['id'] ?>" onclick="window.open('<?= $noteUrl ?>')">
-                    </div>
-                <?php else: ?>
-                    <div class="bubble-attachment">
-                        <a class="attachment-bubble-file" href="<?= $noteUrl ?>" target="_blank">
-                            📄 <?= htmlspecialchars($note['filename'] ?? $note['name']) ?>
-                        </a>
-                    </div>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        <?php endif; ?>
-        <div class="meta">
-            <span><?= htmlspecialchars($msgTime) ?></span>
-            <?php if ($isOut): ?>
-                <?php
-                $tickClass = 'sent';
-                $tickSymbol = '✓';
-                if ($status === 'delivered') { $tickClass = 'delivered'; $tickSymbol = '✓✓'; }
-                elseif ($status === 'read') { $tickClass = 'read'; $tickSymbol = '✓✓'; }
-                elseif ($status === 'error') { $tickClass = 'error'; $tickSymbol = '✗'; }
-                ?>
-                <span class="tick <?= $tickClass ?>"><?= $tickSymbol ?></span>
-            <?php endif; ?>
+        <div class="bubble {if $msg.is_error}error{elseif $msg.is_out}out{else}in{/if}">
+            <div class="text">{$msg.message|escape:'html':'UTF-8'|nl2br}</div>
+            {if !empty($msg.notes)}
+                {foreach from=$msg.notes item=note}
+                    {if $note.is_image}
+                        <div class="bubble-attachment">
+                            <img class="attachment-bubble-img" src="upload/{$note.id}" onclick="window.open('{$note.url}')">
+                        </div>
+                    {else}
+                        <div class="bubble-attachment">
+                            <a class="attachment-bubble-file" href="{$note.url}" target="_blank">
+                                📄 {$note.filename|escape:'html':'UTF-8'}
+                            </a>
+                        </div>
+                    {/if}
+                {/foreach}
+            {/if}
+            <div class="meta">
+                <span>{$msg.display_time|escape:'html':'UTF-8'}</span>
+                {if $msg.is_out}
+                    <span class="tick {$msg.tick_class}">{$msg.tick_symbol}</span>
+                {/if}
+            </div>
         </div>
-    </div>
-
-<?php endforeach; endif; ?>
+    {/foreach}
+{/if}
 </div>
 
 <div class="wa-footer">
-    <?php if ($windowOpen): ?>
+    {if $windowOpen}
         <div class="footer-inner">
             <div class="window-status open">
                 <span class="window-icon">🟢</span>
-                <?= htmlspecialchars($windowMessage) ?>
+                {$windowMessage|escape:'html':'UTF-8'}
             </div>
             <div id="attachmentPreview" style="display:none;" class="attachment-preview">
                 <img id="previewImg" class="preview-img" style="display:none;">
                 <span id="previewIcon" style="font-size:24px;display:none;">📄</span>
                 <span id="previewName"></span>
-                <span class="remove-attach" onclick="removeAttachment()" title="<?= $lbl('LBL_CONVERSATION_REMOVE_ATTACHMENT') ?>">✕</span>
+                <span class="remove-attach" id="removeAttachBtn" title="{$MOD.LBL_CONVERSATION_REMOVE_ATTACHMENT|escape:'html':'UTF-8'}">✕</span>
             </div>
-            <div id="uploadingIndicator" class="uploading-indicator" style="display:none;">⏳ <?= $lbl('LBL_CONVERSATION_UPLOADING') ?></div>
+            <div id="uploadingIndicator" class="uploading-indicator" style="display:none;">⏳ {$MOD.LBL_CONVERSATION_UPLOADING|escape:'html':'UTF-8'}</div>
             <div class="input-row">
                 <input type="file" id="mediaFile" style="display:none;"
-                    accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/3gpp,audio/ogg,audio/mpeg,audio/mp4,audio/amr,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    onchange="handleFileSelected(this)">
-                <button class="attach-btn" onclick="document.getElementById('mediaFile').click()" title="<?= $lbl('LBL_ATTACHMENT') ?>">📎</button>
+                    accept="image/jpeg,image/png,image/gif,image/webp,video/mp4,video/3gpp,audio/ogg,audio/mpeg,audio/mp4,audio/amr,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                <button class="attach-btn" id="attachBtn" title="{$MOD.LBL_ATTACHMENT|escape:'html':'UTF-8'}">📎</button>
                 <textarea id="msgText"
-                    placeholder="<?= $lbl('LBL_CONVERSATION_PLACEHOLDER') ?>"
-                    rows="1"
-                    onInput="this.style.height='auto';this.style.height=this.scrollHeight+'px';"
-                    onKeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}"></textarea>
-                <button id="sendBtn" onclick="sendMessage()" title="<?= $lbl('LBL_CONVERSATION_SEND') ?>">➤</button>
+                    placeholder="{$MOD.LBL_CONVERSATION_PLACEHOLDER|escape:'html':'UTF-8'}"
+                    rows="1"></textarea>
+                <button id="sendBtn" title="{$MOD.LBL_CONVERSATION_SEND|escape:'html':'UTF-8'}">➤</button>
             </div>
         </div>
-    <?php else: ?>
+    {else}
         <div class="footer-inner">
             <div class="window-status closed">
                 <span class="window-icon">🔴</span>
-                <?= htmlspecialchars($windowMessage) ?>
+                {$windowMessage|escape:'html':'UTF-8'}
             </div>
             <div class="window-closed-hint">
-                <?= $lbl('LBL_CONVERSATION_WINDOW_CLOSED_HINT') ?>
+                {$MOD.LBL_CONVERSATION_WINDOW_CLOSED_HINT|escape:'html':'UTF-8'}
             </div>
-            <?php if (!empty($newMessageUrl)): ?>
-            <a href="<?= htmlspecialchars($newMessageUrl) ?>" class="btn-new-message"
-               onclick="window.opener.location.href=this.href;window.close();return false;">
+            {if !empty($newMessageUrl)}
+            <a href="{$newMessageUrl|escape:'html':'UTF-8'}" class="btn-new-message" id="newMessageBtn">
                 <span class="btn-icon">✉</span>
-                <?= $lbl('LBL_CONVERSATION_NEW_MESSAGE_BTN') ?>
+                {$MOD.LBL_CONVERSATION_NEW_MESSAGE_BTN|escape:'html':'UTF-8'}
             </a>
-            <?php endif; ?>
+            {/if}
         </div>
-    <?php endif; ?>
+    {/if}
 </div>
 
 <script>
+    var _convParentType = '{$parentType|escape:"javascript":"UTF-8"}';
+    var _convParentId   = '{$parentId|escape:"javascript":"UTF-8"}';
+    var _convLastDate   = '{$lastMessageDate|escape:"javascript":"UTF-8"}';
+    var _convPollDelay  = {$pollDelay};
+</script>
+{literal}
+<script>
+    document.getElementById('removeAttachBtn').addEventListener('click', removeAttachment);
+    document.getElementById('mediaFile').addEventListener('change', function() { handleFileSelected(this); });
+    document.getElementById('attachBtn').addEventListener('click', function() { document.getElementById('mediaFile').click(); });
+    document.getElementById('msgText').addEventListener('input', function() { this.style.height='auto'; this.style.height=this.scrollHeight+'px'; });
+    document.getElementById('msgText').addEventListener('keydown', function(e) { if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); } });
+    document.getElementById('sendBtn').addEventListener('click', sendMessage);
+    var newMessageBtn = document.getElementById('newMessageBtn');
+    if (newMessageBtn) {
+        newMessageBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            window.opener.location.href = this.href;
+            window.close();
+        });
+    }
+
     var CONVERSATION = {
-        parentType: '<?= addslashes($parentType) ?>',
-        parentId:   '<?= addslashes($parentId) ?>',
-        lastDate:   '<?= addslashes(end($messages)['date_entered'] ?? '') ?>',
-        pollDelay:  <?= (int)$pollDelay ?>
+        parentType: _convParentType,
+        parentId:   _convParentId,
+        lastDate:   _convLastDate,
+        pollDelay:  _convPollDelay
     };
 </script>
-<?= getVersionedScript('modules/stic_Messages/include/ConversationView/ConversationView.js') ?>
+{/literal}
+<script src="{$conversationScriptUrl}"></script>
 
 </body>
 </html>
