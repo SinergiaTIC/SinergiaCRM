@@ -1320,7 +1320,11 @@ class FormHtmlGeneratorService {
                 if ($currentGroupRootId === null || self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) {
                     return $block;
                 }
-            } elseif ($el instanceof FormLayoutSection) {
+            } elseif ($el instanceof FormLayoutSection && $el->groupTemplate === true) {
+                // Only the group's OWN template is structural depth for head
+                // detection. Recursing into any nested section would let a
+                // subgroup designated inside this host hijack it and REPLACE
+                // the host block's fields (e.g. Persona disappearing).
                 $found = $this->findGroupRootInSection($config, $el, $currentGroupRootId);
                 if ($found) return $found;
             }
@@ -1576,6 +1580,17 @@ class FormHtmlGeneratorService {
                 if ($el instanceof FormLayoutSection && (!empty($el->groupTemplate) || $el->containerType === 'tab_item')) { $templateSection = $el; break; }
             }
         }
+        if ($templateSection === null) {
+            // A nested head is detected from its own host section, not from the
+            // designated group section: use the latter's template so instance
+            // cards keep the group's card/panel flavor (border, radius, title).
+            $designated = $this->findDesignatedGroupSectionFor($config->layout, $rootBlock->id);
+            if ($designated !== null) {
+                foreach ($designated->elements as $el) {
+                    if ($el instanceof FormLayoutSection && !empty($el->groupTemplate)) { $templateSection = $el; break; }
+                }
+            }
+        }
         $instanceBaseTitle = ($templateSection !== null && $templateSection->title !== '') ? $templateSection->title : $sectionTitle;
         $instanceTitleExpression = json_encode($instanceBaseTitle, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
         if ($instanceTitleExpression === false) $instanceTitleExpression = '""';
@@ -1618,28 +1633,18 @@ class FormHtmlGeneratorService {
         }
 
         // Chrome-less single-box groups (STACKED panel/card flavor only): the
-        // group container IS the only box — the internal "element" template
-        // card and the block's host card are suppressed, so the fields render
-        // directly inside the group container. Two cases share this
-        // representation:
-        //  - A single-block OPTIONAL group (spec §1.35): one possible instance,
-        //    no instance identity is needed (any number of fields).
-        //  - A single-VISIBLE-FIELD group: when the whole group draws exactly
-        //    ONE input, the per-instance card would be the only wrapper around
-        //    a lone field; the field's own label identifies the instances and
-        //    a compact inline remove control replaces the card's one. This
-        //    unifies the representation with the optional-only flavor, which
-        //    already rendered the field bare.
-        // Groups whose designated section is TABS or ACCORDION keep their own
-        // instance navigation (tab bar / accordion items) in every case: that
-        // chrome is the point of those flavors, single visible field or not.
+        // Single-box groups: the group container IS the only box — the
+        // internal element template and the host section cards are suppressed
+        // so ONE visible field renders directly, with its label identifying
+        // the instance. More fields always keep the normal card wrapper,
+        // whether the group is optional or repeatable. Tabs/accordion groups
+        // keep their instance navigation in every case.
         $templateContentSections = ($templateSection !== null)
             ? array_filter($templateSection->elements, fn ($el) => $el instanceof FormLayoutSection)
             : [];
         $singleContentSection = count($children) === 0 && count($templateContentSections) === 1;
-        $isSingleVisibleFieldGroup = $singleContentSection
+        $singleBoxGroup = $singleContentSection
             && self::countContentSectionVisibleFields(reset($templateContentSections), $config) === 1;
-        $singleBoxGroup = ($isOptional && !$isRepeatable && $singleContentSection) || $isSingleVisibleFieldGroup;
 
         // Alpine initialization:
         // - Optional: start inactive with empty instances []
@@ -1998,23 +2003,19 @@ class FormHtmlGeneratorService {
                     $html .= "<div class='card-body' {$groupShowAttr}>" . $this->newLine('+');
                     {
                     if ($singleBoxGroup) {
-                        // Single-box group: the group container is the ONLY box for the
-                        // root block — the internal "element" template card and the
-                        // block's host card are suppressed, so the root fields render
-                        // directly. Two flavors share this representation (see the
-                        // $singleBoxGroup condition above): single-block OPTIONAL
-                        // groups and single-VISIBLE-FIELD groups (repeatable included).
+                        // Single-box group: the group container is the ONLY box
+                        // for the root block — the internal template card and
+                        // the host card are suppressed, so its single visible
+                        // field renders directly (optional or repeatable).
                         // The content section renders CHROME-LESS (not
                         // `renderBlockInstanceFields`) so its NESTED subsections
                         // (user structure inside the host) are still rendered with
                         // their own chrome instead of being dropped.
-                        //
-                        // The `x-for` + `x-data` bridge is kept (even though the
-                        // group holds a single instance): it HIDES the content
-                        // while the optional group is inactive AND defines the
-                        // instance index variable the fields reference. Dropping
-                        // it left the fields with an undefined idx_lN (Alpine
-                        // "idx_lN is not defined") when the group was nested.
+                        // The `x-for` + `x-data` bridge is kept: it HIDES the
+                        // content while an optional group is inactive AND
+                        // defines the instance index variable the field uses.
+                        // Dropping it left the field with an undefined idx_lN
+                        // (Alpine "idx_lN is not defined") in nested groups.
                         $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
                             if ($isRepeatable) {

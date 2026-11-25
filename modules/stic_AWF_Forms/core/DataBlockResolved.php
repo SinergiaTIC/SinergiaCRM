@@ -308,6 +308,20 @@ class DataBlockResolved {
             if ($block->isOptional()) {
                 return [];
             }
+            // A mandatory group HEAD at an intermediate level (prefix already
+            // fixed) with no submitted data must NOT get a phantom instance:
+            // the mandatory [0] fallback belongs only to the top level. A
+            // phantom nested head produces spurious validation errors and
+            // duplicate server actions on an instance the user never created
+            // (e.g. when its fields are unbundled into the parent host and no
+            // data lands at this level of the POST matrix).
+            // Only apply it at the head's OWN level (prefix length = depth-1):
+            // the mirror branch below re-resolves the head with the CHILD's
+            // prefix to obtain that parent instance's fallback, which must
+            // keep working (non-head members still get one instance).
+            if (!empty($prefix) && $block->isGroupHead() && count($prefix) === $block->getLoopDepth() - 1) {
+                return [];
+            }
             // A NON-head block inside a group that submits NO data of its own
             // (typically because it renders no fields at all) still needs ONE
             // instance PER parent instance: mirror the nearest group-head

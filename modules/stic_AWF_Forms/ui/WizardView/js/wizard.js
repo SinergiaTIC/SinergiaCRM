@@ -3129,7 +3129,7 @@ class WizardStep4 {
       },
 
       isGroupTemplateSection(section) {
-        return !!section && section.groupTemplate === true;
+        return stic_AwfMovePolicy.isTemplate(section);
       },
 
       // Children rendered inside a section card in step 4. A group section's
@@ -3479,7 +3479,7 @@ class WizardStep4 {
         // silently dropped every group rule for a nested group (its members
         // could be dragged out and would then post unindexed, losing their
         // per-instance data, and its element template became deletable alone).
-        return !!section && section.isGroupSection === true;
+        return stic_AwfMovePolicy.isGroup(section);
       },
 
       isWithinGroupSection(section) {
@@ -3487,15 +3487,7 @@ class WizardStep4 {
         // section. It must accumulate: returning only the OUTERMOST
         // section's group-ness lost the enclosing group of a group nested
         // inside a plain section, letting its content be dragged out.
-        let current = section;
-        let within = false;
-        while (current) {
-          if (this.isGroupSection(current)) within = true;
-          const parent = this.getParentSectionOf(current);
-          if (!parent) return within;
-          current = parent;
-        }
-        return within;
+        return stic_AwfMovePolicy.withinGroup(section, this.sections);
       },
 
       groupName(section) {
@@ -3565,9 +3557,7 @@ class WizardStep4 {
       // A nested section can move out of its parent only when the parent is NOT a
       // group section (sections can never leave their group section)
       canMoveSectionOut(section) {
-        const parent = this.getParentSectionOf(section);
-        if (!parent) return false;              // Already a top-level section
-        return !this.isWithinGroupSection(section);
+        return stic_AwfMovePolicy.canMoveSectionOut(section, this.sections, this.data_blocks);
       },
 
       // Takes a nested section out of its (non-group) parent section and places it
@@ -3587,86 +3577,21 @@ class WizardStep4 {
       // Only offered to standalone nested SECTIONS: blocks and fields must always
       // remain inside a section.
       getFormMoveTarget() {
-        return { id: '__form__', isFormTarget: true };
+        return stic_AwfMovePolicy.FORM_TARGET;
       },
-
-      // All sections contained (at any depth) within the given section (excluding it)
-      getSectionsWithin(section) {
-        const result = [];
-        const walk = (s) => {
-          for (const el of s.elements) {
-            if (el.type !== 'section') continue;
-            result.push(el);
-            walk(el);
-          }
-        };
-        walk(section);
-        return result;
-      },
-
-      // Top-level designated group section scoping the given section (or null when
-      // the section is standalone, i.e. not inside any designated group section)
-      getGroupScopeRoot(section) {
-        let current = section;
-        let scope = null;
-        while (current) {
-          if (this.isGroupSection(current)) scope = current;
-          const parent = this.getParentSectionOf(current);
-          if (!parent) break;
-          current = parent;
-        }
-        return scope;
-      },
-
-      // All standalone sections of the form (never inside a designated group),
-      // at any depth. A designated group section NESTED inside a standalone one
-      // is group structure, not a content container, so it is filtered out here
-      // too (otherwise another group could be nested inside it).
-      getStandaloneSections() {
-        // A section inside a designated group is never a standalone target:
-        // the filter must be applied to the WHOLE subtree, not only to the
-        // group section itself, otherwise the group's own children/hosts would
-        // still be offered as move targets and a standalone section could be
-        // dropped into a group.
-        return this.sections
-          .filter(s => !this.isGroupSection(s))
-          .flatMap(s => [s, ...this.getSectionsWithin(s).filter(w => !this.isWithinGroupSection(w))]);
-      },
-
-      // Candidate sections a SECTION can be moved into (group-scope rules):
-      //  - group sections are FIXED: they represent their group and never move;
-      //  - a section inside a group can only move within that group (any of its
-      //    sections/subsections, including the group's top level);
-      //  - a standalone section can move into any other standalone section at any
-      //    depth; a nested standalone section can also move to the form's top level
-      //    (the "outside all sections" option).
+      // Dropdown data for section moves — rules live in stic_AwfMovePolicy.
       getSectionMoveTargets(section) {
-        if (this.isGroupSection(section)) {
-          // The whole group section can be moved into any section OUTSIDE it
-          // (e.g. inside a tabs container to present the group as a tab). It
-          // can never target itself or its own descendants. The "outside all
-          // sections" target is offered only when the group is nested.
-          const excluded = new Set([section.id, ...this.getSectionsWithin(section).map(s => s.id)]);
-          const targets = this.getStandaloneSections().filter(s => !excluded.has(s.id));
-          return this.canMoveSectionOut(section) ? [...targets, this.getFormMoveTarget()] : targets;
-        }
-        const excluded = new Set([section.id, ...this.getSectionsWithin(section).map(s => s.id)]);
-        const parent = this.getParentSectionOf(section);
-        const groupRoot = this.getGroupScopeRoot(section);
-        const candidates = groupRoot
-          ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
-          : this.getStandaloneSections();
-        // The internal group template is never a move target (it is hidden)
-        let targets = candidates.filter(s => !excluded.has(s.id) && !this.isGroupTemplateSection(s) && (!parent || s.id !== parent.id));
-        const template = groupRoot ? this.getGroupTemplate(groupRoot) : null;
-        if (groupRoot && template && parent && parent.id === template.id) {
-          targets = targets.filter(s => s.id !== groupRoot.id);
-        }
-        return this.canMoveSectionOut(section) ? [...targets, this.getFormMoveTarget()] : targets;
+        return stic_AwfMovePolicy.sectionTargets(section, this.sections, this.data_blocks).map(s => s);
       },
 
       // Hierarchical section label: "Parent - Child - ..." (walks up the parents)
       getSectionLabel(section) {
+        // The internal group template is hidden in step 4: a move into it
+        // lands at the group's own level, so label it with the group's name.
+        if (this.isGroupTemplateSection(section)) {
+          const group = this.getParentSectionOf(section);
+          return group ? this.getSectionLabel(group) : (section.title || utils.translate('LBL_SECTION_NO_TITLE'));
+        }
         const own = section.title || utils.translate('LBL_SECTION_NO_TITLE');
         let parent = this.getParentSectionOf(section);
         // Skip the internal group template level (it is hidden in the UI)
@@ -3690,16 +3615,8 @@ class WizardStep4 {
         const arr = parent ? parent.elements : this.sections;
         const idx = arr.findIndex(el => el.id === section.id);
         if (idx >= 0) arr.splice(idx, 1);
-        // A designated group section holds ONLY its element template: 
-        // a move into "the group's top level" lands at the end of the
-        // template, where the content is actually rendered. Pushing a section
-        // directly into the group section (outside its template) left it
-        // unrendered, so the section seemed to vanish from the wizard.
-        let dest = target;
-        if (this.isGroupSection(target)) {
-          const groupTemplate = this.getGroupTemplate(target);
-          if (groupTemplate) dest = groupTemplate;
-        }
+        // The policy resolves group-section targets to their element template.
+        const dest = stic_AwfMovePolicy.resolved(target, this.sections);
         dest.elements.push(section);
 
         // Container-type coherence against the REAL destination: a section
@@ -3738,81 +3655,19 @@ class WizardStep4 {
         };
         return find(this.sections);
       },
-
-      // Candidate sections an element can be moved to (group-scope rules).
-      // Elements must always remain inside a section, so there is no
-      // "outside all sections" target, and 'tabs' CONTAINER sections are never
-      // targets (they hold only panes): their 'tab_item' children are the targets.
-      //  - content of a group (directly or in any of its subsections): the
-      //    sections and subsections of that same group;
-      //  - standalone content: any standalone section of the form, at any depth.
+      // Dropdown data for element moves — rules live in stic_AwfMovePolicy.
       getMoveTargets(element, fromSection) {
-        if (!fromSection) return [];
-        const groupRoot = this.getGroupScopeRoot(fromSection);
-        let candidates;
-        if (groupRoot) {
-          candidates = this.getSectionsWithin(groupRoot);
-        } else {
-          candidates = this.getStandaloneSections();
-        }
-
-        // An ELEMENT carries its data block: a whole block element or a field
-        // fragment must render inside its OWN block's instance loop (its host
-        // subtree). Dropping them into ANOTHER block's host corrupts the
-        // layout: the render misreads the foreign host as a subgroup of the
-        // moved block and REPLACES the host's own content (its fields lost).
-        // GROUPED blocks are therefore restricted to their block's host
-        // subtree; STANDALONE blocks keep the section reordering behaviour.
-        const movedBlock = (element && (element.type === 'datablock' || element.type === 'field'))
-          ? this.getDataBlock(element) : null;
-        const hostScope = (movedBlock && !movedBlock.is_root)
-          ? this.getBlockHostScope(element.ref_id)
-          : null;
-        if (hostScope) {
-          candidates = candidates.filter(s => s.id === hostScope.id
-            || this.getSectionsWithin(hostScope).some(w => w.id === s.id));
-        }
-
-        return candidates.filter(s => s.id !== fromSection.id && !this.isTabsContainer(s) && !this.isAccordionContainer(s) && !this.isGroupTemplateSection(s));
-      },
-
-      // Innermost section whose subtree renders inside the given block's
-      // instance loop: the section containing the block's WHOLE element (for a
-      // fully unbundled block, the one holding its field fragments). Null for
-      // blocks with no layout representation.
-      getBlockHostScope(blockId) {
-        if (!blockId) return null;
-        let host = null;
-        const findHost = (section) => {
-          if (host) return;
-          for (const el of (section.elements || [])) {
-            if (el.type === 'datablock' && el.ref_id === blockId) { host = section; return; }
-          }
-          for (const el of (section.elements || [])) {
-            if (el.type === 'section') findHost(el);
-          }
-        };
-        this.sections.forEach(findHost);
-        if (host) return host;
-        let frag = null;
-        const findFrag = (section) => {
-          if (frag) return;
-          for (const el of (section.elements || [])) {
-            if (el.type === 'field' && el.ref_id === blockId) { frag = section; return; }
-          }
-          for (const el of (section.elements || [])) {
-            if (el.type === 'section') findFrag(el);
-          }
-        };
-        this.sections.forEach(findFrag);
-        return frag;
+        return stic_AwfMovePolicy.elementTargets(element, fromSection, this.sections, this.data_blocks);
       },
 
       // Adds a new (empty) nested section to ANY section,
       // like the top-level add-section button, and focuses its title editor
       addNestedSection(section) {
         const nested = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
-        section.elements.push(nested);
+        // A group section holds only its hidden element template: new content
+        // goes directly into the template, next to the block host sections.
+        const host = this.isGroupSection(section) ? (this.getGroupTemplate(section) || section) : section;
+        host.elements.push(nested);
 
         // Once rendered: scroll to the new section card and start editing its title
         Alpine.nextTick(() => {
@@ -3879,6 +3734,10 @@ class WizardStep4 {
         if (!element || element.type !== 'field') return;
         const block = this.getDataBlock(element);
         if (!block) return;
+        // I2/I3: bundling is a layout move too — the same policy that governs
+        // the move dropdowns decides whether the scattered fragments may be
+        // consolidated at the first one's section.
+        if (!stic_AwfMovePolicy.canBundle(block.id, this.sections, this.data_blocks)) return;
 
         const fragments = [];
         const collect = (sec) => {
@@ -3890,7 +3749,9 @@ class WizardStep4 {
         this.sections.forEach(collect);
         if (fragments.length === 0) return;
 
-        const firstSection = fragments[0].sec;
+        // A group head's whole element belongs in its structural host, not in
+        // the section that happened to hold a misplaced fragment.
+        const firstSection = stic_AwfMovePolicy.bundleDestination(block.id, this.sections, this.data_blocks) || fragments[0].sec;
         const firstIndex = firstSection.elements.indexOf(fragments[0].el);
 
         // Remove every fragment, then insert the block element at the first position
@@ -3940,18 +3801,9 @@ class WizardStep4 {
         const toSection = this.findSectionById(toSectionId);
         if (!fromSection || !toSection) return;
 
-        // Same-level rule: blocks of a group only move between that group's nested
-        // sections; standalone blocks only move between standalone top-level sections.
-        // The dropdown already shows only valid targets; this is the enforcement.
+        // Enforce the same rule the dropdown used; the target is final.
         if (!this.getMoveTargets(element, fromSection).some(s => s.id === toSection.id)) return;
-
-        let dest = toSection;
-        if (this.isGroupSection(toSection)) {
-          const groupTemplate = this.getGroupTemplate(toSection);
-          if (groupTemplate) dest = groupTemplate;
-        }
-
-        // Move the element itself
+        const dest = stic_AwfMovePolicy.resolved(toSection, this.sections);
         fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
         dest.elements.push(element);
       },

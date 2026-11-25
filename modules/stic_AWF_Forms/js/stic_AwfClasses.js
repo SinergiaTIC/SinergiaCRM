@@ -2539,10 +2539,29 @@ class stic_AwfLayout {
       const host = blockHostSection(home, block);
       fragments.forEach(({ section, el }) => {
         const i = section.elements.indexOf(el);
-        if (i >= 0 && !sectionContainsSection(home, section)) {
-          section.elements.splice(i, 1);
-          host.elements.push(el);
+        if (i < 0 || sectionContainsSection(home, section)) return;
+        // A section that holds ONLY this block's fragments is the user's own
+        // unbundled layout for the block (created in step 4). Stripping its
+        // fragments here left the section EMPTY and later passes dropped it,
+        // so the user's section disappeared when the parent became a group.
+        // Move the whole section (identity, title and subtree intact) into the
+        // block's host inside the group instead of extracting its fragments.
+        const ownElements = (section.elements || []).filter(e => e.type === 'datablock' || e.type === 'field');
+        if (ownElements.length > 0 && ownElements.every(e => e.ref_id === blockId) && section !== host) {
+          const detach = (parent, seen = new Set()) => {
+            if (!parent || seen.has(parent.id)) return false;
+            seen.add(parent.id);
+            const idx = parent.elements.findIndex(e => e.id === section.id);
+            if (idx >= 0) { parent.elements.splice(idx, 1); return true; }
+            return parent.elements.some(e => e.type === 'section' && detach(e, seen));
+          };
+          this.structure = this.structure.filter(s => s.id !== section.id);
+          this.structure.forEach(s => detach(s));
+          if (!sectionContainsSection(host, section)) host.elements.push(section);
+          return;
         }
+        section.elements.splice(i, 1);
+        host.elements.push(el);
       });
     });
 
@@ -5572,3 +5591,245 @@ class stic_AwfConfiguration {
     return true;
   }
 }
+
+/**
+ * Single source of truth for step-4 layout move rules (I1-I5):
+ *   I1 group sections own one hidden element template; never element targets.
+ *   I2 a group head's element stays in its own group, never in a nested one;
+ *      a misplaced fragment can be moved back to the head's own host.
+ *   I3 a plain member may move inside its group, but not into a nested group.
+ *   I4 a section keeps its nearest enclosing group; a nested group stays
+ *      inside its parent group and never reaches the form top level.
+ *   I5 containers/templates are not drop targets; their item sections are.
+ * Dropdowns and movers both use these functions; returned sections are the
+ * FINAL destinations (group sections already resolved to their template).
+ */
+globalThis.stic_AwfMovePolicy = (() => {
+  const FORM_TARGET = { id: '__form__', isFormTarget: true };
+
+  const isGroup = s => !!s && s.isGroupSection === true;
+  const isTemplate = s => !!s && s.groupTemplate === true;
+  const isContainer = s => !!s && (s.containerType === 'card_tabs' || s.containerType === 'panel_tabs'
+    || s.containerType === 'card_accordion' || s.containerType === 'panel_accordion');
+  const templateOf = s => (isGroup(s) && Array.isArray(s.elements))
+    ? s.elements.find(el => el && el.type === 'section' && el.groupTemplate === true) || null
+    : null;
+
+  const descendants = (section) => {
+    const out = [];
+    const walk = s => (s.elements || []).forEach(el => { if (el && el.type === 'section') { out.push(el); walk(el); } });
+    walk(section);
+    return out;
+  };
+  const parentOf = (section, sections) => {
+    const find = list => {
+      for (const s of list) {
+        for (const el of (s.elements || [])) {
+          if (el && el.type !== 'section') continue;
+          if (el.id === section.id) return s;
+          const found = find([el]);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+    return find(sections || []);
+  };
+  // Nearest / outermost designated group section enclosing a section (itself included)
+  const nearestGroup = (section, sections) => {
+    let cur = section;
+    while (cur) { if (isGroup(cur)) return cur; cur = parentOf(cur, sections); }
+    return null;
+  };
+  const outerGroup = (section, sections) => {
+    let cur = section, scope = null;
+    while (cur) { if (isGroup(cur)) scope = cur; cur = parentOf(cur, sections); }
+    return scope;
+  };
+  const withinGroup = (section, sections) => !!nearestGroup(section, sections);
+  const standalone = (sections) => (sections || [])
+    .filter(s => !isGroup(s))
+    .flatMap(s => [s, ...descendants(s).filter(w => !withinGroup(w, sections))]);
+
+  const hostOfBlock = (blockId, sections) => {
+    const find = type => {
+      for (const section of (sections || [])) {
+        const walk = s => {
+          if ((s.elements || []).some(e => e && e.type === type && e.ref_id === blockId)) return s;
+          for (const e of (s.elements || [])) {
+            if (e && e.type === 'section') { const found = walk(e); if (found) return found; }
+          }
+          return null;
+        };
+        const found = walk(section);
+        if (found) return found;
+      }
+      return null;
+    };
+    return find('datablock') || find('field');
+  };
+  // Designated group section of a block, wherever it is nested.
+  const designatedOfBlock = (blockId, list) => {
+    for (const section of (list || [])) {
+      const walk = s => {
+        if (isGroup(s) && s.groupRootBlockId === blockId) return s;
+        for (const e of (s.elements || [])) {
+          if (e && e.type === 'section') { const found = walk(e); if (found) return found; }
+        }
+        return null;
+      };
+      const found = walk(section);
+      if (found) return found;
+    }
+    return null;
+  };
+  const resolved = (target, sections) => (isGroup(target) ? (templateOf(target) || target) : target);
+  const dedupe = (list) => {
+    const seen = new Set();
+    return list.filter(s => { if (seen.has(s.id)) return false; seen.add(s.id); return true; });
+  };
+
+  /** FINAL destinations for a datablock/field element (no form target: elements live inside sections). */
+  function elementTargets(element, fromSection, sections, dataBlocks) {
+    if (!fromSection || !element) return [];
+    const scope = outerGroup(fromSection, sections);
+    let candidates = scope ? descendants(scope) : standalone(sections);
+    if (element.type === 'datablock' || element.type === 'field') {
+      const block = (dataBlocks || []).find(b => b.id === element.ref_id);
+      if (block) {
+        if (block.isGroupHead(dataBlocks || [])) {
+          // I2: a head's element stays INSIDE ITS OWN GROUP (never another
+          // group's host). The designated template is the real home: a
+          // fragment misplaced in a member's host can still be moved back to
+          // the head's own host within that template (the old "hostOfBlock"
+          // test froze the fragment at its current, corrupted position).
+          const designated = designatedOfBlock(block.id, sections);
+          if (designated) {
+            // I2/I4: inside its OWN group only. A nested group section is a
+            // different instance loop: a head's element dropped there renders
+            // with the wrong indexes (or disappears).
+            candidates = candidates.filter(s => nearestGroup(s, sections) === designated);
+          } else {
+            const host = hostOfBlock(block.id, sections);
+            candidates = host ? candidates.filter(s => s.id === host.id || descendants(host).some(w => w.id === s.id)) : [];
+          }
+        } else {
+          // I3: a plain member never crosses a group boundary
+          const ownGroup = nearestGroup(fromSection, sections);
+          candidates = candidates.filter(s => nearestGroup(s, sections) === ownGroup);
+        }
+      }
+    }
+    return dedupe(candidates.filter(s => s.id !== fromSection.id && !isGroup(s) && !isContainer(s) && !isTemplate(s)));
+  }
+
+  /** Section where a bundled whole element must be placed. For a group head,
+   *  its own structural host inside the designated template (not the section
+   *  that happens to hold a misplaced fragment). */
+  function bundleDestination(blockId, sections, dataBlocks) {
+    const block = (dataBlocks || []).find(b => b.id === blockId);
+    if (block && block.isGroupHead(dataBlocks || [])) {
+      const designated = designatedOfBlock(blockId, sections);
+      const template = designated ? templateOf(designated) : null;
+      if (template) {
+        const whole = (template.elements || []).find(el => el && el.type === 'section'
+          && (el.elements || []).some(e => e && e.type === 'datablock' && e.ref_id === blockId));
+        if (whole) return whole;
+        const plain = (template.elements || []).find(el => el && el.type === 'section'
+          && !isGroup(el) && !isTemplate(el));
+        if (plain) return plain;
+      }
+      return hostOfBlock(blockId, sections);
+    }
+    return null; // plain member: keep the first fragment's section
+  }
+
+  /** Whether a block's scattered fragments may be bundled (I2/I3); the
+   *  destination comes from bundleDestination(), not the first fragment. */
+  function canBundle(blockId, sections, dataBlocks) {
+    const hosts = [];
+    for (const section of (sections || [])) {
+      const walk = s => {
+        (s.elements || []).forEach(el => {
+          if (el && el.type === 'section') { walk(el); return; }
+          if (el && el.type === 'field' && el.ref_id === blockId) hosts.push(s);
+        });
+      };
+      walk(section);
+    }
+    if (hosts.length === 0) return false;
+    const block = (dataBlocks || []).find(b => b.id === blockId);
+    if (block && block.isGroupHead(dataBlocks || [])) {
+      const designated = designatedOfBlock(blockId, sections);
+      if (designated) return hosts.every(s => nearestGroup(s, sections) === designated);
+      const host = hostOfBlock(blockId, sections);
+      return !!host && hosts.every(s => s.id === host.id || descendants(host).some(w => w.id === s.id));
+    }
+    const g = nearestGroup(hosts[0], sections);
+    return hosts.every(s => nearestGroup(s, sections) === g);
+  }
+
+  /** FINAL destinations for a section (group sections resolve to their template). */
+  // Id of the enclosing group root when `section` is a nested group head.
+  const nestedRootId = (section, dataBlocks) => {
+    if (!isGroup(section)) return null;
+    const block = (dataBlocks || []).find(b => b.id === section.groupRootBlockId);
+    return block && block.group_root && block.group_root !== block.id ? block.group_root : null;
+  };
+
+  // Whether a section may be moved out to the form's top level.
+  function canMoveSectionOut(section, sections, dataBlocks) {
+    const parent = parentOf(section, sections);
+    if (!parent) return false;
+    if (nestedRootId(section, dataBlocks)) return false;   // subgroup stays in its parent group
+    return isGroup(section) ? !withinGroup(parent, sections) : !withinGroup(section, sections);
+  }
+
+  function sectionTargets(section, sections, dataBlocks) {
+    if (!section) return [];
+    const ownIds = new Set([section.id, ...descendants(section).map(s => s.id)]);
+    const parent = parentOf(section, sections);
+    const canMoveOut = canMoveSectionOut(section, sections, dataBlocks);
+    if (isGroup(section)) {
+      const enclosingRoot = nestedRootId(section, dataBlocks);
+      if (enclosingRoot) {
+        // A nested group stays in its parent group's own level: never in a
+        // sibling subgroup, a standalone section, or the top level.
+        const home = designatedOfBlock(enclosingRoot, sections);
+        const universe = home ? [home, ...descendants(home)] : [];
+        const targets = universe
+          .filter(s => !ownIds.has(s.id) && (s === home || !isGroup(s)) && !isTemplate(s)
+            && nearestGroup(s, sections) === home
+            && s.id !== parent?.id && s.id !== section.id)
+          .map(s => resolved(s, sections))
+          .filter(s => !ownIds.has(s.id) && s.id !== parent?.id && s.id !== section.id);
+        return dedupe(targets);
+      }
+      const targets = standalone(sections)
+        .filter(s => !ownIds.has(s.id) && !withinGroup(s, sections))
+        .filter(s => s.id !== parent?.id && s.id !== section.id && !ownIds.has(s.id));
+      return canMoveOut ? [...targets, FORM_TARGET] : targets;
+    }
+    const scope = outerGroup(section, sections);
+    const universe = scope ? [scope, ...descendants(scope)] : standalone(sections);
+    const ownGroup = nearestGroup(section, sections);
+    let targets = universe.filter(s => !ownIds.has(s.id) && !isTemplate(s)
+      && (!parent || s.id !== parent.id)
+      && nearestGroup(s, sections) === ownGroup);
+    // A section that is already a direct child of the template must not be
+    // offered the group section itself (it is its own parent's container).
+    const template = scope ? templateOf(scope) : null;
+    if (scope && template && parent && parent.id === template.id) targets = targets.filter(s => s.id !== scope.id);
+    targets = dedupe(targets.map(s => resolved(s, sections))
+      // Filter AFTER resolution: a group-section target that resolves to the
+      // node's own parent (or to its subtree) must not be offered — otherwise
+      // the dropdown shows a single "target" that is the current location.
+      .filter(s => !ownIds.has(s.id) && (!parent || s.id !== parent.id) && s.id !== section.id));
+    return canMoveOut ? [...targets, FORM_TARGET] : targets;
+  }
+
+  return {
+    FORM_TARGET, isGroup, isTemplate, withinGroup, resolved,
+    elementTargets, sectionTargets, canMoveSectionOut, canBundle, bundleDestination,
+  };
+})();
