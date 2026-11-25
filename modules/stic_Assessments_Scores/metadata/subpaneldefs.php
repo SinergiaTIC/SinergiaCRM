@@ -21,6 +21,22 @@
  * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
  */
 $module_name = 'stic_Assessments_Scores';
+
+// Self-relationship: partial scores under a main score
+$layout_defs[$module_name]['subpanel_setup']['stic_assessments_scores_children'] = array(
+    'order' => 100,
+    'module' => 'stic_Assessments_Scores',
+    'subpanel_name' => 'default',
+    'sort_order' => 'asc',
+    'sort_by' => 'name',
+    'title_key' => 'LBL_CHILD_SCORES_SUBPANEL_TITLE',
+    'get_subpanel_data' => 'children_link',
+    'top_buttons' => array(
+        array('widget_class' => 'SubPanelTopButtonQuickCreate'),
+        array('widget_class' => 'SubPanelTopSelectButton', 'mode' => 'MultiSelect'),
+    ),
+);
+
 $layout_defs[$module_name]['subpanel_setup']['securitygroups'] = array(
     'top_buttons' => array(
         array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'SecurityGroups', 'mode' => 'MultiSelect'),

@@ -69,4 +69,8 @@ $mod_strings = array(
     'LBL_SCORE_NAME_PREFIX' => 'Puntuación',
     'LBL_STIC_ASSESSMENT_ID' => 'ID de Valoración',
     'LBL_STIC_ASSESSMENTS_STIC_ASSESSMENTS_SCORES_FROM_STIC_ASSESSMENTS_TITLE' => 'Valoración',
+    'LBL_PARENT_SCORE_ID' => 'Puntuación principal (ID)',
+    'LBL_PARENT_SCORE' => 'Puntuación principal',
+    'LBL_CHILD_SCORES' => 'Puntuaciones parciales',
+    'LBL_CHILD_SCORES_SUBPANEL_TITLE' => 'Puntuaciones parciales',
 );

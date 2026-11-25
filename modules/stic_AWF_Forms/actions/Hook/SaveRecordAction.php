@@ -270,7 +270,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $injectedFks = $this->injectRelationFks($context, $actionConfig, $bean, $block);
 
             // Save without running logic hooks to avoid unwanted side effects in the creation of the record.
-            $bean->save(false); 
+            $bean->save(false); $GLOBALS['log']->fatal("[DEBUG-SAVE] SAVED {$module} id={$bean->id} parent=" . var_export($bean->parent_id ?? null, true)); 
             $this->persistNonDbRelations($context, $actionConfig, $bean, $block, $modifications);
             
             $modificationType = BeanModificationType::CREATED;
@@ -385,14 +385,24 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
      * Fills the system fields of stic_Assessments_Scores blocks with the data
      * of the current submission, when the form does not define them itself:
      *  - form_id: identifier of the AWF form that generated the score
-     *  - submission_data: JSON with all the answers of the submission
+     *  - submission_data: JSON with the submitted answers. Blocks holding the
+     *    self-relationship relate field ("parent_name") are "partial" scores:
+     *    their JSON contains the answers of their own block. Other blocks are
+     *    "main" scores: their JSON contains the answers of the whole submission.
      * @param ExecutionContext $context The global context
      * @param DataBlockResolved $block The resolved data block
      * @return void
      */
     private function fillAssessmentScoreSystemFields(ExecutionContext $context, DataBlockResolved $block): void
     {
-        foreach (['form_id' => $context->formId, 'submission_data' => ScaleActionUtils::buildSubmissionJson($context)] as $fieldName => $value) {
+        // Partial score: the block includes the self-relationship relate field
+        $isPartial = isset($block->dataBlock->fields['parent_name']);
+
+        $json = $isPartial
+            ? ScaleActionUtils::buildBlockSubmissionJson($context, $block)
+            : ScaleActionUtils::buildSubmissionJson($context);
+
+        foreach (['form_id' => $context->formId, 'submission_data' => $json] as $fieldName => $value) {
             // Only when the block actually includes the field and the form does not set it
             if (!isset($block->dataBlock->fields[$fieldName])) {
                 continue;
@@ -485,6 +495,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             }
 
             $bean->{$idName} = $targetBeanRef->beanId;
+            $GLOBALS['log']->fatal("[DEBUG-FK] bean={$bean->id} {$idName} = {$targetBeanRef->beanId}");
             // Finds and populates the display relate field (e.g. account_name) associated with a physical FK field (e.g. account_id)
             stic_AWF_FormsUtils::populateRelateDisplayField($bean, $idName, $targetBeanRef->beanId);
 
@@ -579,7 +590,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             if ($fieldResolved === null || empty($fieldResolved->value)) {
                 continue;
             }
-            if ($fieldResolved->definition && $fieldResolved->definition->value_type === DataBlockFieldValueType::FIXED) {
+            if ($fieldResolved->dataBlockField && $fieldResolved->dataBlockField->value_type === DataBlockFieldValueType::FIXED) {
                 continue;
             }
             $fieldDef = $bean->field_defs[$fieldName] ?? null;

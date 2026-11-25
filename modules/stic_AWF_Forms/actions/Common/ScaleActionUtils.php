@@ -218,6 +218,86 @@ class ScaleActionUtils {
     }
 
     /**
+     * Resolves the score of a submitted field: when the field options define
+     * scores (PR: "Puntuación" in option editors), the score of the chosen
+     * option(s) is returned (the sum for multi-value fields). Returns null
+     * when the field has no scored options or no selected value.
+     * @param ?FormDataBlockField $fieldDef The field definition (if found)
+     * @param mixed $rawValue The submitted value (scalar or array for multi-fields)
+     * @return ?float The score (null when there is no value or no scores)
+     */
+    public static function resolveFieldScore(?FormDataBlockField $fieldDef, mixed $rawValue): ?float {
+        if ($rawValue === null || $rawValue === '' || $rawValue === []) {
+            return null;
+        }
+
+        $scoreMap = [];
+        $hasScores = false;
+        foreach ($fieldDef?->value_options ?? [] as $option) {
+            if ($option->score !== null) {
+                $scoreMap[(string)$option->value] = (float)$option->score;
+                $hasScores = true;
+            }
+        }
+        if (!$hasScores) {
+            return null;
+        }
+
+        if (is_array($rawValue)) {
+            $sum = 0.0;
+            foreach ($rawValue as $single) {
+                if (array_key_exists((string)$single, $scoreMap)) {
+                    $sum += $scoreMap[(string)$single];
+                }
+            }
+            return $sum;
+        }
+        return $scoreMap[(string)$rawValue] ?? null;
+    }
+
+    /**
+     * Resolves the display text of a submitted value: when the field options
+     * define the chosen value, its label (text) is returned; otherwise the
+     * raw value itself.
+     * @param ?FormDataBlockField $fieldDef The field definition (if found)
+     * @param mixed $rawValue The submitted value (scalar or array for multi-fields)
+     * @return ?string The display text (null when there is no value at all)
+     */
+    public static function resolveDisplayTextValue(?FormDataBlockField $fieldDef, mixed $rawValue): ?string {
+        if ($rawValue === null || $rawValue === '' || $rawValue === []) {
+            return null;
+        }
+
+        $textMap = [];
+        foreach ($fieldDef?->value_options ?? [] as $option) {
+            if ($option->text !== null && $option->text !== '') {
+                $textMap[(string)$option->value] = (string)$option->text;
+            }
+        }
+
+        $toText = function ($value) use ($textMap): ?string {
+            if (array_key_exists((string)$value, $textMap)) {
+                return $textMap[(string)$value];
+            }
+            return is_scalar($value) ? (string)$value : null;
+        };
+
+        // Multi-value fields: the display text is the concatenation of the chosen texts
+        if (is_array($rawValue)) {
+            $texts = [];
+            foreach ($rawValue as $single) {
+                $text = $toText($single);
+                if ($text !== null) {
+                    $texts[] = $text;
+                }
+            }
+            return empty($texts) ? null : implode(', ', $texts);
+        }
+
+        return $toText($rawValue);
+    }
+
+    /**
      * Parses a range definition in the compact format "min-max: Label", with
      * ranges separated by newlines or pipes. Also supports open ranges
      * (">=5", "<=5", ">5", "<5") and single values ("5"). The first matching
@@ -432,6 +512,51 @@ class ScaleActionUtils {
     }
 
     /**
+     * Gets the data blocks of the form in display order (the order their
+     * sections appear in the form layout).
+     * @param FormConfig $formConfig The form configuration
+     * @return FormDataBlock[] Blocks ordered as displayed in the form
+     */
+    public static function getBlocksInDisplayOrder(FormConfig $formConfig): array {
+        $ordered = [];
+
+        $collect = function ($elements) use (&$collect, &$ordered, $formConfig) {
+            foreach ($elements ?? [] as $element) {
+                if (($element->type ?? '') === 'datablock' && !empty($element->ref_id)
+                    && isset($formConfig->data_blocks[$element->ref_id])) {
+                    $ordered[] = $formConfig->data_blocks[$element->ref_id];
+                } elseif (!empty($element->elements) && is_array($element->elements)) {
+                    $collect($element->elements);
+                }
+            }
+        };
+        $collect($formConfig->layout->structure ?? []);
+
+        // Any block not referenced by the layout goes at the end
+        foreach ($formConfig->data_blocks as $block) {
+            if (!in_array($block, $ordered, true)) {
+                $ordered[] = $block;
+            }
+        }
+        return $ordered;
+    }
+
+    /**
+     * Gets the display position of a data block (0-based) in the form layout.
+     * @param FormConfig $formConfig The form configuration
+     * @param FormDataBlock $block The data block
+     * @return int The position (blocks outside the layout go last)
+     */
+    public static function getBlockDisplayPosition(FormConfig $formConfig, FormDataBlock $block): int {
+        foreach (self::getBlocksInDisplayOrder($formConfig) as $position => $orderedBlock) {
+            if ($orderedBlock === $block || $orderedBlock->id === $block->id) {
+                return $position;
+            }
+        }
+        return PHP_INT_MAX;
+    }
+
+    /**
      * Builds a structured JSON string with all the data captured by a form
      * submission: one entry per data block, with every field, its label and
      * the value submitted (including unlinked/virtual fields and fixed
@@ -442,54 +567,8 @@ class ScaleActionUtils {
      */
     public static function buildSubmissionJson(ExecutionContext $context): string {
         $blocksData = [];
-        foreach ($context->formConfig->data_blocks as $block) {
-            $fieldsData = [];
-            $instancesData = [];
-
-            foreach ($block->fields as $fieldDef) {
-                $fieldData = [
-                    'label' => !empty($fieldDef->label) ? $fieldDef->label : $fieldDef->text_original,
-                    'type' => $fieldDef->type_in_form,
-                ];
-                if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
-                    $fieldData['unlinked'] = true;
-                }
-
-                if ($block->getLoopDepth() > 0) {
-                    // Repeatable/optional block: resolve the value per instance
-                    $instances = DataBlockResolved::resolveInstances($block, $context->formData, $context);
-                    foreach ($instances as $instanceIndex => $instance) {
-                        $value = $instance->getFieldValue($fieldDef->name)?->value;
-                        if ($fieldDef->type === 'multienum' && is_array($value)) {
-                            $value = implode(',', $value);
-                        }
-                        $fieldData['value'] = $value;
-                        $instancesData[$instanceIndex][$fieldDef->name] = $fieldData;
-                    }
-                    continue;
-                }
-
-                // Scalar block: flat key in the raw form data (or the fixed value)
-                $phpKey = str_replace('.', '_', $fieldDef->getKey());
-                $value = $context->formData[$phpKey] ?? ($fieldDef->value_type === DataBlockFieldValueType::FIXED ? $fieldDef->value : null);
-                if ($fieldDef->type === 'multienum' && is_array($value)) {
-                    $value = implode(',', $value);
-                }
-                $fieldData['value'] = $value;
-                $fieldsData[$fieldDef->name] = $fieldData;
-            }
-
-            $blockData = [
-                'text' => $block->text,
-                'module' => $block->module,
-            ];
-            if (!empty($fieldsData)) {
-                $blockData['fields'] = $fieldsData;
-            }
-            if (!empty($instancesData)) {
-                $blockData['instances'] = array_values($instancesData);
-            }
-            $blocksData[] = $blockData;
+        foreach (self::getBlocksInDisplayOrder($context->formConfig) as $order => $block) {
+            $blocksData[] = self::buildBlockDataArray($context, $block, null, $order);
         }
 
         $submissionData = [
@@ -501,4 +580,93 @@ class ScaleActionUtils {
 
         return json_encode($submissionData, JSON_UNESCAPED_UNICODE);
     }
+
+    /**
+     * Builds a structured JSON string with the answers captured by ONE data
+     * block of the submission (its fields, labels and values, per instance).
+     * Used for "partial" records of stic_Assessments_Scores, so each partial
+     * stores the questions/answers of its own section in its submission_data.
+     * @param ExecutionContext $context The execution context of the submission
+     * @param DataBlockResolved $block The resolved data block (current instance)
+     * @return string The JSON string
+     */
+    public static function buildBlockSubmissionJson(ExecutionContext $context, DataBlockResolved $block): string {
+        $submissionData = [
+            'form_id' => $context->formId,
+            'form_type' => $context->formType,
+            'submission_timestamp' => date('Y-m-d H:i:s', (int)$context->submissionTimestamp),
+            'block' => self::buildBlockDataArray($context, $block->dataBlock, $block,
+                self::getBlockDisplayPosition($context->formConfig, $block->dataBlock)),
+        ];
+
+        return json_encode($submissionData, JSON_UNESCAPED_UNICODE);
+    }
+
+    /**
+     * Builds the data array of one data block (fields, labels and values).
+     * @param ExecutionContext $context The execution context of the submission
+     * @param FormDataBlock $block The data block configuration
+     * @param ?DataBlockResolved $resolvedBlock The resolved block instance
+     *        (for groups). When null, values are read from the raw form data
+     * @return array The block data array
+     */
+    private static function buildBlockDataArray(ExecutionContext $context, FormDataBlock $block, ?DataBlockResolved $resolvedBlock = null, ?int $order = null): array {
+        $fieldsData = [];
+        $instancesData = [];
+
+        foreach ($block->fields as $fieldDef) {
+            $fieldData = [
+                'label' => !empty($fieldDef->label) ? $fieldDef->label : $fieldDef->text_original,
+                'type' => $fieldDef->type_in_form,
+            ];
+            if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
+                $fieldData['unlinked'] = true;
+            }
+
+            if ($block->getLoopDepth() > 0 && $resolvedBlock === null) {
+                // Repeatable/optional block: resolve the value per instance
+                $instances = DataBlockResolved::resolveInstances($block, $context->formData, $context);
+                foreach ($instances as $instanceIndex => $instance) {
+                    $value = $instance->getFieldValue($fieldDef->name)?->value;
+                    if ($fieldDef->type === 'multienum' && is_array($value)) {
+                        $value = implode(',', $value);
+                    }
+                    $fieldData['value'] = $value;
+                    $fieldData['text'] = self::resolveDisplayTextValue($fieldDef, $value);
+                    $fieldData['score'] = self::resolveFieldScore($fieldDef, $value);
+                    $instancesData[$instanceIndex][$fieldDef->name] = $fieldData;
+                }
+                continue;
+            }
+
+            // Value from the resolved block instance (groups) or the flat form data
+            if ($resolvedBlock !== null) {
+                $value = $resolvedBlock->getFieldValue($fieldDef->name)?->value;
+            } else {
+                $phpKey = str_replace('.', '_', $fieldDef->getKey());
+                $value = $context->formData[$phpKey] ?? ($fieldDef->value_type === DataBlockFieldValueType::FIXED ? $fieldDef->value : null);
+            }
+            if ($fieldDef->type === 'multienum' && is_array($value)) {
+                $value = implode(',', $value);
+            }
+            $fieldData['value'] = $value;
+            $fieldData['text'] = self::resolveDisplayTextValue($fieldDef, $value);
+            $fieldData['score'] = self::resolveFieldScore($fieldDef, $value);
+            $fieldsData[$fieldDef->name] = $fieldData;
+        }
+
+        $blockData = [
+            'text' => $block->text,
+            'module' => $block->module,
+            'order' => $order,
+        ];
+        if (!empty($fieldsData)) {
+            $blockData['fields'] = $fieldsData;
+        }
+        if (!empty($instancesData)) {
+            $blockData['instances'] = array_values($instancesData);
+        }
+        return $blockData;
+    }
 }
+

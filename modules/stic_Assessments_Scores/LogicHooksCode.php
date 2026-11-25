@@ -46,7 +46,7 @@ class stic_Assessments_ScoresLogicHooks
         $prefix = translate('LBL_SCORE_NAME_PREFIX', 'stic_Assessments_Scores');
         $score = ($bean->score_value !== null && $bean->score_value !== '') ? $bean->score_value : '0';
         $label = !empty($bean->classification_label) ? ' (' . $bean->classification_label . ')' : '';
-        $date = !empty($timedate) ? $timedate->asUser($timedate->now()) : date('Y-m-d H:i');
+        $date = !empty($timedate) ? $timedate->asUser(new DateTime()) : date('Y-m-d H:i');
 
         $bean->name = $prefix . ': ' . $score . $label . ' - ' . $date;
     }
