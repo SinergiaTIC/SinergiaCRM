@@ -257,3 +257,27 @@ $mod_strings['LBL_STIC_PA_PASSWORD_HELP'] = 'Para editar la contraseña es neces
 
 // Conversaciones
 $mod_strings['LBL_STIC_CONVERSATIONS_SUBPANEL_TITLE'] = 'Conversaciones';
+
+// Portal labels
+$mod_strings['LBL_STIC_PANEL_PORTAL_AUTHENTICATION'] = 'Autenticación del portal';
+$mod_strings['LBL_STIC_PORTAL_ACTIONS_HELP'] = 'El portal permite a contactos y organizaciones externas iniciar sesión de forma segura mediante OAuth2 para acceder a sus datos y relaciones. Use este popup para enviar una invitación al portal o un restablecimiento de contraseña. El destinatario recibirá un enlace para establecer su contraseña y podrá acceder al portal. El acceso al portal se habilita automáticamente cuando se envía la invitación o el restablecimiento.';
+$mod_strings['LBL_STIC_PORTAL_ACTION_TYPE_HELP'] = '<b>Enviar invitación:</b> Envía un correo de bienvenida con la URL de acceso al portal, el nombre de usuario y un enlace para establecer la contraseña. La plantilla del correo se puede personalizar en Administración > Configuración del portal > Plantillas de correo > Credenciales del portal (Personas/Organizaciones).<br><br><b>Enviar restablecimiento de contraseña:</b> Envía solo el enlace para establecer la contraseña sin el mensaje de bienvenida. La plantilla del correo se puede personalizar en Administración > Configuración del portal > Plantillas de correo > Restablecimiento de contraseña.<br><br>En ambos casos, el nombre de usuario del portal se establece automáticamente a partir del correo electrónico si está vacío, y el campo %PORTAL_ENABLED_LABEL% se habilita automáticamente.';
+$mod_strings['LBL_STIC_PORTAL_ENABLED'] = 'Portal habilitado';
+$mod_strings['LBL_STIC_PORTAL_ENABLED_C_HELP'] = 'Habilita el acceso al portal para este registro. Cuando está habilitado, el usuario puede iniciar sesión en la página de login del portal.';
+$mod_strings['LBL_STIC_PORTAL_FAILED_ATTEMPTS'] = 'Intentos fallidos';
+$mod_strings['LBL_STIC_PORTAL_FAILED_ATTEMPTS_C_HELP'] = 'Número de intentos fallidos consecutivos de login al portal. Solo lectura, establecido automáticamente por el sistema.';
+$mod_strings['LBL_STIC_PORTAL_FORCE_PW_CHANGE'] = 'Forzar cambio de contraseña';
+$mod_strings['LBL_STIC_PORTAL_FORCE_PW_CHANGE_C_HELP'] = 'Fuerza al usuario a cambiar su contraseña en el próximo login al portal. Útil después de un restablecimiento de contraseña por parte del administrador.';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_BODY'] = 'Hola,<br><br>Su cuenta del portal ha sido creada. Es la primera vez que accede.<br><br><strong>Primer paso: Establezca su contraseña antes de iniciar sesión.</strong> Debe completar este paso antes de poder acceder al portal.<br><a href="{$portal_reset_link}">Establecer contraseña</a><br><br>Después de establecer su contraseña, abra la aplicación: <a href="{$portal_address}">{$portal_address}</a><br>Usuario del portal: {$contact_stic_portal_username_c}<br><br>El enlace para establecer la contraseña caduca en 24 horas. Si no esperaba este correo, contacte con su organización.';
+$mod_strings['LBL_STIC_PORTAL_INVITATION_SUBJECT'] = 'Portal de SinergiaCRM - Acceda a su portal';
+$mod_strings['LBL_STIC_PORTAL_LAST_LOGIN'] = 'Último acceso';
+$mod_strings['LBL_STIC_PORTAL_LAST_LOGIN_C_HELP'] = 'Fecha y hora del último login exitoso al portal. Solo lectura, establecido automáticamente por el sistema.';
+$mod_strings['LBL_STIC_PORTAL_LOCKED_UNTIL'] = 'Bloqueado hasta';
+$mod_strings['LBL_STIC_PORTAL_LOCKED_UNTIL_C_HELP'] = 'Si la cuenta está bloqueada por intentos fallidos, la fecha y hora en que se desbloqueará automáticamente. Solo lectura.';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_CHANGED'] = 'Contraseña cambiada';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_CHANGED_C_HELP'] = 'Fecha en que se cambió la contraseña del portal por última vez. Solo lectura, actualizada automáticamente.';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRES'] = 'Contraseña caduca';
+$mod_strings['LBL_STIC_PORTAL_PASSWORD_EXPIRES_C_HELP'] = 'Fecha en que caduca la contraseña del portal. Después de esta fecha, el usuario deberá cambiarla al iniciar sesión. Solo lectura.';
+$mod_strings['LBL_STIC_PORTAL_TARGET_APP_HELP'] = 'Después de establecer su contraseña, la cuenta es redirigida a la aplicación externa seleccionada mediante el flujo de código de autorización OAuth2. Las aplicaciones listadas aquí provienen de los Clientes OAuth2 configurados en el CRM (Administración > Clientes OAuth2).<br><br>Para añadir una nueva aplicación, vaya a <b>Clientes OAuth2 > Nuevo cliente del portal (código de autorización)</b>, complete el Nombre y la URL de redirección, y aparecerá en este desplegable.<br><br>Elija <b>Genérica (sin aplicación específica)</b> para omitir la redirección y mostrar la página de login del portal.';
+$mod_strings['LBL_STIC_PORTAL_USERNAME'] = 'Usuario del portal';
+$mod_strings['LBL_STIC_PORTAL_USERNAME_C_HELP'] = 'Dirección de correo electrónico usada para el login al portal. Debe ser única entre todas las Personas y Organizaciones.';
