@@ -361,7 +361,7 @@
                                     </div>
                                   </template>
                                   <button type="button" class="btn ms-2" :disabled="field.required" 
-                                          @click="formConfig.deleteDataBlockField(item, field); $store.dataBlockRelationships.resetDataBlockRelationships();"
+                                          @click="formConfig.deleteDataBlockField(item, field);"
                                           :title="utils.translate('LBL_BUTTON_DELETE')">
                                     <span class="suitepicon suitepicon-action-delete"></span>
                                   </button>
@@ -601,7 +601,7 @@
                         <option :value="candidate.id" x-text="candidate.text + (candidate.module ? ' (' + candidate.getModuleText() + ')' : '')"></option>
                       </template>
                     </select>
-                    <button type="button" class="btn" :title="utils.translate('LBL_DATABLOCK_ADD_TO_GROUP_TITLE')"
+                    <button type="button" class="btn" :disabled="selectedCandidateId === ''" :title="utils.translate('LBL_DATABLOCK_ADD_TO_GROUP_TITLE')"
                             @click="formConfig.addChildToGroup(item.id, selectedCandidateId); selectedCandidateId = '';">
                       <span class="suitepicon suitepicon-action-plus"></span>
                     </button>

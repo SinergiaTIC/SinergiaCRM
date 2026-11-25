@@ -570,8 +570,6 @@ class WizardStep2 {
             get dataBlockRelationships() { 
               return this.formConfig.getAllDataBlockRelationships(); 
             },
-            resetDataBlockRelationships() {
-            },
             usedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
               return this.dataBlockRelationships[datablockId].filter(r => r.datablock_orig != '' && r.datablock_dest != '');
@@ -609,15 +607,10 @@ class WizardStep2 {
               });
             },
             addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText) {
-              let dataBlock = this.formConfig.addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText);
-              if (dataBlock) {
-                this.resetDataBlockRelationships();
-              }
-              return dataBlock;
+              return this.formConfig.addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText);
             },
             deleteRelationship(datablockId, relName, relatedDatablockId) {
               this.formConfig.deleteRelationship(datablockId, relName, relatedDatablockId);
-              this.resetDataBlockRelationships();
             },
             getRelationshipTypeLabel(datablockId, relName, otherDatablockId, origDatablockId) {
               let block = this.data_blocks.find(d => d.id == datablockId);
@@ -855,12 +848,14 @@ class WizardStep2 {
                 this.formConfig.addDataBlockField(this.dataBlock, this.field);
               } else {
                 if (this.needDeleteOld) {
-                  this.dataBlock.deleteField(this.field.name);
+                  const oldField = this.dataBlock.fields.find(f => f.name === this.original_name);
+                  if (oldField) this.formConfig.deleteDataBlockField(this.dataBlock, oldField);
                   this.formConfig.addDataBlockField(this.dataBlock, this.field);
                 } else {
                   this.dataBlock.updateField(this.original_name, this.field);
                 }
               }
+              this.formConfig.refreshGroups();
               this.close();
             },
           });
@@ -1115,9 +1110,13 @@ class WizardStep2 {
              */ 
             openCreate(dataBlock) {
               this.dataBlock = dataBlock;
-              this.relationships.resetDataBlockRelationships(); // Force reload relationships
-              this.availableRels = this.relationships.unusedDatablockRelationships(dataBlock.id);
+                            this.availableRels = this.relationships.unusedDatablockRelationships(dataBlock.id);
               this.selectedRelName = this.availableRels[0]?.name ?? '';
+              // Reset the target on every open: the init effect only reacts to a
+              // RELATIONSHIP change, so reopening the same one kept a stale target.
+              this.availableDataBlocks = this.relationships.getAvailableDataBlocksForRelationship(dataBlock.id, this.selectedRelName);
+              this.relatedDataBlockId = this.availableDataBlocks[0]?.id ?? -1;
+              this.newDataBlockText = '';
               this.isOpen = true;
             },
 
@@ -1182,36 +1181,6 @@ class WizardStep2 {
         return blocks.some(b => !b.isValid());
       },
 
-      /**
-       * Reassigns the group_root of a DataBlock and provides visual feedback.
-       */
-      changeGroupRoot(block, newRootId) {
-        if (!block) return;
-
-        // Manual membership is reserved for UNLINKED blocks: a linked block
-        // joins a group only through its relationships (auto-adoption), so
-        // assigning it a group root by hand is refused (removal — empty
-        // newRootId — stays allowed for any member)
-        if (newRootId && !block.isUnlinked) return;
-
-        const oldRoot = block.getGroupHeadBlock(this.data_blocks);
-        block.group_root = newRootId || '';
-
-        if (block.is_child && block.getOptionalDisabledReason(this.data_blocks) != null) {
-          block.min_instances = 1;
-        }
-
-        block.sanitizeRepeatableLimits();
-
-        // Refresh group titles for old and new roots
-        if (oldRoot) oldRoot.refreshGroupTitle(this.data_blocks);
-        const newRoot = block.getGroupHeadBlock(this.data_blocks);
-        if (newRoot) newRoot.refreshGroupTitle(this.data_blocks);
-
-        this.formConfig.prepareForSave();
-        this.highlightCard(block.id);
-      },
-
       reloadGroupTitle(block) {
         if (!block) return;
         
@@ -1246,8 +1215,7 @@ class WizardStep2 {
         // Confirmation before permanently removing the data block
         if (!confirm(utils.translate('LBL_DATABLOCK_DELETE_CONFIRM'))) return;
         this.formConfig.deleteDataBlock(dataBlock);
-        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
-      },
+              },
 
       getDataBlockText(dataBlockId) {
         let dataBlock = this.data_blocks.find(d => d.id == dataBlockId);
@@ -1640,8 +1608,7 @@ class WizardStep2 {
         const dataBlock = this.formConfig.addDataBlockModule(this.newDataBlock.module, true, this.newDataBlock.text);
         this.creatingDataBlock = false;
         this.newDataBlock = {module:'', text:''};
-        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
-        this.$nextTick(() => {
+                this.$nextTick(() => {
           const element = document.getElementById('dataBlock_' + dataBlock.id); 
           if(element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1662,8 +1629,7 @@ class WizardStep2 {
       handleAddDocumentDatablock() {
         const text = this.formConfig.suggestDataBlockText('Documents');
         const dataBlock = this.formConfig.addDataBlockModule('Documents', true, text);
-        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
-        this.$nextTick(() => {
+                this.$nextTick(() => {
           const element = document.getElementById('dataBlock_' + dataBlock.id); 
           if(element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });

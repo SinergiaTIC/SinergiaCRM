@@ -470,21 +470,13 @@ class stic_AwfDataBlock {
       return false;
     }
 
-    // If 'other' is already a group head, ensure it can legally nest without exceeding depth limits
-    if (other.is_repeatable || other.is_optional) {
-      const parentDepth = this.getDepth(allDataBlocks);
-      const subtreeHeight = other.getChildren(allDataBlocks).length > 0 ? 1 : 0;
-      if (parentDepth + 1 + subtreeHeight > 2) return false;
+    // A sibling in the same parent group is already instance-scoped with this
+    // block: it is not a candidate to adopt, so no depth check applies here.
+    if (isSameGroupChild) return true;
 
-      let totalRepeatable = (this.is_repeatable ? 1 : 0) + (other.is_repeatable ? 1 : 0);
-      let cur = this.group_root;
-      while (cur) {
-        const p = allDataBlocks.find(b => b.id === cur);
-        if (p && p.is_repeatable) totalRepeatable++;
-        cur = p ? p.group_root : null;
-      }
-      if (totalRepeatable > 2) return false;
-    }
+    // An orphan head joining this group must respect the depth/N×M rule.
+    if ((other.is_repeatable || other.is_optional)
+        && !globalThis.stic_AwfGroupPolicy.canAdoptHead(other, this, allDataBlocks)) return false;
 
     return true;
   }
@@ -503,19 +495,8 @@ class stic_AwfDataBlock {
     if (!this.hasVisibleFormFieldsInTree(allDataBlocks) && !this.hasAnyFieldsInTree(allDataBlocks)) 
         return 'LBL_ERROR_DATABLOCK_OPTIONAL_NO_FIELDS';
 
-    // Cannot be optional if an external block requires an FK to this block
-    const hasExternalMandatoryDependent = allDataBlocks.some(other => {
-      if (other.id === this.id) return false;
-      
-      // If 'other' is or will be inside this group, both are deactivated together
-      if (this.isOrWillBeInGroup(other, allDataBlocks)) return false;
-
-      const isOtherMandatory = !other.is_optional;
-      const requiresThisBlock = other.fields.some(f => f.required && f.type === 'relate' && 
-                                                       (f.value === this.id || (f.value_type === 'dataBlock' && f.value === this.id)));
-      
-      return isOtherMandatory && requiresThisBlock;
-    });
+    // An external block with a mandatory FK to this block keeps it mandatory.
+    const hasExternalMandatoryDependent = globalThis.stic_AwfGroupPolicy.externalIncoming(this, allDataBlocks, true);
     if (hasExternalMandatoryDependent) return 'LBL_ERROR_DATABLOCK_OPTIONAL_MANDATORY_RELATION';
 
     // Can be optional
@@ -586,16 +567,8 @@ class stic_AwfDataBlock {
     // Whole dependency tree renders NO visible form field cannot be repeatable
     if (!this.hasVisibleFormFieldsInTree(allDataBlocks)) return 'LBL_ERROR_DATABLOCK_REPEATABLE_NO_VISIBLE_FIELDS';
 
-    // Cannot repeat if independent external blocks point to this block via FK
-    const hasExternalIncomingFk = allDataBlocks.some(other => {
-      if (other.id === this.id) return false;
-      
-      // If 'other' is or will be inside our group tree, it is resolved via instances/loops
-      if (this.isOrWillBeInGroup(other, allDataBlocks)) {
-        return false;
-      }
-      return other.isRelationalChild(this.id, allDataBlocks);
-    });
+    // Cannot repeat if an independent external block points to this block via FK
+    const hasExternalIncomingFk = globalThis.stic_AwfGroupPolicy.externalIncoming(this, allDataBlocks, false);
     if (hasExternalIncomingFk) return 'LBL_ERROR_DATABLOCK_REPEATABLE_HAS_DEPENDENTS';
 
     // Depth-2 rule: adding this block as repeatable must keep the branch ≤ 2
@@ -664,68 +637,13 @@ class stic_AwfDataBlock {
   }
 
   /**
-   * Returns valid candidate parent blocks for this block to join as a child.
-   * Filters out self, descendants (cycle prevention), and invalid N x M combinations.
-   * @param {stic_AwfDataBlock[]} allDataBlocks 
-   * @returns {stic_AwfDataBlock[]}
-   */
-  getAvailableGroupRoots(allDataBlocks) {
-    return allDataBlocks.filter(candidate => {
-      // 1. Cannot be itself
-      if (candidate.id === this.id) return false;
-
-      // 2. Cannot be an existing descendant (prevents cycles)
-      if (this.isDescendant(candidate.id, allDataBlocks)) return false;
-
-      // 3. If this block is ALREADY repeatable, candidates MUST NOT be repeatable
-      //    nor have repeatable ancestors (prevents N x M beyond the depth-2 rule)
-      if (this.is_repeatable && !this.canBeRepeatableInParent(candidate, allDataBlocks)) return false;
-
-      // 4. Depth guard: group nesting is limited to 2 levels. The resulting
-      //    depth of this block (candidate depth + 1) plus its own subtree height
-      //    (1 if it already has children) must not exceed 2.
-      const subtreeHeight = this.getChildren(allDataBlocks).length > 0 ? 1 : 0;
-      if (candidate.getDepth(allDataBlocks) + 1 + subtreeHeight > 2) return false;
-
-      return true;
-    });
-  }
-
-  /**
    * Returns candidate independent blocks that can be manually added to this group.
    * @param {stic_AwfDataBlock[]} allDataBlocks 
    * @returns {stic_AwfDataBlock[]}
    */
   getAvailableCandidateChildren(allDataBlocks) {
-    if (!this.isGroupHead(allDataBlocks) || this.getDepth(allDataBlocks) > 1) return [];
-    
-    const myGroupRoot = (this.group_root && this.group_root !== this.id) ? this.group_root : null;
-    const groupBlocks = [this, ...this.getDescendants(allDataBlocks)];
-
-    return allDataBlocks.filter(candidate => {
-      if (candidate.id === this.id) return false;
-      const isOrphan = candidate.is_root;
-      const isSameGroupChild = myGroupRoot && candidate.group_root === myGroupRoot;
-
-      if (!isOrphan && !isSameGroupChild) return false;
-      if (candidate.is_repeatable || candidate.is_optional) return false;
-      if (candidate.isGroupHead(allDataBlocks)) return false;
-
-      // Check if it is a manual candidate:
-      // 1. Unlinked block
-      if (candidate.isUnlinked) return true;
-
-      // 2. Many-to-Many partner
-      if (this.isManyToManyGroupCandidate(candidate, allDataBlocks)) return true;
-
-      // 3. Relational 1-N dependent that was previously excluded/unlinked from this group
-      const isRelationalDependent = groupBlocks.some(g => 
-        candidate.isRelationalChild(g.id, allDataBlocks) || g.isRelationalChild(candidate.id, allDataBlocks)
-      );
-      if (isRelationalDependent) return true;
-
-      return false;
-    });
+    return (allDataBlocks || []).filter(candidate =>
+      globalThis.stic_AwfGroupPolicy.canJoin(this, candidate, allDataBlocks));
   }
 
   /**
@@ -738,60 +656,20 @@ class stic_AwfDataBlock {
    */
   isRelationalChild(parentId, allDataBlocks) {
     if (!parentId || this.id === parentId) return false;
+    const parent = allDataBlocks?.find(b => b.id === parentId);
+    const nm = (name) => globalThis.stic_AwfGroupPolicy?.isNamedNM(name, this, parent) ?? false;
 
     // A) Has a relate/FK field pointing to parent
     if (this.fields?.some(f => f.type === 'relate' &&
         (f.value === parentId || (f.value_type === 'dataBlock' && f.value === parentId))
     )) return true;
 
-    // B) Has a relationship entry pointing to parent where THIS block is the initiator (N side)
-    if (this.relationships?.some(r => r.related_datablock_id === parentId && r.initiator_id === this.id)) return true;
-
-    // C) Parent has a relationship entry pointing to this block where THIS block is the initiator
-    const parent = allDataBlocks?.find(b => b.id === parentId);
-    if (parent?.relationships?.some(r => r.related_datablock_id === this.id && r.initiator_id === this.id)) return true;
+    // B/C) Relationship entries with THIS block as initiator are dependencies
+    // ONLY for 1-N/1-1; N-M partners are linked but not auto-adoptable.
+    if (this.relationships?.some(r => r.related_datablock_id === parentId && r.initiator_id === this.id && !nm(r.name))) return true;
+    if (parent?.relationships?.some(r => r.related_datablock_id === this.id && r.initiator_id === this.id && !nm(r.name))) return true;
 
     return false;
-  }
-
-  /**
-   * Whether this block is linked to `other` by a MANY-TO-MANY relationship.
-   * An N-M relationship has NO foreign key on either side, so neither block can
-   * be auto-adopted into the other's group (auto-adoption follows the FK /
-   * initiator direction). The relationship metadata decides: anything that is
-   * not one-to-many / one-to-one counts as many-to-many (the SuiteCRM default
-   * when the metadata is missing).
-   * @param {stic_AwfDataBlock} other
-   * @returns {boolean}
-   */
-  isManyToManyWith(other) {
-    if (!other || !this.module || !other.module || this.id === other.id) return false;
-    const names = new Set();
-    (this.relationships || []).forEach(r => { if (r.related_datablock_id === other.id) names.add(r.name); });
-    (other.relationships || []).forEach(r => { if (r.related_datablock_id === this.id) names.add(r.name); });
-    if (names.size === 0) return false;
-    for (const name of names) {
-      const meta = utils.getModuleInformation(this.module)?.relationships?.[name]
-        || utils.getModuleInformation(other.module)?.relationships?.[name];
-      const type = meta?.relationship_type || meta?.type;
-      if (type === 'one-to-many' || type === '1-N' || type === 'one-to-one' || type === '1-1') return false;
-    }
-    return true;
-  }
-
-  /**
-   * Whether `candidate` may be added to THIS group BY HAND because it is linked
-   * to one of the group's blocks by a many-to-many relationship. The group is
-   * this head plus its current members. N-M partners have no FK, so they cannot
-   * be auto-adopted; the user adds them manually.
-   * @param {stic_AwfDataBlock} candidate
-   * @param {stic_AwfDataBlock[]} allDataBlocks
-   * @returns {boolean}
-   */
-  isManyToManyGroupCandidate(candidate, allDataBlocks) {
-    if (!candidate || candidate.isUnlinked || !candidate.module) return false;
-    const groupBlocks = [this, ...this.getDescendants(allDataBlocks)];
-    return groupBlocks.some(g => g.id !== candidate.id && candidate.isManyToManyWith(g));
   }
 
   /**
@@ -820,17 +698,6 @@ class stic_AwfDataBlock {
     }
 
     return descendants;
-  }
-
-  /**
-   * Helper to check if this block could be placed under candidate without violating N x M
-   * @param {stic_AwfDataBlock} candidate
-   * @param {stic_AwfDataBlock[]} allDataBlocks
-   * @returns {boolean}
-   */
-  canBeRepeatableInParent(candidate, allDataBlocks) {
-    if (candidate.is_repeatable) return false;
-    return candidate.canBeRepeatable(allDataBlocks);
   }
 
   /**
@@ -979,13 +846,7 @@ class stic_AwfDataBlock {
     }
 
     // Get member blocks sorted hierarchically (Top-Down: Depth 1, Depth 2, etc.)
-    const sortedMembers = this.getGroupMembersSorted(allDataBlocks);
-
-    // The full group list starts with this root block followed by sorted members
-    const fullGroupBlocks = [this, ...sortedMembers];
-
-    // Compose the title joining block texts in exact hierarchical order
-    this.group_title = fullGroupBlocks.map(b => (b.text || '').trim()).filter(t => t.length > 0).join(' + ');
+    this.group_title = globalThis.stic_AwfGroupPolicy.groupTitle(this, allDataBlocks);
   }
 
   /**
@@ -1060,49 +921,41 @@ class stic_AwfDataBlock {
    * @returns {boolean}
    */
   canLeaveGroup(allDataBlocks) {
-    // 1. Root blocks cannot leave their own group
     if (!this.group_root) return false;
 
-    // Find the group root block
-    const rootBlock = allDataBlocks.find(b => b.id === this.group_root) 
-                   || this.getGroupRootBlock(allDataBlocks);
-    if (!rootBlock) return false;
-
-    // 2. Case A: Manual member outside the relational tree can always leave
-    const treeBlockIds = this.getGroupTreeBlockIds(rootBlock, allDataBlocks);
-    if (!treeBlockIds.has(this.id)) {
-      return true;
+    // Any repeatable head in the group_root chain enforces instance scoping:
+    // a member inside that hierarchy cannot leave, even from an optional
+    // subgroup. The topmost root is used for the relational-tree check.
+    const chain = [];
+    let current = this;
+    while (current?.group_root) {
+      const parent = allDataBlocks.find(b => b.id === current.group_root);
+      if (!parent || chain.some(b => b.id === parent.id)) break;
+      chain.push(parent);
+      current = parent;
     }
+    const topRoot = chain[chain.length - 1];
+    if (!topRoot) return false;
 
-    // 3. Case B: Member inside the relational tree
-    // Repeatable groups enforce strict instance scoping: tree members cannot leave
-    if (rootBlock.is_repeatable) {
-      return false;
-    }
+    // Auto-added members are relational dependents of ANY block in this group
+    // hierarchy (not only of the top root: an N-M parent like Llamada can bring
+    // in Persona, whose FK then brings in Tasca). Manual/N-M members can leave.
+    const groupIds = new Set(chain.map(b => b.id));
+    chain.forEach(b => b.getDescendants(allDataBlocks).forEach(d => groupIds.add(d.id)));
+    const autoAdded = [...groupIds].some(id => id !== this.id && this.isRelationalChild(id, allDataBlocks));
+    if (!autoAdded) return true;
 
-    // Optional-only groups (0..1): tree members CAN leave with conditions
-    if (rootBlock.is_optional) {
-      // Collect IDs of blocks that will stay in the group if this block (and its descendants) leave
-      const mySubtreeIds = new Set([this.id, ...this.getDescendants(allDataBlocks).map(b => b.id)]);
-      const remainingGroupBlockIds = allDataBlocks
-        .filter(b => (b.group_root === rootBlock.id || b.id === rootBlock.id) && !mySubtreeIds.has(b.id))
-        .map(b => b.id);
+    // A relational member inside a repeatable hierarchy cannot leave: its
+    // instance scoping is defined by the group loop.
+    if (chain.some(b => b.is_repeatable)) return false;
 
-      // Cannot leave if this block has a MANDATORY relate/FK field pointing to a block that remains in the optional group
-      const hasMandatoryFkToRemainingGroup = this.fields.some(f => {
-        if (!f.required && !f.required_in_form) return false;
-        if (f.type !== 'relate') return false;
-        return remainingGroupBlockIds.includes(f.value);
-      });
+    if (!topRoot.is_optional) return false;
 
-      if (hasMandatoryFkToRemainingGroup) {
-        return false;
-      }
+    const mySubtreeIds = new Set([this.id, ...this.getDescendants(allDataBlocks).map(b => b.id)]);
+    const remainingGroupBlockIds = [...groupIds].filter(id => !mySubtreeIds.has(id));
 
-      return true;
-    }
-
-    return false;
+    // Cannot leave if this block has a MANDATORY relate/FK field pointing to a block that stays
+    return !remainingGroupBlockIds.some(id => globalThis.stic_AwfGroupPolicy.hasMandatoryFk(this, id));
   }
 
   /**
@@ -3788,6 +3641,7 @@ class stic_AwfConfiguration {
       this.addDataBlockField(dataBlock, fileField);
 
       this.data_blocks.push(dataBlock);
+      this.refreshGroups();
       return dataBlock;
     }
 
@@ -3847,6 +3701,7 @@ class stic_AwfConfiguration {
     });
 
     this.data_blocks.push(dataBlock);
+    this.refreshGroups();
 
     return dataBlock;
   }
@@ -4195,11 +4050,12 @@ class stic_AwfConfiguration {
       if (relateField) relateFieldBlock = block;
     });
 
-    if (relateField && !relateField.required) {
-      // Field is not required: delete field + relationship + action
+    if (relateField && relateField.type === 'relate' && relateField.value_type === 'dataBlock') {
+      // Drop the auto-created relate field (required or not): keeping it as a
+      // fixed field with no value makes the block invalid.
       this.deleteDataBlockField(relateFieldBlock, relateField);
     } else {
-      // No relate field (N-M), or field is required (keep field, convert to fixed, remove relationship + action)
+      // No auto-created relate field (N-M): remove relationship + action.
       if (relateField) {
         relateField.value = '';
         relateField.value_text = '';
@@ -4363,22 +4219,7 @@ class stic_AwfConfiguration {
    * @returns {boolean}
    */
   canAdoptHeadIntoGroup(head, joinUnder) {
-    if (!head || !joinUnder) return false;
-    // N×M: temporarily join and evaluate the in-place rule — AT THE REAL
-    // JOINING POINT (`joinUnder`): with nested groups, a head joining under a
-    // DEEPER member lands one level deeper than the group's root, and the
-    // depth/N×M rule must be evaluated there (joining under the root would
-    // underestimate the depth and allow 3-level repeatable chains).
-    const prevGroupRoot = head.group_root;
-    head.group_root = joinUnder.id;
-    const branchOk = head.canBeRepeatable(this.data_blocks);
-    head.group_root = prevGroupRoot;
-    if (!branchOk) return false;
-    // Nesting depth: the head lands at parentDepth + 1; its own members one
-    // level deeper — the whole nesting must stay within 2 levels
-    const parentDepth = joinUnder.getDepth(this.data_blocks);
-    const subtreeHeight = head.getChildren(this.data_blocks).length > 0 ? 1 : 0;
-    return parentDepth + 1 + subtreeHeight <= 2;
+    return globalThis.stic_AwfGroupPolicy.canAdoptHead(head, joinUnder, this.data_blocks);
   }
 
   /**
@@ -4519,9 +4360,7 @@ class stic_AwfConfiguration {
 
       // Ensure default group title if missing
       if (!block.group_title || !block.group_title.trim()) {
-        const children = block.getDescendants(this.data_blocks);
-        const blockNames = [block.text, ...children.map(c => c.text)];
-        block.group_title = blockNames.join(' + ');
+        block.group_title = globalThis.stic_AwfGroupPolicy.groupTitle(block, this.data_blocks);
       }
 
       if (!block.element_singular_name) {
@@ -4564,9 +4403,7 @@ class stic_AwfConfiguration {
 
       // Ensure default group labels if missing
       if (!block.group_title || !block.group_title.trim()) {
-        const children = block.getDescendants(this.data_blocks);
-        const blockNames = [block.text, ...children.map(c => c.text)];
-        block.group_title = blockNames.join(' + ');
+        block.group_title = globalThis.stic_AwfGroupPolicy.groupTitle(block, this.data_blocks);
       }
     } else {
       block.min_instances = 1;
@@ -4606,26 +4443,9 @@ class stic_AwfConfiguration {
     const child = this.data_blocks.find(b => b.id === childBlockId);
 
     if (!parent || !child) return;
-
-    if (parent.id === child.id) return;
-    if (parent.isDescendant(child.id, this.data_blocks)) return;
-    if (child.isGroupHead(this.data_blocks)) return;
-
-    const parentGroupBlocks = [parent, ...parent.getDescendants(this.data_blocks)];
-    const childHasNm = parentGroupBlocks.some(g => g.id !== child.id && child.isManyToManyWith(g));
-    const isRelationalDependent = parentGroupBlocks.some(g => 
-      child.isRelationalChild(g.id, this.data_blocks) || g.isRelationalChild(child.id, this.data_blocks)
-    );
-
-    // Allow unlinked, N-M, or previously extracted relational blocks
-    if (!child.isUnlinked && !childHasNm && !isRelationalDependent) return;
+    if (!globalThis.stic_AwfGroupPolicy.canJoin(parent, child, this.data_blocks)) return;
 
     const parentGroupRoot = (parent.group_root && parent.group_root !== parent.id) ? parent.group_root : null;
-    const childIsOrphan = child.is_root;
-    const childIsSameGroupChild = parentGroupRoot && child.group_root === parentGroupRoot;
-    if (!childIsOrphan && !childIsSameGroupChild) return;
-
-    if (!parent.isGroupHead(this.data_blocks) || parent.getDepth(this.data_blocks) > 1) return;
 
     // The child explicitly (re-)joins THIS group: clear only THIS group's
     // exclusion, keeping the exclusions the user made against OTHER groups
@@ -4669,6 +4489,12 @@ class stic_AwfConfiguration {
     // cannot be bounced back into them by the next adoption pass.
     child.addGroupExclusion(currentGroupRootId);
     child.group_root = '';
+
+    // Prevent the inverse adoption: the old root may be relationally dependent
+    // on the child (FK points at it). Without this, making the child a head
+    // would immediately adopt the former parent and invert the group.
+    const oldRoot = this.data_blocks.find(b => b.id === currentGroupRootId);
+    if (oldRoot) oldRoot.addGroupExclusion(child.id);
 
     // Descendants in the same group leave with the child and are excluded from that root
     const relationalDescendants = child.getRelationalDescendants(this.data_blocks);
@@ -4922,8 +4748,8 @@ class stic_AwfConfiguration {
         if (depth < 2) {
           members = block.getChildren(this.data_blocks).map(c => buildNode(c, depth + 1));
         } else {
-          // Defensive flattening of legacy level-3+ descendants (depth > 2 can no
-          // longer be created via getAvailableGroupRoots, but old configs may exist)
+          // Defensive flattening of legacy level-3+ descendants (old configs
+          // may still have them; the UI now limits nesting to 2 levels).
           members = block.getDescendants(this.data_blocks).map(c => ({ block: c, isGroup: false, members: [] }));
         }
       }
@@ -5832,4 +5658,98 @@ globalThis.stic_AwfMovePolicy = (() => {
     FORM_TARGET, isGroup, isTemplate, withinGroup, resolved,
     elementTargets, sectionTargets, canMoveSectionOut, canBundle, bundleDestination,
   };
+})();
+
+/**
+ * Shared step-2 group rules: dependency, membership, eligibility and adoption.
+ * UI filters and the corresponding mutations use these predicates.
+ */
+globalThis.stic_AwfGroupPolicy = (() => {
+  const isHead = (b, blocks) => !!b && b.isGroupHead(blocks || []);
+
+  const fieldRefs = (b, targetId) => (b?.fields || []).filter(f => f.type === 'relate'
+    && (f.value === targetId || (f.value_type === 'dataBlock' && f.value === targetId)));
+  const hasMandatoryFk = (b, targetId) => fieldRefs(b, targetId).some(f => f.required || f.required_in_form);
+
+  const relNames = (a, b) => {
+    const names = new Set();
+    if (!a || !b) return names;
+    (a.relationships || []).forEach(r => { if (r.related_datablock_id === b.id) names.add(r.name); });
+    (b.relationships || []).forEach(r => { if (r.related_datablock_id === a.id) names.add(r.name); });
+    return names;
+  };
+  // Unknown/missing metadata means N-M (SuiteCRM default), as before.
+  const isNamedNM = (name, a, b) => {
+    const meta = utils.getModuleInformation(a?.module)?.relationships?.[name]
+      || utils.getModuleInformation(b?.module)?.relationships?.[name];
+    const type = meta?.relationship_type || meta?.type;
+    return !(type === 'one-to-many' || type === '1-N' || type === 'one-to-one' || type === '1-1');
+  };
+  const isNM = (a, b) => [...relNames(a, b)].some(name => isNamedNM(name, a, b));
+
+  const groupIds = (b, blocks) => {
+    const ids = new Set();
+    let cur = b;
+    while (cur && !ids.has(cur.id)) {
+      ids.add(cur.id);
+      cur = (blocks || []).find(x => x.id === cur.group_root);
+    }
+    return ids;
+  };
+  const willBeInGroup = (block, other, blocks) => {
+    if (!block || !other || block.id === other.id) return true;
+    if (block.hasAncestor(other, blocks)) return true;   // ancestor in the same chain
+    if (!block.isOrWillBeInGroup(other, blocks)) return false;
+    for (const id of groupIds(block, blocks)) if (other.isExcludedFromGroup(id)) return false;
+    return true;
+  };
+  // External incoming dependency: excludes blocks that are in/will be in the
+  // group and blocks explicitly excluded from it. mandatoryOnly uses the
+  // unified mandatory-FK definition (required OR required_in_form).
+  const externalIncoming = (block, blocks, mandatoryOnly = false) => (blocks || []).some(other => {
+    if (!other || other.id === block.id) return false;
+    if (willBeInGroup(block, other, blocks)) return false;
+    return mandatoryOnly ? hasMandatoryFk(other, block.id) : other.isRelationalChild(block.id, blocks);
+  });
+
+  const canJoin = (parent, child, blocks) => {
+    if (!isHead(parent, blocks) || parent.getDepth(blocks) > 1) return false;
+    if (!child || child.id === parent.id || isHead(child, blocks)) return false;
+    if (parent.isDescendant(child.id, blocks)) return false;
+    const parentGroupRoot = (parent.group_root && parent.group_root !== parent.id) ? parent.group_root : null;
+    if (!child.is_root && !(parentGroupRoot && child.group_root === parentGroupRoot)) return false;
+    const groupBlocks = [parent, ...parent.getDescendants(blocks)];
+    const related = groupBlocks.some(g => child.isRelationalChild(g.id, blocks) || g.isRelationalChild(child.id, blocks));
+    const nmWithGroup = groupBlocks.some(g => g.id !== child.id && isNM(g, child));
+    return child.isUnlinked || nmWithGroup || related;
+  };
+
+  const canAdoptHead = (head, joinUnder, blocks) => {
+    if (!head || !joinUnder) return false;
+    const height = head.getChildren(blocks).length > 0 ? 1 : 0;
+    if (joinUnder.getDepth(blocks) + 1 + height > 2) return false;
+    // A repeatable head must also satisfy the in-place repeatable rule;
+    // optional-only heads use the depth/N-M limits (no repeatable checks).
+    if (head.is_repeatable) {
+      const prev = head.group_root;
+      head.group_root = joinUnder.id;
+      const ok = head.canBeRepeatable(blocks);
+      head.group_root = prev;
+      if (!ok) return false;
+    }
+    let repeatable = (joinUnder.is_repeatable ? 1 : 0) + (head.is_repeatable ? 1 : 0);
+    let cur = joinUnder.group_root;
+    while (cur) {
+      const p = (blocks || []).find(b => b.id === cur);
+      if (!p) break;
+      if (p.is_repeatable) repeatable++;
+      cur = p.group_root;
+    }
+    return repeatable <= 2;
+  };
+
+  const groupTitle = (block, blocks) => [block, ...block.getGroupMembersSorted(blocks)]
+    .map(b => (b.text || '').trim()).filter(t => t.length > 0).join(' + ');
+
+  return { isHead, hasMandatoryFk, isNamedNM, isNM, willBeInGroup, externalIncoming, canJoin, canAdoptHead, groupTitle };
 })();
