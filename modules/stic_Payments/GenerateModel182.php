@@ -151,7 +151,6 @@ $paymentTypes = "p.payment_type = '" . implode("' OR p.payment_type = '", $payme
 $lastyear = date("Y") - 1;   // Year for which we are presenting the M182
 $twoYearsAgo = date("Y") - 2;   // Year before $lastyear
 $threeYearsAgo = date("Y") - 3;   // Year before $twoYearsAgo
-$fourYearsAgo = date("Y") - 4; // Year before $threeYearsAgo
 
 // Check if an issuing organization has been selected and set custom annual donations fields
 $issuingOrganizationKey = $_REQUEST['issuing_organization_key'] ?? '';
@@ -292,7 +291,7 @@ foreach ($contacts as $id) {
             INNER JOIN stic_payments_contacts_c pc ON p.id = pc.stic_payments_contactsstic_payments_idb
             INNER JOIN contacts c ON pc.stic_payments_contactscontacts_ida = c.id
         WHERE  c.id = '" . $id . "'
-            AND YEAR(p.payment_date) >= '" . $fourYearsAgo . "' AND YEAR(p.payment_date) <= '" . $twoYearsAgo . "'
+            AND YEAR(p.payment_date) >= '" . $threeYearsAgo . "' AND YEAR(p.payment_date) <= '" . $twoYearsAgo . "'
             AND p.status = 'paid'
             AND (" . $paymentTypes . ")
             AND (p.m182_excluded = 0 OR p.m182_excluded IS NULL)
@@ -353,19 +352,17 @@ foreach ($contacts as $id) {
     $recurrenceMonetary = false;
 
     // Check kind donations recurrence
-    if (($historicalPayments[$lastyear]['kind_total'] ?? 0) > 0
+    if (($historicalPayments[$lastyear]['kind_total'] ?? 0) >= ($historicalPayments[$twoYearsAgo]['kind_total'] ?? 0)
     && ($historicalPayments[$twoYearsAgo]['kind_total'] ?? 0) >= ($historicalPayments[$threeYearsAgo]['kind_total'] ?? 0) 
-    && ($historicalPayments[$threeYearsAgo]['kind_total'] ?? 0) >= ($historicalPayments[$fourYearsAgo]['kind_total'] ?? 0) 
-    && ($historicalPayments[$fourYearsAgo]['kind_total'] ?? 0) > 0) {
-    $recurrenceKind = true;
+    && ($historicalPayments[$threeYearsAgo]['kind_total'] ?? 0) > 0) {
+        $recurrenceKind = true;
     }
 
     // Check monetary donations recurrence
-    if (($historicalPayments[$lastyear]['monetary_total'] ?? 0) > 0
+    if (($historicalPayments[$lastyear]['monetary_total'] ?? 0) >= ($historicalPayments[$twoYearsAgo]['monetary_total'] ?? 0)
     && ($historicalPayments[$twoYearsAgo]['monetary_total'] ?? 0) >= ($historicalPayments[$threeYearsAgo]['monetary_total'] ?? 0) 
-    && ($historicalPayments[$threeYearsAgo]['monetary_total'] ??0) >= ($historicalPayments[$fourYearsAgo]['monetary_total'] ?? 0) 
-    && ($historicalPayments[$fourYearsAgo]['monetary_total'] ?? 0) > 0) {
-    $recurrenceMonetary = true;
+    && ($historicalPayments[$threeYearsAgo]['monetary_total'] ?? 0) > 0) {
+        $recurrenceMonetary = true;
     }
 
     $historicalPayments['recurrente_kind'] = $recurrenceKind;
@@ -374,7 +371,7 @@ foreach ($contacts as $id) {
     // 4.1.4 Save the data obtained for the contact
     $contacts[$id] = $historicalPayments;
 
-    $GLOBALS['log']->debug('[M182] Contact processed: [id] = ' . $historicalPayments['id'] . '; [' . $fourYearsAgo . '] = ' . ($historicalPayments[$fourYearsAgo]['total'] ?? 0) . '; [' . $threeYearsAgo . '] = ' . ($historicalPayments[$threeYearsAgo]['total'] ?? 0) . '; [' . $twoYearsAgo . '] = ' . ($historicalPayments[$twoYearsAgo]['total'] ?? 0) . '; [' . $lastyear . '] = ' . ($historicalPayments[$lastyear]['total'] ?? 0) . '; [recurrente] = ' . ($historicalPayments['recurrente'] ?? 'No') . ';');
+    $GLOBALS['log']->debug('[M182] Contact processed: [id] = ' . $historicalPayments['id'] . '; [' . $threeYearsAgo . '] = ' . ($historicalPayments[$threeYearsAgo]['total'] ?? 0) . '; [' . $twoYearsAgo . '] = ' . ($historicalPayments[$twoYearsAgo]['total'] ?? 0) . '; [' . $lastyear . '] = ' . ($historicalPayments[$lastyear]['total'] ?? 0) . '; [recurrente] = ' . ($historicalPayments['recurrente'] ?? 'No') . ';');
 }
 
 // 4.2 Accounts
@@ -394,7 +391,7 @@ foreach ($accounts as $id) {
             INNER JOIN stic_payments_accounts_c pa ON p.id = pa.stic_payments_accountsstic_payments_idb
             INNER JOIN accounts a ON pa.stic_payments_accountsaccounts_ida = a.id
         WHERE  a.id = '" . $id . "'
-            AND YEAR(p.payment_date) >= '" . $fourYearsAgo . "' AND YEAR(p.payment_date) <= '" . $twoYearsAgo . "'
+            AND YEAR(p.payment_date) >= '" . $threeYearsAgo . "' AND YEAR(p.payment_date) <= '" . $twoYearsAgo . "'
             AND p.status = 'paid'
             AND (" . $paymentTypes . ")
             AND (p.m182_excluded = 0 OR p.m182_excluded IS NULL)
@@ -424,13 +421,11 @@ foreach ($accounts as $id) {
     $historicalPayments[$lastyear]['total'] ??= 0;
     $historicalPayments[$twoYearsAgo]['total'] ??= 0;
     $historicalPayments[$threeYearsAgo]['total'] ??= 0;
-    $historicalPayments[$fourYearsAgo]['total'] ??= 0;
     
     $recurrence = false;
-    if ($historicalPayments[$lastyear]['total'] > 0
+    if ($historicalPayments[$lastyear]['total'] >= $historicalPayments[$twoYearsAgo]['total']
         && $historicalPayments[$twoYearsAgo]['total'] >= $historicalPayments[$threeYearsAgo]['total'] 
-        && $historicalPayments[$threeYearsAgo]['total'] >= $historicalPayments[$fourYearsAgo]['total'] 
-        && $historicalPayments[$fourYearsAgo]['total'] > 0) {
+        && $historicalPayments[$threeYearsAgo]['total'] > 0) {
         $recurrence = true;
     }
     $historicalPayments['recurrente'] = $recurrence;
@@ -439,7 +434,7 @@ foreach ($accounts as $id) {
     // 4.2.4 Save the data obtained for the account
     $accounts[$id] = $historicalPayments;
 
-    $GLOBALS['log']->debug('[M182] Account processed: [id] = ' . $historicalPayments['id'] . '; [' . $fourYearsAgo . '] = ' . $historicalPayments[$fourYearsAgo]['total'] . '; [' . $threeYearsAgo . '] = ' . $historicalPayments[$threeYearsAgo]['total'] . '; [' . $twoYearsAgo . '] = ' . $historicalPayments[$twoYearsAgo]['total'] . '; [' . $lastyear . '] = ' . $historicalPayments[$lastyear]['total'] . '; [recurrente] = ' . ($historicalPayments['recurrente'] ? 'Sí' : 'No') . ';');
+    $GLOBALS['log']->debug('[M182] Account processed: [id] = ' . $historicalPayments['id'] . '; [' . $threeYearsAgo . '] = ' . $historicalPayments[$threeYearsAgo]['total'] . '; [' . $twoYearsAgo . '] = ' . $historicalPayments[$twoYearsAgo]['total'] . '; [' . $lastyear . '] = ' . $historicalPayments[$lastyear]['total'] . '; [recurrente] = ' . ($historicalPayments['recurrente'] ? 'Sí' : 'No') . ';');
 }
 
 // 5. M182 generation
