@@ -185,14 +185,6 @@ $searchFields['Contacts'] = array (
       ),
       'force_unifiedsearch' => true,
     ),
-    'account_name' => 
-    array (
-      'query_type' => 'default',
-      'db_field' => 
-      array (
-        0 => 'accounts.name',
-      ),
-    ),
     'lead_source' => 
     array (
       'query_type' => 'default',
@@ -319,14 +311,6 @@ $searchFields['Contacts'] = array (
     'assigned_user_id' => 
     array (
       'query_type' => 'default',
-    ),
-    'account_id' => 
-    array (
-      'query_type' => 'default',
-      'db_field' => 
-      array (
-        0 => 'accounts.id',
-      ),
     ),
     'campaign_name' => 
     array (

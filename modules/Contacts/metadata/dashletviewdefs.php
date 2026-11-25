@@ -90,17 +90,19 @@ $dashletData['ContactsDashlet']['columns'] = array(
         'width' => '10%',
         'name' => 'stic_relationship_type_c',
     ),
-    'account_name' => array(
-        'width' => '20%',
-        'label' => 'LBL_ACCOUNT_NAME',
-        'sortable' => false,
-        'link' => true,
-        'module' => 'Accounts',
-        'id' => 'ACCOUNT_ID',
-        'ACLTag' => 'ACCOUNT',
-        'name' => 'account_name',
-        'default' => true,
-    ),
+    // STIC-Custom - XJO - 20261124 - Remove organization field in contacts - Organizational Environment
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1426
+    // 'account_name' => array(
+    //     'width' => '20%',
+    //     'label' => 'LBL_ACCOUNT_NAME',
+    //     'sortable' => false,
+    //     'link' => true,
+    //     'module' => 'Accounts',
+    //     'id' => 'ACCOUNT_ID',
+    //     'ACLTag' => 'ACCOUNT',
+    //     'name' => 'account_name',
+    //     'default' => true,
+    // ),
     'phone_mobile' => array(
         'width' => '10%',
         'label' => 'LBL_MOBILE_PHONE',

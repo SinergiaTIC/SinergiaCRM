@@ -44,16 +44,6 @@ $subpanel_layout['list_fields'] = array(
         'width' => '20%',
         'sortable' => true,
     ),
-    'account_name' => array(
-        'name' => 'account_name',
-        'module' => 'Accounts',
-        'target_record_key' => 'account_id',
-        'target_module' => 'Accounts',
-        'widget_class' => 'SubPanelDetailViewLink',
-        'vname' => 'LBL_LIST_ACCOUNT_NAME',
-        'width' => '20%',
-        'sortable' => true,
-    ),
     'phone_mobile' => array(
         'type' => 'phone',
         'vname' => 'LBL_MOBILE_PHONE',

@@ -72,16 +72,18 @@ $subpanel_layout = array(
             'module' => 'Contacts',
             'width' => '23%',
         ),
-        'account_name'=>array(
-            'name'=>'account_name',
-            'module' => 'Accounts',
-            'target_record_key' => 'account_id',
-            'target_module' => 'Accounts',
-            'widget_class' => 'SubPanelDetailViewLink',
-            'vname' => 'LBL_LIST_ACCOUNT_NAME',
-            'width' => '22%',
-            'sortable'=>false,
-        ),
+        // STIC-Custom - XJO - 20261124 - Remove organization field in contacts - Organizational Environment
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1426
+        // 'account_name'=>array(
+        //     'name'=>'account_name',
+        //     'module' => 'Accounts',
+        //     'target_record_key' => 'account_id',
+        //     'target_module' => 'Accounts',
+        //     'widget_class' => 'SubPanelDetailViewLink',
+        //     'vname' => 'LBL_LIST_ACCOUNT_NAME',
+        //     'width' => '22%',
+        //     'sortable'=>false,
+        // ),
         'contact_id'=>array(
             'usage'=>'query_only',
             

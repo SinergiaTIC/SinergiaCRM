@@ -242,7 +242,6 @@ $popupMeta = array(
       28 => 'billing_address_country',
       29 => 'campaign_name',
       30 => 'stic_total_annual_donations_c',
-      // 31 => 'parent_name',
   ),
   'searchdefs' => array(
       'name' => array(
@@ -304,14 +303,6 @@ $popupMeta = array(
           'width' => '10%',
           'name' => 'stic_identification_number_c',
       ),
-      // 'parent_name' => array(
-      //     'type' => 'relate',
-      //     'link' => true,
-      //     'label' => 'LBL_MEMBER_OF',
-      //     'id' => 'PARENT_ID',
-      //     'width' => '10%',
-      //     'name' => 'parent_name',
-      // ),
       'stic_language_c' => array(
           'type' => 'enum',
           'studio' => 'visible',

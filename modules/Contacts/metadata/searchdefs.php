@@ -205,11 +205,6 @@ array(
                 'width' => '10%',
                 'name' => 'stic_relationship_type_c',
             ),
-            'account_name' => array(
-                'name' => 'account_name',
-                'default' => true,
-                'width' => '10%',
-            ),
             'phone' => array(
                 'name' => 'phone',
                 'label' => 'LBL_ANY_PHONE',
@@ -260,11 +255,6 @@ array(
                 'width' => '10%',
                 'default' => true,
                 'name' => 'name',
-            ),
-            'account_name' => array(
-                'name' => 'account_name',
-                'default' => true,
-                'width' => '10%',
             ),
             'stic_relationship_type_c' => array(
                 'type' => 'multienum',

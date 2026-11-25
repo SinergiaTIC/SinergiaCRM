@@ -827,11 +827,7 @@ array (
             'name' => 'stic_employment_status_c',
             'label' => 'LBL_STIC_EMPLOYMENT_STATUS',
           ),
-          1 => 
-          array (
-            'name' => 'account_name',
-            'label' => 'LBL_ACCOUNT_NAME',
-          ),
+          1 => '',
         ),
         3 => 
         array (
