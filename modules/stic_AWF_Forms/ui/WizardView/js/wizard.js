@@ -3142,6 +3142,28 @@ class WizardStep4 {
         return template ? template.elements : (section ? section.elements : []);
       },
 
+      // Hidden fields render as bare <input type="hidden"> in the final form:
+      // they have no visual position, so step 4 does not draw them. They are
+      // still configurable in step 3 and the layout re-syncs them on change.
+      isHiddenFieldElement(element) {
+        const field = this.getField(element);
+        return !!field && field.type_in_form === 'hidden';
+      },
+      getVisibleSectionBodyElements(section) {
+        return this.getSectionBodyElements(section).filter(e => !this.isHiddenFieldElement(e));
+      },
+      getHiddenFieldCount(section) {
+        const elements = this.getSectionBodyElements(section);
+        let count = elements.filter(e => this.isHiddenFieldElement(e)).length;
+        elements.forEach(e => {
+          if (e.type === 'datablock') count += this.getFields(e).filter(f => f.type_in_form === 'hidden').length;
+        });
+        return count;
+      },
+      getVisibleBlockFields(element) {
+        return this.getFields(element).filter(f => f.type_in_form !== 'hidden');
+      },
+
       // True when `section` is the SOLE content section of its group: the group
       // has exactly one data-block host, so its title is hidden and the singular
       // record name comes from its block — its own configuration panel has no
@@ -3636,7 +3658,11 @@ class WizardStep4 {
           ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
           : this.getStandaloneSections();
         // The internal group template is never a move target (it is hidden)
-        const targets = candidates.filter(s => !excluded.has(s.id) && !this.isGroupTemplateSection(s) && (!parent || s.id !== parent.id));
+        let targets = candidates.filter(s => !excluded.has(s.id) && !this.isGroupTemplateSection(s) && (!parent || s.id !== parent.id));
+        const template = groupRoot ? this.getGroupTemplate(groupRoot) : null;
+        if (groupRoot && template && parent && parent.id === template.id) {
+          targets = targets.filter(s => s.id !== groupRoot.id);
+        }
         return this.canMoveSectionOut(section) ? [...targets, this.getFormMoveTarget()] : targets;
       },
 
@@ -3665,17 +3691,28 @@ class WizardStep4 {
         const arr = parent ? parent.elements : this.sections;
         const idx = arr.findIndex(el => el.id === section.id);
         if (idx >= 0) arr.splice(idx, 1);
-        target.elements.push(section);
+        // A designated group section holds ONLY its element template: 
+        // a move into "the group's top level" lands at the end of the
+        // template, where the content is actually rendered. Pushing a section
+        // directly into the group section (outside its template) left it
+        // unrendered, so the section seemed to vanish from the wizard.
+        let dest = target;
+        if (this.isGroupSection(target)) {
+          const groupTemplate = this.getGroupTemplate(target);
+          if (groupTemplate) dest = groupTemplate;
+        }
+        dest.elements.push(section);
 
-        // Container-type coherence: a section moved INTO a tabs/accordion
-        // container becomes the matching item (title on, collapse off); an item
-        // moved out of it reverts to a plain panel.
-        if (this.isTabsContainer(target)) {
+        // Container-type coherence against the REAL destination: a section
+        // moved INTO a tabs/accordion container becomes the matching item
+        // (title on, collapse off); an item moved out of it (or into a plain
+        // section, e.g. a group's element template) reverts to a plain panel.
+        if (this.isTabsContainer(dest)) {
           section.containerType = 'tab_item';
           section.showTitle = true;
           section.isCollapsible = false;
           section.isCollapsed = false;
-        } else if (this.isAccordionContainer(target)) {
+        } else if (this.isAccordionContainer(dest)) {
           section.containerType = 'accordion_item';
           section.showTitle = true;
           section.isCollapsible = false;
@@ -3713,10 +3750,63 @@ class WizardStep4 {
       getMoveTargets(element, fromSection) {
         if (!fromSection) return [];
         const groupRoot = this.getGroupScopeRoot(fromSection);
-        const candidates = groupRoot
-          ? [groupRoot, ...this.getSectionsWithin(groupRoot)]
-          : this.getStandaloneSections();
+        let candidates;
+        if (groupRoot) {
+          candidates = this.getSectionsWithin(groupRoot);
+        } else {
+          candidates = this.getStandaloneSections();
+        }
+
+        // An ELEMENT carries its data block: a whole block element or a field
+        // fragment must render inside its OWN block's instance loop (its host
+        // subtree). Dropping them into ANOTHER block's host corrupts the
+        // layout: the render misreads the foreign host as a subgroup of the
+        // moved block and REPLACES the host's own content (its fields lost).
+        // GROUPED blocks are therefore restricted to their block's host
+        // subtree; STANDALONE blocks keep the section reordering behaviour.
+        const movedBlock = (element && (element.type === 'datablock' || element.type === 'field'))
+          ? this.getDataBlock(element) : null;
+        const hostScope = (movedBlock && !movedBlock.is_root)
+          ? this.getBlockHostScope(element.ref_id)
+          : null;
+        if (hostScope) {
+          candidates = candidates.filter(s => s.id === hostScope.id
+            || this.getSectionsWithin(hostScope).some(w => w.id === s.id));
+        }
+
         return candidates.filter(s => s.id !== fromSection.id && !this.isTabsContainer(s) && !this.isAccordionContainer(s) && !this.isGroupTemplateSection(s));
+      },
+
+      // Innermost section whose subtree renders inside the given block's
+      // instance loop: the section containing the block's WHOLE element (for a
+      // fully unbundled block, the one holding its field fragments). Null for
+      // blocks with no layout representation.
+      getBlockHostScope(blockId) {
+        if (!blockId) return null;
+        let host = null;
+        const findHost = (section) => {
+          if (host) return;
+          for (const el of (section.elements || [])) {
+            if (el.type === 'datablock' && el.ref_id === blockId) { host = section; return; }
+          }
+          for (const el of (section.elements || [])) {
+            if (el.type === 'section') findHost(el);
+          }
+        };
+        this.sections.forEach(findHost);
+        if (host) return host;
+        let frag = null;
+        const findFrag = (section) => {
+          if (frag) return;
+          for (const el of (section.elements || [])) {
+            if (el.type === 'field' && el.ref_id === blockId) { frag = section; return; }
+          }
+          for (const el of (section.elements || [])) {
+            if (el.type === 'section') findFrag(el);
+          }
+        };
+        this.sections.forEach(findFrag);
+        return frag;
       },
 
       // Adds a new (empty) nested section to ANY section,
@@ -3856,9 +3946,15 @@ class WizardStep4 {
         // The dropdown already shows only valid targets; this is the enforcement.
         if (!this.getMoveTargets(element, fromSection).some(s => s.id === toSection.id)) return;
 
+        let dest = toSection;
+        if (this.isGroupSection(toSection)) {
+          const groupTemplate = this.getGroupTemplate(toSection);
+          if (groupTemplate) dest = groupTemplate;
+        }
+
         // Move the element itself
         fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
-        toSection.elements.push(element);
+        dest.elements.push(element);
       },
 
       resetTheme() {

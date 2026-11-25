@@ -480,6 +480,72 @@ AWF.onChange('Contacts0.last_name', function (val, scope) { updateTitle(scope); 
 // scope.setSectionTitle(null);
 ```
 
+#### AWF.setGroupOptional(groupName, isOptional, [options])
+*(Alias: `scope.setGroupOptional`)*
+Alterna programáticamente un **grupo de bloques definido como opcional en el Wizard** (`min_instances = 0`). Por seguridad del contrato con el servidor, solo actúa sobre grupos con el flag del Wizard: retorna `false` con `console.warn` si el grupo no existe o no es opcional.
+
+* **`isOptional = false` (obligatorio)**: oculta el interruptor de activación (`display: none`, el input sigue enviándose en el POST), lo marca como activado y garantiza que exista al menos una instancia renderizada. El servidor recibe siempre la señal `_toggle_{BlockName}=1` y las filas del grupo.
+* **`isOptional = true` (opcional)**: vuelve a mostrar el interruptor. **Nunca toca las filas renderizadas ni los datos ya introducidos**, salvo que se pase `options.resetWhenOptional = true`, que desactiva el grupo y elimina sus instancias (nada se envía al servidor).
+* **`options.instanceIndex`**: para subgrupos opcionales dentro de un grupo repetible, dirige la copia de la fila indicada del padre. Llamado desde `scope`, resuelve preferentemente dentro de la instancia del evento.
+* Si se invoca antes de que Alpine inicialice (p. ej. en el `custom_js` de primer nivel con ciertas configuraciones), la aplicación queda en cola hasta `alpine:initialized`.
+
+```javascript
+// Mostrar el grupo opcional solo si el usuario acepta las condiciones:
+AWF.onChange('_detached.Checks0.acepto', function (val, scope) {
+    scope.setGroupOptional('Contacts0', !!val);
+});
+
+// Volver a hacerlo opcional descartando lo introducido:
+AWF.setGroupOptional('Contacts0', true, { resetWhenOptional: true });
+
+// Subgrupo opcional, solo en la fila 1 del padre:
+AWF.setGroupOptional('Alergias0', false, { instanceIndex: 1 });
+```
+
+#### AWF.isGroupOptional(groupName, [options])
+*(Alias: `scope.isGroupOptional`)*
+Retorna `true` si el grupo está definido como opcional en el Wizard y ninguna regla lo ha forzado obligatorio; `false` si el grupo no existe, no es opcional, o fue forzado a obligatorio mediante `AWF.setGroupOptional(..., false)`.
+
+#### AWF.setGroupVisible(groupName, isVisible, [options])
+*(Alias: `scope.setGroupVisible`)*
+Muestra u oculta un **grupo de bloques completo** (funciona con cualquier grupo, opcional o no):
+* **`isVisible = false`**: oculta el contenedor (`display: none`) y lo marca en `data-awf-hidden`. Si el grupo es **opcional**, lo desactiva y vacía sus instancias (nada llega al POST y los campos required ocultos no bloquean el envío HTML5), salvo que se pase `options.preserveState = true`. Si el grupo **no es opcional**, deshabilita sus controles internos marcándolos con `data-awf-vis-disabled="1"`.
+* **`isVisible = true`**: vuelve a mostrarlo; re-habilita únicamente los controles que la propia API deshabilitó y, si el grupo había sido forzado obligatorio (`setGroupOptional(..., false)`), lo reactiva automáticamente (primera instancia incluida).
+* Cada cambio efectivo de activación se notifica a los suscriptores de `onGroupChange`.
+* Retorna `false` con `console.warn` si no existe ningún grupo con ese nombre.
+
+#### AWF.isGroupVisible(groupName, [options])
+*(Alias: `scope.isGroupVisible`)*
+Retorna `null` si el grupo no existe; `true`/`false` según esté visible u oculto.
+
+#### AWF.isGroupActive(groupName, [options])
+*(Alias: `scope.isGroupActive`)*
+Retorna el estado de activación actual del grupo (el interruptor de inclusión):
+* `null` si el grupo no existe.
+* `true`/`false` según el interruptor esté activo o no (en grupos obligatorios, siempre `true`).
+* Desde `scope` (o con `options.instanceIndex`) lee la copia de esa fila del grupo padre.
+
+```javascript
+if (AWF.isGroupActive('Contacts1')) { /* el grupo se enviará al servidor */ }
+```
+
+#### AWF.onGroupChange(groupName, callback, [options])
+*(Alias: `scope.onGroupChange`)*
+Subscripción a los cambios de activación de un grupo (interruptor manual del usuario, `setGroupOptional` o `setGroupVisible`). El callback recibe `callback(isActive, scope)`:
+* **`isActive`**: `true` si el grupo está activo, `false` si está inactivo.
+* **`scope`**: el mismo objeto de contexto que en `AWF.onChange` (§4), construido sobre el interruptor del grupo. En grupos anidados, `scope.card` y `scope.instanceIndex` apuntan a la fila del **grupo padre**, de modo que `scope.setGroupVisible(...)`, `scope.setGroupOptional(...)`, `scope.getValue(...)` o `scope.isGroupActive(...)` operan dentro de esa tarjeta.
+* **`options.instanceIndex`**: solo sigue la copia de esa fila del grupo padre (desde `scope` se deduce automáticamente de la tarjeta del evento).
+* **`options.immediate: true`**: evalúa el estado actual de cada instancia existente al suscribirse, y también al añadirse nuevas filas al grupo padre.
+* Retorna una función `off()` para cancelar la subscripción. Solo se notifica cuando el estado **cambia** efectivamente.
+
+```javascript
+// El grupo Responsable2 solo se muestra mientras Responsable1 esté activo;
+// al ocultarse, un grupo opcional se desactiva solo (sin datos residuales):
+AWF.onGroupChange('Responsable1', function (isActive, scope) {
+    scope.setGroupVisible('Responsable2', isActive);
+});
+```
+
 #### AWF.getFieldContainer(target, [options])
 *(Alias: `scope.getFieldContainer` y propiedad `scope.fieldContainer`)*
 Retorna el elemento DOM contenedor del campo (`.awf-field` o `.form-check`). Resulta indispensable para ocultar o mostrar bloques de entrada completos (input, etiqueta y textos de ayuda) sin dejar etiquetas huérfanas ni desalinear la cuadrícula visual de Bootstrap.
@@ -567,6 +633,12 @@ Todos los métodos globales están disponibles en `scope` operando por defecto s
 * `scope.setLabel([target], text)`
 * `scope.getSectionTitle([target])`
 * `scope.setSectionTitle([target], text)`
+* `scope.setGroupOptional(groupName, isOptional, [options])`
+* `scope.isGroupOptional(groupName, [options])`
+* `scope.setGroupVisible(groupName, isVisible, [options])`
+* `scope.isGroupVisible(groupName, [options])`
+* `scope.isGroupActive(groupName, [options])`
+* `scope.onGroupChange(groupName, callback, [options])`
 * `scope.getFieldContainer([target])`
 * `scope.getAttribute([target], attribute)`
 * `scope.setAttribute([target], attribute, value)`

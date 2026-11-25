@@ -57,6 +57,36 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * Counts the visible inputs a section subtree actually draws in the form:
+     * a whole block element contributes ALL its visible fields, an unbundled
+     * field element contributes its own, and nested sections are walked too.
+     * Fixed and hidden fields draw no input (same rule as
+     * blockHasRenderableFields). Used to decide whether a group renders its
+     * bare single-field representation for BOTH optional and repeatable.
+     */
+    private static function countContentSectionVisibleFields(FormLayoutSection $section, FormConfig $config): int {
+        $count = 0;
+        foreach ($section->elements as $el) {
+            if ($el instanceof FormLayoutSection) {
+                $count += self::countContentSectionVisibleFields($el, $config);
+                continue;
+            }
+            if (!($el instanceof FormLayoutElement)) continue;
+            $block = $config->data_blocks[$el->ref_id] ?? null;
+            if (!$block) continue;
+            if ($el->type === 'field') {
+                $field = $block->fields[$el->field_name] ?? null;
+                if ($field !== null && $field->type_field !== DataBlockFieldType::FIXED && $field->type_in_form !== 'hidden') $count++;
+            } else if ($el->type === 'datablock') {
+                foreach ($block->fields as $field) {
+                    if ($field->type_field !== DataBlockFieldType::FIXED && $field->type_in_form !== 'hidden') $count++;
+                }
+            }
+        }
+        return $count;
+    }
+
+    /**
      * Helper to check if a block or ANY of its descendants (subgroup tree)
      * has renderable fields. Mirrors the design-side filtering: a group head is
      * kept if the root OR any descendant has at least one visible field.
@@ -1119,6 +1149,12 @@ class FormHtmlGeneratorService {
                 return $this->renderBlockInstancePanel($block, $theme, $instanceIndexVar, $outerIndexVars);
             }
             if ($currentGroupRootId === null) {
+                // The group section already renders the head block's fields inside its own loop, so the head block element is redundant and skipped.
+                $alreadyInGroup = $parentSection instanceof FormLayoutGroupSection && $parentSection->groupRootBlockId === $block->id;
+                $siblingGroup = $parentSection !== null && self::sectionHasGroupForBlock($parentSection, $block->id);
+                if ($alreadyInGroup || $siblingGroup) {
+                    return "<!-- Group head '{$block->name}' is already rendered by its group section -->" . $this->newLine();
+                }
                 $labelSection = $parentSection ? $this->topLevelAncestorSection($config, $parentSection) : $parentSection;
                 return $this->generateDataBlockHtml($block, $theme, $config, $instanceIndexVar, $labelSection, $outerIndexVars);
             }
@@ -1170,6 +1206,14 @@ class FormHtmlGeneratorService {
         foreach ($section->elements as $element) {
             if ($element instanceof FormLayoutElement && $element->ref_id === $blockId) return true;
             if ($element instanceof FormLayoutSection && self::sectionContainsElementForBlock($element, $blockId)) return true;
+        }
+        return false;
+    }
+
+    /** Whether a direct child section already renders `blockId` as its group root. */
+    private static function sectionHasGroupForBlock(FormLayoutSection $section, string $blockId): bool {
+        foreach ($section->elements as $element) {
+            if ($element instanceof FormLayoutGroupSection && $element->groupRootBlockId === $blockId) return true;
         }
         return false;
     }
@@ -1262,8 +1306,18 @@ class FormHtmlGeneratorService {
                 $block = $config->data_blocks[$el->ref_id] ?? null;
                 if (!$block) continue;
                 $isHead = $block->isRepeatable() || $block->isOptional() || !empty($config->getGroupChildren($block));
-                if ($isHead && $block->id !== $currentGroupRootId
-                    && ($currentGroupRootId === null || self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId))) {
+                if (!$isHead) continue;
+                if ($block->id === $currentGroupRootId) continue;
+                // An element can only announce its subgroup FROM INSIDE the
+                // block's OWN designated group section. An element moved into a
+                // FOREIGN host (manual edit, cross-host move or corruption)
+                // would otherwise hijack that host as the subgroup's loop and
+                // REPLACE the host block's own fields (content lost). Without
+                // this guard, a fully-unbundled nested head would also lose
+                // its instance loop.
+                $ownDesignated = $this->findDesignatedGroupSectionFor($config->layout, $block->id);
+                if ($ownDesignated !== null && !$this->sectionIsInsideSubtree($ownDesignated, $section)) continue;
+                if ($currentGroupRootId === null || self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) {
                     return $block;
                 }
             } elseif ($el instanceof FormLayoutSection) {
@@ -1272,6 +1326,42 @@ class FormHtmlGeneratorService {
             }
         }
         return null;
+    }
+
+    /**
+     * Finds the designated group section of a block (the FormLayoutGroupSection
+     * whose groupRootBlockId is the block's id), wherever it lives in the layout.
+     */
+    private function findDesignatedGroupSectionFor(FormLayout $layout, string $blockId): ?FormLayoutSection {
+        foreach ($layout->structure ?? [] as $section) {
+            $found = $this->findDesignatedGroupSectionInSection($section, $blockId);
+            if ($found) return $found;
+        }
+        return null;
+    }
+
+    private function findDesignatedGroupSectionInSection(FormLayoutSection $section, string $blockId): ?FormLayoutSection {
+        if ($section instanceof FormLayoutGroupSection && $section->groupRootBlockId === $blockId) return $section;
+        foreach ($section->elements ?? [] as $el) {
+            if ($el instanceof FormLayoutSection) {
+                $found = $this->findDesignatedGroupSectionInSection($el, $blockId);
+                if ($found) return $found;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Whether $section lives inside the subtree of $subtreeRoot (itself included).
+     */
+    private function sectionIsInsideSubtree(FormLayoutSection $subtreeRoot, FormLayoutSection $section): bool {
+        if ($subtreeRoot === $section) return true;
+        foreach ($subtreeRoot->elements ?? [] as $el) {
+            if ($el instanceof FormLayoutSection) {
+                if ($el === $section || $this->sectionIsInsideSubtree($el, $section)) return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -1360,7 +1450,7 @@ class FormHtmlGeneratorService {
             $switchIdAttr = "id='switch_{$rootBlock->id}'";
             $switchForAttr = "for='switch_{$rootBlock->id}'";
         }
-        $html = "<div class='form-check form-switch mb-3'>" . $this->newLine('+');
+        $html = "<div class='form-check form-switch mb-3 awf-optional-switch'>" . $this->newLine('+');
         {
             $html .= "<input class='form-check-input' type='checkbox' role='switch' {$switchIdAttr} {$switchNameAttr} value='1' x-model='active' " .
                     "@change=\"if (!active) { instances = []; } else if (instances.length === 0) { instances.push({ id: nextInstanceId++ }); }\">" . $this->newLine();
@@ -1384,7 +1474,10 @@ class FormHtmlGeneratorService {
     private function renderServerDataOptionalGroup(FormDataBlock $rootBlock, ?FormLayoutSection $section, array $contentOuterVars, FormConfig $config, FormTheme $theme): string {
         $sectionTitle = ($section && $section->title !== '') ? $section->title : ($rootBlock->group_title ?: $rootBlock->text);
         $toggleLabel = htmlspecialchars(($section && $section->toggle_label !== '') ? $section->toggle_label : (translate('LBL_DATABLOCK_INCLUDE_LABEL_DEFAULT', 'stic_AWF_Forms') . " " . $sectionTitle), ENT_QUOTES, 'UTF-8');
-        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: false, nextInstanceId: 1, instances: [] }\">" . $this->newLine('+');
+        // Stable JS hooks for AWF.setGroupOptional / isGroupOptional: server-data
+        // groups are ALWAYS Wizard-optional (min_instances = 0 by definition)
+        $safeBlockName = htmlspecialchars($rootBlock->name, ENT_QUOTES, 'UTF-8');
+        $html = "<div class='awf-group-container mb-4' data-awf-group='{$safeBlockName}' data-awf-optional='1' x-data=\"{ active: false, nextInstanceId: 1, instances: [] }\">" . $this->newLine('+');
         {
             $html .= $this->renderOptionalToggleSwitch($rootBlock, $toggleLabel, $contentOuterVars);
             // Instance materialization: the server discovers group instances from
@@ -1527,13 +1620,29 @@ class FormHtmlGeneratorService {
             return $this->renderServerDataOptionalGroup($rootBlock, $section, $contentOuterVars, $config, $theme);
         }
 
-        // A single-block OPTIONAL, non-repeatable group: the group container IS the only box. 
-        // The root block's fields render directly inside the group container.
+        // Chrome-less single-box groups (STACKED panel/card flavor only): the
+        // group container IS the only box — the internal "element" template
+        // card and the block's host card are suppressed, so the fields render
+        // directly inside the group container. Two cases share this
+        // representation:
+        //  - A single-block OPTIONAL group (spec §1.35): one possible instance,
+        //    no instance identity is needed (any number of fields).
+        //  - A single-VISIBLE-FIELD group: when the whole group draws exactly
+        //    ONE input, the per-instance card would be the only wrapper around
+        //    a lone field; the field's own label identifies the instances and
+        //    a compact inline remove control replaces the card's one. This
+        //    unifies the representation with the optional-only flavor, which
+        //    already rendered the field bare.
+        // Groups whose designated section is TABS or ACCORDION keep their own
+        // instance navigation (tab bar / accordion items) in every case: that
+        // chrome is the point of those flavors, single visible field or not.
         $templateContentSections = ($templateSection !== null)
             ? array_filter($templateSection->elements, fn ($el) => $el instanceof FormLayoutSection)
             : [];
-        $singleBlockOptionalGroup = $isOptional && !$isRepeatable
-            && count($children) === 0 && count($templateContentSections) === 1;
+        $singleContentSection = count($children) === 0 && count($templateContentSections) === 1;
+        $isSingleVisibleFieldGroup = $singleContentSection
+            && self::countContentSectionVisibleFields(reset($templateContentSections), $config) === 1;
+        $singleBoxGroup = ($isOptional && !$isRepeatable && $singleContentSection) || $isSingleVisibleFieldGroup;
 
         // Alpine initialization:
         // - Optional: start inactive with empty instances []
@@ -1550,7 +1659,12 @@ class FormHtmlGeneratorService {
         // user can see. Same contract as the regular tabs container: the pane
         // publishes its instance index and the owner of `activeTab` switches.
         $paneActivation = "@invalid.capture=\"const gp = \$event.target.closest('[data-awf-group-pane]'); if (gp && gp.closest('.awf-group-container') === \$el) activeTab = +gp.dataset.awfGroupPane; const gi = \$event.target.closest('[data-awf-group-item]'); if (gi && gi.closest('.awf-group-container') === \$el) openItem = +gi.dataset.awfGroupItem\" @awf-show-group-pane=\"if (\$event.target.closest('.awf-group-container') === \$el) activeTab = +\$event.detail\" @awf-show-group-item=\"if (\$event.target.closest('.awf-group-container') === \$el) openItem = +\$event.detail\"";
-        $html = "<div class='awf-group-container mb-4' x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0, openItem: 0, titleOverrides: {}, titleOverrideFor: function (index, fallback) { var o = this.titleOverrides[index]; return (o === undefined || o === null) ? fallback : o; } }\" {$paneActivation}>" . $this->newLine('+');
+        // Stable JS hooks for AWF.setGroupOptional / isGroupOptional: the block
+        // name plus the Wizard-optional flag (only optional groups may be
+        // toggled programmatically — see getAwfHelperJs)
+        $safeBlockName = htmlspecialchars($rootBlock->name, ENT_QUOTES, 'UTF-8');
+        $optionalAttr = $isOptional ? " data-awf-optional='1'" : '';
+        $html = "<div class='awf-group-container mb-4' data-awf-group='{$safeBlockName}'{$optionalAttr} x-data=\"{ active: {$initialActive}, nextInstanceId: 1, instances: {$initialInstances}, activeTab: 0, openItem: 0, titleOverrides: {}, titleOverrideFor: function (index, fallback) { var o = this.titleOverrides[index]; return (o === undefined || o === null) ? fallback : o; } }\" {$paneActivation}>" . $this->newLine('+');
         {
             // The group section's header (title/subtitle) is rendered by the
             // loop paths below (stacked cards) or by the tabs chrome — both
@@ -1891,12 +2005,14 @@ class FormHtmlGeneratorService {
                     $groupShowAttr = $isCollapsibleGroup ? "id='{$groupBodyId}' x-show='open' x-transition" : "";
                     $html .= "<div class='card-body' {$groupShowAttr}>" . $this->newLine('+');
                     {
-                    if ($singleBlockOptionalGroup) {
-                        // Single-block optional group (spec §1.35): the group
-                        // container is the ONLY box for the root block — the
-                        // internal "element" template card and the block's host
-                        // card are suppressed, so the root fields render directly.
-                        // The single content section renders CHROME-LESS (not
+                    if ($singleBoxGroup) {
+                        // Single-box group: the group container is the ONLY box for the
+                        // root block — the internal "element" template card and the
+                        // block's host card are suppressed, so the root fields render
+                        // directly. Two flavors share this representation (see the
+                        // $singleBoxGroup condition above): single-block OPTIONAL
+                        // groups and single-VISIBLE-FIELD groups (repeatable included).
+                        // The content section renders CHROME-LESS (not
                         // `renderBlockInstanceFields`) so its NESTED subsections
                         // (user structure inside the host) are still rendered with
                         // their own chrome instead of being dropped.
@@ -1909,18 +2025,53 @@ class FormHtmlGeneratorService {
                         // "idx_lN is not defined") when the group was nested.
                         $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
-                            $html .= "<div class='awf-instance-card' :data-awf-instance=\"{$instanceVar}\" x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
-                            {
-                                $contentSection = reset($templateContentSections);
-                                if ($contentSection instanceof FormLayoutSection) {
-                                    $html .= $this->renderSectionNode($contentSection, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars, false);
-                                } else {
-                                    $html .= $this->renderBlockInstanceFields($rootBlock, $theme, $instanceVar, $contentOuterVars);
+                            if ($isRepeatable) {
+                                // Repeatable single-field group: the lone field renders
+                                // bare, with a compact inline remove control for
+                                // instances beyond the first — the per-instance card
+                                // chrome that used to carry the remove button is
+                                // suppressed in this representation, and without the
+                                // inline control an added instance could never be removed
+                                $html .= "<div class='awf-instance-card d-flex align-items-start gap-2' :data-awf-instance=\"{$instanceVar}\" x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                                {
+                                    $html .= "<div class='flex-grow-1'>" . $this->newLine('+');
+                                    {
+                                        $contentSection = reset($templateContentSections);
+                                        if ($contentSection instanceof FormLayoutSection) {
+                                            $html .= $this->renderSectionNode($contentSection, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars, false);
+                                        } else {
+                                            $html .= $this->renderBlockInstanceFields($rootBlock, $theme, $instanceVar, $contentOuterVars);
+                                        }
+                                    }
+                                    $html .= "</div>" . $this->newLine('-');
+                                    $html .= "<button type='button' class='btn btn-sm btn-outline-danger' x-show='index > 0' @click=\"instances = instances.filter(i => i !== instance)\">{$removeLabel}</button>" . $this->newLine();
                                 }
+                                $html .= "</div>" . $this->newLine('-');
+                            } else {
+                                $html .= "<div class='awf-instance-card' :data-awf-instance=\"{$instanceVar}\" x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
+                                {
+                                    $contentSection = reset($templateContentSections);
+                                    if ($contentSection instanceof FormLayoutSection) {
+                                        $html .= $this->renderSectionNode($contentSection, $config, $theme, $instanceVar, $rootBlock->id, $contentOuterVars, false);
+                                    } else {
+                                        $html .= $this->renderBlockInstanceFields($rootBlock, $theme, $instanceVar, $contentOuterVars);
+                                    }
+                                }
+                                $html .= "</div>" . $this->newLine('-');
                             }
-                            $html .= "</div>" . $this->newLine('-');
                         }
                         $html .= "</template>" . $this->newLine('-');
+                        if ($isRepeatable) {
+                            // Add-instances button: in this bare representation it lives
+                            // right after the instances, like in the card path
+                            $html .= "<button type='button' class='btn btn-sm btn-outline-primary awf-add-instance-btn mt-1' " .
+                                    "@click=\"instances.push({ id: nextInstanceId++ })\" " .
+                                    "x-show=\"!{$maxInstances} || instances.length < {$maxInstances}\">" . $this->newLine('+');
+                            {
+                                $html .= "<span>{$addLabel}</span>" . $this->newLine();
+                            }
+                            $html .= "</button>" . $this->newLine('-');
+                        }
                     } else {
                     // Per-instance chrome: the element TEMPLATE's own card IS the
                     // instance card — the header shows the instance title
@@ -2045,7 +2196,7 @@ class FormHtmlGeneratorService {
                     }
                     $html .= "</button>" . $this->newLine('-');
                 }
-                    } // end single-block-optional-group else
+                    } // end single-box-group else
                     }
                     $html .= "</div>" . $this->newLine('-');
                 }
@@ -4211,6 +4362,265 @@ JS;
     return applied;
   }
 
+  // --- Optional group control (setGroupOptional / isGroupOptional) -------
+  // Only groups flagged `data-awf-optional="1"` (Wizard-defined optional,
+  // min_instances = 0) may be toggled programmatically: the server contract
+  // for mandatory blocks expects their rows to always be posted.
+
+  function findGroupContainers(groupName, card, options) {
+    var name = String(groupName || '').trim();
+    if (name === '') return [];
+    var search = function (root) {
+      if (!root || !root.querySelectorAll) return [];
+      // Compare the dataset value directly: no CSS-escaping pitfalls
+      var found = Array.prototype.slice.call(root.querySelectorAll('[data-awf-group]'))
+        .filter(function (el) { return el.dataset.awfGroup === name; });
+      var idx = options && options.instanceIndex;
+      if (idx != null) {
+        // Optional subgroups render one container per parent row: keep only
+        // the copy living inside the requested parent instance
+        found = found.filter(function (el) {
+          var inst = el.closest('.awf-instance-card');
+          return inst && inst.dataset.awfInstance === String(idx);
+        });
+      }
+      return found;
+    };
+    // Prefer the instance card scope when called from inside an instance
+    var local = (card && card.querySelectorAll) ? search(card) : [];
+    return local.length > 0 ? local : search(getForm());
+  }
+
+  function applyGroupOptionalState(container, isOptional, resetWhenOptional, keepForcedMarker) {
+    if (!container || !container.querySelectorAll) return false;
+    if (container.dataset.awfOptional !== '1') return false;
+    var state = groupState(container);
+    if (!state) {
+      // Alpine not initialized yet: re-apply once it is
+      document.addEventListener('alpine:initialized', function () {
+        applyGroupOptionalState(container, isOptional, resetWhenOptional, keepForcedMarker);
+      }, { once: true });
+      return false;
+    }
+    var prevActive = !!state.active;
+    var switchWrap = container.querySelector('.awf-optional-switch');
+    var switchInput = container.querySelector('input[name^="_toggle_"]');
+
+    if (!isOptional) {
+      // Force MANDATORY: hide the switch (display:none keeps the input in the
+      // POST), check it and make sure at least one instance row is rendered.
+      // Setting `active` through x-model mirrors the checked state.
+      if (switchWrap) switchWrap.style.display = 'none';
+      if (switchInput && !switchInput.checked) switchInput.checked = true;
+      state.active = true;
+      if (Array.isArray(state.instances) && state.instances.length === 0) {
+        state.instances.push({ id: state.nextInstanceId++ });
+      }
+      container.dataset.awfForcedMandatory = '1';
+    } else {
+      // Back to OPTIONAL: show the switch again. Rendered rows and the values
+      // the user already typed are NEVER touched unless resetWhenOptional.
+      if (switchWrap) switchWrap.style.display = '';
+      if (resetWhenOptional) {
+        state.active = false;
+        if (Array.isArray(state.instances)) state.instances = [];
+        if (switchInput) switchInput.checked = false;
+      }
+      // A temporary deactivation (e.g. setGroupVisible hiding the group) keeps
+      // the forced-mandatory intent so the group reactivates when shown again
+      if (!keepForcedMarker) delete container.dataset.awfForcedMandatory;
+    }
+    // Broadcast the change (only when the state actually changed)
+    var nowActive = !!state.active;
+    if (nowActive !== prevActive) notifyGroupChange(container, nowActive);
+    return true;
+  }
+
+  function setGroupOptional(groupName, isOptional, options) {
+    var opts = options || {};
+    var containers = findGroupContainers(groupName, opts.card, opts);
+    var eligible = containers.filter(function (c) { return c.dataset.awfOptional === '1'; });
+    if (eligible.length === 0) {
+      console.warn('AWF.setGroupOptional: no Wizard-optional group "' + groupName + '" found' +
+        (containers.length > 0 ? ' (the group is not optional: min_instances > 0)' : ''));
+      return false;
+    }
+    var applied = false;
+    eligible.forEach(function (c) {
+      if (applyGroupOptionalState(c, !!isOptional, !!opts.resetWhenOptional)) applied = true;
+    });
+    return applied;
+  }
+
+  function isGroupOptional(groupName, options) {
+    var opts = options || {};
+    var containers = findGroupContainers(groupName, opts.card, opts);
+    if (containers.length === 0) return false;
+    var c = containers[0];
+    if (c.dataset.awfOptional !== '1') return false;
+    // `data-awf-forced-mandatory="1"` marks a group a rule forced mandatory
+    return c.dataset.awfForcedMandatory !== '1';
+  }
+
+  // --- Group visibility & group change events ------------------------------
+  // setGroupVisible / isGroupVisible / onGroupChange work on ANY group
+  // container (data-awf-group), optional or not. Hiding an optional group
+  // deactivates it (unless options.preserveState) so nothing residual reaches
+  // the POST; hiding a non-optional group disables its inner controls (marked
+  // with data-awf-vis-disabled) so hidden required fields cannot block the
+  // HTML5 submit. State changes are broadcast to onGroupChange subscribers.
+
+  var groupListeners = [];
+
+  function groupState(container) {
+    return (container._x_dataStack && container._x_dataStack[0]) || null;
+  }
+
+  function dispatchGroupListener(listener, container, isActive) {
+    var opts = listener.options || {};
+    var parentCard = container.closest('.awf-instance-card');
+    if (opts.instanceIndex != null) {
+      var idx = parentCard ? parentCard.dataset.awfInstance : null;
+      if (String(idx) !== String(opts.instanceIndex)) return;
+    }
+    var swInput = container.querySelector('input[name^="_toggle_"]');
+    var parentIndexes = (parentCard && parentCard.dataset.awfInstance !== undefined)
+      ? [Number(parentCard.dataset.awfInstance)] : [];
+    // Same context object onChange delivers: scope.card / scope.instanceIndex
+    // point at the PARENT row for nested optional groups
+    var scope = buildInfo(swInput || container, parentCard, {
+      detached: false, block: container.dataset.awfGroup, field: '', indexes: parentIndexes, multi: false
+    });
+    try { listener.callback(isActive, scope); } catch (err) { console.error('AWF.onGroupChange callback error', err); }
+  }
+
+  function notifyGroupChange(container, isActive) {
+    var name = container.dataset.awfGroup;
+    if (!name) return;
+    // Manual toggles reach the delegated handler twice (input + change):
+    // only broadcast actual state transitions
+    if (container._awfGroupLastActive === isActive) return;
+    container._awfGroupLastActive = isActive;
+    groupListeners.slice().forEach(function (listener) {
+      if (listener.groupName !== name) return;
+      dispatchGroupListener(listener, container, isActive);
+    });
+  }
+
+  function triggerGroupListenersImmediate(listener) {
+    var run = function () {
+      findGroupContainers(listener.groupName, listener.options && listener.options.card, listener.options)
+        .forEach(function (c) {
+          var st = groupState(c);
+          if (st) dispatchGroupListener(listener, c, !!st.active);
+        });
+    };
+    // Wait for Alpine when it has not initialized the groups yet
+    var form = getForm();
+    var first = form ? form.querySelector('[data-awf-group]') : null;
+    if (!first || !groupState(first)) {
+      document.addEventListener('alpine:initialized', run, { once: true });
+      return;
+    }
+    run();
+  }
+
+  function applyGroupVisibility(container, makeVisible, options) {
+    if (!container || !container.querySelectorAll) return false;
+    var opts = options || {};
+    var state = groupState(container);
+    var needsState = container.dataset.awfOptional === '1' || container.dataset.awfForcedMandatory === '1';
+    if (!state && needsState) {
+      // Alpine not initialized yet: re-apply once it is
+      document.addEventListener('alpine:initialized', function () {
+        applyGroupVisibility(container, makeVisible, opts);
+      }, { once: true });
+      return false;
+    }
+
+    if (makeVisible) {
+      container.dataset.awfHidden = '0';
+      container.style.display = '';
+      // Re-enable ONLY the controls this API disabled when hiding
+      var reenable = container.querySelectorAll('[data-awf-vis-disabled]');
+      for (var i = 0; i < reenable.length; i++) {
+        reenable[i].disabled = false;
+        delete reenable[i].dataset.awfVisDisabled;
+      }
+      // A group a rule forced mandatory becomes active again
+      if (container.dataset.awfForcedMandatory === '1' && state && !state.active) {
+        applyGroupOptionalState(container, false);
+      }
+      return true;
+    }
+
+    container.dataset.awfHidden = '1';
+    container.style.display = 'none';
+    if (container.dataset.awfOptional === '1') {
+      // Deactivate so nothing residual reaches the POST (unless preserved).
+      // keepForcedMarker: hiding must not drop the forced-mandatory intent,
+      // so the group reactivates automatically when shown again
+      if (!opts.preserveState) applyGroupOptionalState(container, true, true, true);
+    } else {
+      // Non-optional group: disable its controls (keeping a marker so only
+      // these are re-enabled later; pre-existing disabled ones are untouched)
+      var controls = container.querySelectorAll('input, select, textarea');
+      for (var j = 0; j < controls.length; j++) {
+        var ctl = controls[j];
+        if (!ctl.disabled) { ctl.disabled = true; ctl.dataset.awfVisDisabled = '1'; }
+      }
+    }
+    return true;
+  }
+
+  function setGroupVisible(groupName, isVisible, options) {
+    var opts = options || {};
+    var containers = findGroupContainers(groupName, opts.card, opts);
+    if (containers.length === 0) {
+      console.warn('AWF.setGroupVisible: no group "' + groupName + '" found');
+      return false;
+    }
+    var applied = false;
+    containers.forEach(function (c) {
+      if (applyGroupVisibility(c, !!isVisible, opts)) applied = true;
+    });
+    return applied;
+  }
+
+  function isGroupVisible(groupName, options) {
+    var opts = options || {};
+    var containers = findGroupContainers(groupName, opts.card, opts);
+    if (containers.length === 0) return null;
+    var c = containers[0];
+    return c.dataset.awfHidden !== '1' && c.style.display !== 'none';
+  }
+
+  function isGroupActive(groupName, options) {
+    var opts = options || {};
+    var containers = findGroupContainers(groupName, opts.card, opts);
+    if (containers.length === 0) return null;
+    var c = containers[0];
+    var state = groupState(c);
+    if (state) return !!state.active;
+    // Pre-Alpine fallback: the switch mirrors the initial activation state
+    var sw = c.querySelector('input[name^="_toggle_"]');
+    if (sw) return !!sw.checked;
+    // Groups without a switch are mandatory: always active
+    return true;
+  }
+
+  function onGroupChange(groupName, callback, options) {
+    if (typeof callback !== 'function') return function () {};
+    var opts = options || {};
+    var listener = { groupName: String(groupName || '').trim(), callback: callback, options: opts };
+    groupListeners.push(listener);
+    if (opts.immediate) triggerGroupListenersImmediate(listener);
+    return function off() {
+      var i = groupListeners.indexOf(listener);
+      if (i >= 0) groupListeners.splice(i, 1);
+    };
+  }
+
   var listeners = [];
   var delegatedForm = null;
 
@@ -4271,6 +4681,47 @@ JS;
         var val = (arguments.length === 1) ? target : text;
         var res = resolveForInfo(t, card, parsed);
         return setSectionTitleOn(res.elements, val);
+      },
+      setGroupOptional: function (groupName, isOptional, options) {
+        // From inside an instance, prefer the optional groups of THIS card
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        return setGroupOptional(groupName, isOptional, o);
+      },
+      isGroupOptional: function (groupName, options) {
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        return isGroupOptional(groupName, o);
+      },
+      setGroupVisible: function (groupName, isVisible, options) {
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        return setGroupVisible(groupName, isVisible, o);
+      },
+      isGroupVisible: function (groupName, options) {
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        return isGroupVisible(groupName, o);
+      },
+      isGroupActive: function (groupName, options) {
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        return isGroupActive(groupName, o);
+      },
+      onGroupChange: function (groupName, callback, options) {
+        var o = {};
+        if (options && typeof options === 'object') { for (var k in options) o[k] = options[k]; }
+        o.card = o.card || card;
+        // Subscriptions from inside an instance only follow THAT parent row
+        if (o.instanceIndex == null && card && card.dataset.awfInstance !== undefined) {
+          o.instanceIndex = card.dataset.awfInstance;
+        }
+        return onGroupChange(groupName, callback, o);
       },
       getText: function (target) {
         var res = resolveForInfo(target || currentCanonical, card, parsed);
@@ -4437,6 +4888,16 @@ JS;
                 triggerListenerImmediate(listener, c);
               }
             });
+            // A new instance card may carry optional subgroups: run immediate
+            // group listeners for the copies living inside the new card
+            groupListeners.forEach(function (gl) {
+              if (gl.options && gl.options.immediate) {
+                findGroupContainers(gl.groupName, c, gl.options).forEach(function (gc) {
+                  var st = groupState(gc);
+                  if (st) dispatchGroupListener(gl, gc, !!st.active);
+                });
+              }
+            });
           });
         }, 0);
       }
@@ -4451,6 +4912,14 @@ JS;
     var handler = function (event) {
       var el = event.target;
       if (!el || !el.name) return;
+      // Group activation switches (_toggle_{Block}[i]...): notify onGroupChange
+      // subscribers about the manual activation state change
+      if (/^_toggle_([^\[\]]+)((?:\[\d+\])*)$/.test(el.name)) {
+        var groupContainer = el.closest('.awf-group-container');
+        if (groupContainer && groupContainer.dataset.awfGroup) {
+          notifyGroupChange(groupContainer, !!el.checked);
+        }
+      }
       var parsed = parseFieldName(el.name);
       if (!parsed) return;
 
@@ -4504,6 +4973,12 @@ JS;
     setHelp: function (target, text, options) { return setHelpTextOn(containerOf(resolve(target, options).elements), text); },
     getSectionTitle: function (target, options) { return getSectionTitleFrom(resolve(target, options).elements); },
     setSectionTitle: function (target, text, options) { return setSectionTitleOn(resolve(target, options).elements, text); },
+    setGroupOptional: function (groupName, isOptional, options) { return setGroupOptional(groupName, isOptional, options); },
+    isGroupOptional: function (groupName, options) { return isGroupOptional(groupName, options); },
+    setGroupVisible: function (groupName, isVisible, options) { return setGroupVisible(groupName, isVisible, options); },
+    isGroupVisible: function (groupName, options) { return isGroupVisible(groupName, options); },
+    isGroupActive: function (groupName, options) { return isGroupActive(groupName, options); },
+    onGroupChange: function (groupName, callback, options) { return onGroupChange(groupName, callback, options); },
     getAttribute: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
     setAttribute: function (target, attr, value, options) { return setAttributeOn(resolve(target, options).elements, attr, value); },
     getAttributeValue: function (target, attr, options) { return getAttributeOn(resolve(target, options).elements, attr); },
@@ -4584,6 +5059,12 @@ JS;
       onChange: function (fieldName, callback, options) { return scoped('onChange', [fieldName, callback, options], options); },
       getSectionTitle: function (target, options) { return scoped('getSectionTitle', [target, options], options); },
       setSectionTitle: function (target, text, options) { return scoped('setSectionTitle', [target, text, options], options); },
+      setGroupOptional: function (groupName, isOptional, options) { return scoped('setGroupOptional', [groupName, isOptional, options], options); },
+      isGroupOptional: function (groupName, options) { return scoped('isGroupOptional', [groupName, options], options); },
+      setGroupVisible: function (groupName, isVisible, options) { return scoped('setGroupVisible', [groupName, isVisible, options], options); },
+      isGroupVisible: function (groupName, options) { return scoped('isGroupVisible', [groupName, options], options); },
+      isGroupActive: function (groupName, options) { return scoped('isGroupActive', [groupName, options], options); },
+      onGroupChange: function (groupName, callback, options) { return scoped('onGroupChange', [groupName, callback, options], options); },
       parseFieldName: parseFieldName
     };
   } else {
