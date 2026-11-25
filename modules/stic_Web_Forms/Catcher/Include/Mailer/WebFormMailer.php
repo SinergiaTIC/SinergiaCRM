@@ -310,8 +310,11 @@ class WebFormMailer
      * @param Optional String $lang Language with which to parse the template
      * @return String Mail body in html
      */
-    public function parseEmailTemplateById($templateId, $replacementObjects, $lang = null)
+    public function parseEmailTemplateById($templateId, $replacementObjects, $account, $lang = null)
     {
+        // Calling the object from the form to parse the entire template
+        $objWeb = $replacementObjects[0];
+
         if (empty($templateId)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  No ID received.");
             return false;
@@ -325,7 +328,7 @@ class WebFormMailer
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Template with ID  [{$templateId}]  not found.");
             return false;
         }
-        return $this->parseEmailTemplate($template, $replacementObjects, $lang);
+        return $this->parseEmailTemplate($template, $replacementObjects, $objWeb, $account, $lang);
     }
 
     /**
@@ -338,6 +341,9 @@ class WebFormMailer
      */
     public function parseEmailTemplateByName($templateName, $replacementObjects, $lang = null, $type = 'email')
     {
+        // Calling the object from the form to parse the entire template
+        $objWeb = $replacementObjects[0];
+
         if (empty($templateName)) {
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  No name has been received.");
             return false;
@@ -351,7 +357,7 @@ class WebFormMailer
             $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Template not found with name [{$templateName}]");
             return false;
         }
-        return $this->parseEmailTemplate($template, $replacementObjects, $lang);
+        return $this->parseEmailTemplate($template, $replacementObjects, $objWeb, $account, $lang);
     }
 
     /**
@@ -361,7 +367,7 @@ class WebFormMailer
      * @param $replacementObjects Array of objects to be parsed
      * @return String Mail body in html
      */
-    protected function parseEmailTemplate($template, $replacementObjects, $lang)
+    protected function parseEmailTemplate($template, $replacementObjects, $objWeb, $account, $lang)
     {
         global $current_language, $app_list_strings, $app_strings;
 
@@ -385,11 +391,11 @@ class WebFormMailer
         $app_strings = return_application_language($current_language);
         $app_list_strings = return_app_list_strings_language($current_language);
 
-        $parseArr = array("subject0" => $template->subject, "text0" => $template->body, "html0" => $template->body_html);
+        $parseArr = array("subject1" => $template->subject, "text1" => $template->body, "html1" => $template->body_html);
         $replacementObjectsLength = (empty($replacementObjects) || !is_array($replacementObjects) ? 0 : count($replacementObjects));
 
-        $j = 0;
-        for ($i = 0; $i < $replacementObjectsLength; $i++) {
+        $j = 1;
+        for ($i = 1; $i < $replacementObjectsLength ; $i++) {
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Parsing object [{$i}] [{$replacementObjects[$i]->module_dir}] ... ");
             $macro_nv = array();
             $obj = $this->prepareBean2EmailTemplate($replacementObjects[$i]);
@@ -401,6 +407,53 @@ class WebFormMailer
             $parseArr["subject{$j}"] = $parseArr["subject{$i}"];
             $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ":  Result [{$i}] -> " . $parseArr["html{$j}"]);
         }
+
+        // Search the web form to replace on the email template the param
+        switch ($_REQUEST['webFormClass']) {
+            // If the form is from Donation
+            case 'Donation':
+                // If is a Contact, replace the param form_contact to contact
+                if($_REQUEST['web_module'] == 'Contacts') {
+                    $parseArr["html{$i}"] = str_replace('$form_contact', '$contact', $parseArr["html{$i}"]);
+
+                // If is an Account, replace the param form_account to account
+                } elseif ($_REQUEST['web_module'] == 'Accounts') {
+                    $parseArr["html{$i}"] = str_replace('$form_account', '$account', $parseArr["html{$i}"]);
+                }
+
+                // Parsing the object
+                $obj = $this->prepareBean2EmailTemplate($objWeb);
+                $parseArr = $template->parse_email_template($parseArr, $obj->module_dir, $obj, $macro_nv);
+
+                break;
+
+            // If the form is from Events
+            case 'EventInscription':
+                // If there is an account, replace both params
+                if(!empty($account)) {
+                    $search = ['$form_contact', '$form_account'];
+                    $replace = ['$contact', '$account'];
+                    $parseArr["html{$i}"] = str_replace($search, $replace, $parseArr["html{$i}"]);
+
+                    // Parsing the object
+                    $obj = $this->prepareBean2EmailTemplate($account);
+                    $parseArr = $template->parse_email_template($parseArr, $obj->module_dir, $obj, $macro_nv);
+
+                // If there isn't an account, replace the param form_contact to contact
+                } else {
+                    $parseArr["html{$i}"] = str_replace('$form_contact', '$contact', $parseArr["html{$i}"]);
+
+                    // Parsing the object
+                    $obj = $this->prepareBean2EmailTemplate($objWeb);
+                    $parseArr = $template->parse_email_template($parseArr, $obj->module_dir, $obj, $macro_nv);
+                }
+                break;
+        }
+
+        // Parse the entire email template again
+        $parseArr["text{$j}"] = $parseArr["text{$i}"];
+        $parseArr["html{$j}"] = $parseArr["html{$i}"];
+        $parseArr["subject{$j}"] = $parseArr["subject{$i}"];
 
         $GLOBALS['log']->debug('Line ' . __LINE__ . ': ' . __METHOD__ . ": Recovering original language files ...");
         $current_language = $prev_lang;
