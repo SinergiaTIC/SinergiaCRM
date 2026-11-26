@@ -301,7 +301,23 @@ class CustomAdministrationController extends AdministrationController
         }
         require_once 'SticInclude/Portal/ConfigUtils.php';
         SticPortalConfigUtils::clearAllLockouts();
-        header('Location: index.php?module=Administration&action=index');
+        header('Location: index.php?module=Administration&action=sticportalconfig');
+        exit;
+    }
+
+    public function action_sticportalconfig_cleariplockout() {
+        global $current_user;
+        if (!is_admin($current_user) || empty($_GET['token'])
+            || !hash_equals($_SESSION['stic_portal_config_token'] ?? '', (string) $_GET['token'])) {
+            sugar_die('Unauthorized access to administration.');
+        }
+        $ip = (string) ($_GET['ip'] ?? '');
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+            sugar_die('Invalid IP address.');
+        }
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        SticPortalConfigUtils::clearIpLockout($ip);
+        header('Location: index.php?module=Administration&action=sticportalconfig');
         exit;
     }
 

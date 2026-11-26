@@ -211,6 +211,9 @@ class SticPortalActionsUtils
             return array('success' => false, 'error' => 'email failed');
         }
 
+        // Archive the sent email so it appears in the record's History subpanel
+        self::archiveSentEmail($bean, $subject, $bodyHtml, $toList, $ccList, $bccList, $options);
+
         SticPortalAuthUtils::recordLoginAudit($bean, $bean->module_name, $bean->stic_portal_username_c,
             $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'invitation', $oauthClientId, $oauthClientName);
         return array('success' => true, 'error' => '');
@@ -292,6 +295,9 @@ class SticPortalActionsUtils
             return array('success' => false, 'error' => 'email failed');
         }
 
+        // Archive the sent email so it appears in the record's History subpanel
+        self::archiveSentEmail($bean, $subjectParsed, $bodyHtmlParsed, $toList, $ccList, $bccList, $options);
+
         SticPortalAuthUtils::recordLoginAudit($bean, $bean->module_name, $bean->stic_portal_username_c,
             $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '', true, null, 'admin_reset', $oauthClientId, $oauthClientName);
         SticPortalAuthUtils::sendSecurityNotification($bean, 'reset_requested');
@@ -361,6 +367,99 @@ class SticPortalActionsUtils
     }
 
     /**
+     * Resolve the outbound account and the sender identity for a portal email.
+     * Shared by sendMail() and archiveSentEmail() so the archived Emails record
+     * shows the same From as the message that was actually sent.
+     *
+     * @param array $options Optional overrides: 'output_smtp', 'from_email', 'from_name'.
+     * @return array array(OutboundEmail, fromEmail, fromName)
+     */
+    private static function resolveOutboundAndSender(array $options = array())
+    {
+        $emailObj = new Email();
+        $defaults = $emailObj->getSystemDefaultEmail();
+
+        $mailerName = (string) ($options['output_smtp'] ?? '');
+        $outboundEmail = new OutboundEmail();
+        if ($mailerName === '' || $mailerName === 'system') {
+            $outboundEmail = $outboundEmail->getSystemMailerSettings();
+        } else {
+            $user = new User();
+            $user->getSystemUser();
+            $outboundEmail = $outboundEmail->getMailerByName($user, $mailerName);
+        }
+
+        $fromEmail = (string) ($options['from_email'] ?? '');
+        $fromName  = (string) ($options['from_name'] ?? '');
+        $fromEmail = $fromEmail !== '' ? $fromEmail : (!empty($outboundEmail->smtp_from_addr) ? $outboundEmail->smtp_from_addr : ($defaults['email'] ?? ''));
+        $fromName  = $fromName !== '' ? $fromName : (!empty($outboundEmail->smtp_from_name) ? $outboundEmail->smtp_from_name : ($defaults['name'] ?? ''));
+        return array($outboundEmail, $fromEmail, $fromName);
+    }
+
+    /**
+     * Archive the sent email as an Emails record related to the Contact/Account,
+     * so it appears in the record's History subpanel (the same place where
+     * emails archived from the CRM show up).
+     *
+     * @param SugarBean $bean Contact or Account the email was sent to.
+     * @param string $subject Parsed email subject.
+     * @param string $bodyHtml Parsed HTML body.
+     * @param array $toList Recipient addresses.
+     * @param array $ccList CC addresses.
+     * @param array $bccList BCC addresses.
+     * @param array $options Optional mailer overrides (same keys as sendMail()).
+     * @return string|false The archived Emails id, or false on failure.
+     */
+    private static function archiveSentEmail($bean, $subject, $bodyHtml, $toList, $ccList = array(), $bccList = array(), array $options = array())
+    {
+        try {
+            $toList = array_values(array_filter(array_map('trim', (array) $toList)));
+            if (empty($toList)) {
+                return false;
+            }
+            list(, $fromEmail, $fromName) = self::resolveOutboundAndSender($options);
+            $bodyText = strip_tags(str_replace(array('<br>', '</p>'), array("\n", "\n\n"), $bodyHtml));
+
+            $emailBean = BeanFactory::newBean('Emails');
+            $emailBean->type = 'out';
+            $emailBean->status = 'sent';
+            $emailBean->name = $subject;
+            $emailBean->description_html = $bodyHtml;
+            $emailBean->description = $bodyText;
+            // from_addr drives the emails_email_addr_rel 'from' link;
+            // from_addr_name is the display form stored in emails_text.
+            $emailBean->from_addr = $fromEmail;
+            $emailBean->from_addr_name = ($fromName !== '' ? $fromName . ' <' . $fromEmail . '>' : $fromEmail);
+            $emailBean->to_addrs = implode(', ', $toList);
+            $emailBean->to_addrs_names = $emailBean->to_addrs;
+            $ccList = array_values(array_filter(array_map('trim', (array) $ccList)));
+            if (!empty($ccList)) {
+                $emailBean->cc_addrs = implode(', ', $ccList);
+                $emailBean->cc_addrs_names = $emailBean->cc_addrs;
+            }
+            $bccList = array_values(array_filter(array_map('trim', (array) $bccList)));
+            if (!empty($bccList)) {
+                $emailBean->bcc_addrs = implode(', ', $bccList);
+                $emailBean->bcc_addrs_names = $emailBean->bcc_addrs;
+            }
+            $emailBean->date_sent_received = $GLOBALS['timedate']->nowDb();
+            $emailBean->assigned_user_id = !empty($bean->assigned_user_id) ? $bean->assigned_user_id : ($GLOBALS['current_user']->id ?? '');
+            $emailBean->save();
+
+            // Relate to the Contact/Account so the email shows in the
+            // History subpanel of the detail view.
+            $rel = ($bean->module_dir === 'Accounts') ? 'accounts' : 'contacts';
+            if ($emailBean->load_relationship($rel)) {
+                $emailBean->$rel->add($bean->id);
+            }
+            return $emailBean->id;
+        } catch (Exception $e) {
+            $GLOBALS['log']->error(__METHOD__ . ' - Failed to archive portal email for ' . $bean->module_dir . ':' . $bean->id . ': ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Send an HTML email through the configured outbound account.
      *
      * The sender identity defaults to the system SMTP account (avoids
@@ -386,19 +485,8 @@ class SticPortalActionsUtils
         $bccList = array_values(array_filter(array_map('trim', (array) $bccList)));
         $bodyText = strip_tags(str_replace(array('<br>', '</p>'), array("\n", "\n\n"), $bodyHtml));
 
-        $emailObj = new Email();
-        $defaults = $emailObj->getSystemDefaultEmail();
-
-        // Outbound account: system default, or the account named by the workflow
-        $mailerName = (string) ($options['output_smtp'] ?? '');
-        $outboundEmail = new OutboundEmail();
-        if ($mailerName === '' || $mailerName === 'system') {
-            $outboundEmail = $outboundEmail->getSystemMailerSettings();
-        } else {
-            $user = new User();
-            $user->getSystemUser();
-            $outboundEmail = $outboundEmail->getMailerByName($user, $mailerName);
-        }
+        // Outbound account + sender identity (shared with archiveSentEmail())
+        list($outboundEmail, $fromEmail, $fromName) = self::resolveOutboundAndSender($options);
 
         $log = __CLASS__ . '::' . __METHOD__;
         $mailer = new SugarPHPMailer();
@@ -424,10 +512,8 @@ class SticPortalActionsUtils
             $mailer->Password = $outboundEmail->mail_smtppass;
         }
 
-        $fromEmail = (string) ($options['from_email'] ?? '');
-        $fromName  = (string) ($options['from_name'] ?? '');
-        $mailer->From = $fromEmail !== '' ? $fromEmail : (!empty($outboundEmail->smtp_from_addr) ? $outboundEmail->smtp_from_addr : ($defaults['email'] ?? ''));
-        $mailer->FromName = $fromName !== '' ? $fromName : (!empty($outboundEmail->smtp_from_name) ? $outboundEmail->smtp_from_name : ($defaults['name'] ?? ''));
+        $mailer->From = $fromEmail;
+        $mailer->FromName = $fromName;
         isValidEmailAddress($mailer->From);
 
         $mailer->Subject  = $subject;

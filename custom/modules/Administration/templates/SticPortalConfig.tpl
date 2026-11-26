@@ -424,6 +424,41 @@
 </tr>
 </table>
 
+<!-- LOCKED IPs -->
+<table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view" style="table-layout:fixed;">
+<tr><th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_STIC_PORTAL_LOCKED_IPS|default:'Locked IPs'}</h4></th></tr>
+<tr>
+    <td colspan="4" valign="middle">
+        {if $LOCKED_IPS}
+        <table width="100%" border="0" cellspacing="1" cellpadding="2" class="list view">
+        <thead>
+            <tr>
+                <th>IP Address</th>
+                <th>Failed Attempts</th>
+                <th>Locked Until</th>
+                <th>Last Attempt</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+        {foreach from=$LOCKED_IPS item=ip}
+            <tr>
+                <td>{$ip.ip_address|escape}</td>
+                <td>{$ip.failed_attempts|escape}</td>
+                <td>{$ip.locked_until|escape}</td>
+                <td>{$ip.last_attempt|escape}</td>
+                <td><a class="button" href="index.php?module=Administration&action=sticportalconfig_cleariplockout&ip={$ip.ip_address|escape:url}&token={$PORTAL_CONFIG_TOKEN}">Unlock</a></td>
+            </tr>
+        {/foreach}
+        </tbody>
+        </table>
+        {else}
+        <em>{$MOD.LBL_STIC_PORTAL_NO_LOCKED_IPS|default:'No IPs currently locked.'}</em>
+        {/if}
+    </td>
+</tr>
+</table>
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="actionsContainer">
 <tr><td>
     <input type="submit" class="button primary" value="{$APP.LBL_SAVE_BUTTON_LABEL}" title="{$APP.LBL_SAVE_BUTTON_TITLE}" accesskey="a">&nbsp;

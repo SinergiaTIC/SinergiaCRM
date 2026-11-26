@@ -246,6 +246,40 @@ class SticPortalConfigUtils
     }
 
     /**
+     * Clear the lockout for a single IP address.
+     *
+     * @param string $ip The IP address to unlock.
+     * @return bool True on success.
+     */
+    public static function clearIpLockout($ip)
+    {
+        global $db;
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+            return false;
+        }
+        $qip = $db->quoted($ip);
+        $db->query("DELETE FROM stic_portal_login_attempts WHERE ip_address = $qip");
+        $GLOBALS['log']->info(__METHOD__ . " - IP lockout cleared for $ip");
+        return true;
+    }
+
+    /**
+     * Get the list of currently locked IP addresses.
+     *
+     * @return array Array of assoc arrays: ip_address, failed_attempts, locked_until, last_attempt.
+     */
+    public static function getLockedIps()
+    {
+        global $db;
+        $out = array();
+        $result = $db->query("SELECT ip_address, failed_attempts, locked_until, last_attempt FROM stic_portal_login_attempts WHERE locked_until IS NOT NULL AND locked_until > NOW() ORDER BY locked_until DESC");
+        while ($row = $db->fetchByAssoc($result)) {
+            $out[] = $row;
+        }
+        return $out;
+    }
+
+    /**
      * Clear all portal sessions for contacts and accounts.
      * Resets stic_portal_session_id_c to NULL for all records.
      * Uses SQL directly for performance — may affect many records.

@@ -53,4 +53,30 @@ class stic_Portal_Login_AuditViewList extends ViewList
         $this->lv->multiSelect = false;
         $this->lv->show_action_dropdown = false;
     }
+
+    public function listViewProcess()
+    {
+        $this->processSearchForm();
+        $this->lv->searchColumns = $this->searchForm->searchColumns;
+
+        if (!$this->headers) {
+            return;
+        }
+        if (empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false) {
+            $this->lv->ss->assign("SEARCH", true);
+            $this->lv->ss->assign('savedSearchData', $this->searchForm->getSavedSearchData());
+            $this->lv->setup($this->seed, 'include/ListView/ListViewGeneric.tpl', $this->where, $this->params);
+            // Read-only audit: strip every edit affordance from the rows —
+            // the edit-link pencil (rowAccess drives it and admins bypass
+            // ACLs, so denying ACL edit alone cannot hide it) and the
+            // inline-edit pencil on every column (incl. parent module).
+            if (!empty($this->lv->data['pageData']['rowAccess'])) {
+                foreach ($this->lv->data['pageData']['rowAccess'] as $i => $access) {
+                    $this->lv->data['pageData']['rowAccess'][$i]['edit'] = false;
+                }
+            }
+            $this->lv->ss->assign('inline_edit', false);
+            echo $this->lv->display();
+        }
+    }
 }

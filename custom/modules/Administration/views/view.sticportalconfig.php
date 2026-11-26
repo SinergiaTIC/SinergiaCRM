@@ -60,6 +60,8 @@ class AdministrationViewSticportalconfig extends SugarView
         $this->ss->assign('EMAIL_TEMPLATES', $emailTemplates);
         $this->ss->assign('USERNAME_FIELDS_CONTACTS', $this->getUsernameFieldOptions('Contacts'));
         $this->ss->assign('USERNAME_FIELDS_ACCOUNTS', $this->getUsernameFieldOptions('Accounts'));
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        $this->ss->assign('LOCKED_IPS', SticPortalConfigUtils::getLockedIps());
 
         echo $this->ss->fetch('custom/modules/Administration/templates/SticPortalConfig.tpl');
     }
