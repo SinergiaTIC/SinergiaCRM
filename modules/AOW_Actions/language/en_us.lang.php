@@ -65,6 +65,7 @@ $mod_strings = array(
     'LBL_CREATE_EMAIL_TEMPLATE' => 'Create',
     'LBL_RECORD_TYPE' => 'Record Type',
     'LBL_SENDEMAIL' => 'Send Email',
+    'LBL_PORTALACTIONS' => 'Portal Actions',
     'LBL_CREATERECORD' => 'Create Record',
     'LBL_MODIFYRECORD' => 'Modify Record',
     'LBL_ADD_FIELD' => 'Add Field',

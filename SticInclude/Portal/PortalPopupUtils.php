@@ -1,0 +1,141 @@
+<?php
+/**
+ * This file is part of SinergiaCRM.
+ * SinergiaCRM is a work developed by SinergiaTIC Association, based on SuiteCRM.
+ * Copyright (C) 2013 - 2023 SinergiaTIC Association
+ *
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License version 3 as published by the
+ * Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License along with
+ * this program; if not, see http://www.gnu.org/licenses or write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301 USA.
+ *
+ * You can contact SinergiaTIC Association at email address info@sinergiacrm.org.
+ */
+
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
+require_once 'SticInclude/Portal/ConfigUtils.php';
+
+/**
+ * Portal Actions popup utilities for Contacts and Accounts detail views.
+ * Injects OAuth2 client list and popup HTML into the Contacts/Accounts views.
+ */
+class SticPortalPopupUtils
+{
+    /**
+     * Echo the Portal Actions popup HTML and inject the OAuth2 client list for
+     * the Portal Actions button. Used by both detail and list views: the popup
+     * acts on the current record in a detail view and on the selected records
+     * in a list view (see PortalActions.js).
+     *
+     * @param string $module Module name (Contacts or Accounts).
+     */
+    public static function echoPortalActionsPopup($module)
+    {
+        global $db, $mod_strings;
+
+        if (empty($mod_strings)) {
+            $mod_strings = return_module_language($GLOBALS['current_language'], $module);
+        }
+
+        // Inject OAuth2 portal clients for invitation buttons
+        $clients = array();
+        $r = $db->query("SELECT id, name, redirect_url FROM oauth2clients WHERE allowed_grant_type='portal_authorization_code' AND deleted=0 ORDER BY name");
+        while ($row = $db->fetchByAssoc($r)) {
+            $clients[] = array('id' => $row['id'], 'name' => $row['name'], 'url' => $row['redirect_url']);
+        }
+        echo '<script>if(typeof STIC==="undefined"){var STIC={};} STIC.portalClients = ' . json_encode($clients, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . "</script>\n";
+
+        // Inject the selectable email templates and the default template per
+        // action (the same one the Portal Configuration settings use). The
+        // invitation default depends on the module the popup runs on.
+        $templates = array();
+        $r = $db->query("SELECT id, name FROM email_templates WHERE type='email' AND deleted=0 ORDER BY name");
+        while ($row = $db->fetchByAssoc($r)) {
+            $templates[] = array('id' => $row['id'], 'name' => $row['name']);
+        }
+        echo '<script>STIC.portalTemplates = ' . json_encode($templates, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . "</script>\n";
+        $templateDefaults = array(
+            'invitation' => SticPortalConfigUtils::get(($module === 'Accounts') ? 'PORTAL_TMPL_CRED_ACCOUNTS' : 'PORTAL_TMPL_CRED_CONTACTS', ''),
+            'pwreset' => SticPortalConfigUtils::get('PORTAL_TMPL_RESET', ''),
+        );
+        echo '<script>STIC.portalTemplateDefaults = ' . json_encode($templateDefaults, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . "</script>\n";
+        echo '<script>function getPortalInvitationLimit() {return ' . (int)SticPortalConfigUtils::get('PORTAL_INVITATION_LIMIT', 100) . ';}</script>' . "\n";
+        echo getVersionedScript('SticInclude/Portal/PortalActions.js') . "\n";
+
+        // One-time CSRF token for the navigation-based portal actions entry points.
+        if (empty($_SESSION['stic_portal_actions_token'])) {
+            $_SESSION['stic_portal_actions_token'] = bin2hex(random_bytes(16));
+        }
+        $portalToken = $_SESSION['stic_portal_actions_token'];
+
+        $titleHelp = $mod_strings['LBL_STIC_PORTAL_ACTIONS_HELP'] ?? 'Send an invitation or password reset.';
+        $actionHelp = $mod_strings['LBL_STIC_PORTAL_ACTION_TYPE_HELP'] ?? 'Invitation vs Password Reset.';
+        $enabledLabel = htmlspecialchars($mod_strings['LBL_STIC_PORTAL_ENABLED'] ?? 'Portal Enabled');
+        $actionHelp = str_replace('%PORTAL_ENABLED_LABEL%', $enabledLabel, $actionHelp);
+        $appHelp = $mod_strings['LBL_STIC_PORTAL_TARGET_APP_HELP'] ?? 'Redirect after password setup.';
+
+        // Portal Actions popup HTML — the .pap-* rules are inlined so the
+        // popup renders correctly in every SuiteP theme variant (only the
+        // Stic theme compiles them in its stylesheet).
+        echo '<style>.pap-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:99999;justify-content:center;align-items:center}.pap-overlay .inline-help-content{display:none !important}.pap-dialog{background:#fff;border-radius:8px;padding:30px;max-width:480px;width:90%;box-shadow:0 4px 20px rgba(0,0,0,.3)}.pap-dialog h3{margin:0 0 15px 0;font-size:16px}.pap-dialog h3 .inline-help{font-size:13px;margin-left:4px;color:#888;cursor:help}.pap-field{margin-bottom:15px}.pap-label{display:block;font-size:12px;font-weight:600;margin-bottom:4px;color:#555}.pap-label .inline-help{font-size:12px;margin-left:4px;color:#999;cursor:help;vertical-align:middle}.pap-actions{margin-top:20px;text-align:right}.pap-btn-cancel{padding:8px 16px;border:1px solid #ddd;background:#f5f5f5;border-radius:4px;cursor:pointer;margin-right:8px;font-size:13px}.pap-btn-execute{padding:8px 16px;background:#1976d2;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px}</style>' . "\n";
+        echo '
+<div id="portalActionsPopup" class="pap-overlay">
+<div class="pap-dialog">
+    <h3>
+        ' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_ACTIONS'] ?? 'Portal Actions') . '
+        <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="1" aria-describedby="qtip-1"></i>
+        <div class="inline-help-content" style="display:none;">' . $titleHelp . '</div>
+    </h3>
+    <div class="pap-field">
+        <label class="pap-label">
+            ' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_ACTION'] ?? 'Action') . '
+            <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="2" aria-describedby="qtip-2"></i>
+            <div class="inline-help-content" style="display:none;">' . $actionHelp . '</div>
+        </label>
+        <select id="portalActionType" class="form-control" style="width:100%" onchange="portalActionSyncTemplateSelect()">
+            <option value="invitation">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_INVITATION'] ?? 'Send Invitation Email') . '</option>
+            <option value="pwreset">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_RESET'] ?? 'Send Password Reset') . '</option>
+        </select>
+    </div>
+    <div class="pap-field">
+        <label class="pap-label">
+            ' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_TARGET_APP'] ?? 'Target App for Redirect') . '
+            <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="3" aria-describedby="qtip-3"></i>
+            <div class="inline-help-content" style="display:none;">' . $appHelp . '</div>
+        </label>
+        <select id="portalAppSelect" class="form-control" style="width:100%"></select>
+    </div>
+    <div class="pap-field">
+        <label class="pap-label">
+            ' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_TEMPLATE'] ?? 'Email Template') . '
+            <i class="inline-help glyphicon glyphicon-info-sign" data-hasqtip="4" aria-describedby="qtip-4"></i>
+            <div class="inline-help-content" style="display:none;">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_TEMPLATE_HELP'] ?? 'Defaults to the template selected in Portal Configuration (per action type). Choose another template to override it for this send.') . '</div>
+        </label>
+        <select id="portalTemplateSelect" class="form-control" style="width:100%"></select>
+    </div>
+    <div class="pap-actions">
+        <button onclick="closePortalActionsPopup()" class="pap-btn-cancel">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_CANCEL'] ?? 'Cancel') . '</button>
+        <button onclick="executePortalAction()" class="pap-btn-execute">' . htmlspecialchars($mod_strings['LBL_STIC_PORTAL_POPUP_EXECUTE'] ?? 'Send') . '</button>
+    </div>
+</div></div>
+<script>
+if(typeof STIC==="undefined"){var STIC={};} STIC.portalCsrf = ' . json_encode($portalToken) . ';
+$("#portalActionsPopup .inline-help").removeAttr("data-hasqtip");
+setInlineHelpQtip();
+// Force qtips above the overlay — inline style from qtip plugin wins over CSS
+$("#portalActionsPopup .inline-help").on("mouseover", function() {
+    setTimeout(function() { $(".qtip").css("z-index", "100000"); }, 100);
+});
+</script>';
+    }
+}

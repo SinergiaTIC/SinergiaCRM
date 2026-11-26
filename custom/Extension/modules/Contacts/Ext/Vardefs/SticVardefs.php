@@ -259,7 +259,7 @@ $dictionary['Contact']['fields']['stic_identification_number_c'] = array(
     'comments' => '',
     'help' => '',
     'type' => 'varchar',
-    'len' => '255',
+    'len' => '50',
     'size' => '20',
     'required' => 0,
     'audited' => 0,
@@ -509,7 +509,7 @@ $dictionary['Contact']['fields']['stic_professional_sector_other_c'] = array(
     'comments' => '',
     'help' => '',
     'type' => 'varchar',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
     'required' => 0,
     'audited' => 0,
@@ -594,7 +594,7 @@ $dictionary['Contact']['fields']['stic_tax_name_c'] = array(
     'comments' => '',
     'help' => '',
     'type' => 'varchar',
-    'len' => '255',
+    'len' => '150',
     'size' => '30',
     'required' => 0,
     'audited' => 0,
@@ -964,7 +964,7 @@ $dictionary['Contact']['fields']['inc_address_block_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_address_district_c'] = array(
@@ -987,7 +987,7 @@ $dictionary['Contact']['fields']['inc_address_district_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_address_door_c'] = array(
@@ -1010,7 +1010,7 @@ $dictionary['Contact']['fields']['inc_address_door_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_address_floor_c'] = array(
@@ -1033,7 +1033,7 @@ $dictionary['Contact']['fields']['inc_address_floor_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_address_num_a_c'] = array(
@@ -1056,7 +1056,7 @@ $dictionary['Contact']['fields']['inc_address_num_a_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_address_num_b_c'] = array(
@@ -1079,7 +1079,7 @@ $dictionary['Contact']['fields']['inc_address_num_b_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_address_postal_code_c'] = array(
@@ -1102,7 +1102,7 @@ $dictionary['Contact']['fields']['inc_address_postal_code_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_address_street_c'] = array(
@@ -1125,7 +1125,7 @@ $dictionary['Contact']['fields']['inc_address_street_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_address_street_type_c'] = array(
@@ -1410,7 +1410,7 @@ $dictionary['Contact']['fields']['inc_driving_licenses_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_economic_benefits_c'] = array(
@@ -1484,7 +1484,7 @@ $dictionary['Contact']['fields']['inc_employ_office_reg_time_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_geographical_proximity_c'] = array(
@@ -1687,7 +1687,7 @@ $dictionary['Contact']['fields']['inc_max_commuting_time_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
 );
 $dictionary['Contact']['fields']['inc_country_origin_c'] = array(
@@ -2245,7 +2245,7 @@ $dictionary['Contact']['fields']['inc_state_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
     'studio' => array(
         'editview' => false,
@@ -2273,7 +2273,7 @@ $dictionary['Contact']['fields']['inc_municipality_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
     'studio' => array(
         'editview' => false,
@@ -2301,7 +2301,7 @@ $dictionary['Contact']['fields']['inc_town_c'] = array(
     'reportable' => true,
     'unified_search' => false,
     'merge_filter' => 'enabled',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
     'studio' => array(
         'editview' => false,
@@ -2585,7 +2585,7 @@ $dictionary['Contact']['fields']['stic_time_availability_c'] = array(
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',
     'type' => 'varchar',
-    'len' => '255',
+    'len' => '100',
     'size' => '20',
     'default' => false,
     'no_default' => false,
@@ -2610,7 +2610,7 @@ $dictionary['Contact']['fields']['stic_pa_username_c'] = array(
     'type' => 'varchar',
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',
-    'len' => '255',
+    'len' => '100',
     'inline_edit' => '1',
     'required' => false,
     'massupdate' => 1,
@@ -2630,7 +2630,7 @@ $dictionary['Contact']['fields']['stic_pa_password_c'] = array(
     'custom_module' => 'Contacts',
     'source' => 'custom_fields',
     'type' => 'varchar',
-    'len' => '255',
+    'len' => '100',
     'inline_edit' => '0',
     'write_only' => true,
     'required' => false,
@@ -2830,3 +2830,272 @@ $dictionary['Contact']['fields']['am_projecttemplates_resources']['vname'] = 'LB
 // STIC#981
 $dictionary['Contact']['fields']['primary_address_postalcode']['inline_edit'] = true;
 $dictionary['Contact']['fields']['do_not_call']['massupdate'] = '1';
+
+
+$dictionary['Contact']['fields']['stic_portal_username_c'] = array(
+    'name' => 'stic_portal_username_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_USERNAME_C_HELP',
+    'vname' => 'LBL_STIC_PORTAL_USERNAME',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 100,
+    'required' => false,
+    'audited' => true,
+    'importable' => true,
+    'massupdate' => true,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_hashed_c'] = array(
+    'name' => 'stic_portal_hashed_c',
+    'vname' => 'LBL_STIC_PORTAL_HASHED',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 60,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+    ),
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_enabled_c'] = array(
+    'name' => 'stic_portal_enabled_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_ENABLED_C_HELP',
+    'vname' => 'LBL_STIC_PORTAL_ENABLED',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'bool',
+    'default' => 0,
+    'required' => false,
+    'audited' => true,
+    'importable' => true,
+    'massupdate' => true,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_force_pw_change_c'] = array(
+    'name' => 'stic_portal_force_pw_change_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_FORCE_PW_CHANGE_C_HELP',
+    'vname' => 'LBL_STIC_PORTAL_FORCE_PW_CHANGE',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'bool',
+    'default' => 0,
+    'required' => false,
+    'audited' => true,
+    'importable' => true,
+    'massupdate' => true,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_last_login_c'] = array(
+    'name' => 'stic_portal_last_login_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_LAST_LOGIN_C_HELP',
+    'vname' => 'LBL_STIC_PORTAL_LAST_LOGIN',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => true,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_failed_attempts_c'] = array(
+    'name' => 'stic_portal_failed_attempts_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_FAILED_ATTEMPTS_C_HELP',
+    'vname' => 'LBL_STIC_PORTAL_FAILED_ATTEMPTS',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'int',
+    'len' => 11,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_locked_until_c'] = array(
+    'name' => 'stic_portal_locked_until_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_LOCKED_UNTIL_C_HELP',
+    'vname' => 'LBL_STIC_PORTAL_LOCKED_UNTIL',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_password_changed_c'] = array(
+    'name' => 'stic_portal_password_changed_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_PASSWORD_CHANGED_C_HELP',
+    'vname' => 'LBL_STIC_PORTAL_PASSWORD_CHANGED',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_password_expires_c'] = array(
+    'name' => 'stic_portal_password_expires_c',
+    'popupHelp' => 'LBL_STIC_PORTAL_PASSWORD_EXPIRES_C_HELP',
+    'vname' => 'LBL_STIC_PORTAL_PASSWORD_EXPIRES',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_reset_token_c'] = array(
+    'name' => 'stic_portal_reset_token_c',
+    'vname' => 'LBL_STIC_PORTAL_RESET_TOKEN',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 64,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+    ),
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_reset_expires_c'] = array(
+    'name' => 'stic_portal_reset_expires_c',
+    'vname' => 'LBL_STIC_PORTAL_RESET_EXPIRES',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_magic_token_c'] = array(
+    'name' => 'stic_portal_magic_token_c',
+    'vname' => 'LBL_STIC_PORTAL_MAGIC_TOKEN',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 64,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+    ),
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_magic_expires_c'] = array(
+    'name' => 'stic_portal_magic_expires_c',
+    'vname' => 'LBL_STIC_PORTAL_MAGIC_EXPIRES',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'datetime',
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => true,
+    'studio' => 'visible',
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_remember_token_c'] = array(
+    'name' => 'stic_portal_remember_token_c',
+    'vname' => 'LBL_STIC_PORTAL_REMEMBER_TOKEN',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 64,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+    ),
+    'inline_edit' => false,
+);
+
+$dictionary['Contact']['fields']['stic_portal_session_id_c'] = array(
+    'name' => 'stic_portal_session_id_c',
+    'vname' => 'LBL_STIC_PORTAL_SESSION_ID',
+    'custom_module' => 'Contacts',
+    'source' => 'custom_fields',
+    'type' => 'varchar',
+    'len' => 64,
+    'required' => false,
+    'audited' => false,
+    'importable' => false,
+    'massupdate' => false,
+    'reportable' => false,
+    'studio' => array(
+        'editview' => false,
+        'detailview' => false,
+        'listview' => false,
+        'searchview' => false,
+    ),
+    'inline_edit' => false,
+);
+

@@ -115,6 +115,7 @@ $app_strings['LBL_NEW_MSG_NOTIFICATION'] = 'Nueva notificación por mensaje tele
 $app_strings['LBL_SUBPANEL_NEW_MESSAGE_CONVERSATION_LABEL'] = 'Enviar mensaje (conversación)';
 
 // Envío masivo de correos
+$app_strings['LBL_PORTAL_INVITATION_LIMIT_ALERT'] = 'Se ha superado el limite de invitaciones.';
 $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'El envío sólo se aplicará a los registros de la página actual. Para envíos masivos se recomienda utilizar el módulo Campañas.';
 
 // Campos de filtro en relaciones muchos a muchos
@@ -190,6 +191,7 @@ $app_list_strings['moduleList']['stic_AWF_Forms'] = 'Formularios Web Avanzados';
 $app_list_strings['moduleList']['stic_AWF_Deferred_Tickets'] = 'Procesos en espera de formularios';
 $app_list_strings['moduleList']['stic_AWF_Incoming_Events'] = 'Notificaciones externas de formularios';
 $app_list_strings['moduleList']['stic_Conversations'] = 'Conversaciones';
+$app_list_strings['moduleList']['stic_Portal_Login_Audit'] = 'Registro de auditoría de accesos al portal';
 $app_list_strings['moduleList']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
 $app_list_strings['moduleList']['stic_Recycle_Bin_Relationships'] = 'Relaciones de la papelera';
 
@@ -257,6 +259,7 @@ $app_list_strings['moduleListSingular']['stic_AWF_Forms'] = 'Formulario Web Avan
 $app_list_strings['moduleListSingular']['stic_AWF_Deferred_Tickets'] = 'Proceso en espera de formulario';
 $app_list_strings['moduleListSingular']['stic_AWF_Incoming_Events'] = 'Notificación externa de formulario';
 $app_list_strings['moduleListSingular']['stic_Conversations'] = 'Conversación';
+$app_list_strings['moduleListSingular']['stic_Portal_Login_Audit'] = 'Registro de auditoría de accesos al portal';
 $app_list_strings['moduleListSingular']['stic_Recycle_Bin'] = 'Papelera de reciclaje';
 $app_list_strings['moduleListSingular']['stic_Recycle_Bin_Relationships'] = 'Relación de la papelera';
 
@@ -4260,3 +4263,9 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Mensajes';
 
 // Lista dinámica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
+
+// Options for the portal login audit parent_type filter
+$app_list_strings['stic_portal_audit_parent_types'] = array(
+    'Contacts' => 'Personas (Contacts)',
+    'Accounts' => 'Organizaciones (Accounts)',
+);

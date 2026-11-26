@@ -264,6 +264,73 @@ class CustomAdministrationController extends AdministrationController
         // Add specific logic for manage main menu
         require_once('custom/modules/Administration/SticAdvancedMenu/SticAdvancedMenuEdit.php');
 
-    } 
+    }
+
+    public function action_sticportalconfig_save() {
+        global $current_user;
+        if (!is_admin($current_user)) {
+            sugar_die('Unauthorized access to administration.');
+        }
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST'
+            || empty($_POST['portal_config_token'])
+            || !hash_equals($_SESSION['stic_portal_config_token'] ?? '', (string) $_POST['portal_config_token'])) {
+            sugar_die('Invalid portal configuration request.');
+        }
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        SticPortalConfigUtils::saveFromPost($_POST);
+        // Logo upload goes through handleLogoUpload() which validates the MIME type
+        // (rejects arbitrary/scriptable files) and stores via the portal config.
+        if (!empty($_FILES['portal_logo_file']['tmp_name'])) {
+            $logoResult = SticPortalConfigUtils::handleLogoUpload($_FILES['portal_logo_file']);
+            if ($logoResult === false) {
+                // Invalid image: do not overwrite the existing logo, inform the admin
+                $_SESSION['stic_portal_config_error'] = 'Invalid logo image. Only PNG and JPEG files are allowed.';
+                header('Location: index.php?module=Administration&action=sticportalconfig');
+                exit;
+            }
+        }
+        header('Location: index.php?module=Administration&action=index');
+        exit;
+    }
+
+    public function action_sticportalconfig_clearlockouts() {
+        global $current_user;
+        if (!is_admin($current_user) || empty($_GET['token'])
+            || !hash_equals($_SESSION['stic_portal_config_token'] ?? '', (string) $_GET['token'])) {
+            sugar_die('Unauthorized access to administration.');
+        }
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        SticPortalConfigUtils::clearAllLockouts();
+        header('Location: index.php?module=Administration&action=sticportalconfig');
+        exit;
+    }
+
+    public function action_sticportalconfig_cleariplockout() {
+        global $current_user;
+        if (!is_admin($current_user) || empty($_GET['token'])
+            || !hash_equals($_SESSION['stic_portal_config_token'] ?? '', (string) $_GET['token'])) {
+            sugar_die('Unauthorized access to administration.');
+        }
+        $ip = (string) ($_GET['ip'] ?? '');
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+            sugar_die('Invalid IP address.');
+        }
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        SticPortalConfigUtils::clearIpLockout($ip);
+        header('Location: index.php?module=Administration&action=sticportalconfig');
+        exit;
+    }
+
+    public function action_sticportalconfig_clearsessions() {
+        global $current_user;
+        if (!is_admin($current_user) || empty($_GET['token'])
+            || !hash_equals($_SESSION['stic_portal_config_token'] ?? '', (string) $_GET['token'])) {
+            sugar_die('Unauthorized access to administration.');
+        }
+        require_once 'SticInclude/Portal/ConfigUtils.php';
+        SticPortalConfigUtils::clearAllSessions();
+        header('Location: index.php?module=Administration&action=index');
+        exit;
+    }
 
 }
