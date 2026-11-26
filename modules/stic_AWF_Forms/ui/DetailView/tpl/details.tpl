@@ -22,6 +22,7 @@
  
 <script type="text/javascript" language="JavaScript">
     STIC.enabledModules = {$enabledModules};
+    STIC.awfAssetVersion = {$VERSION_MARK|json_encode};
 </script>
 
 <div class="clear"></div>

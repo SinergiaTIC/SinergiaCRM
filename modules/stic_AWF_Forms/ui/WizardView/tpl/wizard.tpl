@@ -26,6 +26,7 @@
     STIC.formMsgWarnings = {$msgWarnings|json_encode};
     STIC.isAdmin = {$isAdminUser|json_encode};
     STIC.record = {$beanJson};
+    STIC.awfAssetVersion = {$VERSION_MARK|json_encode};
 </script>
 
 {$title}

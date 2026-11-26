@@ -324,9 +324,12 @@ class WizardNavigation {
     $("#wizard-section-desc").text(utils.translate(stepInfo.desc));
 
     // Step content
+    const assetVersion = globalThis.STIC?.awfAssetVersion
+      ? `?v=${encodeURIComponent(globalThis.STIC.awfAssetVersion)}`
+      : '';
     if (!(step in WizardNavigation.cacheSteps)) {
       WizardNavigation.cacheSteps[step] = await (
-        await fetch(`modules/stic_AWF_Forms/ui/WizardView/steps/step${step}.html`)
+        await fetch(`modules/stic_AWF_Forms/ui/WizardView/steps/step${step}.html${assetVersion}`)
       ).text();
     }
     let $el = document.getElementById("wizard-step-container");
@@ -335,7 +338,7 @@ class WizardNavigation {
     // Debug options
     if (!(WizardNavigation.cacheDebug)) {
       WizardNavigation.cacheDebug = await (
-        await fetch(`modules/stic_AWF_Forms/ui/WizardView/steps/debug.html`)
+        await fetch(`modules/stic_AWF_Forms/ui/WizardView/steps/debug.html${assetVersion}`)
       ).text();
     }
     let $elDebug = document.getElementById("debug-container");

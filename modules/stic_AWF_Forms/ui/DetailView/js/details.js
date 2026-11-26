@@ -74,9 +74,12 @@ class DetailsNavigation {
     }
 
     // Step content
+    const assetVersion = globalThis.STIC?.awfAssetVersion
+      ? `?v=${encodeURIComponent(globalThis.STIC.awfAssetVersion)}`
+      : '';
     if (!(step in DetailsNavigation.cacheSteps)) {
       DetailsNavigation.cacheSteps[step] = await (
-        await fetch(`modules/stic_AWF_Forms/ui/DetailView/steps/step${step}.html`)
+        await fetch(`modules/stic_AWF_Forms/ui/DetailView/steps/step${step}.html${assetVersion}`)
       ).text();
     }
     let $el = document.getElementById("wizard-step-container");
