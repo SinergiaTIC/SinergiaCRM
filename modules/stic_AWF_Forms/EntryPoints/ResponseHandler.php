@@ -491,9 +491,7 @@ class ResponseHandler
         global $app_list_strings;
 
         // Consolidate links: a single link for each affected bean AND instance
-        // Repeatable groups create the same bean module ids per instance,
-        // so the instance addressing ("i" or "i:j") is part of the key, giving
-        // one independent stic_AWF_Links record per (beanId, instance).
+        // Group loops create one link per bean and full instance index vector.
         $consolidatedBeans = [];
         foreach ($context->actionResults as $result) {
             foreach ($result->modifiedBeans as $modBean) {
@@ -591,104 +589,105 @@ class ResponseHandler
         }
     }
 
-    /**
-     * Validates submission data against field definition in vardefs
-     * @param FormConfig $config Form configuration
-     * @param array $data Received data in the submission
-     * @return ?array List of errors or null if no errors
-     */
+    /** Returns true when any ancestor owns a repeatable/optional loop. */
+    private function hasEnclosingGroupLoop(FormDataBlock $block, FormConfig $config): bool {
+        $seen = [$block->id => true];
+        $parentId = $block->group_root ?? '';
+        while ($parentId !== '' && !isset($seen[$parentId])) {
+            $seen[$parentId] = true;
+            $parent = $config->data_blocks[$parentId] ?? null;
+            if (!$parent) break;
+            if ($parent->isRepeatable() || $parent->isOptional()) return true;
+            $parentId = $parent->group_root ?? '';
+        }
+        return false;
+    }
+
+    /** Validates fields and cardinality recursively per group instance. */
     private function validateSubmission(FormConfig $config, array $data): ?array {
         $errors = [
-            'errors' => [], 
+            'errors' => [],
             'errorDescriptions' => [],
         ];
 
-        // Preprocess data to fill in missing boolean/checkbox fields
-        // (browsers don't send unchecked checkboxes)
+        // Browsers omit unchecked checkboxes.
         stic_AWFUtils::fillMissingBooleanFields($config, $data);
+        $context = new ExecutionContext('', '', $data, $config, null, '', null, '');
 
         foreach ($config->data_blocks as $block) {
-            // Datablock is detached
             if (empty($block->module)) continue;
+            // Enclosed blocks are validated by their loop owner.
+            if ($this->hasEnclosingGroupLoop($block, $config)) continue;
 
-            // Child blocks (group_root set) are validated together with their root when the root
-            // is a repeatable or optional group. Children of SIMPLE groups (mandatory, max=1) are
-            // validated individually as scalar blocks (they use static field names).
-            if (!empty($block->group_root)) {
-                $rootBlock = $config->data_blocks[$block->group_root] ?? null;
-                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
-                    continue;
-                }
-                // Simple group child: fall through to scalar validation below
-            }
-
-            // Repeatable and optional groups are processed as groups:
-            // resolve instances, validate root + descendants per instance.
-            // Simple groups (mandatory, max=1) with children keep the scalar path: the root
-            // is validated as a normal block, and children are validated individually (they
-            // use static field names). This preserves backward compatibility with non-expandable
-            // actions until generic unrolling lands.
             if ($block->isRepeatable() || $block->isOptional()) {
-                $context = new ExecutionContext('', '', $data, $config, null, '', null, '');
-                $instances = DataBlockResolved::resolveInstances($block, $data, $context);
-                $minInstances = $block->min_instances;
-                $maxInstances = $block->max_instances;
-                if ($maxInstances !== null && count($instances) > $maxInstances) {
-                    $errors['errorDescriptions'][$block->name] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$block->text}': ".
-                                                                   translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
-                    $errors['errors'][$block->name] = translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
-                }
-                if (count($instances) < $minInstances) {
-                    $errors['errorDescriptions'][$block->name] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$block->text}': ".
-                                                                   translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
-                    $errors['errors'][$block->name] = translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
-                }
-                $children = $config->getGroupDescendants($block);
-                foreach ($instances as $resolvedBlock) {
-                    $blocksToValidate = array_merge([$block], $children);
-                    foreach ($blocksToValidate as $blockToValidate) {
-                        if ($blockToValidate->name === $block->name) {
-                            $this->validateBlockFields($blockToValidate, $resolvedBlock, $data, $errors);
-                            continue;
-                        }
-                        // Validate every inner instance j of the outer instance i, with per-level min/max checks.
-                        if ($blockToValidate->getLoopDepth() >= 2) {
-                            $innerInstances = DataBlockResolved::resolveInstances($blockToValidate, $data, $context, [$resolvedBlock->instanceIndex]);
-                            $innerMax = $blockToValidate->max_instances;
-                            if ($innerMax !== null && count($innerInstances) > $innerMax) {
-                                $errorKey = $blockToValidate->name . '_' . $resolvedBlock->instanceIndex;
-                                $errors['errorDescriptions'][$errorKey] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$blockToValidate->text}': ".
-                                                                               translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
-                                $errors['errors'][$errorKey] = translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
-                            }
-                            if (count($innerInstances) < $blockToValidate->min_instances) {
-                                $errorKey = $blockToValidate->name . '_' . $resolvedBlock->instanceIndex;
-                                $errors['errorDescriptions'][$errorKey] = translate('LBL_FIELD', 'stic_AWF_Responses') ." '{$blockToValidate->text}': ".
-                                                                               translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
-                                $errors['errors'][$errorKey] = translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
-                            }
-                            foreach ($innerInstances as $innerResolved) {
-                                $this->validateBlockFields($blockToValidate, $innerResolved, $data, $errors);
-                            }
-                            continue;
-                        }
-                        // Child block fields are resolved with the SAME loop-index
-                        // stack as the outer instance, reading their own indexed
-                        // data (ChildBlock[i1]...[in][field]). The constructor
-                        // expects the full array of loop indexes, not the scalar
-                        // instanceIndex.
-                        $resolvedBlockForBlock = new DataBlockResolved($blockToValidate, $data, $context, $resolvedBlock->loopIndexes);
-                        $this->validateBlockFields($blockToValidate, $resolvedBlockForBlock, $data, $errors);
-                    }
-                }
-                continue;
+                $this->validateGroupInstances($block, $data, $context, $errors, []);
+            } else {
+                // Simple groups keep scalar names but may contain looped subgroups.
+                $this->validateScalarBlockTree($block, $data, $context, $errors, []);
             }
-
-            $resolvedBlock = new DataBlockResolved($block, $data, new ExecutionContext('', '', $data, $config, null, '', null, ''));
-            $this->validateBlockFields($block, $resolvedBlock, $data, $errors);
         }
 
         return $errors;
+    }
+
+    /** Validates one group's cardinality and fields per direct-parent instance. */
+    private function validateGroupInstances(FormDataBlock $group, array $data, ExecutionContext $context, array &$errors, array $prefix, array $ancestors = []): void {
+        if (isset($ancestors[$group->id])) return; // malformed group_root cycle
+        $nextAncestors = $ancestors;
+        $nextAncestors[$group->id] = true;
+        $instances = DataBlockResolved::resolveInstances($group, $data, $context, $prefix);
+        $errorKey = $group->name . (empty($prefix) ? '' : '_' . implode('_', $prefix));
+        $maxInstances = $group->max_instances;
+        if ($maxInstances !== null && count($instances) > $maxInstances) {
+            $errors['errorDescriptions'][$errorKey] = translate('LBL_FIELD', 'stic_AWF_Responses') . " '{$group->text}': "
+                . translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
+            $errors['errors'][$errorKey] = translate('LBL_ERROR_REPEATABLE_MAX_INSTANCES', 'stic_AWF_Responses');
+        }
+        if (count($instances) < $group->min_instances) {
+            $errors['errorDescriptions'][$errorKey] = translate('LBL_FIELD', 'stic_AWF_Responses') . " '{$group->text}': "
+                . translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
+            $errors['errors'][$errorKey] = translate('LBL_ERROR_REPEATABLE_MIN_INSTANCES', 'stic_AWF_Responses');
+        }
+
+        foreach ($instances as $instance) {
+            $this->validateBlockFields($group, $instance, $data, $errors);
+            $this->validateChildBlocks($group, $data, $context, $errors, $instance->loopIndexes, $nextAncestors);
+        }
+    }
+
+    /** Validates direct children; simple members add no loop level. */
+    private function validateChildBlocks(FormDataBlock $parent, array $data, ExecutionContext $context, array &$errors, array $prefix, array $ancestors = []): void {
+        foreach ($context->formConfig->getGroupChildren($parent) as $child) {
+            if (empty($child->module) || isset($ancestors[$child->id])) continue;
+            if ($child->isRepeatable() || $child->isOptional()) {
+                $this->validateGroupInstances($child, $data, $context, $errors, $prefix, $ancestors);
+                continue;
+            }
+
+            // Simple heads and plain members have one instance per parent.
+            $nextAncestors = $ancestors;
+            $nextAncestors[$child->id] = true;
+            $resolved = new DataBlockResolved($child, $data, $context, $prefix);
+            $this->validateBlockFields($child, $resolved, $data, $errors);
+            $this->validateChildBlocks($child, $data, $context, $errors, $prefix, $nextAncestors);
+        }
+    }
+
+    /** Recursive scalar validation for legacy/simple groups. */
+    private function validateScalarBlockTree(FormDataBlock $block, array $data, ExecutionContext $context, array &$errors, array $prefix, array $ancestors = []): void {
+        if (isset($ancestors[$block->id])) return; // malformed group_root cycle
+        $nextAncestors = $ancestors;
+        $nextAncestors[$block->id] = true;
+        $resolved = new DataBlockResolved($block, $data, $context, $prefix);
+        $this->validateBlockFields($block, $resolved, $data, $errors);
+        foreach ($context->formConfig->getGroupChildren($block) as $child) {
+            if (empty($child->module) || isset($nextAncestors[$child->id])) continue;
+            if ($child->isRepeatable() || $child->isOptional()) {
+                $this->validateGroupInstances($child, $data, $context, $errors, $prefix, $nextAncestors);
+            } else {
+                $this->validateScalarBlockTree($child, $data, $context, $errors, $prefix, $nextAncestors);
+            }
+        }
     }
 
     /**
@@ -836,8 +835,8 @@ class ResponseHandler
             if (!empty($formField->validations)) {
                 foreach ($formField->validations as $valConfig) {
                     // Check conditions (if any)
-                    if (!stic_AWFUtils::evaluateConditions($valConfig->conditions, $data)) {
-                        continue; // Conditions are not met, skip this validation
+                    if (!stic_AWFUtils::evaluateConditionsForInstance($valConfig->conditions, $block->form_config, $data, $instanceIndexes)) {
+                        continue; // Condition does not match this instance.
                     }
 
                     $validatorDef = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
@@ -875,14 +874,8 @@ class ResponseHandler
 
         $context = new ExecutionContext('', '', $submittedData, $formConfig, null, '', null, '');
         foreach ($formConfig->data_blocks as $block) {
-            // Child blocks are processed together with their root when the root is repeatable/optional.
-            // Children of SIMPLE groups fall through to scalar detail generation.
-            if (!empty($block->group_root)) {
-                $rootBlock = $formConfig->data_blocks[$block->group_root] ?? null;
-                if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
-                    continue;
-                }
-            }
+            // Enclosed blocks are generated with their loop's full index vector.
+            if ($this->hasEnclosingGroupLoop($block, $formConfig)) continue;
 
             // Repeatable and optional groups: generate details for root + descendants per instance.
             if ($block->isRepeatable() || $block->isOptional()) {
@@ -891,11 +884,11 @@ class ResponseHandler
                 foreach ($instances as $instance) {
                     $blocksToProcess = array_merge([$block], $children);
                     foreach ($blocksToProcess as $blockToProcess) {
-                        // depth-2 descendants: one detail block per [outer, inner] instance
+                        // Preserve the complete outer-to-inner instance path.
                         if ($blockToProcess->getLoopDepth() >= 2) {
                             $innerInstances = DataBlockResolved::resolveInstances($blockToProcess, $submittedData, $context, [$instance->instanceIndex]);
                             foreach ($innerInstances as $innerInstance) {
-                                $this->generateBlockDetailsForIndexes($blockToProcess, $responseBean, $formBean, $submittedData, [$instance->instanceIndex, $innerInstance->instanceIndex], $orderCounter, $uploadedFiles);
+                                $this->generateBlockDetailsForIndexes($blockToProcess, $responseBean, $formBean, $submittedData, $innerInstance->getLoopIndexes(), $orderCounter, $uploadedFiles);
                             }
                             continue;
                         }
@@ -923,11 +916,7 @@ class ResponseHandler
         $this->generateBlockDetailsForIndexes($block, $responseBean, $formBean, $submittedData, $instanceIndexes, $orderCounter, $uploadedFiles);
     }
 
-    /**
-     * Multi-index variant: $instanceIndexes holds one index per
-     * repeatable loop level, outer to inner ([] for scalar blocks, [i] for
-     * depth-1, [i, j] for depth-2).
-     */
+    /** Generates details using the full outer-to-inner instance index vector. */
     private function generateBlockDetailsForIndexes(FormDataBlock $block, SugarBean $responseBean, SugarBean $formBean, array $submittedData, array $instanceIndexes, int &$orderCounter, array $uploadedFiles = []): void {
         global $app_strings;
 
@@ -965,9 +954,7 @@ class ResponseHandler
                     continue;
                 }
 
-            // Read the raw value from the submitted structure
-            // (scalar blocks use the flat PHP key, repeatable instances use the
-            // indexed array — depth-2 blocks navigate [outer][inner])
+            // Scalar fields use flat keys; grouped fields use the full index vector.
             if (!empty($instanceIndexes)) {
                 $isUnlinked = $field->type_field === DataBlockFieldType::UNLINKED;
                 $sourceArray = $submittedData[($isUnlinked ? '_detached_' : '') . $block->name] ?? [];
@@ -978,6 +965,10 @@ class ResponseHandler
             } else {
                 $inputKey = $field->getPhpKey();
                 $rawValue = $submittedData[$inputKey] ?? null;
+            }
+            // A missing grouped checkbox is still an explicit false value.
+            if ($rawValue === null && ($field->type === 'bool' || $field->type === 'checkbox')) {
+                $rawValue = '0';
             }
 
             // Calculate readable text and value to store

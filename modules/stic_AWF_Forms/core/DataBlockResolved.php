@@ -184,11 +184,16 @@ class DataBlockResolved {
 
         // Process linked fields
         foreach ($config->fields as $fieldName => $fieldDef) {
-            if ($fieldDef->type_field === DataBlockFieldType::FIXED) {
+            if ($fieldDef->value_type === DataBlockFieldValueType::FIXED
+                || $fieldDef->type_field === DataBlockFieldType::FIXED) {
                 $castedValue = stic_AWFUtils::castCrmValue($fieldDef->value, $fieldDef->type, $context);
                 $logicalKey = $fieldDef->getKeyForIndexes($keyIndexes);
                 $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, $castedValue);
-                $this->formData[$fieldName] = $fieldResolved;
+                if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
+                    $this->detachedData[$fieldName] = $fieldResolved;
+                } else {
+                    $this->formData[$fieldName] = $fieldResolved;
+                }
                 continue;
             }
             if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) continue;
@@ -203,7 +208,8 @@ class DataBlockResolved {
 
         // Process detached fields
         foreach ($config->fields as $fieldName => $fieldDef) {
-            if ($fieldDef->type_field !== DataBlockFieldType::UNLINKED) continue;
+            if ($fieldDef->type_field !== DataBlockFieldType::UNLINKED
+                || $fieldDef->value_type === DataBlockFieldValueType::FIXED) continue;
             // FILE fields never land in the POST matrix: the file input posts
             // under the flat per-instance key (see FormHtmlGeneratorService),
             // so the resolved value is the uploaded file's name
@@ -222,8 +228,8 @@ class DataBlockResolved {
             if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
             $isUnlinked = ($fieldDef->type_field === DataBlockFieldType::UNLINKED);
             $targetArray = $isUnlinked ? $detachedInstance : $linkedInstance;
-            if ($isUnlinked && isset($this->detachedData[$fieldName])) continue;
-            if (!$isUnlinked && isset($this->formData[$fieldName])) continue;
+            $resolvedMap = $isUnlinked ? $this->detachedData : $this->formData;
+            if (isset($resolvedMap[$fieldName]) && $resolvedMap[$fieldName]->value !== null && $resolvedMap[$fieldName]->value !== '') continue;
             if ($fieldDef->type === 'bool' || $fieldDef->type === 'checkbox') {
                 $logicalKey = $fieldDef->getKeyForIndexes($keyIndexes);
                 $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, 0);
@@ -237,27 +243,15 @@ class DataBlockResolved {
     }
 
     /**
-     * Returns one DataBlockResolved per instance for a repeatable block.
-     * For optional blocks with zero instances, returns an empty array.
-     * GENERIC n-dimensional enumeration (one loop level per group head in the
-     * block's chain): with no $prefix it enumerates ALL the instances of the
-     * block (walking every level recursively); with $prefix (a partial index
-     * stack of the ANCESTOR levels already fixed) it enumerates only the
-     * instances below that prefix.
+     * Enumerates every instance in the block's group-loop chain.
+     * A prefix restricts enumeration to instances below fixed ancestor indexes.
      * @param FormDataBlock $block
      * @param array $formData
      * @param ExecutionContext $context
-     * @param array $prefix Already-fixed ancestor loop indexes (outer to inner)
+     * @param array $prefix Fixed ancestor indexes, outer to inner
      * @return DataBlockResolved[]
      */
-    /**
-     * Instance indexes at the CURRENT enumeration level contributed by the
-     * block's FILE fields: their flat per-instance keys
-     * ("_detached_Block_i1_i2_field") carry the FULL loop-index stack, so an
-     * instance whose only value is an uploaded file (files never land in the
-     * POST matrix) is still enumerated. Only the indexes BELOW the already
-     * fixed prefix are returned.
-     */
+    /** Returns current-level indexes contributed by uploaded-file keys. */
     private static function fileKeyLevelIndexes(FormDataBlock $block, ExecutionContext $context, array $prefix): array {
         $depth = $block->getLoopDepth();
         if ($depth < 1) return [];
@@ -276,6 +270,19 @@ class DataBlockResolved {
         return $levelIndexes;
     }
 
+    /** Returns instance indexes materialized only by an optional activation switch. */
+    private static function toggleLevelIndexes(FormDataBlock $block, array $formData, array $prefix): array {
+        if (!$block->isOptional()) return [];
+        $signal = $formData['_toggle_' . $block->name] ?? null;
+        foreach ($prefix as $levelIndex) {
+            $signal = is_array($signal) ? ($signal[$levelIndex] ?? null) : null;
+        }
+        if (is_array($signal)) {
+            return array_values(array_filter(array_keys($signal), 'is_int'));
+        }
+        return $signal !== null && in_array($signal, ['1', 1, true, 'on'], true) ? [0] : [];
+    }
+
     public static function resolveInstances(FormDataBlock $block, array $formData, ExecutionContext $context, array $prefix = []): array {
         $depth = $block->getLoopDepth();
         $blockName = $block->name;
@@ -291,10 +298,10 @@ class DataBlockResolved {
         $indexes = array_unique(array_merge(
             array_filter(array_keys($linkedNode), 'is_int'),
             array_filter(array_keys($detachedNode), 'is_int'),
-            // FILE fields never land in the POST matrix: their flat per-instance
-            // keys ("_detached_Block_i1_i2_field") enumerate instances too — an
-            // instance whose ONLY value is the uploaded file must be resolved
-            self::fileKeyLevelIndexes($block, $context, $prefix)
+            // Uploaded files also enumerate instances outside the POST matrix.
+            self::fileKeyLevelIndexes($block, $context, $prefix),
+            // Optional switches can also be the only submitted value.
+            self::toggleLevelIndexes($block, $formData, $prefix)
         ));
         sort($indexes);
 
@@ -308,22 +315,29 @@ class DataBlockResolved {
             if ($block->isOptional()) {
                 return [];
             }
-            // A NON-head block inside a group that submits NO data of its own
-            // (typically because it renders no fields at all) still needs ONE
-            // instance PER parent instance: mirror the nearest group-head
-            // ancestor's instances instead of a single [0]. Otherwise a
-            // repeatable group would create the child only for its FIRST
-            // instance (the reported bug).
+            // Nested mandatory heads without submitted rows must not create phantoms.
+            if (!empty($prefix) && $block->isGroupHead() && count($prefix) === $block->getLoopDepth() - 1) {
+                return [];
+            }
+            // Empty non-head blocks mirror the nearest enclosing loop, skipping simple groups.
             if (!$block->isGroupHead() && !empty($block->group_root)) {
-                $parent = $block->form_config->data_blocks[$block->group_root] ?? null;
-                if ($parent !== null && $parent->id !== $block->id && $parent->isGroupHead()) {
-                    $parentInstances = self::resolveInstances($parent, $formData, $context, $prefix);
-                    if (!empty($parentInstances)) {
-                        return array_map(
-                            fn ($parentInstance) => new DataBlockResolved($block, $formData, $context, $parentInstance->loopIndexes),
-                            $parentInstances
-                        );
+                $parentId = $block->group_root;
+                $seen = [$block->id => true];
+                while ($parentId !== '' && !isset($seen[$parentId])) {
+                    $seen[$parentId] = true;
+                    $parent = $block->form_config->data_blocks[$parentId] ?? null;
+                    if (!$parent) break;
+                    if ($parent->isRepeatable() || $parent->isOptional()) {
+                        $parentInstances = self::resolveInstances($parent, $formData, $context, $prefix);
+                        if (!empty($parentInstances)) {
+                            return array_map(
+                                fn ($parentInstance) => new DataBlockResolved($block, $formData, $context, $parentInstance->loopIndexes),
+                                $parentInstances
+                            );
+                        }
+                        break;
                     }
+                    $parentId = $parent->group_root;
                 }
             }
             $indexes = [0];
@@ -343,8 +357,7 @@ class DataBlockResolved {
     }
 
     /**
-     * Full loop-index vector (outer to inner) of this instance: [] for scalar,
-     * [i] for depth-1, [i1, i2] for depth-2, ...
+     * Full outer-to-inner loop-index vector; empty for scalar instances.
      */
     public function getLoopIndexes(): array {
         return $this->loopIndexes;
@@ -380,14 +393,7 @@ class DataBlockResolved {
         return null;
     }
 
-    /**
-     * Loop-depth-aware resolution: takes the FIRST d indexes of the context's
-     * active index stack (d = the block's loop depth) — a shallower target
-     * read through a deeper motor uses the outer indexes. When the stack is
-     * shorter than the block's depth, the missing levels default to 0
-     * (deterministic; same-group deeper targets are resolved by their own
-     * unrolling).
-     */
+    /** Resolves a block from the active index stack, padding missing levels with zero. */
     public static function resolveForBlock(FormDataBlock $blockConfig, array $formData, ExecutionContext $context): ?DataBlockResolved {
         $depth = $blockConfig->getLoopDepth();
         if ($depth === 0) {
@@ -418,17 +424,9 @@ class DataBlockResolved {
     }
 
     /**
-     * Three-layer activation check: whether this block instance should be persisted.
-     *  (1) Mandatory blocks (min_instances > 0) are ALWAYS active.
-     *  (2) Optional blocks (always group heads) check the explicit
-     *      `_toggle_{BlockName}` signal posted by the activation switch: the
-     *      switch renders OUTSIDE the block's own loop, so the signal is
-     *      indexed by the first (depth - 1) loop indexes — scalar for a
-     *      top-level optional group, `[i1]` / `[i1][i2]`... for deeper ones.
-     *  (3) Fallback: any non-FIXED resolved field with a non-empty value
-     *      (linked or detached), or an uploaded file for the block's file
-     *      fields. FIXED/server values NEVER count as user input (ghost
-     *      records protection).
+     * Mandatory instances are active. Optional instances require an explicit
+     * toggle, a non-empty user field or an uploaded file; fixed values do not
+     * activate an instance.
      */
     public function isActivated(): bool {
         // (1) Mandatory blocks are always active

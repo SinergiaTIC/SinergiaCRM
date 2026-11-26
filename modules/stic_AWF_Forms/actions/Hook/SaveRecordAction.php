@@ -431,9 +431,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 continue;
             }
 
-            // Loop-depth-aware bean reference: 
-            // a depth-1 target uses the parent index
-            // a depth-2 target uses the composite "i:j" key.
+            // Resolve the target using the active outer-to-inner index vector.
             $targetBeanRef = $targetBlock->getReferenceForContext($context);
 
             if (!$targetBeanRef || empty($targetBeanRef->beanId)) {
@@ -464,20 +462,11 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
     }
 
     /**
-     * Returns the FIRST duplicate rule that identifies `$otherBean` as a
-     * duplicate of the given instance, or null.
-     *
-     * A rule with NO fields is IGNORED: it cannot identify a duplicate, and an
-     * empty rule would otherwise match EVERY other bean. A block with no form
-     * fields keeps the default EMPTY rule, so without this guard every
-     * repeatable instance would be treated as a duplicate of the first one and
-     * collapsed into it (the reported bug: a group child with no fields created
-     * only for the first instance).
-     *
-     * @param DataBlockResolved $block The instance being saved
-     * @param object $otherBean A bean created earlier in the same request
-     * @param array $rules The block's duplicate detection rules
-     * @return ?object The matched rule, or null
+     * Returns the first matching duplicate rule, ignoring empty rules.
+     * @param DataBlockResolved $block
+     * @param object $otherBean
+     * @param array $rules
+     * @return ?object
      */
     private static function matchDuplicateRule(DataBlockResolved $block, $otherBean, array $rules) {
         foreach ($rules as $rule) {

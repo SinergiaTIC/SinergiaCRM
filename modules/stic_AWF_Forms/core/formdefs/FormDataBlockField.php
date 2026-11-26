@@ -129,9 +129,8 @@ class FormDataBlockField {
      * Returns the DOM-id / validation-error key for a field. For instance-aware
      * fields it uses the "BlockName_{index}_fieldName" format so that the frontend
      * showServerError() can match the dynamic input id pattern "f_BlockName_0_fieldName".
-     * For detached blocks the '_detached.' prefix is preserved, keeping consistency
-     * with the existing non-repeatable convention.
-     * @param ?int $index The instance index, or null for scalar (non-repeatable) fields
+     * Detached fields keep the '_detached.' prefix.
+     * @param ?int $index The instance index, or null for scalar fields
      * @return string
      */
     public function getKeyForId(?int $index = null): string {
@@ -143,8 +142,8 @@ class FormDataBlockField {
     }
 
     /**
-     * Multi-dimensional variants. Accept one index per repeatable loop level,
-     * outer to inner (e.g. [i, j] for a block inside a subgroup of a repeatable root).
+     * Multi-dimensional variants. Accept one index per group-loop level,
+     * outer to inner (for example [i, j, k] for deeper optional nesting).
      * With a single index they are identical to getKeyForInstance/getPhpKeyForInstance/getKeyForId.
      * @param array $indexes Loop indexes, outer to inner
      */

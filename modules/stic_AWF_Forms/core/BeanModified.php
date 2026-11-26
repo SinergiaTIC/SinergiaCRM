@@ -44,8 +44,8 @@ class BeanModified extends BeanReference {
     public array $submittedData;
 
     /**
-     * Instance addressing of the modification: null for scalar flows,
-     * "i" for depth-1 instances or "i:j" for depth-2 instances.
+     * Instance addressing of the modification: null for scalar flows or a
+     * colon-separated index vector such as "i:j:k".
      * One stic_AWF_Links record is generated per (beanId, instanceIndex).
      */
     public ?string $instanceIndex = null;
@@ -55,7 +55,7 @@ class BeanModified extends BeanReference {
      * @param string $module The modified bean module
      * @param BeanModificationType $modificationType The modification type
      * @param array<string, FieldModification> $submittedData The data that was applied
-     * @param ?string $instanceIndex Instance addressing ("i" or "i:j"), or null for scalar
+     * @param ?string $instanceIndex Instance index vector, or null for scalar
     */
     public function __construct(string $id, string $module, BeanModificationType $modificationType, array $submittedData = [], ?string $instanceIndex = null) {
         parent::__construct($module, $id);

@@ -42,8 +42,8 @@ class FormDataBlock {
     public ?int $max_instances = 1;               // Maximum allowed instances (1 = simple, >1 or null = repeatable, null = no limit)
     public string $group_title = '';              // Visual title for the repeat group
     public bool $is_custom_group_title = false;   // Flag to track manual title overrides
-    public string $group_root = '';               // ID of the repeatable root this block belongs to
-    public string $element_singular_name = '';    // Singular name for repeatable elements (for UI)
+    public string $group_root = '';               // ID of this block's group root
+    public string $element_singular_name = '';    // Singular label for group instances
 
     private ?BeanReference $beanReference = null; // Bean where the data block has been saved
 
@@ -121,8 +121,7 @@ class FormDataBlock {
     }
 
     /**
-     * Calculates the depth of the block within the chain of group roots. 
-     * Called directly by ResponseHandler to decide whether to evaluate sub-loops at level >= 2.
+     * Counts repeatable/optional heads in the block's group-root chain.
      */
     public function getLoopDepth(): int {
         // Number of x-for loops that address this block's instances, i.e. the
@@ -189,7 +188,7 @@ class FormDataBlock {
     /**
      * Sets the bean reference for this data block, optionally for a specific instance index.
      * @param string $beanId The ID of the bean
-     * @param string|null $instanceIndex Optional instance index (e.g., "i" for depth-1, "i:j" for depth-2)
+     * @param string|null $instanceIndex Instance index vector, or null for scalar
      */
     public function setBeanReference(string $beanId, ?string $instanceIndex = null): void {
         $ref = new BeanReference($this->module, $beanId);
@@ -201,7 +200,7 @@ class FormDataBlock {
 
     /**
      * Gets the bean reference for this data block, optionally for a specific instance index.
-     * @param string|null $instanceIndex Optional instance index (e.g., "i" for depth-1, "i:j" for depth-2)
+     * @param string|null $instanceIndex Instance index vector, or null for scalar
      * @return BeanReference|null The bean reference or null if not set
      */
     public function getBeanReference(?string $instanceIndex = null): ?BeanReference {
@@ -221,7 +220,7 @@ class FormDataBlock {
 
     /**
      * Gets the bean reference for a specific instance index.
-     * @param string|int $index The instance index (e.g., "i" for depth-1, "i:j" for depth-2)
+     * @param string|int $index Instance index vector
      * @return BeanReference|null The bean reference or null if not set
      */
     public function getIndexedBeanReference(string|int $index): ?BeanReference {
@@ -243,7 +242,7 @@ class FormDataBlock {
      * repeatable ancestor.
      * 
      * @param ExecutionContext $context The execution context
-     * @param string|null $instanceKey Optional instance key (e.g., "i" for depth-1, "i:j" for depth-2)
+     * @param string|null $instanceKey Instance index vector, or null for scalar
      * @return BeanReference|null The bean reference or null if not set
      */
     public function getReferenceForContext(ExecutionContext $context, ?string $instanceKey = null): ?BeanReference {
