@@ -108,12 +108,80 @@ class ParserLabel
         }
         if (!empty($this->packageName)) {
             //we are in Module builder
-
-            return self::addLabels($language, $labels, $this->moduleName, "custom/modulebuilder/packages/{$this->packageName}/modules/{$this->moduleName}/language");
+            // STIC-Custom 20261029 ART - Ensure new labels exist in the other language files so they don't show the internal key when switching language
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1485
+            // return self::addLabels($language, $labels, $this->moduleName, "custom/modulebuilder/packages/{$this->packageName}/modules/{$this->moduleName}/language");
+            $basepath = "custom/modulebuilder/packages/{$this->packageName}/modules/{$this->moduleName}/language";
+            $result = self::addLabels($language, $labels, $this->moduleName, $basepath);
+            // Only missing keys are added, existing translations are preserved
+            self::ensureLabelsInOtherLanguages($basepath, $language, $labels);
+            return $result;
+            // END STIC-Custom
         } else {
             return self::addLabels($language, $labels, $this->moduleName);
         }
     }
+
+    // STIC-Custom 20261029 ART - Ensure new labels exist in the other language files so they don't show the internal key when switching language
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1485
+    /**
+     * Propagate newly created labels to the rest of language files in a ModuleBuilder
+     * package when they are missing, preserving existing translations
+     * @param string $basepath Base language directory of the MB module
+     * @param string $language Language just saved (e.g. es_ES)
+     * @param array $labels System label => Display label pairs (keys already uppercased)
+     */
+    protected static function ensureLabelsInOtherLanguages($basepath, $language, $labels)
+    {
+        if (empty($labels) || !is_dir($basepath)) {
+            return;
+        }
+        // Always guarantee en_us has the key as fallback
+        $files = array();
+        $enFile = $basepath . '/en_us.lang.php';
+        if (file_exists($enFile)) {
+            $files[] = 'en_us';
+        }
+        // Also propagate to any other existing language file missing the key
+        $languageFiles = scandir($basepath);
+        if ($languageFiles === false) {
+            return;
+        }
+        foreach ($languageFiles as $file) {
+            if (substr((string) $file, -9) === '.lang.php') {
+                $lang = substr((string) $file, 0, -9);
+                if ($lang !== $language && $lang !== 'en_us' && !in_array($lang, $files, true)) {
+                    $files[] = $lang;
+                }
+            }
+        }
+        foreach ($files as $lang) {
+            if ($lang === $language) {
+                continue;
+            }
+            $filename = $basepath . '/' . $lang . '.lang.php';
+            if (!file_exists($filename)) {
+                continue;
+            }
+            $mod_strings = array();
+            include $filename;
+            if (!is_array($mod_strings)) {
+                $mod_strings = array();
+            }
+            $missing = array();
+            foreach ($labels as $key => $value) {
+                if (!isset($mod_strings[$key]) || $mod_strings[$key] === '') {
+                    $missing[$key] = to_html(strip_tags(from_html($value)));
+                }
+            }
+            if (!empty($missing)) {
+                // Append missing keys without overwriting existing translations
+                $merged = array_merge($mod_strings, $missing);
+                write_override_label_to_file('mod_strings', $merged, $filename);
+            }
+        }
+    }
+    // END STIC-Custom
 
     /**
      * Remove a label from the language pack for a module
