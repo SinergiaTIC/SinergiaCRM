@@ -352,6 +352,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
         $mi = new ModuleInstaller() ;
         $mi->silent = true;
         // STIC-Custom 20261126 EPS - Rebuild extensions only once, after all relationships are installed
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1593
         $mi->rebuild_extensions();
         // END STIC-Custom
         $mi->rebuild_relationships();
