@@ -53,7 +53,7 @@ class SticPortalPopupUtils
         while ($row = $db->fetchByAssoc($r)) {
             $clients[] = array('id' => $row['id'], 'name' => $row['name'], 'url' => $row['redirect_url']);
         }
-        echo '<script>STIC.portalClients = ' . json_encode($clients, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . "</script>\n";
+        echo '<script>if(typeof STIC==="undefined"){var STIC={};} STIC.portalClients = ' . json_encode($clients, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . "</script>\n";
 
         // Inject the selectable email templates and the default template per
         // action (the same one the Portal Configuration settings use). The
@@ -129,7 +129,7 @@ class SticPortalPopupUtils
     </div>
 </div></div>
 <script>
-STIC.portalCsrf = ' . json_encode($portalToken) . ';
+if(typeof STIC==="undefined"){var STIC={};} STIC.portalCsrf = ' . json_encode($portalToken) . ';
 $("#portalActionsPopup .inline-help").removeAttr("data-hasqtip");
 setInlineHelpQtip();
 // Force qtips above the overlay — inline style from qtip plugin wins over CSS
