@@ -337,6 +337,7 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             $mi->install_vardefs() ;
             $mi->install_layoutdefs() ;
             // STIC-Custom 20261126 EPS - Do not call install_extensions() per relationship
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1593
             // install_extensions() runs a full rebuild_extensions() sweep (every module x every
             // extension type) on each loop iteration, so saving one relationship was O(N) in the
             // number of relationships already deployed for the module, exceeding max_execution_time
