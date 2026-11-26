@@ -86,8 +86,7 @@ class ExecutionContext {
      * Adds an action result to the execution context.
      * Per-instance executions store one result per instance:
      *  - instance index 0 keeps the plain action id (backward compatible);
-     *  - later indexes use "{$actionId}_{index}";
-     *  - depth-2 executions use "{$actionId}_{outer}_{inner}".
+     *  - deeper executions append every index: "{$actionId}_{i}_{j}_{k}".
      * Without an active instance index, the plain action id is used (scalar).
      * @param ActionResult $result Action result
      */

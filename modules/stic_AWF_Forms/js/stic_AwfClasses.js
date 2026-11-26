@@ -48,7 +48,7 @@ class stic_AwfDataBlock {
       group_title: '',          // Visual title for the repeat group
       is_custom_group_title: false, // Flag to track manual title overrides
       group_root: '',           // ID of the immediate parent block (List Adjacency)
-      element_singular_name: '', // Singular name for repeatable elements (for UI)
+      element_singular_name: '', // Singular label for group instances
     });
 
     // 2. Overwrite with provided data
@@ -74,13 +74,8 @@ class stic_AwfDataBlock {
   get is_child() { return !this.is_root; }
 
   /**
-   * Group exclusions of this block: the ids of the group roots the user has
-   * explicitly removed this block from. A SET (array) so that a block related
-   * to several group roots (e.g. a central block shared by two optional
-   * groups) can stay out of ALL of them: removing it from group C must keep
-   * the previous exclusion of group B, otherwise the next adoption pass would
-   * bounce it back into B (the "ping-pong" bug).
-   * Legacy configs stored a single string id; it is normalized here.
+   * Returns all group roots this block was explicitly removed from.
+   * Legacy single-id values are normalized to an array.
    * @returns {string[]}
    */
   getGroupExclusions() {
@@ -220,7 +215,7 @@ class stic_AwfDataBlock {
   }
 
   /**
-   * Returns child blocks that belong to this repeatable root.
+   * Returns direct children of this group root.
    * @param {stic_AwfDataBlock[]} dataBlocks
    * @returns {stic_AwfDataBlock[]}
    */
@@ -543,12 +538,8 @@ class stic_AwfDataBlock {
       currentParentId = parentBlock.group_root;
     }
 
-    // Longest repeatable CHAIN below this block (the branch depth), NOT the
-    // SUM of parallel branches: two independent repeatable children are two
-    // depth-2 branches (this → child), never a depth-3 one. Summing them
-    // wrongly refused a valid configuration with MAX_DEPTH.
-    // Counts `this` itself as the first level (the block being evaluated as
-    // repeatable) + the deepest repeatable descendant chain.
+    // Count this block plus its deepest repeatable descendant chain.
+    // Parallel branches are independent, not additive.
     return repeatableAncestors + 1 + this.longestRepeatableDescendantChain(allDataBlocks);
   }
 
@@ -714,7 +705,7 @@ class stic_AwfDataBlock {
   }
 
   /**
-   * Obté tots els descendents d'un DataBlock evitant bucles infinits.
+   * Gets all descendants while stopping malformed cycles.
    * @param {stic_AwfDataBlock[]} allBlocks 
    * @param {Set<string>} visited 
    * @returns {stic_AwfDataBlock[]}
@@ -1670,7 +1661,7 @@ class stic_AwfAction {
       flow_error_id: null,      // ID of the failure flow
       flow_success_text: null,  // Final text for the success flow
       flow_error_text: null,    // Final text for the failure flow
-      repeat_group: null,       // { rootBlockId, groupTitle, isRoot } when the action targets a block of a repeatable group, null otherwise
+      repeat_group: null,       // Optional action-group metadata: { rootBlockId, groupTitle, isRoot }
     });
 
     this.flow_success_text = utils.translate("LBL_FLOW_DEFERRED_MAIN");
@@ -1811,11 +1802,7 @@ class stic_AwfLayout {
     const fragmentKeys = new Set();        // blockId::fieldName — each field renders once
     const fragmentsByBlock = new Map();    // blockId -> [{ section, el }]
 
-    // ---- 0. Cycle repair: drop any section element that references one of its
-    //         own ancestors (self/nested reference). A corrupted structure with
-    //         a section cycle would otherwise overflow the stack in every
-    //         recursive walk below (findBlockHostSection, cleanElements, ...)
-    //         and render infinitely many sections in the wizard.
+    // ---- 0. Remove section-cycle edges before recursive layout walks. ----
     const repairCycles = (section, ancestorIds) => {
       section.elements = section.elements.filter(el => {
         if (el.type !== 'section') return true;
@@ -1958,13 +1945,8 @@ class stic_AwfLayout {
       return outer.elements.some(el => el.type === 'section' && sectionContainsSection(el, inner, seen));
     };
 
-    // The nested section of a group section that hosts a block: the one already
-    // containing it, or a new one titled with the block text. With the 2-level
-    // template model (spec): ALL the hosts live inside the group's TEMPLATE
-    // child (tab_item) — the group section itself only holds the template.
-    // Sections are tracked by id (not by reference): under Alpine reactive
-    // proxies reference identity is unreliable and a corrupted structure with
-    // a section cycle would otherwise cause infinite recursion (stack overflow).
+    // Find or create a block host inside the group's instance-template child.
+    // Track sections by id because Alpine proxies break reference identity.
     const findBlockHostSection = (hostRoot, block, seen = new Set()) => {
       if (seen.has(hostRoot.id)) return null;
       seen.add(hostRoot.id);
@@ -2078,8 +2060,7 @@ class stic_AwfLayout {
     const blockHostSection = (groupSection, block, seen = new Set()) => {
       if (seen.has(block.id)) return null;
       seen.add(block.id);
-      // 2-level template model: the group's content lives inside its TEMPLATE
-      // child. The block's host is searched/created inside it.
+      // Group content lives inside the instance-template child.
       const template = findGroupTemplate(groupSection);
       if (!template) return groupSection; // Defensive (the template pass creates it)
       // A member of a NESTED subgroup (its DIRECT group head is not this
@@ -2175,17 +2156,8 @@ class stic_AwfLayout {
       };
       this.structure.forEach(walk);
     };
-    // Demotes a designated group section AND dissolves the wrapper the group
-    // machinery built for it: the section is replaced IN PLACE by its own
-    // content, with the template child unwrapped one level (its children go
-    // up, keeping their identity, so Alpine bindings survive). The wrapper
-    // and its "(group)"/"(element)" titles were auto-created; keeping them
-    // after the group is gone would leave stray headers and a useless nesting
-    // level that NO later pass prunes (the generic prunes only remove
-    // sections with no children, and a template child always counts as one).
-    // An empty wrapper dissolves entirely. Collected-then-processed: never
-    // called while eachDesignated is walking (splicing a parent's elements
-    // during a forEach skips the lifted siblings).
+    // Demote a removed group and lift its template children into the parent.
+    // Collect first so structural splicing cannot skip siblings.
     const demoteSectionLifted = (s) => {
       s.kind = '';
       s.groupRootBlockId = '';
@@ -2196,12 +2168,7 @@ class stic_AwfLayout {
       const released = template
         ? [...s.elements.filter(el => el.id !== template.id), ...template.elements]
         : [...(s.elements || [])];
-      // The released content is spliced into the PARENT level, which must hold
-      // sections only: a raw element (datablock reference / unbundled field
-      // fragment) is wrapped in a plain section instead of being lifted as-is
-      // (an element at the top level crashed repairCycles/eachDesignated with
-      // "Cannot read properties of undefined"). Order is preserved: each run of
-      // consecutive raw elements becomes one wrapper.
+      // Parent levels hold sections only; wrap consecutive raw elements.
       const lifted = [];
       let wrapper = null;
       released.forEach(el => {
@@ -2392,9 +2359,7 @@ class stic_AwfLayout {
       });
     };
     designateNestedGroups();
-    // Legacy label migration (Task 7.17): group labels used to live on the
-    // block; move them to the designated section (the renderer's source of
-    // truth) and drop the legacy block properties from the saved JSON.
+    // Migrate legacy group labels from blocks to their designated sections.
     eachDesignated(s => {
       const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
       if (!gBlock) return;
@@ -2529,17 +2494,10 @@ class stic_AwfLayout {
       return home;
     };
 
-    // The home of a root block must be a TOP-LEVEL section, so a block that
-    // just got a group root cannot be homed inside the parent's group template.
-    // A block that ALREADY had its own top-level group section must be MOVED
-    // into the parent instead: keeping the old section would render the group
-    // twice (the stale copy would be pruned as empty on a LATER sync, so the
-    // duplicate would also persist for a while).
+    // Move an existing subgroup home into its parent instead of keeping a stale top-level copy.
     const moveExistingHomeToParent = (rootBlock, parentGroupSection) => {
       if (!parentGroupSection) return null;
-      // The parent's template must exist BEFORE the move: a home created during
-      // this same pass has none yet, and moving into a group section without a
-      // template would leave the subgroup's section outside the instance loop
+      // The destination template must exist before moving the subgroup.
       let parentTemplate = findGroupTemplate(parentGroupSection);
       if (!parentTemplate) {
         const parentBlock = dataBlocks.find(b => b.id === parentGroupSection.groupRootBlockId);
@@ -2648,8 +2606,7 @@ class stic_AwfLayout {
       processTopSection(section, ownerRootId);
     });
 
-    // ---- 4. Group-section normalization (2-level template model: the whole
-    //         group's content lives inside its tab_item TEMPLATE child) ----
+    // ---- 4. Normalize each group's container and instance-template child ----
     // EVERY designated group section, top level AND nested (any depth),
     // in tree order: the parent group's template is always normalized (and
     // therefore exists) before the subgroups nested inside it. Idempotent: it is
@@ -2660,17 +2617,12 @@ class stic_AwfLayout {
       designatedSections.forEach(section => {
         const rootBlock = dataBlocks.find(b => b.id === section.groupRootBlockId);
 
-      // e) FIRST: the 2-level template structure — wrap ALL the group's content
-      //    (per-block hosts, direct elements) inside ONE template child = the
-      //    INSTANCE TEMPLATE. Its title is the source of the instance labels
-      //    ("Template #N" / "Template").
-      //    Elements are compared by id (never by reference): under Alpine
-      //    reactive proxies reference identity is unreliable and comparing by
-      //    reference could push the template inside itself, corrupting the
-      //    structure with a cycle (infinite recursion / infinite sections).
+      // e) FIRST: wrap group content in one instance-template child.
+      //    Its title supplies instance labels ("Template #N" / "Template").
+      //    Compare elements by id: Alpine proxies make reference identity
+      //    unreliable and reference comparison can create self-nesting cycles.
       const template = ensureGroupTemplate(section, rootBlock);
-      // Spec "Simplificación UX del Wizard (Paso 4)": the element template is an
-      // INTERNAL 2-level wrapper the user never edits on its own — its chrome is
+      // The element template is an internal wrapper; its chrome is
       // DERIVED from the group on every sync:
       //  - containerType: tabs parent -> 'tab_item' pane; accordion parent ->
       //    'accordion_item'; otherwise 'card' (the repeating "Elements" section
@@ -2817,12 +2769,7 @@ class stic_AwfLayout {
       return !(allBlockTexts.has(s.title) && !s.is_custom_title);
     });
 
-    // ---- 6. Insert the new top-level sections created during extraction/orphans:
-    //         right after their source section, or appended at the end.
-    //         Membership is checked BY ID, never by reference: under Alpine
-    //         reactivity the section objects are Proxies, so includes()/indexOf()
-    //         can miss a section that IS present and append a duplicate (which
-    //         then crashes the step-4 list with "Duplicate key on x-for") ----
+    // ---- 6. Insert new homes after their source section or append them. ----
     const structureIndexOfId = (id) => this.structure.findIndex(s => s && s.id === id);
     const insertionsBySource = new Map();
     const appendedSections = [];
@@ -2842,19 +2789,7 @@ class stic_AwfLayout {
     });
     appendedSections.forEach(s => this.structure.push(s));
 
-    // ---- 6b. DEFAULT-SECTION ORDER: sections created during this sync follow
-    //          the data_blocks order. Group homes used to be pushed during
-    //          designation (early) while plain homes were appended at pass 6,
-    //          so a fresh layout showed ALL group sections first. Only the
-    //          SLOTS of the sections created here (afterSection == null:
-    //          designation + orphans) are re-arranged; pre-existing sections,
-    //          user structure and the extraction homes anchored after their
-    //          source keep their exact position.
-    //          Keyed BY ID (never by reference): under Alpine reactivity the
-    //          section objects are Proxies, so reference comparisons are
-    //          unreliable and could duplicate a section (duplicate x-for key).
-    //          The reorder only runs when every created id occupies exactly
-    //          one slot, guaranteeing a safe permutation. ----
+    // ---- 6b. Order newly created homes by data_blocks without moving user sections. ----
     const defaultHomeRootById = new Map();
     newSectionsForRoots.forEach(({ section, afterSection, rootId }) => {
       if (afterSection || !section || section.id == null) return;
@@ -2926,8 +2861,7 @@ class stic_AwfLayout {
           }
         });
       }
-      // A tabs/accordion container holds ONLY sections and needs at least ONE
-      // item to render: an empty container gets a single empty item (spec 2026-10-08)
+      // Empty tabs/accordion containers need one item to render.
       if ((isTabs || isAccordion) && !section.elements.some(el => el.type === 'section')) {
         const item = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
         item.containerType = isAccordion ? 'accordion_item' : 'tab_item';
@@ -2940,17 +2874,7 @@ class stic_AwfLayout {
     };
     this.structure.forEach(normalizeContainerSections);
 
-    // ---- 8b. Healing pass: elements (whole blocks / field fragments) of a
-    //          GROUPED block must live inside the block's OWN home subtree (the
-    //          section rendered inside its instance loop). A manual edit or a
-    //          cross-host move leaves them elsewhere (e.g. a subgroup member's
-    //          field inside the parent group's host); the render would then
-    //          misread that host as a subgroup head and REPLACE its own
-    //          content with the subgroup loop (the host block's fields lost).
-    //          Relocate any such element to the block's home.
-    //          NOTE: the destination is resolved FRAGMENT-BLIND — counting a
-    //          field fragment as a host reference would chase the corruption
-    //          instead of healing it.
+    // ---- 8b. Move grouped elements back into their own instance-loop home. ----
     const designatedById = new Map();  // groupRootId -> its designated group section
     const indexLayout = (section) => {
       for (const el of section.elements) {
@@ -3008,21 +2932,12 @@ class stic_AwfLayout {
     this.structure.forEach(heal);
     misplaced.forEach(({ el, dest }) => dest.elements.push(el));
 
-    // ---- 9. Integrity guard: Alpine's x-for keys top-level sections by id, so
-    //         the structure must NEVER end a sync with a repeated or missing
-    //         id. Exact duplicate references (the same object pushed twice by a
-    //         legacy/edge pass) are collapsed; two distinct sections that share
-    //         an id get a fresh one. This keeps the wizard from crashing with
-    //         "Duplicate key on x-for" after a sync. ----
+    // ---- 9. Ensure unique section ids required by Alpine x-for keys. ----
     this.ensureUniqueSectionIds();
   }
 
   /**
-   * Guarantees the top-level sections have unique, defined ids. Alpine's x-for
-   * keys sections by id, so a repeated or missing id crashes the step-4 list
-   * ("Duplicate key on x-for" / "Cannot read properties of undefined"). Exact
-   * duplicate references are collapsed; distinct sections sharing an id get a
-   * fresh one.
+   * Collapses duplicate section references and assigns ids to collisions.
    */
   ensureUniqueSectionIds() {
     const seenRefs = new Set();
@@ -3152,7 +3067,7 @@ class stic_AwfLayoutSection extends stic_AwfLayoutNode {
       title: "",               // Title to display
       subtitle: "",            // Subtitle to display
       showTitle: true,         // Indicates if the title will be shown
-      is_custom_title: false,  // Flag to track manual title overrides (sync no longer auto-renames the section)
+      is_custom_title: false,  // Manual title override preserved by sync
       isCollapsible: false,    // Indicates if the section can be collapsed
       isCollapsed: false,      // Indicates if the section will appear initially collapsed
 
@@ -3160,7 +3075,7 @@ class stic_AwfLayoutSection extends stic_AwfLayoutNode {
       add_button_label: '',    // Label for the "add new instance" button
       remove_button_label: '', // Label for the "remove instance" button
       
-      containerType: 'panel',  // Type of visual container: 'panel' (simple), 'card' (with border), 'tabs', 'accordion'
+      containerType: 'panel',  // panel/card, tabs/accordion, or item pane
       elements: [],            // Can contain instances of stic_AwfLayoutElement or stic_AwfLayoutSection
 
       kind: '',                // Section kind: '' (plain) or 'group' (represents a data-block group)
@@ -3172,8 +3087,7 @@ class stic_AwfLayoutSection extends stic_AwfLayoutNode {
     this.elements = (data.elements || []).map(e => stic_AwfLayoutSection.fromData(e, false));
   }
 
-  // Polymorphic node factory: group sections are instantiated as
-  // stic_AwfLayoutGroupSection; plain sections and block/field elements as before
+  // Creates the matching layout node subclass.
   static fromData(e, topLevel = true) {
     if (e.type === 'section' || Array.isArray(e.elements) || (topLevel && e.kind === 'group')) {
       // Group designations are valid at ANY depth (a group section moved into
@@ -3203,10 +3117,9 @@ class stic_AwfLayoutSection extends stic_AwfLayoutNode {
 }
 
 /**
- * Section that REPRESENTS a data-block group: fixed at the top level of
- * the layout, it holds the group's content (nested sections, blocks or fields)
- * and renders the group's instance loop. The reference to its group root block
- * makes it robust to content changes (unbundled fields, moved elements).
+ * Represents a data-block group at the top level or inside another group.
+ * It owns the instance loop and keeps an explicit group-root reference so
+ * content moves and unbundling do not change its identity.
  */
 class stic_AwfLayoutGroupSection extends stic_AwfLayoutSection {
   constructor(data = {}) {
@@ -3804,9 +3717,7 @@ class stic_AwfConfiguration {
       }
     });
 
-    // Refresh groups: the group root's title must drop the deleted member
-    // (otherwise the badge keeps e.g. "Persona + Tasca" after deleting Tasca),
-    // and the layout must drop the deleted block's sections right away
+    // Refresh group titles and remove deleted-block layout elements.
     this.refreshGroups();
   }
 
@@ -4493,16 +4404,11 @@ class stic_AwfConfiguration {
     // The group root they are being unlinked from
     const currentGroupRootId = child.group_root;
 
-    // Mark the target child as excluded from THIS specific group. The exclusion
-    // is ADDED to the block's exclusion set (never overwritten): a block related
-    // to several group roots keeps the exclusions of the other groups, so it
-    // cannot be bounced back into them by the next adoption pass.
+    // Add this group to the child's exclusions without clearing other groups.
     child.addGroupExclusion(currentGroupRootId);
     child.group_root = '';
 
-    // Prevent the inverse adoption: the old root may be relationally dependent
-    // on the child (FK points at it). Without this, making the child a head
-    // would immediately adopt the former parent and invert the group.
+    // Prevent the former parent from being adopted back under the child.
     const oldRoot = this.data_blocks.find(b => b.id === currentGroupRootId);
     if (oldRoot) oldRoot.addGroupExclusion(child.id);
 
@@ -4519,8 +4425,7 @@ class stic_AwfConfiguration {
   }
 
   /**
-   * Returns repeatable-group metadata for a block, or null if the block is not part
-   * of any repeatable group.
+   * Returns action-group metadata for repeatable roots and grouped blocks.
    * @param {stic_AwfDataBlock} block
    * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
    */
@@ -4583,15 +4488,13 @@ class stic_AwfConfiguration {
   }
 
   /**
-   * Returns the motor group of a block: the nearest ancestor (or self) that acts as a
-   * repeatable group head (cardinality > 1). Returns null for scalar blocks.
-   * Uses getGroupHeadBlock which walks the immediate-parent chain (supports subgroups).
+   * Returns the repeatable group used for Step 3 action badges.
    * @param {stic_AwfDataBlock} block
    * @returns {stic_AwfDataBlock|null}
    */
   getBlockMotorGroup(block) {
     if (!block) return null;
-    // Only repeatable heads are motor groups (optional-only groups are 0..1, not motor).
+    // Optional-only groups are not shown as repeatable action badges.
     if (block.is_repeatable) return block;
     const head = block.getGroupHeadBlock(this.data_blocks);
     return (head && head.is_repeatable) ? head : null;
@@ -4665,16 +4568,14 @@ class stic_AwfConfiguration {
   }
 
   /**
-   * AWF Paso 3 §2 — Returns the single Motor Group of an action.
-   * An action belongs to Grup X if any of its parameters (required or not) or its
-   * execution conditions reference a block that belongs to Grup X (root or relational child).
-   * Terminal/global actions always return null (§3.2): they cannot bind to repeatable groups.
+   * Returns the repeatable motor group used by Step 3 action badges.
+   * Terminal/global actions have no motor group.
    * @param {stic_AwfAction} action
    * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null if the action is scalar-only
    */
   getActionMotorGroup(action) {
     if (!action) return null;
-    // Terminal / global actions cannot be bound to a repeatable group (§3.2)
+    // Terminal/global actions have no motor group.
     if (action.is_terminal) return null;
     const def = utils.getDefinedActions()?.find(d => d.name === action.name);
     if (def && def.resumptionContext === 'original_user' && !def.isTerminal) {
@@ -5526,16 +5427,10 @@ globalThis.stic_AwfMovePolicy = (() => {
       const block = (dataBlocks || []).find(b => b.id === element.ref_id);
       if (block) {
         if (block.isGroupHead(dataBlocks || [])) {
-          // I2: a head's element stays INSIDE ITS OWN GROUP (never another
-          // group's host). The designated template is the real home: a
-          // fragment misplaced in a member's host can still be moved back to
-          // the head's own host within that template (the old "hostOfBlock"
-          // test froze the fragment at its current, corrupted position).
+          // Group-head elements stay inside their own designated group.
           const designated = designatedOfBlock(block.id, sections);
           if (designated) {
-            // I2/I4: inside its OWN group only. A nested group section is a
-            // different instance loop: a head's element dropped there renders
-            // with the wrong indexes (or disappears).
+            // Crossing into a nested group would change the instance scope.
             candidates = candidates.filter(s => nearestGroup(s, sections) === designated);
           } else {
             const host = hostOfBlock(block.id, sections);

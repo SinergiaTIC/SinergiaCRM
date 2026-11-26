@@ -3079,17 +3079,14 @@ class WizardStep4 {
         return this.isAccordionContainer(parent);
       },
 
-      // A group section's template child (2-level model) is identified by the
-      // persistent groupTemplate marker (legacy: its tab_item/accordion_item type).
+      // Identify the group's instance-template child by marker or legacy item type.
       isGroupTemplateChild(section) {
         if (section?.groupTemplate !== true && section?.containerType !== 'tab_item' && section?.containerType !== 'accordion_item') return false;
         const parent = this.getParentSectionOf(section);
         return !!parent && parent.isGroupSection === true;
       },
 
-      // The group's element TEMPLATE child (the internal 2-level wrapper).
-      // Spec "Simplificación UX del Wizard (Paso 4)": it is NEVER shown as an
-      // independent node in step 4; its children render inside the group card.
+      // The internal template is not rendered as a separate step-4 node.
       getGroupTemplate(section) {
         if (!section || !this.isGroupSection(section)) return null;
         return section.elements.find(el => el.type === 'section' && el.groupTemplate === true) || null;
@@ -3250,8 +3247,7 @@ class WizardStep4 {
             section.elements = section.elements.filter(el => el.type === 'section');
             section.elements.push(item);
           }
-          // A tabs/accordion container needs at least ONE item to render: an
-          // empty section gets a single empty item (spec 2026-10-08)
+          // Empty tabs/accordion containers need one item.
           if (!section.elements.some(el => el.type === 'section')) {
             const item = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
             item.containerType = itemType;
@@ -3273,7 +3269,7 @@ class WizardStep4 {
             }
           });
         }
-        // A group section's internal template chrome is DERIVED (spec §5.3):
+        // Keep internal template chrome derived from its group section.
         // keep it consistent immediately, not only on the next sync
         if (this.isGroupSection(section)) this.syncGroupTemplateChrome(section);
       },
@@ -3375,16 +3371,12 @@ class WizardStep4 {
       },
 
       canDeleteSection(section) {
-        // 2-level template model (spec §4): the group's TEMPLATE child can
-        // NEVER be deleted in isolation — the group is removed as a whole
-        // (parent section), so the template is protected here (identified by
-        // its groupTemplate marker; legacy configs: the tab_item container)
+        // Protect the group's internal instance template; delete the group instead.
+        // Legacy tab_item/accordion_item children are recognized too.
         if (section && (section.groupTemplate === true || section.containerType === 'tab_item' || section.containerType === 'accordion_item') && this.isGroupSection(this.getParentSectionOf(section))) {
           return false;
         }
-        // A section (top-level or nested) can be deleted only when it holds no
-        // layout element with content (data blocks or unbundled field fragments)
-        // at any depth
+        // Delete only sections with no content at any depth.
         const hasContent = (sec) => sec.elements.some(el =>
           (el.type === 'datablock' || el.type === 'field') || (el.type === 'section' && hasContent(el)));
         return !hasContent(section);
@@ -3406,7 +3398,7 @@ class WizardStep4 {
       moveUpSection(section) {
         // Swap with the ADJACENT sibling, whether it is a section or an element
         // (field/block): a nested section must be able to move past a field at
-        // the same level (the old version skipped elements and got stuck).
+        // the same level, including non-section elements.
         const arr = this.getParentSectionOf(section)?.elements || this.sections;
         const idx = arr.findIndex(el => el.id === section.id);
         if (idx <= 0) return;
@@ -3437,23 +3429,12 @@ class WizardStep4 {
       },
 
       isGroupSection(section) {
-        // Sections are DESIGNATED as group sections (kind 'group' + the
-        // reference to their group root block) — no content-based heuristics.
-        // A designated group section can be NESTED (the wizard moves a whole
-        // group section inside another section, e.g. to present the group as a
-        // tab) and the sync walks designations at ANY depth (eachDesignated),
-        // so this test must NOT be restricted to the top level: doing so
-        // silently dropped every group rule for a nested group (its members
-        // could be dragged out and would then post unindexed, losing their
-        // per-instance data, and its element template became deletable alone).
+        // Group identity is explicit and valid at any nesting depth.
         return stic_AwfMovePolicy.isGroup(section);
       },
 
       isWithinGroupSection(section) {
-        // TRUE if the section ITSELF or ANY ancestor is a designated group
-        // section. It must accumulate: returning only the OUTERMOST
-        // section's group-ness lost the enclosing group of a group nested
-        // inside a plain section, letting its content be dragged out.
+        // True when the section or any ancestor is a designated group.
         return stic_AwfMovePolicy.withinGroup(section, this.sections);
       },
 
@@ -3467,20 +3448,14 @@ class WizardStep4 {
       getGroup(section) {
         // The group's root block comes from the section's explicit
         // reference (robust to content changes: unbundled fields, moved elements).
-        // is_root is NOT required: a depth-2 subgroup head has group_root set
-        // but owns its OWN designated section (needsOwnGroupSection), so the
-        // header/badges must resolve it too (the wizard crashed reading
-        // getSectionGroup(section).is_optional for that case).
+        // Nested heads also own designated sections and must resolve their badges.
         if (!this.isGroupSection(section)) return null;
         const block = section.getGroupBlock(this.data_blocks);
         if (!block || !block.isGroupHead(this.data_blocks)) return null;
         return block;
       },
 
-      // Nested section hosting a depth-2 subgroup head: the subgroup identity
-      // lives in the block's group_root chain, the section stays a plain
-      // content container, but the wizard displays it as a group. 
-      // Only meaningful inside a designated group section.
+      // Legacy plain host for a nested subgroup inside a designated group.
       getSubgroupHead(section) {
         if (!section || this.isGroupSection(section) || !this.isWithinGroupSection(section)) return null;
         for (const el of section.elements) {

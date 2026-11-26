@@ -110,8 +110,7 @@ class ActionResult {
         $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $submittedData, $block->getInstanceIndexKey());
         $this->addModifiedBean($modifiedBean);
 
-        // The resolved block carries the instance indexes (null for scalar
-        // blocks, "i" for depth-1, "i:j" for depth-2),
+        // Register the reference under the full instance index vector.
         $block->dataBlock->setBeanReference($bean->id, $block->getInstanceIndexKey());
     }
 

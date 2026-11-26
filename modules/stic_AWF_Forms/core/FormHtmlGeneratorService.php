@@ -576,7 +576,7 @@ class FormHtmlGeneratorService {
      * @param FormTheme $theme The form theme
      * @param ?string $instanceIndexVar Alpine index variable for instance-aware rendering, or null for scalar
      * @param ?string $currentGroupRootId ID of the group root whose loop we are already inside (null outside any loop)
-     * @param array $outerIndexVars Alpine variables of the ENCLOSING repeatable loops, outer to inner
+     * @param array $outerIndexVars Alpine variables of the enclosing group loops, outer to inner
      * @return string The generated HTML
      */
     private function renderSectionNode(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?string $currentGroupRootId = null, array $outerIndexVars = [], bool $withChrome = true): string {
@@ -806,7 +806,7 @@ class FormHtmlGeneratorService {
                 // Alpine initializes.
                 $tabsHtml .= "<div class='tab-pane' data-awf-pane='{$pane->id}' style='display: none;' :style=\"'display: ' + (activeTab === '{$pane->id}' ? 'block' : 'none')\">" . $this->newLine('+');
                 {
-                    // Unified visual for EVERY tab body (spec §2.1): the content
+                    // Use the same framed body for every tab.
                     // always boxed inside a bordered white card. The pane's
                     // SUBTITLE (when set) shows as the pane's header (gray).
                     // The card KEEPS its top border on purpose: the tab bar has
@@ -1107,7 +1107,7 @@ class FormHtmlGeneratorService {
      * @param FormTheme $theme The form theme
      * @param ?string $instanceIndexVar Alpine index variable for instance-aware rendering, or null for scalar
      * @param ?FormLayoutSection $parentSection The section that contains the element (labels context for groups)
-     * @param array $outerIndexVars Alpine variables of the ENCLOSING repeatable loops, outer to inner
+     * @param array $outerIndexVars Alpine variables of the enclosing group loops, outer to inner
      * @return string The generated HTML
      */
     private function renderElementNode(FormLayoutElement $element, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?FormLayoutSection $parentSection = null, ?string $currentGroupRootId = null, array $outerIndexVars = []): string {
@@ -1145,7 +1145,7 @@ class FormHtmlGeneratorService {
                 // The head block element inside its own group loop: the head's
                 // OWN fields are addressed by its own loop index (plus the
                 // enclosing ones) — the head is one instance per loop iteration
-                // (a repeatable subgroup head repeats per [i][j]).
+                // (a looped subgroup head repeats per [i][j]).
                 // Inside its DEDICATED host section the host's chrome (title +
                 // frame) already represents the block: render the fields without
                 // a nested panel (no duplicated title)
@@ -1412,7 +1412,7 @@ class FormHtmlGeneratorService {
      * @param FormConfig $config The full form configuration
      * @param ?string $instanceIndexVar Alpine index variable for instance-aware rendering, or null for scalar
      * @param ?FormLayoutSection $section The layout section that contains the block (source of the group labels and title)
-     * @param array $outerIndexVars Alpine variables of the ENCLOSING repeatable loops, outer to inner
+     * @param array $outerIndexVars Alpine variables of the enclosing group loops, outer to inner
      * @return string The generated HTML for the data block as a string
      */
     private function generateDataBlockHtml(FormDataBlock $block, FormTheme $theme, FormConfig $config, ?string $instanceIndexVar = null, ?FormLayoutSection $section = null, array $outerIndexVars = []): string {
@@ -1443,7 +1443,7 @@ class FormHtmlGeneratorService {
     /**
      * Renders the OPTIONAL group activation switch (a checkbox that posts the
      * `_toggle_{BlockName}` signal the server reads to decide whether to persist
-     * the block). Inside an enclosing repeatable loop the signal name and the
+     * the block). Inside an enclosing group loop the signal name and the
      * DOM id/for are indexed by the enclosing loop variables, so each repetition
      * gets its own switch (a static id would make every label toggle the first
      * repetition's switch).
@@ -1481,7 +1481,7 @@ class FormHtmlGeneratorService {
     }
 
     /**
-     * Renders a SERVER-DATA optional group (spec §1.36) as a SINGLE activation
+     * Renders a server-data optional group as a single activation switch.
      * switch: no section title, no card frame and no body. When the user turns
      * it on, the server persists the block's server-resolved data (FIXED fields,
      * relations); when off, nothing is sent.
@@ -1575,7 +1575,7 @@ class FormHtmlGeneratorService {
      * @param FormConfig $config The full form configuration
      * @param ?string $instanceIndexVar Alpine index variable for the x-for loop ('index' by default)
      * @param ?FormLayoutSection $section The layout section that contains the group (title and micro-copy labels)
-     * @param array $outerIndexVars Alpine variables of the ENCLOSING repeatable loops, outer to inner
+     * @param array $outerIndexVars Alpine variables of the enclosing group loops, outer to inner
      * @return string The generated HTML for the group
      */
     private function generateGroupHtml(FormDataBlock $rootBlock, FormTheme $theme, FormConfig $config, ?string $instanceIndexVar = null, ?FormLayoutSection $section = null, array $outerIndexVars = []): string {
@@ -1586,7 +1586,7 @@ class FormHtmlGeneratorService {
         if ($groupTitleExpression === false) $groupTitleExpression = '""';
         $groupTitleExpression = htmlspecialchars($groupTitleExpression, ENT_QUOTES, 'UTF-8');
 
-        // The group's TEMPLATE child (2-level model, spec §3.B): identified by
+        // The group's instance-template child is identified by its marker.
         // the persistent groupTemplate marker (legacy: the tab_item container).
         // Its title names the INSTANCES ("Template #N" / "Template"); fallback
         // to the group title for legacy layouts without the template child.
@@ -1624,16 +1624,10 @@ class FormHtmlGeneratorService {
         $isAccordionGroup = $section !== null && in_array($section->containerType, ['panel_accordion', 'card_accordion'], true);
         // Both tabs flavors render the same FLAT chrome for a group (see the
         // tabs branch below), so card_tabs no longer adds a card frame here.
-        // Per-level loop variables (idx_l1, idx_l2) keep the Alpine scopes of
-        // nested groups from shadowing each other
-        // Generic per-level loop variables (idx_l1, idx_l2, ... idx_lN) keep the
-        // Alpine scopes of nested groups from shadowing each other, for ANY
-        // nesting depth (N optional levels; at most 2 repeatable levels). The
-        // level counts the enclosing loops: those in $outerIndexVars plus the
-        // loop the group itself renders inside ($instanceIndexVar, if any).
+        // Per-level variables (idx_l1 ... idx_lN) prevent nested-loop shadowing.
+        // The level counts enclosing loops plus this group's own loop, if any.
         $instanceVar = 'idx_l' . (count($outerIndexVars) + ($instanceIndexVar !== null ? 1 : 0) + 1);
-        // Full index stack of this group's subtree: enclosing loops first, own loop last.
-        // Depth-2 fields build POST names Block[outer][inner][field] from it.
+        // Full outer-to-inner index stack used to build grouped POST names.
         $indexStack = array_merge($outerIndexVars, [$instanceVar]);
         // The group's content lives INSIDE its own loop: the enclosing vars for
         // the content include the loop the group itself is inside (if any).
@@ -1686,7 +1680,7 @@ class FormHtmlGeneratorService {
             // 1. Optional activation switch: below the section title/subtitle, styled as a normal field.
             // The switch posts a REAL activation signal `_toggle_{BlockName}`:
             // scalar for a top-level optional group, indexed by the enclosing loop
-            // variables for optional subgroups rendered inside a repeatable loop.
+            // variables for optional subgroups rendered inside a group loop.
             if ($isOptional) {
                 $html .= $this->renderOptionalToggleSwitch($rootBlock, $toggleLabel, $contentOuterVars);
             }
@@ -2035,12 +2029,7 @@ class FormHtmlGeneratorService {
                         $html .= "<template x-for='(instance, index) in instances' :key='instance.id'>" . $this->newLine('+');
                         {
                             if ($isRepeatable) {
-                                // Repeatable single-field group: the lone field renders
-                                // bare, with a compact inline remove control for
-                                // instances beyond the first — the per-instance card
-                                // chrome that used to carry the remove button is
-                                // suppressed in this representation, and without the
-                                // inline control an added instance could never be removed
+                                // Bare single-field groups keep an inline remove control.
                                 $html .= "<div class='d-flex align-items-start gap-2' x-data=\"{ {$instanceVar}: index }\">" . $this->newLine('+');
                                 {
                                     $html .= "<div class='flex-grow-1'>" . $this->newLine('+');
@@ -2095,8 +2084,7 @@ class FormHtmlGeneratorService {
                     $instanceXData = $tCollapsible
                         ? "x-data=\"{ {$instanceVar}: index, open: {$tStartOpen} }\" @invalid.capture=\"open = true\""
                         : "x-data=\"{ {$instanceVar}: index }\"";
-                    // The instance card shows the template's normal card frame
-                    // (no extra border/tint from the old instance CSS)
+                    // Use the template's normal card frame.
                     $instanceStyle = $tCollapsible ? 'height: auto !important;' : '';
                     $instanceStyleAttr = $instanceStyle !== '' ? " style='{$instanceStyle}'" : '';
                     $instanceTitle = $isRepeatable ? "{$instanceTitleExpression} + ' #' + ({$instanceVar} + 1)" : $instanceTitleExpression;
@@ -2454,11 +2442,11 @@ class FormHtmlGeneratorService {
      * @param FormDataBlockField $field The field to render
      * @param FormTheme $theme The form theme
      * @param ?string $instanceIndexVar The Alpine variable for the innermost instance index, or null for scalar fields
-     * @param array $outerIndexVars Alpine variables of the enclosing repeatable loops, outer to inner
+     * @param array $outerIndexVars Alpine variables of the enclosing group loops, outer to inner
      * @return string The generated HTML
      */
     private function renderField(FormDataBlockField $field, FormTheme $theme, ?string $instanceIndexVar = null, array $outerIndexVars = []): string {
-        // Instance-aware field rendering for repeatable groups
+        // Instance-aware field rendering for group loops
         $isInstance = $instanceIndexVar !== null;
         $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
         $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';

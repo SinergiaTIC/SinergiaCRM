@@ -243,27 +243,15 @@ class DataBlockResolved {
     }
 
     /**
-     * Returns one DataBlockResolved per instance for a repeatable block.
-     * For optional blocks with zero instances, returns an empty array.
-     * GENERIC n-dimensional enumeration (one loop level per group head in the
-     * block's chain): with no $prefix it enumerates ALL the instances of the
-     * block (walking every level recursively); with $prefix (a partial index
-     * stack of the ANCESTOR levels already fixed) it enumerates only the
-     * instances below that prefix.
+     * Enumerates every instance in the block's group-loop chain.
+     * A prefix restricts enumeration to instances below fixed ancestor indexes.
      * @param FormDataBlock $block
      * @param array $formData
      * @param ExecutionContext $context
-     * @param array $prefix Already-fixed ancestor loop indexes (outer to inner)
+     * @param array $prefix Fixed ancestor indexes, outer to inner
      * @return DataBlockResolved[]
      */
-    /**
-     * Instance indexes at the CURRENT enumeration level contributed by the
-     * block's FILE fields: their flat per-instance keys
-     * ("_detached_Block_i1_i2_field") carry the FULL loop-index stack, so an
-     * instance whose only value is an uploaded file (files never land in the
-     * POST matrix) is still enumerated. Only the indexes BELOW the already
-     * fixed prefix are returned.
-     */
+    /** Returns current-level indexes contributed by uploaded-file keys. */
     private static function fileKeyLevelIndexes(FormDataBlock $block, ExecutionContext $context, array $prefix): array {
         $depth = $block->getLoopDepth();
         if ($depth < 1) return [];
@@ -369,8 +357,7 @@ class DataBlockResolved {
     }
 
     /**
-     * Full loop-index vector (outer to inner) of this instance: [] for scalar,
-     * [i] for depth-1, [i1, i2] for depth-2, ...
+     * Full outer-to-inner loop-index vector; empty for scalar instances.
      */
     public function getLoopIndexes(): array {
         return $this->loopIndexes;
@@ -406,14 +393,7 @@ class DataBlockResolved {
         return null;
     }
 
-    /**
-     * Loop-depth-aware resolution: takes the FIRST d indexes of the context's
-     * active index stack (d = the block's loop depth) — a shallower target
-     * read through a deeper motor uses the outer indexes. When the stack is
-     * shorter than the block's depth, the missing levels default to 0
-     * (deterministic; same-group deeper targets are resolved by their own
-     * unrolling).
-     */
+    /** Resolves a block from the active index stack, padding missing levels with zero. */
     public static function resolveForBlock(FormDataBlock $blockConfig, array $formData, ExecutionContext $context): ?DataBlockResolved {
         $depth = $blockConfig->getLoopDepth();
         if ($depth === 0) {
@@ -444,17 +424,9 @@ class DataBlockResolved {
     }
 
     /**
-     * Three-layer activation check: whether this block instance should be persisted.
-     *  (1) Mandatory blocks (min_instances > 0) are ALWAYS active.
-     *  (2) Optional blocks (always group heads) check the explicit
-     *      `_toggle_{BlockName}` signal posted by the activation switch: the
-     *      switch renders OUTSIDE the block's own loop, so the signal is
-     *      indexed by the first (depth - 1) loop indexes — scalar for a
-     *      top-level optional group, `[i1]` / `[i1][i2]`... for deeper ones.
-     *  (3) Fallback: any non-FIXED resolved field with a non-empty value
-     *      (linked or detached), or an uploaded file for the block's file
-     *      fields. FIXED/server values NEVER count as user input (ghost
-     *      records protection).
+     * Mandatory instances are active. Optional instances require an explicit
+     * toggle, a non-empty user field or an uploaded file; fixed values do not
+     * activate an instance.
      */
     public function isActivated(): bool {
         // (1) Mandatory blocks are always active

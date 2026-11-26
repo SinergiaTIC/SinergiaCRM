@@ -208,10 +208,7 @@ class stic_AWFUtils {
                             if (!$hasVisibleFields) continue;
 
                             $groupBlockLoopDepth = $groupBlock->getLoopDepth();
-                            // Blocks inside nested group loops (depth >= 2, N optional
-                            // levels): one sub-row per inner instance, values read from
-                            // their RESOLVED instances (each field reads its own matrix —
-                            // linked or detached)
+                            // Nested loops: one row per fully resolved inner instance.
                             if ($groupBlockLoopDepth >= 2) {
                                 $subInstances = DataBlockResolved::resolveInstances($groupBlock, $formData, $summaryContext, [$instance->instanceIndex]);
                                 $innerNumber = 1;
@@ -539,9 +536,7 @@ class stic_AWFUtils {
 
                             $groupBlockLoopDepth = $groupBlock->getLoopDepth();
                             if ($groupBlockLoopDepth >= 2) {
-                                // Nested group loops (depth >= 2, N optional levels): one
-                                // sub-block row per inner instance, values from the RESOLVED
-                                // instances (each field reads its own matrix)
+                                // Nested loops: one row per fully resolved inner instance.
                                 $subInstances = DataBlockResolved::resolveInstances($groupBlock, $formData, $summaryContext, [$instance->instanceIndex]);
                                 $innerNumber = 1;
                                 foreach ($subInstances as $subInstance) {
@@ -887,7 +882,7 @@ class stic_AWFUtils {
         $loadedModules = array_map(function($b) { return $b->module_dir; }, $beansForTemplate);
         foreach ($context->actionResults as $result) {
             foreach ($result->modifiedBeans as $modBean) {
-                // Ignore Metadata entries wich represent action logs not CRM records
+                // Ignore metadata entries that represent action logs, not CRM records.
                 if ($modBean->modificationType === BeanModificationType::METADATA) continue;
 
                 // Ignore beans from modules that are already loaded to avoid unpredictable overwrites in the template parser
@@ -1585,7 +1580,7 @@ class stic_AWFUtils {
     {
         $blockReferences = [];
         foreach ($context->formConfig->data_blocks as $bId => $b) {
-            // Restriction: deferred actions operate on non-repeatable blocks only.
+            // This legacy map includes only scalar, ungrouped blocks.
             if ($b->isRepeatable() || !empty($b->group_root)) {
                 continue;
             }

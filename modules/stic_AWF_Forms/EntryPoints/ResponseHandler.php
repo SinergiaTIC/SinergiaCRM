@@ -491,9 +491,7 @@ class ResponseHandler
         global $app_list_strings;
 
         // Consolidate links: a single link for each affected bean AND instance
-        // Repeatable groups create the same bean module ids per instance,
-        // so the instance addressing ("i" or "i:j") is part of the key, giving
-        // one independent stic_AWF_Links record per (beanId, instance).
+        // Group loops create one link per bean and full instance index vector.
         $consolidatedBeans = [];
         foreach ($context->actionResults as $result) {
             foreach ($result->modifiedBeans as $modBean) {

@@ -30,10 +30,10 @@ class FormLayoutSection extends FormLayoutNode {
 
     public string $title;
     public string $subtitle;
-    public string $containerType;            // 'panel', 'card', 'tabs', 'accordion'
+    public string $containerType;            // panel/card, tabs/accordion, or item pane
     public bool $showTitle;
-    public bool $is_custom_title = false;    // Flag to track manual title overrides (sync no longer auto-renames the section)
-    public bool $groupTemplate = false;      // Marks the group section's TEMPLATE child (instance blueprint, 2-level model)
+    public bool $is_custom_title = false;    // Manual title override preserved by sync
+    public bool $groupTemplate = false;      // Marks the group's instance-template child
     public bool $isCollapsible;
     public bool $isCollapsed;
     public string $toggle_label = '';        // Label for the "include instance data" toggle switch
