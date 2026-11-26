@@ -336,13 +336,26 @@ class DeployedRelationships extends AbstractRelationships implements Relationshi
             $mi->install_languages() ;
             $mi->install_vardefs() ;
             $mi->install_layoutdefs() ;
-            $mi->install_extensions();
+            // STIC-Custom 20261126 EPS - Do not call install_extensions() per relationship
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1593
+            // install_extensions() runs a full rebuild_extensions() sweep (every module x every
+            // extension type) on each loop iteration, so saving one relationship was O(N) in the
+            // number of relationships already deployed for the module, exceeding max_execution_time
+            // on instances with many relationships. The per-relationship installdefs sections
+            // (relationships, language, vardefs, layoutdefs) are already installed by the
+            // install_...() calls above; extensions are rebuilt once after the loop below.
+            // $mi->install_extensions();
+            // END STIC-Custom
         }
 
         // Run through the module installer to rebuild the relationships once after everything is done.
         require_once 'ModuleInstall/ModuleInstaller.php' ;
         $mi = new ModuleInstaller() ;
         $mi->silent = true;
+        // STIC-Custom 20261126 EPS - Rebuild extensions only once, after all relationships are installed
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1593
+        $mi->rebuild_extensions();
+        // END STIC-Custom
         $mi->rebuild_relationships();
 
         // now clear all caches so that our changes are visible
