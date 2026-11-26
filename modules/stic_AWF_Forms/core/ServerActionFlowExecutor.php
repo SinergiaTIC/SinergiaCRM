@@ -88,7 +88,7 @@ class ServerActionFlowExecutor {
                 if ($motorBlock !== null && !$isTerminal) {
                     $resolvedInstances = DataBlockResolved::resolveInstances($motorBlock, $this->context->formData, $this->context);
                     if (empty($resolvedInstances)) {
-                        // Repeatable group with zero instances: skip the action.
+                        // Group with zero active instances: skip the action.
                         $skippedResult = new ActionResult(ResultStatus::SKIPPED, $actionConfig, "Repeatable group '{$motorBlock->name}' has no instances.");
                         $this->context->addActionResult($skippedResult);
                         $lastResult = $skippedResult;

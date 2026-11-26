@@ -26,12 +26,9 @@ if (!defined('sugarEntry') || !sugarEntry) {
 }
 
 /**
- * Section that REPRESENTS a data-block group: fixed at the top level of
- * the layout, it holds the group's content (nested sections, blocks or fields)
- * and renders the group's instance loop. The explicit reference to its group
- * root block (groupRootBlockId) makes it robust to content changes: the group
- * section exists and is identified even when all its content is unbundled field
- * elements placed elsewhere.
+ * Represents a data-block group at the top level or inside another group.
+ * It owns the group's instance loop and keeps an explicit groupRootBlockId so
+ * content moves and unbundling do not change its identity.
  */
 class FormLayoutGroupSection extends FormLayoutSection {
     public string $kind = 'group';

@@ -213,7 +213,7 @@ Esta sección es fundamental cuando el formulario interactúa con más de un mó
 
 * Ejemplo práctico: Imaginemos un formulario de inscripción de una persona a un evento. En esta sección de Relaciones se indicará que ambos bloques (Persona e Inscripción) están unidos. Así, cuando el usuario envíe el formulario, el sistema no solo creará los dos registros por separado, sino que automáticamente generará el vínculo formal entre ambos dentro del CRM.
 
-#### Grupos de bloques de datos (Repetibles) ####
+#### Grupos de bloques de datos (Repetibles y opcionales) ####
 
 La creación de un "Grupo" permite relacionar y repetir en el formulario uno o más bloques de datos en conjunto. Cuando se define el grupo como repetible, **todo el conjunto de campos de los bloques que lo componen aparece N veces** en un mismo envío, generando tantos registros en el CRM como repeticiones complete el visitante. Es la funcionalidad ideal para simplificar operativas como una inscripción grupal (recoger en una única respuesta los datos de varios participantes).
 
@@ -233,11 +233,11 @@ La creación de un "Grupo" permite relacionar y repetir en el formulario uno o m
   * El **interruptor obligatorio/opcional** (mínima de instancias = 1 o 0).
   * El **límite máximo** de instancias (dejarlo vacío = sin límite).
   * Las **etiquetas personalizadas** de los botones "Añadir" y "Eliminar".
-  * El botón **"Desagrupar"**, que revierte el grupo a bloques independientes (restaurando los valores por defecto: mínima 1, sin máximo y sin título de grupo).
+  * El botón **"Desagrupar"**, que revierte el grupo a bloques independientes (restaurando los valores por defecto: mínima 1, máximo 1 y sin título de grupo).
 
 * **Vinculación maestro-alumno**: Al igual que en las relaciones 1-N descritas arriba, los registros creados por el grupo se vinculan automáticamente en el CRM (por ejemplo, cada "Inscripción" creada se referencia con la "Persona" de la misma instancia).
 
-* **Anidamiento visual y cardinalidad**: Un grupo puede contener subgrupos y el modelo admite hasta dos niveles de grupos repetibles. La jerarquía se conserva visualmente: cada subgrupo tiene sus propios bloques, títulos e índices de instancia, y el contenido no puede salir del grupo al mover secciones. Los datos de los dos niveles se guardan correctamente (cada instancia del subgrupo genera sus propios registros vinculados en cascada al registro padre correspondiente). El formulario puede contener varios grupos disjuntos.
+* **Anidamiento visual y cardinalidad**: Un grupo puede contener subgrupos. Los grupos repetibles admiten como máximo dos niveles; los grupos opcionales no tienen límite de profundidad. La jerarquía se conserva visualmente: cada subgrupo tiene sus propios bloques, títulos e índices de instancia, y el contenido no puede salir del grupo al mover secciones. Los datos de cada nivel se guardan correctamente (cada instancia del subgrupo genera sus propios registros vinculados en cascada al registro padre correspondiente). El formulario puede contener varios grupos disjuntos.
 
 ### Paso 3: Lógica y automatismos ###
 En este paso se configurará qué ocurre "por detrás" cuando alguien hace clic en "Enviar" del formulario. La lógica de negocio se articula mediante un sistema visual de flujos compuesto por **Acciones**.
@@ -319,7 +319,7 @@ Entre las opciones de diseño y maquetación disponibles destacan:
 
   * **Comportamiento colapsable (Acordeón)**: Las secciones pueden configurarse como paneles desplegables, permitiendo elegir si al cargar la página aparecen expandidas o contraídas por defecto. Esto resulta extremadamente útil en formularios largos para no abrumar al usuario, permitiéndole navegar progresivamente por bloques o revelar información opcional solo si interactúa con ella. (Las secciones de pestañas también pueden ser colapsables si se configura así.)
 
-  * **Grupos representados con estructura de plantilla**: Todo grupo (repetible u opcional) se representa con **dos niveles**: la sección contenedora del grupo (título general, subtítulo, conmutador de inclusión y botones de añadir/eliminar) y una **plantilla de instancia** interior (una pestaña con el nombre en singular, p. ej. *"Participante"*) que contiene sus campos. La plantilla no se puede eliminar de forma aislada (solo se elimina el grupo completo desde la sección contenedora) y sus campos solo se pueden reordenar dentro de la plantilla. La etiqueta de cada instancia se evalúa dinámicamente: *"Participante #1"*, *"Participante #2"* para repetibles; el nombre de la plantilla a secas para opcionales. Si la sección contenedora tiene formato de pestañas, cada instancia se representa como una pestaña dinámica.
+  * **Grupos representados con estructura de plantilla**: Todo grupo (repetible u opcional) se representa con **dos elementos estructurales**: la sección contenedora del grupo (título general, subtítulo, conmutador de inclusión y botones de añadir/eliminar) y una **plantilla de instancia** interior (una pestaña con el nombre en singular, p. ej. *"Participante"*) que contiene sus campos. La plantilla no se puede eliminar de forma aislada (solo se elimina el grupo completo desde la sección contenedora) y sus campos solo se pueden reordenar dentro de la plantilla. La etiqueta de cada instancia se evalúa dinámicamente: *"Participante #1"*, *"Participante #2"* para repetibles; el nombre de la plantilla a secas para opcionales. Si la sección contenedora tiene formato de pestañas, cada instancia se representa como una pestaña dinámica.
 
   * **Restaurar secciones por defecto**: Un botón ("Configuración de secciones por defecto"), junto al de añadir sección, restaura las secciones a las que se generarían automáticamente con los bloques de datos actuales (previa confirmación: se pierden las configuraciones manuales del paso).
 

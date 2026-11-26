@@ -213,8 +213,7 @@
   border-color: #80abec; 
 }
 
-/* Group container cards (step 2, 2-level group tree): a group card holds
-   the data block cards of the group (root block included) */
+/* Step 2 group cards contain their root and member blocks. */
 .card.group-card {
   border-color: #80abec;
 }
@@ -224,10 +223,11 @@
 .card.group-card .awf-group-body {
   background-color: #f7fafd;
 }
-.card.group-card.subgroup-card {
+/* Nested group cards use a lighter shade. */
+.card.group-card .card.group-card {
   border-color: #9ec1f0;
 }
-.card.group-card.subgroup-card > .awf-group-header > .card-header {
+.card.group-card .card.group-card > .awf-group-header > .card-header {
   background-color: #f0f6ff;
 }
 .card.awf-wizard-section-card {
