@@ -3675,6 +3675,18 @@ $dictionary["stic_registrations_stic_events"] = array(
                 0 => 'stic_registrations_stic_eventsstic_registrations_idb',
             ),
         ),
+        3 => array(
+            // Covering index for the attendees totals recalculation of the events
+            // (modules/stic_Registrations/Utils.php): allows to read all the registrations of an
+            // event from the index without accessing the table rows
+            'name' => 'idx_reg_event_del_idb',
+            'type' => 'index',
+            'fields' => array(
+                0 => 'stic_registrations_stic_eventsstic_events_ida',
+                1 => 'deleted',
+                2 => 'stic_registrations_stic_eventsstic_registrations_idb',
+            ),
+        ),
     ),
 );
 
