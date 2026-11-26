@@ -47,6 +47,19 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * Helper to check if a block has any input that must be emitted.
+     * Hidden fields count because they still carry submitted values; fixed
+     * fields do not because they are resolved from the form configuration.
+     */
+    private static function blockHasRenderableInputs(FormDataBlock $block): bool {
+        foreach ($block->fields as $field) {
+            if ($field->type_field === DataBlockFieldType::FIXED) continue;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Helper to check if a group has any renderable field
      */
     private static function groupHasRenderableFields(array $groupBlocks): bool {
@@ -87,14 +100,14 @@ class FormHtmlGeneratorService {
     }
 
     /**
-     * Helper to check if a block or ANY of its descendants (subgroup tree)
-     * has renderable fields. Mirrors the design-side filtering: a group head is
-     * kept if the root OR any descendant has at least one visible field.
+     * Whether a block or any descendant has an input to emit. Unlike the
+     * visible-field predicate, this includes hidden fields so their values are
+     * not lost inside a group that renders for another visible member.
      */
-    private static function groupSubtreeHasRenderableFields(FormDataBlock $block, FormConfig $config): bool {
-        if (self::blockHasRenderableFields($block) || self::isServerDataOptionalGroup($block, $config)) return true;
+    private static function groupSubtreeHasRenderableInputs(FormDataBlock $block, FormConfig $config): bool {
+        if (self::blockHasRenderableInputs($block) || self::isServerDataOptionalGroup($block, $config)) return true;
         foreach ($config->getGroupChildren($block) as $child) {
-            if (self::groupSubtreeHasRenderableFields($child, $config)) return true;
+            if (self::groupSubtreeHasRenderableInputs($child, $config)) return true;
         }
         return false;
     }
@@ -1231,14 +1244,14 @@ class FormHtmlGeneratorService {
      */
     private static function elementHasRenderableContent(FormLayoutElement $element, FormConfig $config, ?string $currentGroupRootId = null): bool {
         if ($element->type === 'field') {
-            // Unbundled field element: renderable only when the field exists and is
-            // actually rendered (fixed/hidden fields produce no visible HTML)
+            // Unbundled field element: fixed fields are resolved server-side;
+            // hidden fields still produce an input and must not be dropped.
             $block = $config->data_blocks[$element->ref_id] ?? null;
             if (!$block) return false;
             if ($currentGroupRootId !== null && !self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) return false;
             $field = $block->fields[$element->field_name] ?? null;
             if (!$field) return false;
-            return $field->type_field !== DataBlockFieldType::FIXED && $field->type_in_form !== 'hidden';
+            return $field->type_field !== DataBlockFieldType::FIXED;
         }
         if ($element->type !== 'datablock') return true;
         $block = $config->data_blocks[$element->ref_id] ?? null;
@@ -1260,7 +1273,7 @@ class FormHtmlGeneratorService {
             return self::groupHasRenderableContent($groupBlocks, $config);
         }
 
-        return self::blockHasRenderableFields($block);
+        return self::blockHasRenderableInputs($block);
     }
 
     private static function resolveGroupRootBlock(FormConfig $config, string $blockId): ?FormDataBlock {
@@ -1432,9 +1445,9 @@ class FormHtmlGeneratorService {
         }
         // Simple group with children: render children inline (static, no instance index)
         foreach ($children as $childBlock) {
-            // Skip blocks with no renderable fields anywhere in their subtree
-            // (matches the design filtering: empty blocks/groups are not shown)
-            if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
+            // Skip blocks with no input to emit anywhere in their subtree.
+            // Hidden fields count because they still carry submitted values.
+            if (!self::groupSubtreeHasRenderableInputs($childBlock, $config)) continue;
             $html .= $this->renderBlockPanel($childBlock, $theme);
         }
         return $html;
@@ -2230,12 +2243,17 @@ class FormHtmlGeneratorService {
         }
 
         // Older or manually edited configurations can leave the group template
-        // empty after a child block is assigned to its group. In that case the
-        // root fallback above makes $inner non-empty and would suppress the
-        // flat root + children fallback below, silently losing every child.
-        if ($section !== null && empty($section->elements)) {
+        // empty, or a legacy host can contain only the root element. In
+        // those cases render children not already represented; otherwise a
+        // hidden-only root input can suppress visible members. Designated group
+        // templates keep their existing representation to avoid duplicates.
+        $isLegacyHost = $section !== null
+            && empty($section->groupTemplate)
+            && self::sectionContainsElementForBlock($section, $rootBlock->id);
+        if ($section !== null && (empty($section->elements) || $isLegacyHost)) {
             foreach ($children as $childBlock) {
-                if (!self::groupSubtreeHasRenderableFields($childBlock, $config)
+                if (self::sectionContainsElementForBlock($section, $childBlock->id)) continue;
+                if (!self::groupSubtreeHasRenderableInputs($childBlock, $config)
                     && !self::isServerDataOptionalGroup($childBlock, $config)) {
                     continue;
                 }
@@ -2256,7 +2274,7 @@ class FormHtmlGeneratorService {
         // without nested sections
         $inner = $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar, $contentOuterVars);
         foreach ($children as $childBlock) {
-            if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
+            if (!self::groupSubtreeHasRenderableInputs($childBlock, $config)) continue;
             $childHasChildren = !empty($config->getGroupChildren($childBlock));
             $childIsGroupHead = $childBlock->isRepeatable() || $childBlock->isOptional() || $childHasChildren;
             if ($childIsGroupHead) {
@@ -2299,8 +2317,15 @@ class FormHtmlGeneratorService {
      * @return string Generated HTML for the block panel
      */
     private function renderBlockPanel(FormDataBlock $block, FormTheme $theme): string {
-        // A block with no renderable fields renders nothing (empty sub-section)
-        if (!self::blockHasRenderableFields($block)) return "";
+        if (!self::blockHasRenderableInputs($block)) return "";
+        if (!self::blockHasRenderableFields($block)) {
+            $html = '';
+            foreach ($block->fields as $field) {
+                if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                $html .= $this->renderField($field, $theme);
+            }
+            return $html;
+        }
         $blockTitle = htmlspecialchars($block->text, ENT_QUOTES, 'UTF-8');
 
         $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
@@ -2357,8 +2382,16 @@ class FormHtmlGeneratorService {
     /** Renders instance fields without adding another block panel. */
     private function renderBlockInstanceFields(FormDataBlock $block, FormTheme $theme, string $instanceIndexVar, array $outerIndexVars = []): string {
         $marker = $this->renderBlockInstanceMarker($block, $instanceIndexVar, $outerIndexVars);
-        if (!self::blockHasRenderableFields($block)) {
+        if (!self::blockHasRenderableInputs($block)) {
             return $marker;
+        }
+        if (!self::blockHasRenderableFields($block)) {
+            $html = $marker;
+            foreach ($block->fields as $field) {
+                if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
+            }
+            return $html;
         }
         $html = $marker . "<div class='awf-grid-fields'>" . $this->newLine('+');
         {
