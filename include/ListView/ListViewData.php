@@ -269,7 +269,11 @@ class ListViewData
         $this->seed =& $seed;
         // STIC-Custom AAM - 20260309 - Check if async count is enabled
         // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
-        $useAsyncCount = !empty($sugar_config['stic_async_list_count']);
+        // STIC-Custom AAM - 20261029 - Respect disable_count_query: when it is active,
+        // no total count at all (neither SuiteCRM nor STIC async) is performed and
+        // only the records of the current page are shown, as the core does.
+        $useAsyncCount = !empty($sugar_config['stic_async_list_count'])
+            && empty($sugar_config['disable_count_query']);
         // When async is enabled, also enable disable_count_query for efficiency (limit + 1 trick)
         $originalDisableCountQuery = $sugar_config['disable_count_query'] ?? false;
         if ($useAsyncCount) {

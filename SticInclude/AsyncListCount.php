@@ -53,6 +53,15 @@ if (empty($module)) {
     return;
 }
 
+// STIC-Custom AAM - 20261029 - Respect disable_count_query: when it is active, no
+// total count (neither SuiteCRM nor STIC async) must be performed at all.
+// Also guard against stale cached pages still firing the async request.
+if (empty($GLOBALS['sugar_config']['stic_async_list_count'])
+    || !empty($GLOBALS['sugar_config']['disable_count_query'])) {
+    outputJson(false, null, 'Async count disabled');
+    return;
+}
+
 $bean = BeanFactory::getBean($module);
 if (!$bean) {
     outputJson(false, null, 'Invalid module');
@@ -64,9 +73,19 @@ if (!$bean->ACLAccess('ListView')) {
     return;
 }
 
+// Stop processing if the client has already gone away (e.g. user navigated).
+ignore_user_abort(false);
+
 // The main query stored by ListViewData.php includes all filter joins (inner_join, custom_from, etc.)
 // that are needed for WHERE clauses referencing joined tables (e.g., jt6.name)
 $storedQuery = SugarVCR::retrieve($module);
+
+// Release the PHP session lock now that the (filter-aware) query has been read
+// from the session, so this long-running request does not block other requests
+// from the same user (e.g. navigation).
+if (session_status() === PHP_SESSION_ACTIVE) {
+    session_write_close();
+}
 if (!empty($storedQuery)) {
     $countQuery = $bean->create_list_count_query($storedQuery);
 } else {
@@ -83,5 +102,9 @@ $db = DBManagerFactory::getInstance();
 $result = $db->query($countQuery);
 $row = $db->fetchByAssoc($result);
 $total = intval($row['c'] ?? $row['count'] ?? 0);
+
+if (connection_aborted()) {
+    return;
+}
 
 outputJson(true, ['total' => $total]);
