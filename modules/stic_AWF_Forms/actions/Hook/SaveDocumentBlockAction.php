@@ -66,25 +66,12 @@ class SaveDocumentBlockAction extends HookDataBlockActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Required file not uploaded.");
         }
 
-        // BACKEND validation of the file field's validators. 
+        // BACKEND validation of the file field's validators.
         // The submit-time AJAX validation SKIPS file fields
-        // (their value lives in $_FILES, not in the POST matrix)
-        if (!empty($fileField->validations)) {
-            $validatorDefs = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
-            foreach ($fileField->validations as $valConfig) {
-                if (!empty($valConfig->conditions) && !stic_AWFUtils::evaluateConditions($valConfig->conditions, $context->formData)) {
-                    continue; // Conditions not met: skip this validation
-                }
-                foreach ($validatorDefs as $def) {
-                    if ($def->getName() === $valConfig->validator && $def instanceof ValidatorActionDefinition) {
-                        if (!$def->validateBackend($fileInfo, (array)($valConfig->params ?? []))) {
-                            $errorMsg = !empty($valConfig->message) ? $valConfig->message : $def->getDefaultErrorMessage();
-                            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Advanced Web Forms: file field '{$fileField->name}' rejected by validator '{$valConfig->validator}': {$errorMsg}");
-                            return new ActionResult(ResultStatus::ERROR, $actionConfig, $errorMsg);
-                        }
-                    }
-                }
-            }
+        // (their value lives in $_FILES, not in the POST matrix).
+        $validationError = $this->validateFileValidators($fileField, $fileInfo, $context, $block);
+        if ($validationError !== null) {
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, $validationError);
         }
 
         $document = BeanFactory::newBean('Documents');
@@ -144,5 +131,40 @@ class SaveDocumentBlockAction extends HookDataBlockActionDefinition {
             ['key' => 'revision_filename', 'label' => $this->translate('FILENAME_TEXT'), 'value' => $revision->filename],
         ]);
         return $result;
+    }
+
+    /**
+     * Validates an uploaded file in the scope of its concrete group instance.
+     * Returns an error message, or null when every applicable validator passes.
+     */
+    private function validateFileValidators(FormDataBlockField $fileField, array $fileInfo, ExecutionContext $context, DataBlockResolved $block): ?string {
+        if (empty($fileField->validations)) {
+            return null;
+        }
+
+        $validatorDefs = ActionDiscoveryService::discoverActions([ActionType::VALIDATOR]);
+        foreach ($fileField->validations as $valConfig) {
+            if (!empty($valConfig->conditions)
+                && !stic_AWFUtils::evaluateConditionsForInstance(
+                    $valConfig->conditions,
+                    $context->formConfig,
+                    $context->formData,
+                    $block->getLoopIndexes()
+                )) {
+                continue;
+            }
+
+            foreach ($validatorDefs as $def) {
+                if ($def->getName() === $valConfig->validator && $def instanceof ValidatorActionDefinition) {
+                    if (!$def->validateBackend($fileInfo, (array)($valConfig->params ?? []))) {
+                        $errorMsg = !empty($valConfig->message) ? $valConfig->message : $def->getDefaultErrorMessage();
+                        $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Advanced Web Forms: file field '{$fileField->name}' rejected by validator '{$valConfig->validator}': {$errorMsg}");
+                        return $errorMsg;
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 }

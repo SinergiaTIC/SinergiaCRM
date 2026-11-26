@@ -213,7 +213,7 @@ class ResponseHandler
                 exit;
             }
 
-            $errors = $this->validateSubmission($formConfig, $cleanData);
+            $errors = $this->validateSubmission($formConfig, $cleanData, $uploadedFiles);
             if (!empty($errors) && !empty($errors['errors'])) {
                 echo json_encode(['status' => 'error', 'errors' => $errors['errors']]);
             } else {
@@ -231,7 +231,7 @@ class ResponseHandler
             $responseDescription = '';
 
             // Data validation
-            $validationErrors = $this->validateSubmission($formConfig, $cleanData);
+            $validationErrors = $this->validateSubmission($formConfig, $cleanData, $uploadedFiles);
             if (!empty($validationErrors) && !empty($validationErrors['errorDescriptions'])) {
                 $errorString = implode(", ", $validationErrors['errorDescriptions']);
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Data Validation errors for Form ID {$formId}:" . $errorString);
@@ -604,7 +604,7 @@ class ResponseHandler
     }
 
     /** Validates fields and cardinality recursively per group instance. */
-    private function validateSubmission(FormConfig $config, array $data): ?array {
+    private function validateSubmission(FormConfig $config, array $data, array $uploadedFiles = []): ?array {
         $errors = [
             'errors' => [],
             'errorDescriptions' => [],
@@ -612,7 +612,7 @@ class ResponseHandler
 
         // Browsers omit unchecked checkboxes.
         stic_AWFUtils::fillMissingBooleanFields($config, $data);
-        $context = new ExecutionContext('', '', $data, $config, null, '', null, '');
+        $context = new ExecutionContext('', '', $data, $config, null, '', null, '', $uploadedFiles);
 
         foreach ($config->data_blocks as $block) {
             // Enclosed blocks are validated by their loop owner.
@@ -874,7 +874,7 @@ class ResponseHandler
         //     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship 'details_link' in Responses bean.");
         // }
 
-        $context = new ExecutionContext('', '', $submittedData, $formConfig, null, '', null, '');
+        $context = new ExecutionContext('', '', $submittedData, $formConfig, null, '', null, '', $uploadedFiles);
         foreach ($formConfig->data_blocks as $block) {
             // Enclosed blocks are generated with their loop's full index vector.
             if ($this->hasEnclosingGroupLoop($block, $formConfig)) continue;
