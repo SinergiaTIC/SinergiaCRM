@@ -52,7 +52,8 @@ class stic_Assessments_Scores extends Basic
     public $SecurityGroups;
 
     // Module fields
-    public $form_id;
+    public $response_id;
+    public $response_name;
     public $score_value;
     public $classification_label;
     public $submission_data;

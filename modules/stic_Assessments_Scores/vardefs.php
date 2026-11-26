@@ -31,14 +31,36 @@ $dictionary['stic_Assessments_Scores'] = array(
     'inline_edit' => true,
     'duplicate_merge' => true,
     'fields' => array(
-        'form_id' => array(
+        'response_id' => array(
             'required' => false,
-            'name' => 'form_id',
-            'vname' => 'LBL_FORM_ID',
+            'name' => 'response_id',
+            'vname' => 'LBL_RESPONSE_ID',
             'type' => 'id',
             'len' => 36,
             'reportable' => false,
             'studio' => 'visible',
+        ),
+        'response_link' => array(
+            'name' => 'response_link',
+            'type' => 'link',
+            'relationship' => 'stic_awf_responses_stic_assessments_scores',
+            'source' => 'non-db',
+            'module' => 'stic_AWF_Responses',
+            'bean_name' => 'stic_AWF_Responses',
+            'vname' => 'LBL_RESPONSE',
+            'id_name' => 'response_id',
+        ),
+        'response_name' => array(
+            'name' => 'response_name',
+            'type' => 'relate',
+            'source' => 'non-db',
+            'vname' => 'LBL_RESPONSE',
+            'save' => true,
+            'id_name' => 'response_id',
+            'link' => 'response_link',
+            'table' => 'stic_awf_responses',
+            'module' => 'stic_AWF_Responses',
+            'rname' => 'name',
         ),
         'score_value' => array(
             'required' => false,
@@ -167,6 +189,15 @@ $dictionary['stic_Assessments_Scores'] = array(
             'rhs_key' => 'parent_id',
             'relationship_type' => 'one-to-many',
         ),
+        'stic_awf_responses_stic_assessments_scores' => array(
+            'lhs_module' => 'stic_AWF_Responses',
+            'lhs_table' => 'stic_awf_responses',
+            'lhs_key' => 'id',
+            'rhs_module' => 'stic_Assessments_Scores',
+            'rhs_table' => 'stic_assessments_scores',
+            'rhs_key' => 'response_id',
+            'relationship_type' => 'one-to-many',
+        ),
     ),
     'indices' => array(
         array(
@@ -175,9 +206,9 @@ $dictionary['stic_Assessments_Scores'] = array(
             'fields' => array('stic_assessments_stic_assessments_scoresstic_assessments_ida'),
         ),
         array(
-            'name' => 'idx_stic_assessments_scores_form',
+            'name' => 'idx_stic_assessments_scores_response',
             'type' => 'index',
-            'fields' => array('form_id'),
+            'fields' => array('response_id'),
         ),
         array(
             'name' => 'idx_stic_assessments_scores_parent',

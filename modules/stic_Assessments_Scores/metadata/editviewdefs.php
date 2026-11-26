@@ -41,7 +41,7 @@ $viewdefs[$module_name] = array(
             'lbl_default_panel' => array(
                 array('name', 'assigned_user_name'),
                 array('stic_assessments_stic_assessments_scores_name', 'score_value'),
-                array('form_id', 'classification_label'),
+                array('response_name', 'classification_label'),
                 array('submission_data'),
                 array('description'),
             ),

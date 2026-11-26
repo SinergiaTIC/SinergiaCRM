@@ -107,12 +107,15 @@ $searchdefs[$module_name] = array(
                 'default' => true,
                 'name' => 'classification_label',
             ),
-            'form_id' => array(
-                'type' => 'id',
-                'label' => 'LBL_FORM_ID',
+            'response_name' => array(
+                'type' => 'relate',
+                'label' => 'LBL_RESPONSE',
                 'width' => '10%',
                 'default' => true,
-                'name' => 'form_id',
+                'name' => 'response_name',
+                'id_name' => 'response_id',
+                'module' => 'stic_AWF_Responses',
+                'rname' => 'name',
             ),
             'description' => array(
                 'type' => 'text',
