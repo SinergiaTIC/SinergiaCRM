@@ -1,0 +1,2 @@
+INSERT INTO `stic_settings` (`id`, `date_entered`, `date_modified`, `modified_user_id`, `created_by`, `deleted`, `assigned_user_id`, `type`, `name`, `value`, `description`) VALUES
+('8c97d702-baf5-48cd-8f39-bcf3c22d453a', NOW(), NOW(), '1', '1', 0, '1', 'CONTACTS', 'CONTACTS_SUMMARY_VIEW_ENABLED', '0', 'Activa la vista de resumen (SummaryView) al abrir un Contacto. 1 = activa (redirige DetailView a SummaryView), 0 = desactivada (comportamiento clásico).');
