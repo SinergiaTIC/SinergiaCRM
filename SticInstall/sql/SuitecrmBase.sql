@@ -6608,7 +6608,8 @@ ALTER TABLE `emails`
 ALTER TABLE `emails_beans`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_emails_beans_bean_id` (`bean_id`),
-  ADD KEY `idx_emails_beans_email_bean` (`email_id`,`bean_id`,`deleted`);
+  ADD KEY `idx_emails_beans_email_bean` (`email_id`,`bean_id`,`deleted`),
+  ADD KEY `idx_emails_beans_email_mod_del_bean` (`email_id`,`bean_module`,`deleted`,`bean_id`);
 
 --
 -- Indexes for table `emails_email_addr_rel`
@@ -7413,7 +7414,7 @@ ALTER TABLE `templatesectionline`
 ALTER TABLE `tracker`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_tracker_iid` (`item_id`),
-  ADD KEY `idx_tracker_userid_vis_id` (`user_id`,`visible`,`id`),
+  ADD KEY `idx_tracker_userid_vis_id` (`user_id`,`visible`,`deleted`,`id`),
   ADD KEY `idx_tracker_userid_itemid_vis` (`user_id`,`item_id`,`visible`),
   ADD KEY `idx_tracker_monitor_id` (`monitor_id`),
   ADD KEY `idx_tracker_date_modified` (`date_modified`);
