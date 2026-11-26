@@ -72,6 +72,10 @@ $sugar_config = array(
         2 => 'png',
         3 => 'jpeg',
         4 => 'jpg',
+        // STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+		// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+        5 => 'webp',
+        // END STIC-Custom
     ),
     'anti_malware_scanners' => array(
         'SuiteCRM\\Utility\\AntiMalware\\Providers\\ClamTCP' => array(
@@ -536,6 +540,10 @@ $sugar_config = array(
         3 => 'jpeg',
         4 => 'svg',
         5 => 'bmp',
+        // STIC-Custom SPPM - 20260818 - Allow GIF and WEBP image uploads (re-encode with GD)
+		// https://github.com/SinergiaTIC/SinergiaCRM/pull/1390
+        6 => 'webp',
+        // END STIC-Custom
     ),
     'vcal_time' => '2',
     'verify_client_ip' => true,
