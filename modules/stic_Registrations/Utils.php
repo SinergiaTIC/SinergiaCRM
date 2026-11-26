@@ -22,6 +22,14 @@
  */
 class stic_RegistrationsUtils {
 
+    /**
+     * Number of registrations per event from which the aggregated query stops
+     * using the index on the relationship table. For events with a very high
+     * number of registrations (very high selectivity on the event id), a full
+     * table scan is faster than index access plus one row lookup per relation.
+     */
+    const USE_INDEX_THRESHOLD = 1000;
+
 /**
  * Calculate the number of entries by type in the event.
  * It is executed after the events after_save, after_relationship_delete and after_relationship_add of the event.
@@ -70,13 +78,34 @@ class stic_RegistrationsUtils {
         $eventBean->status_maybe = 0;
         $eventBean->status_drop_out = 0;
 
+        // Estimate the number of registrations of the event by summing the
+        // stored status counters of the event, avoiding an extra COUNT query
+        // on the relationship table.
+        $registrationCount = 0;
+        foreach ([
+            'status_confirmed',
+            'status_not_invited',
+            'status_took_part',
+            'status_rejected',
+            'status_invited',
+            'status_didnt_take_part',
+            'status_maybe',
+            'status_drop_out',
+        ] as $statusField) {
+            $registrationCount += (int) ($eventBean->fetched_row[$statusField] ?? 0);
+        }
+
+        // For events with more registrations than the threshold, force a full
+        // table scan on the relationship table instead of the index access
+        $useIndexHint = $registrationCount > self::USE_INDEX_THRESHOLD ? ' USE INDEX ()' : '';
+
         $sql =
             "SELECT
                 sum(attendees) as total ,
                 sr.status
             FROM
                 stic_registrations sr
-            INNER JOIN stic_registrations_stic_events_c srse ON
+            INNER JOIN stic_registrations_stic_events_c srse{$useIndexHint} ON
                 sr.id = srse.stic_registrations_stic_eventsstic_registrations_idb
                 AND srse.deleted = 0
             WHERE
