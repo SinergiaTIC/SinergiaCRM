@@ -1507,6 +1507,11 @@ EOQ;
         $this->setPreference('lockout', '');
         $this->setPreference('loginfailed', '0');
         $this->savePreferencesToDB();
+        // STIC-Custom 20261028 ART - Clear the user lockout when the password is changed
+        // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+        require_once 'custom/modules/Users/SticUserLockoutUtils.php';
+        SticUserLockoutUtils::clearLockoutPreferencesAndSession($this->id, $this->user_name);
+        // END STIC-Custom
         //set new password
         $now = TimeDate::getInstance()->nowDb();
         $query = "UPDATE $this->table_name SET user_hash='$user_hash', system_generated_password='$system_generated', pwd_last_changed='$now' where id='$this->id'";

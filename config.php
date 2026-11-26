@@ -691,4 +691,13 @@ $sugar_config = array(
     // https://github.com/SinergiaTIC/SinergiaCRM/pull/1014
     'stic_async_list_count' => false, 
     // END STIC-Custom
+
+    // STIC-Custom 20260611 ART - User Lockout Settings
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1242
+    'userlockout' => array(
+        'enabled' => 0,
+        'maxfailedlogins' => '5',
+        'automaticunlocktime' => '2',
+    ),
+    // END STIC-Custom
 );

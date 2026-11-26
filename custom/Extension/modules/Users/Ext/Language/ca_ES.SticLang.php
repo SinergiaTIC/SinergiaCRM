@@ -132,3 +132,11 @@ $mod_strings['LBL_IMPERSONATION_MONITORING_ITEM_SUMMARY_2'] = ' amb ID ';
 // Model 182
 $mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION'] = 'Emissió del Model 182';
 $mod_strings['LBL_STIC_M182_ISSUING_ORGANIZATION_INFO'] = "Indica per a quines organitzacions l'usuari podrà generar el Model 182. La llista es genera dinàmicament a partir dels <a href='index.php?module=stic_Settings' target='_blank'>paràmetres de configuració</a>.";
+
+// User lockout
+$mod_strings['LBL_UNLOCK_USER'] = "Desbloqueja l'usuari";
+$mod_strings['LBL_USER_UNLOCKED_MSG'] = '✅ Usuari desbloquejat';
+$mod_strings['LBL_USER_LOCKOUT_COUNTDOWN'] = "⛔ Usuari bloquejat per haver assolit el nombre màxim d'intents fallits d'inici de sessió. Es desbloquejarà automàticament en {minutes} minuts i {seconds} segons.";
+$mod_strings['LBL_USER_LOCKOUT_FINISHED_REFRESHING'] = "✅ El temps de bloqueig ha finalitzat. Desbloquejant l'usuari...";
+$mod_strings['ERR_USER_IS_LOCKED_OUT_DETAILVIEW'] = "⛔ Usuari bloquejat per haver assolit el nombre màxim d'intents fallits d'inici de sessió. Podeu desbloquejar-lo mitjançant l'acció 'Desbloqueja l'usuari'.";
+$mod_strings['ERR_INVALID_PASSWORD_OR_USER_LOCKED_OUT'] = "Heu d'indicar un usuari i una contrasenya vàlids. Si heu assolit el nombre màxim d'intents fallits, el vostre compte pot estar bloquejat.";

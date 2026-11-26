@@ -152,3 +152,17 @@ $mod_strings['LBL_STIC_SINERGIADA_ACTIONS_SECTION'] = 'Acciones';
 $mod_strings['LBL_OAUTH_AUTHENTICATION_TITLE'] = 'Autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE'] = 'Activar autenticación OAuth';
 $mod_strings['LBL_OAUTH_AUTH_ENABLE_HELP'] = 'Al activar esta opción los usuarios podrán autenticarse mediante OAuth 2.0, además de hacerlo con usuario y contraseña. Después de activarla se deberá configurar por lo menos uno de los proveedores externos. Para más información, consulte la <a href="https://wiki.sinergiatic.org/index.php?title=Usuarios,_Roles,_Grupos_de_seguridad_y_Registro_de_cambios#Autenticaci%C3%B3n_OAuth" target="_blank">documentación</a>.';
+
+// User lockout settings
+$mod_strings['LBL_USER_LOCKOUT'] = 'Bloqueo de usuarios';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT'] = 'Habilitar el bloqueo de usuarios';
+$mod_strings['LBL_ENABLE_USER_LOCKOUT_HELP'] = 'Si se activa esta opción, el sistema bloqueará las cuentas de los usuarios cuando alcancen un cierto número de intentos consecutivos de autenticación fallidos. Las cuentas bloqueadas se podrán desbloquear tanto automáticamente, pasado un cierto tiempo, como manualmente, por parte de un administrador.';
+$mod_strings['LBL_MAX_FAILED_LOGINS'] = 'Número máximo de intentos fallidos';
+$mod_strings['LBL_MAX_FAILED_LOGINS_HELP'] = 'Al usuario se le bloqueará la cuenta si alcanza este número de intentos consecutivos de autenticación fallidos.';
+$mod_strings['ERR_MAX_FAILED_LOGINS'] = 'Especifique un valor válido para el número máximo de intentos fallidos.';
+$mod_strings['LBL_AUTO_UNLOCK'] = 'Desbloquear automáticamente los usuarios bloqueados';
+$mod_strings['LBL_AUTO_UNLOCK_HELP'] = 'Si se activa esta opción, el sistema desbloqueará automáticamente las cuentas de los usuarios bloqueados una vez transcurrido el tiempo indicado desde el bloqueo.';
+$mod_strings['LBL_AUTO_UNLOCK_TIME'] = 'Tiempo de desbloqueo automático';
+$mod_strings['LBL_AUTO_UNLOCK_TIME_HELP'] = 'Número de minutos que tarda una cuenta de usuario en desbloquearse automáticamente.';
+$mod_strings['LBL_AUTO_UNLOCK_TIME_UNITS'] = 'minutos';
+$mod_strings['ERR_AUTOMATIC_UNLOCK_TIME'] = 'Especifique un valor válido para el tiempo de desbloqueo automático.';
