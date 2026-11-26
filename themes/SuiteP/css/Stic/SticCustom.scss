@@ -367,8 +367,8 @@ form#popup_query_form {
 // Different visibility for panels within the detail/editing view and the supanells of the detail view.
 .detail-view,
 #EditView_tabs {
-  background-color: #fff !important;
   padding-bottom: 10px;
+  clear: both;
   .panel-default {
     border-bottom-color: #fff;
     box-shadow: none;
