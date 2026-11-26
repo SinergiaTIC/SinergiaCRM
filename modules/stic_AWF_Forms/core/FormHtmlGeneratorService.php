@@ -2468,6 +2468,23 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * Returns structural metadata used by client-side condition resolution.
+     * The logical field key never contains instance indexes; loop indexes are
+     * bound separately to the real Alpine variables for this control.
+     */
+    private function getFieldScopeAttributes(FormDataBlockField $field, ?string $instanceIndexVar, array $outerIndexVars): string {
+        $fieldKey = htmlspecialchars($field->getKey(), ENT_QUOTES, 'UTF-8');
+        if ($instanceIndexVar === null) {
+            return " data-awf-field-key='{$fieldKey}' data-awf-loop-depth='0' data-awf-loop-indexes='[]'";
+        }
+
+        $allVars = array_merge($outerIndexVars, [$instanceIndexVar]);
+        $indexesExpr = implode(', ', $allVars);
+        $depth = count($allVars);
+        return " data-awf-field-key='{$fieldKey}' data-awf-loop-depth='{$depth}' :data-awf-loop-indexes=\"JSON.stringify([{$indexesExpr}])\"";
+    }
+
+    /**
      * Internal field renderer that supports both scalar and instance-aware rendering.
      * Instance-aware fields receive every enclosing loop variable in $outerIndexVars
      * and build nested POST names: Block[outer]...[inner][field] at any depth.
@@ -2480,6 +2497,7 @@ class FormHtmlGeneratorService {
     private function renderField(FormDataBlockField $field, FormTheme $theme, ?string $instanceIndexVar = null, array $outerIndexVars = []): string {
         // Instance-aware field rendering for group loops
         $isInstance = $instanceIndexVar !== null;
+        $scopeAttributes = $this->getFieldScopeAttributes($field, $instanceIndexVar, $outerIndexVars);
         $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
         $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
 
@@ -2510,7 +2528,7 @@ class FormHtmlGeneratorService {
         // Render hidden fields differently: only input without label or wrapper
         if ($field->type_in_form === 'hidden') {
             $val = htmlspecialchars($field->value ?? '', ENT_QUOTES, 'UTF-8');
-            return "<input type='hidden' {$nameAttr} {$idExpr} value='{$val}'>" . $this->newLine();
+            return "<input type='hidden' {$nameAttr} {$idExpr} {$scopeAttributes} value='{$val}'>" . $this->newLine();
         }
 
         $label = htmlspecialchars($field->label);
@@ -2566,7 +2584,7 @@ class FormHtmlGeneratorService {
         if ($field->subtype_in_form === 'select_checkbox') {
             $html = "<div class='form-check awf-field {$layoutClasses}'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' {$nameAttr} class='form-check-input' value='1' {$idExpr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
+                $html .= "<input type='checkbox' {$nameAttr} class='form-check-input' value='1' {$idExpr} {$scopeAttributes} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
                 $html .= "<label class='form-check-label' {$forExpr}>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
@@ -2584,7 +2602,7 @@ class FormHtmlGeneratorService {
         if ($field->subtype_in_form === 'select_switch') {
             $html = "<div class='form-check form-switch awf-field {$layoutClasses}'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' role='switch' {$nameAttr} class='form-check-input' value='1' {$idExpr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
+                $html .= "<input type='checkbox' role='switch' {$nameAttr} class='form-check-input' value='1' {$idExpr} {$scopeAttributes} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
                 $html .= "<label class='form-check-label' {$forExpr}>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
@@ -2615,7 +2633,7 @@ class FormHtmlGeneratorService {
                 $fileKeyExpr = "'{$filePrefix}{$field->data_block->name}_' + {$indexChain} + '_{$field->name}'";
                 $fileIdExpr = $inputKeyExpr;
             }
-            return $this->generateFileField($field, $theme, $fileKeyExpr, $fileIdExpr, $layoutClasses) .$this->newLine();
+            return $this->generateFileField($field, $theme, $fileKeyExpr, $fileIdExpr, $layoutClasses, $scopeAttributes) .$this->newLine();
         }
 
         // --- COMMON CASES ---
@@ -2635,7 +2653,7 @@ class FormHtmlGeneratorService {
 
             // Text Areas
             if ($field->type_in_form == 'textarea') {
-                $controlHtml .= "<textarea {$validationsAttr} {$nameAttr} class='form-control' {$idExpr} ".
+                $controlHtml .= "<textarea {$validationsAttr} {$nameAttr} class='form-control' {$idExpr} {$scopeAttributes} ".
                                 "placeholder='{$placeholder}' style='height: 100px' {$ariaDescribedBy} {$requiredAttr}></textarea>" .$this->newLine();
 
             // Selects & Lists
@@ -2671,7 +2689,7 @@ class FormHtmlGeneratorService {
                                 $resetAttr = ($field->required_in_form && $isMulti) ? " @change='resetError(\$el.closest(\".awf-option-group\").nextElementSibling)'" : '';
                                 $controlHtml .= "<div class='form-check'>" .$this->newLine('+');
                                 {
-                                    $controlHtml .= "<input {$validationsAttr}{$resetAttr} type='{$inputType}' {$optNameAttr} {$optIdExpr} value='{$val}' class='form-check-input' {$req}{$scoreAttr}>" .$this->newLine();
+                                    $controlHtml .= "<input {$validationsAttr}{$resetAttr} type='{$inputType}' {$optNameAttr} {$optIdExpr} {$scopeAttributes} value='{$val}' class='form-check-input' {$req}{$scoreAttr}>" .$this->newLine();
                                     $controlHtml .= "<label class='form-check-label' {$optForExpr}>{$txt}</label>" .$this->newLine();
                                 }
                                 $controlHtml .= "</div>" .$this->newLine('-');
@@ -2693,7 +2711,7 @@ class FormHtmlGeneratorService {
                     $selectNameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
                     $multipleAttr = $isMultipleSelect ? 'multiple' : '';
                     
-                    $controlHtml .= "<select {$validationsAttr} {$selectNameAttr} class='form-select' {$idExpr} {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" . $this->newLine('+');
+                    $controlHtml .= "<select {$validationsAttr} {$selectNameAttr} class='form-select' {$idExpr} {$scopeAttributes} {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" . $this->newLine('+');
                     {
                         // Check if a visible empty option already exists in configuration
                         $hasVisibleEmptyOption = false;
@@ -2754,7 +2772,7 @@ class FormHtmlGeneratorService {
                 }
                 $iconClass = $this->getIconClass($field->subtype_in_form);
                 $cssClasses = 'form-control ' . ($iconClass ?? '');
-                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' {$nameAttr} class='{$cssClasses}' {$idExpr} ".
+                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' {$nameAttr} class='{$cssClasses}' {$idExpr} {$scopeAttributes} ".
                                 "placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine();
             }
 
@@ -2800,7 +2818,7 @@ class FormHtmlGeneratorService {
      * @param string $layoutClasses
      * @return string
      */
-    private function generateFileField(FormDataBlockField $field, FormTheme $theme, ?string $instanceKeyTemplate = null, ?string $instanceIdTemplate = null, string $layoutClasses = ''): string {
+    private function generateFileField(FormDataBlockField $field, FormTheme $theme, ?string $instanceKeyTemplate = null, ?string $instanceIdTemplate = null, string $layoutClasses = '', string $scopeAttributes = ''): string {
         $inputName = $field->getKey();
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
@@ -2905,7 +2923,7 @@ class FormHtmlGeneratorService {
             $html .= "</div>" .$this->newLine('-');
 
             // Actual file input
-            $html .= "<input type='file' {$fileNameAttr} x-ref='fileInput' {$fileIdAttr} " .
+            $html .= "<input type='file' {$fileNameAttr} x-ref='fileInput' {$fileIdAttr} {$scopeAttributes} " .
                      "style='display: none !important;' @change='updateFileInfo()' {$requiredAttr} {$acceptAttr} {$ariaDescribedBy} {$validationsAttr}>" .$this->newLine();
 
             $html .= $description .$this->newLine();
@@ -2928,6 +2946,7 @@ class FormHtmlGeneratorService {
      */
     private function generateRatingField(FormDataBlockField $field, ?string $instanceIndexVar = null, array $outerIndexVars = []): string {
         $isInstance = $instanceIndexVar !== null;
+        $scopeAttributes = $this->getFieldScopeAttributes($field, $instanceIndexVar, $outerIndexVars);
         $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
         $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
 
@@ -3004,7 +3023,7 @@ class FormHtmlGeneratorService {
             // Phantom input for HTML5 validation
             $errorMsg = translate('LBL_REQUIRED_FIELD_MESSAGE', 'stic_AWF_Forms');
             $requiredAttr = $isRequired ? 'required' : '';
-            $html .= "<input type='text' x-ref=\"input\" {$nameAttr} {$idExpr} :value=\"val\" {$ariaDescribedBy} {$requiredAttr} tabindex='-1'" .
+            $html .= "<input type='text' x-ref=\"input\" {$nameAttr} {$idExpr} {$scopeAttributes} :value=\"val\" {$ariaDescribedBy} {$requiredAttr} tabindex='-1'" .
                     "style='opacity:0; width:100%; height:1px; position:absolute; bottom:0; left:0; z-index:-1; pointer-events:none;'" .
                     "oninvalid=\"this.setCustomValidity('{$errorMsg}')\" oninput=\"this.setCustomValidity('')\"> " . $this->newLine();
 
@@ -3322,6 +3341,35 @@ document.addEventListener('alpine:init', () => {
       }
     },
 
+    getFieldScopeIndexes(input) {
+      if (!input || !input.dataset) return [];
+      try {
+        const indexes = JSON.parse(input.dataset.awfLoopIndexes || '[]');
+        return Array.isArray(indexes) ? indexes : [];
+      } catch (e) {
+        return [];
+      }
+    },
+
+    resolveConditionControls(input, logicalKey) {
+      const form = input && typeof input.closest === 'function' ? input.closest('form') : null;
+      if (!form) return [];
+      const candidates = Array.from(form.querySelectorAll('[data-awf-field-key]'))
+        .filter(control => control.dataset.awfFieldKey === logicalKey);
+      if (candidates.length === 0) return [];
+
+      const depth = Number(candidates[0].dataset.awfLoopDepth || 0);
+      const wanted = this.getFieldScopeIndexes(input).slice(0, depth);
+      while (wanted.length < depth) wanted.push(0);
+
+      return candidates.filter(control => {
+        if (Number(control.dataset.awfLoopDepth || 0) !== depth) return false;
+        const actual = this.getFieldScopeIndexes(control);
+        return actual.length === depth
+          && wanted.every((value, index) => String(value) === String(actual[index]));
+      });
+    },
+
     validateInput(input) {
       this.resetError(input);
       this.serverErrors = {};
@@ -3336,19 +3384,10 @@ document.addEventListener('alpine:init', () => {
               if (rule.conditions && rule.conditions.length > 0) {
                 for (const cond of rule.conditions) {
                   if (!cond.field_name) continue;
-                  const logicalKey = cond.field_name.replace(/\./g, '_');
-                  let condInput = form.querySelector('[id="f_' + logicalKey + '"]')
-                    || form.querySelector('[name="' + logicalKey + '"]');
-                  // Reuse the current instance prefix for grouped conditions.
-                  if (!condInput && input.name && input.name.indexOf('[') !== -1) {
-                    const dot = cond.field_name.indexOf('.');
-                    const fieldName = dot !== -1 ? cond.field_name.substring(dot + 1) : cond.field_name;
-                    const conditionBlock = (dot !== -1 ? cond.field_name.substring(0, dot) : input.name.substring(0, input.name.indexOf('['))).replace(/\./g, '_');
-                    const indexes = input.name.substring(input.name.indexOf('['), input.name.lastIndexOf('[') + 1);
-                    condInput = form.querySelector('[name="' + conditionBlock + indexes + fieldName + '"]');
-                  }
-                  if (!condInput) { conditionsMet = false; break; }
+                  const condControls = this.resolveConditionControls(input, cond.field_name);
+                  if (condControls.length === 0) { conditionsMet = false; break; }
 
+                  const condInput = condControls[0];
                   const isMatch = (condInput.value == cond.value);
                   if (cond.operator === 'Equal_To' && !isMatch) { conditionsMet = false; break; }
                   if (cond.operator === 'Not_Equal_To' && isMatch) { conditionsMet = false; break; }
