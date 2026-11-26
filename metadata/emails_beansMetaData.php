@@ -105,6 +105,15 @@ $dictionary['emails_beans'] = array('table' => 'emails_beans',
             'type'		=> 'alternate_key',
             'fields'	=> array('email_id', 'bean_id', 'deleted')
         ),
+        array(
+            // Covering index for the queries that look up the related beans of an email
+            // filtering by bean_module (e.g. the contacts subpanel of an email). Without
+            // bean_module in the index every matching entry requires reading the table row,
+            // which is very slow on tables with millions of rows.
+            'name'		=> 'idx_emails_beans_email_mod_del_bean',
+            'type'		=> 'index',
+            'fields'	=> array('email_id', 'bean_module', 'deleted', 'bean_id')
+        ),
     ),
     'relationships' => array(
         'emails_accounts_rel' => array(

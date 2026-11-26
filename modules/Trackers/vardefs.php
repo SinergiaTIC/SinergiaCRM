@@ -238,12 +238,17 @@ $dictionary['Tracker'] = array(
             ),
         ),
         array(
-            // shortened name to comply with Oracle length restriction
+            // shortened name to comply with Oracle length restriction.
+            // 'deleted' is included so that the "last viewed" dashlet subquery
+            // (SELECT MAX(id) FROM tracker WHERE user_id = ? AND deleted = 0 AND visible = 1)
+            // can be resolved reading only the index (backward seek). Without it the subquery
+            // scans the whole table and takes seconds with big tracker tables.
             'name' => 'idx_tracker_userid_vis_id',
             'type' => 'index',
             'fields' => array(
                 'user_id',
                 'visible',
+                'deleted',
                 'id',
             ),
         ),
