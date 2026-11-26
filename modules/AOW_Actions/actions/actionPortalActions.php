@@ -59,11 +59,17 @@ class actionPortalActions extends actionSendEmail
         // shows them) with the generic option ALWAYS last. Selection is still
         // resolved by $appId, so saved actions keep their app selected.
         $appOptions = array();
-        $clientBean = BeanFactory::getBean('OAuth2Clients')->get_full_list('name', "allowed_grant_type='portal_authorization_code' AND deleted=0");
+        $clientBean = BeanFactory::getBean('OAuth2Clients')->get_full_list('name', "oauth2clients.allowed_grant_type='portal_authorization_code'");
         foreach ((array) $clientBean as $client) {
             $appOptions[$client->id] = $client->name;
         }
         $appOptions[''] = translate('LBL_PORTAL_ACTIONS_GENERIC_APP', 'AOW_Actions');
+        // Default selection: the first app (alphabetical, Generic stays last),
+        // matching the Portal Actions popup. A saved action keeps its own
+        // selection; Generic is only preselected when no apps exist.
+        if (!array_key_exists('portal_app', $params) && !empty($appOptions)) {
+            $appId = (string) array_key_first($appOptions);
+        }
 
         // Email templates: the default is the one selected in Portal
         // Configuration for the current action type (same template the Portal
