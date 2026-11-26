@@ -137,7 +137,7 @@ class stic_AwfDataBlock {
     this.group_title = value
   }
 
-  getValidationErrors() {
+  getValidationErrors(allDataBlocks = []) {
     let errors = [];
 
     // Internal Name validation (if needed)
@@ -161,13 +161,25 @@ class stic_AwfDataBlock {
           });
         }
       });
-    } 
+    }
+
+    // Surface group state invalidated by later edits.
+    if (Array.isArray(allDataBlocks) && allDataBlocks.length > 0) {
+      if (this.is_repeatable) {
+        const reason = this.getRepeatableDisabledReason(allDataBlocks);
+        if (reason) errors.push(utils.translate(reason));
+      }
+      if (this.is_optional) {
+        const reason = this.getOptionalDisabledReason(allDataBlocks);
+        if (reason) errors.push(utils.translate(reason));
+      }
+    }
 
     return errors;
   }
 
-  isValid() {
-    return this.getValidationErrors().length === 0;
+  isValid(allDataBlocks = []) {
+    return this.getValidationErrors(allDataBlocks).length === 0;
   }
 
   /**
@@ -474,7 +486,8 @@ class stic_AwfDataBlock {
     // block: it is not a candidate to adopt, so no depth check applies here.
     if (isSameGroupChild) return true;
 
-    // An orphan head joining this group must respect the depth/N×M rule.
+    // A repeatable orphan head joining this group must respect the repeatable
+    // depth rule; optional heads nest freely.
     if ((other.is_repeatable || other.is_optional)
         && !globalThis.stic_AwfGroupPolicy.canAdoptHead(other, this, allDataBlocks)) return false;
 
@@ -2214,7 +2227,7 @@ class stic_AwfLayout {
       const gBlock = dataBlocks.find(b => b.id === s.groupRootBlockId);
       // A group section stays valid while its root is a group head. The root
       // does NOT have to be top level: a group head nested in another group
-      // (depth 2) is a group of its own and owns its designated section.
+      // (any depth) is a group of its own and owns its designated section.
       if (!gBlock || !isGroupHead(gBlock)) demoteRootless.push(s);
     });
     demoteRootless.forEach(demoteSectionLifted);
@@ -2324,38 +2337,52 @@ class stic_AwfLayout {
       eachDesignated(s => { if (!found && s.groupRootBlockId === rootId) found = s; });
       return found;
     };
-    // NESTED group heads (depth 2): a group head inside another group is a group
-    // of its own, so it gets its OWN designated group section — nested inside the
-    // template of its DIRECT parent group and carrying its own element template.
-    // Without it the wizard tree shows a plain section (no "<group> (group)"
-    // title, no "<group> (element)" template) and the renderer falls back to the
-    // host section title for the subgroup instances, losing the group's own
-    // instance titles and micro-copy labels.
+    // Nested heads get a designated section inside their direct parent's template.
     const designateNestedGroups = () => {
-      dataBlocks.forEach(block => {
+      // Saved block order is not guaranteed to be parent-before-child.
+      const depthOf = (b) => {
+        let d = 0, cur = b;
+        const seen = new Set([b.id]);
+        while (cur.group_root && !seen.has(cur.group_root)) {
+          seen.add(cur.group_root);
+          const parent = dataBlocks.find(x => x.id === cur.group_root);
+          if (!parent) break;
+          d++; cur = parent;
+        }
+        return d;
+      };
+      const ordered = dataBlocks.slice().sort((x, y) => depthOf(x) - depthOf(y));
+      ordered.forEach(block => {
         if (block.is_root) return;              // Top-level roots: designated above
         if (!isGroupHead(block)) return;        // Plain member: hosted in a plain section
-        if (findDesignated(block.id)) return;    // Already designated
-        // The nested group section lives in the template of its nearest ancestor
-        // group head that already has a designated section
-        let parentSection = null, parentBlock = null;
-        let cur = block;
-        const guard = new Set();
-        while (cur && cur.group_root && !guard.has(cur.id)) {
-          guard.add(cur.id);
-          const parent = dataBlocks.find(b => b.id === cur.group_root);
-          if (!parent) break;
-          if (isGroupHead(parent)) {
-            const section = findDesignated(parent.id);
-            if (section) { parentSection = section; parentBlock = parent; break; }
-          }
-          cur = parent;
-        }
-        if (!parentSection) return; // No ancestor group section yet: handled later
+
+        // Keep each subgroup in its direct parent's template.
+        const parentBlock = dataBlocks.find(b => b.id === block.group_root);
+        if (!parentBlock || !isGroupHead(parentBlock)) return;
+        const parentSection = findDesignated(parentBlock.id);
+        if (!parentSection) return;
         const parentTemplate = ensureGroupTemplate(parentSection, parentBlock);
         if (!parentTemplate) return;
-        // Upgrade the block's existing host section in place, or create it when
-        // the block has no host yet (its content is placed by the passes below)
+
+        const existing = findDesignated(block.id);
+        if (existing) {
+          if (sectionContainsSection(parentTemplate, existing)) return;
+          if (sectionContainsSection(existing, parentTemplate)) return; // malformed hierarchy: never create a cycle
+          // Relocate the section without rebuilding its subtree.
+          this.structure = this.structure.filter(s => s.id !== existing.id);
+          const detach = (sec, seen = new Set()) => {
+            if (!sec || seen.has(sec.id)) return false;
+            seen.add(sec.id);
+            const idx = (sec.elements || []).findIndex(el => el && el.id === existing.id);
+            if (idx >= 0) { sec.elements.splice(idx, 1); return true; }
+            return (sec.elements || []).some(el => el.type === 'section' && detach(el, seen));
+          };
+          this.structure.forEach(sec => detach(sec));
+          parentTemplate.elements.push(existing);
+          return;
+        }
+
+        // Reuse the existing host or create one for later content passes.
         let host = findDirectChildHost(parentTemplate, block);
         if (!host) {
           host = new stic_AwfLayoutSection({ title: block.text });
@@ -2623,7 +2650,7 @@ class stic_AwfLayout {
 
     // ---- 4. Group-section normalization (2-level template model: the whole
     //         group's content lives inside its tab_item TEMPLATE child) ----
-    // EVERY designated group section, top level AND nested (depth 2 subgroups),
+    // EVERY designated group section, top level AND nested (any depth),
     // in tree order: the parent group's template is always normalized (and
     // therefore exists) before the subgroups nested inside it. Idempotent: it is
     // re-run after the orphan pass, which places content into these sections.
@@ -4208,12 +4235,7 @@ class stic_AwfConfiguration {
     }
 
   /**
-   * Whether a dependent GROUP HEAD can be adopted (nested) into parentBlock's
-   * group: the resulting branch must keep the N×M rule (at most 2 repeatable
-   * levels — evaluated exactly as if the head had become repeatable in place,
-   * the same rule the in-place switch applies) and the group nesting must stay
-   * within 2 levels (the head's depth becomes the parent's + 1, plus 1 more
-   * when the head already has members of its own).
+   * Optional heads nest freely; repeatable heads must remain valid at the joining point.
    * @param {stic_AwfDataBlock} head
    * @param {stic_AwfDataBlock} parentBlock
    * @returns {boolean}
@@ -4223,9 +4245,7 @@ class stic_AwfConfiguration {
   }
 
   /**
-   * Adopts orphan blocks that depend on parentBlock when parentBlock becomes a group root.
-   * Traverses transitively (BFS): adopted children also adopt their own dependents, so
-   * chains like Adult -> Entorn Familiar -> Menor -> Inscripcio are fully grouped.
+   * Adopts dependent orphans transitively when a block becomes a group head.
    * @param {stic_AwfDataBlock} parentBlock 
    */
    adoptRelatedOrphans(parentBlock) {
@@ -4245,19 +4265,14 @@ class stic_AwfConfiguration {
       this.data_blocks.forEach(candidate => {
         if (visited.has(candidate.id)) return;
 
-        // Do not re-adopt if the candidate was explicitly excluded from THIS group
-        if (candidate.isExcludedFromGroup(thisGroupRootId) || candidate.isExcludedFromGroup(parentBlock.id)) {
+        // Respect exclusions for the top root and the current joining head.
+        if (candidate.isExcludedFromGroup(thisGroupRootId)
+            || candidate.isExcludedFromGroup(parentBlock.id)
+            || candidate.isExcludedFromGroup(current.id)) {
           return;
         }
 
-        // Adopt if: (a) candidate is an orphan (is_root), OR
-        //           (b) candidate is in the same parent group (reparenting into subgroup), OR
-        //           (c) candidate is a DIRECT member of `current` (existing member of
-        //               the group hierarchy: the BFS must keep expanding THROUGH it,
-        //               otherwise transitive dependencies (member -> orphan) are never
-        //               reached — e.g. Org -> Persona -> Tarea with the group already
-        //               formed: Tarea depends on the MEMBER (Persona), not on the head,
-        //               and would never be adopted).
+        // Consider orphans, same-group siblings and existing direct members.
         const isOrphan = candidate.is_root;
         const isSameGroupChild = parentGroupRoot && candidate.group_root === parentGroupRoot
           && candidate.id !== parentBlock.id;
@@ -4273,10 +4288,7 @@ class stic_AwfConfiguration {
           return;
         }
 
-        // The N×M + depth rule is evaluated AT THE REAL JOINING POINT
-        // (`current`): a head joining under a deeper member lands one level
-        // deeper than the group root, and must respect the same limits the
-        // in-place switch would enforce there.
+        // Validate repeatable heads at their actual joining point.
         if ((candidate.is_repeatable || candidate.is_optional)
           && !this.canAdoptHeadIntoGroup(candidate, current)) return;
 
@@ -4309,26 +4321,24 @@ class stic_AwfConfiguration {
   }
 
   /**
-   * Disbands a group, releasing all its children and resetting group metadata.
-   * Releases the whole descendant branch (transitive), not just
-   * direct children: with multi-level adoption a level-2+ descendant would otherwise keep
-   * pointing to an already-disbanded intermediate parent.
-   * @param {stic_AwfDataBlock} parentBlock 
+   * Releases direct children to the parent's level and resets group metadata.
+   * @param {stic_AwfDataBlock} parentBlock
    */
   disbandGroup(parentBlock) {
     if (!parentBlock) return;
 
-    // Release ALL descendant blocks in the branch
+    // Move only direct children so nested group subtrees stay intact.
     const releaseTo = (parentBlock.group_root && parentBlock.group_root !== parentBlock.id) ? parentBlock.group_root : '';
     const descendants = parentBlock.getDescendants(this.data_blocks);
 
     descendants.forEach(child => {
-      child.group_root = releaseTo;
-      // The disbanded group no longer exists: drop only ITS exclusion, keeping
-      // the exclusions the user made against other groups
+      // Clear exclusions related to the disbanded group.
       child.removeGroupExclusion(parentBlock.id);
       child.removeGroupExclusion(releaseTo);
       child.clearLegacyGroupExcluded();
+    });
+    parentBlock.getChildren(this.data_blocks).forEach(child => {
+      child.group_root = releaseTo;
     });
 
     // Reset limits and clear group metadata
@@ -4734,28 +4744,20 @@ class stic_AwfConfiguration {
   }
 
   /**
-   * Builds the 2-level visual tree for Step 2: groups are container cards
-   * that hold their data block cards — the group's root block is a normal card
-   * inside the group container. Level-3+ descendants (legacy data) are flattened
-   * into the level-2 members so no block ever disappears from the UI.
+   * Builds the recursive Step 2 tree and cuts malformed cycles.
    * @returns {Array<{block: stic_AwfDataBlock, isGroup: boolean, members: Array}>}
    */
   getVisualTree() {
-    const buildNode = (block, depth) => {
+    const buildNode = (block, seen) => {
+      if (seen.has(block.id)) return null; // cycle edge: block is already rendered
       const isGroup = block.isGroupHead(this.data_blocks);
-      let members = [];
-      if (isGroup) {
-        if (depth < 2) {
-          members = block.getChildren(this.data_blocks).map(c => buildNode(c, depth + 1));
-        } else {
-          // Defensive flattening of legacy level-3+ descendants (old configs
-          // may still have them; the UI now limits nesting to 2 levels).
-          members = block.getDescendants(this.data_blocks).map(c => ({ block: c, isGroup: false, members: [] }));
-        }
-      }
+      const next = new Set(seen); next.add(block.id);
+      const members = isGroup
+        ? block.getChildren(this.data_blocks).map(c => buildNode(c, next)).filter(Boolean)
+        : [];
       return { block, isGroup, members };
     };
-    return this.getOrderedDataBlocks().filter(b => b.is_root).map(b => buildNode(b, 1));
+    return this.getOrderedDataBlocks().filter(b => b.is_root).map(b => buildNode(b, new Set())).filter(Boolean);
   }
 
   getOrderedDataBlocks() {
@@ -5713,7 +5715,8 @@ globalThis.stic_AwfGroupPolicy = (() => {
   });
 
   const canJoin = (parent, child, blocks) => {
-    if (!isHead(parent, blocks) || parent.getDepth(blocks) > 1) return false;
+    // Plain members add no loop level and may join optional groups at any depth.
+    if (!isHead(parent, blocks)) return false;
     if (!child || child.id === parent.id || isHead(child, blocks)) return false;
     if (parent.isDescendant(child.id, blocks)) return false;
     const parentGroupRoot = (parent.group_root && parent.group_root !== parent.id) ? parent.group_root : null;
@@ -5725,27 +5728,18 @@ globalThis.stic_AwfGroupPolicy = (() => {
   };
 
   const canAdoptHead = (head, joinUnder, blocks) => {
-    if (!head || !joinUnder) return false;
-    const height = head.getChildren(blocks).length > 0 ? 1 : 0;
-    if (joinUnder.getDepth(blocks) + 1 + height > 2) return false;
-    // A repeatable head must also satisfy the in-place repeatable rule;
-    // optional-only heads use the depth/N-M limits (no repeatable checks).
-    if (head.is_repeatable) {
-      const prev = head.group_root;
-      head.group_root = joinUnder.id;
-      const ok = head.canBeRepeatable(blocks);
+    if (!head || !joinUnder || head.id === joinUnder.id) return false;
+    const prev = head.group_root;
+    head.group_root = joinUnder.id;
+    try {
+      // Optional depth is unlimited; repeatable depth remains capped at two.
+      const subtree = [head, ...head.getDescendants(blocks)];
+      if (subtree.some(b => b.is_repeatable && b.countRepeatableLevel(blocks) > 2)) return false;
+      if (head.is_repeatable && !head.canBeRepeatable(blocks)) return false;
+      return true;
+    } finally {
       head.group_root = prev;
-      if (!ok) return false;
     }
-    let repeatable = (joinUnder.is_repeatable ? 1 : 0) + (head.is_repeatable ? 1 : 0);
-    let cur = joinUnder.group_root;
-    while (cur) {
-      const p = (blocks || []).find(b => b.id === cur);
-      if (!p) break;
-      if (p.is_repeatable) repeatable++;
-      cur = p.group_root;
-    }
-    return repeatable <= 2;
   };
 
   const groupTitle = (block, blocks) => [block, ...block.getGroupMembersSorted(blocks)]

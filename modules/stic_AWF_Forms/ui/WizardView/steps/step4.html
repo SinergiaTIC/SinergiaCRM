@@ -239,7 +239,7 @@
                     <!-- field_spacing -->
                     <div class="mb-3">
                         <label for="theme-field_spacing" class="form-label small" x-text="utils.translateForFieldLabel('LBL_THEME_FIELD_SPACING')"></label>
-                        <select id="theme-form_width" class="form-select" x-model="layout.theme.field_spacing">
+                        <select id="theme-field_spacing" class="form-select" x-model="layout.theme.field_spacing">
                             <template x-for="item in stic_AwfTheme.field_spacing_in_formList()" :key="item.id">
                                 <option :value="item.id" x-text="item.text" :selected="item.id == layout.theme.field_spacing"></option>
                             </template>
@@ -613,7 +613,7 @@
 
                                                 <!-- Section Body (the group's internal element template is flattened: its children render directly) -->
                                                 <div class="card-body p-2" x-show="!isCollapsed" x-transition>
-                                                    <!-- Content: data blocks and (level < 2) nested sections -->
+                                                    <!-- Content: data blocks and nested sections at any depth -->
                                                     <template x-for="(element, index) in getVisibleSectionBodyElements(section)" :key="element.id">
                                                         <div>
                                                             <template x-if="element.type === 'section'">
@@ -649,7 +649,7 @@
                                                                 <div>
                                                                     <strong x-text="utils.translateForFieldLabel('LBL_FIELD')"></strong>
                                                                     <span x-text="'(' + utils.fromFieldLabelText(getDataBlock(element).text) + ')'"></span>
-                                                                    <span :id="`sectionFieldLabelEdit-${element.groupRootBlockId}.${getField(element).name}`" data-model="getField(element).label" x-init="sticControls.editableText($el);"></span>
+                                                                    <span :id="`sectionFieldLabelEdit-${element.ref_id}.${getField(element).name}`" data-model="getField(element).label" x-init="sticControls.editableText($el);"></span>
                                                                 </div>
                                                             </template>
                                                         </div>
@@ -739,7 +739,7 @@
                                                         <template x-if="element.type !== 'section'">
                                                             <template x-for="field in getVisibleBlockFields(element)" :key="field.name">
                                                                 <div class="border rounded px-2 py-1 m-2 d-inline-flex align-items-center gap-1" x-data="{ open: false }">
-                                                                    <span :id="`sectionFieldLabelEdit-${element.groupRootBlockId}.${field.name}`" data-model="field.label" x-init="sticControls.editableText($el);"></span>
+                                                                    <span :id="`sectionFieldLabelEdit-${element.ref_id}.${field.name}`" data-model="field.label" x-init="sticControls.editableText($el);"></span>
                                                                     <button class="btn btn-sm" :class="open ? 'active' : ''"
                                                                             :title="utils.translate('LBL_FIELD_CONFIG')" @click="open = !open;">
                                                                         <span class="awf-icon-gear" :class="open ? 'awf-icon-gear-fill' : ''"></span>

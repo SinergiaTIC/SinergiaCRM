@@ -92,7 +92,7 @@ class FormHtmlGeneratorService {
      * kept if the root OR any descendant has at least one visible field.
      */
     private static function groupSubtreeHasRenderableFields(FormDataBlock $block, FormConfig $config): bool {
-        if (self::blockHasRenderableFields($block)) return true;
+        if (self::blockHasRenderableFields($block) || self::isServerDataOptionalGroup($block, $config)) return true;
         foreach ($config->getGroupChildren($block) as $child) {
             if (self::groupSubtreeHasRenderableFields($child, $config)) return true;
         }
@@ -100,21 +100,28 @@ class FormHtmlGeneratorService {
     }
 
     /**
-     * A SERVER-DATA OPTIONAL group (spec §1.36): an optional, non-repeatable
-     * group whose whole subtree draws NO input (all its fields are FIXED/hidden
-     * or the data is server-resolved) but which has at least one field. It
-     * renders as a SINGLE activation switch — no section title and no body — so
-     * the user can choose to include the server-side record (e.g. "include
-     * registration to the assembly", whose data is a fixed event plus the
-     * relation to the answer). Never repeatable: N instances of an input-less
-     * group would be indistinguishable.
+     * Server-data optional groups render one activation switch and no fields.
+     * Nested optional/repeatable heads keep their own controls.
      */
     private static function isServerDataOptionalGroup(FormDataBlock $rootBlock, FormConfig $config): bool {
         if (!$rootBlock->isOptional() || $rootBlock->isRepeatable()) return false;
         $groupBlocks = array_merge([$rootBlock], $config->getGroupDescendants($rootBlock));
         if (self::groupHasRenderableFields($groupBlocks)) return false;
         foreach ($groupBlocks as $b) {
+            // Nested heads own their activation or loop and cannot be collapsed.
+            if ($b->id !== $rootBlock->id && ($b->isRepeatable() || $b->isOptional())) return false;
+        }
+        foreach ($groupBlocks as $b) {
             if (!empty($b->fields)) return true;
+        }
+        return false;
+    }
+
+    /** A group renders when it has visible fields or any server-data switch. */
+    private static function groupHasRenderableContent(array $groupBlocks, FormConfig $config): bool {
+        if (self::groupHasRenderableFields($groupBlocks)) return true;
+        foreach ($groupBlocks as $block) {
+            if (self::isServerDataOptionalGroup($block, $config)) return true;
         }
         return false;
     }
@@ -574,24 +581,23 @@ class FormHtmlGeneratorService {
      */
     private function renderSectionNode(FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar = null, ?string $currentGroupRootId = null, array $outerIndexVars = [], bool $withChrome = true): string {
         $groupRootBlock = null;
-        // Check if is Top Level Group section (not nested inside another group loop)
-        if ($section instanceof FormLayoutGroupSection && $currentGroupRootId === null) {
+        if ($section instanceof FormLayoutGroupSection) {
             /** @var FormLayoutGroupSection $section */
-            $groupRootBlock = self::resolveGroupRootBlock($config, $section->groupRootBlockId);
+            if ($currentGroupRootId === null) {
+                $groupRootBlock = self::resolveGroupRootBlock($config, $section->groupRootBlockId);
+            } else {
+                // Designated subgroups render once by explicit identity.
+                $candidate = $config->data_blocks[$section->groupRootBlockId] ?? null;
+                if ($candidate && $candidate->id !== $currentGroupRootId
+                    && self::blockBelongsToGroupInstance($candidate, $config, $currentGroupRootId)) {
+                    $groupRootBlock = $candidate;
+                }
+            }
             if (!$groupRootBlock) {
                 return "<!-- Group section has an invalid or missing group root reference -->" . $this->newLine();
             }
         } else if ($currentGroupRootId !== null && empty($section->groupTemplate)) {
-            // Inside a group's loop: a nested section holding a subgroup head (a
-            // group head of depth 2, different from the current loop's root)
-            // renders that subgroup's own loop
-            //
-            // The loop's OWN element template is excluded: it is instance
-            // STRUCTURE rendered by the loop, not a section to be re-evaluated.
-            // Detecting a subgroup there would make it hijack the whole template
-            // (the sibling content would be lost and the subgroup would inherit
-            // the parent's titles and micro-copy). Subgroups are detected in the
-            // template's CHILDREN, each with its own designated section.
+            // Legacy nested hosts may announce a subgroup; the loop's own template is structural.
             $groupRootBlock = $this->findGroupRootInSection($config, $section, $currentGroupRootId);
         }
 
@@ -599,7 +605,7 @@ class FormHtmlGeneratorService {
             $groupBlocks = array_merge([$groupRootBlock], $config->getGroupDescendants($groupRootBlock));
             // A server-data optional group has no visible field but still
             // renders (its activation switch): never drop it here.
-            if (!self::groupHasRenderableFields($groupBlocks) && !self::isServerDataOptionalGroup($groupRootBlock, $config)) return '';
+            if (!self::groupHasRenderableContent($groupBlocks, $config)) return '';
         } elseif (!self::sectionHasRenderableContent($section, $config, $currentGroupRootId)) {
             return '';
         }
@@ -1251,7 +1257,7 @@ class FormHtmlGeneratorService {
         if (!empty($blockChildren)) {
             $descendants = $config->getGroupDescendants($block);
             $groupBlocks = array_merge([$block], $descendants);
-            return self::groupHasRenderableFields($groupBlocks) || self::isServerDataOptionalGroup($block, $config);
+            return self::groupHasRenderableContent($groupBlocks, $config);
         }
 
         return self::blockHasRenderableFields($block);
@@ -1269,9 +1275,19 @@ class FormHtmlGeneratorService {
 
     private static function blockBelongsToGroupInstance(FormDataBlock $block, FormConfig $config, string $groupRootId): bool {
         if ($block->id === $groupRootId) return true;
-        $ownerId = $block->group_root !== '' ? $block->group_root : $block->id;
-        $owner = $config->data_blocks[$ownerId] ?? null;
-        return $owner !== null && $owner->id === $groupRootId;
+        // Walk the full chain for unlimited optional nesting; stop on malformed cycles.
+        $current = $block;
+        $visited = [$current->id => true];
+        while ($current->group_root !== '') {
+            $parentId = $current->group_root;
+            if ($parentId === $groupRootId) return true;
+            if (isset($visited[$parentId])) break;
+            $visited[$parentId] = true;
+            $parent = $config->data_blocks[$parentId] ?? null;
+            if (!$parent) break;
+            $current = $parent;
+        }
+        return false;
     }
 
     /**
@@ -1283,7 +1299,7 @@ class FormHtmlGeneratorService {
             $rootBlock = self::resolveGroupRootBlock($config, $section->groupRootBlockId);
             if (!$rootBlock) return false;
             $groupBlocks = array_merge([$rootBlock], $config->getGroupDescendants($rootBlock));
-            return self::groupHasRenderableFields($groupBlocks) || self::isServerDataOptionalGroup($rootBlock, $config);
+            return self::groupHasRenderableContent($groupBlocks, $config);
         }
         foreach ($section->elements as $childNode) {
             if ($childNode instanceof FormLayoutSection) {
@@ -2326,8 +2342,10 @@ class FormHtmlGeneratorService {
      * @return string Generated HTML for the block panel
      */
     private function renderBlockInstancePanel(FormDataBlock $block, FormTheme $theme, string $instanceIndexVar, array $outerIndexVars = []): string {
-        // A block with no renderable fields renders nothing (empty sub-section)
-        if (!self::blockHasRenderableFields($block)) return "";
+        // Blocks without visible fields still need an instance marker.
+        if (!self::blockHasRenderableFields($block)) {
+            return $this->renderBlockInstanceFields($block, $theme, $instanceIndexVar, $outerIndexVars);
+        }
         $blockTitle = htmlspecialchars($block->text, ENT_QUOTES, 'UTF-8');
 
         $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
@@ -2340,15 +2358,21 @@ class FormHtmlGeneratorService {
         return $html;
     }
 
-    /**
-     * Renders a block instance's fields WITHOUT the panel wrapper (no title,
-     * no frame): used when the block already lives in its own dedicated host
-     * section — the host's chrome (title + frame) is the block's representation
-     * and a nested panel would duplicate it.
-     */
+    /** Emits a hidden row marker for every group instance. */
+    private function renderBlockInstanceMarker(FormDataBlock $block, string $instanceIndexVar, array $outerIndexVars): string {
+        if (empty($block->fields)) return '';
+        $vars = array_merge($outerIndexVars, [$instanceIndexVar]);
+        $nameExpr = "'{$block->name}[' + " . implode(" + '][' + ", $vars) . " + '][_awf_server_data]'";
+        return "<input type='hidden' :name=\"{$nameExpr}\" value='1'>" . $this->newLine();
+    }
+
+    /** Renders instance fields without adding another block panel. */
     private function renderBlockInstanceFields(FormDataBlock $block, FormTheme $theme, string $instanceIndexVar, array $outerIndexVars = []): string {
-        if (!self::blockHasRenderableFields($block)) return "";
-        $html = "<div class='awf-grid-fields'>" . $this->newLine('+');
+        $marker = $this->renderBlockInstanceMarker($block, $instanceIndexVar, $outerIndexVars);
+        if (!self::blockHasRenderableFields($block)) {
+            return $marker;
+        }
+        $html = $marker . "<div class='awf-grid-fields'>" . $this->newLine('+');
         {
             foreach ($block->fields as $field) {
                 if ($field->type_field === DataBlockFieldType::FIXED) {
@@ -2425,8 +2449,8 @@ class FormHtmlGeneratorService {
 
     /**
      * Internal field renderer that supports both scalar and instance-aware rendering.
-     * Depth-2 fields receive the enclosing loop variables in $outerIndexVars
-     * and build two-level POST names: Block[outer][inner][field].
+     * Instance-aware fields receive every enclosing loop variable in $outerIndexVars
+     * and build nested POST names: Block[outer]...[inner][field] at any depth.
      * @param FormDataBlockField $field The field to render
      * @param FormTheme $theme The form theme
      * @param ?string $instanceIndexVar The Alpine variable for the innermost instance index, or null for scalar fields
@@ -3292,9 +3316,19 @@ document.addEventListener('alpine:init', () => {
               if (rule.conditions && rule.conditions.length > 0) {
                 for (const cond of rule.conditions) {
                   if (!cond.field_name) continue;
-                  const condInput = form.querySelector('[id="f_' + cond.field_name + '"]');
-                  if (!condInput) continue;
-                    
+                  const logicalKey = cond.field_name.replace(/\./g, '_');
+                  let condInput = form.querySelector('[id="f_' + logicalKey + '"]')
+                    || form.querySelector('[name="' + logicalKey + '"]');
+                  // Reuse the current instance prefix for grouped conditions.
+                  if (!condInput && input.name && input.name.indexOf('[') !== -1) {
+                    const dot = cond.field_name.indexOf('.');
+                    const fieldName = dot !== -1 ? cond.field_name.substring(dot + 1) : cond.field_name;
+                    const conditionBlock = (dot !== -1 ? cond.field_name.substring(0, dot) : input.name.substring(0, input.name.indexOf('['))).replace(/\./g, '_');
+                    const indexes = input.name.substring(input.name.indexOf('['), input.name.lastIndexOf('[') + 1);
+                    condInput = form.querySelector('[name="' + conditionBlock + indexes + fieldName + '"]');
+                  }
+                  if (!condInput) { conditionsMet = false; break; }
+
                   const isMatch = (condInput.value == cond.value);
                   if (cond.operator === 'Equal_To' && !isMatch) { conditionsMet = false; break; }
                   if (cond.operator === 'Not_Equal_To' && isMatch) { conditionsMet = false; break; }

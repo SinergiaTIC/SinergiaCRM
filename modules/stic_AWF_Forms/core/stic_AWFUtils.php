@@ -177,21 +177,15 @@ class stic_AWFUtils {
                 $block = $context->getDataBlockById($blockId);
                 if (!$block) continue;
 
-                // Child blocks are rendered together with their root when the root is repeatable/optional.
-                // Children of SIMPLE groups fall through to scalar summary rendering.
-                if (!empty($block->group_root)) {
-                    $rootBlock = $context->formConfig->data_blocks[$block->group_root] ?? null;
-                    if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
-                        continue;
-                    }
-                }
+                // Enclosed blocks are rendered by their loop owner.
+                if (self::hasEnclosingGroupLoop($block, $context->formConfig)) continue;
 
                 // Repeatable and optional groups render as per-instance rows in the summary.
                 if ($block->isRepeatable() || $block->isOptional()) {
                     // Use transitive descendants (multi-level branches);
                     // config comes from the context ($formConfig was never defined in this scope).
                     $formConfig = $context->formConfig;
-                    $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '');
+                    $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '', $context->uploadedFiles);
                     $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
                     $instances = DataBlockResolved::resolveInstances($block, $formData, $summaryContext);
                     $instanceNumber = 1;
@@ -518,21 +512,14 @@ class stic_AWFUtils {
                 $block = $context->getDataBlockById($blockId);
                 if (!$block) continue;
 
-                // Child blocks are rendered together with their root when the root
-                // is repeatable/optional. Children of SIMPLE groups fall through to
-                // scalar summary rendering.
-                if (!empty($block->group_root)) {
-                    $rootBlock = $context->formConfig->data_blocks[$block->group_root] ?? null;
-                    if ($rootBlock && ($rootBlock->isRepeatable() || $rootBlock->isOptional())) {
-                        continue;
-                    }
-                }
+                // Enclosed blocks are rendered by their loop owner.
+                if (self::hasEnclosingGroupLoop($block, $context->formConfig)) continue;
 
                 // Repeatable and optional groups render as per-instance rows.
                 if ($block->isRepeatable() || $block->isOptional()) {
                     $formConfig = $context->formConfig;
                     $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
-                    $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '');
+                    $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '', $context->uploadedFiles);
                     $instances = DataBlockResolved::resolveInstances($block, $formData, $summaryContext);
                     $instanceNumber = 1;
                     foreach ($instances as $instance) {
@@ -600,6 +587,20 @@ class stic_AWFUtils {
         }
 
         return $text;
+    }
+
+    /** Returns true when any ancestor owns a repeatable/optional loop. */
+    private static function hasEnclosingGroupLoop(FormDataBlock $block, FormConfig $config): bool {
+        $seen = [$block->id => true];
+        $parentId = $block->group_root ?? '';
+        while ($parentId !== '' && !isset($seen[$parentId])) {
+            $seen[$parentId] = true;
+            $parent = $config->data_blocks[$parentId] ?? null;
+            if (!$parent) break;
+            if ($parent->isRepeatable() || $parent->isOptional()) return true;
+            $parentId = $parent->group_root ?? '';
+        }
+        return false;
     }
 
     /**
@@ -1093,8 +1094,7 @@ class stic_AWFUtils {
      */
     public static function fillMissingBooleanFields(FormConfig $formConfig, array &$formData): void {
         foreach ($formConfig->data_blocks as $dataBlock) {
-            // Child blocks are filled together with their root when the root
-            // renders a loop (repeatable, optional OR simple with children).
+            // Enclosed blocks are filled with their loop owner.
             if (!empty($dataBlock->group_root)) {
                 $rootBlock = $formConfig->data_blocks[$dataBlock->group_root] ?? null;
                 if ($rootBlock && $rootBlock->getLoopDepth() >= 1) {
@@ -1102,10 +1102,9 @@ class stic_AWFUtils {
                 }
             }
 
-            // Group blocks process boolean fields for ALL their instances
-            // (n-dimensional matrices: one level per group head in the chain).
+            // Fill every grouped instance recursively.
             if ($dataBlock->getLoopDepth() >= 1) {
-                // Use transitive descendants (multi-level branches)
+                // Include all descendants.
                 $blocksInGroup = array_merge([$dataBlock], $formConfig->getGroupDescendants($dataBlock));
                 foreach (['', '_detached_'] as $prefix) {
                     foreach ($blocksInGroup as $blockInGroup) {
@@ -1118,7 +1117,8 @@ class stic_AWFUtils {
             }
 
             foreach ($dataBlock->fields as $field) {
-                if ($field->type_field === DataBlockFieldType::FIXED) {
+                if ($field->value_type === DataBlockFieldValueType::FIXED
+                    || $field->type_field === DataBlockFieldType::FIXED) {
                     continue;
                 }
 
@@ -1132,11 +1132,7 @@ class stic_AWFUtils {
         }
     }
 
-    /**
-     * Walks the block's n-dimensional instance matrix recursively and fills
-     * missing boolean/checkbox values ('0') at every leaf row ($indexes =
-     * the loop indexes accumulated so far, outer to inner).
-     */
+    /** Fills missing grouped booleans with '0' at every instance leaf. */
     private static function fillMissingBooleansRecursive(FormDataBlock $blockInGroup, array &$formData, string $blockKey, array $indexes): void {
         $node = &$formData[$blockKey];
         foreach ($indexes as $idx) {
@@ -1157,7 +1153,8 @@ class stic_AWFUtils {
         }
 
         foreach ($blockInGroup->fields as $field) {
-            if ($field->type_field === DataBlockFieldType::FIXED) continue;
+            if ($field->value_type === DataBlockFieldValueType::FIXED
+                || $field->type_field === DataBlockFieldType::FIXED) continue;
             if ($field->type !== 'bool' && $field->type !== 'checkbox' && !in_array($field->subtype_in_form, ['select_checkbox', 'select_switch'])) continue;
             $isUnlinked = $field->type_field === DataBlockFieldType::UNLINKED;
             if (str_starts_with($blockKey, '_detached_') !== $isUnlinked) continue;
@@ -1336,7 +1333,9 @@ class stic_AWFUtils {
                 continue;
             }
 
-            $submittedValue = self::extractScalarFieldValue($cond->field_name, $formData);
+            $submittedValue = $block !== null
+                ? self::resolveConditionFieldValue($cond, $formConfig, $formData, [])
+                : self::extractScalarFieldValue($cond->field_name, $formData);
             $results[] = self::compareConditionValue($cond, $submittedValue);
         }
 
@@ -1444,6 +1443,9 @@ class stic_AWFUtils {
         $fieldName = substr($rawField, strpos($rawField, '.') + 1);
 
         $fieldDef = $block->fields[$fieldName] ?? null;
+        if ($fieldDef !== null && $fieldDef->value_type === DataBlockFieldValueType::FIXED) {
+            return $fieldDef->value;
+        }
         $isDetached = ($fieldDef !== null && $fieldDef->type_field === DataBlockFieldType::UNLINKED);
         $blockKey = ($isDetached ? '_detached_' : '') . $block->name;
 

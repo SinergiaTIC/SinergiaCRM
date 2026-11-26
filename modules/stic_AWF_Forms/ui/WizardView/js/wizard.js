@@ -1173,12 +1173,13 @@ class WizardStep2 {
       get formConfig() { return window.alpineComponent.formConfig; },
       get data_blocks() { return this.formConfig.data_blocks; },
       get orderedDataBlocks() { return this.formConfig.getOrderedDataBlocks(); },
-      // 2-level visual tree: groups are container cards holding their block cards
+      // Recursive group tree.
       get blockTree() { return this.formConfig.getVisualTree(); },
-      // A group container shows the error style when any of its blocks is invalid
+      // Mark a group when any descendant block is invalid.
       groupNodeHasErrors(node) {
-        const blocks = [node.block, ...node.members.flatMap(m => [m.block, ...(m.members || []).map(g => g.block)])];
-        return blocks.some(b => !b.isValid());
+        const blocks = this.data_blocks;
+        const walk = (n) => !n.block.isValid(blocks) || (n.members || []).some(walk);
+        return !!node && walk(node);
       },
 
       reloadGroupTitle(block) {

@@ -22,10 +22,7 @@
 
 class sticControls {
   /**
-   * Stamps an inert <template> element's content into $el and binds it with Alpine.
-   * Used to render reusable markup fragments (e.g. the step2 data-block card and
-   * group header templates) at multiple positions of the 2-level group tree
-   * without duplicating HTML.
+   * Clones a template into $el and initializes Alpine bindings.
    */
   static mountTemplate($el, templateId) {
     const tpl = document.getElementById(templateId);

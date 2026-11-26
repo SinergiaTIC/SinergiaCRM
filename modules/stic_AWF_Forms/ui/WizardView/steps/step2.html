@@ -54,68 +54,37 @@
       <h2 class="mb-2" x-text="utils.translate('LBL_DATABLOCKS')"></h2>
       <!-- Main Content -->
 
-      <!-- DataBlocks: 2-level tree — groups are container cards holding their data block cards -->
+      <!-- Recursive group tree -->
       <div class="work-area-container" style="position: relative; padding-bottom: 20px;">
         <template x-for="node in blockTree" :key="node.block.id + (node.isGroup ? '::group' : '::single')">
-          <!-- The key includes the SHAPE (group/standalone): when a block switches
-               between standalone card and group container (or back), the key CHANGES
-               and Alpine runs a clean remove+create cycle for the item. With the bare
-               block.id key, the same keyed item is PATCHED across the structural flip
-               of the two sibling x-if templates, and the old x-if branch can be left
-               orphaned in the DOM (the block renders DUPLICATED: the stale member card
-               next to the new subgroup container). -->
-          <div>
-            <!-- Standalone block: plain card -->
-            <template x-if="!node.isGroup">
-              <div x-data="{ item: node.block }" x-init="sticControls.mountTemplate($el, 'awfTplDataBlockCard')"></div>
-            </template>
+          <!-- Shape changes rebuild the node; no x-data snapshot is allowed here. -->
+          <div x-init="sticControls.mountTemplate($el, 'awfTplGroupNode')"></div>
+        </template>
 
-            <!-- Group container card (level 1): holds the group's data block cards -->
-            <template x-if="node.isGroup">
-              <div :id="'group_' + node.block.id" class="card group-card mb-3 shadow-sm transition-all"
-                   :class="{ 'has-errors': groupNodeHasErrors(node) }"
-                   x-data="{ item: node.block, showGroupSettings: false, isCollapsed: false }">
-                <div class="awf-group-header" x-init="sticControls.mountTemplate($el, 'awfTplGroupHeader')"></div>
-                <div class="awf-group-body p-2" x-show="!isCollapsed" x-transition>
-                  <!-- Group root data block (a normal card inside the group) -->
-                  <div x-init="sticControls.mountTemplate($el, 'awfTplDataBlockCard')"></div>
-                  <!-- Level-1 members -->
-                  <template x-for="child in node.members" :key="child.block.id + (child.isGroup ? '::group' : '::single')">
-                      <!-- Same reason as the root loop: the member -> subgroup-head flip
-                           must rebuild the item cleanly (see the root x-for comment). -->
-                    <div>
-                      <!-- Subgroup container card (level 2) -->
-                      <template x-if="child.isGroup">
-                        <div :id="'group_' + child.block.id" class="card group-card subgroup-card mb-3 shadow-sm transition-all"
-                             :class="{ 'has-errors': groupNodeHasErrors(child) }"
-                             x-data="{ item: child.block, showGroupSettings: false, isCollapsed: false }">
-                          <div class="awf-group-header" x-init="sticControls.mountTemplate($el, 'awfTplGroupHeader')"></div>
-                          <div class="awf-group-body p-2" x-show="!isCollapsed" x-transition>
-                            <!-- Subgroup root data block -->
-                            <div x-init="sticControls.mountTemplate($el, 'awfTplDataBlockCard')"></div>
-                            <!-- Level-2 members -->
-                            <template x-for="gc in child.members" :key="gc.block.id + (gc.isGroup ? '::group' : '::single')">
-                              <div x-data="{ item: gc.block }" x-init="sticControls.mountTemplate($el, 'awfTplDataBlockCard')"></div>
-                            </template>
-                          </div>
-                        </div>
-                      </template>
-                      <!-- Simple child block -->
-                      <template x-if="!child.isGroup">
-                        <div x-data="{ item: child.block }" x-init="sticControls.mountTemplate($el, 'awfTplDataBlockCard')"></div>
-                      </template>
-                    </div>
-                  </template>
-                </div>
+        <!-- Recursive node; the `node` alias stays live at every depth. -->
+        <template id="awfTplGroupNode">
+          <template x-if="!node.isGroup">
+            <div x-data="{ item: node.block }" x-init="sticControls.mountTemplate($el, 'awfTplDataBlockCard')"></div>
+          </template>
+          <template x-if="node.isGroup">
+            <div :id="'group_' + node.block.id" class="card group-card mb-3 shadow-sm transition-all"
+                 :class="{ 'has-errors': groupNodeHasErrors(node) }"
+                 x-data="{ item: node.block, showGroupSettings: false, isCollapsed: false }">
+              <div class="awf-group-header" x-init="sticControls.mountTemplate($el, 'awfTplGroupHeader')"></div>
+              <div class="awf-group-body p-2" x-show="!isCollapsed" x-transition>
+                <div x-data="{ item: node.block }" x-init="sticControls.mountTemplate($el, 'awfTplDataBlockCard')"></div>
+                <template x-for="node in node.members" :key="node.block.id + (node.isGroup ? '::group' : '::single')">
+                  <div x-init="sticControls.mountTemplate($el, 'awfTplGroupNode')"></div>
+                </template>
               </div>
-            </template>
-          </div>
+            </div>
+          </template>
         </template>
 
         <!-- DataBlock Template -->
         <template id="awfTplDataBlockCard">
           <!-- DataBlock card (stamped via sticControls.mountTemplate) -->
-          <div :id="'dataBlock_' + item.id" class="card datablock mb-3 shadow-sm transition-all" :class="{ 'has-errors': !item.isValid() }" 
+          <div :id="'dataBlock_' + item.id" class="card datablock mb-3 shadow-sm transition-all" :class="{ 'has-errors': !item.isValid(data_blocks) }"
                x-data="WizardStep2.datablockxData(item)">
 
             <!-- DataBlock header -->
@@ -150,19 +119,19 @@
                 <template x-if="!item.isGroupHead(data_blocks)">
                   <div class="d-flex align-items-center gap-4 me-3">
                     <!-- Optional Switch -->
-                    <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.canBeOptional(data_blocks) ? 'switch-empty' : ''" 
+                    <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.is_optional && !item.canBeOptional(data_blocks) ? 'switch-empty' : ''"
                          :title="item.getOptionalDisabledReasonTranslated(data_blocks)">
                       <label class="form-check-label small me-2" :for="'opt_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
                       <input class="form-check-input" type="checkbox" role="switch" :id="'opt_switch_' + item.id" :checked="item.is_optional" 
-                             @change="toggleOptional(item, $event.target.checked)" :disabled="!item.canBeOptional(data_blocks)">
+                             @change="toggleOptional(item, $event.target.checked)" :disabled="!item.is_optional && !item.canBeOptional(data_blocks)">
                     </div>
 
                     <!-- Repeatable Switch -->
-                    <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.canBeRepeatable(data_blocks) ? 'switch-empty' : ''" 
+                    <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.is_repeatable && !item.canBeRepeatable(data_blocks) ? 'switch-empty' : ''"
                          :title="item.getRepeatableDisabledReasonTranslated(data_blocks)">
                       <label class="form-check-label small me-2" :for="'rep_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
                       <input class="form-check-input" type="checkbox" role="switch" :id="'rep_switch_' + item.id" :checked="item.is_repeatable" 
-                             @change="toggleRepeatable(item, $event.target.checked)" :disabled="!item.canBeRepeatable(data_blocks)">
+                             @change="toggleRepeatable(item, $event.target.checked)" :disabled="!item.is_repeatable && !item.canBeRepeatable(data_blocks)">
                     </div>
                   </div>
                 </template>
@@ -200,7 +169,7 @@
             <!-- DataBlock body -->
             <div class="card-body" x-show="!isCollapsed" x-transition>
               <!-- Alert message -->
-              <template x-if="!item.isValid()">
+              <template x-if="!item.isValid(data_blocks)">
                 <div class="alert alert-danger p-2 mb-3 shadow-sm border-danger">
                   <div class="d-flex align-items-start">
                     <i class="suitepicon  suitepicon-template-issue text-danger me-2 mt-1"></i>
@@ -479,7 +448,7 @@
 
               <!-- Accordion Headers -->
               <template x-if="!item.module">
-                <div :id="`dataDef_${item.id}`" :class="{'has-errors':!item.isValid()}" :data-sections="JSON.stringify([
+                <div :id="`dataDef_${item.id}`" :class="{'has-errors':!item.isValid(data_blocks)}" :data-sections="JSON.stringify([
                         {headerText:`utils.translate('LBL_FIELDS') + ' ('+item.fields.length+')'`, selected:true, contentId:'dataBlockFields'+item.id},
                       ]);" x-init="$nextTick(() => sticControls.accordion($el))"></div>
               </template>
@@ -529,19 +498,19 @@
               </div>
               <div class="d-flex align-items-center gap-4 me-3">
                 <!-- Optional Switch -->
-                <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.canBeOptional(data_blocks) ? 'switch-empty' : ''" 
+                <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.is_optional && !item.canBeOptional(data_blocks) ? 'switch-empty' : ''"
                       :title="item.getOptionalDisabledReasonTranslated(data_blocks)">
                   <label class="form-check-label small me-2" :for="'opt_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_OPTIONAL')"></label>
                   <input class="form-check-input" type="checkbox" role="switch" :id="'opt_switch_' + item.id" :checked="item.is_optional" 
-                          @change="toggleOptional(item, $event.target.checked)" :disabled="!item.canBeOptional(data_blocks)">
+                          @change="toggleOptional(item, $event.target.checked)" :disabled="!item.is_optional && !item.canBeOptional(data_blocks)">
                 </div>
 
                 <!-- Repeatable Switch -->
-                <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.canBeRepeatable(data_blocks) ? 'switch-empty' : ''" 
+                <div class="form-check form-switch d-flex align-items-center mb-0" :class="!item.is_repeatable && !item.canBeRepeatable(data_blocks) ? 'switch-empty' : ''"
                       :title="item.getRepeatableDisabledReasonTranslated(data_blocks)">
                   <label class="form-check-label small me-2" :for="'rep_switch_' + item.id" x-text="utils.translateForFieldLabel('LBL_DATABLOCK_GROUP_REPEATABLE')"></label>
                   <input class="form-check-input" type="checkbox" role="switch" :id="'rep_switch_' + item.id" :checked="item.is_repeatable" 
-                          @change="toggleRepeatable(item, $event.target.checked)" :disabled="!item.canBeRepeatable(data_blocks)">
+                          @change="toggleRepeatable(item, $event.target.checked)" :disabled="!item.is_repeatable && !item.canBeRepeatable(data_blocks)">
                 </div>
               </div>
             </div>
