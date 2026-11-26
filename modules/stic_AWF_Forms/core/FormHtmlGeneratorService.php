@@ -2371,9 +2371,8 @@ class FormHtmlGeneratorService {
         return $html;
     }
 
-    /** Emits a hidden row marker for every group instance. */
+    /** Emits a hidden row marker for every group instance, even without fields. */
     private function renderBlockInstanceMarker(FormDataBlock $block, string $instanceIndexVar, array $outerIndexVars): string {
-        if (empty($block->fields)) return '';
         $vars = array_merge($outerIndexVars, [$instanceIndexVar]);
         $nameExpr = "'{$block->name}[' + " . implode(" + '][' + ", $vars) . " + '][_awf_server_data]'";
         return "<input type='hidden' :name=\"{$nameExpr}\" value='1'>" . $this->newLine();
