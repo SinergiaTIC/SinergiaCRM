@@ -373,6 +373,12 @@ $searchFields['Accounts'] = array(
             0 => 'id',
         ),
     ),
+    // STIC-Custom 20261120 ART - Add search field for STIC Identification Number
+    // https://github.com/SinergiaTIC/SinergiaCRM/pull/
+    'stic_identification_number_c' => array(
+        'query_type' => 'default',
+    ),
+    // END STIC-Custom
 );
 
 // END STIC-Custom
