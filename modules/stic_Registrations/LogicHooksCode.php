@@ -53,11 +53,8 @@ class stic_RegistrationsLogicHooks {
     public function after_save(&$bean, $event, $arguments) {
         include_once 'modules/stic_Registrations/Utils.php';
 
-        // Recalculate ateendees totals, only if the status, the attendees number or the deleted flag change.
-        if ($bean->status != ($bean->fetched_row['status'] ?? null)
-            || $bean->attendees != ($bean->fetched_row['attendees'] ?? null)
-            || empty($bean->deleted) != empty($bean->fetched_row['deleted'] ?? 0)
-        ) {
+        // Recalculate ateendees totals, only if the status or attendees number change.
+        if ($bean->status != ($bean->fetched_row['status'] ?? null) || $bean->attendees != ($bean->fetched_row['attendees'] ?? null)) {
             stic_RegistrationsUtils::recalculateTotalAttendees($bean);
         }
 
@@ -86,12 +83,12 @@ class stic_RegistrationsLogicHooks {
 
             case 'after_relationship_delete':
                 // Recalculate totals attendes by status in the related event
-                stic_RegistrationsUtils::recalculateTotalAttendees($bean, $arguments['related_id'], 'relationship_delete');
+                stic_RegistrationsUtils::recalculateTotalAttendees($bean, $arguments['related_id']);
                 break;
 
             case 'after_relationship_add':
                 // Recalculate totals attendes by status in the related event
-                stic_RegistrationsUtils::recalculateTotalAttendees($bean, $arguments['related_id'], 'relationship_add');
+                stic_RegistrationsUtils::recalculateTotalAttendees($bean, $arguments['related_id']);
 
                 // Try create attendances
                 stic_RegistrationsUtils::createAttendancesForNewRegistration($bean);
