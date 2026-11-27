@@ -350,7 +350,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $dataToLog = [
                 ['key' => 'duplicate_rule_matched', 'label' => $this->translate('DUPLICATE_RULE_MATCHED_TEXT'), 'value' => $matchedRuleFields],
             ];
-            $actionResult->registerActionMetadata($bean, $dataToLog);
+            $actionResult->registerActionMetadata($bean, $dataToLog, $block->getInstanceIndexKey());
         }
 
         // Log injected FK relationships
@@ -372,7 +372,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 }
             }
             if (!empty($metadata)) {
-                $actionResult->registerActionMetadata($bean, $metadata);
+                $actionResult->registerActionMetadata($bean, $metadata, $block->getInstanceIndexKey());
             }
         }
 

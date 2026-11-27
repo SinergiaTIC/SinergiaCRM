@@ -141,7 +141,7 @@ class SaveDocumentBlockAction extends HookDataBlockActionDefinition {
         $result->registerBeanModificationFromBlock($document, $block, BeanModificationType::CREATED, $modifications);
         $result->registerActionMetadata($document, [
             ['key' => 'revision_filename', 'label' => $this->translate('FILENAME_TEXT'), 'value' => $revision->filename],
-        ]);
+        ], $block->getInstanceIndexKey());
         return $result;
     }
 
