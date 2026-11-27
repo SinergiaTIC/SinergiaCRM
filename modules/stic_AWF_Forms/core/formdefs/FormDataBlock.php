@@ -200,12 +200,14 @@ class FormDataBlock {
 
     /**
      * Gets the bean reference for this data block, optionally for a specific instance index.
+     * An explicit instance index never falls back to the global reference: a
+     * missing instance must resolve to null so it cannot reuse another instance.
      * @param string|null $instanceIndex Instance index vector, or null for scalar
      * @return BeanReference|null The bean reference or null if not set
      */
     public function getBeanReference(?string $instanceIndex = null): ?BeanReference {
-        if ($instanceIndex !== null && isset($this->indexedBeanReferences[(string)$instanceIndex])) {
-            return $this->indexedBeanReferences[(string)$instanceIndex];
+        if ($instanceIndex !== null) {
+            return $this->indexedBeanReferences[(string)$instanceIndex] ?? null;
         }
         return $this->beanReference;
     }

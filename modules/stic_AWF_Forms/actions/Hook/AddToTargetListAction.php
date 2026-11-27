@@ -108,7 +108,7 @@ class AddToTargetListAction extends HookBeanActionDefinition {
         $dataToLog = [
             ['key' => 'target_list_record', 'label' => $this->translate('TARGET_LIST_RECORD_TEXT'), 'value' => $lpoRef->beanId],
         ];
-        $actionResult->registerActionMetadata($bean, $dataToLog);
+        $actionResult->registerActionMetadata($bean, $dataToLog, $block->getInstanceIndexKey());
 
         return $actionResult;
     }

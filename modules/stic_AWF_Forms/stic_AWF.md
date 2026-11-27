@@ -222,7 +222,7 @@ La creación de un "Grupo" permite relacionar y repetir en el formulario uno o m
 * **Modelo de repetibilidad único (0..N)**: El sistema gestiona la repetición con dos parámetros por grupo, eliminando la distinción entre "bloque con instancias" y "grup de registros":
   * **Mínima de instancias** (`min_instances`): 0 u 1.
   * **Máxima de instancias** (`max_instances`): sin límite o un número concreto.
-  * Un grupo con **mínima 1** es *Obligatorio* (los campos se muestran al menos una vez). Un grupo con **mínima 0** es *Opcional*: se muestra inicialmente vacío y solo se guardan los datos si el visitante añade al menos una instancia; si no añade ninguna, sus acciones de guardado se **omiten** en el procesamiento en lugar de crear registros vacíos.
+  * Un grupo con **mínima 1** es *Obligatorio* (los campos se muestran al menos una vez). Un grupo con **mínima 0** es *Opcional*: se muestra inicialmente vacío y solo se guardan los datos si el visitante añade al menos una instancia; si no añade ninguna, sus acciones de guardado se **omiten** en el procesamiento en lugar de crear registros vacíos. Los bloques dependientes obligatorios tampoco se materializan ni se guardan mientras el grupo opcional esté desactivado. Un grupo obligatorio **no repetible** se renderiza y procesa una sola vez, sin botones de añadir/eliminar ni índices propios.
 
 * **Convertir un bloque en grupo repetible**: Desde la barra de acciones del bloque (Paso 2) hay un botón "+" que transforma cualquier bloque no repetible en la raíz de un grupo. El sistema crea automáticamente el grupo con:
   * Título por defecto formado por el nombre del bloque raíz + los nombres de los bloques hijo vinculados (p. ej.: *"Menor + Inscripción"*), editable en cualquier momento.
@@ -278,19 +278,19 @@ Inicialmente, el sistema incluye las siguientes acciones que se pueden añadir a
 * **Enviar notificación por correo / al usuario asignado**: Permite enviar emails automatizados utilizando las plantillas del CRM. Esta acción cubre dos grandes escenarios:
   * *Correos de respuesta al usuario (Auto-respondedor)*: Se puede enviar un correo de confirmación, agradecimiento o resguardo directamente a la persona visitante que ha rellenado el formulario (leyendo el email del registro recién creado).
   * *Avisos internos*: Se puede notificar a una dirección interna o al trabajador responsable del registro asignado.
-  * **Novedad destacada:** En ambos casos, el sistema procesa la plantilla inyectando la información de **todos los registros implicados en la respuesta**. Es decir, si un formulario crea a la vez una "Persona" y una "Inscripción", la plantilla de correo podrá interpretar dinámicamente variables de ambos módulos simultáneamente (siempre que sean módulos distintos), dotando a las comunicaciones de un contexto mucho más rico sin configuraciones adicionales.
+  * **Novedad destacada:** En ambos casos, el sistema procesa la plantilla inyectando la información de **todos los registros implicados en la instancia que genera el correo**. Es decir, si un formulario crea a la vez una "Persona" y una "Inscripción", la plantilla de correo podrá interpretar dinámicamente variables de ambos módulos simultáneamente (siempre que sean módulos distintos y pertenezcan a la misma instancia), dotando a las comunicaciones de un contexto mucho más rico sin configuraciones adicionales. Nunca se mezclan datos de repeticiones distintas.
 
 
 * **Añadir a LPO**: Añade el registro resultante a una Lista de Público Objetivo destino.
 
 * **Verificar sesión activa y permisos**: Bloquea el acceso y el procesamiento del formulario si no hay una sesión activa en el CRM o si el usuario no dispone de permisos explícitos de edición/creación para **todos y cada uno de los módulos** involucrados en los bloques de datos del formulario.
 
-* **Mostrar página con resumen de respuestas (Final)**: Redirige al usuario a una página que contiene el resumen de todas sus respuestas al formulario.
+* **Mostrar página con resumen de respuestas (Final)**: Redirige al usuario a una página que contiene el resumen de sus respuestas. El resumen respeta los campos colocados en el diseño, no duplica campos repetidos y muestra también los nombres de los ficheros adjuntos.
 
 * **Redireccionar a página (Final)**: Redirige al usuario a una página web externa una vez procesados los datos. Esta acción permite adjuntar datos recopilados en el formulario y enviarlos a la URL de destino (utilizando los métodos estándar GET o POST).
 
 #### Acciones Diferidas (Procesos en espera de eventos externos) ####
-Más allá de las acciones inmediatas, el sistema incorpora un potente motor de **acciones diferidas** que permite pausar temporalmente el procesamiento de una respuesta y esperar a que ocurra un evento externo antes de continuar. Este mecanismo resulta esencial para escenarios que requieren interacción asíncrona con servicios o personas externas al CRM:
+Más allá de las acciones inmediatas, el sistema incorpora un potente motor de **acciones diferidas** que permite pausar temporalmente el procesamiento de una respuesta y esperar a que ocurra un evento externo antes de continuar. Este mecanismo resulta esencial para escenarios que requieren interacción asíncrona con servicios o personas externas al CRM. La respuesta solo se marca como procesada cuando todos sus tickets diferidos han terminado. Las acciones terminales ligadas a una instancia se ejecutan con la primera fila que cumple sus condiciones y parámetros obligatorios. Los documentos adjuntos se conservan en almacenamiento temporal durable durante la espera y, si falla el guardado final, se elimina el registro parcial para permitir un reintento:
 
 * **Confirmación de correo electrónico**: Detiene el flujo de procesamiento y envía un correo con un enlace único al visitante. El sistema espera hasta que la persona hace clic en ese enlace para verificar su dirección de correo, momento en que se reanuda automáticamente el flujo y se continúa con el resto de acciones configuradas.
 
@@ -754,7 +754,7 @@ A diferencia de sistemas anteriores, los Formularios Web Avanzados ofrecen una a
   
   * **Datos y ejecución**: Muestra un resumen con la respuesta original recibida debidamente formateada de forma legible, así como el registro de ejecución de las acciones y los mensajes de error en caso de que el procesado haya fallado.
 
-* **Detalles de respuestas**: Cada respuesta cuenta con un listado estructurado de "detalles". Este componente guarda las respuestas de forma desglosada y está pensado específicamente para facilitar el análisis estadístico y la extracción de métricas. Además, para facilitar los informes y la comparativa de datos cruzados, los campos de valoración para encuestas (estrellas, emojis, NPS, etc.) normalizan su puntuación de forma automática y la guardan unificada en una escala del 0 al 100 en el campo *"Valor entero de la respuesta"*.
+* **Detalles de respuestas**: Cada respuesta cuenta con un listado estructurado de "detalles". Este componente guarda las respuestas de forma desglosada y está pensado específicamente para facilitar el análisis estadístico y la extracción de métricas. La clave de pregunta es estable (`Bloque.campo`) y el índice de instancia se guarda por separado, de modo que las repeticiones no dividen la serie histórica. Además, para facilitar los informes y la comparativa de datos cruzados, los campos de valoración para encuestas (estrellas, emojis, NPS, etc.) normalizan su puntuación de forma automática y la guardan unificada en una escala del 0 al 100 en el campo *"Valor entero de la respuesta"*.
 
 * **Vínculos (Trazabilidad en el CRM)**: Es el módulo encargado de documentar de forma granular qué impacto exacto ha tenido una respuesta dentro de la base de datos. Cada respuesta tiene uno o varios "Vínculos" asociados. Un vínculo informa de manera precisa sobre:
 
@@ -779,7 +779,7 @@ El nuevo sistema ofrece un grado de flexibilidad adicional para perfiles técnic
     * `UI/ExampleUIAction.php` — Acción de frontend que inyecta JS/CSS en el formulario (UIActionDefinition + IFrontendAction).
     * `Group/ExampleGroupAction.php` — Grupo de acciones reutilizables (GroupActionDefinition).
 
-* **Campos ocultos (vs Campos de servidor)**: Los formularios web avanzados incorporan los campos ocultos (`<input type="hidden">`). A diferencia de los "Campos de servidor" (que se configuran y viven de forma segura exclusivamente en el servidor del CRM), los campos ocultos sí se inyectan en el código HTML del formulario.
+* **Campos ocultos (vs Campos de servidor)**: Los formularios web avanzados incorporan los campos ocultos (`<input type="hidden">`). A diferencia de los "Campos de servidor" (que se configuran y viven de forma segura exclusivamente en el servidor del CRM), los campos ocultos sí se inyectan en el código HTML del formulario. Abrir o sincronizar el asistente conserva estos bloques y fragmentos para que sus valores no se pierdan.
   * *Casos de uso*: Son ideales para capturar información de contexto dinámica que no requiere intervención visual del usuario, como leer parámetros pasados por la URL (ej: `?origen=newsletter_abril`), capturar identificadores de seguimiento, o permitir que un script externo de la web rellene el campo automáticamente antes de enviar la respuesta.
 
 * **Edición HTML e inyección de nuevos campos**: El sistema genera un código HTML **limpio, indentado y optimizado para su legibilidad**, el cual puede ser descargado y editado libremente para su inserción en plataformas externas. Si se respeta la nomenclatura, el CRM entenderá perfectamente cualquier nuevo campo añadido manualmente en el código sin romper el formulario. Para añadir nuevos campos mapeados al CRM se usa el patrón `NombreBloque.NombreCampoCRM` y, para datos de uso exclusivo en la respuesta (campos no enlazados), el patrón `_detached.NombreBloque.NombreCampo`.

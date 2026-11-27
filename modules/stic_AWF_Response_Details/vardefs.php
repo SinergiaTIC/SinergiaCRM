@@ -91,6 +91,27 @@ $dictionary['stic_AWF_Response_Details'] = array(
     'len' => '255',
     'size' => '20',
   ),
+  'question_instance_index' =>
+  array (
+    'required' => false,
+    'name' => 'question_instance_index',
+    'vname' => 'LBL_QUESTION_INSTANCE_INDEX',
+    'type' => 'varchar',
+    'massupdate' => 0,
+    'no_default' => false,
+    'comments' => 'Outer-to-inner group instance indexes, colon-separated; null for scalar answers.',
+    'help' => '',
+    'importable' => 'true',
+    'duplicate_merge' => 'disabled',
+    'duplicate_merge_dom_value' => '0',
+    'audited' => false,
+    'inline_edit' => false,
+    'reportable' => true,
+    'unified_search' => false,
+    'merge_filter' => 'disabled',
+    'len' => '64',
+    'size' => '20',
+  ),
   'question_label' => 
   array (
     'required' => false,

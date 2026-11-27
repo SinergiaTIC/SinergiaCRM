@@ -75,47 +75,52 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
 
         // Duplicate detection logic
         $duplicateRules = $block->dataBlock->duplicate_detections ?? [];
-
-        // When a repeatable block submits several instances in the same request, a later
-        // instance may be a duplicate of one created earlier in this same request. Detect it
-        // against the block's indexed reference map (beans registered by previous instances)
-        // and apply the configured duplicate strategy.
-        if ($block->instanceIndex !== null && !empty($duplicateRules)) {
-            $indexedRefs = $block->dataBlock->getIndexedBeanReferences();
-            $currentInstanceKey = $block->getInstanceIndexKey();
-            foreach ($indexedRefs as $otherIndex => $ref) {
-                // Compare against the FULL instance key: array keys are strings ("0", "0:1")
-                if ((string)$otherIndex === $currentInstanceKey) continue;
-
-                $otherBean = BeanFactory::getBean($module, $ref->beanId);
-                if (!$otherBean) continue;
-
-                $matchedRule = self::matchDuplicateRule($block, $otherBean, $duplicateRules);
-
-                if ($matchedRule !== null) {
-                    $bean = $otherBean;
-                    $onDuplicateAction = $matchedRule->on_duplicate;
-
-                    $fieldLabels = [];
-                    foreach ($matchedRule->fields as $fName) {
-                        $fieldDef = $block->dataBlock->fields[$fName] ?? null;
-                        if ($fieldDef) {
-                            $label = !empty($fieldDef->label) ? $fieldDef->label : (!empty($fieldDef->text_original) ? $fieldDef->text_original : $fName);
-                            $fieldLabels[] = rtrim($label, ': ');
-                        } else {
-                            $fieldLabels[] = $fName;
-                        }
-                    }
-                    $matchedRuleFields = implode(', ', $fieldLabels);
-                    break;
-                }
-            }
-        }
+        $priorBeanCache = [];
 
         if ($bean === null) {
             foreach ($duplicateRules as $rule) {
                 // A rule with NO fields cannot identify a duplicate: ignore it
                 if (empty($rule->fields)) continue;
+
+                // Preserve configured rule priority across beans created earlier in this request.
+                if ($block->instanceIndex !== null) {
+                    $indexedRefs = $block->dataBlock->getIndexedBeanReferences();
+                    $currentInstanceKey = $block->getInstanceIndexKey();
+                    foreach ($indexedRefs as $otherIndex => $ref) {
+                        // Compare against the FULL instance key: array keys are strings ("0", "0:1")
+                        if ((string)$otherIndex === $currentInstanceKey) continue;
+
+                        if (!array_key_exists($otherIndex, $priorBeanCache)) {
+                            $priorBeanCache[$otherIndex] = BeanFactory::getBean($module, $ref->beanId);
+                        }
+                        $otherBean = $priorBeanCache[$otherIndex];
+                        if (!$otherBean) continue;
+
+                        $matchedRule = self::matchDuplicateRule($block, $otherBean, [$rule]);
+                        if ($matchedRule === null) continue;
+
+                        $bean = $otherBean;
+                        $onDuplicateAction = $matchedRule->on_duplicate;
+
+                        $fieldLabels = [];
+                        foreach ($matchedRule->fields as $fName) {
+                            $fieldDef = $block->dataBlock->fields[$fName] ?? null;
+                            if ($fieldDef) {
+                                $label = !empty($fieldDef->label) ? $fieldDef->label : (!empty($fieldDef->text_original) ? $fieldDef->text_original : $fName);
+                                $fieldLabels[] = rtrim($label, ': ');
+                            } else {
+                                $fieldLabels[] = $fName;
+                            }
+                        }
+                        $matchedRuleFields = implode(', ', $fieldLabels);
+                        break;
+                    }
+
+                    if ($bean !== null) {
+                        break;
+                    }
+                }
+
                 $scalarFields = [];
                 $emailValues = [];
                 $skipRule = false;
@@ -236,7 +241,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                     break; // Stop searching, we found one
                 }
             }
-        } // skip standard DB duplicate detection when intra-POST match was found
+        } // Rule-first search preserves configured priority across request and stored duplicates.
 
         // Action Logic (Create or Handle Duplicate) and performed modifications
         $modificationType = null;
@@ -345,7 +350,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
             $dataToLog = [
                 ['key' => 'duplicate_rule_matched', 'label' => $this->translate('DUPLICATE_RULE_MATCHED_TEXT'), 'value' => $matchedRuleFields],
             ];
-            $actionResult->registerActionMetadata($bean, $dataToLog);
+            $actionResult->registerActionMetadata($bean, $dataToLog, $block->getInstanceIndexKey());
         }
 
         // Log injected FK relationships
@@ -367,7 +372,7 @@ class SaveRecordAction extends HookDataBlockActionDefinition {
                 }
             }
             if (!empty($metadata)) {
-                $actionResult->registerActionMetadata($bean, $metadata);
+                $actionResult->registerActionMetadata($bean, $metadata, $block->getInstanceIndexKey());
             }
         }
 

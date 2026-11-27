@@ -116,7 +116,11 @@ class stic_AWFUtils {
     {
         $theme = $context->formConfig->layout->theme;
         $layout = $context->formConfig->layout;
+        $formConfig = $context->formConfig;
         $formData = $context->formData;
+        $layoutFields = self::collectSummaryFieldsFromSections($layout->structure, $formConfig);
+        $renderedScalarFields = [];
+        $renderedGroupRoots = [];
 
         // Default options
         $title = $options['title'] ?? '';
@@ -154,37 +158,23 @@ class stic_AWFUtils {
             $html .= "<table style=\"width: 100%;border-collapse: collapse;margin-bottom: 0px;\">";
             $hasFields = false;
 
-            // Elements of the section (data blocks): collect them RECURSIVELY,
-            // since the layout nests the blocks inside host sections (Paso 4
-            // composite model). Field elements (unbundled blocks) also count as
-            // block references; blocks are de-duplicated per section walk.
-            $collectBlockElements = function ($containerSection) use (&$collectBlockElements) {
-                $found = [];
-                foreach ($containerSection->elements as $element) {
-                    if ($element->type === 'datablock' || $element->type === 'field') {
-                        $found[$element->ref_id] = true;
-                    } elseif ($element->type === 'section') {
-                        foreach ($collectBlockElements($element) as $refId => $v) {
-                            $found[$refId] = true;
-                        }
-                    }
-                }
-                return $found;
-            };
-            $sectionBlockIds = $collectBlockElements($section);
+            // Respect field-level layout selections and de-duplicate fields
+            // across sections. Group descendants are rendered by their root.
+            $sectionFields = self::collectSummaryFields($section, $formConfig);
 
-            foreach (array_keys($sectionBlockIds) as $blockId) {
+            foreach ($sectionFields as $blockId => $fieldNames) {
                 $block = $context->getDataBlockById($blockId);
                 if (!$block) continue;
 
                 // Enclosed blocks are rendered by their loop owner.
-                if (self::hasEnclosingGroupLoop($block, $context->formConfig)) continue;
+                if (self::hasEnclosingGroupLoop($block, $formConfig)) continue;
 
                 // Repeatable and optional groups render as per-instance rows in the summary.
                 if ($block->isRepeatable() || $block->isOptional()) {
-                    // Use transitive descendants (multi-level branches);
-                    // config comes from the context ($formConfig was never defined in this scope).
-                    $formConfig = $context->formConfig;
+                    if (isset($renderedGroupRoots[$block->id])) continue;
+                    $renderedGroupRoots[$block->id] = true;
+
+                    // Use transitive descendants (multi-level branches).
                     $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '', $context->uploadedFiles);
                     $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
                     $instances = DataBlockResolved::resolveInstances($block, $formData, $summaryContext);
@@ -196,16 +186,8 @@ class stic_AWFUtils {
                         $instanceNumber++;
 
                         foreach ($groupBlocks as $groupBlock) {
-                            // Skip blocks with no visible (non-fixed, labelled) fields:
-                            // they would render empty instance sub-rows
-                            $hasVisibleFields = false;
-                            foreach ($groupBlock->fields as $visibleCheck) {
-                                if ($visibleCheck->type_field !== DataBlockFieldType::FIXED && !empty($visibleCheck->label)) {
-                                    $hasVisibleFields = true;
-                                    break;
-                                }
-                            }
-                            if (!$hasVisibleFields) continue;
+                            $selectedFieldNames = $layoutFields[$groupBlock->id] ?? [];
+                            if (empty($selectedFieldNames)) continue;
 
                             $groupBlockLoopDepth = $groupBlock->getLoopDepth();
                             // Nested loops: one row per fully resolved inner instance.
@@ -217,7 +199,9 @@ class stic_AWFUtils {
                                     $html .= "<tr><td colspan=\"2\" style=\"padding: 6px 12px 6px 28px;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.03);border-bottom: 1px solid {$borderColor};\">" . htmlspecialchars($innerLabel) . "</td></tr>";
                                     $hasFields = true;
                                     $innerNumber++;
-                                    foreach ($groupBlock->fields as $fieldDef) {
+                                    foreach ($selectedFieldNames as $fieldName) {
+                                        $fieldDef = $groupBlock->fields[$fieldName] ?? null;
+                                        if (!$fieldDef) continue;
                                         // Only show visible fields in the form
                                         if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                                         // If it has no label, it is not displayed
@@ -232,7 +216,9 @@ class stic_AWFUtils {
                                 continue;
                             }
 
-                            foreach ($groupBlock->fields as $fieldDef) {
+                            foreach ($selectedFieldNames as $fieldName) {
+                                $fieldDef = $groupBlock->fields[$fieldName] ?? null;
+                                if (!$fieldDef) continue;
                                 // Only show visible fields in the form
                                 if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                                 // If it has no label, it is not displayed
@@ -255,7 +241,9 @@ class stic_AWFUtils {
                     continue;
                 }
 
-                foreach ($block->fields as $fieldDef) {
+                foreach ($fieldNames as $fieldName) {
+                    $fieldDef = $block->fields[$fieldName] ?? null;
+                    if (!$fieldDef) continue;
                     // Only show visible fields in the form
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) {
                         continue;
@@ -264,6 +252,10 @@ class stic_AWFUtils {
                     if (empty($fieldDef->label)) {
                         continue;
                     }
+
+                    $fieldKey = $block->id . '::' . $fieldName;
+                    if (isset($renderedScalarFields[$fieldKey])) continue;
+                    $renderedScalarFields[$fieldKey] = true;
 
                     $formKey = $fieldDef->getPhpKey();
 
@@ -491,7 +483,11 @@ class stic_AWFUtils {
         }
         
         $layout = $context->formConfig->layout;
-        $formData = $context->formData; 
+        $formConfig = $context->formConfig;
+        $formData = $context->formData;
+        $layoutFields = self::collectSummaryFieldsFromSections($layout->structure, $formConfig);
+        $renderedScalarFields = [];
+        $renderedGroupRoots = [];
         
         foreach ($layout->structure as $section) {
             
@@ -505,16 +501,19 @@ class stic_AWFUtils {
                 $text .= "--------------------\n";
             }
 
-            foreach (array_keys(self::collectSummaryBlockIds($section)) as $blockId) {
+            $sectionFields = self::collectSummaryFields($section, $formConfig);
+            foreach ($sectionFields as $blockId => $fieldNames) {
                 $block = $context->getDataBlockById($blockId);
                 if (!$block) continue;
 
                 // Enclosed blocks are rendered by their loop owner.
-                if (self::hasEnclosingGroupLoop($block, $context->formConfig)) continue;
+                if (self::hasEnclosingGroupLoop($block, $formConfig)) continue;
 
                 // Repeatable and optional groups render as per-instance rows.
                 if ($block->isRepeatable() || $block->isOptional()) {
-                    $formConfig = $context->formConfig;
+                    if (isset($renderedGroupRoots[$block->id])) continue;
+                    $renderedGroupRoots[$block->id] = true;
+
                     $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
                     $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '', $context->uploadedFiles);
                     $instances = DataBlockResolved::resolveInstances($block, $formData, $summaryContext);
@@ -524,15 +523,8 @@ class stic_AWFUtils {
                         $instanceNumber++;
 
                         foreach ($groupBlocks as $groupBlock) {
-                            // Skip blocks with no visible (non-fixed, labelled) fields
-                            $hasVisibleFields = false;
-                            foreach ($groupBlock->fields as $visibleCheck) {
-                                if ($visibleCheck->type_field !== DataBlockFieldType::FIXED && !empty($visibleCheck->label)) {
-                                    $hasVisibleFields = true;
-                                    break;
-                                }
-                            }
-                            if (!$hasVisibleFields) continue;
+                            $selectedFieldNames = $layoutFields[$groupBlock->id] ?? [];
+                            if (empty($selectedFieldNames)) continue;
 
                             $groupBlockLoopDepth = $groupBlock->getLoopDepth();
                             if ($groupBlockLoopDepth >= 2) {
@@ -542,7 +534,9 @@ class stic_AWFUtils {
                                 foreach ($subInstances as $subInstance) {
                                     $text .= "  " . rtrim($groupBlock->text, ' :') . " #" . $innerNumber . "\n";
                                     $innerNumber++;
-                                    foreach ($groupBlock->fields as $fieldDef) {
+                                    foreach ($selectedFieldNames as $fieldName) {
+                                        $fieldDef = $groupBlock->fields[$fieldName] ?? null;
+                                        if (!$fieldDef) continue;
                                         if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                                         if (empty($fieldDef->label)) continue;
                                         $value = $subInstance->getFieldValue($fieldDef->name)?->value
@@ -553,12 +547,18 @@ class stic_AWFUtils {
                                 }
                             } else {
                                 // Depth-1: fields from the instance matrix (Block[i][field])
-                                foreach ($groupBlock->fields as $fieldDef) {
+                                foreach ($selectedFieldNames as $fieldName) {
+                                    $fieldDef = $groupBlock->fields[$fieldName] ?? null;
+                                    if (!$fieldDef) continue;
                                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                                     if (empty($fieldDef->label)) continue;
                                     $isUnlinked = $fieldDef->type_field === DataBlockFieldType::UNLINKED;
                                     $blockArrayKey = ($isUnlinked ? '_detached_' : '') . $groupBlock->name;
                                     $value = $formData[$blockArrayKey][$instance->instanceIndex][$fieldDef->name] ?? '';
+                                    if ($fieldDef->type_in_form === 'file') {
+                                        $fileKey = $fieldDef->getFileKeyForIndexes([$instance->instanceIndex]);
+                                        $value = $context->uploadedFiles[$fileKey]['name'] ?? '';
+                                    }
                                     $text .= "  " . self::formatSummaryTextValue($fieldDef, $value) . "\n";
                                 }
                             }
@@ -567,14 +567,23 @@ class stic_AWFUtils {
                     continue;
                 }
 
-                foreach ($block->fields as $fieldDef) {
+                foreach ($fieldNames as $fieldName) {
+                    $fieldDef = $block->fields[$fieldName] ?? null;
+                    if (!$fieldDef) continue;
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                     if (empty($fieldDef->label)) continue;
+
+                    $fieldKey = $block->id . '::' . $fieldName;
+                    if (isset($renderedScalarFields[$fieldKey])) continue;
+                    $renderedScalarFields[$fieldKey] = true;
 
                     $formKey = $fieldDef->getPhpKey();
 
                     // Value to display
                     $value = $formData[$formKey] ?? '';
+                    if ($fieldDef->type_in_form === 'file' && isset($context->uploadedFiles[$formKey]['name'])) {
+                        $value = $context->uploadedFiles[$formKey]['name'];
+                    }
                     $text .= self::formatSummaryTextValue($fieldDef, $value) . "\n";
                 }
             }
@@ -599,23 +608,60 @@ class stic_AWFUtils {
     }
 
     /**
-     * Recursively collects the data-block IDs referenced by a section's
-     * elements (datablock AND unbundled field elements), walking nested
-     * sections, de-duplicated per section walk.
-     * @return array<string, true>
+     * Collects the selected summary fields from layout sections. A whole block
+     * selects every non-FIXED field; a field element selects only field_name.
+     * The first occurrence wins, so duplicates across sections render once.
+     *
+     * @param FormLayoutSection[] $sections
+     * @return array<string, string[]> block ID => ordered field names
      */
-    private static function collectSummaryBlockIds($containerSection): array {
+    private static function collectSummaryFieldsFromSections(array $sections, FormConfig $config): array
+    {
         $found = [];
-        foreach ($containerSection->elements as $element) {
-            if ($element->type === 'datablock' || $element->type === 'field') {
-                $found[$element->ref_id] = true;
-            } elseif ($element->type === 'section') {
-                foreach (self::collectSummaryBlockIds($element) as $refId => $v) {
-                    $found[$refId] = true;
+        $walk = function (array $elements) use (&$walk, &$found, $config): void {
+            foreach ($elements as $element) {
+                if ($element->type === 'section') {
+                    $walk($element->elements);
+                    continue;
+                }
+                if ($element->type !== 'datablock' && $element->type !== 'field') {
+                    continue;
+                }
+
+                $block = $config->data_blocks[$element->ref_id] ?? null;
+                if (!$block) {
+                    continue;
+                }
+
+                if ($element->type === 'datablock') {
+                    foreach ($block->fields as $fieldName => $fieldDef) {
+                        if ($fieldDef->type_field === DataBlockFieldType::FIXED) {
+                            continue;
+                        }
+                        $found[$block->id][$fieldName] = true;
+                    }
+                    continue;
+                }
+
+                $fieldName = $element->field_name;
+                $fieldDef = $block->fields[$fieldName] ?? null;
+                if ($fieldDef && $fieldDef->type_field !== DataBlockFieldType::FIXED) {
+                    $found[$block->id][$fieldName] = true;
                 }
             }
+        };
+
+        foreach ($sections as $section) {
+            $walk($section->elements);
         }
-        return $found;
+
+        return array_map('array_keys', $found);
+    }
+
+    /** Collects selected fields for one section, including nested sections. */
+    private static function collectSummaryFields($section, FormConfig $config): array
+    {
+        return self::collectSummaryFieldsFromSections([$section], $config);
     }
 
     /**
@@ -866,35 +912,8 @@ class stic_AWFUtils {
         $attachments = $emailTemplate->getAttachments() ?: [];
 
 
-        // Prepare the array of Beans for the parser
-        $beansForTemplate = [];
-        // The main Context Bean (the recipient)
-        if ($parentBeanForArchive && isset($parentBeanForArchive->module_dir)) {
-            $beansForTemplate[] = $parentBeanForArchive;
-        }
-        // The Response Bean (to access $stic_awf_responses_html_summary)
-        if ($context->responseBean) {
-            $beansForTemplate[] = $context->responseBean;
-        }
-
-        // Add all other generated Beans from the form context (DataBlocks)
-        // We only add them if a bean of that module hasn't been added yet to avoid unpredictable overwrites
-        $loadedModules = array_map(function($b) { return $b->module_dir; }, $beansForTemplate);
-        foreach ($context->actionResults as $result) {
-            foreach ($result->modifiedBeans as $modBean) {
-                // Ignore metadata entries that represent action logs, not CRM records.
-                if ($modBean->modificationType === BeanModificationType::METADATA) continue;
-
-                // Ignore beans from modules that are already loaded to avoid unpredictable overwrites in the template parser
-                if (in_array($modBean->moduleName, $loadedModules)) continue;
-
-                $loadedBean = $modBean->getBean();
-                if ($loadedBean) {
-                    $beansForTemplate[] = $loadedBean;
-                    $loadedModules[] = $modBean->moduleName;
-                }
-            }
-        }
+        // Select one consistent bean per module for the template parser.
+        $beansForTemplate = self::selectBeansForTemplate($context, $parentBeanForArchive);
 
         // Parse the email template using all relevant beans
         require_once 'SticInclude/Utils.php';
@@ -963,6 +982,84 @@ class stic_AWFUtils {
                 $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.':  Email sent but error archiving: ' . $e->getMessage());
             }
         }
+    }
+
+    /**
+     * Selects one bean per module for email template parsing.
+     *
+     * The recipient/parent bean has highest priority. Grouped executions use
+     * only modifications from the active instance, with scalar modifications
+     * as a fallback for modules that have no exact instance match. Scalar
+     * executions preserve the legacy first-bean-per-module behavior and never
+     * import indexed beans from an unrelated instance.
+     *
+     * @param ExecutionContext $context
+     * @param ?SugarBean $parentBeanForArchive
+     * @return SugarBean[]
+     */
+    private static function selectBeansForTemplate(ExecutionContext $context, ?SugarBean $parentBeanForArchive): array
+    {
+        // STIC-Custom OC - 20261127 - Keep email template beans in the active instance scope
+        $beansForTemplate = [];
+        $loadedModules = [];
+        $addBean = function (?SugarBean $bean) use (&$beansForTemplate, &$loadedModules): bool {
+            $moduleDir = $bean?->module_dir ?? null;
+            if (!is_string($moduleDir) || $moduleDir === '' || isset($loadedModules[$moduleDir])) {
+                return false;
+            }
+            $beansForTemplate[] = $bean;
+            $loadedModules[$moduleDir] = true;
+            return true;
+        };
+
+        // The parser lets later beans overwrite macros from the same module,
+        // so the recipient and response keep priority over action results.
+        $addBean($parentBeanForArchive);
+        $addBean($context->responseBean);
+
+        $activeInstanceKey = $context->getInstanceIndexKey();
+        $instanceCandidates = [];
+        $scalarCandidates = [];
+        foreach ($context->actionResults as $result) {
+            foreach ($result->modifiedBeans as $modBean) {
+                if ($modBean->modificationType === BeanModificationType::METADATA) {
+                    continue;
+                }
+
+                $moduleName = $modBean->moduleName;
+                if ($moduleName === '' || isset($loadedModules[$moduleName])) {
+                    continue;
+                }
+
+                if ($modBean->instanceIndex === null) {
+                    $scalarCandidates[$moduleName][] = $modBean;
+                } elseif ($activeInstanceKey !== null && $modBean->instanceIndex === $activeInstanceKey) {
+                    $instanceCandidates[$moduleName][] = $modBean;
+                }
+            }
+        }
+
+        $addCandidates = function (array $candidates) use (&$addBean, &$loadedModules): void {
+            foreach ($candidates as $moduleName => $moduleCandidates) {
+                if (isset($loadedModules[$moduleName])) {
+                    continue;
+                }
+                foreach ($moduleCandidates as $candidate) {
+                    $loadedBean = $candidate->getBean();
+                    if ($loadedBean && $addBean($loadedBean)) {
+                        break;
+                    }
+                }
+            }
+        };
+
+        if ($activeInstanceKey !== null) {
+            $addCandidates($instanceCandidates);
+        }
+        $addCandidates($scalarCandidates);
+
+        return $beansForTemplate;
+        // END STIC-Custom OC
     }
 
     /** 
@@ -1533,6 +1630,7 @@ class stic_AWFUtils {
 
         $deferredContext = DeferredContextData::fromJson($ticket->context_data);
         $context->deferredContext = $deferredContext;
+        $deferredContext->restoreUploadedFiles($context);
 
         // Datablock references to beans (see applyDeferredBlockReferences)
         self::applyDeferredBlockReferences($context, $deferredContext);
@@ -1560,15 +1658,72 @@ class stic_AWFUtils {
             if ($block === null) {
                 continue;
             }
-            if ($index === null && ($block->isRepeatable() || !empty($block->group_root))) {
-                // Legacy snapshot: repeatable members without an index key cannot
-                // be restored (the instance they belong to is unknown)
+            if ($index === null && $block->getLoopDepth() > 0) {
+                // Legacy snapshot: looped members without an index key cannot
+                // be restored (the instance they belong to is unknown).
                 continue;
             }
             $block->setBeanReference($beanId, $index);
         }
         if (!empty($deferredContext->instanceIndexes)) {
             $context->setInstanceIndexes($deferredContext->instanceIndexes);
+        }
+    }
+
+    /**
+     * Aggregate all deferred tickets before marking a response as processed.
+     * Pending work always keeps the response waiting.
+     */
+    public static function aggregateDeferredResponseStatus(array $ticketStatuses, string $fallbackStatus): string
+    {
+        $statuses = array_values(array_unique(array_map(
+            fn ($status) => strtolower(trim((string)$status)),
+            $ticketStatuses
+        )));
+        if (empty($statuses)) {
+            return $fallbackStatus;
+        }
+
+        $activeStatuses = ['pending', 'processing'];
+        $failedStatuses = ['failed', 'cancelled'];
+        $successStatuses = ['resolved', 'processed'];
+
+        if (array_intersect($activeStatuses, $statuses)) {
+            return 'awaiting_action';
+        }
+        if (array_intersect($failedStatuses, $statuses)) {
+            return 'error';
+        }
+        if (array_diff($statuses, $successStatuses)) {
+            return 'awaiting_action';
+        }
+        return 'processed';
+    }
+
+    /** 
+     * Recalculates and persists the response status from all its deferred tickets. 
+     */
+    public static function syncResponseDeferredStatus(?SugarBean $responseBean, string $fallbackStatus): void
+    {
+        if (!$responseBean || empty($responseBean->id)) {
+            return;
+        }
+
+        $db = DBManagerFactory::getInstance();
+        $safeResponseId = $db->quote($responseBean->id);
+        $result = $db->query(
+            "SELECT status FROM stic_awf_deferred_tickets
+             WHERE stic_awf_responses_id_c = '{$safeResponseId}' AND deleted = 0"
+        );
+        $statuses = [];
+        while (($row = $db->fetchByAssoc($result)) !== false && $row !== null) {
+            $statuses[] = $row['status'] ?? '';
+        }
+
+        $newStatus = self::aggregateDeferredResponseStatus($statuses, $fallbackStatus);
+        if ($responseBean->status !== $newStatus) {
+            $responseBean->status = $newStatus;
+            $responseBean->save();
         }
     }
 
@@ -1632,6 +1787,7 @@ class stic_AWFUtils {
         // Check if the ticket has already been processed by a concurrent thread (e.g. Webhook)
         if ($ticketBean && $ticketBean->status === 'processed') {
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The sub-flow for this ticket has already been executed in the past. Delegating only the UI.");
+            stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'processed');
 
             // Delegate UI rendering directly to the flow executor safely
             if (!$isCli) {
@@ -1647,8 +1803,7 @@ class stic_AWFUtils {
             $lastResult = $executor->executeFlow($flow, $errorFlow);
             if (!$lastResult->isError()) {
                 if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
-                    $context->responseBean->status = 'processed';
-                    $context->responseBean->save();
+                    stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'processed');
                 }
                 if ($ticketBean && $ticketBean->status === 'resolved') {
                     $ticketBean->status = 'processed';
@@ -1659,8 +1814,7 @@ class stic_AWFUtils {
             // Error flow execution
             $lastResult = $executor->executeFlow($flow);
             if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
-                $context->responseBean->status = 'error';
-                $context->responseBean->save();
+                stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'error');
             }
             if ($ticketBean) {
                 $ticketBean->status = 'failed';
@@ -1698,6 +1852,7 @@ class stic_AWFUtils {
 
             if ($isSuccess && $ticketStatus === 'processed' && !$isCli) {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The ticket has already been processed. Ticket ID: {$ticket->id}");
+                stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'processed');
                 
                 $customTitle = $context->deferredContext?->alreadyProcessedTitle;
                 $customMsg = $context->deferredContext?->alreadyProcessedMessage;

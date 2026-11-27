@@ -47,6 +47,19 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * Helper to check if a block has any input that must be emitted.
+     * Hidden fields count because they still carry submitted values; fixed
+     * fields do not because they are resolved from the form configuration.
+     */
+    private static function blockHasRenderableInputs(FormDataBlock $block): bool {
+        foreach ($block->fields as $field) {
+            if ($field->type_field === DataBlockFieldType::FIXED) continue;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Helper to check if a group has any renderable field
      */
     private static function groupHasRenderableFields(array $groupBlocks): bool {
@@ -87,14 +100,14 @@ class FormHtmlGeneratorService {
     }
 
     /**
-     * Helper to check if a block or ANY of its descendants (subgroup tree)
-     * has renderable fields. Mirrors the design-side filtering: a group head is
-     * kept if the root OR any descendant has at least one visible field.
+     * Whether a block or any descendant has an input to emit. Unlike the
+     * visible-field predicate, this includes hidden fields so their values are
+     * not lost inside a group that renders for another visible member.
      */
-    private static function groupSubtreeHasRenderableFields(FormDataBlock $block, FormConfig $config): bool {
-        if (self::blockHasRenderableFields($block) || self::isServerDataOptionalGroup($block, $config)) return true;
+    private static function groupSubtreeHasRenderableInputs(FormDataBlock $block, FormConfig $config): bool {
+        if (self::blockHasRenderableInputs($block) || self::isServerDataOptionalGroup($block, $config)) return true;
         foreach ($config->getGroupChildren($block) as $child) {
-            if (self::groupSubtreeHasRenderableFields($child, $config)) return true;
+            if (self::groupSubtreeHasRenderableInputs($child, $config)) return true;
         }
         return false;
     }
@@ -598,7 +611,10 @@ class FormHtmlGeneratorService {
             }
         } else if ($currentGroupRootId !== null && empty($section->groupTemplate)) {
             // Legacy nested hosts may announce a subgroup; the loop's own template is structural.
-            $groupRootBlock = $this->findGroupRootInSection($config, $section, $currentGroupRootId);
+            $currentRoot = $config->data_blocks[$currentGroupRootId] ?? null;
+            if (!$currentRoot || $currentRoot->isRepeatable() || $currentRoot->isOptional()) {
+                $groupRootBlock = $this->findGroupRootInSection($config, $section, $currentGroupRootId);
+            }
         }
 
         if ($groupRootBlock) {
@@ -611,6 +627,10 @@ class FormHtmlGeneratorService {
         }
 
         if ($groupRootBlock) {
+            // Simple mandatory groups have no loop in the backend contract. Render them once with scalar field names.
+            if (!$groupRootBlock->isRepeatable() && !$groupRootBlock->isOptional()) {
+                return $this->generateSimpleGroupHtml($groupRootBlock, $section, $config, $theme, $instanceIndexVar, $outerIndexVars);
+            }
             // Groups always render with their own chrome (the loop provides it)
             return $this->generateGroupHtml($groupRootBlock, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
         }
@@ -1135,6 +1155,25 @@ class FormHtmlGeneratorService {
             return $this->renderField($field, $theme, $currentGroupRootId !== null ? $instanceIndexVar : null, $outerIndexVars);
         }
 
+        $currentRoot = $currentGroupRootId !== null ? ($config->data_blocks[$currentGroupRootId] ?? null) : null;
+        $isSimpleGroupContext = $currentRoot !== null
+            && !$currentRoot->isRepeatable()
+            && !$currentRoot->isOptional();
+        if ($isSimpleGroupContext) {
+            if ($block->isRepeatable() || $block->isOptional()) {
+                return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $parentSection, $outerIndexVars);
+            }
+            if ($parentSection !== null && self::sectionIsDedicatedBlockHost($parentSection, $block->id)) {
+                $html = '';
+                foreach ($block->fields as $field) {
+                    if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                    $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
+                }
+                return $html;
+            }
+            return $this->renderBlockPanel($block, $theme, $instanceIndexVar, $outerIndexVars);
+        }
+
         $isGroupHead = $block->isRepeatable() || $block->isOptional() || !empty($config->getGroupChildren($block));
 
         if ($isGroupHead) {
@@ -1231,14 +1270,14 @@ class FormHtmlGeneratorService {
      */
     private static function elementHasRenderableContent(FormLayoutElement $element, FormConfig $config, ?string $currentGroupRootId = null): bool {
         if ($element->type === 'field') {
-            // Unbundled field element: renderable only when the field exists and is
-            // actually rendered (fixed/hidden fields produce no visible HTML)
+            // Unbundled field element: fixed fields are resolved server-side;
+            // hidden fields still produce an input and must not be dropped.
             $block = $config->data_blocks[$element->ref_id] ?? null;
             if (!$block) return false;
             if ($currentGroupRootId !== null && !self::blockBelongsToGroupInstance($block, $config, $currentGroupRootId)) return false;
             $field = $block->fields[$element->field_name] ?? null;
             if (!$field) return false;
-            return $field->type_field !== DataBlockFieldType::FIXED && $field->type_in_form !== 'hidden';
+            return $field->type_field !== DataBlockFieldType::FIXED;
         }
         if ($element->type !== 'datablock') return true;
         $block = $config->data_blocks[$element->ref_id] ?? null;
@@ -1260,7 +1299,7 @@ class FormHtmlGeneratorService {
             return self::groupHasRenderableContent($groupBlocks, $config);
         }
 
-        return self::blockHasRenderableFields($block);
+        return self::blockHasRenderableInputs($block);
     }
 
     private static function resolveGroupRootBlock(FormConfig $config, string $blockId): ?FormDataBlock {
@@ -1425,19 +1464,71 @@ class FormHtmlGeneratorService {
             return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
         }
         $html = "";
-        // Root block fields (scalar rendering)
+        // Root block fields (scalar rendering, or enclosing-loop aware when this
+        // simple group is nested inside a repeatable/optional parent).
         foreach ($block->fields as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
-            $html .= $this->renderField($field, $theme);
+            $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
         }
-        // Simple group with children: render children inline (static, no instance index)
+        // Simple group with children: render descendants inline. Looped children
+        // keep their own instance loop; simple descendants remain scalar.
         foreach ($children as $childBlock) {
-            // Skip blocks with no renderable fields anywhere in their subtree
-            // (matches the design filtering: empty blocks/groups are not shown)
-            if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
-            $html .= $this->renderBlockPanel($childBlock, $theme);
+            // Skip blocks with no input to emit anywhere in their subtree.
+            // Hidden fields count because they still carry submitted values.
+            if (!self::groupSubtreeHasRenderableInputs($childBlock, $config)) continue;
+            if ($childBlock->isRepeatable() || $childBlock->isOptional()) {
+                $html .= $this->generateGroupHtml($childBlock, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
+            } else {
+                $html .= $this->generateDataBlockHtml($childBlock, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
+            }
         }
         return $html;
+    }
+
+    /**
+     * Render a mandatory simple group once, using the backend's scalar naming contract while preserving its layout chrome.
+     */
+    private function generateSimpleGroupHtml(FormDataBlock $rootBlock, FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar, array $outerIndexVars): string {
+        $templateSection = null;
+        foreach ($section->elements as $element) {
+            if ($element instanceof FormLayoutSection && (!empty($element->groupTemplate) || $element->containerType === 'tab_item')) {
+                $templateSection = $element;
+                break;
+            }
+        }
+        $contentSection = $templateSection ?? $section;
+
+        $staticSection = new FormLayoutSection();
+        $staticSection->id = $section->id;
+        $staticSection->type = 'section';
+        $staticSection->title = $section->title;
+        $staticSection->subtitle = $section->subtitle;
+        $staticSection->containerType = $section->containerType;
+        $staticSection->showTitle = $section->showTitle;
+        $staticSection->is_custom_title = $section->is_custom_title;
+        $staticSection->isCollapsible = $section->isCollapsible;
+        $staticSection->isCollapsed = $section->isCollapsed;
+        $staticSection->toggle_label = $section->toggle_label;
+        $staticSection->add_button_label = $section->add_button_label;
+        $staticSection->remove_button_label = $section->remove_button_label;
+        $staticSection->elements = $contentSection->elements;
+
+        // Legacy/manual layouts may omit whole block hosts. Add only missing
+        // blocks so every descendant is emitted once with scalar names.
+        $groupBlocks = array_merge([$rootBlock], $config->getGroupDescendants($rootBlock));
+        foreach ($groupBlocks as $groupBlock) {
+            if (self::sectionContainsElementForBlock($staticSection, $groupBlock->id)) continue;
+            if (!self::groupSubtreeHasRenderableInputs($groupBlock, $config)
+                && !self::isServerDataOptionalGroup($groupBlock, $config)) {
+                continue;
+            }
+            $staticSection->elements[] = FormLayoutElement::fromJsonArray($staticSection, [
+                'type' => 'datablock',
+                'ref_id' => $groupBlock->id,
+            ]);
+        }
+
+        return $this->renderSectionNode($staticSection, $config, $theme, $instanceIndexVar, $rootBlock->id, $outerIndexVars, true);
     }
 
     /**
@@ -2238,12 +2329,17 @@ class FormHtmlGeneratorService {
         }
 
         // Older or manually edited configurations can leave the group template
-        // empty after a child block is assigned to its group. In that case the
-        // root fallback above makes $inner non-empty and would suppress the
-        // flat root + children fallback below, silently losing every child.
-        if ($section !== null && empty($section->elements)) {
+        // empty, or a legacy host can contain only the root element. In
+        // those cases render children not already represented; otherwise a
+        // hidden-only root input can suppress visible members. Designated group
+        // templates keep their existing representation to avoid duplicates.
+        $isLegacyHost = $section !== null
+            && empty($section->groupTemplate)
+            && self::sectionContainsElementForBlock($section, $rootBlock->id);
+        if ($section !== null && (empty($section->elements) || $isLegacyHost)) {
             foreach ($children as $childBlock) {
-                if (!self::groupSubtreeHasRenderableFields($childBlock, $config)
+                if (self::sectionContainsElementForBlock($section, $childBlock->id)) continue;
+                if (!self::groupSubtreeHasRenderableInputs($childBlock, $config)
                     && !self::isServerDataOptionalGroup($childBlock, $config)) {
                     continue;
                 }
@@ -2264,7 +2360,7 @@ class FormHtmlGeneratorService {
         // without nested sections
         $inner = $this->renderBlockInstancePanel($rootBlock, $theme, $instanceVar, $contentOuterVars);
         foreach ($children as $childBlock) {
-            if (!self::groupSubtreeHasRenderableFields($childBlock, $config)) continue;
+            if (!self::groupSubtreeHasRenderableInputs($childBlock, $config)) continue;
             $childHasChildren = !empty($config->getGroupChildren($childBlock));
             $childIsGroupHead = $childBlock->isRepeatable() || $childBlock->isOptional() || $childHasChildren;
             if ($childIsGroupHead) {
@@ -2306,9 +2402,16 @@ class FormHtmlGeneratorService {
      * @param FormTheme $theme The form theme
      * @return string Generated HTML for the block panel
      */
-    private function renderBlockPanel(FormDataBlock $block, FormTheme $theme): string {
-        // A block with no renderable fields renders nothing (empty sub-section)
-        if (!self::blockHasRenderableFields($block)) return "";
+    private function renderBlockPanel(FormDataBlock $block, FormTheme $theme, ?string $instanceIndexVar = null, array $outerIndexVars = []): string {
+        if (!self::blockHasRenderableInputs($block)) return "";
+        if (!self::blockHasRenderableFields($block)) {
+            $html = '';
+            foreach ($block->fields as $field) {
+                if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
+            }
+            return $html;
+        }
         $blockTitle = htmlspecialchars($block->text, ENT_QUOTES, 'UTF-8');
 
         $html = "<div class='awf-block-panel mb-3'>" . $this->newLine('+');
@@ -2318,7 +2421,7 @@ class FormHtmlGeneratorService {
             {
                 foreach ($block->fields as $field) {
                     if ($field->type_field === DataBlockFieldType::FIXED) continue;
-                    $html .= $this->renderField($field, $theme);
+                    $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
                 }
             }
             $html .= "</div>" . $this->newLine('-');
@@ -2354,9 +2457,8 @@ class FormHtmlGeneratorService {
         return $html;
     }
 
-    /** Emits a hidden row marker for every group instance. */
+    /** Emits a hidden row marker for every group instance, even without fields. */
     private function renderBlockInstanceMarker(FormDataBlock $block, string $instanceIndexVar, array $outerIndexVars): string {
-        if (empty($block->fields)) return '';
         $vars = array_merge($outerIndexVars, [$instanceIndexVar]);
         $nameExpr = "'{$block->name}[' + " . implode(" + '][' + ", $vars) . " + '][_awf_server_data]'";
         return "<input type='hidden' :name=\"{$nameExpr}\" value='1'>" . $this->newLine();
@@ -2365,8 +2467,16 @@ class FormHtmlGeneratorService {
     /** Renders instance fields without adding another block panel. */
     private function renderBlockInstanceFields(FormDataBlock $block, FormTheme $theme, string $instanceIndexVar, array $outerIndexVars = []): string {
         $marker = $this->renderBlockInstanceMarker($block, $instanceIndexVar, $outerIndexVars);
-        if (!self::blockHasRenderableFields($block)) {
+        if (!self::blockHasRenderableInputs($block)) {
             return $marker;
+        }
+        if (!self::blockHasRenderableFields($block)) {
+            $html = $marker;
+            foreach ($block->fields as $field) {
+                if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
+            }
+            return $html;
         }
         $html = $marker . "<div class='awf-grid-fields'>" . $this->newLine('+');
         {
@@ -2444,6 +2554,23 @@ class FormHtmlGeneratorService {
     }
 
     /**
+     * Returns structural metadata used by client-side condition resolution.
+     * The logical field key never contains instance indexes; loop indexes are
+     * bound separately to the real Alpine variables for this control.
+     */
+    private function getFieldScopeAttributes(FormDataBlockField $field, ?string $instanceIndexVar, array $outerIndexVars): string {
+        $fieldKey = htmlspecialchars($field->getKey(), ENT_QUOTES, 'UTF-8');
+        if ($instanceIndexVar === null) {
+            return " data-awf-field-key='{$fieldKey}' data-awf-loop-depth='0' data-awf-loop-indexes='[]'";
+        }
+
+        $allVars = array_merge($outerIndexVars, [$instanceIndexVar]);
+        $indexesExpr = implode(', ', $allVars);
+        $depth = count($allVars);
+        return " data-awf-field-key='{$fieldKey}' data-awf-loop-depth='{$depth}' :data-awf-loop-indexes=\"JSON.stringify([{$indexesExpr}])\"";
+    }
+
+    /**
      * Internal field renderer that supports both scalar and instance-aware rendering.
      * Instance-aware fields receive every enclosing loop variable in $outerIndexVars
      * and build nested POST names: Block[outer]...[inner][field] at any depth.
@@ -2456,6 +2583,7 @@ class FormHtmlGeneratorService {
     private function renderField(FormDataBlockField $field, FormTheme $theme, ?string $instanceIndexVar = null, array $outerIndexVars = []): string {
         // Instance-aware field rendering for group loops
         $isInstance = $instanceIndexVar !== null;
+        $scopeAttributes = $this->getFieldScopeAttributes($field, $instanceIndexVar, $outerIndexVars);
         $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
         $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
 
@@ -2486,7 +2614,7 @@ class FormHtmlGeneratorService {
         // Render hidden fields differently: only input without label or wrapper
         if ($field->type_in_form === 'hidden') {
             $val = htmlspecialchars($field->value ?? '', ENT_QUOTES, 'UTF-8');
-            return "<input type='hidden' {$nameAttr} {$idExpr} value='{$val}'>" . $this->newLine();
+            return "<input type='hidden' {$nameAttr} {$idExpr} {$scopeAttributes} value='{$val}'>" . $this->newLine();
         }
 
         $label = htmlspecialchars($field->label);
@@ -2542,7 +2670,7 @@ class FormHtmlGeneratorService {
         if ($field->subtype_in_form === 'select_checkbox') {
             $html = "<div class='form-check awf-field {$layoutClasses}'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' {$nameAttr} class='form-check-input' value='1' {$idExpr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
+                $html .= "<input type='checkbox' {$nameAttr} class='form-check-input' value='1' {$idExpr} {$scopeAttributes} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr} >" .$this->newLine();
                 $html .= "<label class='form-check-label' {$forExpr}>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
@@ -2560,7 +2688,7 @@ class FormHtmlGeneratorService {
         if ($field->subtype_in_form === 'select_switch') {
             $html = "<div class='form-check form-switch awf-field {$layoutClasses}'>" .$this->newLine('+');
             {
-                $html .= "<input type='checkbox' role='switch' {$nameAttr} class='form-check-input' value='1' {$idExpr} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
+                $html .= "<input type='checkbox' role='switch' {$nameAttr} class='form-check-input' value='1' {$idExpr} {$scopeAttributes} {$ariaDescribedBy} {$requiredAttr} {$validationsAttr}>" .$this->newLine();
                 $html .= "<label class='form-check-label' {$forExpr}>" . $this->newLine('+');
                 {
                     $html .= $label . $this->newLine();
@@ -2591,7 +2719,7 @@ class FormHtmlGeneratorService {
                 $fileKeyExpr = "'{$filePrefix}{$field->data_block->name}_' + {$indexChain} + '_{$field->name}'";
                 $fileIdExpr = $inputKeyExpr;
             }
-            return $this->generateFileField($field, $theme, $fileKeyExpr, $fileIdExpr, $layoutClasses) .$this->newLine();
+            return $this->generateFileField($field, $theme, $fileKeyExpr, $fileIdExpr, $layoutClasses, $scopeAttributes) .$this->newLine();
         }
 
         // --- COMMON CASES ---
@@ -2611,7 +2739,7 @@ class FormHtmlGeneratorService {
 
             // Text Areas
             if ($field->type_in_form == 'textarea') {
-                $controlHtml .= "<textarea {$validationsAttr} {$nameAttr} class='form-control' {$idExpr} ".
+                $controlHtml .= "<textarea {$validationsAttr} {$nameAttr} class='form-control' {$idExpr} {$scopeAttributes} ".
                                 "placeholder='{$placeholder}' style='height: 100px' {$ariaDescribedBy} {$requiredAttr}></textarea>" .$this->newLine();
 
             // Selects & Lists
@@ -2647,7 +2775,7 @@ class FormHtmlGeneratorService {
                                 $resetAttr = ($field->required_in_form && $isMulti) ? " @change='resetError(\$el.closest(\".awf-option-group\").nextElementSibling)'" : '';
                                 $controlHtml .= "<div class='form-check'>" .$this->newLine('+');
                                 {
-                                    $controlHtml .= "<input {$validationsAttr}{$resetAttr} type='{$inputType}' {$optNameAttr} {$optIdExpr} value='{$val}' class='form-check-input' {$req}{$scoreAttr}>" .$this->newLine();
+                                    $controlHtml .= "<input {$validationsAttr}{$resetAttr} type='{$inputType}' {$optNameAttr} {$optIdExpr} {$scopeAttributes} value='{$val}' class='form-check-input' {$req}{$scoreAttr}>" .$this->newLine();
                                     $controlHtml .= "<label class='form-check-label' {$optForExpr}>{$txt}</label>" .$this->newLine();
                                 }
                                 $controlHtml .= "</div>" .$this->newLine('-');
@@ -2669,7 +2797,7 @@ class FormHtmlGeneratorService {
                     $selectNameAttr = $isInstance ? ":name=\"'{$finalNameTemplate}'\"" : "name='{$finalName}'";
                     $multipleAttr = $isMultipleSelect ? 'multiple' : '';
                     
-                    $controlHtml .= "<select {$validationsAttr} {$selectNameAttr} class='form-select' {$idExpr} {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" . $this->newLine('+');
+                    $controlHtml .= "<select {$validationsAttr} {$selectNameAttr} class='form-select' {$idExpr} {$scopeAttributes} {$multipleAttr} {$ariaDescribedBy} {$requiredAttr}>" . $this->newLine('+');
                     {
                         // Check if a visible empty option already exists in configuration
                         $hasVisibleEmptyOption = false;
@@ -2730,7 +2858,7 @@ class FormHtmlGeneratorService {
                 }
                 $iconClass = $this->getIconClass($field->subtype_in_form);
                 $cssClasses = 'form-control ' . ($iconClass ?? '');
-                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' {$nameAttr} class='{$cssClasses}' {$idExpr} ".
+                $controlHtml .= "<input {$validationsAttr} type='{$controlType}' {$nameAttr} class='{$cssClasses}' {$idExpr} {$scopeAttributes} ".
                                 "placeholder='{$placeholder}' autocomplete='{$autocomplete}' {$ariaDescribedBy} {$requiredAttr}>" .$this->newLine();
             }
 
@@ -2776,7 +2904,7 @@ class FormHtmlGeneratorService {
      * @param string $layoutClasses
      * @return string
      */
-    private function generateFileField(FormDataBlockField $field, FormTheme $theme, ?string $instanceKeyTemplate = null, ?string $instanceIdTemplate = null, string $layoutClasses = ''): string {
+    private function generateFileField(FormDataBlockField $field, FormTheme $theme, ?string $instanceKeyTemplate = null, ?string $instanceIdTemplate = null, string $layoutClasses = '', string $scopeAttributes = ''): string {
         $inputName = $field->getKey();
         $label = htmlspecialchars($field->label);
         $requiredAttr = $field->required_in_form ? 'required' : '';
@@ -2881,7 +3009,7 @@ class FormHtmlGeneratorService {
             $html .= "</div>" .$this->newLine('-');
 
             // Actual file input
-            $html .= "<input type='file' {$fileNameAttr} x-ref='fileInput' {$fileIdAttr} " .
+            $html .= "<input type='file' {$fileNameAttr} x-ref='fileInput' {$fileIdAttr} {$scopeAttributes} " .
                      "style='display: none !important;' @change='updateFileInfo()' {$requiredAttr} {$acceptAttr} {$ariaDescribedBy} {$validationsAttr}>" .$this->newLine();
 
             $html .= $description .$this->newLine();
@@ -2904,6 +3032,7 @@ class FormHtmlGeneratorService {
      */
     private function generateRatingField(FormDataBlockField $field, ?string $instanceIndexVar = null, array $outerIndexVars = []): string {
         $isInstance = $instanceIndexVar !== null;
+        $scopeAttributes = $this->getFieldScopeAttributes($field, $instanceIndexVar, $outerIndexVars);
         $inputName = $isInstance ? $field->getKeyForInstance(0) : $field->getKey();
         $namePrefix = $field->type_field === DataBlockFieldType::UNLINKED ? '_detached.' : '';
 
@@ -2980,7 +3109,7 @@ class FormHtmlGeneratorService {
             // Phantom input for HTML5 validation
             $errorMsg = translate('LBL_REQUIRED_FIELD_MESSAGE', 'stic_AWF_Forms');
             $requiredAttr = $isRequired ? 'required' : '';
-            $html .= "<input type='text' x-ref=\"input\" {$nameAttr} {$idExpr} :value=\"val\" {$ariaDescribedBy} {$requiredAttr} tabindex='-1'" .
+            $html .= "<input type='text' x-ref=\"input\" {$nameAttr} {$idExpr} {$scopeAttributes} :value=\"val\" {$ariaDescribedBy} {$requiredAttr} tabindex='-1'" .
                     "style='opacity:0; width:100%; height:1px; position:absolute; bottom:0; left:0; z-index:-1; pointer-events:none;'" .
                     "oninvalid=\"this.setCustomValidity('{$errorMsg}')\" oninput=\"this.setCustomValidity('')\"> " . $this->newLine();
 
@@ -3307,6 +3436,35 @@ document.addEventListener('alpine:init', () => {
       }
     },
 
+    getFieldScopeIndexes(input) {
+      if (!input || !input.dataset) return [];
+      try {
+        const indexes = JSON.parse(input.dataset.awfLoopIndexes || '[]');
+        return Array.isArray(indexes) ? indexes : [];
+      } catch (e) {
+        return [];
+      }
+    },
+
+    resolveConditionControls(input, logicalKey) {
+      const form = input && typeof input.closest === 'function' ? input.closest('form') : null;
+      if (!form) return [];
+      const candidates = Array.from(form.querySelectorAll('[data-awf-field-key]'))
+        .filter(control => control.dataset.awfFieldKey === logicalKey);
+      if (candidates.length === 0) return [];
+
+      const depth = Number(candidates[0].dataset.awfLoopDepth || 0);
+      const wanted = this.getFieldScopeIndexes(input).slice(0, depth);
+      while (wanted.length < depth) wanted.push(0);
+
+      return candidates.filter(control => {
+        if (Number(control.dataset.awfLoopDepth || 0) !== depth) return false;
+        const actual = this.getFieldScopeIndexes(control);
+        return actual.length === depth
+          && wanted.every((value, index) => String(value) === String(actual[index]));
+      });
+    },
+
     validateInput(input) {
       this.resetError(input);
       this.serverErrors = {};
@@ -3321,19 +3479,10 @@ document.addEventListener('alpine:init', () => {
               if (rule.conditions && rule.conditions.length > 0) {
                 for (const cond of rule.conditions) {
                   if (!cond.field_name) continue;
-                  const logicalKey = cond.field_name.replace(/\./g, '_');
-                  let condInput = form.querySelector('[id="f_' + logicalKey + '"]')
-                    || form.querySelector('[name="' + logicalKey + '"]');
-                  // Reuse the current instance prefix for grouped conditions.
-                  if (!condInput && input.name && input.name.indexOf('[') !== -1) {
-                    const dot = cond.field_name.indexOf('.');
-                    const fieldName = dot !== -1 ? cond.field_name.substring(dot + 1) : cond.field_name;
-                    const conditionBlock = (dot !== -1 ? cond.field_name.substring(0, dot) : input.name.substring(0, input.name.indexOf('['))).replace(/\./g, '_');
-                    const indexes = input.name.substring(input.name.indexOf('['), input.name.lastIndexOf('[') + 1);
-                    condInput = form.querySelector('[name="' + conditionBlock + indexes + fieldName + '"]');
-                  }
-                  if (!condInput) { conditionsMet = false; break; }
+                  const condControls = this.resolveConditionControls(input, cond.field_name);
+                  if (condControls.length === 0) { conditionsMet = false; break; }
 
+                  const condInput = condControls[0];
                   const isMatch = (condInput.value == cond.value);
                   if (cond.operator === 'Equal_To' && !isMatch) { conditionsMet = false; break; }
                   if (cond.operator === 'Not_Equal_To' && isMatch) { conditionsMet = false; break; }

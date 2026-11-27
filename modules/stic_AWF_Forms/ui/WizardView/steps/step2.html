@@ -549,7 +549,7 @@
                   <i class="inline-help glyphicon glyphicon-info-sign"></i>
                   <div class="inline-help-content" style="display:none;" x-text="utils.translate('LBL_DATABLOCK_MAX_REPETITIONS_DESC')"></div>
                   <input type="number" :id="`groupMaxInstances_${item.id}`" min="2" placeholder="∞" class="form-control form-control-sm" 
-                          x-model.number="item.max_instances" @input="item.sanitizeRepeatableLimits()" @blur="item.sanitizeRepeatableLimits()">
+                          x-model.number.lazy="item.max_instances" @blur="item.sanitizeRepeatableLimits()">
                 </div>
 
                 <!-- Element singular name -->

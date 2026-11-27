@@ -213,7 +213,7 @@ class ResponseHandler
                 exit;
             }
 
-            $errors = $this->validateSubmission($formConfig, $cleanData);
+            $errors = $this->validateSubmission($formConfig, $cleanData, $uploadedFiles);
             if (!empty($errors) && !empty($errors['errors'])) {
                 echo json_encode(['status' => 'error', 'errors' => $errors['errors']]);
             } else {
@@ -231,7 +231,7 @@ class ResponseHandler
             $responseDescription = '';
 
             // Data validation
-            $validationErrors = $this->validateSubmission($formConfig, $cleanData);
+            $validationErrors = $this->validateSubmission($formConfig, $cleanData, $uploadedFiles);
             if (!empty($validationErrors) && !empty($validationErrors['errorDescriptions'])) {
                 $errorString = implode(", ", $validationErrors['errorDescriptions']);
                 $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Data Validation errors for Form ID {$formId}:" . $errorString);
@@ -604,7 +604,7 @@ class ResponseHandler
     }
 
     /** Validates fields and cardinality recursively per group instance. */
-    private function validateSubmission(FormConfig $config, array $data): ?array {
+    private function validateSubmission(FormConfig $config, array $data, array $uploadedFiles = []): ?array {
         $errors = [
             'errors' => [],
             'errorDescriptions' => [],
@@ -612,10 +612,9 @@ class ResponseHandler
 
         // Browsers omit unchecked checkboxes.
         stic_AWFUtils::fillMissingBooleanFields($config, $data);
-        $context = new ExecutionContext('', '', $data, $config, null, '', null, '');
+        $context = new ExecutionContext('', '', $data, $config, null, '', null, '', $uploadedFiles);
 
         foreach ($config->data_blocks as $block) {
-            if (empty($block->module)) continue;
             // Enclosed blocks are validated by their loop owner.
             if ($this->hasEnclosingGroupLoop($block, $config)) continue;
 
@@ -658,7 +657,7 @@ class ResponseHandler
     /** Validates direct children; simple members add no loop level. */
     private function validateChildBlocks(FormDataBlock $parent, array $data, ExecutionContext $context, array &$errors, array $prefix, array $ancestors = []): void {
         foreach ($context->formConfig->getGroupChildren($parent) as $child) {
-            if (empty($child->module) || isset($ancestors[$child->id])) continue;
+            if (isset($ancestors[$child->id])) continue;
             if ($child->isRepeatable() || $child->isOptional()) {
                 $this->validateGroupInstances($child, $data, $context, $errors, $prefix, $ancestors);
                 continue;
@@ -681,7 +680,7 @@ class ResponseHandler
         $resolved = new DataBlockResolved($block, $data, $context, $prefix);
         $this->validateBlockFields($block, $resolved, $data, $errors);
         foreach ($context->formConfig->getGroupChildren($block) as $child) {
-            if (empty($child->module) || isset($nextAncestors[$child->id])) continue;
+            if (isset($nextAncestors[$child->id])) continue;
             if ($child->isRepeatable() || $child->isOptional()) {
                 $this->validateGroupInstances($child, $data, $context, $errors, $prefix, $nextAncestors);
             } else {
@@ -698,9 +697,8 @@ class ResponseHandler
      * @param array $errors
      */
     private function validateBlockFields(FormDataBlock $block, DataBlockResolved $resolvedBlock, array $data, array &$errors): void {
-        $targetBean = BeanFactory::newBean($block->module);
+        $targetBean = !empty($block->module) ? BeanFactory::newBean($block->module) : null;
         $realVardefs = $targetBean ? $targetBean->field_defs : [];
-        if (empty($realVardefs)) return;
 
         $instanceIndex = $resolvedBlock->instanceIndex;
 
@@ -711,7 +709,9 @@ class ResponseHandler
         foreach ($block->fields as $formField) {
             $inputKeyInForm = $instanceIndexes !== [] ? $formField->getKeyForIdForIndexes($instanceIndexes) : $formField->getKeyForId($instanceIndex);
             $inputKey = $instanceIndexes !== [] ? $formField->getPhpKeyForIndexes($instanceIndexes) : ($instanceIndex !== null ? $formField->getPhpKeyForInstance($instanceIndex) : $formField->getPhpKey());
-            $value = $resolvedBlock->getFieldValue($formField->name)?->value;
+            $value = $formField->type_field === DataBlockFieldType::UNLINKED
+                ? $resolvedBlock->getDetachedFieldValue($formField->name)?->value
+                : $resolvedBlock->getFieldValue($formField->name)?->value;
             $label = rtrim($formField->label, ":");
 
             if ($formField->type == 'relate') {
@@ -755,11 +755,13 @@ class ResponseHandler
                 }
             }
 
-            // Validation of data type (from VarDefs)
+            // Validation of data type (from VarDefs, or the form field for detached fields)
             $defField = isset($realVardefs[$formField->name]) ? $realVardefs[$formField->name] : null;
-            $typeToCheck = $defField ? $defField['type'] : $formField->type_in_form;
+            $typeToCheck = $defField
+                ? $defField['type']
+                : ($formField->type_field === DataBlockFieldType::UNLINKED ? $formField->type : $formField->type_in_form);
             // Special case for emails
-            if ($typeToCheck === 'varchar' && str_starts_with($defField['name'], 'email')) {
+            if ($typeToCheck === 'varchar' && str_starts_with($formField->name, 'email')) {
                 $typeToCheck = 'email';
             }
 
@@ -872,7 +874,7 @@ class ResponseHandler
         //     $GLOBALS['log']->fatal('Line ' . __LINE__ . ': ' . __METHOD__ . ": ResponseHandler: Could not load relationship 'details_link' in Responses bean.");
         // }
 
-        $context = new ExecutionContext('', '', $submittedData, $formConfig, null, '', null, '');
+        $context = new ExecutionContext('', '', $submittedData, $formConfig, null, '', null, '', $uploadedFiles);
         foreach ($formConfig->data_blocks as $block) {
             // Enclosed blocks are generated with their loop's full index vector.
             if ($this->hasEnclosingGroupLoop($block, $formConfig)) continue;
@@ -921,38 +923,37 @@ class ResponseHandler
         global $app_strings;
 
         foreach ($block->fields as $field) {
+            // Skip fixed fields before consuming analytical order.
+            if ($field->type_field === DataBlockFieldType::FIXED) continue;
+
             $currentOrder = $orderCounter;
             $orderCounter += 1;
 
-                // Skip fixed fields
-                if ($field->type_field === DataBlockFieldType::FIXED) continue;
+            // Set default integer value to null
+            $answerInteger = null;
 
-                // Set default integer value to null
-                $answerInteger = null;
+            if ($field->type_in_form === 'file') {
+                if ($block->is_document_block) {
+                    $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
+                    $detailBean->stic_awf_responses_id_c = $responseBean->id;
+                    $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
+                    $detailBean->assigned_user_id = $responseBean->assigned_user_id;
+                    $this->setQuestionIdentity($detailBean, $block, $field, $instanceIndexes);
+                    $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+                    $detailBean->question_label = rtrim($detailBean->question_label, ' :');
+                    $detailBean->question_section = $block->text;
+                    $detailBean->question_sort_order = $currentOrder;
 
-                if ($field->type_in_form === 'file') {
-                    if ($block->is_document_block) {
-                        $instanceSuffix = $instanceIndexes !== [] ? '[' . implode('][', $instanceIndexes) . ']' : '';
-                        $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
-                        $detailBean->stic_awf_responses_id_c = $responseBean->id;
-                        $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
-                        $detailBean->assigned_user_id = $responseBean->assigned_user_id;
-                        $detailBean->question_key = $block->name . $instanceSuffix . '.' . $field->name;
-                        $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
-                        $detailBean->question_label = rtrim($detailBean->question_label, ' :');
-                        $detailBean->question_section = $block->text;
-                        $detailBean->question_sort_order = $currentOrder;
-
-                        $fileKey = $instanceIndexes !== [] ? $field->getFileKeyForIndexes($instanceIndexes) : $field->getPhpKey();
-                        $fileName = $uploadedFiles[$fileKey]['name'] ?? '';
-                        $detailBean->answer_value = $fileName;
-                        $detailBean->answer_text = $fileName;
-                        $detailBean->answer_type = 'file';
-                        $detailBean->answer_integer = $answerInteger;
-                        $detailBean->save();
-                    }
-                    continue;
+                    $fileKey = $instanceIndexes !== [] ? $field->getFileKeyForIndexes($instanceIndexes) : $field->getPhpKey();
+                    $fileName = $uploadedFiles[$fileKey]['name'] ?? '';
+                    $detailBean->answer_value = $fileName;
+                    $detailBean->answer_text = $fileName;
+                    $detailBean->answer_type = 'file';
+                    $detailBean->answer_integer = $answerInteger;
+                    $detailBean->save();
                 }
+                continue;
+            }
 
             // Scalar fields use flat keys; grouped fields use the full index vector.
             if (!empty($instanceIndexes)) {
@@ -1030,7 +1031,7 @@ class ResponseHandler
             $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
             $detailBean->assigned_user_id = $responseBean->assigned_user_id;
 
-            $detailBean->question_key = !empty($instanceIndexes) ? $field->getKeyForIndexes($instanceIndexes) : $block->name . '.' . $field->name;
+            $this->setQuestionIdentity($detailBean, $block, $field, $instanceIndexes);
             $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
             $detailBean->question_label = rtrim($detailBean->question_label, ' :');
             if (!empty($field->description)) {
@@ -1067,6 +1068,17 @@ class ResponseHandler
 
             $detailBean->save();
         }
+    }
+
+    /**
+     * Stores a stable analytical question key and keeps instance addressing in
+     * a separate reportable field so grouped answers remain in the same series.
+     */
+    private function setQuestionIdentity(SugarBean $detailBean, FormDataBlock $block, FormDataBlockField $field, array $instanceIndexes): void
+    {
+        // Separate stable question keys from instance metadata
+        $detailBean->question_key = $block->name . '.' . $field->name;
+        $detailBean->question_instance_index = $instanceIndexes === [] ? null : implode(':', $instanceIndexes);
     }
 
     /** 

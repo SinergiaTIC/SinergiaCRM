@@ -27,7 +27,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
 
 class UnactivatedOptionalBlockException extends \Exception {
     public function __construct(public readonly string $parameterName, public readonly string $blockName, public readonly string $actionName) {
-        $message = "Required parameter '{$parameterName}' for action '{$actionName}' references optional DataBlock '{$blockName}' which was not activated.";
+        $message = "Required parameter '{$parameterName}' for action '{$actionName}' references DataBlock '{$blockName}' which was not activated (the block or an optional ancestor is inactive).";
         $GLOBALS['log']->error($message);
         parent::__construct($message);
     }
