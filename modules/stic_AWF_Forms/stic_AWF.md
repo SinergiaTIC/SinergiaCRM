@@ -222,7 +222,7 @@ La creación de un "Grupo" permite relacionar y repetir en el formulario uno o m
 * **Modelo de repetibilidad único (0..N)**: El sistema gestiona la repetición con dos parámetros por grupo, eliminando la distinción entre "bloque con instancias" y "grup de registros":
   * **Mínima de instancias** (`min_instances`): 0 u 1.
   * **Máxima de instancias** (`max_instances`): sin límite o un número concreto.
-  * Un grupo con **mínima 1** es *Obligatorio* (los campos se muestran al menos una vez). Un grupo con **mínima 0** es *Opcional*: se muestra inicialmente vacío y solo se guardan los datos si el visitante añade al menos una instancia; si no añade ninguna, sus acciones de guardado se **omiten** en el procesamiento en lugar de crear registros vacíos.
+  * Un grupo con **mínima 1** es *Obligatorio* (los campos se muestran al menos una vez). Un grupo con **mínima 0** es *Opcional*: se muestra inicialmente vacío y solo se guardan los datos si el visitante añade al menos una instancia; si no añade ninguna, sus acciones de guardado se **omiten** en el procesamiento en lugar de crear registros vacíos. Los bloques dependientes obligatorios tampoco se materializan ni se guardan mientras el grupo opcional esté desactivado.
 
 * **Convertir un bloque en grupo repetible**: Desde la barra de acciones del bloque (Paso 2) hay un botón "+" que transforma cualquier bloque no repetible en la raíz de un grupo. El sistema crea automáticamente el grupo con:
   * Título por defecto formado por el nombre del bloque raíz + los nombres de los bloques hijo vinculados (p. ej.: *"Menor + Inscripción"*), editable en cualquier momento.

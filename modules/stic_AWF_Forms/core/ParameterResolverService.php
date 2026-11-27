@@ -185,13 +185,12 @@ class ParameterResolverService {
         // Loop-depth-aware instance resolution
         $resolvedBlock = DataBlockResolved::resolveForBlock($dataBlockConfig, $context->formData, $context);
 
-        // Check whether the block has optional cardinality (min_instances === 0)
-        $isOptional = (isset($dataBlockConfig->min_instances) && (int)$dataBlockConfig->min_instances === 0) || !empty($dataBlockConfig->isOptional());
-
-        // Determine if the instance was activated by the submitter
+        // Determine whether this concrete instance is active. Mandatory blocks
+        // are also gated when an optional ancestor is inactive.
         $isActivated = $resolvedBlock !== null && (!method_exists($resolvedBlock, 'isActivated') || $resolvedBlock->isActivated());
 
-        if ($isOptional && !$isActivated) {
+        // STIC-Custom OC - 20261127 - Do not resolve descendants of an inactive optional group.
+        if (!$isActivated) {
             if ($def->required) {
                 // If the action strictly requires this block, interrupt via specific control exception
                 throw new UnactivatedOptionalBlockException($def->name, $dataBlockConfig->name, $actionConfig->name);

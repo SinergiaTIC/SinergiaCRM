@@ -330,10 +330,21 @@ class DataBlockResolved {
                     if ($parent->isRepeatable() || $parent->isOptional()) {
                         $parentInstances = self::resolveInstances($parent, $formData, $context, $prefix);
                         if (!empty($parentInstances)) {
-                            return array_map(
-                                fn ($parentInstance) => new DataBlockResolved($block, $formData, $context, $parentInstance->loopIndexes),
-                                $parentInstances
-                            );
+                            $mirroredInstances = [];
+                            foreach ($parentInstances as $parentInstance) {
+                                $resolved = self::createActiveInstance($block, $formData, $context, $parentInstance->loopIndexes);
+                                if ($resolved !== null) {
+                                    $mirroredInstances[] = $resolved;
+                                }
+                            }
+                            return $mirroredInstances;
+                        }
+                        // Preserve the legacy empty-instance fallback for mandatory
+                        // loop chains, but never escape an inactive optional ancestor.
+                        $probe = new self($block, $formData, $context, array_merge($prefix, [0]));
+                        if (!$probe->hasActiveOptionalAncestors()) {
+                            // STIC-Custom OC - 20261127 - An inactive optional ancestor must not materialize a mandatory child.
+                            return [];
                         }
                         break;
                     }
@@ -350,10 +361,27 @@ class DataBlockResolved {
             if ($remainingLevels > 0) {
                 $instances = array_merge($instances, self::resolveInstances($block, $formData, $context, $newPrefix));
             } else {
-                $instances[] = new DataBlockResolved($block, $formData, $context, $newPrefix);
+                $resolved = self::createActiveInstance($block, $formData, $context, $newPrefix);
+                if ($resolved !== null) {
+                    $instances[] = $resolved;
+                }
             }
         }
         return $instances;
+    }
+
+    /**
+     * Creates a mandatory instance only when every optional ancestor is active
+     * for the same index path. Optional blocks keep their historical contract.
+     */
+    private static function createActiveInstance(FormDataBlock $block, array $formData, ExecutionContext $context, array $loopIndexes): ?self {
+        $resolved = new self($block, $formData, $context, $loopIndexes);
+        // Optional blocks keep their historical enumeration/activation contract.
+        // Mandatory descendants must not escape an inactive optional ancestor.
+        if ($block->isOptional()) {
+            return $resolved;
+        }
+        return $resolved->hasActiveOptionalAncestors() ? $resolved : null;
     }
 
     /**
@@ -424,15 +452,59 @@ class DataBlockResolved {
     }
 
     /**
-     * Mandatory instances are active. Optional instances require an explicit
-     * toggle, a non-empty user field or an uploaded file; fixed values do not
-     * activate an instance.
+     * Optional blocks use their own activation contract. Mandatory instances
+     * are active only when every optional ancestor is active for the same path.
      */
     public function isActivated(): bool {
-        // (1) Mandatory blocks are always active
+        if ($this->dataBlock->isOptional()) {
+            return $this->isOwnInstanceActivated();
+        }
+        return $this->hasActiveOptionalAncestors();
+    }
+
+    /**
+     * STIC-Custom OC - 20261127 - Prevent mandatory descendants from escaping an
+     * inactive optional ancestor. Evaluate each optional ancestor locally to
+     * avoid recursive activation cycles in malformed configurations.
+     */
+    private function hasActiveOptionalAncestors(): bool {
+        $parentId = $this->dataBlock->group_root ?? '';
+        $seen = [$this->dataBlock->id => true];
+
+        while ($parentId !== '' && !isset($seen[$parentId])) {
+            $seen[$parentId] = true;
+            $parent = $this->dataBlock->form_config->data_blocks[$parentId] ?? null;
+            if (!$parent) break;
+
+            if ($parent->isOptional()) {
+                $parentDepth = $parent->getLoopDepth();
+                if ($parentDepth < 1 || count($this->loopIndexes) < $parentDepth) {
+                    return false;
+                }
+                $parentIndexes = array_slice($this->loopIndexes, 0, $parentDepth);
+                // A non-repeatable optional parent is one shared N:1 instance;
+                // preserve outer indexes but canonicalize its own index to 0.
+                if (!$parent->isRepeatable()) {
+                    $parentIndexes[$parentDepth - 1] = 0;
+                }
+                $parentInstance = new self($parent, $this->fullFormData, $this->executionContext, $parentIndexes);
+                if (!$parentInstance->isOwnInstanceActivated()) {
+                    return false;
+                }
+            }
+
+            $parentId = $parent->group_root ?? '';
+        }
+
+        return true;
+    }
+
+    /** Evaluates only this block's activation, without walking ancestors. */
+    private function isOwnInstanceActivated(): bool {
+        // Mandatory blocks have no own activation signal; ancestors are checked by isActivated().
         if (!$this->dataBlock->isOptional()) return true;
 
-        // (2) Explicit activation signal, indexed by the enclosing loops
+        // Explicit activation signal, indexed by the enclosing loops.
         $signalKey = '_toggle_' . $this->dataBlock->name;
         $signal = $this->fullFormData[$signalKey] ?? null;
         $signalIndexes = array_slice($this->loopIndexes, 0, max(count($this->loopIndexes) - 1, 0));
@@ -440,10 +512,19 @@ class DataBlockResolved {
             $signal = is_array($signal) ? ($signal[$levelIndex] ?? null) : null;
         }
         if ($signal !== null && in_array($signal, ['1', 1, true, 'on'], true)) {
+            // A scalar switch on a non-repeatable optional block activates only
+            // its canonical instance 0. Repeatable groups use one master switch
+            // for every submitted row.
+            if (!$this->dataBlock->isRepeatable() && empty($signalIndexes)) {
+                $ownIndex = $this->loopIndexes === [] ? 0 : (int)end($this->loopIndexes);
+                if ($ownIndex !== 0) {
+                    return false;
+                }
+            }
             return true;
         }
 
-        // (3) Fallback over the RESOLVED fields (FIXED/server values never count)
+        // Fallback over resolved fields (FIXED/server values never count).
         foreach ([$this->formData, $this->detachedData] as $fieldMap) {
             foreach ($fieldMap as $fieldResolved) {
                 $def = $fieldResolved->dataBlockField;
@@ -457,9 +538,7 @@ class DataBlockResolved {
             }
         }
 
-        // Fallback: uploaded files for the block's file fields (the flat
-        // per-instance key with the FULL loop-index stack — files never land
-        // in the POST matrix)
+        // Uploaded files use the flat per-instance key with the full index stack.
         foreach ($this->dataBlock->fields as $fieldDef) {
             if ($fieldDef->type_in_form !== 'file') continue;
             $phpKey = $this->loopIndexes !== []
