@@ -866,35 +866,8 @@ class stic_AWFUtils {
         $attachments = $emailTemplate->getAttachments() ?: [];
 
 
-        // Prepare the array of Beans for the parser
-        $beansForTemplate = [];
-        // The main Context Bean (the recipient)
-        if ($parentBeanForArchive && isset($parentBeanForArchive->module_dir)) {
-            $beansForTemplate[] = $parentBeanForArchive;
-        }
-        // The Response Bean (to access $stic_awf_responses_html_summary)
-        if ($context->responseBean) {
-            $beansForTemplate[] = $context->responseBean;
-        }
-
-        // Add all other generated Beans from the form context (DataBlocks)
-        // We only add them if a bean of that module hasn't been added yet to avoid unpredictable overwrites
-        $loadedModules = array_map(function($b) { return $b->module_dir; }, $beansForTemplate);
-        foreach ($context->actionResults as $result) {
-            foreach ($result->modifiedBeans as $modBean) {
-                // Ignore metadata entries that represent action logs, not CRM records.
-                if ($modBean->modificationType === BeanModificationType::METADATA) continue;
-
-                // Ignore beans from modules that are already loaded to avoid unpredictable overwrites in the template parser
-                if (in_array($modBean->moduleName, $loadedModules)) continue;
-
-                $loadedBean = $modBean->getBean();
-                if ($loadedBean) {
-                    $beansForTemplate[] = $loadedBean;
-                    $loadedModules[] = $modBean->moduleName;
-                }
-            }
-        }
+        // Select one consistent bean per module for the template parser.
+        $beansForTemplate = self::selectBeansForTemplate($context, $parentBeanForArchive);
 
         // Parse the email template using all relevant beans
         require_once 'SticInclude/Utils.php';
@@ -963,6 +936,84 @@ class stic_AWFUtils {
                 $GLOBALS['log']->error('Line '.__LINE__.': '.__METHOD__.':  Email sent but error archiving: ' . $e->getMessage());
             }
         }
+    }
+
+    /**
+     * Selects one bean per module for email template parsing.
+     *
+     * The recipient/parent bean has highest priority. Grouped executions use
+     * only modifications from the active instance, with scalar modifications
+     * as a fallback for modules that have no exact instance match. Scalar
+     * executions preserve the legacy first-bean-per-module behavior and never
+     * import indexed beans from an unrelated instance.
+     *
+     * @param ExecutionContext $context
+     * @param ?SugarBean $parentBeanForArchive
+     * @return SugarBean[]
+     */
+    private static function selectBeansForTemplate(ExecutionContext $context, ?SugarBean $parentBeanForArchive): array
+    {
+        // STIC-Custom OC - 20261127 - Keep email template beans in the active instance scope
+        $beansForTemplate = [];
+        $loadedModules = [];
+        $addBean = function (?SugarBean $bean) use (&$beansForTemplate, &$loadedModules): bool {
+            $moduleDir = $bean?->module_dir ?? null;
+            if (!is_string($moduleDir) || $moduleDir === '' || isset($loadedModules[$moduleDir])) {
+                return false;
+            }
+            $beansForTemplate[] = $bean;
+            $loadedModules[$moduleDir] = true;
+            return true;
+        };
+
+        // The parser lets later beans overwrite macros from the same module,
+        // so the recipient and response keep priority over action results.
+        $addBean($parentBeanForArchive);
+        $addBean($context->responseBean);
+
+        $activeInstanceKey = $context->getInstanceIndexKey();
+        $instanceCandidates = [];
+        $scalarCandidates = [];
+        foreach ($context->actionResults as $result) {
+            foreach ($result->modifiedBeans as $modBean) {
+                if ($modBean->modificationType === BeanModificationType::METADATA) {
+                    continue;
+                }
+
+                $moduleName = $modBean->moduleName;
+                if ($moduleName === '' || isset($loadedModules[$moduleName])) {
+                    continue;
+                }
+
+                if ($modBean->instanceIndex === null) {
+                    $scalarCandidates[$moduleName][] = $modBean;
+                } elseif ($activeInstanceKey !== null && $modBean->instanceIndex === $activeInstanceKey) {
+                    $instanceCandidates[$moduleName][] = $modBean;
+                }
+            }
+        }
+
+        $addCandidates = function (array $candidates) use (&$addBean, &$loadedModules): void {
+            foreach ($candidates as $moduleName => $moduleCandidates) {
+                if (isset($loadedModules[$moduleName])) {
+                    continue;
+                }
+                foreach ($moduleCandidates as $candidate) {
+                    $loadedBean = $candidate->getBean();
+                    if ($loadedBean && $addBean($loadedBean)) {
+                        break;
+                    }
+                }
+            }
+        };
+
+        if ($activeInstanceKey !== null) {
+            $addCandidates($instanceCandidates);
+        }
+        $addCandidates($scalarCandidates);
+
+        return $beansForTemplate;
+        // END STIC-Custom OC
     }
 
     /** 

@@ -278,7 +278,7 @@ Inicialmente, el sistema incluye las siguientes acciones que se pueden añadir a
 * **Enviar notificación por correo / al usuario asignado**: Permite enviar emails automatizados utilizando las plantillas del CRM. Esta acción cubre dos grandes escenarios:
   * *Correos de respuesta al usuario (Auto-respondedor)*: Se puede enviar un correo de confirmación, agradecimiento o resguardo directamente a la persona visitante que ha rellenado el formulario (leyendo el email del registro recién creado).
   * *Avisos internos*: Se puede notificar a una dirección interna o al trabajador responsable del registro asignado.
-  * **Novedad destacada:** En ambos casos, el sistema procesa la plantilla inyectando la información de **todos los registros implicados en la respuesta**. Es decir, si un formulario crea a la vez una "Persona" y una "Inscripción", la plantilla de correo podrá interpretar dinámicamente variables de ambos módulos simultáneamente (siempre que sean módulos distintos), dotando a las comunicaciones de un contexto mucho más rico sin configuraciones adicionales.
+  * **Novedad destacada:** En ambos casos, el sistema procesa la plantilla inyectando la información de **todos los registros implicados en la instancia que genera el correo**. Es decir, si un formulario crea a la vez una "Persona" y una "Inscripción", la plantilla de correo podrá interpretar dinámicamente variables de ambos módulos simultáneamente (siempre que sean módulos distintos y pertenezcan a la misma instancia), dotando a las comunicaciones de un contexto mucho más rico sin configuraciones adicionales. Nunca se mezclan datos de repeticiones distintas.
 
 
 * **Añadir a LPO**: Añade el registro resultante a una Lista de Público Objetivo destino.
