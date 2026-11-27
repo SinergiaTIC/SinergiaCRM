@@ -398,12 +398,21 @@ class stic_AwfDataBlock {
   }
 
   /**
-   * Whether this block has at least one VISIBLE form field (a field that
-   * renders an input: not FIXED, not hidden). Matches the renderer's and the
-   * sync's renderability predicate, so "visible" means what actually draws.
+   * Whether this block has at least one VISIBLE form field. This is used for
+   * optional/repeatable eligibility; hidden inputs still count for layout
+   * persistence through hasRenderableInputs().
    */
   hasVisibleFormFields() {
     return (this.fields || []).some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
+  }
+
+  /**
+   * Whether this block has at least one input to emit. Hidden fields count
+   * because they still carry submitted values; FIXED fields do not because
+   * they are resolved from the form configuration.
+   */
+  hasRenderableInputs() {
+    return (this.fields || []).some(f => f.type_field !== 'fixed');
   }
 
   /**
@@ -1815,14 +1824,14 @@ class stic_AwfLayout {
     };
     this.structure.forEach(s => repairCycles(s, new Set()));
 
-    const hasRenderableFields = (blk) => blk.fields.some(f => f.type_field !== 'fixed' && f.type_in_form !== 'hidden');
     // A SERVER-DATA OPTIONAL block (no visible field anywhere in its tree, but
     // it has fields and is optional) is kept in the layout: its section hosts
     // the activation switch and, when on, the server persists the record.
     const isServerDataOptional = (block) => block.is_optional
       && (block.fields.length > 0 || block.getDescendants(dataBlocks).some(b => b.fields.length > 0));
-    const isRenderable = (block) => hasRenderableFields(block)
-      || block.getDescendants(dataBlocks).some(hasRenderableFields)
+    // Hidden fields are inputs even when they draw no visible control
+    const isRenderable = (block) => block.hasRenderableInputs()
+      || block.getDescendants(dataBlocks).some(b => b.hasRenderableInputs())
       || isServerDataOptional(block);
     const isGroupHead = (block) => block.is_repeatable || block.is_optional || block.getChildren(dataBlocks).length > 0;
     // Top-level root of a block, walking the whole group_root chain (order-independent)
@@ -1861,7 +1870,7 @@ class stic_AwfLayout {
         const block = dataBlocks.find(b => b.id === el.ref_id);
         if (!block) return false;                    // The block no longer exists
         if (placedBlockIds.has(el.ref_id)) return false; // It's a duplicate
-        if (!isRenderable(block)) return false;      // Nothing visible to render
+        if (!isRenderable(block)) return false;      // No input to render
         placedBlockIds.add(el.ref_id);
         wholeBlockPlaced.add(el.ref_id);
         return true;
