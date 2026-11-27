@@ -66,6 +66,7 @@ class stic_AWF_Response_Details extends Basic
     public $securitygroups_name;
     public $question_sort_order;
     public $question_key;
+    public $question_instance_index;
     public $question_label;
     public $question_help_text;
     public $question_section;

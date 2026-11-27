@@ -285,7 +285,7 @@ Inicialmente, el sistema incluye las siguientes acciones que se pueden añadir a
 
 * **Verificar sesión activa y permisos**: Bloquea el acceso y el procesamiento del formulario si no hay una sesión activa en el CRM o si el usuario no dispone de permisos explícitos de edición/creación para **todos y cada uno de los módulos** involucrados en los bloques de datos del formulario.
 
-* **Mostrar página con resumen de respuestas (Final)**: Redirige al usuario a una página que contiene el resumen de todas sus respuestas al formulario.
+* **Mostrar página con resumen de respuestas (Final)**: Redirige al usuario a una página que contiene el resumen de sus respuestas. El resumen respeta los campos colocados en el diseño, no duplica campos repetidos y muestra también los nombres de los ficheros adjuntos.
 
 * **Redireccionar a página (Final)**: Redirige al usuario a una página web externa una vez procesados los datos. Esta acción permite adjuntar datos recopilados en el formulario y enviarlos a la URL de destino (utilizando los métodos estándar GET o POST).
 
@@ -383,7 +383,7 @@ A diferencia de sistemas anteriores, los Formularios Web Avanzados ofrecen una a
   
   * **Datos y ejecución**: Muestra un resumen con la respuesta original recibida debidamente formateada de forma legible, así como el registro de ejecución de las acciones y los mensajes de error en caso de que el procesado haya fallado.
 
-* **Detalles de respuestas**: Cada respuesta cuenta con un listado estructurado de "detalles". Este componente guarda las respuestas de forma desglosada y está pensado específicamente para facilitar el análisis estadístico y la extracción de métricas. Además, para facilitar los informes y la comparativa de datos cruzados, los campos de valoración para encuestas (estrellas, emojis, NPS, etc.) normalizan su puntuación de forma automática y la guardan unificada en una escala del 0 al 100 en el campo *"Valor entero de la respuesta"*.
+* **Detalles de respuestas**: Cada respuesta cuenta con un listado estructurado de "detalles". Este componente guarda las respuestas de forma desglosada y está pensado específicamente para facilitar el análisis estadístico y la extracción de métricas. La clave de pregunta es estable (`Bloque.campo`) y el índice de instancia se guarda por separado, de modo que las repeticiones no dividen la serie histórica. Además, para facilitar los informes y la comparativa de datos cruzados, los campos de valoración para encuestas (estrellas, emojis, NPS, etc.) normalizan su puntuación de forma automática y la guardan unificada en una escala del 0 al 100 en el campo *"Valor entero de la respuesta"*.
 
 * **Vínculos (Trazabilidad en el CRM)**: Es el módulo encargado de documentar de forma granular qué impacto exacto ha tenido una respuesta dentro de la base de datos. Cada respuesta tiene uno o varios "Vínculos" asociados. Un vínculo informa de manera precisa sobre:
 

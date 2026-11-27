@@ -70,6 +70,11 @@ $listViewDefs[$module_name] = array(
         'label' => 'LBL_QUESTION_KEY',
         'default' => false,
     ),
+    'QUESTION_INSTANCE_INDEX' => array(
+        'width' => '10',
+        'label' => 'LBL_QUESTION_INSTANCE_INDEX',
+        'default' => false,
+    ),
     'QUESTION_SECTION' => array(
         'width' => '10',
         'label' => 'LBL_QUESTION_SECTION',

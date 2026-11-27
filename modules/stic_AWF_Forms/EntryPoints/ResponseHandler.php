@@ -923,38 +923,37 @@ class ResponseHandler
         global $app_strings;
 
         foreach ($block->fields as $field) {
+            // Skip fixed fields before consuming analytical order.
+            if ($field->type_field === DataBlockFieldType::FIXED) continue;
+
             $currentOrder = $orderCounter;
             $orderCounter += 1;
 
-                // Skip fixed fields
-                if ($field->type_field === DataBlockFieldType::FIXED) continue;
+            // Set default integer value to null
+            $answerInteger = null;
 
-                // Set default integer value to null
-                $answerInteger = null;
+            if ($field->type_in_form === 'file') {
+                if ($block->is_document_block) {
+                    $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
+                    $detailBean->stic_awf_responses_id_c = $responseBean->id;
+                    $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
+                    $detailBean->assigned_user_id = $responseBean->assigned_user_id;
+                    $this->setQuestionIdentity($detailBean, $block, $field, $instanceIndexes);
+                    $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
+                    $detailBean->question_label = rtrim($detailBean->question_label, ' :');
+                    $detailBean->question_section = $block->text;
+                    $detailBean->question_sort_order = $currentOrder;
 
-                if ($field->type_in_form === 'file') {
-                    if ($block->is_document_block) {
-                        $instanceSuffix = $instanceIndexes !== [] ? '[' . implode('][', $instanceIndexes) . ']' : '';
-                        $detailBean = BeanFactory::newBean('stic_AWF_Response_Details');
-                        $detailBean->stic_awf_responses_id_c = $responseBean->id;
-                        $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
-                        $detailBean->assigned_user_id = $responseBean->assigned_user_id;
-                        $detailBean->question_key = $block->name . $instanceSuffix . '.' . $field->name;
-                        $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
-                        $detailBean->question_label = rtrim($detailBean->question_label, ' :');
-                        $detailBean->question_section = $block->text;
-                        $detailBean->question_sort_order = $currentOrder;
-
-                        $fileKey = $instanceIndexes !== [] ? $field->getFileKeyForIndexes($instanceIndexes) : $field->getPhpKey();
-                        $fileName = $uploadedFiles[$fileKey]['name'] ?? '';
-                        $detailBean->answer_value = $fileName;
-                        $detailBean->answer_text = $fileName;
-                        $detailBean->answer_type = 'file';
-                        $detailBean->answer_integer = $answerInteger;
-                        $detailBean->save();
-                    }
-                    continue;
+                    $fileKey = $instanceIndexes !== [] ? $field->getFileKeyForIndexes($instanceIndexes) : $field->getPhpKey();
+                    $fileName = $uploadedFiles[$fileKey]['name'] ?? '';
+                    $detailBean->answer_value = $fileName;
+                    $detailBean->answer_text = $fileName;
+                    $detailBean->answer_type = 'file';
+                    $detailBean->answer_integer = $answerInteger;
+                    $detailBean->save();
                 }
+                continue;
+            }
 
             // Scalar fields use flat keys; grouped fields use the full index vector.
             if (!empty($instanceIndexes)) {
@@ -1032,7 +1031,7 @@ class ResponseHandler
             $detailBean->stic_awf_forms_id_c = $formBean->id ?? '';
             $detailBean->assigned_user_id = $responseBean->assigned_user_id;
 
-            $detailBean->question_key = !empty($instanceIndexes) ? $field->getKeyForIndexes($instanceIndexes) : $block->name . '.' . $field->name;
+            $this->setQuestionIdentity($detailBean, $block, $field, $instanceIndexes);
             $detailBean->question_label = $field->label ?? $field->text_original ?? $field->name;
             $detailBean->question_label = rtrim($detailBean->question_label, ' :');
             if (!empty($field->description)) {
@@ -1069,6 +1068,17 @@ class ResponseHandler
 
             $detailBean->save();
         }
+    }
+
+    /**
+     * Stores a stable analytical question key and keeps instance addressing in
+     * a separate reportable field so grouped answers remain in the same series.
+     */
+    private function setQuestionIdentity(SugarBean $detailBean, FormDataBlock $block, FormDataBlockField $field, array $instanceIndexes): void
+    {
+        // Separate stable question keys from instance metadata
+        $detailBean->question_key = $block->name . '.' . $field->name;
+        $detailBean->question_instance_index = $instanceIndexes === [] ? null : implode(':', $instanceIndexes);
     }
 
     /** 

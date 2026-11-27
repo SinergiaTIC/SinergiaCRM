@@ -116,7 +116,11 @@ class stic_AWFUtils {
     {
         $theme = $context->formConfig->layout->theme;
         $layout = $context->formConfig->layout;
+        $formConfig = $context->formConfig;
         $formData = $context->formData;
+        $layoutFields = self::collectSummaryFieldsFromSections($layout->structure, $formConfig);
+        $renderedScalarFields = [];
+        $renderedGroupRoots = [];
 
         // Default options
         $title = $options['title'] ?? '';
@@ -154,37 +158,23 @@ class stic_AWFUtils {
             $html .= "<table style=\"width: 100%;border-collapse: collapse;margin-bottom: 0px;\">";
             $hasFields = false;
 
-            // Elements of the section (data blocks): collect them RECURSIVELY,
-            // since the layout nests the blocks inside host sections (Paso 4
-            // composite model). Field elements (unbundled blocks) also count as
-            // block references; blocks are de-duplicated per section walk.
-            $collectBlockElements = function ($containerSection) use (&$collectBlockElements) {
-                $found = [];
-                foreach ($containerSection->elements as $element) {
-                    if ($element->type === 'datablock' || $element->type === 'field') {
-                        $found[$element->ref_id] = true;
-                    } elseif ($element->type === 'section') {
-                        foreach ($collectBlockElements($element) as $refId => $v) {
-                            $found[$refId] = true;
-                        }
-                    }
-                }
-                return $found;
-            };
-            $sectionBlockIds = $collectBlockElements($section);
+            // Respect field-level layout selections and de-duplicate fields
+            // across sections. Group descendants are rendered by their root.
+            $sectionFields = self::collectSummaryFields($section, $formConfig);
 
-            foreach (array_keys($sectionBlockIds) as $blockId) {
+            foreach ($sectionFields as $blockId => $fieldNames) {
                 $block = $context->getDataBlockById($blockId);
                 if (!$block) continue;
 
                 // Enclosed blocks are rendered by their loop owner.
-                if (self::hasEnclosingGroupLoop($block, $context->formConfig)) continue;
+                if (self::hasEnclosingGroupLoop($block, $formConfig)) continue;
 
                 // Repeatable and optional groups render as per-instance rows in the summary.
                 if ($block->isRepeatable() || $block->isOptional()) {
-                    // Use transitive descendants (multi-level branches);
-                    // config comes from the context ($formConfig was never defined in this scope).
-                    $formConfig = $context->formConfig;
+                    if (isset($renderedGroupRoots[$block->id])) continue;
+                    $renderedGroupRoots[$block->id] = true;
+
+                    // Use transitive descendants (multi-level branches).
                     $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '', $context->uploadedFiles);
                     $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
                     $instances = DataBlockResolved::resolveInstances($block, $formData, $summaryContext);
@@ -196,16 +186,8 @@ class stic_AWFUtils {
                         $instanceNumber++;
 
                         foreach ($groupBlocks as $groupBlock) {
-                            // Skip blocks with no visible (non-fixed, labelled) fields:
-                            // they would render empty instance sub-rows
-                            $hasVisibleFields = false;
-                            foreach ($groupBlock->fields as $visibleCheck) {
-                                if ($visibleCheck->type_field !== DataBlockFieldType::FIXED && !empty($visibleCheck->label)) {
-                                    $hasVisibleFields = true;
-                                    break;
-                                }
-                            }
-                            if (!$hasVisibleFields) continue;
+                            $selectedFieldNames = $layoutFields[$groupBlock->id] ?? [];
+                            if (empty($selectedFieldNames)) continue;
 
                             $groupBlockLoopDepth = $groupBlock->getLoopDepth();
                             // Nested loops: one row per fully resolved inner instance.
@@ -217,7 +199,9 @@ class stic_AWFUtils {
                                     $html .= "<tr><td colspan=\"2\" style=\"padding: 6px 12px 6px 28px;font-weight: bold;color: {$textColor};background-color: rgba(0,0,0,0.03);border-bottom: 1px solid {$borderColor};\">" . htmlspecialchars($innerLabel) . "</td></tr>";
                                     $hasFields = true;
                                     $innerNumber++;
-                                    foreach ($groupBlock->fields as $fieldDef) {
+                                    foreach ($selectedFieldNames as $fieldName) {
+                                        $fieldDef = $groupBlock->fields[$fieldName] ?? null;
+                                        if (!$fieldDef) continue;
                                         // Only show visible fields in the form
                                         if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                                         // If it has no label, it is not displayed
@@ -232,7 +216,9 @@ class stic_AWFUtils {
                                 continue;
                             }
 
-                            foreach ($groupBlock->fields as $fieldDef) {
+                            foreach ($selectedFieldNames as $fieldName) {
+                                $fieldDef = $groupBlock->fields[$fieldName] ?? null;
+                                if (!$fieldDef) continue;
                                 // Only show visible fields in the form
                                 if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                                 // If it has no label, it is not displayed
@@ -255,7 +241,9 @@ class stic_AWFUtils {
                     continue;
                 }
 
-                foreach ($block->fields as $fieldDef) {
+                foreach ($fieldNames as $fieldName) {
+                    $fieldDef = $block->fields[$fieldName] ?? null;
+                    if (!$fieldDef) continue;
                     // Only show visible fields in the form
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) {
                         continue;
@@ -264,6 +252,10 @@ class stic_AWFUtils {
                     if (empty($fieldDef->label)) {
                         continue;
                     }
+
+                    $fieldKey = $block->id . '::' . $fieldName;
+                    if (isset($renderedScalarFields[$fieldKey])) continue;
+                    $renderedScalarFields[$fieldKey] = true;
 
                     $formKey = $fieldDef->getPhpKey();
 
@@ -491,7 +483,11 @@ class stic_AWFUtils {
         }
         
         $layout = $context->formConfig->layout;
-        $formData = $context->formData; 
+        $formConfig = $context->formConfig;
+        $formData = $context->formData;
+        $layoutFields = self::collectSummaryFieldsFromSections($layout->structure, $formConfig);
+        $renderedScalarFields = [];
+        $renderedGroupRoots = [];
         
         foreach ($layout->structure as $section) {
             
@@ -505,16 +501,19 @@ class stic_AWFUtils {
                 $text .= "--------------------\n";
             }
 
-            foreach (array_keys(self::collectSummaryBlockIds($section)) as $blockId) {
+            $sectionFields = self::collectSummaryFields($section, $formConfig);
+            foreach ($sectionFields as $blockId => $fieldNames) {
                 $block = $context->getDataBlockById($blockId);
                 if (!$block) continue;
 
                 // Enclosed blocks are rendered by their loop owner.
-                if (self::hasEnclosingGroupLoop($block, $context->formConfig)) continue;
+                if (self::hasEnclosingGroupLoop($block, $formConfig)) continue;
 
                 // Repeatable and optional groups render as per-instance rows.
                 if ($block->isRepeatable() || $block->isOptional()) {
-                    $formConfig = $context->formConfig;
+                    if (isset($renderedGroupRoots[$block->id])) continue;
+                    $renderedGroupRoots[$block->id] = true;
+
                     $groupBlocks = array_merge([$block], $formConfig->getGroupDescendants($block));
                     $summaryContext = new ExecutionContext('', '', $formData, $formConfig, null, '', null, '', $context->uploadedFiles);
                     $instances = DataBlockResolved::resolveInstances($block, $formData, $summaryContext);
@@ -524,15 +523,8 @@ class stic_AWFUtils {
                         $instanceNumber++;
 
                         foreach ($groupBlocks as $groupBlock) {
-                            // Skip blocks with no visible (non-fixed, labelled) fields
-                            $hasVisibleFields = false;
-                            foreach ($groupBlock->fields as $visibleCheck) {
-                                if ($visibleCheck->type_field !== DataBlockFieldType::FIXED && !empty($visibleCheck->label)) {
-                                    $hasVisibleFields = true;
-                                    break;
-                                }
-                            }
-                            if (!$hasVisibleFields) continue;
+                            $selectedFieldNames = $layoutFields[$groupBlock->id] ?? [];
+                            if (empty($selectedFieldNames)) continue;
 
                             $groupBlockLoopDepth = $groupBlock->getLoopDepth();
                             if ($groupBlockLoopDepth >= 2) {
@@ -542,7 +534,9 @@ class stic_AWFUtils {
                                 foreach ($subInstances as $subInstance) {
                                     $text .= "  " . rtrim($groupBlock->text, ' :') . " #" . $innerNumber . "\n";
                                     $innerNumber++;
-                                    foreach ($groupBlock->fields as $fieldDef) {
+                                    foreach ($selectedFieldNames as $fieldName) {
+                                        $fieldDef = $groupBlock->fields[$fieldName] ?? null;
+                                        if (!$fieldDef) continue;
                                         if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                                         if (empty($fieldDef->label)) continue;
                                         $value = $subInstance->getFieldValue($fieldDef->name)?->value
@@ -553,12 +547,18 @@ class stic_AWFUtils {
                                 }
                             } else {
                                 // Depth-1: fields from the instance matrix (Block[i][field])
-                                foreach ($groupBlock->fields as $fieldDef) {
+                                foreach ($selectedFieldNames as $fieldName) {
+                                    $fieldDef = $groupBlock->fields[$fieldName] ?? null;
+                                    if (!$fieldDef) continue;
                                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                                     if (empty($fieldDef->label)) continue;
                                     $isUnlinked = $fieldDef->type_field === DataBlockFieldType::UNLINKED;
                                     $blockArrayKey = ($isUnlinked ? '_detached_' : '') . $groupBlock->name;
                                     $value = $formData[$blockArrayKey][$instance->instanceIndex][$fieldDef->name] ?? '';
+                                    if ($fieldDef->type_in_form === 'file') {
+                                        $fileKey = $fieldDef->getFileKeyForIndexes([$instance->instanceIndex]);
+                                        $value = $context->uploadedFiles[$fileKey]['name'] ?? '';
+                                    }
                                     $text .= "  " . self::formatSummaryTextValue($fieldDef, $value) . "\n";
                                 }
                             }
@@ -567,14 +567,23 @@ class stic_AWFUtils {
                     continue;
                 }
 
-                foreach ($block->fields as $fieldDef) {
+                foreach ($fieldNames as $fieldName) {
+                    $fieldDef = $block->fields[$fieldName] ?? null;
+                    if (!$fieldDef) continue;
                     if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
                     if (empty($fieldDef->label)) continue;
+
+                    $fieldKey = $block->id . '::' . $fieldName;
+                    if (isset($renderedScalarFields[$fieldKey])) continue;
+                    $renderedScalarFields[$fieldKey] = true;
 
                     $formKey = $fieldDef->getPhpKey();
 
                     // Value to display
                     $value = $formData[$formKey] ?? '';
+                    if ($fieldDef->type_in_form === 'file' && isset($context->uploadedFiles[$formKey]['name'])) {
+                        $value = $context->uploadedFiles[$formKey]['name'];
+                    }
                     $text .= self::formatSummaryTextValue($fieldDef, $value) . "\n";
                 }
             }
@@ -599,23 +608,60 @@ class stic_AWFUtils {
     }
 
     /**
-     * Recursively collects the data-block IDs referenced by a section's
-     * elements (datablock AND unbundled field elements), walking nested
-     * sections, de-duplicated per section walk.
-     * @return array<string, true>
+     * Collects the selected summary fields from layout sections. A whole block
+     * selects every non-FIXED field; a field element selects only field_name.
+     * The first occurrence wins, so duplicates across sections render once.
+     *
+     * @param FormLayoutSection[] $sections
+     * @return array<string, string[]> block ID => ordered field names
      */
-    private static function collectSummaryBlockIds($containerSection): array {
+    private static function collectSummaryFieldsFromSections(array $sections, FormConfig $config): array
+    {
         $found = [];
-        foreach ($containerSection->elements as $element) {
-            if ($element->type === 'datablock' || $element->type === 'field') {
-                $found[$element->ref_id] = true;
-            } elseif ($element->type === 'section') {
-                foreach (self::collectSummaryBlockIds($element) as $refId => $v) {
-                    $found[$refId] = true;
+        $walk = function (array $elements) use (&$walk, &$found, $config): void {
+            foreach ($elements as $element) {
+                if ($element->type === 'section') {
+                    $walk($element->elements);
+                    continue;
+                }
+                if ($element->type !== 'datablock' && $element->type !== 'field') {
+                    continue;
+                }
+
+                $block = $config->data_blocks[$element->ref_id] ?? null;
+                if (!$block) {
+                    continue;
+                }
+
+                if ($element->type === 'datablock') {
+                    foreach ($block->fields as $fieldName => $fieldDef) {
+                        if ($fieldDef->type_field === DataBlockFieldType::FIXED) {
+                            continue;
+                        }
+                        $found[$block->id][$fieldName] = true;
+                    }
+                    continue;
+                }
+
+                $fieldName = $element->field_name;
+                $fieldDef = $block->fields[$fieldName] ?? null;
+                if ($fieldDef && $fieldDef->type_field !== DataBlockFieldType::FIXED) {
+                    $found[$block->id][$fieldName] = true;
                 }
             }
+        };
+
+        foreach ($sections as $section) {
+            $walk($section->elements);
         }
-        return $found;
+
+        return array_map('array_keys', $found);
+    }
+
+    /** Collects selected fields for one section, including nested sections. */
+    private static function collectSummaryFields($section, FormConfig $config): array
+    {
+        return self::collectSummaryFieldsFromSections([$section], $config);
     }
 
     /**
