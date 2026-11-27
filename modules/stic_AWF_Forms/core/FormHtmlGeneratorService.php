@@ -611,7 +611,10 @@ class FormHtmlGeneratorService {
             }
         } else if ($currentGroupRootId !== null && empty($section->groupTemplate)) {
             // Legacy nested hosts may announce a subgroup; the loop's own template is structural.
-            $groupRootBlock = $this->findGroupRootInSection($config, $section, $currentGroupRootId);
+            $currentRoot = $config->data_blocks[$currentGroupRootId] ?? null;
+            if (!$currentRoot || $currentRoot->isRepeatable() || $currentRoot->isOptional()) {
+                $groupRootBlock = $this->findGroupRootInSection($config, $section, $currentGroupRootId);
+            }
         }
 
         if ($groupRootBlock) {
@@ -624,6 +627,10 @@ class FormHtmlGeneratorService {
         }
 
         if ($groupRootBlock) {
+            // Simple mandatory groups have no loop in the backend contract. Render them once with scalar field names.
+            if (!$groupRootBlock->isRepeatable() && !$groupRootBlock->isOptional()) {
+                return $this->generateSimpleGroupHtml($groupRootBlock, $section, $config, $theme, $instanceIndexVar, $outerIndexVars);
+            }
             // Groups always render with their own chrome (the loop provides it)
             return $this->generateGroupHtml($groupRootBlock, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
         }
@@ -1148,6 +1155,25 @@ class FormHtmlGeneratorService {
             return $this->renderField($field, $theme, $currentGroupRootId !== null ? $instanceIndexVar : null, $outerIndexVars);
         }
 
+        $currentRoot = $currentGroupRootId !== null ? ($config->data_blocks[$currentGroupRootId] ?? null) : null;
+        $isSimpleGroupContext = $currentRoot !== null
+            && !$currentRoot->isRepeatable()
+            && !$currentRoot->isOptional();
+        if ($isSimpleGroupContext) {
+            if ($block->isRepeatable() || $block->isOptional()) {
+                return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $parentSection, $outerIndexVars);
+            }
+            if ($parentSection !== null && self::sectionIsDedicatedBlockHost($parentSection, $block->id)) {
+                $html = '';
+                foreach ($block->fields as $field) {
+                    if ($field->type_field === DataBlockFieldType::FIXED) continue;
+                    $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
+                }
+                return $html;
+            }
+            return $this->renderBlockPanel($block, $theme, $instanceIndexVar, $outerIndexVars);
+        }
+
         $isGroupHead = $block->isRepeatable() || $block->isOptional() || !empty($config->getGroupChildren($block));
 
         if ($isGroupHead) {
@@ -1438,19 +1464,71 @@ class FormHtmlGeneratorService {
             return $this->generateGroupHtml($block, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
         }
         $html = "";
-        // Root block fields (scalar rendering)
+        // Root block fields (scalar rendering, or enclosing-loop aware when this
+        // simple group is nested inside a repeatable/optional parent).
         foreach ($block->fields as $field) {
             if ($field->type_field === DataBlockFieldType::FIXED) continue;
-            $html .= $this->renderField($field, $theme);
+            $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
         }
-        // Simple group with children: render children inline (static, no instance index)
+        // Simple group with children: render descendants inline. Looped children
+        // keep their own instance loop; simple descendants remain scalar.
         foreach ($children as $childBlock) {
             // Skip blocks with no input to emit anywhere in their subtree.
             // Hidden fields count because they still carry submitted values.
             if (!self::groupSubtreeHasRenderableInputs($childBlock, $config)) continue;
-            $html .= $this->renderBlockPanel($childBlock, $theme);
+            if ($childBlock->isRepeatable() || $childBlock->isOptional()) {
+                $html .= $this->generateGroupHtml($childBlock, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
+            } else {
+                $html .= $this->generateDataBlockHtml($childBlock, $theme, $config, $instanceIndexVar, $section, $outerIndexVars);
+            }
         }
         return $html;
+    }
+
+    /**
+     * Render a mandatory simple group once, using the backend's scalar naming contract while preserving its layout chrome.
+     */
+    private function generateSimpleGroupHtml(FormDataBlock $rootBlock, FormLayoutSection $section, FormConfig $config, FormTheme $theme, ?string $instanceIndexVar, array $outerIndexVars): string {
+        $templateSection = null;
+        foreach ($section->elements as $element) {
+            if ($element instanceof FormLayoutSection && (!empty($element->groupTemplate) || $element->containerType === 'tab_item')) {
+                $templateSection = $element;
+                break;
+            }
+        }
+        $contentSection = $templateSection ?? $section;
+
+        $staticSection = new FormLayoutSection();
+        $staticSection->id = $section->id;
+        $staticSection->type = 'section';
+        $staticSection->title = $section->title;
+        $staticSection->subtitle = $section->subtitle;
+        $staticSection->containerType = $section->containerType;
+        $staticSection->showTitle = $section->showTitle;
+        $staticSection->is_custom_title = $section->is_custom_title;
+        $staticSection->isCollapsible = $section->isCollapsible;
+        $staticSection->isCollapsed = $section->isCollapsed;
+        $staticSection->toggle_label = $section->toggle_label;
+        $staticSection->add_button_label = $section->add_button_label;
+        $staticSection->remove_button_label = $section->remove_button_label;
+        $staticSection->elements = $contentSection->elements;
+
+        // Legacy/manual layouts may omit whole block hosts. Add only missing
+        // blocks so every descendant is emitted once with scalar names.
+        $groupBlocks = array_merge([$rootBlock], $config->getGroupDescendants($rootBlock));
+        foreach ($groupBlocks as $groupBlock) {
+            if (self::sectionContainsElementForBlock($staticSection, $groupBlock->id)) continue;
+            if (!self::groupSubtreeHasRenderableInputs($groupBlock, $config)
+                && !self::isServerDataOptionalGroup($groupBlock, $config)) {
+                continue;
+            }
+            $staticSection->elements[] = FormLayoutElement::fromJsonArray($staticSection, [
+                'type' => 'datablock',
+                'ref_id' => $groupBlock->id,
+            ]);
+        }
+
+        return $this->renderSectionNode($staticSection, $config, $theme, $instanceIndexVar, $rootBlock->id, $outerIndexVars, true);
     }
 
     /**
@@ -2316,13 +2394,13 @@ class FormHtmlGeneratorService {
      * @param FormTheme $theme The form theme
      * @return string Generated HTML for the block panel
      */
-    private function renderBlockPanel(FormDataBlock $block, FormTheme $theme): string {
+    private function renderBlockPanel(FormDataBlock $block, FormTheme $theme, ?string $instanceIndexVar = null, array $outerIndexVars = []): string {
         if (!self::blockHasRenderableInputs($block)) return "";
         if (!self::blockHasRenderableFields($block)) {
             $html = '';
             foreach ($block->fields as $field) {
                 if ($field->type_field === DataBlockFieldType::FIXED) continue;
-                $html .= $this->renderField($field, $theme);
+                $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
             }
             return $html;
         }
@@ -2335,7 +2413,7 @@ class FormHtmlGeneratorService {
             {
                 foreach ($block->fields as $field) {
                     if ($field->type_field === DataBlockFieldType::FIXED) continue;
-                    $html .= $this->renderField($field, $theme);
+                    $html .= $this->renderField($field, $theme, $instanceIndexVar, $outerIndexVars);
                 }
             }
             $html .= "</div>" . $this->newLine('-');
