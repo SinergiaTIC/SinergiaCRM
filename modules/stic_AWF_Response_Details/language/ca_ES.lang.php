@@ -62,6 +62,7 @@ $mod_strings = array (
 
   'LBL_QUESTION_SORT_ORDER' => 'Ordre',
   'LBL_QUESTION_KEY' => 'Clau de la pregunta',
+  'LBL_QUESTION_INSTANCE_INDEX' => "Índex de l'element",
   'LBL_QUESTION_LABEL' => 'Etiqueta',
   'LBL_QUESTION_HELP_TEXT' => "Text d'ajuda",
   'LBL_QUESTION_SECTION' => 'Bloc de dades',

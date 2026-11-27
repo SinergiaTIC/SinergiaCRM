@@ -106,7 +106,13 @@ abstract class ServerDataBlockActionDefinition extends ServerActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Can not resolve DataBlock parameter '{$this->getDataBlockParameterName()}'.");
         }
 
-        // Call the method that will be implemented in the action
+        // Guard for optional blocks
+        if (!$block->isActivated()) {
+            $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": Advanced Web Forms: DataBlock '{$block->dataBlock->name}' skipped because it is optional and was not activated.");
+            return new ActionResult(ResultStatus::SKIPPED, $actionConfig, "DataBlock '{$block->dataBlock->name}' was skipped because it is optional and was not activated.");
+        }
+
+        // Call the method implemented in the child action
         return $this->executeWithBlock($context, $actionConfig, $block);
     }
 

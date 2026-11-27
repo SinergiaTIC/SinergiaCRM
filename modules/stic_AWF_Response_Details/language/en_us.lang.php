@@ -62,6 +62,7 @@ $mod_strings = array (
 
   'LBL_QUESTION_SORT_ORDER' => 'Order',
   'LBL_QUESTION_KEY' => 'Question key',
+  'LBL_QUESTION_INSTANCE_INDEX' => 'Element index',
   'LBL_QUESTION_LABEL' => 'Label',
   'LBL_QUESTION_HELP_TEXT' => 'Help text',
   'LBL_QUESTION_SECTION' => 'Data block',

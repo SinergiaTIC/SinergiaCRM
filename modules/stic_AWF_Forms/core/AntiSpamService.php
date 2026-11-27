@@ -156,8 +156,15 @@ class AntiSpamService
         $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": AntiSpamService: Secure TimeTrap check. Duration: {$duration}s");
 
         // Block if faster than 2 seconds or older than 48 hours (172800s TTL)
-        if ($duration < 2.0 || $duration > 172800.0) {
-            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AntiSpamService: TimeTrap violation detected. Duration: {$duration}s");
+        // Do not apply the upper bound to downloaded forms which carry a FROZEN render timestamp
+        global $sugar_config;
+        $siteHost = parse_url($sugar_config['site_url'] ?? '', PHP_URL_HOST);
+        $formUrl = (string)($postData['awf_form_url'] ?? '');
+        $formHost = $formUrl !== '' ? parse_url($formUrl, PHP_URL_HOST) : null;
+        $hostedInCrm = !empty($siteHost) && !empty($formHost) && strcasecmp($siteHost, $formHost) === 0;
+
+        if ($duration < 2.0 || ($hostedInCrm && $duration > 172800.0)) {
+            $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": AntiSpamService: TimeTrap violation detected. Duration: {$duration}s (hostedInCrm=" . ($hostedInCrm ? '1' : '0') . ")");
             $result['isSpam'] = true;
             return $result;
         }

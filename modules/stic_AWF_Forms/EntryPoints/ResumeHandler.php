@@ -83,8 +83,7 @@ class ResumeHandler
                 }
 
                 if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
-                    $context->responseBean->status = 'error';
-                    $context->responseBean->save();
+                    stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'error');
                 }
 
                 if ($errorFlow) {
@@ -131,6 +130,7 @@ class ResumeHandler
 
             if ($ticket->status === 'processed') {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The ticket has already been processed previously. Delegating the terminal action exclusively.");
+                stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'processed');
                 if (!$isCli) {
                     $executor->executeTerminalActionOnly($virtualFlow);
                 }
@@ -149,8 +149,7 @@ class ResumeHandler
                     $ticket->save();
 
                     if ($context->responseBean) {
-                        $context->responseBean->status = 'error';
-                        $context->responseBean->save();
+                        stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'error');
                     }
                     stic_AWFUtils::renderGenericResponseError($context->formConfig);
                     return;
@@ -161,8 +160,7 @@ class ResumeHandler
             $ticket->save();
 
             if ($context->responseBean && !$lastResult->isError()) {
-                $context->responseBean->status = 'processed';
-                $context->responseBean->save();
+                stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'processed');
             }
 
             $lastAction = $lastResult->getAction();

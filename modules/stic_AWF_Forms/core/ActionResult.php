@@ -107,10 +107,11 @@ class ActionResult {
             throw new \LogicException("Error in registerBeanModificationFromBlock: Bean module ('{$bean->module_name}') is different from block module ('{$blockModule}').");
         }
 
-        $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $submittedData);
+        $modifiedBean = new BeanModified($bean->id, $bean->module_name, $action, $submittedData, $block->getInstanceIndexKey());
         $this->addModifiedBean($modifiedBean);
 
-        $block->dataBlock->setBeanReference($bean->id);
+        // Register the reference under the full instance index vector.
+        $block->dataBlock->setBeanReference($bean->id, $block->getInstanceIndexKey());
     }
 
     /**
@@ -119,8 +120,9 @@ class ActionResult {
      *
      * @param SugarBean $bean The bean on which the action was performed
      * @param array $metadata Array of associative arrays [['key' => string, 'label' => string, 'value' => mixed]]
+     * @param ?string $instanceIndex Instance index vector, or null for scalar actions
      */
-    public function registerActionMetadata(SugarBean $bean, array $metadata): void
+    public function registerActionMetadata(SugarBean $bean, array $metadata, ?string $instanceIndex = null): void
     {
         require_once 'modules/stic_AWF_Forms/core/FieldModification.php';
 
@@ -142,7 +144,8 @@ class ActionResult {
         }
 
         // Save actions as a METADATA injection in the record context
-        $modifiedBean = new BeanModified($bean->id, $bean->module_name, BeanModificationType::METADATA, $logData);
+        // Keep metadata in the same bean instance scope
+        $modifiedBean = new BeanModified($bean->id, $bean->module_name, BeanModificationType::METADATA, $logData, $instanceIndex);
         
         $this->addModifiedBean($modifiedBean);
     }
