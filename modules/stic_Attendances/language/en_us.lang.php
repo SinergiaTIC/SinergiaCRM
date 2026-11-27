@@ -77,4 +77,10 @@ $mod_strings = array(
 
     // Many to Many filter fields
     'LBL_STIC_ATTENDANCES_STIC_REGISTRATIONS_STIC_EVENTS_NAME' => 'Event (via Registrations)',
+
+    // UI feedback messages for attendance creation
+    'LBL_UI_CREATED_LIST' => 'Attendances have been created for the days %s.',
+    'LBL_UI_CREATED_COUNT' => 'Attendances have been created for %d days.',
+    'LBL_UI_NOOP_LIST' => 'No new attendances have been created for the days %s.',
+    'LBL_UI_NOOP_COUNT' => 'No new attendances have been created for %d days.',
 );
