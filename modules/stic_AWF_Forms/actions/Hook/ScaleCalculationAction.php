@@ -38,10 +38,11 @@ require_once "modules/stic_AWF_Forms/actions/Common/ScaleActionUtils.php";
  * and is recalculated and overwritten by the server on submission, so the
  * saved value never depends exclusively on client-side JavaScript.
  *
- * An optional integer scalar can be configured to multiply the result of the
- * operation. More complex calculations can be built by chaining several of
- * these actions. For the interpretation of the result (baremos) use the
- * ScaleInterpretationAction.
+ * More complex calculations can be built by chaining several of these actions
+ * (each one writes its result to an intermediate field the next one can use as
+ * a source), together with the ScaleScalarOperationAction (operation between a
+ * field and an integer scalar). For the interpretation of the result (baremos)
+ * use the ScaleInterpretationAction.
  */
 class ScaleCalculationAction extends HookActionDefinition implements IFrontendAction
 {
@@ -61,25 +62,7 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
      */
     public function getParameters(): array
     {
-        // 1. Numeric result field (target field)
-        $paramTarget = new ActionParameterDefinition();
-        $paramTarget->name = 'target_field';
-        $paramTarget->text = $this->translate('TARGET_FIELD_TEXT');
-        $paramTarget->description = $this->translate('TARGET_FIELD_DESC');
-        $paramTarget->type = ActionParameterType::FIELD;
-        $paramTarget->supportedDataTypes = array_map(fn($type) => ActionDataType::from($type), self::NUMERIC_TYPES);
-        $paramTarget->required = true;
-
-        // 2. List of source fields (multiple selection; numeric fields and
-        // fields whose options define scores, e.g. dropdowns/radios, are allowed)
-        $paramSources = new ActionParameterDefinition();
-        $paramSources->name = 'source_fields';
-        $paramSources->text = $this->translate('SOURCE_FIELDS_TEXT');
-        $paramSources->description = $this->translate('SOURCE_FIELDS_DESC');
-        $paramSources->type = ActionParameterType::FIELD_LIST;
-        $paramSources->required = true;
-
-        // 3. Operation to apply
+        // 1. Operation to apply
         $paramOperation = new ActionParameterDefinition();
         $paramOperation->name = 'operation';
         $paramOperation->text = $this->translate('OPERATION_TEXT');
@@ -97,6 +80,24 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
         ];
         $paramOperation->required = true;
 
+        // 2. Operands: list of source fields (numeric fields and fields whose options define scores, e.g. dropdowns/radios, are allowed) (multiple selection; numeric fields and
+        // fields whose options define scores, e.g. dropdowns/radios, are allowed)
+        $paramSources = new ActionParameterDefinition();
+        $paramSources->name = 'source_fields';
+        $paramSources->text = $this->translate('SOURCE_FIELDS_TEXT');
+        $paramSources->description = $this->translate('SOURCE_FIELDS_DESC');
+        $paramSources->type = ActionParameterType::FIELD_LIST;
+        $paramSources->required = true;
+
+        // 3. Numeric result field (target field)
+        $paramTarget = new ActionParameterDefinition();
+        $paramTarget->name = 'target_field';
+        $paramTarget->text = $this->translate('TARGET_FIELD_TEXT');
+        $paramTarget->description = $this->translate('TARGET_FIELD_DESC');
+        $paramTarget->type = ActionParameterType::FIELD;
+        $paramTarget->supportedDataTypes = array_map(fn($type) => ActionDataType::from($type), self::NUMERIC_TYPES);
+        $paramTarget->required = true;
+
         // 4. Rounding decimals
         $paramDecimals = new ActionParameterDefinition();
         $paramDecimals->name = 'decimals';
@@ -107,23 +108,11 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
         $paramDecimals->defaultValue = '2';
         $paramDecimals->required = false;
 
-        // 5. Optional integer scalar (multiplier) applied to the result
-        //    (TEXT type: the raw string is kept so an empty value is not cast to 0)
-        $paramScalar = new ActionParameterDefinition();
-        $paramScalar->name = 'scalar';
-        $paramScalar->text = $this->translate('SCALAR_TEXT');
-        $paramScalar->description = $this->translate('SCALAR_DESC');
-        $paramScalar->type = ActionParameterType::VALUE;
-        $paramScalar->dataType = ActionDataType::TEXT;
-        $paramScalar->defaultValue = '';
-        $paramScalar->required = false;
-
         return [
-            $paramTarget,
-            $paramSources,
             $paramOperation,
+            $paramSources,
+            $paramTarget,
             $paramDecimals,
-            $paramScalar,
         ];
     }
 
@@ -135,24 +124,27 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
      */
     public function execute(ExecutionContext $context, FormAction $actionConfig): ActionResult
     {
+        // The engine resolves and validates the parameters: the resolved FIELD
+        // parameters are DataBlockFieldResolved objects carrying the field
+        // configuration and the submitted value already casted. No field
+        // resolution or value reading is done here again.
         $targetResolved = $actionConfig->getResolvedParameter('target_field');
         $targetKey = ($targetResolved instanceof DataBlockFieldResolved) ? $targetResolved->formKey : (string)($targetResolved ?? '');
         /** @var array $sourceValues [formKey => submitted raw value] */
         $sourceValues = $actionConfig->getResolvedParameter('source_fields', []);
         $operation = (string)($actionConfig->getResolvedParameter('operation', 'sum') ?: 'sum');
         $decimals = (int)($actionConfig->getResolvedParameter('decimals', 2) ?: 0);
-        // Optional integer multiplier applied to the result (empty/non-numeric = 1)
-        $scalarRaw = $actionConfig->getResolvedParameter('scalar', '');
-        $scalar = is_numeric($scalarRaw) ? (int)$scalarRaw : 1;
 
         if (empty($targetKey)) {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Parameter 'target_field' is missing.");
         }
 
-        // Read the value sent by the browser for the target field (before overwriting it)
-        $targetDef = ScaleActionUtils::resolveFieldDefinition($context->formConfig, $targetKey);
-        $submittedRaw = ScaleActionUtils::getSubmittedFieldValue($context->formConfig, $context->formData, $targetKey, $context->getInstanceIndexes());
-        $submittedNumber = ScaleActionUtils::computeFieldNumericValue($targetDef, $submittedRaw);
+        // Value the browser sent for the target field (before overwriting it),
+        // taken from the resolved parameter (already verified by the engine)
+        $submittedNumber = null;
+        if ($targetResolved instanceof DataBlockFieldResolved && $targetResolved->value !== null && $targetResolved->value !== '') {
+            $submittedNumber = ScaleActionUtils::computeFieldNumericValue($targetResolved->dataBlockField, $targetResolved->value);
+        }
 
         // Compute the numeric value of every source field (option scores are applied)
         $numericValues = [];
@@ -167,7 +159,7 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
             return new ActionResult(ResultStatus::OK, $actionConfig, $this->translate('NO_VALUES_MESSAGE'));
         }
 
-        $result = round($result * $scalar, max(0, min(10, $decimals)));
+        $result = round($result, max(0, min(10, $decimals)));
 
         // Warn when the value sent by the browser differs from the server result
         if ($submittedNumber !== null && abs($submittedNumber - $result) > 0.0001) {
@@ -257,7 +249,6 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
         $sourceFields = [];
         $operation = 'sum';
         $decimals = 2;
-        $scalar = 1;
 
         foreach ($params as $p) {
             switch ($p->name) {
@@ -273,9 +264,6 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
                 case 'decimals':
                     $decimals = (int)($p->value ?: 2);
                     break;
-                case 'scalar':
-                    $scalar = (is_numeric($p->value)) ? (int)$p->value : 1;
-                    break;
             }
         }
 
@@ -290,7 +278,6 @@ class ScaleCalculationAction extends HookActionDefinition implements IFrontendAc
             'sourceFields' => $sourceFields,
             'operation' => $operation,
             'decimals' => $decimals,
-            'scalar' => $scalar,
         ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE);
 
         $script = <<<JS
@@ -347,7 +334,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var values = CFG.sourceFields.map(function(key) { return numericOf(getValue, getAttr, key); });
         var result = computeResult(values);
         if (result === null || isNaN(result)) return;
-        result = result * CFG.scalar;
         result = Number(result.toFixed(CFG.decimals));
 
         updating = true;

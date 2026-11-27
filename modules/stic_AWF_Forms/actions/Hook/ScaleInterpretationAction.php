@@ -66,15 +66,7 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
         $paramScoreField->type = ActionParameterType::FIELD;
         $paramScoreField->required = true;
 
-        // 2. Target field where the interpretation label is written
-        $paramTargetLabel = new ActionParameterDefinition();
-        $paramTargetLabel->name = 'target_label_field';
-        $paramTargetLabel->text = $this->translate('TARGET_LABEL_FIELD_TEXT');
-        $paramTargetLabel->description = $this->translate('TARGET_LABEL_FIELD_DESC');
-        $paramTargetLabel->type = ActionParameterType::FIELD;
-        $paramTargetLabel->required = true;
-
-        // 3. Ranges of the baremo
+        // 2. Ranges of the baremo
         $paramRanges = new ActionParameterDefinition();
         $paramRanges->name = 'ranges';
         $paramRanges->text = $this->translate('RANGES_TEXT');
@@ -84,10 +76,18 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
         $paramRanges->required = true;
         $paramRanges->colSize = 'col-12';
 
+        // 3. Target field where the interpretation label is written
+        $paramTargetLabel = new ActionParameterDefinition();
+        $paramTargetLabel->name = 'target_label_field';
+        $paramTargetLabel->text = $this->translate('TARGET_LABEL_FIELD_TEXT');
+        $paramTargetLabel->description = $this->translate('TARGET_LABEL_FIELD_DESC');
+        $paramTargetLabel->type = ActionParameterType::FIELD;
+        $paramTargetLabel->required = true;
+
         return [
             $paramScoreField,
-            $paramTargetLabel,
             $paramRanges,
+            $paramTargetLabel,
         ];
     }
 
@@ -109,13 +109,14 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
             return new ActionResult(ResultStatus::ERROR, $actionConfig, "Parameters 'score_field' and 'target_label_field' are required.");
         }
 
-        // Read the value sent by the browser for the target field (before overwriting it)
-        $submittedRaw = ScaleActionUtils::getSubmittedFieldValue($context->formConfig, $context->formData, $targetKey, $context->getInstanceIndexes());
-
-        // Numeric score of the source field (option scores are applied)
-        $scoreFieldDef = ScaleActionUtils::resolveFieldDefinition($context->formConfig, $scoreKey);
-        $scoreRaw = ScaleActionUtils::getSubmittedFieldValue($context->formConfig, $context->formData, $scoreKey, $context->getInstanceIndexes());
-        $score = ScaleActionUtils::computeFieldNumericValue($scoreFieldDef, $scoreRaw);
+        // Value the browser sent for the target field and numeric score of the
+        // source field, both taken from the resolved parameters (already
+        // verified and casted by the engine)
+        $submittedRaw = ($targetResolved instanceof DataBlockFieldResolved) ? $targetResolved->value : null;
+        $score = null;
+        if ($scoreResolved instanceof DataBlockFieldResolved && $scoreResolved->value !== null && $scoreResolved->value !== '') {
+            $score = ScaleActionUtils::computeFieldNumericValue($scoreResolved->dataBlockField, $scoreResolved->value);
+        }
 
         if ($score === null) {
             return new ActionResult(ResultStatus::OK, $actionConfig, $this->translate('NO_SCORE_MESSAGE'));
@@ -130,7 +131,7 @@ class ScaleInterpretationAction extends HookActionDefinition implements IFronten
 
         // Write the recalculated label into the raw form data, so later actions
         // (data block saves, ...) use the server-computed value
-        $targetFieldDef = ScaleActionUtils::resolveFieldDefinition($context->formConfig, $targetKey);
+        $targetFieldDef = ($targetResolved instanceof DataBlockFieldResolved) ? $targetResolved->dataBlockField : null;
         $written = ScaleActionUtils::setSubmittedFieldValue(
             $context->formConfig,
             $context->formData,

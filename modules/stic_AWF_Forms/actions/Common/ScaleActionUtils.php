@@ -29,9 +29,17 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * ScaleActionUtils
  *
  * Shared utilities for AWF actions that compute values from the submitted form
- * data (scale calculations, custom formulas, range/baremo interpretation, ...).
- * Used by the scale actions (Hook) and by SaveRecordAction to fill the
- * "submission_data" field of stic_Assessments_Scores.
+ * data (scale calculations, baremos interpretation, ...). Used by the scale
+ * actions (Hook).
+ *
+ * Note: these helpers are NOT duplicated engine logic. The AWF engine resolves
+ * the ACTION PARAMETERS (verified and casted); these helpers complement it with
+ * what the engine does not provide:
+ *  - Option score mapping (computeFieldNumericValue / resolveFieldScore)
+ *  - Display text resolution of an option value (resolveDisplayTextValue)
+ *  - Raw form data read/write for the server-side recalculation of fields
+ *    that are not action parameters (get/setSubmittedFieldValue)
+ *  - Baremo range parsing and lookup (parseRangeDefinition / findRangeLabel)
  */
 class ScaleActionUtils {
 
@@ -69,68 +77,6 @@ class ScaleActionUtils {
         return $block->fields[$fieldName] ?? null;
     }
 
-    /**
-     * Reads the submitted value of a form field from the raw form data,
-     * addressing scalar fields by their flat PHP key and fields inside
-     * repeatable/optional groups through the active instance-index stack.
-     * @param FormConfig $formConfig The form configuration
-     * @param array $formData The raw form data (POST)
-     * @param string $formKey The full field key ("Block.field" / "_detached.Block.field")
-     * @param array $instanceIndexes Active loop-index stack (outer to inner)
-     * @return mixed The submitted value or null if the field has no submitted value
-     */
-    public static function getSubmittedFieldValue(FormConfig $formConfig, array $formData, string $formKey, array $instanceIndexes = []): mixed {
-        $block = self::resolveFieldOwnerBlock($formConfig, $formKey);
-        $depth = $block?->getLoopDepth() ?? 0;
-
-        // Scalar field: read directly from the flat formData
-        if ($depth === 0) {
-            $phpKey = str_replace('.', '_', $formKey);
-            if (array_key_exists($phpKey, $formData)) {
-                return $formData[$phpKey];
-            }
-            if (array_key_exists($formKey, $formData)) {
-                return $formData[$formKey];
-            }
-            return null;
-        }
-
-        // Field inside a group: navigate the POST matrix through the indexes
-        $isDetached = str_starts_with($formKey, '_detached.');
-        $blockKey = ($isDetached ? '_detached_' : '') . $block->name;
-        $fieldName = substr(str_starts_with($formKey, '_detached.') ? substr($formKey, 10) : $formKey, strlen($block->name) + 1);
-
-        if (!isset($formData[$blockKey]) || !is_array($formData[$blockKey])) {
-            return null;
-        }
-        $node = $formData[$blockKey];
-        $indexes = array_slice($instanceIndexes, 0, $depth);
-        while (count($indexes) < $depth) {
-            $indexes[] = 0;
-        }
-        foreach ($indexes as $index) {
-            if (!is_array($node) || !array_key_exists($index, $node)) {
-                return null;
-            }
-            $node = $node[$index];
-        }
-        if (!is_array($node) || !array_key_exists($fieldName, $node)) {
-            return null;
-        }
-        return $node[$fieldName];
-    }
-
-    /**
-     * Writes a value into the raw form data at the position that corresponds
-     * to the given field key, so later actions (data block saves, ...) read
-     * the recomputed value instead of the one sent by the browser.
-     * @param FormConfig $formConfig The form configuration
-     * @param array $formData The raw form data (passed by reference)
-     * @param string $formKey The full field key ("Block.field" / "_detached.Block.field")
-     * @param mixed $value The value to write
-     * @param array $instanceIndexes Active loop-index stack (outer to inner)
-     * @return bool True when the value was written
-     */
     public static function setSubmittedFieldValue(FormConfig $formConfig, array &$formData, string $formKey, mixed $value, array $instanceIndexes = []): bool {
         $block = self::resolveFieldOwnerBlock($formConfig, $formKey);
         $depth = $block?->getLoopDepth() ?? 0;
@@ -366,162 +312,6 @@ class ScaleActionUtils {
         return '';
     }
 
-    /**
-     * Gets the data blocks of the form in display order (the order their
-     * sections appear in the form layout).
-     * @param FormConfig $formConfig The form configuration
-     * @return FormDataBlock[] Blocks ordered as displayed in the form
-     */
-    public static function getBlocksInDisplayOrder(FormConfig $formConfig): array {
-        $ordered = [];
 
-        $collect = function ($elements) use (&$collect, &$ordered, $formConfig) {
-            foreach ($elements ?? [] as $element) {
-                if (($element->type ?? '') === 'datablock' && !empty($element->ref_id)
-                    && isset($formConfig->data_blocks[$element->ref_id])) {
-                    $ordered[] = $formConfig->data_blocks[$element->ref_id];
-                } elseif (!empty($element->elements) && is_array($element->elements)) {
-                    $collect($element->elements);
-                }
-            }
-        };
-        $collect($formConfig->layout->structure ?? []);
 
-        // Any block not referenced by the layout goes at the end
-        foreach ($formConfig->data_blocks as $block) {
-            if (!in_array($block, $ordered, true)) {
-                $ordered[] = $block;
-            }
-        }
-        return $ordered;
-    }
-
-    /**
-     * Gets the display position of a data block (0-based) in the form layout.
-     * @param FormConfig $formConfig The form configuration
-     * @param FormDataBlock $block The data block
-     * @return int The position (blocks outside the layout go last)
-     */
-    public static function getBlockDisplayPosition(FormConfig $formConfig, FormDataBlock $block): int {
-        foreach (self::getBlocksInDisplayOrder($formConfig) as $position => $orderedBlock) {
-            if ($orderedBlock === $block || $orderedBlock->id === $block->id) {
-                return $position;
-            }
-        }
-        return PHP_INT_MAX;
-    }
-
-    /**
-     * Builds a structured JSON string with all the data captured by a form
-     * submission: one entry per data block, with every field, its label and
-     * the value submitted (including unlinked/virtual fields and fixed
-     * server fields). Used, for example, to fill the "submission_data" field
-     * of the stic_Assessments_Scores module.
-     * @param ExecutionContext $context The execution context of the submission
-     * @return string The JSON string
-     */
-    public static function buildSubmissionJson(ExecutionContext $context): string {
-        $blocksData = [];
-        foreach (self::getBlocksInDisplayOrder($context->formConfig) as $order => $block) {
-            $blocksData[] = self::buildBlockDataArray($context, $block, null, $order);
-        }
-
-        $submissionData = [
-            'form_id' => $context->formId,
-            'form_type' => $context->formType,
-            'submission_timestamp' => date('Y-m-d H:i:s', (int)$context->submissionTimestamp),
-            'blocks' => $blocksData,
-        ];
-
-        return json_encode($submissionData, JSON_UNESCAPED_UNICODE);
-    }
-
-    /**
-     * Builds a structured JSON string with the answers captured by ONE data
-     * block of the submission (its fields, labels and values, per instance).
-     * Used for "partial" records of stic_Assessments_Scores, so each partial
-     * stores the questions/answers of its own section in its submission_data.
-     * @param ExecutionContext $context The execution context of the submission
-     * @param DataBlockResolved $block The resolved data block (current instance)
-     * @return string The JSON string
-     */
-    public static function buildBlockSubmissionJson(ExecutionContext $context, DataBlockResolved $block): string {
-        $submissionData = [
-            'form_id' => $context->formId,
-            'form_type' => $context->formType,
-            'submission_timestamp' => date('Y-m-d H:i:s', (int)$context->submissionTimestamp),
-            'block' => self::buildBlockDataArray($context, $block->dataBlock, $block,
-                self::getBlockDisplayPosition($context->formConfig, $block->dataBlock)),
-        ];
-
-        return json_encode($submissionData, JSON_UNESCAPED_UNICODE);
-    }
-
-    /**
-     * Builds the data array of one data block (fields, labels and values).
-     * @param ExecutionContext $context The execution context of the submission
-     * @param FormDataBlock $block The data block configuration
-     * @param ?DataBlockResolved $resolvedBlock The resolved block instance
-     *        (for groups). When null, values are read from the raw form data
-     * @return array The block data array
-     */
-    private static function buildBlockDataArray(ExecutionContext $context, FormDataBlock $block, ?DataBlockResolved $resolvedBlock = null, ?int $order = null): array {
-        $fieldsData = [];
-        $instancesData = [];
-
-        foreach ($block->fields as $fieldDef) {
-            $fieldData = [
-                'label' => !empty($fieldDef->label) ? $fieldDef->label : $fieldDef->text_original,
-                'type' => $fieldDef->type_in_form,
-            ];
-            if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
-                $fieldData['unlinked'] = true;
-            }
-
-            if ($block->getLoopDepth() > 0 && $resolvedBlock === null) {
-                // Repeatable/optional block: resolve the value per instance
-                $instances = DataBlockResolved::resolveInstances($block, $context->formData, $context);
-                foreach ($instances as $instanceIndex => $instance) {
-                    $value = $instance->getFieldValue($fieldDef->name)?->value;
-                    if ($fieldDef->type === 'multienum' && is_array($value)) {
-                        $value = implode(',', $value);
-                    }
-                    $fieldData['value'] = $value;
-                    $fieldData['text'] = self::resolveDisplayTextValue($fieldDef, $value);
-                    $fieldData['score'] = self::resolveFieldScore($fieldDef, $value);
-                    $instancesData[$instanceIndex][$fieldDef->name] = $fieldData;
-                }
-                continue;
-            }
-
-            // Value from the resolved block instance (groups) or the flat form data
-            if ($resolvedBlock !== null) {
-                $value = $resolvedBlock->getFieldValue($fieldDef->name)?->value;
-            } else {
-                $phpKey = str_replace('.', '_', $fieldDef->getKey());
-                $value = $context->formData[$phpKey] ?? ($fieldDef->value_type === DataBlockFieldValueType::FIXED ? $fieldDef->value : null);
-            }
-            if ($fieldDef->type === 'multienum' && is_array($value)) {
-                $value = implode(',', $value);
-            }
-            $fieldData['value'] = $value;
-            $fieldData['text'] = self::resolveDisplayTextValue($fieldDef, $value);
-            $fieldData['score'] = self::resolveFieldScore($fieldDef, $value);
-            $fieldsData[$fieldDef->name] = $fieldData;
-        }
-
-        $blockData = [
-            'text' => $block->text,
-            'module' => $block->module,
-            'order' => $order,
-        ];
-        if (!empty($fieldsData)) {
-            $blockData['fields'] = $fieldsData;
-        }
-        if (!empty($instancesData)) {
-            $blockData['instances'] = array_values($instancesData);
-        }
-        return $blockData;
-    }
 }
-
