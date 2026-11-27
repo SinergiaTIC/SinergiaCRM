@@ -202,16 +202,33 @@ class EmailsControllerActionGetFromFields
             $signature = $userOutboundAccount->signature ?? '';
             $isPersonal = $type === 'user';
             $isGroup = $type === 'group';
+            // STIC-Custom 20260803 PCS - Avoid adding the system default outbound account twice:
+            // it may already have been added by the collector through addSystemEmailAddress /
+            // fillDataAddressWithSystemMailerSettings (same id as the system mailer settings).
+            // https://github.com/SinergiaTIC/SinergiaCRM/pull/1366
+            $existingIds = array_column($dataAddresses, 'id');
+            if (in_array($id, $existingIds, true) && $type === 'system') {
+                continue;
+            }
+            // END STIC-Custom
             $entry = [
                 'type' => 'OutboundEmailAccount',
                 'id' => $id,
                 'name' => $name,
                 'attributes' => [
-                    'from' => $fromAddress,
-                    'name' => $fromName,
+                    // STIC-Custom 20260803 PCS - Avoid encoding errors.
+                    // https://github.com/SinergiaTIC/SinergiaCRM/pull/1366
+                    // 'from' => $fromAddress,
+                    // 'name' => $fromName,
+                    // 'oe' => '',
+                    // 'reply_to' => $replyToAddress,
+                    // 'reply_to_name' => $replyToName
+                    'from' => mb_convert_encoding($fromAddress, 'UTF-8', 'ISO-8859-1'),
+                    'name' => mb_convert_encoding($fromName, 'UTF-8', 'ISO-8859-1'),
                     'oe' => '',
-                    'reply_to' => $replyToAddress,
-                    'reply_to_name' => $replyToName
+                    'reply_to' => mb_convert_encoding($replyToAddress, 'UTF-8', 'ISO-8859-1'),
+                    'reply_to_name' => mb_convert_encoding($replyToName, 'UTF-8', 'ISO-8859-1')
+                    // END STIC-Custom
                 ],
                 'prepend' => false,
                 'isPersonalEmailAccount' => $isPersonal,
