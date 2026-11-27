@@ -612,6 +612,21 @@ $dictionary['stic_Registrations'] = array(
     ),
     'relationships' => array(
     ),
+    'indices' => array(
+        // Covering index for the attendees totals recalculation of the related events
+        // (modules/stic_Registrations/Utils.php): the query reads only the index entries
+        // (the primary key 'id' is part of every secondary index) instead of the whole table
+        array(
+            'name' => 'idx_reg_id_del_status_attendees',
+            'type' => 'index',
+            'fields' => array(
+                'id',
+                'deleted',
+                'status',
+                'attendees',
+            ),
+        ),
+    ),
     'optimistic_locking' => 1,
     'unified_search' => true,
     'unified_search_default_enabled' => true,

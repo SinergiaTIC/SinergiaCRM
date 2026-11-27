@@ -28,6 +28,7 @@ class stic_RegistrationsUtils {
  * In the event that the threshold of 80% or 100% of those registered has been exceeded, notification is sent to the administrator
  *
  * @param Object $registrationBean
+ * @param string|false $eventId Id of the related event. If empty, it is looked up.
  * @return void
  */
     public static function recalculateTotalAttendees($registrationBean, $eventId = false) {
@@ -72,17 +73,16 @@ class stic_RegistrationsUtils {
 
         $sql =
             "SELECT
-                sum(attendees) as total ,
+                sum(sr.attendees) as total,
                 sr.status
             FROM
-                stic_registrations sr
-            INNER JOIN stic_registrations_stic_events_c srse ON
-                sr.id = srse.stic_registrations_stic_eventsstic_registrations_idb
-                AND srse.deleted = 0
+                stic_registrations_stic_events_c srse
+                STRAIGHT_JOIN stic_registrations sr FORCE INDEX (idx_reg_id_del_status_attendees) ON
+                    sr.id = srse.stic_registrations_stic_eventsstic_registrations_idb
+                    AND sr.deleted = 0
             WHERE
                 srse.stic_registrations_stic_eventsstic_events_ida = '{$eventId}'
-                AND sr.deleted = 0
-                AND srse.deleted=0
+                AND srse.deleted = 0
             GROUP BY
                 sr.status";
 
