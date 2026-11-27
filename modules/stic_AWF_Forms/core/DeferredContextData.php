@@ -68,6 +68,8 @@ class DeferredContextData
      *  (empty for global/scalar deferred actions). Restored on resume so the
      *  resumed flow resolves instance-aware references to THIS instance. */
     public array $instanceIndexes = [];
+    /** @var array Uploaded-file metadata staged for deferred document actions. */
+    public array $uploadedFiles = [];
     public ?string $alreadyProcessedTitle = null;
     public ?string $alreadyProcessedMessage = null;
     public ?string $expiredTitle = null;
@@ -126,6 +128,54 @@ class DeferredContextData
     }
 
     /**
+     * Stage uploads before a deferred ticket pauses the request.
+     * PHP temporary uploads disappear when the request ends.
+     */
+    private function captureUploadedFiles(ExecutionContext $context): void {
+        $this->uploadedFiles = [];
+        foreach ($context->uploadedFiles as $key => $fileInfo) {
+            if (!is_array($fileInfo)) continue;
+            $source = (string)($fileInfo['tmp_name'] ?? '');
+            if ($source === '') continue;
+
+            if (str_starts_with($source, 'upload://')) {
+                $realPath = UploadStream::path($source);
+                if ($realPath === null || !is_file($realPath)) {
+                    continue;
+                }
+                $this->uploadedFiles[$key] = $fileInfo;
+                continue;
+            }
+
+            $stagingPath = 'upload://awf_staging_' . create_guid();
+            if (is_uploaded_file($source)) {
+                $staged = UploadStream::move_uploaded_file($source, $stagingPath);
+            } elseif (is_file($source)) {
+                $staged = @copy($source, UploadStream::path($stagingPath));
+            } else {
+                // Already consumed by an earlier action or no longer available.
+                continue;
+            }
+
+            if (!$staged) {
+                $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Could not stage uploaded file '{$key}' for deferred execution.");
+                continue;
+            }
+
+            $fileInfo['tmp_name'] = $stagingPath;
+            $fileInfo['staging_path'] = $stagingPath;
+            $context->uploadedFiles[$key] = $fileInfo;
+            $this->uploadedFiles[$key] = $fileInfo;
+        }
+    }
+
+    /** Restores staged upload metadata into a rebuilt execution context. */
+    public function restoreUploadedFiles(ExecutionContext $context): void
+    {
+        $context->uploadedFiles = $this->uploadedFiles;
+    }
+
+    /**
     * Adds custom data to the context.
     */
     public function setCustom(string $key, mixed $value): void {
@@ -154,6 +204,7 @@ class DeferredContextData
             'module' => $this->module,
             'block_references' => $this->blockReferences,
             'instance_indexes' => $this->instanceIndexes,
+            'uploaded_files' => $this->uploadedFiles,
             'already_processed_title' => $this->alreadyProcessedTitle,
             'already_processed_message' => $this->alreadyProcessedMessage,
             'expired_title' => $this->expiredTitle,
@@ -182,6 +233,7 @@ class DeferredContextData
         );
         $instance->blockReferences = $data['block_references'] ?? [];
         $instance->instanceIndexes = $data['instance_indexes'] ?? [];
+        $instance->uploadedFiles = $data['uploaded_files'] ?? [];
         $instance->alreadyProcessedTitle = $data['already_processed_title'] ?? null;
         $instance->alreadyProcessedMessage = $data['already_processed_message'] ?? null;
         $instance->expiredTitle = $data['expired_title'] ?? null;
@@ -198,6 +250,7 @@ class DeferredContextData
               $data['module'], 
               $data['block_references'],
               $data['instance_indexes'],
+              $data['uploaded_files'],
               $data['already_processed_title'],
               $data['already_processed_message'],
               $data['expired_title'],
@@ -222,6 +275,7 @@ class DeferredContextData
             'module' => $this->module,
             'block_references' => $this->blockReferences,
             'instance_indexes' => $this->instanceIndexes,
+            'uploaded_files' => $this->uploadedFiles,
             'already_processed_title' => $this->alreadyProcessedTitle,
             'already_processed_message' => $this->alreadyProcessedMessage,
             'expired_title' => $this->expiredTitle,
@@ -247,6 +301,7 @@ class DeferredContextData
         // instance-aware references to THIS instance
         $instance->instanceIndexes = $context->getInstanceIndexes();
         $instance->captureBlockReferences($context);
+        $instance->captureUploadedFiles($context);
         
         $instance->alreadyProcessedTitle = $actionConfig->getResolvedParameter('already_processed_title');
         $instance->alreadyProcessedMessage = $actionConfig->getResolvedParameter('already_processed_message');

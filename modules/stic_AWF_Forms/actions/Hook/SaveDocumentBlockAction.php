@@ -74,54 +74,66 @@ class SaveDocumentBlockAction extends HookDataBlockActionDefinition {
             return new ActionResult(ResultStatus::ERROR, $actionConfig, $validationError);
         }
 
-        $document = BeanFactory::newBean('Documents');
+        $document = null;
+        $revision = null;
+        $finalPath = null;
+        try {
+            $document = BeanFactory::newBean('Documents');
 
-        $modifications = stic_AWF_FormsUtils::populateBeanFromBlock($document, $block);
-        
-        // Guarantee mandatory fallbacks if not mapped in the form
-        if (empty($document->active_date)) {
-            $document->active_date = TimeDate::getInstance()->nowDbDate();
-            $modifications['active_date'] = new FieldModification('active_date', FieldModificationStatus::APPLIED, $document->active_date);
-        }
-        if (empty($document->document_name)) {
-            $document->document_name = 'AWF_Upload_' . time();
-            $modifications['document_name'] = new FieldModification('document_name', FieldModificationStatus::APPLIED, $document->document_name);
-        }
-        if (empty($document->status_id)) {
-            $document->status_id = 'Active';
-            $modifications['status_id'] = new FieldModification('status_id', FieldModificationStatus::APPLIED, $document->status_id);
-        }
-        // Assign user if a default one is set
-        if (!empty($context->defaultAssignedUserId)) {
-            $document->assigned_user_id = $context->defaultAssignedUserId;
-        }
-        // Save without logic hooks execution to prevent duplicate triggers
-        $document->save(false);
+            $modifications = stic_AWF_FormsUtils::populateBeanFromBlock($document, $block);
 
-        // Create a DocumentRevision manually (the Documents module auto-creates
-        // one only when $_FILES is populated, which isn't the case here)
-        $revision = BeanFactory::newBean('DocumentRevisions');
-        $revision->id = create_guid();
-        $revision->new_with_id = true;
-        $revision->document_id = $document->id;
-        $revision->filename = $fileInfo['name'];
-        $revision->file_mime_type = mime_content_type($fileInfo['tmp_name']);
-        $revision->file_ext = pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
-        $revision->revision = 1;
-        $revision->save(false);
+            // Guarantee mandatory fallbacks if not mapped in the form
+            if (empty($document->active_date)) {
+                $document->active_date = TimeDate::getInstance()->nowDbDate();
+                $modifications['active_date'] = new FieldModification('active_date', FieldModificationStatus::APPLIED, $document->active_date);
+            }
+            if (empty($document->document_name)) {
+                $document->document_name = 'AWF_Upload_' . time();
+                $modifications['document_name'] = new FieldModification('document_name', FieldModificationStatus::APPLIED, $document->document_name);
+            }
+            if (empty($document->status_id)) {
+                $document->status_id = 'Active';
+                $modifications['status_id'] = new FieldModification('status_id', FieldModificationStatus::APPLIED, $document->status_id);
+            }
+            // Assign user if a default one is set
+            if (!empty($context->defaultAssignedUserId)) {
+                $document->assigned_user_id = $context->defaultAssignedUserId;
+            }
+            $document->save(false);
 
-        // Link the revision back to the document
-        $document->document_revision_id = $revision->id;
-        $document->save(false);
+            // Create a DocumentRevision manually (the Documents module auto-creates
+            // one only when $_FILES is populated, which isn't the case here)
+            $revision = BeanFactory::newBean('DocumentRevisions');
+            $revision->id = create_guid();
+            $revision->new_with_id = true;
+            $revision->document_id = $document->id;
+            $revision->filename = $fileInfo['name'];
+            $mimeSource = str_starts_with((string)$fileInfo['tmp_name'], 'upload://')
+                ? UploadStream::path($fileInfo['tmp_name'])
+                : $fileInfo['tmp_name'];
+            $revision->file_mime_type = $mimeSource !== null ? mime_content_type($mimeSource) : null;
+            $revision->file_ext = pathinfo($fileInfo['name'], PATHINFO_EXTENSION);
+            $revision->revision = 1;
+            $revision->save(false);
 
-        // Move the temporary binary payload to SuiteCRM permanent storage
-        if (!UploadStream::move_uploaded_file($fileInfo['tmp_name'], "upload://{$revision->id}")) {
-            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Failed moving binary payload to target path.");
-        }
+            // Link the revision back to the document
+            $document->document_revision_id = $revision->id;
+            $document->save(false);
 
-        // Build relationship links with the AWF Response log
-        if ($context->responseBean && $context->responseBean->load_relationship('stic_awf_responses_documents')) {
-            $context->responseBean->stic_awf_responses_documents->add($document->id);
+            // Build relationship links with the AWF Response log before moving the
+            // payload, so a relationship failure leaves the staged file retryable.
+            if ($context->responseBean && $context->responseBean->load_relationship('stic_awf_responses_documents')) {
+                $context->responseBean->stic_awf_responses_documents->add($document->id);
+            }
+
+            $finalPath = "upload://{$revision->id}";
+            if (!$this->moveFileToRevision($fileInfo, $revision->id)) {
+                throw new \RuntimeException('Failed moving binary payload to target path.');
+            }
+        } catch (\Throwable $e) {
+            $this->compensateDocument($document, $revision, $finalPath, $context->responseBean);
+            $GLOBALS['log']->error('Line ' . __LINE__ . ': ' . __METHOD__ . ": Advanced Web Forms: document save failed and was compensated: " . $e->getMessage());
+            return new ActionResult(ResultStatus::ERROR, $actionConfig, "Failed storing uploaded document.");
         }
 
         // Register modifications and revision metadata in ActionResult
@@ -131,6 +143,56 @@ class SaveDocumentBlockAction extends HookDataBlockActionDefinition {
             ['key' => 'revision_filename', 'label' => $this->translate('FILENAME_TEXT'), 'value' => $revision->filename],
         ]);
         return $result;
+    }
+
+    /** Moves either an HTTP upload or a previously staged upload stream. */
+    private function moveFileToRevision(array $fileInfo, string $revisionId): bool
+    {
+        $source = (string)($fileInfo['tmp_name'] ?? '');
+        $target = "upload://{$revisionId}";
+        if ($source === '') {
+            return false;
+        }
+        if (str_starts_with($source, 'upload://')) {
+            return (new UploadStream())->rename($source, $target);
+        }
+        return UploadStream::move_uploaded_file($source, $target);
+    }
+
+    /** 
+     * Remove partial Document/Revision state on failure. 
+     */
+    private function compensateDocument(?SugarBean $document, ?SugarBean $revision, ?string $finalPath, ?SugarBean $responseBean): void
+    {
+        if ($finalPath !== null) {
+            $realPath = UploadStream::path($finalPath);
+            if ($realPath !== null && is_file($realPath)) {
+                @unlink($realPath);
+            }
+        }
+        if ($responseBean && $document && !empty($document->id)) {
+            try {
+                if ($responseBean->load_relationship('stic_awf_responses_documents')) {
+                    $responseBean->stic_awf_responses_documents->delete($document->id);
+                }
+            } catch (\Throwable $cleanupError) {
+                $GLOBALS['log']->warn('Could not remove compensated Document relationship: ' . $cleanupError->getMessage());
+            }
+        }
+        if ($revision && !empty($revision->id)) {
+            try {
+                $revision->mark_deleted($revision->id);
+            } catch (\Throwable $cleanupError) {
+                $GLOBALS['log']->warn('Could not compensate DocumentRevision ' . $revision->id . ': ' . $cleanupError->getMessage());
+            }
+        }
+        if ($document && !empty($document->id)) {
+            try {
+                $document->mark_deleted($document->id);
+            } catch (\Throwable $cleanupError) {
+                $GLOBALS['log']->warn('Could not compensate Document ' . $document->id . ': ' . $cleanupError->getMessage());
+            }
+        }
     }
 
     /**

@@ -290,7 +290,7 @@ Inicialmente, el sistema incluye las siguientes acciones que se pueden añadir a
 * **Redireccionar a página (Final)**: Redirige al usuario a una página web externa una vez procesados los datos. Esta acción permite adjuntar datos recopilados en el formulario y enviarlos a la URL de destino (utilizando los métodos estándar GET o POST).
 
 #### Acciones Diferidas (Procesos en espera de eventos externos) ####
-Más allá de las acciones inmediatas, el sistema incorpora un potente motor de **acciones diferidas** que permite pausar temporalmente el procesamiento de una respuesta y esperar a que ocurra un evento externo antes de continuar. Este mecanismo resulta esencial para escenarios que requieren interacción asíncrona con servicios o personas externas al CRM:
+Más allá de las acciones inmediatas, el sistema incorpora un potente motor de **acciones diferidas** que permite pausar temporalmente el procesamiento de una respuesta y esperar a que ocurra un evento externo antes de continuar. Este mecanismo resulta esencial para escenarios que requieren interacción asíncrona con servicios o personas externas al CRM. La respuesta solo se marca como procesada cuando todos sus tickets diferidos han terminado. Los documentos adjuntos se conservan en almacenamiento temporal durable durante la espera y, si falla el guardado final, se elimina el registro parcial para permitir un reintento:
 
 * **Confirmación de correo electrónico**: Detiene el flujo de procesamiento y envía un correo con un enlace único al visitante. El sistema espera hasta que la persona hace clic en ese enlace para verificar su dirección de correo, momento en que se reanuda automáticamente el flujo y se continúa con el resto de acciones configuradas.
 

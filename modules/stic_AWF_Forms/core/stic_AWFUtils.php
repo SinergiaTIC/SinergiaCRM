@@ -1533,6 +1533,7 @@ class stic_AWFUtils {
 
         $deferredContext = DeferredContextData::fromJson($ticket->context_data);
         $context->deferredContext = $deferredContext;
+        $deferredContext->restoreUploadedFiles($context);
 
         // Datablock references to beans (see applyDeferredBlockReferences)
         self::applyDeferredBlockReferences($context, $deferredContext);
@@ -1560,15 +1561,72 @@ class stic_AWFUtils {
             if ($block === null) {
                 continue;
             }
-            if ($index === null && ($block->isRepeatable() || !empty($block->group_root))) {
-                // Legacy snapshot: repeatable members without an index key cannot
-                // be restored (the instance they belong to is unknown)
+            if ($index === null && $block->getLoopDepth() > 0) {
+                // Legacy snapshot: looped members without an index key cannot
+                // be restored (the instance they belong to is unknown).
                 continue;
             }
             $block->setBeanReference($beanId, $index);
         }
         if (!empty($deferredContext->instanceIndexes)) {
             $context->setInstanceIndexes($deferredContext->instanceIndexes);
+        }
+    }
+
+    /**
+     * Aggregate all deferred tickets before marking a response as processed.
+     * Pending work always keeps the response waiting.
+     */
+    public static function aggregateDeferredResponseStatus(array $ticketStatuses, string $fallbackStatus): string
+    {
+        $statuses = array_values(array_unique(array_map(
+            fn ($status) => strtolower(trim((string)$status)),
+            $ticketStatuses
+        )));
+        if (empty($statuses)) {
+            return $fallbackStatus;
+        }
+
+        $activeStatuses = ['pending', 'processing'];
+        $failedStatuses = ['failed', 'cancelled'];
+        $successStatuses = ['resolved', 'processed'];
+
+        if (array_intersect($activeStatuses, $statuses)) {
+            return 'awaiting_action';
+        }
+        if (array_intersect($failedStatuses, $statuses)) {
+            return 'error';
+        }
+        if (array_diff($statuses, $successStatuses)) {
+            return 'awaiting_action';
+        }
+        return 'processed';
+    }
+
+    /** 
+     * Recalculates and persists the response status from all its deferred tickets. 
+     */
+    public static function syncResponseDeferredStatus(?SugarBean $responseBean, string $fallbackStatus): void
+    {
+        if (!$responseBean || empty($responseBean->id)) {
+            return;
+        }
+
+        $db = DBManagerFactory::getInstance();
+        $safeResponseId = $db->quote($responseBean->id);
+        $result = $db->query(
+            "SELECT status FROM stic_awf_deferred_tickets
+             WHERE stic_awf_responses_id_c = '{$safeResponseId}' AND deleted = 0"
+        );
+        $statuses = [];
+        while (($row = $db->fetchByAssoc($result)) !== false && $row !== null) {
+            $statuses[] = $row['status'] ?? '';
+        }
+
+        $newStatus = self::aggregateDeferredResponseStatus($statuses, $fallbackStatus);
+        if ($responseBean->status !== $newStatus) {
+            $responseBean->status = $newStatus;
+            $responseBean->save();
         }
     }
 
@@ -1632,6 +1690,7 @@ class stic_AWFUtils {
         // Check if the ticket has already been processed by a concurrent thread (e.g. Webhook)
         if ($ticketBean && $ticketBean->status === 'processed') {
             $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The sub-flow for this ticket has already been executed in the past. Delegating only the UI.");
+            stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'processed');
 
             // Delegate UI rendering directly to the flow executor safely
             if (!$isCli) {
@@ -1647,8 +1706,7 @@ class stic_AWFUtils {
             $lastResult = $executor->executeFlow($flow, $errorFlow);
             if (!$lastResult->isError()) {
                 if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
-                    $context->responseBean->status = 'processed';
-                    $context->responseBean->save();
+                    stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'processed');
                 }
                 if ($ticketBean && $ticketBean->status === 'resolved') {
                     $ticketBean->status = 'processed';
@@ -1659,8 +1717,7 @@ class stic_AWFUtils {
             // Error flow execution
             $lastResult = $executor->executeFlow($flow);
             if ($context->responseBean && $context->responseBean->status === 'awaiting_action') {
-                $context->responseBean->status = 'error';
-                $context->responseBean->save();
+                stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'error');
             }
             if ($ticketBean) {
                 $ticketBean->status = 'failed';
@@ -1698,6 +1755,7 @@ class stic_AWFUtils {
 
             if ($isSuccess && $ticketStatus === 'processed' && !$isCli) {
                 $GLOBALS['log']->info('Line ' . __LINE__ . ': ' . __METHOD__ . ": The ticket has already been processed. Ticket ID: {$ticket->id}");
+                stic_AWFUtils::syncResponseDeferredStatus($context->responseBean, 'processed');
                 
                 $customTitle = $context->deferredContext?->alreadyProcessedTitle;
                 $customMsg = $context->deferredContext?->alreadyProcessedMessage;
