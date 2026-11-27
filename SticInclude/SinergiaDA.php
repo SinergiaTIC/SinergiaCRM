@@ -806,11 +806,16 @@ class ExternalReporting
                     case 'int':
                     case 'currency':
                     case 'float':
+                    case 'long':
                         $fieldV['alias'] = $fieldV['name'];
 
                         if ($fieldV['type'] == 'float' && in_array($fieldV['name'], ['jjwg_maps_lat_c', 'jjwg_maps_lng_c'])) {
                             // We use a specific configuration for the latitude and longitude fields of the JJWG Maps module
                             $decConfig = '11,8';
+                        } elseif ($fieldV['type'] == 'long') {
+                            // 'long' fields are BIGINT in the database, so they need a scale of 0 and enough
+                            // integer digits to hold the whole BIGINT range without truncation
+                            $decConfig = '20,0';
                         } else {
                             $decConfig = '20,4';
                         }
@@ -835,6 +840,7 @@ class ExternalReporting
                     case 'int':
                     case 'currency':
                     case 'float':
+                    case 'long':
                         $edaType = !in_array($fieldV['name'], ['jjwg_maps_lat_c', 'jjwg_maps_lng_c']) ? 'numeric' : 'coordinate';
                         $edaPrecision = $fieldV['type'] == 'currency' ? 2 : 0;
                         $edaPrecision = $fieldV['precision'] ?? $edaPrecision;
