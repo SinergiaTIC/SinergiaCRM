@@ -83,7 +83,7 @@ class ServerActionFlowExecutor {
                 $motorBlock = $this->resolveMotorBlock($paramDefinitions, $paramConfigurations, $actionConfig);
 
                 $isTerminal = $actionExecutor instanceof ITerminalAction;
-                $instanceDescriptors = $this->buildInstanceDescriptors($motorBlock, $isTerminal);
+                $instanceDescriptors = $this->buildInstanceDescriptors($motorBlock);
                 if (empty($instanceDescriptors)) {
                     // Group with zero active instances, or no instance in the
                     // current deferred ticket scope: skip the action.
@@ -143,6 +143,11 @@ class ServerActionFlowExecutor {
 
                     // Context update
                     $this->context->addActionResult($lastResult);
+
+                    // Terminal actions run once, but only after finding the first instance that passes every gate.
+                    if ($isTerminal) {
+                        break;
+                    }
 
                     if ($lastResult->isWait()) {
                         // Mark the response as waiting once, but finish the
@@ -234,11 +239,10 @@ class ServerActionFlowExecutor {
     }
 
     /**
-     * Builds the instance descriptors for an action. Non-terminal actions run
-     * for every compatible instance. Terminal actions run once, using the first
-     * compatible instance (or the deferred ticket instance when resuming).
+     * Builds every in-scope instance descriptor. Terminal compatibility is
+     * evaluated later, after conditions, requisites and parameter resolution.
      */
-    private function buildInstanceDescriptors(?FormDataBlock $motorBlock, bool $isTerminal): array {
+    private function buildInstanceDescriptors(?FormDataBlock $motorBlock): array {
         $deferredScope = $this->getDeferredInstanceScope();
         if ($motorBlock === null) {
             return $deferredScope === null ? [[]] : [$deferredScope];
@@ -259,10 +263,6 @@ class ServerActionFlowExecutor {
                 }
             }
             $descriptors = $scopedDescriptors;
-        }
-
-        if ($isTerminal && !empty($descriptors)) {
-            $descriptors = [$descriptors[0]];
         }
 
         return $descriptors;
@@ -401,7 +401,7 @@ class ServerActionFlowExecutor {
                 $paramDefinitions = $actionExecutor->getParameters();
                 $paramConfigurations = $actionConfig->parameters;
                 $motorBlock = $this->resolveMotorBlock($paramDefinitions, $paramConfigurations, $actionConfig);
-                $instanceDescriptors = $this->buildInstanceDescriptors($motorBlock, true);
+                $instanceDescriptors = $this->buildInstanceDescriptors($motorBlock);
                 if (empty($instanceDescriptors)) {
                     continue;
                 }
@@ -411,6 +411,9 @@ class ServerActionFlowExecutor {
 
                 foreach ($instanceDescriptors as $descriptor) {
                     $this->context->setInstanceIndexes($descriptor);
+                    if (!$this->requisiteAllowsInstance($actionConfig, $descriptor)) {
+                        continue;
+                    }
                     if ($motorBlock !== null
                         && !stic_AWFUtils::evaluateConditionsForInstance($actionConfig->conditions, $this->context->formConfig, $this->context->formData, $descriptor)) {
                         continue;
