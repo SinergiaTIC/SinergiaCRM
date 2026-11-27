@@ -2822,6 +2822,11 @@ class FormHtmlGeneratorService {
                                 $val = htmlspecialchars((string)$opt->value, ENT_QUOTES, 'UTF-8');
                                 $txt = htmlspecialchars((string)$opt->text, ENT_QUOTES, 'UTF-8');
 
+                                $scoreAttr = '';
+                                if ($opt->score !== null && $opt->score !== '') {
+                                    $scoreAttr = ' data-score="' . htmlspecialchars((string)$opt->score, ENT_QUOTES, 'UTF-8') . '"';
+                                }
+
                                 // Ensure the existing empty option gets selected by default in single selects
                                 $selectedAttr = '';
                                 if (!$isMultipleSelect && $hasVisibleEmptyOption && !$emptyOptionSelected && (string)$opt->value === '') {

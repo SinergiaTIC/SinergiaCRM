@@ -1139,7 +1139,11 @@ class stic_AwfField {
         }
       }
     } else {
-      if (this.value == '') {
+      // Fixed/server fields: only flag as error when the field is required in
+      // the module. Fields that are auto-filled at runtime (form_id,
+      // submission_data, parent FK injections...) are intentionally empty in
+      // the config and are filled when the submission is processed.
+      if (this.required && this.value == '') {
         errors.push(utils.translate('LBL_ERROR_FIELD_FIXED_EMPTY'));
       }
     }

@@ -439,7 +439,7 @@ class DataBlockResolved {
      * @return ?DataBlockFieldResolved The resolved field data, or null if not found
      */
     public function getFieldValue($fieldName): ?DataBlockFieldResolved {
-        return $this->formData[$fieldName] ?? null;
+        return $this->formData[$fieldName] ?? $this->detachedData[$fieldName] ?? null;
     }
 
     /**

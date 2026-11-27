@@ -2465,6 +2465,7 @@ class WizardStep3 {
                         param.value = [];
                       }
                     }
+
                   }
                 });
               }
