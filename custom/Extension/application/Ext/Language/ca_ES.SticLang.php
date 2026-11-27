@@ -4262,6 +4262,5 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
 
 // SinergiaDA CRM links
-$app_strings['LBL_STIC_SDA_LINK_DETAIL'] = 'Enllaç detall';
-$app_strings['LBL_STIC_SDA_LINK_EDIT'] = 'Enllaç edició';
-
+$app_strings['LBL_STIC_SDA_LINK_DETAIL'] = 'Enllaç a la vista de detall';
+$app_strings['LBL_STIC_SDA_LINK_EDIT'] = "Enllaç a la vista d'edició";
