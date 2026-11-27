@@ -46,9 +46,16 @@ class ExecutionContext {
 
     /** @var array<string, array> Uploaded files from $_FILES, indexed by PHP key */
     public array $uploadedFiles = [];
-
+    
     /** @var ?DeferredContextData Context object for deferred processes */
     public ?DeferredContextData $deferredContext = null;
+
+    /**
+     * Active loop-index stack (outer to inner) of the group heads being
+     * unrolled: [] for scalar flows, [i] for one loop level, [i1, i2] for two
+     * nested levels, ... (repeatable levels ≤ 2, optional levels unlimited).
+     */
+    public array $instanceIndexes = [];
     
     /**
      * Constructor for ExecutionContext.
@@ -77,6 +84,10 @@ class ExecutionContext {
 
     /**
      * Adds an action result to the execution context.
+     * Per-instance executions store one result per instance:
+     *  - instance index 0 keeps the plain action id (backward compatible);
+     *  - deeper executions append every index: "{$actionId}_{i}_{j}_{k}".
+     * Without an active instance index, the plain action id is used (scalar).
      * @param ActionResult $result Action result
      */
     public function addActionResult(ActionResult $result): void {
@@ -85,6 +96,10 @@ class ExecutionContext {
         if ($key === null) {
             $key = 'unknown_' . count($this->actionResults);
             $GLOBALS['log']->warn('Line ' . __LINE__ . ': ' . __METHOD__ . ": Adding ActionResult with unknown action ID to ExecutionContext. Assigned key: {$key}");
+        }
+        $instanceKey = $this->getInstanceIndexKey();
+        if ($instanceKey !== null && $instanceKey !== '0') {
+            $key .= '_' . str_replace(':', '_', $instanceKey);
         }
         $this->actionResults[$key] = $result;
         if($result->isError()) {
@@ -120,6 +135,41 @@ class ExecutionContext {
     }
 
     /**
+     * Gets the result for a specific instance, checking the exact instance,
+     * then enclosing group-instance prefixes, then the global action result.
+     * Instance 0 keeps the plain action key for backward compatibility.
+     * With no index, behaves like getActionResultById().
+     */
+    public function getResultForAction(string $actionId, int|string|null $instanceIndex = null): ?ActionResult {
+        if ($instanceIndex !== null) {
+            $instancePath = (string)$instanceIndex;
+            while ($instancePath !== '') {
+                $resultKey = $instancePath === '0'
+                    ? $actionId
+                    : $actionId . '_' . str_replace(':', '_', $instancePath);
+                if (isset($this->actionResults[$resultKey])) {
+                    return $this->actionResults[$resultKey];
+                }
+
+                $lastSeparator = strrpos($instancePath, ':');
+                if ($lastSeparator === false) {
+                    break;
+                }
+                $instancePath = substr($instancePath, 0, $lastSeparator);
+            }
+        }
+        return $this->actionResults[$actionId] ?? null;
+    }
+
+    /**
+     * Composite key of the active loop indexes: null (scalar) or the
+     * colon-joined vector ("i", "i:j", "i:j:k"...).
+     */
+    public function getInstanceIndexKey(): ?string {
+        return $this->instanceIndexes === [] ? null : implode(':', $this->instanceIndexes);
+    }
+
+    /**
      * Gets a data block by its ID.
      * @param string $blockId Data block ID
      * @return ?FormDataBlock The data block or null if not found
@@ -141,6 +191,39 @@ class ExecutionContext {
         }
         return null;
     }
-}
 
+    /**
+     * Sets the active loop-index stack (outer to inner) for the instance being
+     * executed. Must be set before any parameter resolution so that
+     * instance-aware keys and bean references are read.
+     */
+    public function setInstanceIndexes(array $indexes): void {
+        $this->instanceIndexes = array_map('intval', array_values($indexes));
+    }
+
+    /**
+     * Gets the active loop-index stack (outer to inner).
+     * @return array
+     */
+    public function getInstanceIndexes(): array {
+        return $this->instanceIndexes;
+    }
+
+    /**
+     * Backward-compatible single-level setter: replaces the stack with one
+     * index (or empties it for null).
+     * @param ?int $index The instance index, or null for scalar flows
+     */
+    public function setCurrentInstanceIndex(?int $index): void {
+        $this->instanceIndexes = $index === null ? [] : [$index];
+    }
+
+    /**
+     * Innermost (current) loop index of the active stack, or null for scalar flows.
+     * @return ?int
+     */
+    public function getCurrentInstanceIndex(): ?int {
+        return $this->instanceIndexes === [] ? null : (int)end($this->instanceIndexes);
+    }
+}
 

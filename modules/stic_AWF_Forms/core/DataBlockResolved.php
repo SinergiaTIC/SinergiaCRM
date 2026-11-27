@@ -37,14 +37,40 @@ class DataBlockResolved {
     /** @var array<string, DataBlockFieldResolved> */
     public array $detachedData = [];     // Unmapped data [detached_field_name => DataBlockFieldResolved]
 
-    public function __construct(FormDataBlock $config, array $fullFormData, ExecutionContext $context) {
+    public ?int $instanceIndex = null;
+
+    /**
+     * Full loop-index stack (outer to inner) addressing this instance in the
+     * n-dimensional POST matrix (one index per repeatable/optional head in the
+     * block's chain; simple groups render with static names).
+     * Example (A -> B -> C, three group heads): C's instance = [i1, i2, i3].
+     */
+    public array $loopIndexes = [];
+
+    private array $fullFormData;                 // RAW form data (for the _toggle_ activation signal)
+    private ExecutionContext $executionContext;  // Request context (for the uploaded files fallback)
+
+    public function __construct(FormDataBlock $config, array $fullFormData, ExecutionContext $context, array $loopIndexes = []) {
         // Warning: PHP POST replaces all '.' with '_'
         // DataBlock names use PascalCase without '_'
         // Form field names:
         //   DataBlockName0_field_name              ->  "field_name" from DataBlockName0 TO CRM
         //   _detached_DataBlockName0_field_name    ->  "field_name" from DataBlockName0 DETACHED
+        //   DataBlockName[index][field_name]       ->  "field_name" from instance index of DataBlockName
+        //   _detached_DataBlockName[index][field_name] ->  "field_name" from instance index of detached DataBlockName
+        //   DataBlockName[i1]...[in][field_name]   ->  n loop levels (one per group head in the chain)
 
         $this->dataBlock = $config;
+        $this->loopIndexes = array_map('intval', $loopIndexes);
+        $this->instanceIndex = $this->loopIndexes === [] ? null : (int)end($this->loopIndexes);
+        $this->fullFormData = $fullFormData;
+        $this->executionContext = $context;
+
+        // Indexed form data for blocks inside group loops
+        if ($this->instanceIndex !== null) {
+            $this->resolveIndexedInstance($config, $fullFormData, $context);
+            return;
+        }
 
         // Load default values (fixed/hidden) from the configuration
         // These values can be overridden by form-submitted values
@@ -131,6 +157,283 @@ class DataBlockResolved {
     }
 
     /**
+     * Resolve a single instance of a block inside group loops. The matrix is
+     * navigated by ALL the loop indexes except the last (the last one
+     * addresses the row itself): formData[Block][i1]...[i_{n-1}][i_n][field].
+     */
+    private function resolveIndexedInstance(FormDataBlock $config, array $fullFormData, ExecutionContext $context): void {
+        $blockName = $config->name;
+        $linkedKey = $blockName;
+        $detachedKey = '_detached_' . $blockName;
+
+        $linkedArray = is_array($fullFormData[$linkedKey] ?? null) ? $fullFormData[$linkedKey] : [];
+        $detachedArray = is_array($fullFormData[$detachedKey] ?? null) ? $fullFormData[$detachedKey] : [];
+
+        $rowIndexes = $this->loopIndexes;
+        $innerIndex = array_pop($rowIndexes);
+        foreach ($rowIndexes as $levelIndex) {
+            $linkedArray = is_array($linkedArray[$levelIndex] ?? null) ? $linkedArray[$levelIndex] : [];
+            $detachedArray = is_array($detachedArray[$levelIndex] ?? null) ? $detachedArray[$levelIndex] : [];
+        }
+
+        $linkedInstance = is_array($linkedArray[$innerIndex] ?? null) ? $linkedArray[$innerIndex] : [];
+        $detachedInstance = is_array($detachedArray[$innerIndex] ?? null) ? $detachedArray[$innerIndex] : [];
+
+        // Logical-key builders: the keys include every loop index (Block[i1]...[in][field])
+        $keyIndexes = $this->loopIndexes;
+
+        // Process linked fields
+        foreach ($config->fields as $fieldName => $fieldDef) {
+            if ($fieldDef->value_type === DataBlockFieldValueType::FIXED
+                || $fieldDef->type_field === DataBlockFieldType::FIXED) {
+                $castedValue = stic_AWFUtils::castCrmValue($fieldDef->value, $fieldDef->type, $context);
+                $logicalKey = $fieldDef->getKeyForIndexes($keyIndexes);
+                $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, $castedValue);
+                if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) {
+                    $this->detachedData[$fieldName] = $fieldResolved;
+                } else {
+                    $this->formData[$fieldName] = $fieldResolved;
+                }
+                continue;
+            }
+            if ($fieldDef->type_field === DataBlockFieldType::UNLINKED) continue;
+
+            $value = $linkedInstance[$fieldName] ?? null;
+            $crmFieldType = $fieldDef->type;
+            $castedValue = stic_AWFUtils::castCrmValue($value, $crmFieldType, $context);
+            $logicalKey = $fieldDef->getKeyForIndexes($keyIndexes);
+            $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, $castedValue);
+            $this->formData[$fieldName] = $fieldResolved;
+        }
+
+        // Process detached fields
+        foreach ($config->fields as $fieldName => $fieldDef) {
+            if ($fieldDef->type_field !== DataBlockFieldType::UNLINKED
+                || $fieldDef->value_type === DataBlockFieldValueType::FIXED) continue;
+            // FILE fields never land in the POST matrix: the file input posts
+            // under the flat per-instance key (see FormHtmlGeneratorService),
+            // so the resolved value is the uploaded file's name
+            $value = $fieldDef->type_in_form === 'file'
+                ? ($context->uploadedFiles[$fieldDef->getFileKeyForIndexes($keyIndexes)]['name'] ?? null)
+                : ($detachedInstance[$fieldName] ?? null);
+            $crmFieldType = $fieldDef->type;
+            $castedValue = stic_AWFUtils::castCrmValue($value, $crmFieldType, $context);
+            $logicalKey = $fieldDef->getKeyForIndexes($keyIndexes);
+            $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, $castedValue);
+            $this->detachedData[$fieldName] = $fieldResolved;
+        }
+
+        // Fill missing booleans
+        foreach ($config->fields as $fieldName => $fieldDef) {
+            if ($fieldDef->type_field === DataBlockFieldType::FIXED) continue;
+            $isUnlinked = ($fieldDef->type_field === DataBlockFieldType::UNLINKED);
+            $targetArray = $isUnlinked ? $detachedInstance : $linkedInstance;
+            $resolvedMap = $isUnlinked ? $this->detachedData : $this->formData;
+            if (isset($resolvedMap[$fieldName]) && $resolvedMap[$fieldName]->value !== null && $resolvedMap[$fieldName]->value !== '') continue;
+            if ($fieldDef->type === 'bool' || $fieldDef->type === 'checkbox') {
+                $logicalKey = $fieldDef->getKeyForIndexes($keyIndexes);
+                $fieldResolved = new DataBlockFieldResolved($logicalKey, $fieldName, $fieldDef, 0);
+                if ($isUnlinked) {
+                    $this->detachedData[$fieldName] = $fieldResolved;
+                } else {
+                    $this->formData[$fieldName] = $fieldResolved;
+                }
+            }
+        }
+    }
+
+    /**
+     * Enumerates every instance in the block's group-loop chain.
+     * A prefix restricts enumeration to instances below fixed ancestor indexes.
+     * @param FormDataBlock $block
+     * @param array $formData
+     * @param ExecutionContext $context
+     * @param array $prefix Fixed ancestor indexes, outer to inner
+     * @return DataBlockResolved[]
+     */
+    /** Returns current-level indexes contributed by uploaded-file keys. */
+    private static function fileKeyLevelIndexes(FormDataBlock $block, ExecutionContext $context, array $prefix): array {
+        $depth = $block->getLoopDepth();
+        if ($depth < 1) return [];
+        $levelIndexes = [];
+        foreach ($block->fields as $fieldDef) {
+            if ($fieldDef->type_in_form !== 'file') continue;
+            $base = ($fieldDef->type_field === DataBlockFieldType::UNLINKED ? '_detached_' : '') . $block->name;
+            $pattern = '/^' . preg_quote($base, '/') . '((?:_\d+){' . $depth . '})_' . preg_quote($fieldDef->name, '/') . '$/';
+            foreach (array_keys($context->uploadedFiles) as $key) {
+                if (!preg_match($pattern, (string)$key, $m)) continue;
+                $vector = array_map('intval', explode('_', trim($m[1], '_')));
+                if (array_slice($vector, 0, count($prefix)) !== array_map('intval', $prefix)) continue;
+                if (isset($vector[count($prefix)])) $levelIndexes[] = $vector[count($prefix)];
+            }
+        }
+        return $levelIndexes;
+    }
+
+    /** Returns instance indexes materialized only by an optional activation switch. */
+    private static function toggleLevelIndexes(FormDataBlock $block, array $formData, array $prefix): array {
+        if (!$block->isOptional()) return [];
+        $signal = $formData['_toggle_' . $block->name] ?? null;
+        foreach ($prefix as $levelIndex) {
+            $signal = is_array($signal) ? ($signal[$levelIndex] ?? null) : null;
+        }
+        if (is_array($signal)) {
+            return array_values(array_filter(array_keys($signal), 'is_int'));
+        }
+        return $signal !== null && in_array($signal, ['1', 1, true, 'on'], true) ? [0] : [];
+    }
+
+    public static function resolveInstances(FormDataBlock $block, array $formData, ExecutionContext $context, array $prefix = []): array {
+        $depth = $block->getLoopDepth();
+        $blockName = $block->name;
+        $linkedNode = is_array($formData[$blockName] ?? null) ? $formData[$blockName] : [];
+        $detachedNode = is_array($formData['_detached_' . $blockName] ?? null) ? $formData['_detached_' . $blockName] : [];
+
+        // Navigate the matrix through the already-fixed ancestor indexes
+        foreach ($prefix as $levelIndex) {
+            $linkedNode = is_array($linkedNode[$levelIndex] ?? null) ? $linkedNode[$levelIndex] : [];
+            $detachedNode = is_array($detachedNode[$levelIndex] ?? null) ? $detachedNode[$levelIndex] : [];
+        }
+
+        $indexes = array_unique(array_merge(
+            array_filter(array_keys($linkedNode), 'is_int'),
+            array_filter(array_keys($detachedNode), 'is_int'),
+            // Uploaded files also enumerate instances outside the POST matrix.
+            self::fileKeyLevelIndexes($block, $context, $prefix),
+            // Optional switches can also be the only submitted value.
+            self::toggleLevelIndexes($block, $formData, $prefix)
+        ));
+        sort($indexes);
+
+        // Levels below this one (nested group heads inside this block's subtree)
+        $remainingLevels = $depth - count($prefix) - 1;
+
+        if (empty($indexes)) {
+            // Optional heads with no submitted instances → no instances at this
+            // level. Mandatory heads → one empty instance so required-field
+            // validation errors are produced.
+            if ($block->isOptional()) {
+                return [];
+            }
+            // Nested mandatory heads without submitted rows must not create phantoms.
+            if (!empty($prefix) && $block->isGroupHead() && count($prefix) === $block->getLoopDepth() - 1) {
+                return [];
+            }
+            // Empty non-head blocks mirror the nearest enclosing loop, skipping simple groups.
+            if (!$block->isGroupHead() && !empty($block->group_root)) {
+                $parentId = $block->group_root;
+                $seen = [$block->id => true];
+                while ($parentId !== '' && !isset($seen[$parentId])) {
+                    $seen[$parentId] = true;
+                    $parent = $block->form_config->data_blocks[$parentId] ?? null;
+                    if (!$parent) break;
+                    if ($parent->isRepeatable() || $parent->isOptional()) {
+                        $parentInstances = self::resolveInstances($parent, $formData, $context, $prefix);
+                        if (!empty($parentInstances)) {
+                            $mirroredInstances = [];
+                            foreach ($parentInstances as $parentInstance) {
+                                $resolved = self::createActiveInstance($block, $formData, $context, $parentInstance->loopIndexes);
+                                if ($resolved !== null) {
+                                    $mirroredInstances[] = $resolved;
+                                }
+                            }
+                            return $mirroredInstances;
+                        }
+                        // Preserve the legacy empty-instance fallback for mandatory
+                        // loop chains, but never escape an inactive optional ancestor.
+                        $probe = new self($block, $formData, $context, array_merge($prefix, [0]));
+                        if (!$probe->hasActiveOptionalAncestors()) {
+                            // STIC-Custom OC - 20261127 - An inactive optional ancestor must not materialize a mandatory child.
+                            return [];
+                        }
+                        break;
+                    }
+                    $parentId = $parent->group_root;
+                }
+            }
+            $indexes = [0];
+            $remainingLevels = max($remainingLevels, 0);
+        }
+
+        $instances = [];
+        foreach ($indexes as $index) {
+            $newPrefix = array_merge($prefix, [(int)$index]);
+            if ($remainingLevels > 0) {
+                $instances = array_merge($instances, self::resolveInstances($block, $formData, $context, $newPrefix));
+            } else {
+                $resolved = self::createActiveInstance($block, $formData, $context, $newPrefix);
+                if ($resolved !== null) {
+                    $instances[] = $resolved;
+                }
+            }
+        }
+        return $instances;
+    }
+
+    /**
+     * Creates a mandatory instance only when every optional ancestor is active
+     * for the same index path. Optional blocks keep their historical contract.
+     */
+    private static function createActiveInstance(FormDataBlock $block, array $formData, ExecutionContext $context, array $loopIndexes): ?self {
+        $resolved = new self($block, $formData, $context, $loopIndexes);
+        // Optional blocks keep their historical enumeration/activation contract.
+        // Mandatory descendants must not escape an inactive optional ancestor.
+        if ($block->isOptional()) {
+            return $resolved;
+        }
+        return $resolved->hasActiveOptionalAncestors() ? $resolved : null;
+    }
+
+    /**
+     * Full outer-to-inner loop-index vector; empty for scalar instances.
+     */
+    public function getLoopIndexes(): array {
+        return $this->loopIndexes;
+    }
+
+    /**
+     * Composite key addressing this instance in bean-reference maps and
+     * per-instance result keys: null (scalar) or the colon-joined index
+     * vector ("i", "i:j", "i:j:k"...).
+     */
+    public function getInstanceIndexKey(): ?string {
+        if ($this->instanceIndex === null) return null;
+        return implode(':', $this->loopIndexes);
+    }
+
+    /**
+     * Returns the BeanReference for this instance, if any. Blocks without a
+     * repeatable scope use the global reference; blocks inside a repeatable
+     * scope require the reference for their exact instance.
+     */
+    public function getInstanceBeanReference(): ?BeanReference {
+        // A simple block or optional-only hierarchy has one global record.
+        if ($this->dataBlock->getLoopDepth() === 0 || !$this->dataBlock->hasRepeatableScope()) {
+            return $this->dataBlock->getBeanReference();
+        }
+
+        // A non-repeatable child can still have one record per repeatable parent.
+        $indexKey = $this->getInstanceIndexKey();
+        if ($indexKey !== null) {
+            return $this->dataBlock->getIndexedBeanReference($indexKey);
+        }
+
+        return null;
+    }
+
+    /** Resolves a block from the active index stack, padding missing levels with zero. */
+    public static function resolveForBlock(FormDataBlock $blockConfig, array $formData, ExecutionContext $context): ?DataBlockResolved {
+        $depth = $blockConfig->getLoopDepth();
+        if ($depth === 0) {
+            return new DataBlockResolved($blockConfig, $formData, $context);
+        }
+        $stack = $context->getInstanceIndexes();
+        $indexes = array_slice($stack, 0, $depth);
+        while (count($indexes) < $depth) { $indexes[] = 0; }
+        return new DataBlockResolved($blockConfig, $formData, $context, $indexes);
+    }
+
+    /**
      * Gets the resolved field data for a given CRM field name. Returns null if the field is not present in the form.
      * @param string $fieldName The CRM field name to retrieve
      * @return ?DataBlockFieldResolved The resolved field data, or null if not found
@@ -146,6 +449,105 @@ class DataBlockResolved {
      */
     public function getDetachedFieldValue($fieldName): ?DataBlockFieldResolved {
         return $this->detachedData[$fieldName] ?? null;
+    }
+
+    /**
+     * Optional blocks use their own activation contract. Mandatory instances
+     * are active only when every optional ancestor is active for the same path.
+     */
+    public function isActivated(): bool {
+        if ($this->dataBlock->isOptional()) {
+            return $this->isOwnInstanceActivated();
+        }
+        return $this->hasActiveOptionalAncestors();
+    }
+
+    /**
+     * STIC-Custom OC - 20261127 - Prevent mandatory descendants from escaping an
+     * inactive optional ancestor. Evaluate each optional ancestor locally to
+     * avoid recursive activation cycles in malformed configurations.
+     */
+    private function hasActiveOptionalAncestors(): bool {
+        $parentId = $this->dataBlock->group_root ?? '';
+        $seen = [$this->dataBlock->id => true];
+
+        while ($parentId !== '' && !isset($seen[$parentId])) {
+            $seen[$parentId] = true;
+            $parent = $this->dataBlock->form_config->data_blocks[$parentId] ?? null;
+            if (!$parent) break;
+
+            if ($parent->isOptional()) {
+                $parentDepth = $parent->getLoopDepth();
+                if ($parentDepth < 1 || count($this->loopIndexes) < $parentDepth) {
+                    return false;
+                }
+                $parentIndexes = array_slice($this->loopIndexes, 0, $parentDepth);
+                // A non-repeatable optional parent is one shared N:1 instance;
+                // preserve outer indexes but canonicalize its own index to 0.
+                if (!$parent->isRepeatable()) {
+                    $parentIndexes[$parentDepth - 1] = 0;
+                }
+                $parentInstance = new self($parent, $this->fullFormData, $this->executionContext, $parentIndexes);
+                if (!$parentInstance->isOwnInstanceActivated()) {
+                    return false;
+                }
+            }
+
+            $parentId = $parent->group_root ?? '';
+        }
+
+        return true;
+    }
+
+    /** Evaluates only this block's activation, without walking ancestors. */
+    private function isOwnInstanceActivated(): bool {
+        // Mandatory blocks have no own activation signal; ancestors are checked by isActivated().
+        if (!$this->dataBlock->isOptional()) return true;
+
+        // Explicit activation signal, indexed by the enclosing loops.
+        $signalKey = '_toggle_' . $this->dataBlock->name;
+        $signal = $this->fullFormData[$signalKey] ?? null;
+        $signalIndexes = array_slice($this->loopIndexes, 0, max(count($this->loopIndexes) - 1, 0));
+        foreach ($signalIndexes as $levelIndex) {
+            $signal = is_array($signal) ? ($signal[$levelIndex] ?? null) : null;
+        }
+        if ($signal !== null && in_array($signal, ['1', 1, true, 'on'], true)) {
+            // A scalar switch on a non-repeatable optional block activates only
+            // its canonical instance 0. Repeatable groups use one master switch
+            // for every submitted row.
+            if (!$this->dataBlock->isRepeatable() && empty($signalIndexes)) {
+                $ownIndex = $this->loopIndexes === [] ? 0 : (int)end($this->loopIndexes);
+                if ($ownIndex !== 0) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Fallback over resolved fields (FIXED/server values never count).
+        foreach ([$this->formData, $this->detachedData] as $fieldMap) {
+            foreach ($fieldMap as $fieldResolved) {
+                $def = $fieldResolved->dataBlockField;
+                if ($def !== null && $def->type_field === DataBlockFieldType::FIXED) continue;
+                $value = $fieldResolved->value;
+                if (is_array($value)) {
+                    if (!empty($value)) return true;
+                } elseif ($value !== null && $value !== '') {
+                    return true;
+                }
+            }
+        }
+
+        // Uploaded files use the flat per-instance key with the full index stack.
+        foreach ($this->dataBlock->fields as $fieldDef) {
+            if ($fieldDef->type_in_form !== 'file') continue;
+            $phpKey = $this->loopIndexes !== []
+                ? $fieldDef->getFileKeyForIndexes($this->loopIndexes)
+                : $fieldDef->getPhpKey();
+            if (!empty($this->executionContext->uploadedFiles[$phpKey]['name'])) return true;
+        }
+
+        return false;
     }
 
 }

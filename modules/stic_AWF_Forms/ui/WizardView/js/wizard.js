@@ -94,21 +94,51 @@ function wizardForm() {
         init() {
           this.$watch('$store.htmlEditor.isOpen', (isOpen) => {
             if (isOpen) {
-              this.$nextTick(() => this.initQuill());
-            } else if (this.editor) {
-              this.editor = null;
-              window._quillModalEditor = null;
-              const toolbar = this.$refs.editor.previousElementSibling;
-              if (toolbar && toolbar.classList.contains('ql-toolbar')) {
-                toolbar.remove();
+              if (this.$store.htmlEditor.mode === 'visual') {
+                this.$nextTick(() => this.initQuill());
               }
-              this.$refs.editor.className = '';
-              this.$refs.editor.innerHTML = '';
+            } else {
+              this.destroyQuill();
+            }
+          });
+
+          // Switching to the raw-HTML editor captures the current visual HTML
+          // and tears Quill down; switching back re-initialises it from the
+          // stored HTML. This is what lets the source keep advanced markup
+          // (image sizes, remote src…) that Quill would otherwise normalise away.
+          this.$watch('$store.htmlEditor.mode', (mode) => {
+            if (!this.$store.htmlEditor.isOpen) return;
+            if (mode === 'html') {
+              this.captureQuillContent();
+              this.destroyQuill();
+            } else {
+              this.$nextTick(() => this.initQuill());
             }
           });
         },
 
+        // Pull the current visual HTML into the store before leaving visual mode
+        captureQuillContent() {
+          if (!this.editor) return;
+          let html = this.editor.root.innerHTML;
+          if (html === '<p><br></p>') html = '';
+          this.$store.htmlEditor.content = html;
+        },
+
+        destroyQuill() {
+          if (!this.editor) return;
+          this.editor = null;
+          window._quillModalEditor = null;
+          const toolbar = this.$refs.editor.previousElementSibling;
+          if (toolbar && toolbar.classList.contains('ql-toolbar')) {
+            toolbar.remove();
+          }
+          this.$refs.editor.className = '';
+          this.$refs.editor.innerHTML = '';
+        },
+
         initQuill() {
+          if (this.editor) return;
           if (typeof Quill === 'undefined') {
             console.error("Quill JS not loaded");
             return;
@@ -160,6 +190,7 @@ function wizardForm() {
         Alpine.store('htmlEditor', {
           isOpen: false,
           type: '',
+          mode: 'visual',   // 'visual' (Quill) | 'html' (raw source)
           content: '',
           originalContent: '',
 
@@ -174,19 +205,36 @@ function wizardForm() {
             return window.alpineComponent.formConfig;
           },
 
+          // Label of the button that toggles between the visual editor and the
+          // raw-HTML source editor
+          get modeButtonLabel() {
+            return this.mode === 'html'
+              ? utils.translate('LBL_HTML_EDITOR_EDIT_VISUAL')
+              : utils.translate('LBL_HTML_EDITOR_EDIT_HTML');
+          },
+
           open(type) {
             this.type = type;
             this.content = type === 'header' ? this.formConfig.layout.header_html : this.formConfig.layout.footer_html;
             this.originalContent = this.content;
+            this.mode = 'visual';
             this.isOpen = true;
           },
 
+          toggleMode() {
+            this.mode = this.mode === 'html' ? 'visual' : 'html';
+          },
+
           save() {
-            const quill = window._quillModalEditor;
-            if (quill) {
-              let html = quill.root.innerHTML;
-              if (html === '<p><br></p>') html = '';
-              this.content = html;
+            // In visual mode the source of truth is Quill; in HTML mode it is the
+            // textarea bound to `content`, stored as-is (no normalisation).
+            if (this.mode !== 'html') {
+              const quill = window._quillModalEditor;
+              if (quill) {
+                let html = quill.root.innerHTML;
+                if (html === '<p><br></p>') html = '';
+                this.content = html;
+              }
             }
 
             if (this.type === 'header') {
@@ -213,6 +261,15 @@ function wizardForm() {
       let jsonString = "{}";
       if (this.bean?.configuration) {
         jsonString = this.bean.configuration;
+        // Decode HTML entities (&quot; -> ", &#039; -> ') until stable, to handle
+        // values that arrive single or double encoded from the server
+        if (typeof jsonString === 'string' && jsonString.includes('&')) {
+          for (let i = 0; i < 3; i++) {
+            const decoded = new DOMParser().parseFromString(jsonString, 'text/html').documentElement.textContent;
+            if (decoded === jsonString) break;
+            jsonString = decoded;
+          }
+        }
       }
       try {
         this.formConfig = stic_AwfConfiguration.fromJSON(jsonString);
@@ -267,9 +324,12 @@ class WizardNavigation {
     $("#wizard-section-desc").text(utils.translate(stepInfo.desc));
 
     // Step content
+    const assetVersion = globalThis.STIC?.awfAssetVersion
+      ? `?v=${encodeURIComponent(globalThis.STIC.awfAssetVersion)}`
+      : '';
     if (!(step in WizardNavigation.cacheSteps)) {
       WizardNavigation.cacheSteps[step] = await (
-        await fetch(`modules/stic_AWF_Forms/ui/WizardView/steps/step${step}.html`)
+        await fetch(`modules/stic_AWF_Forms/ui/WizardView/steps/step${step}.html${assetVersion}`)
       ).text();
     }
     let $el = document.getElementById("wizard-step-container");
@@ -278,7 +338,7 @@ class WizardNavigation {
     // Debug options
     if (!(WizardNavigation.cacheDebug)) {
       WizardNavigation.cacheDebug = await (
-        await fetch(`modules/stic_AWF_Forms/ui/WizardView/steps/debug.html`)
+        await fetch(`modules/stic_AWF_Forms/ui/WizardView/steps/debug.html${assetVersion}`)
       ).text();
     }
     let $elDebug = document.getElementById("debug-container");
@@ -508,11 +568,10 @@ class WizardStep2 {
         if (!Alpine.store('dataBlockRelationships')) {
           Alpine.store('dataBlockRelationships', {
             get formConfig() { return window.alpineComponent.formConfig; },
+            get data_blocks() { return this.formConfig.data_blocks; },
 
             get dataBlockRelationships() { 
               return this.formConfig.getAllDataBlockRelationships(); 
-            },
-            resetDataBlockRelationships() {
             },
             usedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
@@ -520,7 +579,7 @@ class WizardStep2 {
             },
             unusedDatablockRelationships(datablockId) {
               if (!datablockId || !this.dataBlockRelationships[datablockId]) return [];
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return [];
               let moduleInfo = utils.getModuleInformation(block.module);
               let seen = new Set();
@@ -551,20 +610,15 @@ class WizardStep2 {
               });
             },
             addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText) {
-              let dataBlock = this.formConfig.addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText);
-              if (dataBlock) {
-                this.resetDataBlockRelationships();
-              }
-              return dataBlock;
+              return this.formConfig.addDataBlockRelationship(datablockId, relName, relatedDatablockId, newDatablockText);
             },
             deleteRelationship(datablockId, relName, relatedDatablockId) {
               this.formConfig.deleteRelationship(datablockId, relName, relatedDatablockId);
-              this.resetDataBlockRelationships();
             },
             getRelationshipTypeLabel(datablockId, relName, otherDatablockId, origDatablockId) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return 'N\u2009\u27f7\u2009M';
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherDatablockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherDatablockId);
               let moduleInfo = utils.getModuleInformation(block.module);
               let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
               let hasRelateField = moduleInfo && Object.values(moduleInfo.fields).some(f => f.type === 'relate' && f.options === relName);
@@ -591,7 +645,7 @@ class WizardStep2 {
               return this.formConfig.suggestDataBlockText(this.formConfig.getRelationshipModule(origDatablockId, relName));
             },
             _relArrow(datablockId, relName, otherBlock, initiatorId) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block) return '⟷';
               let moduleInfo = utils.getModuleInformation(block.module);
               let otherModuleInfo = otherBlock ? utils.getModuleInformation(otherBlock.module) : null;
@@ -612,10 +666,10 @@ class WizardStep2 {
               return '⟷';
             },
             getRelText(datablockId, rel) {
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
               if (!block || !rel) return rel?.text || '';
               let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherBlockId);
               if (!otherBlock) return rel.text;
 
               let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
@@ -623,8 +677,8 @@ class WizardStep2 {
             },
             getInvolvedBlocksText(datablockId, rel) {
               let otherBlockId = rel.datablock_orig == datablockId ? rel.datablock_dest : rel.datablock_orig;
-              let block = this.formConfig.data_blocks.find(d => d.id == datablockId);
-              let otherBlock = this.formConfig.data_blocks.find(d => d.id == otherBlockId);
+              let block = this.data_blocks.find(d => d.id == datablockId);
+              let otherBlock = this.data_blocks.find(d => d.id == otherBlockId);
               if (!block || !otherBlock) return rel.text;
 
               let arrow = this._relArrow(datablockId, rel.name, otherBlock, rel.initiator_id);
@@ -797,12 +851,14 @@ class WizardStep2 {
                 this.formConfig.addDataBlockField(this.dataBlock, this.field);
               } else {
                 if (this.needDeleteOld) {
-                  this.dataBlock.deleteField(this.field.name);
+                  const oldField = this.dataBlock.fields.find(f => f.name === this.original_name);
+                  if (oldField) this.formConfig.deleteDataBlockField(this.dataBlock, oldField);
                   this.formConfig.addDataBlockField(this.dataBlock, this.field);
                 } else {
                   this.dataBlock.updateField(this.original_name, this.field);
                 }
               }
+              this.formConfig.refreshGroups();
               this.close();
             },
           });
@@ -1029,7 +1085,6 @@ class WizardStep2 {
           });
         }
         
-
         // Store for the Relationship Creator management
         if (!Alpine.store('relCreator')) {
           Alpine.store('relCreator', {
@@ -1058,9 +1113,13 @@ class WizardStep2 {
              */ 
             openCreate(dataBlock) {
               this.dataBlock = dataBlock;
-              this.relationships.resetDataBlockRelationships(); // Force reload relationships
-              this.availableRels = this.relationships.unusedDatablockRelationships(dataBlock.id);
+                            this.availableRels = this.relationships.unusedDatablockRelationships(dataBlock.id);
               this.selectedRelName = this.availableRels[0]?.name ?? '';
+              // Reset the target on every open: the init effect only reacts to a
+              // RELATIONSHIP change, so reopening the same one kept a stale target.
+              this.availableDataBlocks = this.relationships.getAvailableDataBlocksForRelationship(dataBlock.id, this.selectedRelName);
+              this.relatedDataBlockId = this.availableDataBlocks[0]?.id ?? -1;
+              this.newDataBlockText = '';
               this.isOpen = true;
             },
 
@@ -1112,27 +1171,92 @@ class WizardStep2 {
     };
   }
 
-  static generalDatablocksxData(initial_formConfig) {
+  static generalDatablocksxData() {
     return {
-      formConfig: initial_formConfig,
-
-      deleteDataBlock(dataBlock) {
-        this.formConfig.deleteDataBlock(dataBlock);
-        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get orderedDataBlocks() { return this.formConfig.getOrderedDataBlocks(); },
+      // Recursive group tree.
+      get blockTree() { return this.formConfig.getVisualTree(); },
+      // Mark a group when any descendant block is invalid.
+      groupNodeHasErrors(node) {
+        const blocks = this.data_blocks;
+        const walk = (n) => !n.block.isValid(blocks) || (n.members || []).some(walk);
+        return !!node && walk(node);
       },
 
+      reloadGroupTitle(block) {
+        if (!block) return;
+        
+        block.is_custom_group_title=false;
+        block.refreshGroupTitle(this.data_blocks);
+      },
+
+      /**
+       * Toggles the optional status (min_instances = 0 vs 1) of a DataBlock.
+       */
+      toggleOptional(block, isOptional, highlight = true) {
+        if (!block) return;
+        this.formConfig.setBlockOptional(block, isOptional);
+        if (highlight) {
+          this.highlightCard(block.id);
+        } 
+      },
+
+      /**
+       * Toggles the repeatable status (is_repeatable) of a DataBlock.
+       */
+      toggleRepeatable(block, isRepeatable, highlight = true) {
+        if (!block) return;
+        this.formConfig.setBlockRepeatable(block, isRepeatable);
+        if (highlight) {
+          this.highlightCard(block.id);
+        }
+      },
+
+      deleteDataBlock(dataBlock) {
+        if (!dataBlock) return;
+        // Confirmation before permanently removing the data block
+        if (!confirm(utils.translate('LBL_DATABLOCK_DELETE_CONFIRM'))) return;
+        this.formConfig.deleteDataBlock(dataBlock);
+              },
+
       getDataBlockText(dataBlockId) {
-        let dataBlock = this.formConfig.data_blocks.find(d => d.id == dataBlockId);
+        let dataBlock = this.data_blocks.find(d => d.id == dataBlockId);
         if (!dataBlock) return '';
         return `${dataBlock.text} (${dataBlock.getModuleText()})`;
+      },
+
+      /**
+       * Scrolls to the card and triggers the flash glow animation.
+       */
+      highlightCard(blockId) {
+        this.$nextTick(() => {
+          const element = document.getElementById('dataBlock_' + blockId);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            element.classList.remove('awf-card-highlight');
+            // Force DOM reflow to restart animation if triggered consecutively
+            void element.offsetWidth;
+            element.classList.add('awf-card-highlight');
+            setTimeout(() => {
+              element.classList.remove('awf-card-highlight');
+            }, 1200);
+          }
+        });
       }
     };
   }
 
-  static datablockxData(initial_formConfig, dataBlock) {
+  static datablockxData(dataBlock) {
     return {
-      formConfig: initial_formConfig,
       dataBlock: dataBlock,
+      isCollapsed: false,
+      get formConfig() { return window.alpineComponent.formConfig; },
+
+      toggleCollapse() {
+        this.isCollapsed = !this.isCollapsed;
+      },
 
       init() {
         this.$watch('dataBlock.text', (newText, oldText) => {
@@ -1183,6 +1307,11 @@ class WizardStep2 {
         if (key === 'is_visible') {
           return val ? 1 : 0;
         }
+        if (key === 'score') {
+          if (val === null || val === undefined || val === '') return null;
+          const numericValue = Number(val);
+          return Number.isFinite(numericValue) ? numericValue : null;
+        }
         return (val ?? '').toString();
       },
 
@@ -1197,6 +1326,15 @@ class WizardStep2 {
             return (this.getSortValue(b, key) - this.getSortValue(a, key)) * (this.sortAsc ? 1 : -1);
           }
           const dir = this.sortAsc ? 1 : -1;
+          if (key === 'score') {
+            const valueA = this.getSortValue(a, key);
+            const valueB = this.getSortValue(b, key);
+            if (valueA === null || valueB === null) {
+              if (valueA === valueB) return 0;
+              return valueA === null ? 1 : -1;
+            }
+            return (valueA - valueB) * dir;
+          }
           return this.getSortValue(a, key).localeCompare(this.getSortValue(b, key), undefined, { sensitivity: 'base', numeric: true }) * dir;
         });
       },
@@ -1438,15 +1576,16 @@ class WizardStep2 {
     };
   }
 
-  static addDataBlockModulexData(initial_formConfig) {
+  static addDataBlockModulexData() {
     return {
-      formConfig: initial_formConfig,
-
       creatingDataBlock: false,          // Modal CRM
       creatingUnlinkedDataBlock: false,  // Modal Unlinked
 
       newDataBlock: {module:'', text:''},
       newUnlinkedDataBlock: {text:''},
+
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
 
       get availableModulesForSelect() {
         if (typeof STIC === 'undefined' || !STIC.enabledModules) return [];
@@ -1473,8 +1612,7 @@ class WizardStep2 {
         const dataBlock = this.formConfig.addDataBlockModule(this.newDataBlock.module, true, this.newDataBlock.text);
         this.creatingDataBlock = false;
         this.newDataBlock = {module:'', text:''};
-        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
-        this.$nextTick(() => {
+                this.$nextTick(() => {
           const element = document.getElementById('dataBlock_' + dataBlock.id); 
           if(element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1495,8 +1633,7 @@ class WizardStep2 {
       handleAddDocumentDatablock() {
         const text = this.formConfig.suggestDataBlockText('Documents');
         const dataBlock = this.formConfig.addDataBlockModule('Documents', true, text);
-        Alpine.store('dataBlockRelationships').resetDataBlockRelationships();
-        this.$nextTick(() => {
+                this.$nextTick(() => {
           const element = document.getElementById('dataBlock_' + dataBlock.id); 
           if(element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1506,18 +1643,18 @@ class WizardStep2 {
     };
   }
  
-  static editionFieldxData(fieldStore, config) {
+  static editionFieldxData(fieldStore) {
     return {
-      formConfig: config,
       store: fieldStore,
 
+      get formConfig() { return window.alpineComponent.formConfig; },
       get dataBlock() { return this.store?.dataBlock; },
       get field() { return this.store?.field; },
       get isEdit() { return this.store?.isEdit; },
 
       configValueOptions: false,
-
       showAllFields: false,
+
       get availableFields() {
         if (this.isEdit) {
           return [this.dataBlock?.getModuleInformation()?.fields[this.field.name]];
@@ -1811,10 +1948,11 @@ class WizardStep2 {
     };
   }
 
-  static editionValidationFieldxData(validationStore, config) {
+  static editionValidationFieldxData(validationStore) {
     return {
-      formConfig: config,
       store: validationStore,
+
+      get formConfig() { return window.alpineComponent.formConfig; },
 
       applyCondition: false,
       _activeDef: null,
@@ -1853,15 +1991,39 @@ class WizardStep2 {
     };
   }
 
-  static fieldsSummaryxData(dataBlock, config) {
+  static fieldsSummaryxData(dataBlock) {
     return {
-      formConfig: config,
       dataBlock: dataBlock,
 
       fieldTabSelected: 'form',
 
-      get firstFieldInFormIndex() {
-        return this.dataBlock.fields.filter(f => !f.isFieldInForm()).length;
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+
+      canMoveUpField(index) {
+        return this.dataBlock.fields.slice(0, index).some(f => f.isFieldInForm());
+      },
+
+      canMoveDownField(index) {
+        return this.dataBlock.fields.slice(index + 1).some(f => f.isFieldInForm());
+      },
+
+      moveUpField(index) {
+        const fields = this.dataBlock.fields;
+        let target = index - 1;
+        while (target >= 0 && !fields[target].isFieldInForm()) target--;
+        if (target < 0) return;
+        const [field] = fields.splice(index, 1);
+        fields.splice(target, 0, field);
+      },
+
+      moveDownField(index) {
+        const fields = this.dataBlock.fields;
+        let target = index + 1;
+        while (target < fields.length && !fields[target].isFieldInForm()) target++;
+        if (target >= fields.length) return;
+        const [field] = fields.splice(index, 1);
+        fields.splice(target, 0, field);
       },
 
       get summaryDescription() {
@@ -1927,7 +2089,7 @@ class WizardStep2 {
       getfieldValueText(field) {
         if (!field) return '';
         if (field.value_type == 'dataBlock') {
-          return this.formConfig.data_blocks.find(d => d.id == field.value)?.text;
+          return this.data_blocks.find(d => d.id == field.value)?.text;
         }
         return field.value_text;
       },
@@ -1974,12 +2136,28 @@ class WizardStep2 {
 class WizardStep3 {
   static mainStep3xData() {
     return {
-      get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get flows() { return this.formConfig.flows; },
 
       flowTabSelected: 0,
-      get flow() { return this.formConfig.flows.find(f => f.id == this.flowTabSelected); },
+      get flow() { return this.flows.find(f => f.id == this.flowTabSelected); },
       get actions() { return this.flow?.actions ?? []; },
+
+      /**
+       * Returns the group metadata for an action, or null if the action does not
+       * target a block that belongs to a group (repeatable OR optional OR simple with children).
+       * Always computed LIVE from the current data-block structure so it reflects
+       * the latest group configuration. Inspects ALL parameters and conditions — not just
+       * `data_block_id` — so custom actions are correctly detected.
+       * @param {stic_AwfAction} action
+       * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+       */
+      getActionRepeatGroup(action) {
+        if (!action || !this.formConfig) return null;
+        return this.formConfig.getActionGroupBinding(action);
+      },
 
       selectedCategory: '', 
       selectedActionDefName: '', 
@@ -1995,7 +2173,7 @@ class WizardStep3 {
 
         // If it is a deferred sub-flow (ex: 'awfa123_ok'), check the parent context (deferred action)
         if (flow.id !== '0' && flow.id !== '-1' && flow.id !== '1') {
-          for (const f of this.formConfig.flows) {
+          for (const f of this.flows) {
             const parentAction = f.actions.find(a => a.flow_success_id == flow.id || a.flow_error_id == flow.id);
             if (parentAction) {
               // Check reumptionContext from the deferred action
@@ -2044,6 +2222,7 @@ class WizardStep3 {
             _activeConditionFieldDef: null,
 
             get formConfig() { return window.alpineComponent.formConfig; },
+            get data_blocks() { return this.formConfig.data_blocks; },
 
             get availableFieldsInForm() { return this.formConfig?.getAllFieldsInForm() ?? []; },
             get availableFieldsInFormForSelect() { return this.availableFieldsInForm.map(field => ({ id: field.name, label: field.text })); },
@@ -2177,7 +2356,21 @@ class WizardStep3 {
 
             get isValid() {
               if (!this.action) return false;
-              return this.action.isValid();
+              if (!this.action.isValid()) return false;
+              // Architectural rule (deferred flows): a TERMINAL action (exactly
+              // one HTTP redirect per submission) can NEVER be bound to a
+              // repeatable/optional loop block — it must act on the whole
+              // submission (parent level / main flow). Non-terminal deferred
+              // actions (async emails, tickets) MAY run per instance.
+              if (this.definition?.isTerminal) {
+                for (const param of this.action.parameters) {
+                  const paramDef = (this.definition.parameters || []).find(p => p.name == param.name);
+                  if (paramDef?.type !== 'dataBlock') continue;
+                  const block = this.formConfig.data_blocks.find(b => b.id === param.value);
+                  if (block && block.isGroupHead(this.formConfig.data_blocks)) return false;
+                }
+              }
+              return true;
             },
 
             /** 
@@ -2194,8 +2387,11 @@ class WizardStep3 {
 
               this.currentStep = 1;
 
-              // For creation, we start without action or definition: A definition must be selected
-              this.action = null;
+              // For creation, we start without a definition: A definition must be selected.
+              // NOTE: action is NOT nulled here — keeping the previous action avoids Alpine
+              // "Cannot read properties of null" errors when x-if step-2 expressions (data-model
+              // via editableText) are re-evaluated reactively before the x-if removes the DOM.
+              // Step 2 won't show because `definition` is null (x-if guard is false).
               this.definition = null;
               this.isTerminalFilter = isTerminal;
               this.selectedActionDefName = '';
@@ -2362,17 +2558,55 @@ class WizardStep3 {
               }
             },
 
+            /**
+             * AWF Paso 3 §2.1 — Motor Group of the action being edited.
+             * Delegates to formConfig.getActionMotorGroup(action).
+             * @param {stic_AwfAction} action
+             * @returns {object|null} { rootBlockId, groupTitle, isRoot } or null
+             */
+            getActionMotorGroup(action) {
+              return this.formConfig.getActionMotorGroup(action);
+            },
+
+            /**
+             * AWF Paso 3 §2.3 — Disjoint-groups filter for parameter block selectors.
+             * Returns true if `block` is allowed given the action's current Motor Group:
+             *  - Terminal/global actions: only scalar blocks (no repeatable group).
+             *  - If the action already has a Motor Group X: allow blocks of Grup X (root + children/subgroups)
+             *    AND scalar blocks (no motor group). Block from a disjoint repeatable group → false.
+             *  - If the action has no Motor Group yet: all blocks allowed.
+             * @param {stic_AwfDataBlock} block
+             * @param {stic_AwfAction} action
+             * @returns {boolean}
+             */
+            isBlockAllowedForAction(block, action) {
+              if (!block || !action) return true;
+              // Terminal/global actions cannot bind to any repeatable group (§3.2)
+              if (action.is_terminal) {
+                const motor = this.formConfig.getBlockMotorGroup(block);
+                return !motor;
+              }
+              const motorGroup = this.formConfig.getActionMotorGroup(action);
+              if (!motorGroup) return true; // No motor group yet: everything allowed
+              // Action already bound to a motor group → only same group (incl. subgroups) + scalars
+              const blockMotor = this.formConfig.getBlockMotorGroup(block);
+              if (!blockMotor) return true; // scalar: allowed as constant (§2.2)
+              return blockMotor.id === motorGroup.rootBlockId;
+            },
+
             /** 
              * Returns the list of Data Blocks available to assign in the parameters 
              * @param {Array} supportedModules List of Data Block modules to display 
+             * @param {stic_AwfAction} [action] Current action (for disjoint-groups filtering, §2.3)
              * @returns {Array} List of {id, text, module} data blocks 
              */
-            getSupportedDataBlocksList(supportedModules = []) {
+            getSupportedDataBlocksList(supportedModules = [], action = null) {
               let blocks = [];
               if (!supportedModules) supportedModules = [];
 
-              this.formConfig.data_blocks.forEach(b => {
-                if (supportedModules.length == 0 || supportedModules.includes(b.module)) {
+              this.data_blocks.forEach(b => {
+                if ((supportedModules.length == 0 || supportedModules.includes(b.module)) &&
+                    this.isBlockAllowedForAction(b, action)) {
                   blocks.push({
                     id: b.id, 
                     text: `${b.text} (${b.getModuleText()})`,
@@ -2386,14 +2620,16 @@ class WizardStep3 {
             /** 
              * Returns the list of fields available in the form 
              * @param {Array} supportedDataTypes List of the data types of the fields to display 
+             * @param {stic_AwfAction} [action] Current action (for disjoint-groups filtering, §2.3)
              * @returns List of {id, text, typeInActions} fields 
              */
-            getSupportedFieldsList(supportedDataTypes = []) {
+            getSupportedFieldsList(supportedDataTypes = [], action = null) {
               // Format value: "BlockName.FieldName" / "_detached.BlockName.FieldName"
               let fields = [];
               if (!supportedDataTypes) supportedDataTypes = [];
 
-              this.formConfig.data_blocks.forEach(block => {
+              this.data_blocks.forEach(block => {
+                  if (!this.isBlockAllowedForAction(block, action)) return;
                   block.fields.forEach(field => {
                       const typeInActions = field.getTypeInActions();
                       if (supportedDataTypes.length == 0 || supportedDataTypes.includes(typeInActions)) {
@@ -2407,6 +2643,40 @@ class WizardStep3 {
                   });
               });
               return fields;
+            },
+
+            /**
+             * AWF Paso 3 §3.1 / §3.2 — Fields available for the action's execution condition.
+             * - If the action has NO motor group yet (no repeatable block referenced): ALL fields
+             *   are shown (scalars + repeatable), so the user can pick any field freely.
+             * - If the action already has a Motor Group X: only fields of Grup X + scalar fields
+             *   (disjoint repeatable groups are excluded, §2.3).
+             * - Terminal/global actions: only scalar fields (§3.2).
+             * @param {stic_AwfAction} [action]
+             * @returns {Array} List of {id, label} fields for the condition <stic-select>
+             */
+            availableFieldsInFormForCondition(action = null) {
+              const fields = [];
+              const isTerminal = action && action.is_terminal;
+              const motorGroup = (!isTerminal && action) ? this.formConfig.getActionMotorGroup(action) : null;
+              this.data_blocks.forEach(block => {
+                const blockMotor = this.formConfig.getBlockMotorGroup(block);
+                // Terminal actions: only scalar fields (§3.2)
+                if (isTerminal && blockMotor) return;
+                // Non-terminal with a motor group: exclude disjoint repeatable groups (§2.3)
+                if (motorGroup && blockMotor && blockMotor.id !== motorGroup.rootBlockId) return;
+                // No motor group yet: all fields allowed (scalars + repeatable)
+                block.fields.forEach(field => {
+                  if (field.type_field === 'fixed') return;
+                  const fullName = block.getFieldInputName(field);
+                  const label = field.label || field.text_original;
+                  fields.push({ id: fullName, label: `${block.text} » ${utils.fromFieldLabelText(label)}` });
+                });
+              });
+              return fields;
+            },
+            get availableFieldsInFormForConditionForSelect() {
+              return this.availableFieldsInFormForCondition(this.action);
             },
 
             getParameterValueInputType(paramDataType) {
@@ -2488,7 +2758,7 @@ class WizardStep3 {
                                          (paramDef.selectorOptions || []).find(o => o.name == newParam.selectedOption)?.resolvedType === 'dataBlock';
 
                 if (paramIsDataBlock && newParam.value) {
-                  const requiredBlock = this.formConfig.data_blocks.find(b => b.id == newParam.value);
+                  const requiredBlock = this.data_blocks.find(b => b.id == newParam.value);
                   if (requiredBlock && requiredBlock.save_action_id) {
                     requisiteActions.add(requiredBlock.save_action_id);
                   }
@@ -2567,9 +2837,11 @@ class WizardStep3 {
        * @param {stic_AwfAction} action The action to remove 
        * @return {void} 
        */
-      removeAction(action) {
-        this.formConfig.removeAction(this.flow.id, action.id)
-      },
+       removeAction(action) {
+         // Confirmation before permanently removing the action
+         if (!confirm(utils.translate('LBL_ACTION_DELETE_CONFIRM'))) return;
+         this.formConfig.removeAction(this.flow.id, action.id)
+       },
 
       /**
        * Indicates if an action can be moved up
@@ -2758,14 +3030,253 @@ class WizardStep4 {
       generatedHtml: '',
       previewTimeout: null,
 
-      get formConfig() { return window.alpineComponent.formConfig; },
       get bean() { return window.alpineComponent.bean; },
-      get sections() { return this.formConfig.layout.structure; },
+      get formConfig() { return window.alpineComponent.formConfig; },
+      get data_blocks() { return this.formConfig.data_blocks; },
+      get layout() { return this.formConfig.layout; },
+      get sections() { return this.layout.structure; },
+
+      // Server-rendered preview of the SAVED form (same URL step 5 uses): a
+      // plain link with target="_blank" opens it and RELOADS refresh it.
+      get previewUrl() {
+        return `index.php?module=stic_AWF_Forms&action=renderPreviewForm&record=${this.bean?.id ?? ''}`;
+      },
 
       get availableContainerTypes() {
-        const validCategories = ['panel', 'card'];
+        // Kept for backward compatibility of callers without a section context:
+        // base container types (no 'tab' — it only applies to direct children
+        // of a tabs container)
+        const validCategories = ['panel', 'card', 'tabs'];
         return stic_AwfLayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
       },
+
+      // True when the section is a DIRECT child of a 'tabs' container section:
+      // then its only container type is 'tab' (a pane of the parent tabs).
+      // True when the section is a tabs CONTAINER (either flavor)
+      isTabsContainer(section) {
+        return !!section && (section.containerType === 'card_tabs' || section.containerType === 'panel_tabs');
+      },
+
+      // True when the section is an accordion CONTAINER (either flavor)
+      isAccordionContainer(section) {
+        return !!section && (section.containerType === 'card_accordion' || section.containerType === 'panel_accordion');
+      },
+
+      // A 'tab_item' / 'accordion_item' section is a pane/item: its title IS the
+      // tab label / accordion header (always shown, never collapsible alone)
+      isItemSection(section) {
+        return !!section && (section.containerType === 'tab_item' || section.containerType === 'accordion_item');
+      },
+
+      // True when the section is a DIRECT child of a tabs container section:
+      // then its only container type is 'tab_item' (a pane of the parent tabs).
+      isDirectChildOfTabs(section) {
+        const parent = this.getParentSectionOf(section);
+        return this.isTabsContainer(parent);
+      },
+
+      // True when the section is a DIRECT child of an accordion container:
+      // then its only container type is 'accordion_item'.
+      isDirectChildOfAccordion(section) {
+        const parent = this.getParentSectionOf(section);
+        return this.isAccordionContainer(parent);
+      },
+
+      // Identify the group's instance-template child by marker or legacy item type.
+      isGroupTemplateChild(section) {
+        if (section?.groupTemplate !== true && section?.containerType !== 'tab_item' && section?.containerType !== 'accordion_item') return false;
+        const parent = this.getParentSectionOf(section);
+        return !!parent && parent.isGroupSection === true;
+      },
+
+      // The internal template is not rendered as a separate step-4 node.
+      getGroupTemplate(section) {
+        if (!section || !this.isGroupSection(section)) return null;
+        return section.elements.find(el => el.type === 'section' && el.groupTemplate === true) || null;
+      },
+
+      isGroupTemplateSection(section) {
+        return stic_AwfMovePolicy.isTemplate(section);
+      },
+
+      // Children rendered inside a section card in step 4. A group section's
+      // template child is an internal wrapper: its children (the per-block host
+      // sections) are shown directly inside the group card, so the user can
+      // order the fields without seeing the template node.
+      getSectionBodyElements(section) {
+        const template = this.getGroupTemplate(section);
+        return template ? template.elements : (section ? section.elements : []);
+      },
+
+      // Hidden fields render as bare <input type="hidden"> in the final form:
+      // they have no visual position, so step 4 does not draw them. They are
+      // still configurable in step 3 and the layout re-syncs them on change.
+      isHiddenFieldElement(element) {
+        const field = this.getField(element);
+        return !!field && field.type_in_form === 'hidden';
+      },
+      getVisibleSectionBodyElements(section) {
+        return this.getSectionBodyElements(section).filter(e => !this.isHiddenFieldElement(e));
+      },
+      getHiddenFieldCount(section) {
+        const elements = this.getSectionBodyElements(section);
+        let count = elements.filter(e => this.isHiddenFieldElement(e)).length;
+        elements.forEach(e => {
+          if (e.type === 'datablock') count += this.getFields(e).filter(f => f.type_in_form === 'hidden').length;
+        });
+        return count;
+      },
+      getVisibleBlockFields(element) {
+        return this.getFields(element).filter(f => f.type_in_form !== 'hidden');
+      },
+
+      // True when `section` is the SOLE content section of its group: the group
+      // has exactly one data-block host, so its title is hidden and the singular
+      // record name comes from its block — its own configuration panel has no
+      // effect, so the wizard hides its gear button (nothing to configure).
+      isSoleGroupContentSection(section) {
+        if (!section) return false;
+        const template = this.getParentSectionOf(section);
+        if (!template || !this.isGroupTemplateSection(template)) return false;
+        const group = this.getParentSectionOf(template);
+        if (!group || !this.isGroupSection(group)) return false;
+        const contentSections = (template.elements || []).filter(el => el.type === 'section');
+        return contentSections.length === 1 && contentSections[0].id === section.id;
+      },
+
+      // Singular record name: the group ROOT block's element_singular_name
+      // (defined in step 2) is the single source of truth; the internal
+      // template's title mirrors it (refreshed on every sync).
+      getGroupTemplateTitle(section) {
+        const root = this.getGroup(section) || this.getSubgroupHead(section);
+        if (root && root.element_singular_name) return root.element_singular_name;
+        const template = this.getGroupTemplate(section);
+        return template ? (template.title || '') : '';
+      },
+
+      setGroupTemplateTitle(section, value) {
+        // Write to the BLOCK (step 2's field) and mirror it live on the template
+        const root = this.getGroup(section) || this.getSubgroupHead(section);
+        if (root) root.element_singular_name = value;
+        const template = this.getGroupTemplate(section);
+        if (template) template.title = value;
+      },
+
+      // Keeps the internal template chrome DERIVED from the group while editing
+      // (the same rules the sync enforces): containerType, showTitle, subtitle
+      // and collapsibility are never edited on the template directly.
+      syncGroupTemplateChrome(section) {
+        const template = this.getGroupTemplate(section);
+        if (!template) return;
+        const isTabs = this.isTabsContainer(section);
+        const isAccordion = this.isAccordionContainer(section);
+        const isTabbed = isTabs || isAccordion;
+        // The repeating "Elements" template is a CARD (border + title) unless
+        // the group is a tabs/accordion container (then it is the matching item)
+        template.containerType = isTabs ? 'tab_item' : (isAccordion ? 'accordion_item' : 'card');
+        template.showTitle = true;
+        template.subtitle = '';
+        template.isCollapsible = isTabbed ? false : !!section.isCollapsible;
+        template.isCollapsed = (!isTabbed && section.isCollapsible) ? !!section.isCollapsed : false;
+      },
+
+      // Container options for a section: a direct child of tabs/accordion can
+      // only be the matching item; a group's template child offers panel/card
+      // when its parent group is not a tabs/accordion container (with a
+      // tabs/accordion parent the template IS an item: locked); otherwise
+      // panel/card/tabs/accordion.
+      getAvailableContainerTypes(section) {
+        if (this.isDirectChildOfTabs(section)) {
+          const tabOption = stic_AwfLayoutSection.containerType_in_formList().find(c => c.id === 'tab_item')
+            ?? { id: 'tab_item', text: utils.translate('LBL_SECTION_CONTAINER_TAB_ITEM') };
+          return [tabOption];
+        }
+        if (this.isDirectChildOfAccordion(section)) {
+          const itemOption = stic_AwfLayoutSection.containerType_in_formList().find(c => c.id === 'accordion_item')
+            ?? { id: 'accordion_item', text: utils.translate('LBL_SECTION_CONTAINER_ACCORDION_ITEM') };
+          return [itemOption];
+        }
+        if (this.isGroupTemplateChild(section)) {
+          const parent = this.getParentSectionOf(section);
+          const parentIsTabs = this.isTabsContainer(parent);
+          const parentIsAccordion = this.isAccordionContainer(parent);
+          const validIds = parentIsTabs ? ['tab_item'] : (parentIsAccordion ? ['accordion_item'] : ['panel', 'card']);
+          const list = stic_AwfLayoutSection.containerType_in_formList();
+          if (parentIsTabs && !list.some(c => c.id === 'tab_item')) list.push({ id: 'tab_item', text: utils.translate('LBL_SECTION_CONTAINER_TAB_ITEM') });
+          if (parentIsAccordion && !list.some(c => c.id === 'accordion_item')) list.push({ id: 'accordion_item', text: utils.translate('LBL_SECTION_CONTAINER_ACCORDION_ITEM') });
+          return list.filter(c => validIds.includes(c.id));
+        }
+        // An OPTIONAL, non-repeatable group whose content is a SINGLE section:
+        // tabs/accordion would render a lone tab/header (pointless), so the
+        // group only offers plain panel/card.
+        if (this.isGroupSection(section)) {
+          const group = this.getGroup(section);
+          const template = this.getGroupTemplate(section);
+          const contentSections = template ? (template.elements || []).filter(el => el.type === 'section') : [];
+          if (group && group.is_optional && !group.is_repeatable && contentSections.length === 1) {
+            return stic_AwfLayoutSection.containerType_in_formList().filter(c => ['panel', 'card'].includes(c.id));
+          }
+        }
+        const validCategories = ['panel', 'card', 'card_tabs', 'panel_tabs', 'card_accordion', 'panel_accordion'];
+        return stic_AwfLayoutSection.containerType_in_formList().filter(c => validCategories.includes(c.id));
+      },
+
+      // Side effects of changing a section's container type:
+      //  - a tabs/accordion container turns its DIRECT section children into the
+      //    matching items ('tab_item' / 'accordion_item'; title forced on,
+      //    collapse off) and groups any direct NON-section elements into a new child item 
+      //  - leaving tabs/accordion reverts the items to plain panels.
+      handleContainerTypeChange(section, newType) {
+        if (!section) return;
+        const newIsTabs = this.isTabsContainer({ containerType: newType });
+        const newIsAccordion = this.isAccordionContainer({ containerType: newType });
+        if (newIsTabs || newIsAccordion) {
+          // The PARENT's own showTitle is left untouched: a tabs/accordion
+          // container honors it like a plain panel/card (off = no header, just
+          // the bar/headers and their items). Its child ITEMS always need their
+          // title, since it IS the tab label / accordion header.
+          // Collapsible flags are NOT reset: they only apply while a visible
+          // header exists (the wizard already hides them with showTitle).
+          // Non-section elements cannot live in the container: group them into a new child item
+          const itemType = newIsAccordion ? 'accordion_item' : 'tab_item';
+          const nonSectionElements = section.elements.filter(el => el.type !== 'section');
+          if (nonSectionElements.length > 0) {
+            const item = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
+            item.containerType = itemType;
+            item.showTitle = true;
+            item.isCollapsible = false;
+            item.isCollapsed = false;
+            item.elements = nonSectionElements;
+            section.elements = section.elements.filter(el => el.type === 'section');
+            section.elements.push(item);
+          }
+          // Empty tabs/accordion containers need one item.
+          if (!section.elements.some(el => el.type === 'section')) {
+            const item = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
+            item.containerType = itemType;
+            item.showTitle = true;
+            item.isCollapsible = false;
+            item.isCollapsed = false;
+            section.elements.push(item);
+          }
+          section.elements.forEach(el => {
+            if (el.type === 'section' && el.containerType !== itemType) {
+              el.containerType = itemType;
+              el.showTitle = true;
+            }
+          });
+        } else {
+          section.elements.forEach(el => {
+            if (el.type === 'section' && (el.containerType === 'tab_item' || el.containerType === 'accordion_item')) {
+              el.containerType = 'panel';
+            }
+          });
+        }
+        // Keep internal template chrome derived from its group section.
+        // keep it consistent immediately, not only on the next sync
+        if (this.isGroupSection(section)) this.syncGroupTemplateChrome(section);
+      },
+
 
       init() {
         this.formConfig.syncLayoutWithDataBlocks();
@@ -2846,109 +3357,413 @@ class WizardStep4 {
 
       createSection() {
         this.sections.push(new stic_AwfLayoutSection({
-          title: utils.translate('LBL_SECTION_NEW'),
+          title: utils.translate('LBL_SECTION_NO_TITLE'),
         }));
       },
 
+      /**
+       * Restores the sections to their DEFAULT state: wipes the whole layout
+       * structure and lets the sync regenerate the sections that the CURRENT
+       * data blocks would define from scratch (removes any intricate manual
+       * configuration made in this step). Requires confirmation.
+       */
+      resetSectionsToDefaults() {
+        if (!confirm(utils.translate('LBL_LAYOUT_RESET_SECTIONS_CONFIRM'))) return;
+        this.formConfig.layout.structure = [];
+        this.formConfig.syncLayoutWithDataBlocks();
+      },
+
       canDeleteSection(section) {
-        return section.elements.length==0;
+        // Protect the group's internal instance template; delete the group instead.
+        // Legacy tab_item/accordion_item children are recognized too.
+        if (section && (section.groupTemplate === true || section.containerType === 'tab_item' || section.containerType === 'accordion_item') && this.isGroupSection(this.getParentSectionOf(section))) {
+          return false;
+        }
+        // Delete only sections with no content at any depth.
+        const hasContent = (sec) => sec.elements.some(el =>
+          (el.type === 'datablock' || el.type === 'field') || (el.type === 'section' && hasContent(el)));
+        return !hasContent(section);
       },
 
       deleteSection(section) {
         if (!this.canDeleteSection(section)) return;
-
-        this.formConfig.layout.structure = this.formConfig.layout.structure.filter(s => s.id != section.id);
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        if (idx >= 0) arr.splice(idx, 1);
       },
 
       canMoveUpSection(section) {
-        const index = this.sections.findIndex(s => s.id == section.id);
-        if (index <= 0) return false;
-
-        return true;
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        return idx > 0;
       },
-      
-      moveUpSection(section) {
-        if (!this.canMoveUpSection(section)) return;
 
-        const index = this.sections.findIndex(s => s.id == section.id);
-        const sectionToMove = this.sections[index];
-        this.sections.splice(index, 1);
-        this.sections.splice(index - 1, 0, sectionToMove);
+      moveUpSection(section) {
+        // Swap with the ADJACENT sibling, whether it is a section or an element
+        // (field/block): a nested section must be able to move past a field at
+        // the same level, including non-section elements.
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        if (idx <= 0) return;
+        const [item] = arr.splice(idx, 1);
+        arr.splice(idx - 1, 0, item);
       },
 
       canMoveDownSection(section) {
-        const index = this.sections.findIndex(s => s.id == section.id);
-        if (index >= this.sections.length - 1) return false;
-
-        return true;
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        return idx >= 0 && idx < arr.length - 1;
       },
 
       moveDownSection(section) {
-        if (!this.canMoveDownSection(section)) return;
-
-        const index = this.sections.findIndex(s => s.id == section.id);
-        const sectionToMove = this.sections[index];
-        this.sections.splice(index, 1);
-        this.sections.splice(index + 1, 0, sectionToMove);
+        const arr = this.getParentSectionOf(section)?.elements || this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        if (idx < 0 || idx >= arr.length - 1) return;
+        const [item] = arr.splice(idx, 1);
+        arr.splice(idx + 1, 0, item);
       },
 
       getDataBlock(element) {
-        if (element.type == 'datablock') {
-          return this.formConfig.data_blocks.find(d => d.id == element.ref_id);
+        // Both block and field elements reference the data block through ref_id
+        if (element.type == 'datablock' || element.type == 'field') {
+          return this.data_blocks.find(d => d.id == element.ref_id);
         }
         return null;
       },
 
-      getFields(element) {
-        return this.getDataBlock(element)?.fields.filter(f => f.type_field != 'fixed');
+      isGroupSection(section) {
+        // Group identity is explicit and valid at any nesting depth.
+        return stic_AwfMovePolicy.isGroup(section);
       },
 
-      getElementHeader(element) {
-        let header = element.type;
-        if (element.type == 'datablock') {
-          const dataBlock  = this.getDataBlock(element);
-          header = `${utils.translate('LBL_DATABLOCK')}: ${dataBlock.text}`;
+      isWithinGroupSection(section) {
+        // True when the section or any ancestor is a designated group.
+        return stic_AwfMovePolicy.withinGroup(section, this.sections);
+      },
+
+      groupName(section) {
+        const group = this.getGroup(section) || this.getSubgroupHead(section);
+        if (!group) return null;
+
+        return group.group_title || group.text || '';
+      },
+
+      getGroup(section) {
+        // The group's root block comes from the section's explicit
+        // reference (robust to content changes: unbundled fields, moved elements).
+        // Nested heads also own designated sections and must resolve their badges.
+        if (!this.isGroupSection(section)) return null;
+        const block = section.getGroupBlock(this.data_blocks);
+        if (!block || !block.isGroupHead(this.data_blocks)) return null;
+        return block;
+      },
+
+      // Legacy plain host for a nested subgroup inside a designated group.
+      getSubgroupHead(section) {
+        if (!section || this.isGroupSection(section) || !this.isWithinGroupSection(section)) return null;
+        for (const el of section.elements) {
+          if (el.type !== 'datablock') continue;
+          const block = this.getDataBlock(el);
+          if (block && block.group_root && block.isGroupHead(this.data_blocks)) return block;
         }
-        return header;
+        return null;
       },
 
-      moveElementUp(section, index) {
-        if (index <= 0) return;
-        const item = section.elements[index];
-        section.elements.splice(index, 1);
-        section.elements.splice(index - 1, 0, item);
-      },      
+      isNestedGroupSection(section) {
+        return !!this.getSubgroupHead(section);
+      },
 
-      moveElementDown(section, index) {
-        if (index >= section.elements.length - 1) return;
-        const item = section.elements[index];
-        section.elements.splice(index, 1);
-        section.elements.splice(index + 1, 0, item);
+      // Unified accessor for the group header template: designated top-level
+      // group sections and nested subgroup host sections.
+      getSectionGroup(section) {
+        return this.getGroup(section) || this.getSubgroupHead(section);
+      },
+
+      // The section (at any depth) that directly contains a nested section (or null)
+      getParentSectionOf(section) {
+        const findParent = (sections) => {
+          for (const s of sections) {
+            for (const el of s.elements) {
+              if (el.type !== 'section') continue;
+              if (el.id === section.id) return s;
+              const found = findParent([el]);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+        return findParent(this.sections);
+      },
+
+      isNestedSection(section) {
+        return !!this.getParentSectionOf(section);
+      },
+
+      // A nested section can move out of its parent only when the parent is NOT a
+      // group section (sections can never leave their group section)
+      canMoveSectionOut(section) {
+        return stic_AwfMovePolicy.canMoveSectionOut(section, this.sections, this.data_blocks);
+      },
+
+      // Takes a nested section out of its (non-group) parent section and places it
+      // at its parent's level (top level, or inside the grandparent section),
+      // right after its former parent
+      moveSectionOut(section) {
+        if (!this.canMoveSectionOut(section)) return;
+        const parent = this.getParentSectionOf(section);
+        const grandparent = this.getParentSectionOf(parent);
+        parent.elements = parent.elements.filter(el => el.id !== section.id);
+        const arr = grandparent ? grandparent.elements : this.sections;
+        const idx = arr.indexOf(parent);
+        arr.splice(idx + 1, 0, section);
+      },
+
+      // Reserved target representing the top level of the form (outside all sections).
+      // Only offered to standalone nested SECTIONS: blocks and fields must always
+      // remain inside a section.
+      getFormMoveTarget() {
+        return stic_AwfMovePolicy.FORM_TARGET;
+      },
+      // Dropdown data for section moves — rules live in stic_AwfMovePolicy.
+      getSectionMoveTargets(section) {
+        return stic_AwfMovePolicy.sectionTargets(section, this.sections, this.data_blocks).map(s => s);
+      },
+
+      // Hierarchical section label: "Parent - Child - ..." (walks up the parents)
+      getSectionLabel(section) {
+        // The internal group template is hidden in step 4: a move into it
+        // lands at the group's own level, so label it with the group's name.
+        if (this.isGroupTemplateSection(section)) {
+          const group = this.getParentSectionOf(section);
+          return group ? this.getSectionLabel(group) : (section.title || utils.translate('LBL_SECTION_NO_TITLE'));
+        }
+        const own = section.title || utils.translate('LBL_SECTION_NO_TITLE');
+        let parent = this.getParentSectionOf(section);
+        // Skip the internal group template level (it is hidden in the UI)
+        while (parent && this.isGroupTemplateSection(parent)) parent = this.getParentSectionOf(parent);
+        return parent ? `${this.getSectionLabel(parent)} - ${own}` : own;
+      },
+
+      // Moves a section into another section (group-scope rules), or to the
+      // form's top level via the "outside all sections" target
+      moveSectionToSection(section, toSectionId) {
+        if (!toSectionId) return;
+        if (toSectionId === this.getFormMoveTarget().id) {
+          this.moveSectionOut(section);
+          return;
+        }
+        const target = this.findSectionById(toSectionId);
+        if (!target || target.id === section.id) return;
+        if (!this.getSectionMoveTargets(section).some(s => s.id === target.id)) return;
+
+        const parent = this.getParentSectionOf(section);
+        const arr = parent ? parent.elements : this.sections;
+        const idx = arr.findIndex(el => el.id === section.id);
+        if (idx >= 0) arr.splice(idx, 1);
+        // The policy resolves group-section targets to their element template.
+        const dest = stic_AwfMovePolicy.resolved(target, this.sections);
+        dest.elements.push(section);
+
+        // Container-type coherence against the REAL destination: a section
+        // moved INTO a tabs/accordion container becomes the matching item
+        // (title on, collapse off); an item moved out of it (or into a plain
+        // section, e.g. a group's element template) reverts to a plain panel.
+        if (this.isTabsContainer(dest)) {
+          section.containerType = 'tab_item';
+          section.showTitle = true;
+          section.isCollapsible = false;
+          section.isCollapsed = false;
+        } else if (this.isAccordionContainer(dest)) {
+          section.containerType = 'accordion_item';
+          section.showTitle = true;
+          section.isCollapsible = false;
+          section.isCollapsed = false;
+        } else if (section.containerType === 'tab_item' || section.containerType === 'accordion_item') {
+          section.containerType = 'panel';
+        }
+      },
+
+      // Finds a section by ID at any level (top-level sections and nested sections)
+      // Finds a section by ID at any depth (top-level and nested sections)
+      findSectionById(id) {
+        const find = (sections) => {
+          for (const s of sections) {
+            if (s.id == id) return s;
+            for (const el of s.elements) {
+              if (el.type !== 'section') continue;
+              if (el.id == id) return el;
+              const found = find([el]);
+              if (found) return found;
+            }
+          }
+          return null;
+        };
+        return find(this.sections);
+      },
+      // Dropdown data for element moves — rules live in stic_AwfMovePolicy.
+      getMoveTargets(element, fromSection) {
+        return stic_AwfMovePolicy.elementTargets(element, fromSection, this.sections, this.data_blocks);
+      },
+
+      // Adds a new (empty) nested section to ANY section,
+      // like the top-level add-section button, and focuses its title editor
+      addNestedSection(section) {
+        const nested = new stic_AwfLayoutSection({ title: utils.translate('LBL_SECTION_NO_TITLE') });
+        // A group section holds only its hidden element template: new content
+        // goes directly into the template, next to the block host sections.
+        const host = this.isGroupSection(section) ? (this.getGroupTemplate(section) || section) : section;
+        host.elements.push(nested);
+
+        // Once rendered: scroll to the new section card and start editing its title
+        Alpine.nextTick(() => {
+          const card = document.getElementById('sectionCard_' + nested.id);
+          if (!card) return;
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          const titleEl = card.querySelector('h3[id^="sectionTitleEdit-"]');
+          if (titleEl) {
+            // Trigger the inline editor's dblclick on its display span, then focus the input
+            const displaySpan = titleEl.querySelector('span');
+            displaySpan?.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+            const input = card.querySelector(`input[id="sectionTitleEdit-${nested.id}_ctrl"]`);
+            input?.focus();
+          }
+        });
+      },
+
+      getFields(element) {
+        const block = this.getDataBlock(element);
+        if (!block) return [];
+        // Field elements (unbundled fields) preview only their own field
+        if (element.type === 'field') {
+          const field = block.fields.find(f => f.name === element.field_name);
+          return field ? [field] : [];
+        }
+        return block.fields.filter(f => f.type_field != 'fixed');
+      },
+
+      // The field rendered by a field element (null for block elements)
+      getField(element) {
+        const block = this.getDataBlock(element);
+        if (!block || element.type !== 'field') return null;
+        return block.fields.find(f => f.name === element.field_name) || null;
+      },
+
+      canUnbundleElement(element) {
+        if (!element || element.type !== 'datablock') return false;
+        const block = this.getDataBlock(element);
+        return !!block && block.fields.some(f => f.type_field !== 'fixed');
+      },
+
+      // Replaces a (scalar) block element by one field element per rendered field,
+      // preserving its position inside the section.
+      // NOTE: never trust the captured `index` (frozen when the card was created) —
+      // resolve the CURRENT position by identity, or the splice would hit the wrong
+      // element after the array changed.
+      unbundleElement(element, section) {
+        if (!this.canUnbundleElement(element)) return;
+        const block = this.getDataBlock(element);
+        const currentIndex = section.elements.findIndex(el => el.id === element.id);
+        if (currentIndex < 0) return; // Stale element: nothing to unbundle
+        const fields = block.fields.filter(f => f.type_field !== 'fixed');
+        const fieldElements = fields.map(f => new stic_AwfLayoutElement({
+          type: 'field',
+          ref_id: block.id,
+          field_name: f.name,
+        }));
+        section.elements.splice(currentIndex, 1, ...fieldElements);
+      },
+
+      // Re-groups every field element of a block (wherever it is placed) back into
+      // a single block element, at the position of its first fragment
+      bundleFields(element) {
+        if (!element || element.type !== 'field') return;
+        const block = this.getDataBlock(element);
+        if (!block) return;
+        // I2/I3: bundling is a layout move too — the same policy that governs
+        // the move dropdowns decides whether the scattered fragments may be
+        // consolidated at the first one's section.
+        if (!stic_AwfMovePolicy.canBundle(block.id, this.sections, this.data_blocks)) return;
+
+        const fragments = [];
+        const collect = (sec) => {
+          sec.elements.forEach(el => {
+            if (el.type === 'section') { collect(el); return; }
+            if (el.type === 'field' && el.ref_id === block.id) fragments.push({ sec, el });
+          });
+        };
+        this.sections.forEach(collect);
+        if (fragments.length === 0) return;
+
+        // A group head's whole element belongs in its structural host, not in
+        // the section that happened to hold a misplaced fragment.
+        const firstSection = stic_AwfMovePolicy.bundleDestination(block.id, this.sections, this.data_blocks) || fragments[0].sec;
+        const firstIndex = firstSection.elements.indexOf(fragments[0].el);
+
+        // Remove every fragment, then insert the block element at the first position
+        fragments.forEach(({ sec, el }) => {
+          const i = sec.elements.indexOf(el);
+          if (i >= 0) sec.elements.splice(i, 1);
+        });
+        // Only insert a whole block element if the block does not already have one
+        // anywhere in the layout (otherwise there would be duplicates)
+        if (!this.layoutHasBlockElement(block.id)) {
+          firstSection.elements.splice(Math.min(firstIndex, firstSection.elements.length), 0, new stic_AwfLayoutElement({ type: 'datablock', ref_id: block.id }));
+        }
+      },
+
+      // True when the layout already holds a whole block element for the block
+      layoutHasBlockElement(blockId) {
+        const check = (sec) => sec.elements.some(el =>
+          (el.type === 'datablock' && el.ref_id === blockId) || (el.type === 'section' && check(el)));
+        return this.sections.some(check);
+      },
+
+      // Current position of an element inside a section (by identity)
+      elementIndexIn(section, element) {
+        return section.elements.findIndex(el => el.id === element.id);
+      },
+
+      // Move up/down by element identity (the captured index in the card's x-data
+      // may be stale after the section's elements changed)
+      moveElementUp(section, element) {
+        const i = this.elementIndexIn(section, element);
+        if (i <= 0) return;
+        section.elements.splice(i, 1);
+        section.elements.splice(i - 1, 0, element);
+      },
+
+      moveElementDown(section, element) {
+        const i = this.elementIndexIn(section, element);
+        if (i < 0 || i >= section.elements.length - 1) return;
+        section.elements.splice(i, 1);
+        section.elements.splice(i + 1, 0, element);
       },
 
       moveElementToSection(element, fromSectionId, toSectionId) {
         if (!toSectionId || fromSectionId === toSectionId) return;
 
-        const fromSection = this.formConfig.layout.structure.find(s => s.id == fromSectionId);
-        const toSection = this.formConfig.layout.structure.find(s => s.id == toSectionId);
+        const fromSection = this.findSectionById(fromSectionId);
+        const toSection = this.findSectionById(toSectionId);
+        if (!fromSection || !toSection) return;
 
-        if (fromSection && toSection) {
-          fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
-          toSection.elements.push(element);
-        }
+        // Enforce the same rule the dropdown used; the target is final.
+        if (!this.getMoveTargets(element, fromSection).some(s => s.id === toSection.id)) return;
+        const dest = stic_AwfMovePolicy.resolved(toSection, this.sections);
+        fromSection.elements = fromSection.elements.filter(el => el.id !== element.id);
+        dest.elements.push(element);
       },
 
       resetTheme() {
-        this.formConfig.layout.theme = new stic_AwfTheme();
-        this.formConfig.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
-        this.formConfig.layout.closed_form_title = utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE');
-        this.formConfig.layout.closed_form_text = utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE');
-        this.formConfig.layout.processed_form_title = utils.translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE');
-        this.formConfig.layout.processed_form_text = utils.translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE');
-        this.formConfig.layout.receipt_form_title = utils.translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE');
-        this.formConfig.layout.receipt_form_text = utils.translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE');
-        this.formConfig.layout.custom_css = '';
-        this.formConfig.layout.custom_js = '';
+        this.layout.theme = new stic_AwfTheme();
+        this.layout.submit_button_text = utils.translate('LBL_THEME_SUBMIT_BUTTON_TEXT_VALUE');
+        this.layout.closed_form_title = utils.translate('LBL_THEME_CLOSED_FORM_TITLE_VALUE');
+        this.layout.closed_form_text = utils.translate('LBL_THEME_CLOSED_FORM_TEXT_VALUE');
+        this.layout.processed_form_title = utils.translate('LBL_THEME_PROCESSED_FORM_TITLE_VALUE');
+        this.layout.processed_form_text = utils.translate('LBL_THEME_PROCESSED_FORM_TEXT_VALUE');
+        this.layout.receipt_form_title = utils.translate('LBL_THEME_RECEIPT_FORM_TITLE_VALUE');
+        this.layout.receipt_form_text = utils.translate('LBL_THEME_RECEIPT_FORM_TEXT_VALUE');
+        this.layout.custom_css = '';
+        this.layout.custom_js = '';
       }
     }
   }
