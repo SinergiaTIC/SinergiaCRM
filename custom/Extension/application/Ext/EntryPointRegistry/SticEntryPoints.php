@@ -70,4 +70,7 @@ $entry_point_registry['stic_AWF_resumeHandler'] = array('file' => 'modules/stic_
 // Entry point for async ListView count
 $entry_point_registry['sticAsyncListCount'] = array('file' => 'SticInclude/AsyncListCount.php', 'auth' => true);
 
+// SSO: mints a short-lived token so SinergiaDA can open a session for the logged-in CRM user
+$entry_point_registry['stic_sda_sso_token'] = array('file' => 'SticInclude/SdaSsoToken.php', 'auth' => true);
+
 

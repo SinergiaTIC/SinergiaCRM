@@ -22,8 +22,15 @@
  */
 
 require_once 'modules/Users/controller.php';
+require_once 'SticInclude/SdaSso.php';
 class CustomUsersController extends UsersController
 {
+    /**
+     * Actions reachable without a CRM session: the default login actions plus the
+     * silent SinergiaDA session check, which never returns a token.
+     */
+    public $allowed_actions = array('Authenticate', 'Login', 'LoggedOut', 'sdaSilentCheck');
+
     /**
      * Start impersonation of a target user
      */
@@ -69,5 +76,43 @@ class CustomUsersController extends UsersController
             $GLOBALS['log']->fatal(__METHOD__.__LINE__.'Failed to stop impersonation.');
             die('Failed to stop impersonation.');
         }
+    }
+
+    /**
+     * Silent check of the SinergiaDA session origin. Redirects back to SinergiaDA with
+     * sso_check=active when the CRM session still belongs to the user given in "user"
+     * (and still has SinergiaDA access), or sso_check=inactive otherwise.
+     */
+    public function action_sdaSilentCheck()
+    {
+        global $sugar_config;
+
+        $active = false;
+        $email = isset($_REQUEST['user']) ? (string) $_REQUEST['user'] : '';
+        if (!empty($_SESSION['authenticated_user_id']) && $email !== '') {
+            $user = BeanFactory::newBean('Users');
+            $user->retrieve($_SESSION['authenticated_user_id']);
+            $active = !empty($user->id) && $user->user_name === $email
+                && SticSdaSso::getAllowed($user->id) !== false;
+        }
+
+        $sdaUrl = $sugar_config['stic_sinergiada_public']['url'] ?? "https://" . str_replace("sinergiacrm", "sinergiada", $_SERVER['HTTP_HOST']);
+        $sdaBase = rtrim($sdaUrl, '/');
+        $sdaLanguages = $sugar_config['stic_sinergiada']['sso_locale_languages'] ?? ['es', 'ca', 'en', 'gl'];
+        $lang = explode('_', $sugar_config['default_language'])[0];
+        if (!in_array($lang, $sdaLanguages, true)) {
+            $lang = $sdaLanguages[0] ?? 'es';
+        }
+        if ($sugar_config['stic_sinergiada']['sso_locale_path'] ?? true) {
+            $sdaBase .= '/' . $lang;
+        }
+
+        $return = SticSdaSso::sanitizeReturn($_REQUEST['return'] ?? '');
+        $result = $active ? 'active' : 'inactive';
+
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+        header('Location: ' . $sdaBase . '/?sso_check=' . $result . ($return !== '' ? '#' . $return : '#/home'));
+        die();
     }
 }
