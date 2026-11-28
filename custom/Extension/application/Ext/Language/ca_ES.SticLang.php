@@ -120,6 +120,10 @@ $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = "L'enviament només s'apl
 // Camps de filtre en relacions molts a molts
 $app_strings['LBL_SECURITYGROUPS_NAME'] = 'Grup de seguretat';
 
+// SinergiaDA: Enllaços CRM
+$app_strings['LBL_STIC_SDA_LINK_DETAIL'] = 'Enllaç a la vista de detall';
+$app_strings['LBL_STIC_SDA_LINK_EDIT'] = "Enllaç a la vista d'edició";
+
 // Mòduls propis de SinergiaCRM i mòduls de SuiteCRM reanomenats
 $app_list_strings['moduleList']['Accounts'] = 'Organitzacions';
 $app_list_strings['moduleList']['Contacts'] = 'Persones';
@@ -4260,7 +4264,3 @@ $app_list_strings['collection_temp_list']['stic_Messages'] = 'Missatges';
 
 // Llista dinàmica
 include 'modules/stic_Message_Marketing/dynamicLPOs.php';
-
-// SinergiaDA CRM links
-$app_strings['LBL_STIC_SDA_LINK_DETAIL'] = 'Enllaç a la vista de detall';
-$app_strings['LBL_STIC_SDA_LINK_EDIT'] = "Enllaç a la vista d'edició";
