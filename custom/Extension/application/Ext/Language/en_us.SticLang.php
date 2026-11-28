@@ -117,6 +117,10 @@ $app_strings['LBL_EMAIL_SENDING_ALERT_CURRENT_PAGE'] = 'Email sending will only 
 // Many to Many filter fields
 $app_strings['LBL_SECURITYGROUPS_NAME'] = 'Security Group';
 
+// SinergiaDA: CRM links
+$app_strings['LBL_STIC_SDA_LINK_DETAIL'] = 'Link to the detail view';
+$app_strings['LBL_STIC_SDA_LINK_EDIT'] = 'Link to the edit view';
+
 // SinergiaCRM own modules and SuiteCRM renamed modules
 $app_list_strings['moduleList']['Accounts'] = 'Accounts';
 $app_list_strings['moduleList']['Contacts'] = 'Contacts';

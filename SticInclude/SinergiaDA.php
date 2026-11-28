@@ -806,11 +806,16 @@ class ExternalReporting
                     case 'int':
                     case 'currency':
                     case 'float':
+                    case 'long':
                         $fieldV['alias'] = $fieldV['name'];
 
                         if ($fieldV['type'] == 'float' && in_array($fieldV['name'], ['jjwg_maps_lat_c', 'jjwg_maps_lng_c'])) {
                             // We use a specific configuration for the latitude and longitude fields of the JJWG Maps module
                             $decConfig = '11,8';
+                        } elseif ($fieldV['type'] == 'long') {
+                            // 'long' fields are BIGINT in the database, so they need a scale of 0 and enough
+                            // integer digits to hold the whole BIGINT range without truncation
+                            $decConfig = '20,0';
                         } else {
                             $decConfig = '20,4';
                         }
@@ -835,6 +840,7 @@ class ExternalReporting
                     case 'int':
                     case 'currency':
                     case 'float':
+                    case 'long':
                         $edaType = !in_array($fieldV['name'], ['jjwg_maps_lat_c', 'jjwg_maps_lng_c']) ? 'numeric' : 'coordinate';
                         $edaPrecision = $fieldV['type'] == 'currency' ? 2 : 0;
                         $edaPrecision = $fieldV['precision'] ?? $edaPrecision;
@@ -1060,6 +1066,55 @@ class ExternalReporting
                     'label' => "(n) {$txModuleName}",
                     'description' => 'Special field allow count',
                     'stic_type' => 'none',
+                ]
+            );
+
+            // Special fields: CRM links to open the record in Detail/Edit view (rendered as HTML by SinergiaDA)
+            $crmSiteUrl = rtrim($sugar_config['site_url'] ?? '', '/');
+            $crmBaseUrl = $crmSiteUrl !== '' ? $crmSiteUrl . '/' : '';
+
+            // Translated labels for the CRM link columns (available in all supported languages)
+            $sdaAppStrings = return_application_language($this->langCode);
+            $sdaLinkDetailLabel = $sdaAppStrings['LBL_STIC_SDA_LINK_DETAIL'] ?? 'Enlace detalle';
+            $sdaLinkEditLabel = $sdaAppStrings['LBL_STIC_SDA_LINK_EDIT'] ?? 'Enlace edición';
+            $sdaLinkDetailText = $sdaAppStrings['LBL_VIEW_BUTTON'] ?? 'Ver';
+            $sdaLinkEditText = $sdaAppStrings['LBL_EDIT_BUTTON'] ?? 'Editar';
+
+            $detailLinkExpr = 'CONCAT(\'<a href="' . $crmBaseUrl . 'index.php?module=' . $moduleName . '&action=DetailView&record=\', m.id, \'" target="_blank"><i class="fa fa-eye"></i> ' . $sdaLinkDetailText . '</a>\')';
+            $editLinkExpr = 'CONCAT(\'<a href="' . $crmBaseUrl . 'index.php?module=' . $moduleName . '&action=EditView&record=\', m.id, \'" target="_blank"><i class="fa fa-pencil"></i> ' . $sdaLinkEditText . '</a>\')';
+
+            $createViewQueryFields .= ' ' . $detailLinkExpr . ' AS link_detail, ';
+            $createViewQueryFields .= ' ' . $editLinkExpr . ' AS link_edit, ';
+
+            // Add metadata for the detail link column
+            $this->addMetadataRecord(
+                'sda_def_columns',
+                [
+                    'table' => "{$this->viewPrefix}_{$tableName}",
+                    'column' => 'link_detail',
+                    'type' => 'html',
+                    'aggregations' => 'none',
+                    'decimals' => 0,
+                    'label' => $sdaLinkDetailLabel,
+                    'description' => $sdaLinkDetailLabel,
+                    'sda_hidden' => 0,
+                    'stic_type' => 'html',
+                ]
+            );
+
+            // Add metadata for the edit link column
+            $this->addMetadataRecord(
+                'sda_def_columns',
+                [
+                    'table' => "{$this->viewPrefix}_{$tableName}",
+                    'column' => 'link_edit',
+                    'type' => 'html',
+                    'aggregations' => 'none',
+                    'decimals' => 0,
+                    'label' => $sdaLinkEditLabel,
+                    'description' => $sdaLinkEditLabel,
+                    'sda_hidden' => 0,
+                    'stic_type' => 'html',
                 ]
             );
 
@@ -2421,7 +2476,7 @@ class ExternalReporting
      */
     public function runPostRebuildSQLScripts($modulesList)
     {
-        global $db;
+        global $db, $sugar_config;
 
         // 1) Include script for managing campaign_log view && relationships if Campaigns module is enabled
         // Replace campaign_log view with this version which include differente LEFT JOINS and fields
@@ -2429,6 +2484,14 @@ class ExternalReporting
 
         if (in_array('Campaigns', $modulesList)) {
             $this->info .= '<h2>Rebuilding SinergiaDA campaign_log view and relationships</h2>';
+
+            // CRM link columns (HTML) for the campaign_log view
+            $sdaAppStrings = return_application_language($this->langCode);
+            $crmBaseUrl = !empty($sugar_config['site_url']) ? rtrim($sugar_config['site_url'], '/') . '/' : '';
+            $campaignLogDetailText = $sdaAppStrings['LBL_VIEW_BUTTON'] ?? 'Ver';
+            $campaignLogEditText = $sdaAppStrings['LBL_EDIT_BUTTON'] ?? 'Editar';
+            $campaignLogLinkDetail = "CONCAT('<a href=\"" . $crmBaseUrl . "index.php?module=CampaignLog&action=DetailView&record=', m.id, '\" target=\"_blank\"><i class=\"fa fa-eye\"></i> " . $campaignLogDetailText . "</a>')";
+            $campaignLogLinkEdit = "CONCAT('<a href=\"" . $crmBaseUrl . "index.php?module=CampaignLog&action=EditView&record=', m.id, '\" target=\"_blank\"><i class=\"fa fa-pencil\"></i> " . $campaignLogEditText . "</a>')";
 
             $campaignLogQueries['view'] = "CREATE OR REPLACE VIEW sda_campaign_log AS
             SELECT
@@ -2451,6 +2514,8 @@ class ExternalReporting
                 ) AS date_modified,
                 IFNULL(m.more_information, '') AS more_information,
                 1 as N,
+                $campaignLogLinkDetail AS link_detail,
+                $campaignLogLinkEdit AS link_edit,
                 IFNULL(m.campaign_id, '') AS campaign_id,
                 c.id AS contact_id,
                 u.id AS user_id,
